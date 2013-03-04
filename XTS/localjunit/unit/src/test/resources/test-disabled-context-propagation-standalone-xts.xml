@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<server xmlns="urn:jboss:domain:1.4">
+<server xmlns="urn:jboss:domain:2.0">
     <extensions>
         <extension module="org.jboss.as.clustering.infinispan"/>
         <extension module="org.jboss.as.cmp"/>
@@ -10,7 +10,6 @@
         <extension module="org.jboss.as.ee"/>
         <extension module="org.jboss.as.ejb3"/>
         <extension module="org.jboss.as.jacorb"/>
-        <extension module="org.jboss.as.jaxr"/>
         <extension module="org.jboss.as.jaxrs"/>
         <extension module="org.jboss.as.jdr"/>
         <extension module="org.jboss.as.jmx"/>
@@ -128,7 +127,7 @@
             <spec-descriptor-property-replacement>false</spec-descriptor-property-replacement>
             <jboss-descriptor-property-replacement>true</jboss-descriptor-property-replacement>
         </subsystem>
-        <subsystem xmlns="urn:jboss:domain:ejb3:1.4">
+        <subsystem xmlns="urn:jboss:domain:ejb3:2.0">
             <session-bean>
                 <stateless>
                     <bean-instance-pool-ref pool-name="slsb-strict-max-pool"/>
@@ -154,8 +153,10 @@
                 <file-passivation-store name="file"/>
             </passivation-stores>
             <async thread-pool-name="default"/>
-            <timer-service thread-pool-name="default">
-                <data-store path="timer-service-data" relative-to="jboss.server.data.dir"/>
+            <timer-service thread-pool-name="default" default-data-store="default-file-store">
+                <data-stores>
+                    <file-data-store name="default-file-store" path="timer-service-data" relative-to="jboss.server.data.dir"/>
+                </data-stores>
             </timer-service>
             <remote connector-ref="remoting-connector" thread-pool-name="default"/>
             <thread-pools>
@@ -195,9 +196,6 @@
             <orb socket-binding="jacorb" ssl-socket-binding="jacorb-ssl">
                 <initializers transactions="spec" security="identity"/>
             </orb>
-        </subsystem>
-        <subsystem xmlns="urn:jboss:domain:jaxr:1.1">
-            <connection-factory jndi-name="java:jboss/jaxr/ConnectionFactory"/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
         <subsystem xmlns="urn:jboss:domain:jca:1.1">
