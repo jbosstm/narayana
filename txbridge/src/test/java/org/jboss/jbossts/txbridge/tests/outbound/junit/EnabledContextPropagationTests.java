@@ -3,9 +3,7 @@ package org.jboss.jbossts.txbridge.tests.outbound.junit;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -41,7 +39,7 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(Arquillian.class)
-public final class DisabledContextPropagationTest {
+public final class EnabledContextPropagationTests {
 
     public static final String OUTBOUND_SERVICE_DEPLOYMENT_NAME = "txbridge-outbound-tests-service";
 
@@ -83,9 +81,7 @@ public final class DisabledContextPropagationTest {
 
     @Before
     public void before() {
-        Map<String, String> config = new HashMap<String, String>();
-        config.put("serverConfig", "test-disabled-context-propagation-standalone-xts.xml");
-        controller.start(CONTAINER, config);
+        controller.start(CONTAINER);
     }
 
     @After
@@ -98,7 +94,7 @@ public final class DisabledContextPropagationTest {
     /**
      * Tests commit without WSTXFeature and JTAOverWSATFeature.
      *
-     * No tow-phase commit calls are expected.
+     * Prepare and commit calls are expected.
      *
      * @throws Exception
      */
@@ -112,7 +108,7 @@ public final class DisabledContextPropagationTest {
         parameters.add(new BasicNameValuePair("clientType", String.valueOf(TestATClient.CLIENT_WITHOUT_FEATURES)));
 
         List<String> invocations = makeRequest(baseURL, parameters);
-        assertInvocations(invocations);
+        assertInvocations(invocations, "prepare", "commit");
     }
 
     /**
@@ -218,7 +214,7 @@ public final class DisabledContextPropagationTest {
         assertInvocations(invocations);
     }
 
-    // Tests with disabled JTAOverWSATFeature feature
+    // Tests with disabled JTAOverWSATFeature features
 
     /**
      * Tests commit with disabled JTAOverWSATFeature.
@@ -372,6 +368,7 @@ public final class DisabledContextPropagationTest {
 
     private List<String> makeRequest(URL baseURL, List<NameValuePair> parameters) throws ClientProtocolException, IOException,
             JSONException {
+
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost post = new HttpPost(baseURL.toString() + TestATClient.URL_PATTERN);
         post.setEntity(new UrlEncodedFormEntity(parameters));
@@ -385,7 +382,6 @@ public final class DisabledContextPropagationTest {
     }
 
     private void assertInvocations(List<String> actual, String... expected) {
-        System.out.println("Invocations: " + actual);
         Assert.assertArrayEquals(expected, actual.toArray());
     }
 
