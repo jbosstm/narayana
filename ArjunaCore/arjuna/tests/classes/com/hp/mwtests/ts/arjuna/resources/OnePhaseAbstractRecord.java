@@ -40,22 +40,41 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
-public class BasicRecord extends AbstractRecord
+public class OnePhaseAbstractRecord extends AbstractRecord
 {
 
-    public BasicRecord()
+    public OnePhaseAbstractRecord()
     {
         super(new Uid());
     }
 
+    public boolean onePhaseCalled ()
+    {
+        return _onePhaseCalled;
+    }
+    
     public int typeIs()
     {
         return RecordType.USER_DEF_FIRST0;
     }
+    
+    public int nestedOnePhaseCommit ()
+    {
+        _onePhaseCalled = true;
+        
+        return TwoPhaseOutcome.FINISH_OK;
+    }
 
+    public int topLevelOnePhaseCommit ()
+    {
+        _onePhaseCalled = true;
+        
+        return TwoPhaseOutcome.FINISH_OK;
+    }
+    
     public int nestedAbort()
     {
-        return TwoPhaseOutcome.FINISH_OK;
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     public int nestedCommit()
@@ -70,17 +89,17 @@ public class BasicRecord extends AbstractRecord
 
     public int topLevelAbort()
     {
-        return TwoPhaseOutcome.FINISH_OK;
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     public int topLevelCommit()
     {
-        return TwoPhaseOutcome.FINISH_OK;
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     public int topLevelPrepare()
     {
-        return TwoPhaseOutcome.PREPARE_OK;
+        return TwoPhaseOutcome.PREPARE_READONLY;
     }
 
     public void print(PrintWriter strm)
@@ -105,7 +124,7 @@ public class BasicRecord extends AbstractRecord
 
     public String type()
     {
-        return "/StateManager/AbstractRecord/BasicRecord";
+        return "/StateManager/AbstractRecord/OnePhaseAbstractRecord";
     }
 
     public boolean shouldAdd(AbstractRecord a)
@@ -149,5 +168,6 @@ public class BasicRecord extends AbstractRecord
     {
     }
 
+    private boolean _onePhaseCalled = false;
 }
 
