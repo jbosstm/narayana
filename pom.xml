@@ -1046,6 +1046,8 @@
     <jboss-as.version>8.0.0.Alpha1-SNAPSHOT</jboss-as.version>
     <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>
+    <skip.from.idlj></skip.from.idlj>
+    <skip.from.jacorb></skip.from.jacorb>
   </properties>
   <profiles>
     <profile>
@@ -1089,6 +1091,42 @@
         <module>ArjunaCore</module>
         <module>ArjunaJTA</module>
         <module>ArjunaJTS</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>jts-jacorb</id>
+      <properties>
+        <skip.from.idlj>**</skip.from.idlj>
+      </properties>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>ArjunaJTS/orbportability</module>
+        <module>ArjunaJTS/idl/jacorb</module>
+        <module>ArjunaJTS/jts</module>
+        <module>ArjunaJTS/jtax</module>
+        <module>ArjunaJTS/narayana-jts-jacorb</module>
+        <module>ArjunaJTS/integration</module>
+        <module>narayana-full</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>jts-idlj</id>
+      <properties>
+        <skip.from.jacorb>**</skip.from.jacorb>
+      </properties>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>ArjunaJTS/orbportability</module>
+        <module>ArjunaJTS/idl/idlj</module>
+        <module>ArjunaJTS/jts</module>
+        <module>ArjunaJTS/jtax</module>
+        <module>ArjunaJTS/narayana-jts-idlj</module>
+        <module>ArjunaJTS/integration</module>
+        <module>narayana-full</module>
       </modules>
     </profile>
     <profile>
