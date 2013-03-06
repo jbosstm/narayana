@@ -2535,12 +2535,12 @@ public class BasicAction extends StateManager
             keepGoing = ( individualTwoPhaseOutcome == TwoPhaseOutcome.PREPARE_OK) || ( individualTwoPhaseOutcome == TwoPhaseOutcome.PREPARE_READONLY);
             
             /*
-             * If we are allowed to do 1PC optimisation then check to see if the first N-1
+             * If we are allowed to do dynamic 1PC optimisation then check to see if the first N-1
              * participants returned read-only and there's a single entry left on the
              * intentions list.
              */
             
-            if (keepGoing && TxControl.onePhase)
+            if (keepGoing && TxControl.dynamic1PC)
             {
                 /*
                  * If N-1 returned read-only and 1 record left then exit prepare now and force

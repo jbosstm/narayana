@@ -53,6 +53,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.writeOptimisation")
     private volatile boolean writeOptimisation = false;
 
+    private volatile boolean dynamic1PC = true;
     private volatile boolean readonlyOptimisation = true;
     private volatile boolean classicPrepare = false;
     private volatile boolean enableStatistics = false;
@@ -194,6 +195,31 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setCommitOnePhase(boolean commitOnePhase)
     {
         this.commitOnePhase = commitOnePhase;
+    }
+    
+    /**
+     * Returns true if dynamic one phase commit optimization is to be used. This means that
+     * if the first N-1 participants in the intentions list return read-only then commit_one_phase
+     * will be called on the last participant.
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.dynamic1PC
+     *
+     * @return true if one phase commit is enabled, false otherwise.
+     */
+    public boolean getDynamic1PC()
+    {
+        return dynamic1PC;
+    }
+
+    /**
+     * Sets if dynamic one phase commit behaviour is enabled or not.
+     *
+     * @param dynamic1PC true to enable, false to disable.
+     */
+    public void setDynamic1PC(boolean dynamic1PC)
+    {
+        this.dynamic1PC = dynamic1PC;
     }
 
     /**
