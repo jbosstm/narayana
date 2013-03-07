@@ -24,6 +24,7 @@
     <description>${project.artifactId}</description>
     <packaging>jar</packaging>
     <properties>
+        <version.plugin.antrun>1.7</version.plugin.antrun>
         <version.jbossas>7.1.1.Final</version.jbossas>
         <version.jbossts>4.16.4.Final-SNAPSHOT</version.jbossts>
         <version.junit>4.8.2</version.junit>
@@ -104,29 +105,36 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>${version.plugin.antrun}</version>
                 <executions>
                     <execution>
-                        <id>copy-configutation</id>
+                        <id>create-disabled-context-propagation-configuration</id>
                         <phase>process-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <skip>true</skip>
+                            <target unless="skipTests">
                                 <copy
-                                    file="src/test/resources/test-disabled-context-propagation-standalone-xts.xml"
+                                    file="${env.JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
                                     tofile="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
-                            </tasks>
+                                <replaceregexp
+                                    match="&lt;default-context-propagation enabled=&quot;true&quot;/&gt;"
+                                    replace="&lt;default-context-propagation enabled=&quot;false&quot;/&gt;"
+                                    file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>delete-configutation</id>
+                        <id>delete-disabled-context-propagation-configuration</id>
                         <phase>test</phase>
                         <configuration>
-                            <tasks>
+                            <skip>true</skip>
+                            <target unless="skipTests">
                                 <delete
                                     file="${env.JBOSS_HOME}/standalone/configuration/test-disabled-context-propagation-standalone-xts.xml" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -327,6 +335,24 @@
                             <skip>false</skip>
 						</configuration>
 					</plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-disabled-context-propagation-configuration</id>
+                                <configuration>
+                                    <skip>${maven.test.skip}</skip>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>delete-disabled-context-propagation-configuration</id>
+                                <configuration>
+                                    <skip>${maven.test.skip}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 				</plugins>
 			</build>
 			<dependencies>
@@ -370,6 +396,24 @@
                             <skip>false</skip>
 						</configuration>
 					</plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-disabled-context-propagation-configuration</id>
+                                <configuration>
+                                    <skip>${maven.test.skip}</skip>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>delete-disabled-context-propagation-configuration</id>
+                                <configuration>
+                                    <skip>${maven.test.skip}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 				</plugins>
 			</build>
 			<dependencies>
