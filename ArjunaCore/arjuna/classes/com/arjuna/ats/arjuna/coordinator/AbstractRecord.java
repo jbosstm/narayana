@@ -326,6 +326,9 @@ public abstract class AbstractRecord extends StateManager
 	 * to be restored from that state later. The basic AbstractRecord save_state
 	 * will save common data that is required by the base class during recovery.
 	 *
+	 * If a derived class calls super.save_state then it must be called before
+	 * packing any other data item.
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -352,6 +355,8 @@ public abstract class AbstractRecord extends StateManager
 	 * recreated AbstractRecord the state that that was saved during transaction
 	 * persistence. The base class will restore information that it needs from
 	 * the log.
+	 *
+	 * Data items must be unpacked in the same order that they were packed.
 	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
