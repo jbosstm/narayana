@@ -82,6 +82,9 @@ public class StateManager
      * object, and may then pass the buffer to a persistent object store for
      * saving.
      * 
+     * If a derived class calls super.save_state then it must be called before
+     * packing any other data item.
+     *
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
 
@@ -119,6 +122,8 @@ public class StateManager
      * object, and may then pass the buffer to a persistent object store for
      * saving.
      * 
+     * Data items must be unpacked in the same order that they were packed.
+     *
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
 
