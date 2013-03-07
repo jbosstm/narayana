@@ -236,15 +236,23 @@ function qa_tests_once {
     # run the ant target
     if [ "x$QA_TESTGROUP" != "x" ]; then
       if [ "x$QA_STRESS" != "x" ]; then
-        for i in {1..200}; do echo run $i; ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest; [ $? = 0 ] || break; done
+        ok=0
+        for i in `seq 1 $QA_STRESS`; do
+          echo run $i;
+          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest;
+          if [ $? -ne 0 ]; then
+            ok=1; break;
+          fi
+        done
       else
         ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest;
+        ok=$?
       fi
     else
       ant -f run-tests.xml $target $QA_PROFILE
+      ok=$?
     fi
 
-    ok=$?
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
     mv "$WORKSPACE/qa/TEST-*.txt" $WORKSPACE/qa/testoutput 2>/dev/null
     ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
