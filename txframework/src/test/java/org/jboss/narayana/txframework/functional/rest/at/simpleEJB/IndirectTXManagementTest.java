@@ -22,7 +22,11 @@
 
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+
 import junit.framework.Assert;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.Commit;
@@ -42,9 +46,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
 
 /**
  * @author paul.robinson@redhat.com 06/04/2012

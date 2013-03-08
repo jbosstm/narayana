@@ -22,15 +22,17 @@
 
 package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.Handler;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
+import com.arjuna.mw.wst11.client.WSTXFeature;
 
 public class BABridgedClient {
 
@@ -41,15 +43,7 @@ public class BABridgedClient {
         QName portName = new QName("http://www.jboss.com/functional/ba/bridged/", "BABridgedService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        BABridged client = service.getPort(portName, BABridged.class);
-
-        /*
-           Add client handler chain
-        */
-        BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
-        handlers.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlers);
+        BABridged client = service.getPort(portName, BABridged.class, new WSTXFeature());
 
         return client;
     }

@@ -85,7 +85,6 @@ public class BasicRecord extends AbstractRecord
 
     public void print(PrintWriter strm)
     {
-        strm.println("Shutdown for:");
         super.print(strm);
     }
 

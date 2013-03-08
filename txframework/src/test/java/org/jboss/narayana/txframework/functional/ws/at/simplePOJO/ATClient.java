@@ -22,15 +22,12 @@
 
 package org.jboss.narayana.txframework.functional.ws.at.simplePOJO;
 
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
+import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.arjuna.mw.wst11.client.WSTXFeature;
 
 public class ATClient {
 
@@ -41,17 +38,7 @@ public class ATClient {
         QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        AT client = service.getPort(portName, AT.class);
-
-        /*
-           Add client handler chain
-        */
-        BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
-        handlers.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlers);
-
-        return client;
+        return service.getPort(portName, AT.class, new WSTXFeature());
     }
 }
 

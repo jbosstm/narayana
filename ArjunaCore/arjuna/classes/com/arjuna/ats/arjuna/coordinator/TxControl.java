@@ -222,6 +222,8 @@ public class TxControl
 
 	static final boolean readonlyOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isReadonlyOptimisation();
 
+	static final boolean dynamic1PC = arjPropertyManager.getCoordinatorEnvironmentBean().getDynamic1PC();
+	
     /**
      * flag which is true if transaction service is enabled and false if it is disabled
      */

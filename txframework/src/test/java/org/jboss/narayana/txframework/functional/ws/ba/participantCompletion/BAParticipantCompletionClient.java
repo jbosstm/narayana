@@ -22,16 +22,12 @@
 
 package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import org.jboss.narayana.txframework.functional.ws.ba.participantCompletion.BAParticipantCompletion;
+import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.arjuna.mw.wst11.client.WSTXFeature;
 
 public class BAParticipantCompletionClient {
 
@@ -42,15 +38,7 @@ public class BAParticipantCompletionClient {
         QName portName = new QName("http://www.jboss.com/functional/ba/participantcompletion/", "BAParticipantCompletionService");
 
         Service service = Service.create(wsdlLocation, serviceName);
-        BAParticipantCompletion client = service.getPort(portName, BAParticipantCompletion.class);
-
-        /*
-           Add client handler chain
-        */
-        BindingProvider bindingProvider = (BindingProvider) client;
-        List<Handler> handlers = new ArrayList<Handler>(1);
-        handlers.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlers);
+        BAParticipantCompletion client = service.getPort(portName, BAParticipantCompletion.class, new WSTXFeature());
 
         return client;
     }

@@ -48,21 +48,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Compiler settings -->
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-					<showDeprecation>false</showDeprecation>
-					<showWarnings>true</showWarnings>
-					<optimize>true</optimize>
-					<compilerVersion>1.5</compilerVersion>
-					<fork>true</fork>
-					<executable>${JAVA_HOME}/bin/javac</executable>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
