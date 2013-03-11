@@ -1,4 +1,15 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+
+    <entry key="OrbPortabilityEnvironmentBean.orbInitializationProperties">
+        <!-- This class handles context propagation issues, and should never be commented out or removed. -->
+        com.arjuna.orbportability.orb.PreInit1=com.arjuna.ats.internal.jts.context.ContextPropagationManager
+        <!-- This property ensures the JTS knows which ORB to use and should never be commented out or removed -->
+        com.arjuna.orbportability.orb.PostInit=com.arjuna.ats.jts.utils.ORBSetup
+        <!-- This property ensures the crash recovery is initialised correctly and should never be commented out or removed -->
+        
+        <!-- This property ensures the JTS knows which ORB to use and should never be commented out or removed -->
+        com.arjuna.orbportability.orb.PostSet1=com.arjuna.ats.jts.utils.ORBSetup
+    </entry>
 </properties>
