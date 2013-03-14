@@ -215,15 +215,6 @@
             <classifier>api</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jboss.narayana.xts</groupId>
-            <artifactId>ws-c11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.xts</groupId>
-            <artifactId>ws-c11</artifactId>
-            <classifier>api</classifier>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-api</artifactId>
             <scope>provided</scope>
