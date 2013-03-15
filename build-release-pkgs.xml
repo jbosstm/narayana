@@ -284,7 +284,7 @@
       <if>
         <equals arg1="${rsync}" arg2="true" />
         <then>
-	    <property  name="rsync.cmd" value="echo rsync --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
+	    <property  name="rsync.cmd" value="rsync --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
             <echo>${rsync.cmd}</echo>
             <exec executable="bash" dir="." failonerror="true">
               <arg value="-c"/>
