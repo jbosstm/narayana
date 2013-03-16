@@ -203,8 +203,28 @@ function qa_tests_once {
   [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
   # run the ant target
-  ant -f run-tests.xml $target $QA_PROFILE
-  ok=$?
+  [ $QA_TRACE = 1 ] && enable_qa_trace
+  [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
+
+  if [ "x$QA_TESTGROUP" != "x" ]; then
+    if [[ "$QA_STRESS" =~ ^[0-9]+$ ]] ; then
+      ok=0
+      for i in `seq 1 $QA_STRESS`; do
+        echo run $i;
+        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
+        if [ $? -ne 0 ]; then
+          ok=1; break;
+        fi
+      done
+    else
+      ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
+      ok=$?
+    fi
+  else
+    ant -f run-tests.xml $target $QA_PROFILE
+    ok=$?
+  fi
+
   # archive the jtsremote test output (use a name related to the orb that was used for the tests)
   ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
   return $ok
