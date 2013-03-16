@@ -174,7 +174,7 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
 
-	ThreadActionData.pushAction(theTransaction); // LockManager needs to know if there is a transaction
+	//ThreadActionData.pushAction(theTransaction); // LockManager needs to know if there is a transaction
 
 	int result = TwoPhaseOutcome.PREPARE_NOTOK;
 

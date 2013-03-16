@@ -146,7 +146,7 @@ function tx_bridge_tests {
 }
 
 function enable_qa_trace {
-cat << 'EOF' > dist/narayana-full-5.0.0.M2-SNAPSHOT/etc/log4j.xml
+cat << 'EOF' > $WORKSPACE/qa/dist/${NARAYANA_VERSION}/etc/log4j.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
@@ -185,8 +185,6 @@ function qa_tests_once {
   cd $WORKSPACE/qa
   unset orb
 
-  [ $QA_TRACE = 1 ] && enable_qa_trace
-
   # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
@@ -211,6 +209,8 @@ function qa_tests_once {
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   if [[ "$MFACTOR" =~ ^[0-9]+$ ]] ; then
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
+    # Note that setting the timeout too high (eg 2*240) will cause the defaulttimeout test cases to take
+    # longer than the Task kill timeout period
     let txtimeout=$MFACTOR*120
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/"
   fi
@@ -234,18 +234,21 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target
+    [ $QA_TRACE = 1 ] && enable_qa_trace
+    [ $QA_TESTMETHODS ] || test.methods=""
+
     if [ "x$QA_TESTGROUP" != "x" ]; then
-      if [ "x$QA_STRESS" != "x" ]; then
+      if [[ "$QA_STRESS" =~ ^[0-9]+$ ]] ; then
         ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest;
+          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
-        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP onetest;
+        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
         ok=$?
       fi
     else
@@ -282,7 +285,7 @@ function qa_tests {
 comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 # if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M2-SNAPSHOT"
+[ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
 [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
