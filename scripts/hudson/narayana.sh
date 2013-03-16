@@ -235,7 +235,7 @@ function qa_tests_once {
 
     # run the ant target
     [ $QA_TRACE = 1 ] && enable_qa_trace
-    [ $QA_TESTMETHODS ] || test.methods=""
+    [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
       if [[ "$QA_STRESS" =~ ^[0-9]+$ ]] ; then
