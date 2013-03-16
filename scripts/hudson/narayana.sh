@@ -233,9 +233,9 @@ function qa_tests_once {
     # QA_TARGET overrides the previous settings
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
-    # run the ant target
+    # run the ant target (QA_TESTMETHODS is a list of method names in QA_TESTGROUP to be executed)
     [ $QA_TRACE = 1 ] && enable_qa_trace
-    [ $QA_TESTMETHODS ] || test.methods=""
+    [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
       if [[ "$QA_STRESS" =~ ^[0-9]+$ ]] ; then
