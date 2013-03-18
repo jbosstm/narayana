@@ -191,6 +191,9 @@
     <copy todir="tmp-docs-dir-docs/guides/xts-administration_and_development_guide">
       <fileset dir="${workdir}/${tag}-docs/docs/xts_administration_and_development_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
+    <copy todir="tmp-docs-dir-docs/guides/xts-background_guide">
+      <fileset dir="${workdir}/${tag}-docs/XTS/background/target/docbook/publish/en-US/html_single/"/>
+    </copy>
     <copy todir="tmp-docs-dir-docs/guides/failure_recovery_guide">
       <fileset dir="${workdir}/${tag}-docs/docs/failure_recovery_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
