@@ -77,6 +77,8 @@ public class WedgedResourceDemonstrator {
 			fail("Should not have been able to commit");
 		} catch (RollbackException e) {
 			// This is fine
+		} catch (IllegalStateException e) {
+			// This is fine
 		} finally {
 			if (mode.equals("jts")) {
 				RecoveryManager.manager().terminate();
