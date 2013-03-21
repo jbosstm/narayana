@@ -59,17 +59,27 @@ import com.arjuna.ats.jta.distributed.server.LookupProvider;
 
 @RunWith(BMUnitRunner.class)
 public class SimpleIsolatedServers {
-	private static String[] serverNodeNames = new String[] { "1000", "2000", "3000" };
-	private static int[] serverPortOffsets = new int[] { 1000, 2000, 3000 };
-	private static String[][] clusterBuddies = new String[][] { new String[] { "2000", "3000" }, new String[] { "1000", "3000" },
-			new String[] { "1000", "2000" } };
+	private String[] serverNodeNames = new String[] { "1000", "2000", "3000"};
+	private int[] serverPortOffsets = new int[] { 1000, 2000, 3000 };
+	private String[][] clusterBuddies = new String[serverNodeNames.length][];
 	private LookupProvider lookupProvider = LookupProvider.getInstance();
 	private LocalServer[] localServers = new LocalServer[serverNodeNames.length];
 	private CompletionCounter completionCounter = CompletionCounter.getInstance();
-
+	
 	@Before
 	public void setup() throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException,
 			CoreEnvironmentBeanException, IOException, IllegalArgumentException, NoSuchFieldException {
+
+		for (int i = 0; i < serverNodeNames.length; i++) {
+			List<String> otherNodes = new ArrayList<String>();
+			for (int j = 0; j < serverNodeNames.length; j++) {
+				if (j != i) {
+					otherNodes.add(serverNodeNames[j]);
+				}
+			}
+			clusterBuddies[i] = otherNodes.toArray(new String[0]);
+		}
+		
 		for (int i = 0; i < serverNodeNames.length; i++) {
 			boot(i);
 		}
@@ -647,18 +657,16 @@ public class SimpleIsolatedServers {
 	@BMScript("fail2pc")
 	public void testRecovery() throws Exception {
 		System.out.println("testRecovery");
-		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
-		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
-		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("3000"), completionCounter.getRollbackCount("3000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
+		for (String nodeName: serverNodeNames) {
+			assertTrue("" + completionCounter.getCommitCount(nodeName), completionCounter.getCommitCount(nodeName) == 0);
+			assertTrue("" + completionCounter.getRollbackCount(nodeName), completionCounter.getRollbackCount(nodeName) == 0);
+		}
+		
 		final CompletionCountLock phase2CommitAborted = new CompletionCountLock();
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				int startingTimeout = 0;
-				List<String> nodesToFlowTo = new LinkedList<String>(Arrays.asList(new String[] { "1000", "2000", "3000", "2000", "1000", "2000", "3000",
-						"1000", "3000" }));
+				List<String> nodesToFlowTo = new LinkedList<String>(Arrays.asList(serverNodeNames));
 				try {
 					doRecursiveTransactionalWork(startingTimeout, nodesToFlowTo, true, false);
 				} catch (ExecuteException e) {
@@ -689,18 +697,18 @@ public class SimpleIsolatedServers {
             }
 		}
 
-		reboot("1000");
-		reboot("2000");
-		reboot("3000");
+		for (String nodeName: serverNodeNames) {
+			reboot(nodeName);
+		}
 
 		getLocalServer("1000").doRecoveryManagerScan(false);
 
-		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 4);
-		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 4);
-		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 3);
-		assertTrue("" + completionCounter.getRollbackCount("3000"), completionCounter.getRollbackCount("3000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 1);
+		for (String nodeName: serverNodeNames) {
+			assertTrue("" + completionCounter.getRollbackCount(nodeName), completionCounter.getRollbackCount(nodeName) == 0);
+		}
 	}
 
 	@Test
