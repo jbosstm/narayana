@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jts.remote.hammer;
 
+import com.hp.mwtests.ts.jts.utils.TaskMonitor;
+import com.hp.mwtests.ts.jts.utils.TaskProgress;
 import org.omg.CORBA.IntHolder;
 
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -87,9 +89,10 @@ public class DistributedHammer2
             e.printStackTrace(System.err);
         }
 
-        DHThreadObject2 thr1 = new DHThreadObject2('1');
-        DHThreadObject2 thr2 = new DHThreadObject2('2');
-
+        TaskProgress progress1 = TaskMonitor.INSTANCE.monitorProgress("DistributedHammer2", "DistributedHammer2", 60000L);
+        TaskProgress progress2 = TaskMonitor.INSTANCE.monitorProgress("DistributedHammer2", "DistributedHammer2", 60000L);
+        DHThreadObject2 thr1 = new DHThreadObject2(progress1, '1');
+        DHThreadObject2 thr2 = new DHThreadObject2(progress2, '2');
         thr1.start();
         thr2.start();
 
@@ -109,6 +112,8 @@ public class DistributedHammer2
 
         IntHolder value1 = new IntHolder(0);
         IntHolder value2 = new IntHolder(0);
+        boolean assert1 = DistributedHammerWorker2.get1(value1) | DistributedHammerWorker2.get2(value2);
+        boolean assert2 =  EXPECTED_RESULT == (value1.value + value2.value);
 
         TestUtility.assertTrue( DistributedHammerWorker2.get1(value1) | DistributedHammerWorker2.get2(value2) );
 
@@ -117,7 +122,11 @@ public class DistributedHammer2
         myOA.destroy();
         myORB.shutdown();
 
-        System.out.println("Passed");
+        int res = assert1 && assert2 && progress1.isFinished() && progress2.isFinished() ? 0 : 1;
+
+        System.out.printf("%s%n", (res == 0 ? "Passed" : "Failed"));
+
+        System.exit(res);
     }
 }
 
