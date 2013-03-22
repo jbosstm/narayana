@@ -77,7 +77,7 @@ will test Atomikos, JBossTS, Bitronix and JOTM and commit 100 transactions using
     <path id="classpath.jbossts">
         <pathelement location="${jbossts.install}/lib/narayana-jta.jar" />
         <pathelement location="${jbossts.install}/../../ext/netty.jar" />
-        <pathelement location="${jbossts.install}/lib/ext/hornetq-core.jar" />
+        <pathelement location="${jbossts.install}/lib/ext/hornetq-journal.jar" />
         <pathelement location="${jbossts.install}/lib/ext/jboss-logging.jar" />
     </path>
     <!-- SimpleJTA: https://simple-jta.dev.java.net/servlets/ProjectDocumentList -->

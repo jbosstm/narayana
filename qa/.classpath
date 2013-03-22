@@ -33,7 +33,7 @@
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/dom4j.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/hamcrest-core.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/hornetq-core.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/hornetq-journal.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/httpclient.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/httpcore.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-5.0.0.M2-SNAPSHOT/lib/ext/ironjacamar-spec-api.jar"/>
