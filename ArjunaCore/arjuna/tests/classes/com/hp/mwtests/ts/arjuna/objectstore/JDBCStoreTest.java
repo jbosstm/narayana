@@ -26,6 +26,8 @@ import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
@@ -39,18 +41,28 @@ import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 public class JDBCStoreTest {
-	// public static void setUpClass() throws Exception {
-	// com.microsoft.sqlserver.jdbc.SQLServerDataSource ds = new
-	// com.microsoft.sqlserver.jdbc.SQLServerDataSource();
-	// ds.setPortNumber(5000);
-	// ds.setServerName("localhost");
-	// ds.setUser("");
-	// ds.setPassword("");
-	// }
+	private boolean resetPropertiesFile;
+
+	@Before
+	public void before() {
+		if (System.getProperty("com.arjuna.ats.arjuna.common.propertiesFile") == null) {
+			System.setProperty("com.arjuna.ats.arjuna.common.propertiesFile",
+					"h2jbossts-properties.xml");
+			resetPropertiesFile = true;
+		}
+	}
+
+	@After
+	public void after() {
+		if (resetPropertiesFile) {
+			System.clearProperty("com.arjuna.ats.arjuna.common.propertiesFile");
+		}
+	}
 
 	@Test
 	public void testStateMachine() throws SQLException, ObjectStoreException,
 			Exception {
+
 		ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean = BeanPopulator
 				.getDefaultInstance(ObjectStoreEnvironmentBean.class);
 
