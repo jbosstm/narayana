@@ -49,11 +49,11 @@
 		<property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}/lib"/>
 		<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
 		<path id="jts.classpath">
-			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
+			<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/">
 				<include name="jbossjts.jar"/>
 				<!--include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/-->
 			</fileset>
-			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+			<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/ext">
 				<include name="jboss-transaction-api_1.1_spec.jar"/>
 			</fileset>
 			<pathelement location="../../ArjunaJTS/orbportability/config"/>
@@ -62,21 +62,21 @@
 			<pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 			<pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 		</path>
-		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home};${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 	</target>
 
 	<target name="setJacORBProps" unless="useJavaIdl">
 		<property name="org.jboss.jbossts.qa.orb.name.short" value="jacorb"/>
 		<property name="org.jboss.jbossts.qa.orb.name.long" value="JacORB"/>
-		<property name="org.jboss.jbossts.qa.orb.home" value="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/jacorb"/>
+		<property name="org.jboss.jbossts.qa.orb.home" value="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/jacorb"/>
 		<property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/jacorb.jar;${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
 		<path id="jts.classpath">
-			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
+			<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/">
 				<include name="jbossjts.jar"/>
 				<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 			</fileset>
-			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+			<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/ext">
 				<include name="jboss-transaction-api_1.1_spec.jar"/>
 			</fileset>
 			<pathelement location="../../ArjunaJTS/orbportability/config"/>
@@ -87,8 +87,8 @@
 			<pathelement location="../../ArjunaJTS/jts/build/lib/jts_tests.jar"/>
 		</path>
 
-		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/jacorb/idl/omg;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params1" value="include='${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/jacorb/idl/omg;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+		<property name="idl.params2" value="include='${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/idl/;${org.jboss.jbossts.qa.orb.home}/idl/omg',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 	</target>
 
 	<target name="org.jboss.jbossts.qa.init" depends="setJacORBProps,setJavaIdlProps,org.jboss.jbossts.qa.clean">
@@ -259,10 +259,10 @@
 	</target>
 
     <path id="as.classpath">
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/">
                         <include name="jbossjts.jar"/>
                 </fileset>
-                <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+                <fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/ext">
                         <include name="jbossts-common.jar"/>
                         <include name="jta-1_1-classes.zip"/>
                 </fileset>
