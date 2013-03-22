@@ -67,7 +67,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xms100m -Xmx100m</argLine>
+          <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M</argLine>
           <useManifestOnlyJar>false</useManifestOnlyJar>
           <redirectTestOutputToFile>false</redirectTestOutputToFile>
         </configuration>
