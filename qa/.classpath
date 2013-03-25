@@ -34,7 +34,7 @@
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/dom4j.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/hamcrest-core.jar"/>
-	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/hornetq-core.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/hornetq-journal.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/httpclient.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/httpcore.jar"/>
 	<classpathentry kind="lib" path="dist/narayana-full-4.17.4.Final-SNAPSHOT/lib/ext/ironjacamar-spec-api.jar"/>

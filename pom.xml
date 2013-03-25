@@ -617,8 +617,8 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
-            <version>2.2.13.Final</version>
+            <artifactId>hornetq-journal</artifactId>
+            <version>2.3.0.CR1</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.netty</groupId>
