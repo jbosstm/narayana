@@ -219,6 +219,11 @@
           <classname>com.arjuna.ats.arjuna.common.CoreEnvironmentBean.java </classname>
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <classname>com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean.java </classname>
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section>
