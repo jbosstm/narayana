@@ -52,4 +52,6 @@ public interface HornetqJournalEnvironmentBeanMBean
     public int getBufferSize();
 
     public boolean isLogRates();
+
+    public boolean isAsyncIO();
 }
