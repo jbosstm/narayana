@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.jboss.narayana.arjunacore</groupId>
     <artifactId>arjunacore-all</artifactId>
-    <version>5.0.0.M2-SNAPSHOT</version>
+    <version>5.0.0.M3-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -105,7 +105,7 @@
     </dependency>
     <dependency>
       <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
+      <artifactId>hornetq-journal</artifactId>
     </dependency>
     <dependency>
       <groupId>orson</groupId>

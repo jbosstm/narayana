@@ -113,7 +113,7 @@ public class HornetqJournalStore
         storeDirCanonicalPath = storeDir.getCanonicalPath();
 
         SequentialFileFactory sequentialFileFactory;
-        if(AIOSequentialFileFactory.isSupported()) {
+        if(envBean.isAsyncIO() && AIOSequentialFileFactory.isSupported()) {
             sequentialFileFactory = new AIOSequentialFileFactory(
                     envBean.getStoreDir(),
                     envBean.getBufferSize(),

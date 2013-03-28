@@ -180,7 +180,9 @@ public class LockManager extends StateManager
             try
             {
                 Object syncObject = ((BasicAction.Current() == null) ? getMutex() : BasicAction.Current());
-                
+
+                synchronized (this) {
+                synchronized (getMutex()) {
                 synchronized (syncObject)
                 {
                     synchronized (locksHeldLockObject)
@@ -234,6 +236,8 @@ public class LockManager extends StateManager
                         }
                     }
                 }
+                }
+                }
             }
             catch (NullPointerException e)
             {
@@ -244,6 +248,9 @@ public class LockManager extends StateManager
             {
                 try
                 {
+                    if (tsLogger.logger.isTraceEnabled()) {
+                        tsLogger.logger.trace("LockManager.propagate() Dozing");
+                    }
                     Thread.sleep(LockManager.DOZE_TIME);
                 }
                 catch (InterruptedException e)
@@ -376,7 +383,9 @@ public class LockManager extends StateManager
                 && ((retry >= 0) || ((retry == LockManager.waitTotalTimeout) && (sleepTime > 0))))
         {
             Object syncObject = ((currAct == null) ? getMutex() : currAct);
-            
+
+            synchronized (this) {
+            synchronized (getMutex()) {
             synchronized (syncObject)
             {
                 synchronized (locksHeldLockObject)
@@ -495,7 +504,9 @@ public class LockManager extends StateManager
                         freeState();
                 }
             }
-            
+            }
+            }
+
             if (conflict == ConflictType.CONFLICT)
             {
                 if (retry != 0)
@@ -819,6 +830,9 @@ public class LockManager extends StateManager
                     {
                         try
                         {
+                            if (tsLogger.logger.isTraceEnabled()) {
+                                tsLogger.logger.trace("LockManager.doRelease() Dozing");
+                            }
                             Thread.sleep(LockManager.DOZE_TIME);
                         }
                         catch (InterruptedException e)

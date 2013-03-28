@@ -16,12 +16,20 @@
     <parent>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-all</artifactId>
-        <version>5.0.0.M2-SNAPSHOT</version>
+        <version>5.0.0.M3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <build>
         <plugins>
+            <plugin>
+              <inherited>false</inherited>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <configuration>
+                <skip>false</skip>
+              </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>

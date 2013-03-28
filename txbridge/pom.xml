@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.jboss.narayana</groupId>
         <artifactId>narayana-all</artifactId>
-        <version>5.0.0.M2-SNAPSHOT</version>
+        <version>5.0.0.M3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -212,15 +212,6 @@
         <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>jbossxts</artifactId>
-            <classifier>api</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.xts</groupId>
-            <artifactId>ws-c11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.xts</groupId>
-            <artifactId>ws-c11</artifactId>
             <classifier>api</classifier>
         </dependency>
         <dependency>

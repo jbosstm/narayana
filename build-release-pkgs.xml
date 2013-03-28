@@ -65,8 +65,8 @@
   <!-- where to get the source -->
   <property name="gitbase" value="https://github.com/jbosstm"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="pageName" value="5_0_0_M2-SNAPSHOT"/>
-  <property name="tag" value="5.0.0.M2-SNAPSHOT"/>
+  <property name="pageName" value="5.0.0.M3-SNAPSHOT"/>
+  <property name="tag" value="5.0.0.M3-SNAPSHOT"/>
   <!-- which uber jar to use -->
   <property name="orb" value="jacorb"/>
   <!-- the location the JBossTS web site content is copied to -->
@@ -189,7 +189,10 @@
       <fileset dir="${workdir}/${tag}-docs/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
     <copy todir="tmp-docs-dir-docs/guides/xts-administration_and_development_guide">
-      <fileset dir="${workdir}/${tag}-docs/XTS/docs/administration_and_development_guide/target/docbook/publish/en-US/html_single"/>
+      <fileset dir="${workdir}/${tag}-docs/docs/xts_administration_and_development_guide/target/docbook/publish/en-US/html_single"/>
+    </copy>
+    <copy todir="tmp-docs-dir-docs/guides/xts-background_guide">
+      <fileset dir="${workdir}/${tag}-docs/XTS/background/target/docbook/publish/en-US/html_single/"/>
     </copy>
     <copy todir="tmp-docs-dir-docs/guides/failure_recovery_guide">
       <fileset dir="${workdir}/${tag}-docs/docs/failure_recovery_guide/target/docbook/publish/en-US/html_single"/>
@@ -284,7 +287,7 @@
       <if>
         <equals arg1="${rsync}" arg2="true" />
         <then>
-	    <property  name="rsync.cmd" value="echo rsync --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
+	    <property  name="rsync.cmd" value="rsync --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
             <echo>${rsync.cmd}</echo>
             <exec executable="bash" dir="." failonerror="true">
               <arg value="-c"/>
