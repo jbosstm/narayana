@@ -29,6 +29,14 @@
 	</properties>
 	<build>
 		<plugins>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
 			<!-- Enforce minimum Java 1.5 -->
 			<plugin>
 				<artifactId>maven-enforcer-plugin</artifactId>
