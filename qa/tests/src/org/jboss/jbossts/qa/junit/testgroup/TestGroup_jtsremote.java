@@ -45,7 +45,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
         server2.terminate();
     }
 
-    @Test public void JTSRemote_DistributedHammerTest2() {
+    public void JTSRemote_DistributedHammerTest2() {
         Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 480);
         server1.start("$(1)");
         Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 480);
