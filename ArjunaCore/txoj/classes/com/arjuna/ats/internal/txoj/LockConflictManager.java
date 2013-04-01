@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.txoj;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.arjuna.ats.txoj.LockManager;
 
@@ -47,9 +48,10 @@ import com.arjuna.ats.txoj.LockManager;
 
 public class LockConflictManager
 {
-    public LockConflictManager()
+    public LockConflictManager (ReentrantLock instance)
     {
         _lock = new Object();
+        _instance = instance;
     }
 
     /**
@@ -57,8 +59,22 @@ public class LockConflictManager
      * or block it on a mutex. Returns the time taken to wait.
      */
 
+    /*
+     * Sometimes we must sleep when holding the LockManager mutex. In those situations
+     * we really want to release the mutex, sleep, and then re-acquire it
+     * so that other threads can make progress.
+     *
+     * This routine *must* only be called after having acquired the mutex!
+     */
+    
     public int wait (int retry, int waitTime)
     {
+        /*
+         * Release the mutex on the LockManager instance.
+         */
+        
+        _instance.unlock();
+            
         Date d1 = Calendar.getInstance().getTime();
         
         if (retry == LockManager.waitTotalTimeout)
@@ -86,6 +102,8 @@ public class LockConflictManager
         }
 
         Date d2 = Calendar.getInstance().getTime();
+        
+        _instance.lock();
 
         return (int) (d2.getTime() - d1.getTime());
     }
@@ -103,4 +121,5 @@ public class LockConflictManager
     }
 
     private Object _lock;
+    private ReentrantLock _instance;
 }

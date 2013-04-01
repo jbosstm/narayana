@@ -175,15 +175,11 @@ public class LockManager extends StateManager
         boolean result = false;
         int retryCount = 10;
 
-        do
+        if (lockMutex())
         {
-            try
+            do
             {
-                Object syncObject = ((BasicAction.Current() == null) ? getMutex() : BasicAction.Current());
-
-                synchronized (this) {
-                synchronized (getMutex()) {
-                synchronized (syncObject)
+                try
                 {
                     synchronized (locksHeldLockObject)
                     {
@@ -191,31 +187,31 @@ public class LockManager extends StateManager
                         {
                             LockList oldlist = locksHeld;
                             Lock current = null;
-    
+
                             locksHeld = new LockList(); /* create a new one */
-    
+
                             if (locksHeld != null)
                             {
                                 /*
                                  * scan through old list of held locks and propagate
                                  * to parent.
                                  */
-    
+
                                 while ((current = oldlist.pop()) != null)
                                 {
                                     if (current.getCurrentOwner().equals(from))
                                     {
                                         current.propagate();
                                     }
-    
+
                                     if (!locksHeld.insert(current))
                                     {
                                         current = null;
                                     }
                                 }
-    
+
                                 oldlist = null; /* get rid of old lock list */
-    
+
                                 result = true;
                             }
                             else
@@ -223,52 +219,47 @@ public class LockManager extends StateManager
                                 /*
                                  * Cannot create new locklist - abort and try again.
                                  */
-    
+
                                 freeState();
-    
+
                                 throw new NullPointerException();
                             }
                         }
-    
+
                         if (result)
                         {
                             result = unloadState();
                         }
                     }
                 }
+                catch (NullPointerException e)
+                {
+                    result = false;
                 }
-                }
-            }
-            catch (NullPointerException e)
-            {
-                result = false;
-            }
 
-            if (!result)
-            {
-                try
+                if (!result)
                 {
                     if (tsLogger.logger.isTraceEnabled()) {
                         tsLogger.logger.trace("LockManager.propagate() Dozing");
                     }
-                    Thread.sleep(LockManager.DOZE_TIME);
+
+                    conflictManager.wait(1, LockManager.DOZE_TIME);
                 }
-                catch (InterruptedException e)
-                {
-                }
+
             }
+            while ((!result) && (--retryCount > 0));
 
-        }
-        while ((!result) && (--retryCount > 0));
-
-        if (!result)
-        {
-            txojLogger.i18NLogger.warn_LockManager_1();
-
-            synchronized (locksHeldLockObject)
+            if (!result)
             {
-                freeState();
+                txojLogger.i18NLogger.warn_LockManager_1();
+
+                synchronized (locksHeldLockObject)
+                {
+                    freeState();
+                }
             }
+            
+            unlockMutex();
         }
 
         return result;
@@ -345,53 +336,53 @@ public class LockManager extends StateManager
                     + sleepTime + ")");
         }
 
-        int conflict = ConflictType.CONFLICT;
-        int returnStatus = LockResult.REFUSED;
-        LockRecord newLockR = null;
-        boolean modifyRequired = false;
-        BasicAction currAct = null;
-
-        if (toSet == null)
-        {
-            txojLogger.i18NLogger.warn_LockManager_2();
-
+        if (!lockMutex())
             return LockResult.REFUSED;
-        }
-
-        currAct = BasicAction.Current();
-
-        if (currAct != null)
+        
+        int returnStatus = LockResult.REFUSED;
+        
+        try
         {
-            ActionHierarchy ah = currAct.getHierarchy();
+            int conflict = ConflictType.CONFLICT;
+            LockRecord newLockR = null;
+            boolean modifyRequired = false;
+            BasicAction currAct = null;
 
-            if (ah != null)
-                toSet.changeHierarchy(ah);
-            else
+            if (toSet == null)
             {
-                txojLogger.i18NLogger.warn_LockManager_3();
-
-                toSet = null;
+                txojLogger.i18NLogger.warn_LockManager_2();
 
                 return LockResult.REFUSED;
             }
-        }
 
-        if (super.loadObjectState())
-            super.setupStore();
-        
-        while ((conflict == ConflictType.CONFLICT)
-                && ((retry >= 0) || ((retry == LockManager.waitTotalTimeout) && (sleepTime > 0))))
-        {
-            Object syncObject = ((currAct == null) ? getMutex() : currAct);
+            currAct = BasicAction.Current();
 
-            synchronized (this) {
-            synchronized (getMutex()) {
-            synchronized (syncObject)
+            if (currAct != null)
+            {
+                ActionHierarchy ah = currAct.getHierarchy();
+
+                if (ah != null)
+                    toSet.changeHierarchy(ah);
+                else
+                {
+                    txojLogger.i18NLogger.warn_LockManager_3();
+
+                    toSet = null;
+
+                    return LockResult.REFUSED;
+                }
+            }
+
+            if (super.loadObjectState())
+                super.setupStore();
+
+            while ((conflict == ConflictType.CONFLICT)
+                    && ((retry >= 0) || ((retry == LockManager.waitTotalTimeout) && (sleepTime > 0))))
             {
                 synchronized (locksHeldLockObject)
                 {
                     conflict = ConflictType.CONFLICT;
-    
+
                     if (loadState())
                     {
                         conflict = lockConflict(toSet);
@@ -400,32 +391,32 @@ public class LockManager extends StateManager
                     {
                         txojLogger.i18NLogger.warn_LockManager_4();
                     }
-                    
+
                     if (conflict != ConflictType.CONFLICT)
                     {
                         /*
                          * When here the conflict was resolved or the retry limit
                          * expired.
                          */
-    
+
                         /* no conflict so set lock */
-    
+
                         modifyRequired = toSet.modifiesObject();
-    
+
                         /* trigger object load from store */
-    
+
                         if (super.activate())
                         {
                             returnStatus = LockResult.GRANTED;
-    
+
                             if (conflict == ConflictType.COMPATIBLE)
                             {
                                 int lrStatus = AddOutcome.AR_ADDED;
-    
+
                                 if (currAct != null)
                                 {
                                     /* add new lock record to action list */
-    
+
                                     newLockR = new LockRecord(this, (modifyRequired ? false : true), currAct);
 
                                     if ((lrStatus = currAct.add(newLockR)) != AddOutcome.AR_ADDED)
@@ -436,13 +427,13 @@ public class LockManager extends StateManager
                                             returnStatus = LockResult.REFUSED;
                                     }
                                 }
-    
+
                                 if (returnStatus == LockResult.GRANTED)
                                 {
                                     locksHeld.insert(toSet); /*
-                                                              * add to local lock
-                                                              * list
-                                                              */
+                                     * add to local lock
+                                     * list
+                                     */
                                 }
                             }
                         }
@@ -454,14 +445,14 @@ public class LockManager extends StateManager
                             returnStatus = LockResult.REFUSED;
                         }
                     }
-                    
+
                     /*
                      * Unload internal state into lock store only if lock list was
                      * modified if this fails claim the setlock failed. If we are
                      * using the lock daemon we can arbitrarily throw the lock away
                      * as the daemon has it.
                      */
-    
+
                     if ((returnStatus == LockResult.GRANTED)
                             && (conflict == ConflictType.COMPATIBLE))
                     {
@@ -474,13 +465,13 @@ public class LockManager extends StateManager
                     }
                     else
                         freeState();
-    
+
                     /*
                      * Postpone call on modified to here so that semaphore will have
                      * been released. This means when modified invokes save_state
                      * that routine may set another lock without blocking.
                      */
-    
+
                     if (returnStatus == LockResult.GRANTED)
                     {
                         if (modifyRequired)
@@ -490,38 +481,40 @@ public class LockManager extends StateManager
                             else
                             {
                                 conflict = ConflictType.CONFLICT;
-    
+
                                 returnStatus = LockResult.REFUSED;
                             }
                         }
                     }
-    
+
                     /*
                      * Make sure we free state while we still have the lock.
                      */
-    
+
                     if (conflict == ConflictType.CONFLICT)
                         freeState();
                 }
-            }
-            }
-            }
 
-            if (conflict == ConflictType.CONFLICT)
-            {
-                if (retry != 0)
+                if (conflict == ConflictType.CONFLICT)
                 {
-                    if (sleepTime > 0)
+                    if (retry != 0)
                     {
-                        sleepTime -= conflictManager.wait(retry, sleepTime);
+                        if (sleepTime > 0)
+                        {
+                            sleepTime -= conflictManager.wait(retry, sleepTime);
+                        }
+                        else
+                            retry = 0;
                     }
-                    else
-                        retry = 0;
-                }
 
-                if (retry != LockManager.waitTotalTimeout)
-                    retry--;
+                    if (retry != LockManager.waitTotalTimeout)
+                        retry--;
+                }
             }
+        }
+        finally
+        {
+            unlockMutex();
         }
         
         return returnStatus;
@@ -619,7 +612,7 @@ public class LockManager extends StateManager
         stateLoaded = false;
         hasBeenLocked = false;
         objectLocked = false;
-        conflictManager = new LockConflictManager();
+        conflictManager = new LockConflictManager(mutex);
     }
     
     /*
@@ -654,7 +647,7 @@ public class LockManager extends StateManager
         stateLoaded = false;
         hasBeenLocked = false;
         objectLocked = false;
-        conflictManager = new LockConflictManager();
+        conflictManager = new LockConflictManager(mutex);
     }
     
     /**
@@ -680,60 +673,65 @@ public class LockManager extends StateManager
             txojLogger.logger.trace("LockManager::cleanUp() for object-id " + get_uid());
         }
 
-        if (hasBeenLocked)
+        if (lockMutex())
         {
-            if ((super.objectModel == ObjectModel.MULTIPLE)
-                    && (systemKey == null))
+            if (hasBeenLocked)
             {
-                initialise();
-            }
-
-            /*
-             * Unlike in the original version of Arjuna, we don't check to see
-             * if the invoking thread is within a transaction. We look at
-             * whether this object has been used within a transaction, and then
-             * act accordingly.
-             */
-
-            BasicAction current = BasicAction.Current();
-
-            synchronized (super.usingActions)
-            {
-                if (super.usingActions != null)
+                if ((super.objectModel == ObjectModel.MULTIPLE)
+                        && (systemKey == null))
                 {
-                    Enumeration e = super.usingActions.elements();
+                    initialise();
+                }
 
-                    while (e.hasMoreElements())
+                /*
+                 * Unlike in the original version of Arjuna, we don't check to see
+                 * if the invoking thread is within a transaction. We look at
+                 * whether this object has been used within a transaction, and then
+                 * act accordingly.
+                 */
+
+                BasicAction current = BasicAction.Current();
+
+                synchronized (super.usingActions)
+                {
+                    if (super.usingActions != null)
                     {
-                        BasicAction action = (BasicAction) e.nextElement();
+                        Enumeration e = super.usingActions.elements();
 
-                        if (action != null)  // shouldn't be null!!
+                        while (e.hasMoreElements())
                         {
-                            /*
-                             * Pop actions off using list. Don't check if action
-                             * is running below so that cadavers can be created
-                             * in commit protocol too.
-                             */
+                            BasicAction action = (BasicAction) e.nextElement();
 
-                            /*
-                             * We need to create a cadaver lock record to
-                             * maintain the locks because this object is being
-                             * deleted.
-                             */
-                            
-                            AbstractRecord A = new CadaverLockRecord(lockStore,
-                                    this, action);
-
-                            if (action.add(A) != AddOutcome.AR_ADDED)
+                            if (action != null)  // shouldn't be null!!
                             {
-                                A = null;
+                                /*
+                                 * Pop actions off using list. Don't check if action
+                                 * is running below so that cadavers can be created
+                                 * in commit protocol too.
+                                 */
+
+                                /*
+                                 * We need to create a cadaver lock record to
+                                 * maintain the locks because this object is being
+                                 * deleted.
+                                 */
+
+                                AbstractRecord A = new CadaverLockRecord(lockStore,
+                                        this, action);
+
+                                if (action.add(A) != AddOutcome.AR_ADDED)
+                                {
+                                    A = null;
+                                }
                             }
                         }
                     }
                 }
+
+                hasBeenLocked = false;
             }
 
-            hasBeenLocked = false;
+            unlockMutex();
         }
     }
 
@@ -749,6 +747,9 @@ public class LockManager extends StateManager
             txojLogger.logger.trace("LockManager::doRelease(" + u + ", " + all + ")");
         }
         
+        if (!lockMutex())
+            return false;
+        
         Lock previous = null;
         Lock current = null;
         boolean deleted = false;
@@ -757,9 +758,8 @@ public class LockManager extends StateManager
         boolean loaded = false;
         boolean releasedOK = false;
         BasicAction currAct = BasicAction.Current();
-        Object syncObject = ((currAct == null) ? getMutex() : currAct);
-        
-        synchronized (syncObject)
+
+        try
         {
             synchronized (locksHeldLockObject)
             {
@@ -768,27 +768,27 @@ public class LockManager extends StateManager
                     if (loadState())
                     {
                         loaded = true;
-    
+
                         /*
                          * Must declare iterator after loadstate or it sees an empty
                          * list!
                          */
-    
+
                         LockListIterator next = new LockListIterator(locksHeld);
-                        
+
                         /*
                          * Now scan through held lock list to find which locks to
                          * release u is either the unique id of the lock owner
                          * (oneOrAll = ALL_LOCKS) or the uid of the actual lock
                          * itself (oneOrAll = SINGLE_LOCK).
                          */
-    
+
                         previous = null;
-    
+
                         while ((current = next.iterate()) != null)
                         {
                             Uid checkUid = null;
-    
+
                             if (all)
                                 checkUid = current.getCurrentOwner();
                             else
@@ -803,7 +803,7 @@ public class LockManager extends StateManager
                                 locksHeld.forgetNext(previous);
                                 current = null;
                                 deleted = true;
-    
+
                                 if (!all)
                                 {
                                     break;
@@ -812,7 +812,7 @@ public class LockManager extends StateManager
                             else
                                 previous = current;
                         }
-    
+
                         result = true;
                     }
                     else
@@ -820,12 +820,12 @@ public class LockManager extends StateManager
                         /*
                          * Free state while we still have the lock.
                          */
-    
+
                         freeState();
-    
+
                         result = false;
                     }
-                    
+
                     if (!result)
                     {
                         try
@@ -857,7 +857,7 @@ public class LockManager extends StateManager
                                     txojLogger.logger.trace(" *** CANNOT locate locks  ***");
                                 }
                             }
-    
+
                             int unloadRetryCount = 10;
 
                             do
@@ -868,7 +868,7 @@ public class LockManager extends StateManager
                                 }
                                 else
                                     releasedOK = true;
-    
+
                             }
                             while ((--unloadRetryCount > 0) && (!releasedOK));
                         }
@@ -876,15 +876,19 @@ public class LockManager extends StateManager
                 }
                 while ((!result) && (--retryCount > 0));
             }
+
+            /*
+             * Now signal to any waiting threads that they may try to acquire the
+             * lock.
+             */
+
+            conflictManager.signal();
         }
-
-        /*
-         * Now signal to any waiting threads that they may try to acquire the
-         * lock.
-         */
-
-        conflictManager.signal();
-
+        finally
+        {
+            unlockMutex();            
+        }
+        
         return releasedOK;
     }
 
@@ -952,8 +956,7 @@ public class LockManager extends StateManager
             systemKey = type();
 
             if (mutex == null)
-            {
-                
+            {                
                 mutex = new ReentrantLock();
             }
 
