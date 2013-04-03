@@ -45,7 +45,6 @@ import javax.transaction.xa.Xid;
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.jboss.byteman.rule.exception.ExecuteException;
-import org.jfree.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -311,7 +310,12 @@ public class SimpleIsolatedServers {
 				processBuilder.redirectErrorStream(true);
 				Process process = processBuilder.start();       
 				InputStream inputStream = process.getInputStream();       
-				IOUtils.getInstance().copyStreams(inputStream, System.out);
+				final byte[] bytes = new byte[4096];
+				int bytesRead = inputStream.read(bytes);
+				while (bytesRead > -1) {
+					System.out.write(bytes, 0, bytesRead);
+					bytesRead = inputStream.read(bytes);
+				}
 			}
 		}
 
