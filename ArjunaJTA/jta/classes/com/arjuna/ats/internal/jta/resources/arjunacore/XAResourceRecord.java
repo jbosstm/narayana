@@ -1215,7 +1215,8 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (_theTransaction != null)
 		{
-			if (_theTransaction.getXAResourceState(_theXAResource) == TxInfo.NOT_ASSOCIATED)
+			int txInfo = _theTransaction.getXAResourceState(_theXAResource);
+			if ((txInfo == TxInfo.NOT_ASSOCIATED) || (txInfo == TxInfo.FAILED))
 			{
 				// end has been called so we don't need to do it again!
 
