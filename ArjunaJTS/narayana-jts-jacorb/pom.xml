@@ -47,7 +47,6 @@
         <configuration>
           <doCheck>false</doCheck>
           <doUpdate>false</doUpdate>
-          <scmBranchPropertyName>buildScmBranch</scmBranchPropertyName>
         </configuration>
       </plugin>
       <plugin>
@@ -59,8 +58,8 @@
               <Specification-Title>JTA/JTS</Specification-Title>
               <Specification-Version>1.1/1.0</Specification-Version>
               <Specification-Vendor>Oracle</Specification-Vendor>
-              <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
-              <arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
+              <Implementation-Version>${project.version}</Implementation-Version>
+              <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
               <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
               <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
             </manifestEntries>
@@ -242,9 +241,7 @@
             <configuration>
               <archive>
                 <manifestEntries>
-                  <arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
                   <arjuna-properties-file>jbossts-idlj-properties.xml</arjuna-properties-file>
-                  <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</arjuna-builder>
                 </manifestEntries>
               </archive>
             </configuration>
