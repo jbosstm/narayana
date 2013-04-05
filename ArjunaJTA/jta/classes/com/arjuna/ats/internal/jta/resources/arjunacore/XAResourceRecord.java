@@ -908,12 +908,13 @@ public class XAResourceRecord extends AbstractRecord
 						
 						// Give the list of deserializers a chance to deserialize the record
 						boolean deserialized = false;
-						Iterator<SerializableXAResourceDeserializer> iterator = seriablizableXAResourceDeserializers.iterator();
+						Iterator<SerializableXAResourceDeserializer> iterator = getXAResourceDeserializers().iterator();
 						while (iterator.hasNext()) {
 							SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
 							if (proxyXAResourceDeserializer.canDeserialze(className)) {
 								_theXAResource = proxyXAResourceDeserializer.deserialze(o);
 								deserialized = true;
+                                break;
 							}
 						}
 
@@ -1103,13 +1104,6 @@ public class XAResourceRecord extends AbstractRecord
 		_theTransaction = null;
 		_recovered = true;
 		
-		for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
-			if (recoveryModule instanceof XARecoveryModule) {
-				XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
-				seriablizableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
-				break;
-			}
-		}
 	}
 
 	public XAResourceRecord(Uid u)
@@ -1135,7 +1129,28 @@ public class XAResourceRecord extends AbstractRecord
                 " "+super.toString()+" >";
     }
 
-	/**
+    private List<SerializableXAResourceDeserializer> getXAResourceDeserializers() {
+        if (serializableXAResourceDeserializers != null) {
+            return serializableXAResourceDeserializers;
+        }
+        synchronized (this) {
+            if (serializableXAResourceDeserializers != null) {
+                return serializableXAResourceDeserializers;
+            }
+            serializableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
+            for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
+                if (recoveryModule instanceof XARecoveryModule) {
+                    XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
+                    serializableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
+                    return serializableXAResourceDeserializers;
+                }
+            }
+
+        }
+        return serializableXAResourceDeserializers;
+    }
+
+    /**
 	 * This routine finds the new XAResource for the transaction that used the
 	 * old resource we couldn't serialize. It does this by looking up the
 	 * XARecoveryModule in the recovery manager and asking it for the
@@ -1239,7 +1254,7 @@ public class XAResourceRecord extends AbstractRecord
 	private static boolean _rollbackOptimization = false;
     private static boolean _assumedComplete = false;
     
-	private List<SerializableXAResourceDeserializer> seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
+	private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
 
 	static
 	{
