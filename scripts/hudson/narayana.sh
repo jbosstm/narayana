@@ -50,6 +50,11 @@ function build_as {
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of AS7"
     cd jboss-as
+
+    git remote | grep upstream
+    if [ $? -ne 0 ]; then
+      git remote add upstream $UPSTREAM_GIT_URL
+    fi
     #Abort any partially complete rebase
     git rebase --abort
     git checkout 5_BRANCH
