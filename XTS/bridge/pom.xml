@@ -62,14 +62,17 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wscf11</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wstx11</artifactId>
+      <version>${project.version}</version>
       <classifier>api</classifier>
     </dependency>
   </dependencies>

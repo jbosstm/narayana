@@ -28,7 +28,6 @@
   <name>RESTful Atomic Transactions War Packaging</name>
   <description>Provides Transactions for web applications</description>
   <properties>
-    <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
     <version.artifactId>5.0.0.M3-SNAPSHOT</version.artifactId>
     <artifactId.name>restat-web</artifactId.name>
   </properties>
@@ -48,23 +47,25 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm-all</artifactId>
-      <version>3.1</version>
+      <version>${version.asm}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey.jersey-test-framework</groupId>
       <artifactId>jersey-test-framework-grizzly</artifactId>
-      <version>1.5</version>
+      <version>${version.com.sun.jersey}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -88,19 +89,21 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
+      <version>${version.javax.servlet}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
         <groupId>org.jboss.arquillian.junit</groupId>
         <artifactId>arquillian-junit-container</artifactId>
+        <version>${version.org.jboss.arquillian.core}</version>
         <scope>test</scope>
     </dependency>
 
     <dependency>
         <groupId>org.jboss.arquillian.protocol</groupId>
         <artifactId>arquillian-protocol-servlet</artifactId>
+        <version>${version.org.jboss.arquillian.core}</version>
         <scope>test</scope>
     </dependency>
 
