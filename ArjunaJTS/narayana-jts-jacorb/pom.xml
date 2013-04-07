@@ -163,66 +163,76 @@
     <dependency>
       <groupId>org.jboss.jbossts</groupId>
       <artifactId>common</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.arjunacore</groupId>
       <artifactId>txoj</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jta</groupId>
       <artifactId>jta</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jta</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>orbportability</artifactId>
-       <exclusions>
-         <exclusion>
-           <groupId>org.jboss.jbossts.jts</groupId>
-           <artifactId>idlj-idl</artifactId>
-         </exclusion>
-       </exclusions>
+      <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.jbossts.jts</groupId>
+            <artifactId>idlj-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jts</artifactId>
-       <exclusions>
-         <exclusion>
-           <groupId>org.jboss.jbossts.jts</groupId>
-           <artifactId>idlj-idl</artifactId>
-         </exclusion>
-       </exclusions>
+      <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.jbossts.jts</groupId>
+            <artifactId>idlj-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jtax</artifactId>
-       <exclusions>
-         <exclusion>
-           <groupId>org.jboss.jbossts.jts</groupId>
-           <artifactId>idlj-idl</artifactId>
-         </exclusion>
-       </exclusions>
+      <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.jbossts.jts</groupId>
+            <artifactId>idlj-idl</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
-      <version>3.2.3</version>
+      <version>${version.tanukisoft}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
