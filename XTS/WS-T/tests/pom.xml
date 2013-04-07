@@ -53,23 +53,25 @@
 		<dependency>
 			<groupId>org.jboss.jbossts.xts</groupId>
 			<artifactId>jbossxts</artifactId>
+                        <version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.jbossts.xts</groupId>
 			<artifactId>xts-test-servlet</artifactId>
+                        <version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
+			<version>${version.commons-httpclient}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
+			<version>${version.junit}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
