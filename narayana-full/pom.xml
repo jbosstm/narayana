@@ -66,106 +66,128 @@
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore-services</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
+      <version>${project.version}</version>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-jacorb</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-jacorb</artifactId>
+      <version>${project.version}</version>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-integration</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-web</artifactId>
+      <version>${project.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-api</artifactId>
+      <version>${project.version}</version>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
+      <version>${project.version}</version>
       <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
+      <version>${project.version}</version>
       <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
+      <version>${project.version}</version>
       <classifier>war</classifier>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
+      <version>${project.version}</version>
       <classifier>client</classifier>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
+      <version>${project.version}</version>
       <classifier>coordinator</classifier>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-t11</artifactId>
+      <version>${project.version}</version>
       <classifier>participant</classifier>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>xts-test-servlet</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>jbosstxbridge</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.transaction}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-spec-api</artifactId>
+      <version>${version.org.jboss.ironjacamar}</version>
     </dependency>
 
   </dependencies>
@@ -188,10 +210,12 @@
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>narayana-jts-idlj</artifactId>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
         </dependency>
       </dependencies>
     </profile>

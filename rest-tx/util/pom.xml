@@ -27,9 +27,6 @@
   <packaging>jar</packaging>
   <name>Support utils for using the REST-AT</name>
   <description>Provides Utility methods to support RESTAT</description>
-  <properties>
-    <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-  </properties>
 
   <repositories>
     <repository>
@@ -56,12 +53,13 @@
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
+      <version>${version.log4j}</version>
       <exclusions>
         <exclusion>
           <groupId>com.sun.jmx</groupId>
@@ -84,6 +82,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -111,6 +110,7 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

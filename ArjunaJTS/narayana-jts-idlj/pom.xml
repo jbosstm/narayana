@@ -147,26 +147,32 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>txoj</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jta</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
+      <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.jboss.narayana.jts</groupId>
@@ -177,6 +183,7 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
+      <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.jboss.narayana.jts</groupId>
@@ -187,10 +194,12 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>idlj-idl</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
+      <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.jboss.narayana.jts</groupId>
@@ -201,16 +210,18 @@
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
-      <version>3.2.3</version>
+      <version>${version.tanukisoft}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

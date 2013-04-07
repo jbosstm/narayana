@@ -102,69 +102,77 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-journal</artifactId>
+      <version>${version.org.hornetq}</version>
     </dependency>
     <dependency>
       <groupId>orson</groupId>
       <artifactId>orson</artifactId>
-      <version>0.5.0</version>
+      <version>${version.orson}</version>
       <scope>system</scope>
       <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>1.0.9</version>
+      <version>${version.jfree}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman</artifactId>
+      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-install</artifactId>
+      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-submit</artifactId>
+      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
+      <version>${version.org.jboss.byteman}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.3.168</version>
+      <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
-      <version>6.0.18</version>
+      <version>${version.org.apache.tomcat}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -181,7 +189,7 @@
         <dependency>
           <groupId>sun.jdk</groupId>
           <artifactId>jconsole</artifactId>
-          <version>jdk</version>
+          <version>${version.sun.jdk}</version>
           <scope>system</scope>
           <systemPath>${java.home}/../lib/jconsole.jar</systemPath>
         </dependency>
@@ -198,7 +206,7 @@
         <dependency>
           <groupId>sun.jdk</groupId>
           <artifactId>jconsole</artifactId>
-          <version>jdk</version>
+          <version>${version.sun.jdk}</version>
           <scope>system</scope>
           <systemPath>${java.home}/bundle/Classes/jconsole.jar</systemPath>
         </dependency>
@@ -228,7 +236,7 @@
 			<dependency>
 				<groupId>com.sybase.jConnect</groupId>
 				<artifactId>jconn3</artifactId>
-				<version>6.0</version>
+				<version>${version.com.sybase.jConnect}</version>
 				<scope>system</scope>
 				<systemPath>${orson.jar.location}/../qa/dbdrivers/jConnect-6_0/classes/jconn3.jar</systemPath>
 			</dependency>
@@ -256,7 +264,7 @@
 			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc</artifactId>
-				<version>10.2.0.4</version>
+				<version>${version.com.oracle}</version>
 				<scope>system</scope>
 				<systemPath>${orson.jar.location}/../qa/dbdrivers/oracle_10_2_0_4/ojdbc14.jar</systemPath>
 			</dependency>
@@ -284,7 +292,7 @@
 			<dependency>
 				<groupId>com.ibm</groupId>
 				<artifactId>db2jcc</artifactId>
-				<version>9.7</version>
+				<version>${version.com.ibm}</version>
 				<scope>system</scope>
 				<systemPath>${orson.jar.location}/../qa/dbdrivers/DB2_v9.7/db2jcc.jar</systemPath>
 			</dependency>
@@ -312,7 +320,7 @@
 			<dependency>
 				<groupId>postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>9.0-801.jdbc4</version>
+				<version>${version.postgresql}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -339,7 +347,7 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.21</version>
+				<version>${version.mysql}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -366,7 +374,7 @@
 			<dependency>
 				<groupId>com.microsoft.sqlserver</groupId>
 				<artifactId>sqljdbc4</artifactId>
-				<version>mssql2005_sqljdbc_2.0</version>
+				<version>${version.com.microsoft.sqlserver}</version>
 				<systemPath>${orson.jar.location}/../qa/dbdrivers/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar</systemPath>
 				<scope>system</scope>
 			</dependency>

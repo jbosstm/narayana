@@ -23,10 +23,6 @@
 	<name>JBoss Transactional File I/O</name>
 	<description>Transactional file I/O</description>
 	<url>http://www.jboss.org/jbosstm/fileio/</url>
-	<properties>
-		<version.commons.transaction>1.2</version.commons.transaction>
-		<version.javax.transaction>1.1</version.javax.transaction>
-	</properties>
 	<build>
 		<plugins>
       <plugin>
@@ -69,12 +65,13 @@
 		<dependency>
 			<groupId>org.jboss.narayana.jta</groupId>
 			<artifactId>narayana-jta</artifactId>
+            <version>${project.version}</version>
 		</dependency>
 		<!-- Apache Commons transaction -->
 		<dependency>
 			<groupId>commons-transaction</groupId>
 			<artifactId>commons-transaction</artifactId>
-			<version>${version.commons.transaction}</version>
+			<version>${version.commons-transaction}</version>
 		</dependency>
 	</dependencies>
 </project>
