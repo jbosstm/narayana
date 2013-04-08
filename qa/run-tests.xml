@@ -395,6 +395,12 @@
 			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
 		</then>
 	</elseif>
+	<elseif>
+		<equals arg1="${profile}" arg2="hornetq" />
+		<then>
+			<var name="objectStoreElements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>
+		</then>
+	</elseif>
       </if>
 
       <!-- TODO support JTA mode testing of JTS .jar files? -
