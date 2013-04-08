@@ -31,22 +31,6 @@
 
 package com.arjuna.ats.internal.jta.resources.arjunacore;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -71,6 +55,21 @@ import com.arjuna.ats.jta.resources.StartXAResource;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XidImple;
+
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Mark Little (mark_little@hp.com)
@@ -908,12 +907,13 @@ public class XAResourceRecord extends AbstractRecord
 						
 						// Give the list of deserializers a chance to deserialize the record
 						boolean deserialized = false;
-						Iterator<SerializableXAResourceDeserializer> iterator = seriablizableXAResourceDeserializers.iterator();
+						Iterator<SerializableXAResourceDeserializer> iterator = getXAResourceDeserializers().iterator();
 						while (iterator.hasNext()) {
 							SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
 							if (proxyXAResourceDeserializer.canDeserialze(className)) {
 								_theXAResource = proxyXAResourceDeserializer.deserialze(o);
 								deserialized = true;
+                                break;
 							}
 						}
 
@@ -1102,14 +1102,7 @@ public class XAResourceRecord extends AbstractRecord
 		_valid = true;
 		_theTransaction = null;
 		_recovered = true;
-		
-		for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
-			if (recoveryModule instanceof XARecoveryModule) {
-				XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
-				seriablizableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
-				break;
-			}
-		}
+
 	}
 
 	public XAResourceRecord(Uid u)
@@ -1133,6 +1126,27 @@ public class XAResourceRecord extends AbstractRecord
                 ((_productName != null && _productVersion != null) ? ", product: "+_productName+"/"+_productVersion : "")+
                 ((_jndiName != null) ? ", jndiName: "+_jndiName : "")+
                 " "+super.toString()+" >";
+    }
+
+    private List<SerializableXAResourceDeserializer> getXAResourceDeserializers() {
+        if (serializableXAResourceDeserializers != null) {
+            return serializableXAResourceDeserializers;
+        }
+        synchronized (this) {
+            if (serializableXAResourceDeserializers != null) {
+                return serializableXAResourceDeserializers;
+            }
+            serializableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
+            for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
+                if (recoveryModule instanceof XARecoveryModule) {
+                    XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
+                    serializableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
+                    return serializableXAResourceDeserializers;
+                }
+            }
+
+        }
+        return serializableXAResourceDeserializers;
     }
 
 	/**
@@ -1252,7 +1266,7 @@ public class XAResourceRecord extends AbstractRecord
      * with. Hence USE WITH EXTREME CARE!!
      */
     private static final boolean _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
-    
-	private List<SerializableXAResourceDeserializer> seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
 
+    private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
+    
 }
