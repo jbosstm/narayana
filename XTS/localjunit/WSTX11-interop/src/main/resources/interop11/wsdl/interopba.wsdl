@@ -19,7 +19,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  -->
-<definitions 
+<definitions
     xmlns:s="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://fabrikam123.com/wsba" 
     targetNamespace="http://fabrikam123.com/wsba"
