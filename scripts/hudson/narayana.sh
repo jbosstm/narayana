@@ -349,13 +349,13 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
 [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-[ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
-[ $XTS_TESTS ] || XTS_TESTS=0 # XTS tests
-[ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
+[ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+[ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
+[ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-[ $txbridge ] || txbridge=0 # bridge tests
+[ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
 [ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
