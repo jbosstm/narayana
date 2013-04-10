@@ -422,12 +422,12 @@
           <fileset dir="tests/build">
             <include name="jbossts-*-qa.jar"/>
           </fileset>
-          <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
+          <fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib">
             <exclude name="jbossjts-idlj.jar"/>
             <exclude name="jbossjts-jacorb.jar"/>
             <include name="*.jar"/>
           </fileset>
-          <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+          <fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/ext">
             <include name="*.jar"/>
             <include name="*.zip"/>
           </fileset>
@@ -436,7 +436,7 @@
           <include name="jts_tests.jar"/>
         </fileset> 
         -->
-          <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
+          <pathelement location="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/etc"/>
         </classpath>
         <formatter type="plain"/>
         <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>

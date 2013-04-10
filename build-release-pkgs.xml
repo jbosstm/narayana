@@ -115,8 +115,8 @@
       <arg line="clean -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
     <!-- package the full source release (all src tree) -->
-    <delete file="${workdir}/narayana-full-${tag}-src.zip"/>
-    <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
+    <delete file="${workdir}/jbossts-full-${tag}-src.zip"/>
+    <zip basedir="${workdir}" destfile="${workdir}/jbossts-full-${tag}-src.zip" includes="${tag}/**"/>
     <!-- build the binary releases -->
     <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
       <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/"/>
@@ -246,10 +246,10 @@
     <delete dir="tmp-docs-dir"/>
     <mkdir dir="tmp-docs-dir"/>
     <copy todir="tmp-downloads-dir/src">
-      <fileset dir="${workdir}" includes="narayana-*-${tag}-src.zip"/>
+      <fileset dir="${workdir}" includes="jbossts-*-${tag}-src.zip"/>
     </copy>
     <copy todir="tmp-downloads-dir/binary">
-      <fileset dir="${workdir}/${tag}/narayana-full/target/" includes="narayana-full-${tag}-bin.zip"/>
+      <fileset dir="${workdir}/${tag}/narayana-full/target/" includes="jbossts-full-${tag}.zip"/>
     </copy>
     <copy todir="tmp-downloads-dir/idl">
       <fileset dir="${workdir}/${tag}/ArjunaJTS/idl/src/main/idl/arjuna">
@@ -308,8 +308,8 @@
     <exec executable="date" outputproperty="date">
       <arg line="+'%FT%H:%M:%S.000Z'"/>
     </exec>
-    <length property="full-src-length" file="${workdir}/narayana-full-${tag}-src.zip"/>
-    <length property="full-bin-length" file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-bin.zip"/>
+    <length property="full-src-length" file="${workdir}/jbossts-full-${tag}-src.zip"/>
+    <length property="full-bin-length" file="${workdir}/${tag}/narayana-full/target/jbossts-full-${tag}.zip"/>
     <copy file="magnolia-release-download-page-template.xml" tofile="${workdir}/website.jbosstm.downloads.${pageName}.xml" filtering="true" overwrite="true">
       <filterset>
         <filter token="pageName" value="${pageName}"/>
