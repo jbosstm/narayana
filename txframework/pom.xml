@@ -196,7 +196,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.byteman} ${jvm.args.memory}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}</server.jvm.args>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

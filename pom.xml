@@ -1040,6 +1040,7 @@
                         -javaagent:${project.build.directory}/lib/byteman.jar=listener:true
     </jvm.args.byteman>
     <jvm.args.memory>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
+    <jvm.args.other>-server</jvm.args.other>
 <!--
     <jboss-as.version>7.1.2.Final-SNAPSHOT</jboss-as.version>
 -->

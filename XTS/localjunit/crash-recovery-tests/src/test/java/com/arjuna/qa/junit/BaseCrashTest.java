@@ -36,7 +36,7 @@ public class BaseCrashTest
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
     protected String BytemanArgs = "-Xms64m -Xmx1024m -XX:MaxPermSize=512m -Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/test-classes/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.txt,boot:target/test-classes/lib/byteman.jar,listener:true";
     protected String iPv6Args = "-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] ";
-    protected String javaVmArguments;
+    protected String javaVmArguments = "-server ";
     protected String testName;
     protected String scriptName;
     private final static String xtstestWar = "../xtstest/target/xtstest.war";
@@ -62,9 +62,9 @@ public class BaseCrashTest
     public void setUp()
     {
         if (isIPv6())
-            javaVmArguments = iPv6Args + BytemanArgs.replace("@BMScript@", scriptName);
+            javaVmArguments += iPv6Args + BytemanArgs.replace("@BMScript@", scriptName);
         else
-            javaVmArguments = BytemanArgs.replace("@BMScript@", scriptName);
+            javaVmArguments += BytemanArgs.replace("@BMScript@", scriptName);
 
         System.out.println("Starting arquillian with java VM args: " +
                 javaVmArguments + " isIPv6: " + isIPv6());
