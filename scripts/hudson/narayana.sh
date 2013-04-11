@@ -79,6 +79,10 @@ function build_as {
     git remote add upstream $UPSTREAM_GIT_URL
   fi
 
+  git fetch upstream
+  echo "This is the JBoss-AS commit"
+  echo $(git rev-parse upstream/master)
+
   git pull --rebase --ff-only upstream master
   while [ $? != 0 ]
   do
