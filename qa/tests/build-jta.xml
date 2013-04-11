@@ -36,10 +36,10 @@
 	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 
 	<path id="jta.classpath">
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/">
 			<include name="narayana-jta.jar"/>
 		</fileset>
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/jbossts-full-${narayana.version}/lib/ext">
 			<include name="jboss-transaction-api_1.1_spec.jar"/>
 		</fileset>
         <pathelement location="../ext/junit.jar"/>
