@@ -134,6 +134,7 @@
 			</includes>
 			<excludes>
 				<exclude>*:javadoc</exclude>
+                <exclude>${skip.from.idlj}</exclude>
 			</excludes>
 			<outputDirectory>lib/jts</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}

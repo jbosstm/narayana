@@ -23,6 +23,11 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>${project.artifactId}</description>
+  
+  <properties>
+    <skip.from.idlj>**</skip.from.idlj>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
@@ -74,14 +79,6 @@
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-jacorb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>narayana-jts-idlj</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>idlj-idl</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -172,4 +169,31 @@
     </dependency>
 
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>jts-idlj</id>
+      <activation>
+        <property>
+          <name>idlj-enabled</name>
+          <value>true</value>
+        </property>
+      </activation>
+      
+      <properties>
+        <skip.from.idlj></skip.from.idlj>
+      </properties>
+      
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>narayana-jts-idlj</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
