@@ -29,6 +29,41 @@ function mv_test_files {
   done
 }
 
+function rebase_narayana {
+  echo "Rebasing Narayana"
+  cd $WORKSPACE
+ 
+  # Clean up the local repo
+  git rebase --abort
+  rm -rf .git/rebase-apply
+  git clean -f -d -x
+
+  # Work out the branch point
+  git branch -D 4.17
+  git branch 4.17 origin/4.17
+  git branch -D master
+  git branch master origin/master
+  myRev=`git rev-parse HEAD`
+  ancestor417=`git merge-base $myRev 4.17`
+  ancestorMaster=`git merge-base $myRev master`
+  distanceFromMaster=`git log $ancestorMaster..$myRev | grep commit | wc | cut -c 1-7 | tr -d ' '`
+  distanceFrom417=`git log $ancestor417..$myRev | grep commit | wc | cut -c 1-7 | tr -d ' '`
+  if [ "$distanceFromMaster" -lt "$distanceFrom417" ]
+  then
+    export BRANCHPOINT=master
+  else
+    export BRANCHPOINT=4.17
+  fi
+
+  # Update the pull to head  
+  git pull --rebase --ff-only origin $BRANCHPOINT
+
+  if [ $? -ne 0 ]; then
+    comment_on_pull "Narayana rebase failed. Please rebase it manually."
+    fatal "Narayana rebase failed"
+  fi
+}
+
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
   echo "Building Narayana"
@@ -310,6 +345,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
 [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
+[ $REBASE_NARAYANA ] || REBASE_NARAYANA=0 # do not rebase narayana
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
 [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
@@ -343,6 +379,7 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
+[ $REBASE_NARAYANA = 1 ] && rebase_narayana "$@"
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
