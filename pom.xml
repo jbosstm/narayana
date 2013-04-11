@@ -1123,6 +1123,18 @@
       </modules>
     </profile>
     <profile>
+      <id>jts-idlj</id>
+      <modules>
+        <module>common</module>
+        <module>ArjunaCore</module>
+        <module>ArjunaJTA</module>
+        <module>ArjunaJTS</module>
+      </modules>
+      <properties>
+        <idlj-enabled>true</idlj-enabled>
+      </properties>
+    </profile>
+    <profile>
       <id>stm</id>
       <modules>
         <module>common</module>
