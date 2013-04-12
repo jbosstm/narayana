@@ -112,7 +112,7 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS
+  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
   init_jboss_home
 }
