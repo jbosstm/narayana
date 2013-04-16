@@ -18,17 +18,6 @@ function comment_on_pull
     fi
 }
 
-function skip_file {
-  echo "SKIPPING test file: $i"
-  mv $1 $1.skip
-}
-
-function mv_test_files {
-  for i in $@; do
-    [ -f $i ] && skip_file $i
-  done
-}
-
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
   echo "Building Narayana"
@@ -94,8 +83,6 @@ function build_as {
   done
   [ $? = 0 ] || fatal "git rebase failed"
 
-  # if IPV6_OPTS and AS_TEST_SKIP_LIST are set then skip some test files
-  [ -z "${IPV6_OPTS+x}" ] || mv_test_files $AS_TEST_SKIP_LIST
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
   ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
@@ -323,7 +310,6 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
 [ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
-[ $AS_TEST_SKIP_LIST ] || AS_TEST_SKIP_LIST="controller/src/test/java/org/jboss/as/controller/interfaces/NicInterfaceCriteriaUnitTestCase.java controller/src/test/java/org/jboss/as/controller/interfaces/NotInterfaceCriteriaUnitTestCase.java controller/src/test/java/org/jboss/as/controller/interfaces/AnyInterfaceCriteriaUnitTestCase.java"
 
 # Note: set QA_TARGET if you want to override the QA test ant target
 
