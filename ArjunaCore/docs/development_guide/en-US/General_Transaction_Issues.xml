@@ -18,14 +18,28 @@
     <para>
       In some cases it may be necessary to enlist participants that are not two-phase commit aware into a two-phase
       commit transaction. If there is only a single resource then there is no need for two-phase commit. However, if
-      there are multiple resources in the transaction, the <firstterm>Last Resource Commit optimization
+      there are multiple resources in the transaction, the <firstterm>Last Resource Commit Optimization
       (LRCO)</firstterm> comes into play. It is possible for a single resource that is one-phase aware (i.e., can only
-      commit or roll back, with no prepare), to be enlisted in a transaction with two-phase commit aware resources. The
-      coordinator treats the one-phase aware resource slightly differently, in that it executes the prepare phase on all
-      other resource first, and if it then intends to commit the transaction it passes control to the one-phase aware
-      resource. If it commits, then the coordinator logs the decision to commit and attempts to commit the other
-      resources as well.
+      commit or roll back, with no prepare), to be enlisted in a transaction with two-phase commit aware resources.
+      The feature can be implemented by either logging the decision to commit after or before the one-phase aware participant has committed. Although each approach incurs the potential for heuristic outcomes each has different pros and cons:
+      <itemizedlist>
+        <listitem>
+          <para>
+            log the decision after committing the one-phase aware participant: The coordinator asks each two-phase aware participant if they are able to prepare and if they all vote yes then the one-phase aware participant is asked to commit. If the one-phase aware participant commits successfully then the decision to commit is logged and then commit is called on each two-phase aware participant. This is the strategy that is currently implemented. A heuristic outcome will occur if the coordinator fails before logging its commit decision but after the one-phase participant has committed since each two-phase aware participant will eventually rollback (as required under <firstterm>presumed abort</firstterm> semantics).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            log the decision before committing the one-phase aware participant: The coordinator asks each two-phase aware participant if they are able to prepare and if they all vote yes then the decision to commit is logged. Then the one-phase aware participant is asked to commit followed by each two-phase aware participant. A heuristic will occur if the coordinator fails before committing the one-phase aware participant.
+          </para>
+        </listitem>
+      </itemizedlist>
     </para>
+
+    <para>
+      We opt for the strategy that delays the logging of the decision to commit so that in failure scenarios we have avoided a write operation. But this choice does mean that there is no record in the system of the fact that a heuristic outcome has occurred.
+    </para>
+
     <para>
       In order to utilize the LRCO, your participant must implement the
       <interfacename>com.arjuna.ats.arjuna.coordinator.OnePhase</interfacename> interface and be registered with the

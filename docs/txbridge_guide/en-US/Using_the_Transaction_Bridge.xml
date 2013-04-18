@@ -103,7 +103,7 @@
         in that scope. By default the EJB is backed by the hsqldb embedded in JBossAS, for ease
         of
         deployment. This database does not support XA, so the resource registered for it uses
-        LRCO.
+        LRCO (see <citetitle>ArjunaCore Development Guide</citetitle> for a discussion of LRCO).
         However, this point is not significant to the demo. Curious uses can readily use a true
         XA
         database by deploying it into JBossAS via the usual &lt;xa-datasource&gt; in a -ds.xml
