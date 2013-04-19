@@ -95,6 +95,9 @@
   <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-ncl-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
   </target>
+  <target name="ci-tests-nojts" depends="junit-testsuite,junit-jdbc-ncl-testsuite">
+    <fail if="failed-tests" message="some tests failed"/>
+  </target>
   <!-- General tests.
         These tests should take a combined time of around 2h20m or so.
     -->
@@ -102,6 +105,9 @@
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="ci-jts-tests" depends="junit-jts-testsuite">
+    <fail if="failed-tests" message="some tests failed"/>
+  </target>
+  <target name="ci-junit-testsuite" depends="junit-testsuite">
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="junit-testsuite">
