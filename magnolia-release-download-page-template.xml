@@ -121,7 +121,7 @@
         <sv:value>jbossts-full-@tag@-src.zip</sv:value>
       </sv:property>
       <sv:property sv:name="name24" sv:type="String">
-        <sv:value>jbossts-full-@tag@-bin.zip</sv:value>
+        <sv:value>jbossts-full-@tag@.zip</sv:value>
       </sv:property>
       <sv:property sv:name="popup" sv:type="String">
         <sv:value>true</sv:value>
@@ -181,7 +181,7 @@
         <sv:value>http://www.jboss.org/jbosstm/downloads/@tag@/src/jbossts-full-@tag@-src.zip</sv:value>
       </sv:property>
       <sv:property sv:name="url24" sv:type="String">
-        <sv:value>http://www.jboss.org/jbosstm/downloads/@tag@/binary/jbossts-full-@tag@-bin.zip</sv:value>
+        <sv:value>http://www.jboss.org/jbosstm/downloads/@tag@/binary/jbossts-full-@tag@.zip</sv:value>
       </sv:property>
       <sv:node sv:name="MetaData">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
