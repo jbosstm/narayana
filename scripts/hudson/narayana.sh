@@ -308,9 +308,9 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
 
-comment_on_pull "Started testing this pull request: $BUILD_URL"
-
 check_if_pull_closed
+
+comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 # if the following env variables have not been set initialize them to their defaults
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
