@@ -18,6 +18,23 @@ function comment_on_pull
     fi
 }
 
+function check_if_pull_closed
+{
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+    if [ "$PULL_NUMBER" != "" ]
+    then
+	wget https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER -O - | grep "\"closed\""
+	if [ $? -eq 1 ] 
+	then
+		echo "pull open"
+	else
+		echo "pull closed"
+		exit 0
+	fi
+    fi
+}
+
+
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
   echo "Building Narayana"
@@ -292,6 +309,8 @@ function qa_tests {
 }
 
 comment_on_pull "Started testing this pull request: $BUILD_URL"
+
+check_if_pull_closed
 
 # if the following env variables have not been set initialize them to their defaults
 [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
