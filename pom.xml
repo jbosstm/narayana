@@ -438,7 +438,7 @@
     <jvm.args.memory>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
     
     <!-- External dependencies versions -->
-    <jboss-as.version>7.2.0.Alpha1-SNAPSHOT</jboss-as.version>    
+    <jboss-as.version>7.2.0.Final</jboss-as.version>    
     <version.org.jboss.jbossas>1.0.4.Final</version.org.jboss.jbossas>
     <version.org.jboss>7.0.0.Final</version.org.jboss>
     <version.org.jboss.logmanager>1.2.2.GA</version.org.jboss.logmanager>
