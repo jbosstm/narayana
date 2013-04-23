@@ -29,7 +29,6 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
@@ -51,7 +50,6 @@ public class RegistrationServiceExceptionTest extends BaseWSCTest {
     }
 
     @Test
-    @Ignore //JBTM-1637
     public void testAlreadyRegisteredProtocolIdentifierException()
             throws Exception
             {
@@ -76,7 +74,6 @@ public class RegistrationServiceExceptionTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testInvalidProtocolProtocolIdentifierException()
             throws Exception
             {
@@ -101,7 +98,6 @@ public class RegistrationServiceExceptionTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testInvalidStateProtocolIdentifierException()
             throws Exception
             {
@@ -126,7 +122,6 @@ public class RegistrationServiceExceptionTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testNoActivityProtocolIdentifierException()
             throws Exception
             {
