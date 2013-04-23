@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.ws.api.addressing.MAP;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
@@ -106,7 +105,6 @@ public class EnduranceTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testCreateCoordinationContextError()
             throws Exception
             {
@@ -135,7 +133,6 @@ public class EnduranceTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testRegisterError()
             throws Exception
             {
@@ -150,7 +147,6 @@ public class EnduranceTest extends BaseWSCTest {
             }
 
     @Test
-    @Ignore //JBTM-1637
     public void testEachInTurn()
             throws Exception
             {
