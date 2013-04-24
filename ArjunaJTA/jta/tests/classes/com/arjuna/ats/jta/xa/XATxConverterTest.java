@@ -17,23 +17,50 @@ public class XATxConverterTest {
 	public void testXAConverter() throws CoreEnvironmentBeanException {
 		Uid uid = new Uid();
 		boolean branch = true;
-		Integer eisName = 1;
-		arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier("1");
+		Integer eisName = 97;
+		int nodeNameLength = 28;
+		char[] nodeName = new char[nodeNameLength];
+		for (int i = 0; i < nodeNameLength; i++) {
+			nodeName[i] = '.';
+		}
+		String nodeName1 = new String(nodeName);
+		String nodeName2 = nodeName1;
+		arjPropertyManager.getCoreEnvironmentBean()
+				.setNodeIdentifier(nodeName1);
 
 		XidImple rootXid = new XidImple(uid, branch, eisName);
 		{
-			assertEquals(XATxConverter.getNodeName(rootXid.getXID()), "1");
+			assertTrue(rootXid.getGlobalTransactionId().length <= Xid.MAXGTRIDSIZE);
+			assertTrue(rootXid.getBranchQualifier().length <= Xid.MAXBQUALSIZE);
+			assertEquals(XATxConverter.getNodeName(rootXid.getXID()), nodeName1);
+			assertEquals(XATxConverter.getNodeName(rootXid.getXID()).length(),
+					nodeNameLength);
 			assertEquals(XATxConverter.getEISName(rootXid.getXID()), eisName);
-			assertEquals(XATxConverter.getSubordinateNodeName(rootXid.getXID()), null);
+			assertEquals(
+					XATxConverter.getSubordinateNodeName(rootXid.getXID()),
+					null);
 		}
 
 		// TxControl.setXANodeName(2);
-		XATxConverter.setSubordinateNodeName(rootXid.getXID(), "1");
+		XATxConverter.setSubordinateNodeName(rootXid.getXID(), nodeName2);
 		XidImple subordinateXid = new XidImple(rootXid);
 		{
-			assertEquals(XATxConverter.getNodeName(subordinateXid.getXID()), "1");
-			assertEquals(XATxConverter.getEISName(subordinateXid.getXID()), eisName);
-			assertEquals(XATxConverter.getSubordinateNodeName(subordinateXid.getXID()), "1");
+			assertTrue(subordinateXid.getGlobalTransactionId().length <= Xid.MAXGTRIDSIZE);
+			assertTrue(
+					"Bquallength: "
+							+ subordinateXid.getBranchQualifier().length,
+					subordinateXid.getBranchQualifier().length <= Xid.MAXBQUALSIZE);
+			assertEquals(XATxConverter.getNodeName(subordinateXid.getXID()),
+					nodeName1);
+			assertEquals(XATxConverter.getNodeName(subordinateXid.getXID())
+					.length(), nodeNameLength);
+			assertEquals(XATxConverter.getEISName(subordinateXid.getXID()),
+					eisName);
+			assertEquals(XATxConverter.getSubordinateNodeName(subordinateXid
+					.getXID()), nodeName2);
+			assertEquals(
+					XATxConverter.getSubordinateNodeName(
+							subordinateXid.getXID()).length(), nodeNameLength);
 		}
 	}
 
