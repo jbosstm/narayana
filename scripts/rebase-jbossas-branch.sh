@@ -8,7 +8,7 @@ function fatal {
 echo "Rebaseing origin/$ORIGIN_AS_BRANCH with upstream/$UPSTREAM_AS_BRANCH"
 
 GIT_URL="git@github.com:jbosstm/jboss-as.git"
-UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
+UPSTREAM_GIT_URL="https://github.com/wildfly/wildfly.git"
 TEMPORARY_REBASE_LOCATION=/tmp/rebase-jbossas-branch
 
 rm -rf $TEMPORARY_REBASE_LOCATION || fatal
