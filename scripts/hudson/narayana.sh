@@ -50,7 +50,7 @@ function build_narayana {
 function build_as {
   echo "Building AS"
   GIT_URL="https://github.com/jbosstm/jboss-as.git"
-  UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
+  UPSTREAM_GIT_URL="https://github.com/wildfly/wildfly.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
@@ -109,7 +109,7 @@ function build_as {
 
 function init_jboss_home {
   cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
+  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep wildfly`
   [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
   export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
