@@ -349,7 +349,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
