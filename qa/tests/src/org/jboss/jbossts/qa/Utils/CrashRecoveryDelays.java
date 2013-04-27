@@ -78,7 +78,12 @@ public class CrashRecoveryDelays
 
     private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
     {
+        num_cycles *= getDelayFactor(); //may need to wait longer for recovery to complete on slow machines
+
         for(int i = 0; i < num_cycles; i++) {
+            if (i != 0)
+                awaitReplayCompletion(5); // add a delay to accommodate slower test machines
+
             doRecovery();
         }
     }
