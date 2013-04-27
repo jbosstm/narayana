@@ -102,8 +102,14 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
+  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS
   [ $? = 0 ] || fatal "AS build failed"
+
+  #WFLY-1285
+  cd build/target
+  zip -r ../../dist/target/wildfly-8.0.0.Alpha1-SNAPSHOT.zip ./wildfly-8.0.0.Alpha1-SNAPSHOT
+  cd -
+
   init_jboss_home
 }
 
