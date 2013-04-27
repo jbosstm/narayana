@@ -106,6 +106,7 @@ function build_as {
   [ $? = 0 ] || fatal "AS build failed"
 
   #WFLY-1285
+  mkdir ./dist/target
   cd build/target
   zip -r ../../dist/target/wildfly-8.0.0.Alpha1-SNAPSHOT.zip ./wildfly-8.0.0.Alpha1-SNAPSHOT
   cd -
