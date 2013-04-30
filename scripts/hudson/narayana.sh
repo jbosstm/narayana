@@ -335,7 +335,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
-[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=http://172.17.131.2/userContent/dbdrivers"
 
 # Note: set QA_TARGET if you want to override the QA test ant target
 
