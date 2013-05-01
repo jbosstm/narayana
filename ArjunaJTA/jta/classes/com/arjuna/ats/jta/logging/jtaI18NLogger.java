@@ -424,6 +424,33 @@ public interface jtaI18NLogger {
 	@Message(id = 16101, value = "Could not pack XidImple.", format = MESSAGE_FORMAT)
 	public String get_xid_packerror();
 
+    @Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
+   	public String get_transaction_arjunacore_inactive(Uid arg0);
+
+    @Message(id = 16103, value = "Error getting the status of the current transaction", format = MESSAGE_FORMAT)
+   	public String get_error_getting_tx_status();
+
+    @Message(id = 16104, value = "Error getting the current transaction", format = MESSAGE_FORMAT)
+   	public String get_error_getting_current_tx();
+
+    @Message(id = 16105, value = "Could not lookup the TransactionManager", format = MESSAGE_FORMAT)
+   	public String get_could_not_lookup_tm();
+
+    @Message(id = 16106, value = "Could not lookup the TransactionSynchronizationRegistry", format = MESSAGE_FORMAT)
+   	public String get_could_not_lookup_tsr();
+
+    @Message(id = 16107, value = "Expected an @Transactional annotation at class and/or method level", format = MESSAGE_FORMAT)
+   	public String get_expected_transactional_annotation();
+
+    @Message(id = 16108, value = "Wrong transaction on thread", format = MESSAGE_FORMAT)
+   	public String get_wrong_tx_on_thread();
+
+    @Message(id = 16109, value = "Contextual is null", format = MESSAGE_FORMAT)
+   	public String get_contextual_is_null();
+
+    @Message(id = 16110, value = "Transaction is required for invocation", format = MESSAGE_FORMAT)
+   	public String get_tx_required();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
@@ -436,6 +463,4 @@ public interface jtaI18NLogger {
             all others are log methods and have prefix <level>_
     */
 
-	@Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
-	public String get_transaction_arjunacore_inactive(Uid arg0);
 }

@@ -134,10 +134,17 @@ function rts_as_tests {
   cd ${WORKSPACE}
 }
 
+
 function rest_at_integration_tests {
   echo "#0. REST-AT Integration Test"
   ./build.sh -f ./rest-tx/integration/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
+}
+
+function jta_cdi_tests {
+  echo "#0. JTA CDI Tests"
+  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -P$ARQ_PROF "$@" test
+  [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
 function txframework_tests {
@@ -353,6 +360,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
 [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
 [ $REST_AT_INTEGRATION_TESTS ] || REST_AT_INTEGRATION_TESTS=1 # REST-AT Integration Test
+[ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
@@ -381,6 +389,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
+[ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"

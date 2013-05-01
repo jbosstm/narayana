@@ -54,7 +54,7 @@
 				<!--include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/-->
 			</fileset>
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
-				<include name="jboss-transaction-api_1.1_spec.jar"/>
+				<include name="jboss-transaction-api_1.2_spec.jar"/>
 			</fileset>
 			<pathelement location="../../ArjunaJTS/orbportability/config"/>
 			<pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
@@ -77,7 +77,7 @@
 				<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 			</fileset>
 			<fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
-				<include name="jboss-transaction-api_1.1_spec.jar"/>
+				<include name="jboss-transaction-api_1.2_spec.jar"/>
 			</fileset>
 			<pathelement location="../../ArjunaJTS/orbportability/config"/>
 			<!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
@@ -269,7 +269,7 @@
                 <!-- include classes for AS tests -->
                 <fileset dir="../../ext">
                     <include name="jboss-server-manager.jar"/>
-                    <include name="jboss-transaction-api_1.1_spec.jar"/>
+                    <include name="jboss-transaction-api_1.2_spec.jar"/>
                     <include name="jboss-ejb-api_3.1_spec.jar"/>
                     <include name="jboss-transaction-spi.jar"/>
                     <include name="jboss-remoting.jar"/>

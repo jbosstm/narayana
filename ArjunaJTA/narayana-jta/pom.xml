@@ -82,6 +82,7 @@
                 <source>../../ArjunaCore/arjuna/classes</source>
                 <source>../../ArjunaCore/txoj/classes</source>
                 <source>../jta/classes</source>
+                <source>../cdi/classes</source>
                 <source>../jdbc/classes</source>
               </sources>
             </configuration>
@@ -113,6 +114,7 @@
                   <include>org.jboss.narayana.arjunacore:arjuna</include>
                   <include>org.jboss.narayana.arjunacore:txoj</include>
                   <include>org.jboss.narayana.jta:jta</include>
+                  <include>org.jboss.narayana.jta:cdi</include>
                   <include>org.jboss.narayana.jta:jdbc</include>
                 </includes>
               </artifactSet>
@@ -143,6 +145,11 @@
       <artifactId>jta</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+        <groupId>org.jboss.narayana.jta</groupId>
+        <artifactId>cdi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
