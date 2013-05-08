@@ -187,11 +187,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
                             <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
                                 <!--
