@@ -1,0 +1,309 @@
+package org.jboss.narayana.rest.integration;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.logging.Logger;
+import org.jboss.narayana.rest.integration.api.Aborted;
+import org.jboss.narayana.rest.integration.api.HeuristicException;
+import org.jboss.narayana.rest.integration.api.HeuristicType;
+import org.jboss.narayana.rest.integration.api.Prepared;
+import org.jboss.narayana.rest.integration.api.ReadOnly;
+import org.jboss.narayana.rest.integration.api.Vote;
+import org.jboss.resteasy.client.ClientRequest;
+
+import com.arjuna.ats.arjuna.common.Uid;
+
+/**
+ *
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ *
+ */
+@Path("/" + ParticipantResource.BASE_PATH_SEGMENT + "/{participantId}")
+public final class ParticipantResource {
+
+    public static final String BASE_PATH_SEGMENT = "rest-at-participant";
+
+    private static final Logger LOG = Logger.getLogger(ParticipantResource.class);
+
+    @HEAD
+    public Response getTerminatorUrl(@PathParam("participantId") final Uid participantId, @Context final UriInfo uriInfo) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HEAD request on ParticipantResource. ParticipantId: " + participantId);
+        }
+
+        if (ParticipantsContainer.getInstance().getParticipantInformation(participantId) == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Participant with id " + participantId + " was not found.");
+            }
+
+            return Response.status(404).build();
+        }
+
+        Response.ResponseBuilder builder = Response.ok();
+        TxSupport.addLinkHeader(builder, uriInfo, TxLinkNames.TERMINATOR, TxLinkNames.TERMINATOR);
+
+        return builder.build();
+    }
+
+    @GET
+    @Produces(TxMediaType.TX_STATUS_MEDIA_TYPE)
+    public Response getStatus(@PathParam("participantId") final Uid participantId) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("GET request on ParticipantResource. ParticipantId: " + participantId);
+        }
+
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
+                participantId);
+
+        if (participantInformation == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Participant with id " + participantId + " was not found.");
+            }
+
+            return Response.status(404).build();
+        }
+
+        return Response.ok().entity(TxSupport.toStatusContent(participantInformation.getStatus())).build();
+    }
+
+    @PUT
+    @Consumes(TxMediaType.TX_STATUS_MEDIA_TYPE)
+    @Produces(TxMediaType.TX_STATUS_MEDIA_TYPE)
+    public Response terminate(@PathParam("participantId") final Uid participantId, final String content) throws HeuristicException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("PUT request on ParticipantResource. ParticipantId: " + participantId + ", content: " + content);
+        }
+
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
+                participantId);
+
+        if (participantInformation == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Participant with id " + participantId + " was not found.");
+            }
+
+            return Response.status(404).build();
+        }
+
+        String status = TxSupport.getStatus(content);
+
+        if (TxStatus.isPrepare(status)) {
+            if (!canPrepare(participantInformation)) {
+                return Response.status(412).build();
+            }
+
+            Vote vote = prepare(participantInformation);
+            return voteToResponse(vote);
+
+        } else if (TxStatus.isCommit(status)) {
+            if (!canCommit(participantInformation)) {
+                return Response.status(412).build();
+            }
+
+            commit(participantInformation);
+            return Response.ok().entity(TxSupport.toStatusContent(TxStatus.TransactionCommitted.name())).build();
+
+        } else if (TxStatus.isCommitOnePhase(status)) {
+            if (!canCommitOnePhase(participantInformation)) {
+                return Response.status(412).build();
+            }
+
+            commitOnePhase(participantInformation);
+            return Response.ok().entity(TxSupport.toStatusContent(TxStatus.TransactionCommittedOnePhase.name())).build();
+
+        } else if (TxStatus.isAbort(status)) {
+            rollback(participantInformation);
+            return Response.ok().entity(TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())).build();
+        }
+
+        return Response.status(400).build();
+    }
+
+    @DELETE
+    public Response forgetHeuristic(@PathParam("participantId") final Uid participantId) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("DELETE request on ParticipantResource. ParticipantId: " + participantId);
+        }
+
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
+                participantId);
+
+        if (participantInformation == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Participant with id " + participantId + " was not found.");
+            }
+
+            return Response.status(404).build();
+        }
+
+        if (TxStatus.TransactionHeuristicCommit.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicRollback.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicHazard.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicMixed.name().equals(participantInformation.getStatus())) {
+
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+
+            return Response.ok().build();
+        }
+
+        return Response.status(412).build();
+    }
+
+    private Vote prepare(final ParticipantInformation participantInformation) throws HeuristicException {
+        if (isHeuristic(participantInformation)) {
+            return prepareHeuristic(participantInformation);
+        }
+
+        participantInformation.setStatus(TxStatus.TransactionPreparing.name());
+
+        Vote vote = participantInformation.getParticipant().prepare();
+
+        if (vote instanceof Aborted) {
+            rollback(participantInformation);
+        } else if (vote instanceof Prepared) {
+            participantInformation.setStatus(TxStatus.TransactionPrepared.name());
+        } else if (vote instanceof ReadOnly) {
+            readOnly(participantInformation);
+        }
+
+        return vote;
+    }
+
+    private Vote prepareHeuristic(final ParticipantInformation participantInformation) {
+        if (TxStatus.TransactionHeuristicCommit.name().equals(participantInformation.getStatus())) {
+            return new Prepared();
+        } else {
+            return new Aborted();
+        }
+    }
+
+    private void commit(final ParticipantInformation participantInformation) throws HeuristicException {
+        if (isHeuristic(participantInformation)) {
+            commitHeuristic(participantInformation);
+        } else {
+            participantInformation.setStatus(TxStatus.TransactionCommitting.name());
+
+            try {
+                participantInformation.getParticipant().commit();
+            } catch (HeuristicException e) {
+                if (!e.getHeuristicType().equals(HeuristicType.HEURISTIC_COMMIT)) {
+                    participantInformation.setStatus(e.getHeuristicType().toTxStatus());
+                    throw new HeuristicException(e.getHeuristicType());
+                }
+            }
+
+            participantInformation.setStatus(TxStatus.TransactionCommitted.name());
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+        }
+    }
+
+    private void commitHeuristic(final ParticipantInformation participantInformation) throws HeuristicException {
+        if (!TxStatus.TransactionHeuristicCommit.name().equals(participantInformation.getStatus())) {
+            throw new HeuristicException(HeuristicType.fromTxStatus(participantInformation.getStatus()));
+        } else {
+            participantInformation.setStatus(TxStatus.TransactionCommitted.name());
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+        }
+    }
+
+    private void commitOnePhase(final ParticipantInformation participantInformation) {
+        if (!isHeuristic(participantInformation)) {
+            participantInformation.setStatus(TxStatus.TransactionCommitting.name());
+            participantInformation.getParticipant().commitOnePhase();
+            participantInformation.setStatus(TxStatus.TransactionCommittedOnePhase.name());
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+        }
+    }
+
+    private void rollback(final ParticipantInformation participantInformation) throws HeuristicException {
+        if (isHeuristic(participantInformation)) {
+            rollbackHeuristic(participantInformation);
+        } else {
+            participantInformation.setStatus(TxStatus.TransactionRollingBack.name());
+
+            try {
+                participantInformation.getParticipant().rollback();
+            } catch (HeuristicException e) {
+                if (!e.getHeuristicType().equals(HeuristicType.HEURISTIC_ROLLBACK)) {
+                    participantInformation.setStatus(e.getHeuristicType().toTxStatus());
+                    throw new HeuristicException(e.getHeuristicType());
+                }
+            }
+
+            participantInformation.setStatus(TxStatus.TransactionRolledBack.name());
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+        }
+    }
+
+    private void rollbackHeuristic(final ParticipantInformation participantInformation) throws HeuristicException {
+        if (!TxStatus.TransactionHeuristicRollback.name().equals(participantInformation.getStatus())) {
+            throw new HeuristicException(HeuristicType.fromTxStatus(participantInformation.getStatus()));
+        } else {
+            participantInformation.setStatus(TxStatus.TransactionRolledBack.name());
+            ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+        }
+    }
+
+    private void readOnly(final ParticipantInformation participantInformation) {
+        participantInformation.setStatus(TxStatus.TransactionReadOnly.name());
+
+        try {
+            new ClientRequest(participantInformation.getRecoveryURL()).delete();
+        } catch (Exception e) {
+            // TODO log
+        }
+
+        ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
+    }
+
+    private Response voteToResponse(final Vote vote) {
+        Response response;
+
+        if (vote instanceof Prepared) {
+            response = Response.ok().entity(TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())).build();
+        } else if (vote instanceof ReadOnly) {
+            response = Response.ok().entity(TxSupport.toStatusContent(TxStatus.TransactionReadOnly.name())).build();
+        } else {
+            response = Response.status(409).entity(TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())).build();
+        }
+
+        return response;
+    }
+
+    private boolean canPrepare(final ParticipantInformation participantInformation) {
+        return TxStatus.TransactionActive.name().equals(participantInformation.getStatus())
+                || isHeuristic(participantInformation);
+    }
+
+    private boolean canCommit(final ParticipantInformation participantInformation) {
+        return TxStatus.TransactionPrepared.name().equals(participantInformation.getStatus())
+                || isHeuristic(participantInformation);
+    }
+
+    private boolean canCommitOnePhase(final ParticipantInformation participantInformation) {
+        return TxStatus.TransactionActive.name().equals(participantInformation.getStatus())
+                || isHeuristic(participantInformation);
+    }
+
+    private boolean isHeuristic(final ParticipantInformation participantInformation) {
+        return TxStatus.TransactionHeuristicCommit.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicRollback.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicMixed.name().equals(participantInformation.getStatus())
+                || TxStatus.TransactionHeuristicHazard.name().equals(participantInformation.getStatus());
+    }
+
+}
