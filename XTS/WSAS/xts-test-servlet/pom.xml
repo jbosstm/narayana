@@ -47,25 +47,29 @@
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjunacore</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <!-- XTS: -->
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.servlet}</version>
     </dependency>
     <!-- test time dep only - XTS TestRunnerXMLServlet -->
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
+      <version>${version.dom4j}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

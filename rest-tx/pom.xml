@@ -48,7 +48,4 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <module>tx</module>
     <module>webservice</module>
   </modules>
-  <properties>
-    <version.org.jboss.resteasy>2.0.0.GA</version.org.jboss.resteasy>
-  </properties>
 </project>

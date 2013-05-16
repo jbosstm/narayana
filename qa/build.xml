@@ -78,6 +78,11 @@
     <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
     <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar" dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
   </target>
+  <target name="get.maven.libs">
+        <exec executable="mvn" failonerror="true" dir="${basedir}">
+            <arg value="dependency:copy-dependencies"/>
+        </exec>
+  </target>
   <target name="buildtype">
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jbossjts.jar" property="buildtype" value="jts"/>
     <available file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/narayana-jta.jar" property="buildtype" value="jta"/>

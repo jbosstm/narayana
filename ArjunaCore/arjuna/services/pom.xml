@@ -30,11 +30,12 @@
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
-      <version>3.2.3</version>
+      <version>${version.tanukisoft}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
       <artifactId>arjuna</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

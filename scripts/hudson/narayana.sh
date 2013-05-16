@@ -18,13 +18,30 @@ function comment_on_pull
     fi
 }
 
+function check_if_pull_closed
+{
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+    if [ "$PULL_NUMBER" != "" ]
+    then
+	wget https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER -O - | grep "\"closed\""
+	if [ $? -eq 1 ] 
+	then
+		echo "pull open"
+	else
+		echo "pull closed"
+		exit 0
+	fi
+    fi
+}
+
+
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
   echo "Building Narayana"
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all$OBJECT_STORE_PROFILE "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Dfindbugs.skip=false -Dfindbugs.failOnError=false -Prelease,all,jts-idlj$OBJECT_STORE_PROFILE "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -33,12 +50,17 @@ function build_narayana {
 function build_as {
   echo "Building AS"
   GIT_URL="https://github.com/jbosstm/jboss-as.git"
-  UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
+  UPSTREAM_GIT_URL="https://github.com/wildfly/wildfly.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
     echo "Updating existing checkout of AS7"
     cd jboss-as
+
+    git remote | grep upstream
+    if [ $? -ne 0 ]; then
+      git remote add upstream $UPSTREAM_GIT_URL
+    fi
     #Abort any partially complete rebase
     git rebase --abort
     git checkout 5_BRANCH
@@ -63,6 +85,10 @@ function build_as {
     git remote add upstream $UPSTREAM_GIT_URL
   fi
 
+  git fetch upstream
+  echo "This is the JBoss-AS commit"
+  echo $(git rev-parse upstream/master)
+
   git pull --rebase --ff-only upstream master
   while [ $? != 0 ]
   do
@@ -76,14 +102,14 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -Dts.smoke=false $IPV6_OPTS
+  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
   init_jboss_home
 }
 
 function init_jboss_home {
   cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
+  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep wildfly`
   [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
   export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
@@ -282,6 +308,8 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
 
+check_if_pull_closed
+
 comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 # if the following env variables have not been set initialize them to their defaults
@@ -300,7 +328,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
-[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=http://172.17.131.2/userContent/dbdrivers"
 
 # Note: set QA_TARGET if you want to override the QA test ant target
 
@@ -321,7 +349,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_BUILD = 1 ] && build_as "$@" || init_jboss_home
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"

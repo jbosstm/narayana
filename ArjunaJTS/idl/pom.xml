@@ -47,6 +47,20 @@
 
   <modules>
     <module>jacorb</module>
-    <module>idlj</module>
   </modules>
+  
+  <profiles>
+    <profile>
+      <id>jts-idlj</id>
+      <activation>
+        <property>
+          <name>idlj-enabled</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <modules>
+        <module>idlj</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

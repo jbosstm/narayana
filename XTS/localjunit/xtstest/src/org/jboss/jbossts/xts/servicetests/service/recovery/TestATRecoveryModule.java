@@ -35,7 +35,18 @@ public class TestATRecoveryModule implements XTSATRecoveryModule
             theRecoveryModule = new TestATRecoveryModule();
         }
         if (serviceCount == 0) {
-            XTSATRecoveryManager.getRecoveryManager().registerRecoveryModule(theRecoveryModule);
+
+            XTSATRecoveryManager xtsATRecoveryManager = null;
+            do {
+                xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            } while (xtsATRecoveryManager == null);
+
+            xtsATRecoveryManager.registerRecoveryModule(theRecoveryModule);
         }
         serviceCount++;
     }

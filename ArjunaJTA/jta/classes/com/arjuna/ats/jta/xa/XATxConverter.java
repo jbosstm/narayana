@@ -152,11 +152,14 @@ public class XATxConverter
 			return null;
 		}
 
+		Xid xidImple = new XidImple(xid);
+		byte[] globalTransactionId = xidImple.getGlobalTransactionId();
+
 		// the node name follows the Uid with no separator, so the only
 		// way to tell where it starts is to figure out how long the Uid is.
 		int offset = Uid.UID_SIZE;
 
-		return new String(Arrays.copyOfRange(xid.data, offset, xid.gtrid_length));
+		return new String(Arrays.copyOfRange(globalTransactionId, offset, globalTransactionId.length));
 	}
 
 	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
@@ -176,9 +179,7 @@ public class XATxConverter
 			byte[] nameAsBytes = xaNodeName.getBytes();
 			System.arraycopy(nameAsBytes, 0, theXid.data, offset, length);
 		}
-		for (int i = offset+length; i < theXid.bqual_length; i++) {
-			theXid.data[i] = 0;
-		}
+		theXid.bqual_length = Uid.UID_SIZE+4+4+length;
 	}
 	public static String getSubordinateNodeName(XID xid) {
 		// Arjuna.XID()
@@ -187,16 +188,19 @@ public class XATxConverter
 			return null;
 		}
 
+		Xid xidImple = new XidImple(xid);
+		byte[] branchQualifier = xidImple.getBranchQualifier();
+
 		// the node name follows the Uid with no separator, so the only
 		// way to tell where it starts is to figure out how long the Uid is.
-		int offset = xid.gtrid_length + Uid.UID_SIZE + 4;
+		int offset = Uid.UID_SIZE + 4;
 
-		int length = (xid.data[offset++] << 24)
-				+ ((xid.data[offset++] & 0xFF) << 16)
-				+ ((xid.data[offset++] & 0xFF) << 8)
-				+ (xid.data[offset++] & 0xFF);
+		int length = (branchQualifier[offset++] << 24)
+				+ ((branchQualifier[offset++] & 0xFF) << 16)
+				+ ((branchQualifier[offset++] & 0xFF) << 8)
+				+ (branchQualifier[offset++] & 0xFF);
 		if (length > 0) {
-			return new String(Arrays.copyOfRange(xid.data, offset, offset+length));
+			return new String(Arrays.copyOfRange(branchQualifier, offset, offset+length));
 		} else {
 			return null;
 		}
