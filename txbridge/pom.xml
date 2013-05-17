@@ -329,8 +329,8 @@
 			</build>
 			<dependencies>
 				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<groupId>org.wildfly</groupId>
+					<artifactId>wildfly-arquillian-container-managed</artifactId>
 					<version>${jboss-as.version}</version>
 					<scope>test</scope>
                         <!-- exclude logmanager because an incompatible version is pulled in -->
@@ -399,8 +399,8 @@
 			</build>
 			<dependencies>
 				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<groupId>org.wildfly</groupId>
+					<artifactId>wildfly-arquillian-container-managed</artifactId>
 					<version>${jboss-as.version}</version>
 					<scope>test</scope>
 
