@@ -52,7 +52,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
+                <source>${basedir}/../../common/src/test/java/com/arjuna/common/tests/simple</source>
               </sources>
             </configuration>
           </execution>

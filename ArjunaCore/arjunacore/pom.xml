@@ -74,7 +74,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>../../common/classes</source>
+                <source>../../common/src/main/java</source>
                 <source>../arjuna/classes</source>
                 <source>../txoj/classes</source>
               </sources>
