@@ -174,7 +174,11 @@ public class XAResourceRecordUnitTest
         
         xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.end, FailType.timeout), tx.getTxId(), null);
         
-        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_ERROR);
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
+        
+        xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.end, FailType.XA_RBCOMMFAIL), tx.getTxId(), null);
+        
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.ONE_PHASE_ERROR);
         
         xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.heurcom), tx.getTxId(), null);
         

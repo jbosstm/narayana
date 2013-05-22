@@ -583,6 +583,7 @@ public class XAResourceRecord extends AbstractRecord
 	                return _heuristic;
 
 	            XAException endHeuristic = null;
+	            XAException endRBOnly = null;
 
 	            try
 	            {
@@ -626,6 +627,7 @@ public class XAResourceRecord extends AbstractRecord
 	                     * need to call rollback.
 	                     */
 
+	                	endRBOnly = e1;
 	                    commit = false;
 	                    break;
 	                case XAException.XAER_RMERR:
@@ -664,8 +666,10 @@ public class XAResourceRecord extends AbstractRecord
 
 	                if (commit)
 	                    _theXAResource.commit(_tranID, true);
-	                else
+	                else {
 	                    _theXAResource.rollback(_tranID);
+	                    throw endRBOnly;
+	                }
 	            }
 	            catch (XAException e1)
 	            {
