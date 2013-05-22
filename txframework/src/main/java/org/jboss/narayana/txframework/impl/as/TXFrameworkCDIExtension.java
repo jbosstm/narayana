@@ -22,6 +22,12 @@
 
 package org.jboss.narayana.txframework.impl.as;
 
+import org.jboss.narayana.compensations.impl.CancelOnFailureInterceptor;
+import org.jboss.narayana.compensations.impl.CompensationInterceptor;
+import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
+import org.jboss.narayana.compensations.impl.TxCompensateInterceptor;
+import org.jboss.narayana.compensations.impl.TxConfirmInterceptor;
+import org.jboss.narayana.compensations.impl.TxLoggedInterceptor;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
@@ -48,19 +54,17 @@ public class TXFrameworkCDIExtension implements Extension {
      */
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
 
-        final AnnotatedType<RestTXRequiredInterceptor> restTXRequiredInterceptor = bm.createAnnotatedType(RestTXRequiredInterceptor.class);
-        bbd.addAnnotatedType(restTXRequiredInterceptor);
+        bbd.addAnnotatedType(bm.createAnnotatedType(RestTXRequiredInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMap.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMapImpl.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControl.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControlImpl.class));
 
-        final AnnotatedType<TXDataMap> txDataMap = bm.createAnnotatedType(TXDataMap.class);
-        bbd.addAnnotatedType(txDataMap);
-
-        final AnnotatedType<TXDataMapImpl> txDataMapImpl = bm.createAnnotatedType(TXDataMapImpl.class);
-        bbd.addAnnotatedType(txDataMapImpl);
-
-        final AnnotatedType<WSBATxControl> wsbatxcontrol = bm.createAnnotatedType(WSBATxControl.class);
-        bbd.addAnnotatedType(wsbatxcontrol);
-
-        final AnnotatedType<WSBATxControlImpl> wsbaTxControlImpl = bm.createAnnotatedType(WSBATxControlImpl.class);
-        bbd.addAnnotatedType(wsbaTxControlImpl);
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationManagerImpl.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TxCompensateInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TxConfirmInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TxLoggedInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CancelOnFailureInterceptor.class));
     }
 }
