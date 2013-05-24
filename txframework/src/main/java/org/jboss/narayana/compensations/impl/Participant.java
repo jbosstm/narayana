@@ -28,7 +28,6 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.narayana.compensations.api.CompensationHandler;
-import org.jboss.narayana.compensations.api.CompensationTransactionRuntimeException;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.weld.bootstrap.api.SingletonProvider;
@@ -48,10 +47,6 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
 
     private Class<? extends TransactionLoggedHandler> transactionLoggedHandler;
 
-    private Map<String, Object> rememberedBeans;
-
-    private SingletonProvider singletonProvider;
-
     private BeanManager beanManager;
 
     public Participant(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) {
@@ -60,9 +55,7 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
         this.confirmationHandler = confirmationHandlerClass;
         this.transactionLoggedHandler = transactionLoggedHandlerClass;
 
-        rememberedBeans = CompensationContext.getBeansForThisTransaction();
-        beanManager = BeanManagerLookup.getBeanManager();
-        singletonProvider = TCCLSingletonProvider.instance();
+        beanManager = BeanManagerUtil.getBeanManager();
     }
 
     private <T extends Object> T instantiate(Class<T> clazz) {
@@ -70,7 +63,7 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
         if (clazz == null) {
             return null;
         }
-        return (T) ProgrammaticBeanLookup.lookup(clazz, beanManager);
+        return BeanManagerUtil.createBeanInstance(clazz, beanManager);
     }
 
     @Override
@@ -85,12 +78,10 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     @Override
     public void close() throws WrongStateException, SystemException {
 
-        CompensationContext.rememberForAfterTransaction(rememberedBeans);
         if (confirmationHandler != null) {
             ConfirmationHandler handler = instantiate(confirmationHandler);
             handler.confirm();
         }
-        CompensationContext.forgetAfterTransactionBeans();
     }
 
     @Override
@@ -102,14 +93,10 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     public void compensate() throws FaultedException, WrongStateException, SystemException {
 
         try {
-            CompensationContext.rememberForAfterTransaction(rememberedBeans);
-            TCCLSingletonProvider.reset();
-            TCCLSingletonProvider.initialize(singletonProvider);
             if (compensationHandler != null) {
                 CompensationHandler handler = instantiate(compensationHandler);
                 handler.compensate();
             }
-            CompensationContext.forgetAfterTransactionBeans();
         } catch (Exception e) {
             e.printStackTrace();
         }
