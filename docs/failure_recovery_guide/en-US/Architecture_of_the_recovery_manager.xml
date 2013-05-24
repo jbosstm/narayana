@@ -269,6 +269,71 @@
         resources being recovered and will be discussed within the
         relevant sections for the Recovery Modules.</para>
     </section>
+    <section>
+      <title>Recovery From An Alternate Node</title>
+      <para>
+        After failure it is sometimes desirable to recover on a different
+        node from the one where the transaction manager failed. This kind of
+        usage is only supported in JTA mode running inside an application server
+        (with certain restrictions) and is not typical because of the consequences
+        of incorrect configuration:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          Only JTA transactions will be recovered (so the failing node must be
+          configured in JTA mode).
+        </listitem>
+        <listitem>
+          Changing versions of JBossTS or the application server on the new node
+          is not supported.
+        </listitem>
+        <listitem>
+          The recovering node must have access to the same object store logs as
+          the failed node (which can be achieved by either copying the logs or by
+          using a shared file system or by using the JDBC object store connected
+          to a database that is accessible to both nodes). If you are using the JDBC
+          object store ensure that it is configured the same way on both nodes.
+        </listitem>
+        <listitem>
+          Both nodes must have access to the same set of resource managers and with
+          the same configuration (minimally, the JNDI names must not change). Often the
+          deployment model for databases is to host the resource manager on a different
+          node from the application server so generally this should not be an issue.
+        </listitem>
+        <listitem>
+          Recovery requires help from Resource Managers which should be configured to
+          support the ability to recover from other nodes. Database recovery is known
+          to work but other resource managers may require case by case consideration.
+        </listitem>
+        <listitem>
+          If application deployments define their own datasources then these
+          applications must also be deployed on the new server.
+        </listitem>
+        <listitem>
+          It is recommended that the transaction subsystem is configured in the
+          same way on the new node as it was on the failed one. In particular the
+          node identifier should not change. The comment made in the previous
+          section about the uniqueness of the node identifier still applies so
+          it is imperative that the failed node is not brought back online without
+          changing its configuration. The same restrictions regarding object stores
+          still apply, namely <quote>exactly one recovery manager per ObjectStore must
+          run on each node and ObjectStores must not be shared by multiple nodes</quote>. 
+        </listitem>
+        <listitem>
+          Before restarting recovery on the new node sanity check your configuration 
+          to ensure it does not contain any hard coded IP addresses that refer to
+          network interfaces on the failed node.
+        </listitem>
+      </itemizedlist>
+
+      <para>
+          This is a long list of caveats and if it is not possible to simply restart the
+          failed node then, in order to avoid the consequences of incorrect configuration,
+          we advise that the application server on the recovering node uses the same
+          configuration file as the failed node.
+      </para>
+    </section>
   </section>
   <section>
     <title>Recovery Modules</title>
@@ -819,7 +884,7 @@
       created. The Recovery Manager uses the process id to locate
       transaction status manager items when contacting the originator
       application process for the transaction status. Therefore, exactly
-      one recovery manager per ObjectStore must run on each nodes and
+      one recovery manager per ObjectStore must run on each node and
       ObjectStores must not be shared by multiple nodes.</para>
   </section>
   <section>
