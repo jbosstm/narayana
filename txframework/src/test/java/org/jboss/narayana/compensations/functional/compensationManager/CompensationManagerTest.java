@@ -22,6 +22,8 @@
 
 package org.jboss.narayana.compensations.functional.compensationManager;
 
+import com.arjuna.mw.wst11.UserBusinessActivity;
+import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
@@ -54,6 +56,8 @@ public class CompensationManagerTest {
     @Inject
     CompensationManagerService compensationManagerService;
 
+    UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
+
     @Deployment
     public static JavaArchive createTestArchive() {
 
@@ -70,6 +74,17 @@ public class CompensationManagerTest {
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
+    }
+
+
+    @After
+    public void tearDown() {
+
+        try {
+            uba.close();
+        } catch (Exception e) {
+            // do nothing
+        }
     }
 
     @Before
