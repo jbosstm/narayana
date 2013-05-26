@@ -23,6 +23,7 @@
 package org.jboss.narayana.compensations.impl;
 
 import org.jboss.narayana.compensations.api.CancelOnFailure;
+import org.jboss.narayana.compensations.api.CompensationManager;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ import javax.interceptor.InvocationContext;
 public class CancelOnFailureInterceptor {
 
     @Inject
-    CompensationManagerImpl compensationManager;
+    CompensationManager compensationManager;
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
