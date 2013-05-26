@@ -27,9 +27,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.compensations.api.TxConfirm;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.NoTransactionException;
+import org.jboss.narayana.compensations.api.TxConfirm;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;

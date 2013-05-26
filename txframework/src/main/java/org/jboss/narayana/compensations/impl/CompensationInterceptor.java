@@ -30,11 +30,13 @@ import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
+import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.util.HashMap;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
@@ -57,6 +59,7 @@ public class CompensationInterceptor {
             uba.begin();
             begun = true;
             CompensationManagerImpl.resume(new CompensationManagerState());
+            TXDataMapImpl.resume(new HashMap());
         }
 
 
@@ -85,6 +88,7 @@ public class CompensationInterceptor {
                 throw new TransactionCompensatedException("Transaction was marked as 'compensate only'");
             }
             CompensationManagerImpl.suspend();
+            TXDataMapImpl.suspend();
         }
         return result;
     }

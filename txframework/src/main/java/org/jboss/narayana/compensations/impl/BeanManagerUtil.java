@@ -5,7 +5,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 
 public class BeanManagerUtil {
@@ -34,7 +33,7 @@ public class BeanManagerUtil {
         }
         Bean<T> bean = (Bean<T>) iter.next();
         CreationalContext<T> ctx = bm.createCreationalContext(bean);
-        return(T) bm.getReference(bean, clazz, ctx);
+        return (T) bm.getReference(bean, clazz, ctx);
     }
 
 }
