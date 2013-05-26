@@ -137,5 +137,12 @@ public class TXDataMapImpl<K, V> implements TXDataMap<K, V> {
         return getMap().hashCode();
     }
 
+    public static Map getState() {
 
+        return mapThreadLocal.get();
+    }
+
+    public static boolean isActive() {
+        return mapThreadLocal.get() != null;
+    }
 }

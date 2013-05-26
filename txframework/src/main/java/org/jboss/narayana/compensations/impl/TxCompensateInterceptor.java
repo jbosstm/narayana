@@ -27,9 +27,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.NoTransactionException;
+import org.jboss.narayana.compensations.api.TxCompensate;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
@@ -75,4 +75,5 @@ public class TxCompensateInterceptor extends ParticipantInterceptor {
         }
         return null;
     }
+
 }
