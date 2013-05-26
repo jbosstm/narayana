@@ -115,6 +115,7 @@ function init_jboss_home {
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
   echo "JBOSS_HOME=$JBOSS_HOME"
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml ${JBOSS_HOME}/standalone/configuration
+  cp ${JBOSS_HOME}/docs/examples/configs/standalone-rts.xml ${JBOSS_HOME}/standalone/configuration
 }
 
 function xts_as_tests {
@@ -123,6 +124,20 @@ function xts_as_tests {
   ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
+}
+
+function rts_as_tests {
+  echo "#-1. RTS AS Integration Test"
+  cd ${WORKSPACE}/jboss-as
+  ./build.sh -f ./testsuite/integration/rts/pom.xml -Prts.integration.tests.profile "$@" test
+  [ $? = 0 ] || fatal "RTS AS Integration Test failed"
+  cd ${WORKSPACE}
+}
+
+function rest_at_integration_tests {
+  echo "#0. REST-AT Integration Test"
+  ./build.sh -f ./rest-tx/integration/pom.xml -P$ARQ_PROF "$@" test
+  [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 }
 
 function txframework_tests {
@@ -336,6 +351,8 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+[ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
+[ $REST_AT_INTEGRATION_TESTS ] || REST_AT_INTEGRATION_TESTS=1 # REST-AT Integration Test
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
 [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
@@ -365,9 +382,11 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
+[ $RTS_AS_TESTS = 1 ] && rts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
+[ $REST_AT_INTEGRATION_TESTS = 1 ] && rest_at_integration_test "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
 comment_on_pull "All tests passed - Job complete"

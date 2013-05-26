@@ -1,0 +1,7 @@
+RULE Kill JVM before commit
+CLASS org.jboss.narayana.rest.integration.ParticipantResource
+METHOD commit
+AT ENTRY
+IF true
+DO debug("Killing JVM"), killJVM()
+ENDRULE
