@@ -476,7 +476,7 @@
     <version.org.jboss.ironjacamar>1.0.9.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.remoting>2.5.3</version.org.jboss.remoting>
     <version.org.jboss.ws>1.0.2.Alpha1</version.org.jboss.ws>
-    <version.org.jboss.resteasy>2.3.3.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>2.3.6.Final</version.org.jboss.resteasy>
     <version.org.jboss.weld>1.1.10.Final</version.org.jboss.weld>
     <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
@@ -495,6 +495,7 @@
     <version.javax.servlet>2.5</version.javax.servlet>
     <version.commons-codec>1.4</version.commons-codec>
     <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
+    <version.commons-logging>1.1.0.jboss</version.commons-logging>
     <version.log4j>1.2.15</version.log4j>
     <version.org.slf4j>1.6.1</version.org.slf4j>
     <version.tanukisoft>3.2.3</version.tanukisoft>

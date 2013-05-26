@@ -47,5 +47,6 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <module>util</module>
     <module>tx</module>
     <module>webservice</module>
+    <module>integration</module>
   </modules>
 </project>
