@@ -21,6 +21,7 @@
  */
 package org.jboss.narayana.compensations.functional.distributed;
 
+import org.jboss.narayana.compensations.api.CancelOnFailure;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxConfirm;
@@ -57,6 +58,21 @@ public class TestServiceService implements TestService {
     @TxLogged(DataTxLoggedHandler.class)
     @TxCompensate(DataCompensationHandler.class)
     public void saveData(Boolean throwRuntimeException) {
+
+        state.put("key", "value");
+
+        if (throwRuntimeException) {
+            throw new RuntimeException("Test instructed the service to throw a RuntimeException");
+        }
+
+    }
+
+    @Compensatable
+    @TxConfirm(DataConfirmationHandler.class)
+    @TxLogged(DataTxLoggedHandler.class)
+    @TxCompensate(DataCompensationHandler.class)
+    @CancelOnFailure
+    public void saveDataCancelOnFailure(Boolean throwRuntimeException) {
 
         state.put("key", "value");
 

@@ -32,6 +32,9 @@ public interface TestService {
     public void saveData(Boolean throwException);
 
     @WebMethod
+    public void saveDataCancelOnFailure(Boolean throwException);
+
+    @WebMethod
     public void resetHandlerFlags();
 
     @WebMethod

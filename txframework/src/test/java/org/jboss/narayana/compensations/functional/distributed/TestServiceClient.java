@@ -49,6 +49,12 @@ public class TestServiceClient implements TestService {
     }
 
     @Override
+    @Compensatable
+    public void saveDataCancelOnFailure(Boolean throwException) {
+        testService.saveDataCancelOnFailure(throwException);
+    }
+
+    @Override
     public void resetHandlerFlags() {
         testService.resetHandlerFlags();
     }
