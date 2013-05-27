@@ -23,8 +23,23 @@
 package org.jboss.narayana.compensations.api;
 
 /**
+ * Indicates whether a bean method is to be
+ * executed within a transaction context where the values provide the following
+ * corresponding behavior.
+ *
+ * Only REQUIRED supported at the moment. See https://issues.jboss.org/browse/JBTM-1678 for when other types will be available
+ *
  * @author paul.robinson@redhat.com 21/03/2013
  */
 public enum CompensationTransactionType {
-    REQUIRED //See JBTM-1678 for when other types will be available
+
+    /**
+     *  <p>If called outside a transaction context, the interceptor must begin a new
+     *  compensation-based transaction, the managed bean method execution must then continue
+     *  inside this transaction context, and the transaction must be completed by
+     *  the interceptor.</p>
+     *  <p>If called inside a compensation-based transaction context, the managed bean
+     *  method execution must then continue inside this transaction context.</p>
+     */
+    REQUIRED
 }
