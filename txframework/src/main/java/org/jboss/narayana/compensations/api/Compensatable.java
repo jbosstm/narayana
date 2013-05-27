@@ -30,6 +30,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * <p>The org.jboss.narayana.compensations.api.Compensatable annotation provides the application
+ * the ability to declaratively control compensation transaction boundaries on CDI managed beans, as
+ * well as classes defined as managed beans by the Java EE specification, at both the class
+ * and method level where method level annotations override those at the class level.</p>
+ * <p>This support is provided via an implementation of CDI interceptors that conduct the
+ * necessary suspending, resuming, etc. The Compensatable interceptor interposes on business method
+ * invocations only and not on lifecycle events. Lifecycle methods are invoked in an unspecified
+ * transaction context.</p>
+ * <p>The TxType element of the annotation indicates whether a bean method is to be executed within
+ * a transaction context.  TxType.REQUIRED is the default.</p>
+ * <p>By default checked exceptions do not result in the transactional interceptor marking the transaction for rollback
+ * and instances of RuntimeException and its subclasses do. This default behavior can be modified by specifying
+ * exceptions that result in the interceptor marking the transaction for rollback and/or exceptions that do not result in rollback.</p>
+ *
  * @author paul.robinson@redhat.com 21/03/2013
  */
 @InterceptorBinding

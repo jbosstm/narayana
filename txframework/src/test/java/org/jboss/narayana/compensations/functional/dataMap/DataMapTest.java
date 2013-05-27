@@ -20,19 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.compensations.functional;
+package org.jboss.narayana.compensations.functional.dataMap;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.functional.common.DummyData;
+import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
+import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
+import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -40,30 +38,32 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.context.ContextNotActiveException;
 import javax.inject.Inject;
+
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
 @RunWith(Arquillian.class)
-public class CompensationScopedTest {
+public class DataMapTest {
 
     @Inject
-    DummyData dummyData;
+    Service service;
 
     UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
-    BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
 
     @Deployment
     public static JavaArchive createTestArchive() {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", "services/javax.enterprise.inject.spi.Extension");
 
@@ -77,6 +77,20 @@ public class CompensationScopedTest {
         return archive;
     }
 
+
+    @BeforeClass()
+    public static void submitBytemanScript() throws Exception {
+
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
+
+    @AfterClass()
+    public static void removeBytemanScript() {
+
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
+
+
     @After
     public void tearDown() {
 
@@ -87,76 +101,47 @@ public class CompensationScopedTest {
         }
     }
 
+
+    @Before
+    public void resetParticipants() {
+
+        DataConfirmationHandler.reset();
+    }
+
+
     @Test
     public void testSimple() throws Exception {
 
-        uba.begin();
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
-        dummyData.setValue("1");
-        Assert.assertEquals("1", dummyData.getValue());
+        service.doWork();
+        Assert.assertEquals(true, DataConfirmationHandler.getDataNotNull());
+        Assert.assertEquals(true, DataConfirmationHandler.getDataAvailable());
 
-        uba.close();
+        Assert.assertEquals(false, DataCompensationHandler.getDataNotNull());
+        Assert.assertEquals(false, DataCompensationHandler.getDataAvailable());
+
+        Assert.assertEquals(true, DataTxLoggedHandler.getDataNotNull());
+        Assert.assertEquals(true, DataTxLoggedHandler.getDataAvailable());
     }
 
     @Test
-    public void contextNotActiveTest() throws Exception {
+    public void testCompensate() throws Exception {
 
-        assertContextUnavailable();
-    }
-
-    @Test
-    public void testScopeDestroy() throws Exception {
-
-        assertContextUnavailable();
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         uba.begin();
-        dummyData.setValue("1");
-        Assert.assertEquals("1", dummyData.getValue());
-        uba.close();
+        service.doWork();
+        uba.cancel();
 
-        assertContextUnavailable();
-    }
+        Assert.assertEquals(false, DataConfirmationHandler.getDataNotNull());
+        Assert.assertEquals(false, DataConfirmationHandler.getDataAvailable());
 
-    @Test
-    public void testSuspendResume() throws Exception {
+        Assert.assertEquals(true, DataCompensationHandler.getDataNotNull());
+        Assert.assertEquals(true, DataCompensationHandler.getDataAvailable());
 
-        assertContextUnavailable();
-
-        uba.begin();
-        dummyData.setValue("1");
-        Assert.assertEquals("1", dummyData.getValue());
-        TxContext txContext1 = bam.suspend();
-
-        assertContextUnavailable();
-
-        uba.begin();
-        dummyData.setValue("2");
-        Assert.assertEquals("2", dummyData.getValue());
-        TxContext txContext2 = bam.suspend();
-
-        assertContextUnavailable();
-
-        bam.resume(txContext1);
-        Assert.assertEquals("1", dummyData.getValue());
-        uba.close();
-
-        assertContextUnavailable();
-
-        bam.resume(txContext2);
-        Assert.assertEquals("2", dummyData.getValue());
-        uba.close();
-
-        assertContextUnavailable();
-    }
-
-    private void assertContextUnavailable() {
-
-        try {
-            dummyData.getValue();
-            Assert.fail("Context should not be active here");
-        } catch (ContextNotActiveException e) {
-            //expected
-        }
+        Assert.assertEquals(true, DataTxLoggedHandler.getDataNotNull());
+        Assert.assertEquals(true, DataTxLoggedHandler.getDataAvailable());
     }
 
 

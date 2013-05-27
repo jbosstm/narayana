@@ -20,36 +20,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.compensations.impl;
+package org.jboss.narayana.compensations.functional.dataMap;
 
-import org.jboss.narayana.compensations.api.CancelOnFailure;
-import org.jboss.narayana.compensations.api.CompensationManager;
+import org.jboss.narayana.compensations.api.Compensatable;
+import org.jboss.narayana.compensations.api.TxCompensate;
+import org.jboss.narayana.compensations.api.TxConfirm;
+import org.jboss.narayana.compensations.api.TxLogged;
+import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
+import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
+import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
+import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
+import org.jboss.narayana.txframework.api.management.TXDataMap;
 
-import javax.annotation.Priority;
 import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
 
 /**
- * @author paul.robinson@redhat.com 25/04/2013
+ * @author paul.robinson@redhat.com 24/04/2013
  */
-@CancelOnFailure
-@Interceptor
-@Priority(Interceptor.Priority.PLATFORM_BEFORE + 199)
-public class CancelOnFailureInterceptor {
+public class Service {
 
     @Inject
-    CompensationManager compensationManager;
+    TXDataMap<String, String> data;
 
-    @AroundInvoke
-    public Object intercept(InvocationContext ic) throws Exception {
-
-        try {
-            return ic.proceed();
-        } catch (RuntimeException e) {
-            compensationManager.setCompensateOnly();
-            throw e;
-        }
+    @Compensatable
+    @TxConfirm(DataConfirmationHandler.class)
+    @TxLogged(DataTxLoggedHandler.class)
+    @TxCompensate(DataCompensationHandler.class)
+    public void doWork() throws MyRuntimeException {
+        data.put("key", "value");
     }
+
 }

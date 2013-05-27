@@ -30,6 +30,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Provides a callback handler for confirming that the transaction log has been written.
+ *
  * @author paul.robinson@redhat.com 21/03/2013
  */
 @InterceptorBinding
