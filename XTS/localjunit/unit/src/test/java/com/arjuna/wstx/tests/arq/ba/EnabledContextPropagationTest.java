@@ -2,6 +2,10 @@ package com.arjuna.wstx.tests.arq.ba;
 
 import javax.xml.ws.soap.SOAPFaultException;
 
+import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -256,6 +260,19 @@ public final class EnabledContextPropagationTest extends AbstractContextPropagat
         cancelActivity();
 
         assertInvocations(client.getBusinessActivityInvocations(), "cancel");
+    }
+
+    @Test
+    public void testActivityWithActiveJTA() throws WrongStateException, SystemException, UnknownTransactionException {
+        TestServiceBA client = getBAClientWithFeature(true);
+
+        UserTransaction.getUserTransaction().begin();
+        beginActivity();
+        client.increment();
+        closeActivity();
+        UserTransaction.getUserTransaction().rollback();
+
+        assertInvocations(client.getBusinessActivityInvocations(), "complete", "confirmCompleted", "close");
     }
 
 }
