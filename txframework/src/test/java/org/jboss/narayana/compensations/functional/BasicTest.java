@@ -24,6 +24,8 @@ package org.jboss.narayana.compensations.functional;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.jbossts.xts.bytemanSupport.BMScript;
+import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
@@ -42,8 +44,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,6 +71,7 @@ public class BasicTest {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", "services/javax.enterprise.inject.spi.Extension");
 
@@ -78,6 +83,19 @@ public class BasicTest {
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
+    }
+
+
+    @BeforeClass()
+    public static void submitBytemanScript() throws Exception {
+
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
+
+    @AfterClass()
+    public static void removeBytemanScript() {
+
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @Before
@@ -98,6 +116,8 @@ public class BasicTest {
     @Test
     public void testSimple() throws Exception {
 
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
+
         singleService.testSingle1(false);
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
@@ -108,6 +128,7 @@ public class BasicTest {
     @Test
     public void testMulti() throws Exception {
 
+        ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         multiService.testsMulti(false);
 
@@ -122,6 +143,8 @@ public class BasicTest {
 
     @Test
     public void testCompensation() throws Exception {
+
+        ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         try {
             multiService.testsMulti(true);
@@ -142,6 +165,8 @@ public class BasicTest {
     @Test
     public void testAlternative() throws Exception {
 
+        ParticipantCompletionCoordinatorRules.setParticipantCount(6);
+
         multiService.testAlternative(false);
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
@@ -159,6 +184,8 @@ public class BasicTest {
 
     @Test
     public void testAlternativeThenFail() throws Exception {
+
+        ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         try {
             multiService.testAlternative(true);

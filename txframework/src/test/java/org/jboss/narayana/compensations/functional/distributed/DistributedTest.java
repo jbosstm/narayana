@@ -112,7 +112,7 @@ public class DistributedTest {
     @Test
     public void testSimple() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         client.saveData(false);
 
@@ -127,7 +127,7 @@ public class DistributedTest {
     @Test
     public void testClientDrivenCompensate() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         uba.begin();
         client.saveData(false);
