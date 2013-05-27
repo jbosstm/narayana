@@ -21,13 +21,18 @@
  */
 package org.jboss.narayana.compensations.functional.distributed;
 
+import org.jboss.narayana.compensations.api.CancelOnFailure;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxConfirm;
 import org.jboss.narayana.compensations.api.TxLogged;
+import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
+import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
+import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
+import org.jboss.narayana.txframework.api.management.TXDataMap;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -46,45 +51,60 @@ import javax.jws.soap.SOAPBinding;
 public class TestServiceService implements TestService {
 
     @Inject
-    private State state;
-
+    TXDataMap<String, String> state;
 
     @Compensatable
-    @TxCompensate(DummyCompensationHandler1.class)
-    @TxConfirm(DummyConfirmationHandler1.class)
-    @TxLogged(DummyTransactionLoggedHandler1.class)
+    @TxConfirm(DataConfirmationHandler.class)
+    @TxLogged(DataTxLoggedHandler.class)
+    @TxCompensate(DataCompensationHandler.class)
     public void saveData(Boolean throwRuntimeException) {
+
+        state.put("key", "value");
 
         if (throwRuntimeException) {
             throw new RuntimeException("Test instructed the service to throw a RuntimeException");
         }
 
-        state.setValue("myValue");
+    }
+
+    @Compensatable
+    @TxConfirm(DataConfirmationHandler.class)
+    @TxLogged(DataTxLoggedHandler.class)
+    @TxCompensate(DataCompensationHandler.class)
+    @CancelOnFailure
+    public void saveDataCancelOnFailure(Boolean throwRuntimeException) {
+
+        state.put("key", "value");
+
+        if (throwRuntimeException) {
+            throw new RuntimeException("Test instructed the service to throw a RuntimeException");
+        }
+
     }
 
     @WebMethod
     public void resetHandlerFlags() {
 
-        DummyConfirmationHandler1.reset();
-        DummyTransactionLoggedHandler1.reset();
-        DummyCompensationHandler1.reset();
+        DataConfirmationHandler.reset();
+        DataTxLoggedHandler.reset();
+        DataCompensationHandler.reset();
     }
 
     @Override
     public boolean wasTransactionConfirmedHandlerInvoked() {
 
-        return DummyConfirmationHandler1.getCalled();
+        return DataConfirmationHandler.getDataAvailable();
     }
 
     @Override
     public boolean wasTransactionLoggedHandlerInvoked() {
 
-        return DummyTransactionLoggedHandler1.getCalled();
+        return DataTxLoggedHandler.getDataAvailable();
     }
 
     @Override
     public boolean wasCompensationHandlerInvoked() {
 
-        return DummyCompensationHandler1.getCalled();
+        return DataCompensationHandler.getDataAvailable();
     }
 }

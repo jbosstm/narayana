@@ -30,8 +30,7 @@ import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
-import org.jboss.weld.bootstrap.api.SingletonProvider;
-import org.jboss.weld.bootstrap.api.helpers.TCCLSingletonProvider;
+import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.enterprise.inject.spi.BeanManager;
 import java.util.Map;
@@ -49,6 +48,8 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
 
     private BeanManager beanManager;
 
+    private Map txDataMapState;
+
     public Participant(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) {
 
         this.compensationHandler = compensationHandlerClass;
@@ -56,6 +57,7 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
         this.transactionLoggedHandler = transactionLoggedHandlerClass;
 
         beanManager = BeanManagerUtil.getBeanManager();
+        txDataMapState = TXDataMapImpl.getState();
     }
 
     private <T extends Object> T instantiate(Class<T> clazz) {
@@ -70,8 +72,10 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     public void confirmCompleted(boolean confirmed) {
 
         if (transactionLoggedHandler != null) {
+            TXDataMapImpl.resume(txDataMapState);
             TransactionLoggedHandler handler = instantiate(transactionLoggedHandler);
             handler.transactionLogged(confirmed);
+            TXDataMapImpl.suspend();
         }
     }
 
@@ -79,8 +83,10 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     public void close() throws WrongStateException, SystemException {
 
         if (confirmationHandler != null) {
+            TXDataMapImpl.resume(txDataMapState);
             ConfirmationHandler handler = instantiate(confirmationHandler);
             handler.confirm();
+            TXDataMapImpl.suspend();
         }
     }
 
@@ -94,8 +100,10 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
 
         try {
             if (compensationHandler != null) {
+                TXDataMapImpl.resume(txDataMapState);
                 CompensationHandler handler = instantiate(compensationHandler);
                 handler.compensate();
+                TXDataMapImpl.suspend();
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -24,7 +24,10 @@ package org.jboss.narayana.compensations.functional.distributed;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
+import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,6 +49,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -108,7 +112,7 @@ public class DistributedTest {
     @Test
     public void testSimple() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         client.saveData(false);
 
@@ -123,7 +127,7 @@ public class DistributedTest {
     @Test
     public void testClientDrivenCompensate() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         uba.begin();
         client.saveData(false);
@@ -144,8 +148,33 @@ public class DistributedTest {
             Assert.fail("Exception should have been thrown by now");
         } catch (RuntimeException e) {
             //Exception expected
-        } finally {
-            uba.cancel();
+        }
+
+        uba.cancel();
+
+        Assert.assertEquals(false, client.wasTransactionLoggedHandlerInvoked());
+        Assert.assertEquals(false, client.wasTransactionConfirmedHandlerInvoked());
+        Assert.assertEquals(false, client.wasCompensationHandlerInvoked());
+    }
+
+
+    @Test
+    @Ignore //JBTM-1715
+    public void testRuntimeExceptionCancelOnFailure() throws Exception {
+
+        try {
+            uba.begin();
+            client.saveDataCancelOnFailure(true);
+            Assert.fail("Exception should have been thrown by now");
+        } catch (RuntimeException e) {
+            //Expected
+        }
+
+        try {
+            uba.close();
+            Assert.fail("TransactionRolledBackException should have been thrown by now");
+        } catch (TransactionRolledBackException e) {
+            //Expected
         }
 
         Assert.assertEquals(false, client.wasTransactionLoggedHandlerInvoked());
