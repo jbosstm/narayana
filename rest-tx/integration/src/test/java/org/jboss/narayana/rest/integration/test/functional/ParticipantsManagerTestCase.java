@@ -20,6 +20,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 public final class ParticipantsManagerTestCase {
 
+    private static final String APPLICATION_ID = "org.jboss.narayana.rest.integration.test.functional.ParticipantResourceTestCase";
+
     private ParticipantsManager participantsManager;
 
     @Before
@@ -43,7 +45,7 @@ public final class ParticipantsManagerTestCase {
 
     @Test
     public void testReportHeuristic() throws MalformedURLException {
-        final Uid participantId = new Uid();
+        final String participantId = new Uid().toString();
         registerParticipant(participantId, new LoggingParticipant(new Prepared()));
         final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(participantId);
         participantInformation.setStatus(TxStatus.TransactionPrepared.name());
@@ -53,8 +55,8 @@ public final class ParticipantsManagerTestCase {
         Assert.assertEquals(TxStatus.TransactionHeuristicRollback.name(), participantInformation.getStatus());
     }
 
-    private void registerParticipant(final Uid participantId, final Participant participant) throws MalformedURLException {
-        ParticipantInformation participantInformation = new ParticipantInformation(participantId, "", "", participant);
+    private void registerParticipant(final String participantId, final Participant participant) throws MalformedURLException {
+        ParticipantInformation participantInformation = new ParticipantInformation(participantId, APPLICATION_ID, "", "", participant);
         participantInformation.setStatus(TxStatus.TransactionActive.name());
         ParticipantsContainer.getInstance().addParticipantInformation(participantId, participantInformation);
     }
