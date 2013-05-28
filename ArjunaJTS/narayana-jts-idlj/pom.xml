@@ -40,7 +40,7 @@
           <archive>
             <manifestEntries>
               <Specification-Title>JTA/JTS</Specification-Title>
-              <Specification-Version>1.1/1.0</Specification-Version>
+              <Specification-Version>1.2/1.0</Specification-Version>
               <Specification-Vendor>Oracle</Specification-Vendor>
               <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
               <arjuna-scm-revision>${buildScmBranch} (revision: ${buildNumber})</arjuna-scm-revision>
@@ -83,6 +83,7 @@
                 <source>../../ArjunaCore/txoj/classes</source>
                 <source>../../ArjunaJTA/jta/classes</source>
                 <source>../../ArjunaJTA/jdbc/classes</source>
+                <source>../../ArjunaJTA/cdi/classes</source>
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
                 <source>../jts/services/classes</source>
@@ -130,6 +131,7 @@
                   <include>org.jboss.narayana.arjunacore:txoj</include>
                   <include>org.jboss.narayana.jta:jta</include>
                   <include>org.jboss.narayana.jta:jdbc</include>
+                  <include>org.jboss.narayana.jta:cdi</include>
                   <include>org.jboss.narayana.jts:orbportability</include>
                   <include>org.jboss.narayana.jts:jts</include>
                   <include>org.jboss.narayana.jts:idlj-idl</include>
@@ -166,6 +168,11 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>cdi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -477,10 +477,11 @@
     <version.org.jboss.remoting>2.5.3</version.org.jboss.remoting>
     <version.org.jboss.ws>1.0.2.Alpha1</version.org.jboss.ws>
     <version.org.jboss.resteasy>2.3.6.Final</version.org.jboss.resteasy>
-    <version.org.jboss.weld>1.1.10.Final</version.org.jboss.weld>
+    <version.org.jboss.weld>2.0.0.CR4</version.org.jboss.weld>
     <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
-    <version.org.jboss.spec.javax.transaction>1.0.1.Final</version.org.jboss.spec.javax.transaction>
+    <version.org.jboss.spec.javax.interceptor>1.0.0.Alpha3</version.org.jboss.spec.javax.interceptor>
+    <version.org.jboss.spec.javax.transaction>1.0.0.Alpha3</version.org.jboss.spec.javax.transaction>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
     <version.org.jboss.spec.javax.interceptor>1.0.0.Alpha3</version.org.jboss.spec.javax.interceptor>
     <version.org.jboss.spec.javax.servlet>1.0.1.Final</version.org.jboss.spec.javax.servlet>
@@ -489,8 +490,9 @@
     <version.org.jacorb.jacorb-idl-compiler>2.2.3</version.org.jacorb.jacorb-idl-compiler>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
     <version.commons-transaction>1.2</version.commons-transaction>
+    <version.javax.annotation>1.2-b04</version.javax.annotation>
     <version.javax.transaction>1.1</version.javax.transaction>
-    <version.javax.enterprise>1.0-SP4</version.javax.enterprise>
+    <version.javax.enterprise>1.1</version.javax.enterprise>
     <version.javax.inject>1</version.javax.inject>
     <version.javax.servlet>2.5</version.javax.servlet>
     <version.commons-codec>1.4</version.commons-codec>
@@ -521,8 +523,9 @@
     <version.junit>4.10</version.junit> 
     <version.org.jboss.byteman>2.1.2</version.org.jboss.byteman>
     <version.org.jboss.arquillian.core>1.0.3.Final</version.org.jboss.arquillian.core>
-    <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>   
     <version.javax.annotation>1.2-b04</version.javax.annotation>
+    <version.org.jboss.arquillian.osgi>2.0.0.CR2</version.org.jboss.arquillian.osgi>
+    <version.org.jboss.jboss-transaction-spi>7.0.1.Final</version.org.jboss.jboss-transaction-spi>
   </properties>
   <profiles>
     <profile>
