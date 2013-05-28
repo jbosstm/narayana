@@ -2,8 +2,6 @@ package org.jboss.narayana.rest.integration;
 
 import org.jboss.narayana.rest.integration.api.Participant;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
 /**
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -11,7 +9,9 @@ import com.arjuna.ats.arjuna.common.Uid;
  */
 public final class ParticipantInformation {
 
-    private final Uid id;
+    private final String id;
+
+    private final String applicationId;
 
     private final String recoveryURL;
 
@@ -21,12 +21,13 @@ public final class ParticipantInformation {
 
     private String status;
 
-    public ParticipantInformation(final Uid id, final String recoveryURL, final String baseUrl, final Participant participant) {
-        this(id, recoveryURL, baseUrl, participant, null);
+    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL, final String baseUrl, final Participant participant) {
+        this(id, applicationId, recoveryURL, baseUrl, participant, null);
     }
 
-    public ParticipantInformation(final Uid id, final String recoveryURL, final String baseUrl, final Participant participant, final String status) {
+    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL, final String baseUrl, final Participant participant, final String status) {
         this.id = id;
+        this.applicationId = applicationId;
         this.recoveryURL = recoveryURL;
         this.baseUrl = baseUrl;
         this.participant = participant;
@@ -41,8 +42,12 @@ public final class ParticipantInformation {
         this.status = status;
     }
 
-    public Uid getId() {
+    public String getId() {
         return id;
+    }
+
+    public String getApplicationId() {
+        return applicationId;
     }
 
     public String getRecoveryURL() {

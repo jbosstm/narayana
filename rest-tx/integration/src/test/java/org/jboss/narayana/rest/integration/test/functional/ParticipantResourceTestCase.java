@@ -13,6 +13,7 @@ import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantResource;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
 import org.jboss.narayana.rest.integration.api.Aborted;
+import org.jboss.narayana.rest.integration.api.HeuristicType;
 import org.jboss.narayana.rest.integration.api.Participant;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.ReadOnly;
@@ -39,13 +40,20 @@ import com.arjuna.ats.arjuna.common.Uid;
  */
 public final class ParticipantResourceTestCase {
 
+    private static final String APPLICATION_ID = "org.jboss.narayana.rest.integration.test.functional.ParticipantResourceTestCase";
+
     private static final String BASE_URL = "http://localhost:" + TestPortProvider.getPort();
 
     private static final String PARTICIPANT_URL = BASE_URL + "/" + ParticipantResource.BASE_PATH_SEGMENT;
 
     private static NettyJaxrsServer NETTY;
 
-    private Uid participantId;
+    private String participantId;
+
+    @Test
+    public void simpleTest() {
+        System.out.println(HeuristicType.valueOf("HEURISTIC_ROLLBACK"));
+    }
 
     @BeforeClass
     public static void beforeClass() {
@@ -68,7 +76,7 @@ public final class ParticipantResourceTestCase {
 
     @Before
     public void before() {
-        participantId = new Uid();
+        participantId = new Uid().toString();
         ParticipantsContainer.getInstance().clear();
     }
 
@@ -305,43 +313,46 @@ public final class ParticipantResourceTestCase {
         Assert.assertEquals(TxStatus.TransactionActive.name(), participantInformation.getStatus());
     }
 
-    private void registerParticipant(final Uid participantId, final Participant participant) throws MalformedURLException {
-        ParticipantInformation participantInformation = new ParticipantInformation(participantId, "", BASE_URL, participant);
+    private void registerParticipant(final String participantId, final Participant participant)
+            throws MalformedURLException {
+
+        ParticipantInformation participantInformation = new ParticipantInformation(participantId, APPLICATION_ID, "",
+                BASE_URL, participant);
         participantInformation.setStatus(TxStatus.TransactionActive.name());
         ParticipantsContainer.getInstance().addParticipantInformation(participantId, participantInformation);
     }
 
     @SuppressWarnings("rawtypes")
-    private ClientResponse getParticipantTerminator(final Uid participantId) throws Exception {
+    private ClientResponse getParticipantTerminator(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).head();
     }
 
-    private ClientResponse<String> getParticipantStatus(final Uid participantId) throws Exception {
+    private ClientResponse<String> getParticipantStatus(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).get(String.class);
     }
 
-    private ClientResponse<String> prepareParticipant(final Uid participantId) throws Exception {
+    private ClientResponse<String> prepareParticipant(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).body(TxMediaType.TX_STATUS_MEDIA_TYPE,
                 TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())).put(String.class);
     }
 
-    private ClientResponse<String> commitParticipant(final Uid participantId) throws Exception {
+    private ClientResponse<String> commitParticipant(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).body(TxMediaType.TX_STATUS_MEDIA_TYPE,
                 TxSupport.toStatusContent(TxStatus.TransactionCommitted.name())).put(String.class);
     }
 
-    private ClientResponse<String> commitParticipantInOnePhase(final Uid participantId) throws Exception {
+    private ClientResponse<String> commitParticipantInOnePhase(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).body(TxMediaType.TX_STATUS_MEDIA_TYPE,
                 TxSupport.toStatusContent(TxStatus.TransactionCommittedOnePhase.name())).put(String.class);
     }
 
-    private ClientResponse<String> rollbackParticipant(final Uid participantId) throws Exception {
+    private ClientResponse<String> rollbackParticipant(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).body(TxMediaType.TX_STATUS_MEDIA_TYPE,
                 TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())).put(String.class);
     }
 
     @SuppressWarnings("rawtypes")
-    private ClientResponse forgetParticipantHeuristic(final Uid participantId) throws Exception {
+    private ClientResponse forgetParticipantHeuristic(final String participantId) throws Exception {
         return new ClientRequest(PARTICIPANT_URL + "/" + participantId).delete();
     }
 
