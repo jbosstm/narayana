@@ -25,8 +25,6 @@ import org.jboss.narayana.rest.integration.api.ReadOnly;
 import org.jboss.narayana.rest.integration.api.Vote;
 import org.jboss.resteasy.client.ClientRequest;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
 /**
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -40,7 +38,7 @@ public final class ParticipantResource {
     private static final Logger LOG = Logger.getLogger(ParticipantResource.class);
 
     @HEAD
-    public Response getTerminatorUrl(@PathParam("participantId") final Uid participantId, @Context final UriInfo uriInfo) {
+    public Response getTerminatorUrl(@PathParam("participantId") final String participantId, @Context final UriInfo uriInfo) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("HEAD request on ParticipantResource. ParticipantId: " + participantId);
         }
@@ -61,13 +59,13 @@ public final class ParticipantResource {
 
     @GET
     @Produces(TxMediaType.TX_STATUS_MEDIA_TYPE)
-    public Response getStatus(@PathParam("participantId") final Uid participantId) {
+    public Response getStatus(@PathParam("participantId") final String participantId) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("GET request on ParticipantResource. ParticipantId: " + participantId);
         }
 
-        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
-                participantId);
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance()
+                .getParticipantInformation(participantId);
 
         if (participantInformation == null) {
             if (LOG.isTraceEnabled()) {
@@ -83,13 +81,15 @@ public final class ParticipantResource {
     @PUT
     @Consumes(TxMediaType.TX_STATUS_MEDIA_TYPE)
     @Produces(TxMediaType.TX_STATUS_MEDIA_TYPE)
-    public Response terminate(@PathParam("participantId") final Uid participantId, final String content) throws HeuristicException {
+    public Response terminate(@PathParam("participantId") final String participantId, final String content)
+            throws HeuristicException {
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("PUT request on ParticipantResource. ParticipantId: " + participantId + ", content: " + content);
         }
 
-        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
-                participantId);
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance()
+                .getParticipantInformation(participantId);
 
         if (participantInformation == null) {
             if (LOG.isTraceEnabled()) {
@@ -134,13 +134,13 @@ public final class ParticipantResource {
     }
 
     @DELETE
-    public Response forgetHeuristic(@PathParam("participantId") final Uid participantId) {
+    public Response forgetHeuristic(@PathParam("participantId") final String participantId) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("DELETE request on ParticipantResource. ParticipantId: " + participantId);
         }
 
-        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance().getParticipantInformation(
-                participantId);
+        final ParticipantInformation participantInformation = ParticipantsContainer.getInstance()
+                .getParticipantInformation(participantId);
 
         if (participantInformation == null) {
             if (LOG.isTraceEnabled()) {
@@ -155,6 +155,7 @@ public final class ParticipantResource {
                 || TxStatus.TransactionHeuristicHazard.name().equals(participantInformation.getStatus())
                 || TxStatus.TransactionHeuristicMixed.name().equals(participantInformation.getStatus())) {
 
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
 
             return Response.ok().build();
@@ -176,6 +177,7 @@ public final class ParticipantResource {
             rollback(participantInformation);
         } else if (vote instanceof Prepared) {
             participantInformation.setStatus(TxStatus.TransactionPrepared.name());
+            RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
         } else if (vote instanceof ReadOnly) {
             readOnly(participantInformation);
         }
@@ -187,6 +189,7 @@ public final class ParticipantResource {
         if (TxStatus.TransactionHeuristicCommit.name().equals(participantInformation.getStatus())) {
             return new Prepared();
         } else {
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             return new Aborted();
         }
     }
@@ -202,11 +205,13 @@ public final class ParticipantResource {
             } catch (HeuristicException e) {
                 if (!e.getHeuristicType().equals(HeuristicType.HEURISTIC_COMMIT)) {
                     participantInformation.setStatus(e.getHeuristicType().toTxStatus());
+                    RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
                     throw new HeuristicException(e.getHeuristicType());
                 }
             }
 
             participantInformation.setStatus(TxStatus.TransactionCommitted.name());
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
         }
     }
@@ -216,6 +221,7 @@ public final class ParticipantResource {
             throw new HeuristicException(HeuristicType.fromTxStatus(participantInformation.getStatus()));
         } else {
             participantInformation.setStatus(TxStatus.TransactionCommitted.name());
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
         }
     }
@@ -240,11 +246,13 @@ public final class ParticipantResource {
             } catch (HeuristicException e) {
                 if (!e.getHeuristicType().equals(HeuristicType.HEURISTIC_ROLLBACK)) {
                     participantInformation.setStatus(e.getHeuristicType().toTxStatus());
+                    RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
                     throw new HeuristicException(e.getHeuristicType());
                 }
             }
 
             participantInformation.setStatus(TxStatus.TransactionRolledBack.name());
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
         }
     }
@@ -254,6 +262,7 @@ public final class ParticipantResource {
             throw new HeuristicException(HeuristicType.fromTxStatus(participantInformation.getStatus()));
         } else {
             participantInformation.setStatus(TxStatus.TransactionRolledBack.name());
+            RecoveryManager.getInstance().removeParticipantInformation(participantInformation);
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
         }
     }
@@ -264,7 +273,7 @@ public final class ParticipantResource {
         try {
             new ClientRequest(participantInformation.getRecoveryURL()).delete();
         } catch (Exception e) {
-            // TODO log
+            LOG.warn(e.getMessage(), e);
         }
 
         ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());

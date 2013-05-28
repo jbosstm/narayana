@@ -1,5 +1,6 @@
 package org.jboss.narayana.rest.integration.test.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import org.jboss.narayana.rest.integration.api.Vote;
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  *
  */
-public final class LoggingParticipant implements Participant {
+public final class LoggingParticipant implements Participant, Serializable {
 
     private static final long serialVersionUID = 7584938841973602732L;
 
@@ -47,6 +48,10 @@ public final class LoggingParticipant implements Participant {
 
     public List<String> getInvocations() {
         return invocations;
+    }
+
+    public Vote getOutcome() {
+        return outcome;
     }
 
 }
