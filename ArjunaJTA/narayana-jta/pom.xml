@@ -78,7 +78,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>../../common/classes</source>
+                <source>../../common/src/main/java</source>
                 <source>../../ArjunaCore/arjuna/classes</source>
                 <source>../../ArjunaCore/txoj/classes</source>
                 <source>../jta/classes</source>

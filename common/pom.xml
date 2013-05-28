@@ -17,8 +17,6 @@
   <description>common</description>
   <packaging>jar</packaging>
   <build>
-    <sourceDirectory>classes</sourceDirectory>
-    <testSourceDirectory>tests</testSourceDirectory>
     <plugins>
       <plugin>
         <inherited>false</inherited>
