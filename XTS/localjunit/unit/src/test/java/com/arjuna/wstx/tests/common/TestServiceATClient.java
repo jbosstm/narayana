@@ -21,7 +21,7 @@ import com.arjuna.mw.wst11.client.WSTXFeature;
  */
 public final class TestServiceATClient implements TestServiceAT {
 
-    private static final String WSDL_URL = "http://localhost:8080/test/TestServiceATService/TestServiceAT?wsdl";
+    private static final String WSDL_URL = getBaseUrl() + "/test/TestServiceATService/TestServiceAT?wsdl";
 
     private static final QName SERVICE_NAME = new QName("http://arjuna.com/wstx/tests/common", "TestServiceATService");
 
@@ -83,6 +83,21 @@ public final class TestServiceATClient implements TestServiceAT {
     @Override
     public void reset() {
         testService.reset();
+    }
+
+    private static String getBaseUrl() {
+        String baseAddress = System.getProperty("jboss.bind.address");
+        String basePort = System.getProperty("jboss.bind.port");
+
+        if (baseAddress == null) {
+            baseAddress = "http://localhost";
+        }
+
+        if (basePort == null) {
+            basePort = "8080";
+        }
+
+        return baseAddress + ":" + basePort;
     }
 
 }

@@ -23,7 +23,7 @@ public abstract class AbstractIntegrationTestCase {
 
     protected static final String DEPLOYMENT_NAME = "test";
 
-    protected static final String BASE_URL = "http://localhost:8080";
+    protected static final String BASE_URL = getBaseUrl();
 
     protected static final String DEPLOYMENT_URL = BASE_URL + "/" + DEPLOYMENT_NAME;
 
@@ -114,6 +114,21 @@ public abstract class AbstractIntegrationTestCase {
         }
 
         return (path.delete());
+    }
+
+    private static String getBaseUrl() {
+        String baseAddress = System.getProperty("jboss.bind.address");
+        String basePort = System.getProperty("jboss.bind.port");
+
+        if (baseAddress == null) {
+            baseAddress = "http://localhost";
+        }
+
+        if (basePort == null) {
+            basePort = "8080";
+        }
+
+        return baseAddress + ":" + basePort;
     }
 
 }
