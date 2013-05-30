@@ -24,6 +24,7 @@
     <name>REST-AT Integration</name>
     <description></description>
 
+
     <dependencies>
 
         <dependency>
@@ -165,6 +166,14 @@
                     </includes>
                 </configuration>
             </plugin>
+            <plugin>
+                <inherited>false</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -205,9 +214,6 @@
         </profile>
         <profile>
             <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
