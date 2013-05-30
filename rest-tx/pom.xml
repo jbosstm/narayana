@@ -19,7 +19,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
-    <version>5.0.0.M3</version>
+    <version>5.0.0.M4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
