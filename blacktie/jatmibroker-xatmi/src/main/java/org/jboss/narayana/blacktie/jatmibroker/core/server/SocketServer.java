@@ -80,9 +80,9 @@ public class SocketServer implements Runnable {
 
     private SocketServer(int port, String addr) throws IOException {
         this.shutdown = false;
-        this.port = port;
         this.addr = addr;
         serverSocket = new ServerSocket(port);
+        this.port = serverSocket.getLocalPort();
         clients = new ArrayList<Client>();
         threads = new ArrayList<Thread>();
         contexts = new ArrayList<ClientContext>();

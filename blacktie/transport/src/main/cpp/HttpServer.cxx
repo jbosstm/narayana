@@ -113,6 +113,14 @@ int HttpServer::run() {
 		return -1;
 	}
 
+        if(apr_socket_addr_get(&localsa, APR_LOCAL, sock) != APR_SUCCESS) {
+                apr_socket_close(sock);
+                LOG4CXX_WARN(loggerHttpServer, "could not get address");
+                return -1;
+        }
+
+        port = localsa->port;
+
 	apr_pollset_create(&pollset, DEF_POLLSET_NUM, pool, 0);
 	apr_pollfd_t pfd = { pool, APR_POLL_SOCKET, APR_POLLIN, 0, { NULL }, NULL };
 	pfd.desc.s = sock;
