@@ -28,6 +28,7 @@ extern "C" {
 typedef struct msg_opts {
 	int priority;	/* msg priority from 0 (lowest) to 9 - only used with btenqueue */
 	long ttl;	/* maximum no of milliseconds before giving up */
+	long long schedtime; /* scheduled delivery time (absolute time in millis since epoch ) */
 } msg_opts_t;
 
 extern BLACKTIE_QUEUE_DLL int btenqueue(char * svc, msg_opts_t* headers, char* idata, long ilen, long flags); // COMMUNICATION

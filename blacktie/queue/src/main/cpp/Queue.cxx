@@ -81,6 +81,7 @@ int btenqueue(char * svc, msg_opts_t* headers, char* idata, long ilen, long flag
 						if (headers != NULL) {
 							priority = headers->priority;
 							timeToLive = headers->ttl;
+							message.schedtime = headers->schedtime;
 						}
 
 						LOG4CXX_TRACE(loggerQueue, (char*) "TPNOREPLY send");

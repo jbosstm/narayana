@@ -28,7 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <time.h>
 
 //static SynchronizableObject* lock = new SynchronizableObject();
 
@@ -46,14 +46,15 @@ void TestExternManageDestination::tearDown() {
 	BaseServerTest::tearDown();
 }
 
-static void send_one(int id, int pri, const char *type, const char *subtype) {
-	msg_opts_t mopts = {0, 0L};
+static void send_one(int id, int pri, long long schedtime, const char *type, const char *subtype) {
+	msg_opts_t mopts = {0, 0L, 0L};
 	char msg[16];
 	char* buf;
 	long len;
 	int cd;
 
 	mopts.priority = pri;
+	mopts.schedtime = schedtime; 
 	sprintf(msg, (char*) "%d", id);
 	len = strlen(msg) + 1;
 
@@ -65,7 +66,7 @@ static void send_one(int id, int pri, const char *type, const char *subtype) {
 
 	BT_ASSERT(tperrno == 0 && cd == 0);
 
-	btlogger("Sent %d %d", id, pri);
+	btlogger("Sent %d %d %lld", id, pri, schedtime);
 
 	tpfree(buf);
 }
@@ -111,11 +112,11 @@ static void recv_one(msg_opts_t *mopts, long len, long flags, int expect, int ex
 
 void TestExternManageDestination::test_stored_messages() {
 	int i;
-	msg_opts_t mopts = {0, 0L};
+	msg_opts_t mopts = {0, 0L, 0L};
 
 	btlogger((char*) "test_stored_messages");
 	for (i = 10; i < 20; i++)
-		send_one(i, 0, "X_OCTET", NULL);
+		send_one(i, 0, 0, "X_OCTET", NULL);
 
 	// retrieve the messages in two goes:
 	for (i = 10; i < 20; i++) {
@@ -145,18 +146,18 @@ void TestExternManageDestination::test_stored_message_priority() {
 	btlogger((char*) "test_stored_message_priority");
 	// send messages with out of order ids - the qservice should receive them in order
 	int prefix = 20;
-	msg_opts_t mopts = {0, 10L};
+	msg_opts_t mopts = {0, 10L, 0L};
 
-	send_one(prefix + 8, 1, "X_OCTET", NULL);
-	send_one(prefix + 6, 3, "X_OCTET", NULL);
-	send_one(prefix + 4, 5, "X_OCTET", NULL);
-	send_one(prefix + 2, 7, "X_OCTET", NULL);
-	send_one(prefix + 0, 9, "X_OCTET", NULL);
-	send_one(prefix + 9, 0, "X_OCTET", NULL);
-	send_one(prefix + 7, 2, "X_OCTET", NULL);
-	send_one(prefix + 5, 4, "X_OCTET", NULL);
-	send_one(prefix + 3, 6, "X_OCTET", NULL);
-	send_one(prefix + 1, 8, "X_OCTET", NULL);
+	send_one(prefix + 8, 1, 0, "X_OCTET", NULL);
+	send_one(prefix + 6, 3, 0, "X_OCTET", NULL);
+	send_one(prefix + 4, 5, 0, "X_OCTET", NULL);
+	send_one(prefix + 2, 7, 0, "X_OCTET", NULL);
+	send_one(prefix + 0, 9, 0, "X_OCTET", NULL);
+	send_one(prefix + 9, 0, 0, "X_OCTET", NULL);
+	send_one(prefix + 7, 2, 0, "X_OCTET", NULL);
+	send_one(prefix + 5, 4, 0, "X_OCTET", NULL);
+	send_one(prefix + 3, 6, 0, "X_OCTET", NULL);
+	send_one(prefix + 1, 8, 0, "X_OCTET", NULL);
 
 	int msgId = prefix;
 
@@ -184,9 +185,59 @@ void TestExternManageDestination::test_stored_message_priority() {
 	btlogger((char*) "test_stored_message_priority passed");
 }
 
+void TestExternManageDestination::test_stored_message_schedule() {
+        btlogger((char*) "test_stored_message_schedule");
+        // send messages with differing scheduled delivery times - the qservice should receive them in order
+        int prefix = 20;
+        msg_opts_t mopts = {0, 0, 0L};
+
+        long long time_now = time(NULL);
+        time_now = time_now * 1000;
+
+        // Allow 30 seconds to send all the messages
+        time_now += 30000;
+
+        send_one(prefix + 8, 0, time_now + 16000, "X_OCTET", NULL);
+        send_one(prefix + 6, 0, time_now + 12000, "X_OCTET", NULL);
+        send_one(prefix + 4, 0, time_now + 8000, "X_OCTET", NULL);
+        send_one(prefix + 2, 0, time_now + 4000, "X_OCTET", NULL);
+        send_one(prefix + 0, 0, 0, "X_OCTET", NULL);
+        send_one(prefix + 9, 0, time_now + 18000, "X_OCTET", NULL);
+        send_one(prefix + 7, 0, time_now + 14000, "X_OCTET", NULL);
+        send_one(prefix + 5, 0, time_now + 10000, "X_OCTET", NULL);
+        send_one(prefix + 3, 0, time_now + 6000, "X_OCTET", NULL);
+        send_one(prefix + 1, 0, time_now + 2000, "X_OCTET", NULL);
+
+        int msgId = prefix;
+
+        // retrieve the messages in two goes:
+
+        bool orderOK = true;
+        for (int msgCnt = 0; msgCnt < 10; msgCnt++) {
+                char* data = (char*) tpalloc((char*) "X_OCTET", NULL, 2);
+                long len = 2;
+                long flags = 0;
+                int toCheck = btdequeue((char*) "TestOne", &mopts, &data, &len, flags);
+                BT_ASSERT(tperrno == 0 && toCheck != -1);
+
+                int id = atoi(data);
+
+                btlogger((char*) "qservice iteration: %d expected: %d received: %d", msgCnt, msgId, id);
+                orderOK = orderOK & (msgId == id);
+
+                msgId += 1;
+        }
+        BT_ASSERT(orderOK);
+
+        serverdone();
+
+        btlogger((char*) "test_stored_message_schedule passed");
+}
+
+
 void TestExternManageDestination::test_btenqueue_with_txn_abort() {
 	int i;
-	msg_opts_t mopts = {0, 500L};
+	msg_opts_t mopts = {0, 500L, 0L};
 
 	btlogger((char*) "test_btenqueue_with_txn_abort");
 	BT_ASSERT(tx_open() == TX_OK);
@@ -194,7 +245,7 @@ void TestExternManageDestination::test_btenqueue_with_txn_abort() {
 
 	// enqueue messages within a transaction but then abort it
 	for (i = 40; i < 45; i++)
-		send_one(i, 0, "X_OCTET", NULL);
+		send_one(i, 0, 0, "X_OCTET", NULL);
 
 	BT_ASSERT(tx_rollback() == TX_OK);
 
@@ -209,7 +260,7 @@ void TestExternManageDestination::test_btenqueue_with_txn_abort() {
 
 void TestExternManageDestination::test_btenqueue_with_txn_commit() {
 	int i;
-	msg_opts_t mopts = {0, 0L};
+	msg_opts_t mopts = {0, 0L, 0L};
 
 	btlogger((char*) "test_btenqueue_with_txn_commit");
 	BT_ASSERT(tx_open() == TX_OK);
@@ -217,7 +268,7 @@ void TestExternManageDestination::test_btenqueue_with_txn_commit() {
 
 	// enqueue messages within a transaction and then commit it
 	for (i = 45; i < 50; i++)
-		send_one(i, 0, "X_OCTET", NULL);
+		send_one(i, 0, 0, "X_OCTET", NULL);
 
 	BT_ASSERT(tx_commit() == TX_OK);
 
@@ -231,7 +282,7 @@ void TestExternManageDestination::test_btenqueue_with_txn_commit() {
 }
 
 void TestExternManageDestination::test_btdequeue_with_txn_abort() {
-	msg_opts_t mopts = {0, 0L};
+	msg_opts_t mopts = {0, 0L, 0L};
 	int i;
 
 	btlogger((char*) "test_btdequeue_with_txn_abort");
@@ -239,7 +290,7 @@ void TestExternManageDestination::test_btdequeue_with_txn_abort() {
 
 	// enqueue messages
 	for (i = 50; i < 55; i++)
-		send_one(i, 0, "X_OCTET", NULL);
+		send_one(i, 0, 0, "X_OCTET", NULL);
 
 	// dequeue messages within a transaction and then abort it
 	BT_ASSERT(tx_begin() == TX_OK);
@@ -258,7 +309,7 @@ void TestExternManageDestination::test_btdequeue_with_txn_abort() {
 }
 
 void TestExternManageDestination::test_btdequeue_with_txn_commit() {
-	msg_opts_t mopts = {0, 0L};
+	msg_opts_t mopts = {0, 0L, 0L};
 	int i;
 
 	btlogger((char*) "test_btdequeue_with_txn_commit");
@@ -266,7 +317,7 @@ void TestExternManageDestination::test_btdequeue_with_txn_commit() {
 
 	// enqueue messages
 	for (i = 55; i < 60; i++)
-		send_one(i, 0, "X_OCTET", NULL);
+		send_one(i, 0, 0, "X_OCTET", NULL);
 
 	// and dequeue them within a transaction and then commit it
 	BT_ASSERT(tx_begin() == TX_OK);
@@ -287,17 +338,17 @@ void TestExternManageDestination::test_btdequeue_with_txn_commit() {
 
 void TestExternManageDestination::test_btenqueue_with_tptypes() {
 	int id = 0;
-	msg_opts_t mopts = {0, 0L};
+	msg_opts_t mopts = {0, 0L, 0L};
 
 	btlogger((char*) "test_btenqueue_with_tptypes");
 
-	send_one(id, 0, "X_OCTET", NULL);
+	send_one(id, 0, 0, "X_OCTET", NULL);
 	recv_one(&mopts, 2L, 0L, id, 0, "X_OCTET", NULL);
 
-	send_one(id, 0, "X_COMMON", "deposit");
+	send_one(id, 0, 0, "X_COMMON", "deposit");
 	recv_one(&mopts, 2L, 0L, id, 0, "X_COMMON", "deposit");
 
-	send_one(id, 0, "X_C_TYPE", "acct_info");
+	send_one(id, 0, 0, "X_C_TYPE", "acct_info");
 	recv_one(&mopts, 2L, 0L, id, 0, "X_C_TYPE", "acct_info");
 
 	btlogger((char*) "test_btenqueue_with_txn_commit passed");

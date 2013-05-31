@@ -74,6 +74,7 @@ void TestStompConnection::testLibStomp() {
 		clientSend.type = (char*) "X_OCTET";
 		clientSend.subtype = (char*) "";
 		clientSend.ttl = 20 * 1000;
+		clientSend.schedtime = 0;
 		clientSend.control = NULL;
 		clientSend.xid = NULL;
 		clientSend.syncRcv = 0;
@@ -120,6 +121,7 @@ void TestStompConnection::test() {
 		clientSend.type = (char*) "X_OCTET";
 		clientSend.subtype = (char*) "";
 		clientSend.ttl = 10 * 1000;
+		clientSend.schedtime = 0;
 		clientSend.control = NULL;
 		clientSend.xid = NULL;
 		clientSend.syncRcv = 0;
@@ -155,6 +157,7 @@ void TestStompConnection::test() {
 		serviceSend.type = (char*) "X_OCTET";
 		serviceSend.subtype = (char*) "";
 		serviceSend.control = NULL;
+		serviceSend.schedtime = 0;
 		serviceSend.xid = NULL;
 		serviceSend.syncRcv = 0;
 		serviceSend.serviceName = NULL;
@@ -182,6 +185,7 @@ void TestStompConnection::test() {
 		clientSend.len = 4;
 		clientSend.priority = 0;
 		clientSend.ttl = 20 * 1000;
+		clientSend.schedtime = 0;
 		clientSend.replyto = client->getReplyTo();
 		clientSend.type = (char*) "X_OCTET";
 		clientSend.subtype = (char*) "";

@@ -119,13 +119,13 @@ void TestTransport::test_basic()
 
 	MESSAGE smsgs[] = {
 		{"replyto_Q1", 101101, 99, (char*) "MESSAGE 1", (void*) NULL, (void *) "xid1",
-			0, -2L, 6, 802L, 100L,
+			0, -2L, 6, 802L, 100L, 0,
 			(char *) "type1", (char *) "subtype1", true, (char *) "serviceName1", (char *) "messageId1", false},
 		{"replyto_Q2", 101101, 99, (char*) "MESSAGE 2", (void*) NULL, (void *) NULL,
-			0, -2L, 6, 802L, 100L,
+			0, -2L, 6, 802L, 100L, 0,
 			(char *) "type2", (char *) "subtype2", true, (char *) "serviceName2", (char *) "messageId2", false},
 		{"replyto_Q3", 101101, 99, (char*) "MESSAGE 3", (void*) NULL, (void *) NULL,
-			0, -2L, 6, 802L, 100L,
+			0, -2L, 6, 802L, 100L, 0,
 			(char *) "type3", (char *) "subtype3", true, (char *) "serviceName3", (char *) "messageId3", false},
 	};
 	MESSAGE rmsgs[3];

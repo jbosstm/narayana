@@ -177,6 +177,7 @@ int send(Session* session, const char* replyTo, char* idata, long ilen,
 		int priority, long timeToLive, bool queue, char* queueName) {
 	MESSAGE message;
 	message.syncRcv = 0;
+        message.schedtime = 0;
 	return ::send(session, replyTo, idata, ilen,
 		correlationId, flags, rval, message, rcode,
 		priority, timeToLive, queue, queueName);

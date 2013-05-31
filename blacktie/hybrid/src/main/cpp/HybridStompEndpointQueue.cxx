@@ -126,6 +126,7 @@ MESSAGE HybridStompEndpointQueue::receive(long time) {
 	message.subtype = NULL;
 	message.received = false;
 	message.ttl = -1;
+        message.schedtime = -1;
 	message.serviceName = NULL;
 	message.messageId = NULL;
 
