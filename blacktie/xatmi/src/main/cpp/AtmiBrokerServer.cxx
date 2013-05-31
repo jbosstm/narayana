@@ -369,6 +369,7 @@ AtmiBrokerServer::AtmiBrokerServer() {
 				serverInfo.function_name = servers[i]->function_name;
 				serverInfo.done_function_name = servers[i]->done_function_name;
 				serverInfo.library_name = servers[i]->library_name;
+				serverInfo.xa = servers[i]->xa;
 
 				for (unsigned int j = 0; j < servers[i]->serviceVector.size(); j++) {
 					ServiceInfo service;
@@ -416,7 +417,10 @@ AtmiBrokerServer::AtmiBrokerServer() {
 			return;
 		}
 
-		if (tx_open() != TX_OK) {
+                LOG4CXX_DEBUG(loggerAtmiBrokerServer,
+                                  (char*) "server is xa: " << serverInfo.xa);
+
+		if (serverInfo.xa && tx_open() != TX_OK) {
 			setSpecific(TPE_KEY, TSS_TPESYSTEM);
 
 			LOG4CXX_ERROR(

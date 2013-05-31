@@ -103,6 +103,7 @@ typedef BLACKTIE_CORE_DLL struct _server_info {
 	char* function_name;
 	char* done_function_name;
 	char* library_name;
+	bool xa;
 
 	std::vector<ServiceInfo> serviceVector;
 }ServerInfo;

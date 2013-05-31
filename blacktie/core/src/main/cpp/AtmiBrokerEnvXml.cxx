@@ -274,6 +274,7 @@ static void XMLCALL startElement
 		server->function_name = NULL;
 		server->done_function_name = NULL;
 		server->library_name = NULL;
+		server->xa = true;
 		for(int i = 0; atts[i]; i += 2) {
 			if(atts[i] && strcmp(atts[i], "name") == 0) {
 				server->serverName = copy_value(atts[i+1]);
@@ -281,6 +282,12 @@ static void XMLCALL startElement
 				server->function_name = copy_value(atts[i+1]);
 			} else if(atts[i] && strcmp(atts[i], "done_function") == 0) {
 				server->done_function_name = copy_value(atts[i+1]);
+			} else if(atts[i] && strcmp(atts[i], "xa") == 0) {
+                                if(strcmp(atts[i+1], "true") == 0) {
+                                        server->xa = true;
+                                } else {
+                                        server->xa = false;
+                                }
 			}
 		}
 
