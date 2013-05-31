@@ -22,15 +22,13 @@ git checkout -t origin/$ORIGIN_AS_BRANCH || fatal
 git remote add upstream $UPSTREAM_GIT_URL
 git pull --rebase --ff-only upstream $UPSTREAM_AS_BRANCH
 
-while [ $? != 0 ]
-do
- for i in `git status -s | sed "s/UU \(.*\)/\1/g"`
- do
-    awk '/^<+ HEAD$/,/^=+$/{next} /^>+ /{next} 1' $i > $i.bak; mv $i.bak $i; git add $i
- done
- git rebase --continue
-done
-[ $? = 0 ] || fatal "git rebase failed"
+if [ $? != 0 ]; then
+  echo "Merge conflict needs manual intervention. Please go to '$TEMPORARY_REBASE_LOCATION/jboss-as' and resolve, then run:"
+  echo ""
+  echo "    git push origin $ORIGIN_AS_BRANCH -f"
+  echo "    rm -rf $TEMPORARY_REBASE_LOCATION"
+  exit -1
+fi
 
 git push origin $ORIGIN_AS_BRANCH -f
 rm -rf $TEMPORARY_REBASE_LOCATION
