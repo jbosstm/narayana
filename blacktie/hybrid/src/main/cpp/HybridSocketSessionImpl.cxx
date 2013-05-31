@@ -405,6 +405,19 @@ bool HybridSocketSessionImpl::send(MESSAGE& message) {
 				LOG4CXX_TRACE(logger, "Set the expires ttl: " << ttl);
 			}
 
+                        // Check to set the scheduled delivery time
+                        char* scheduled = NULL;
+                        if (message.schedtime > 0) {
+                                // TODO this must be uncommented for hornetq and needs the epoch
+                                //long long epoch = time(NULL) * (long long)1000;
+                                //long long longTTL = epoch + message.ttl;
+                                long long longSched = message.schedtime;
+                                scheduled = (char*) malloc(32); // #   define ULLONG_MAX      18446744073709551615ULL from /usr/include/limits.h
+                                sprintf(scheduled, "%lld", longSched);
+                                apr_hash_set(frame.headers, "_HQ_SCHED_DELIVERY", APR_HASH_KEY_STRING, scheduled);
+                                LOG4CXX_TRACE(logger, "Set the scheduled delivery time: " << scheduled);
+                        }
+
 			// Create a receipt ID to send
 			char * receiptId = (char*) malloc(10);
 			::sprintf(receiptId, "send-%d", receiptCounter);
@@ -419,6 +432,9 @@ bool HybridSocketSessionImpl::send(MESSAGE& message) {
 			if (ttl != NULL) {
 				free(ttl);
 			}
+                        if (scheduled != NULL) {
+                                free(scheduled);
+                        } 
 		}
 
 		if (isNonBlocking && rc == APR_TIMEUP) {

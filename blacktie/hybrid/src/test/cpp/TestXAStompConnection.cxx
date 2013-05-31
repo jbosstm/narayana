@@ -96,6 +96,7 @@ void TestXAStompConnection::test() {
 		clientSend.type = (char*) "X_OCTET";
 		clientSend.subtype = (char*) "";
 		clientSend.ttl = 120 * 1000;
+		clientSend.schedtime = 0;
 		clientSend.control = NULL;
 		long discardTxTTL = -1;
 		clientSend.xid = txx_serialize(&discardTxTTL);
@@ -128,6 +129,7 @@ void TestXAStompConnection::test() {
 		message.subtype = NULL;
 		message.received = false;
 		message.ttl = -1;
+		message.schedtime = 0;
 		message.serviceName = NULL;
 		message.messageId = NULL;
 		message.syncRcv = 1;
@@ -162,6 +164,7 @@ void TestXAStompConnection::test() {
 		message.subtype = NULL;
 		message.received = false;
 		message.ttl = -1;
+		message.schedtime = 0;
 		message.serviceName = NULL;
 		message.messageId = NULL;
 		message.syncRcv = 1;

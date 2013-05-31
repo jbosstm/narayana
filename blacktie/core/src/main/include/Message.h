@@ -31,6 +31,7 @@ struct message_t {
 	long len;
 	long flags;
 	long ttl; /* the expiration time of the message */
+	long long schedtime; /* the scheduled delivery time of the message (milliseconds since epoch)*/ 
 	char* type;
 	char* subtype;
 	bool received;

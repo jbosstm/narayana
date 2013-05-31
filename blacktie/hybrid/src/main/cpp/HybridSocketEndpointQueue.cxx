@@ -340,7 +340,7 @@ bool HybridSocketEndpointQueue::send(const char* replyto, long rval, long rcode,
 		toReturn = _send(replyto, rval, rcode, data, msglen, correlationId, flags, type, subtype);
 	} else {
 		LOG4CXX_DEBUG(logger, (char*) "socket endpoint has not connected and push message to send_queue");
-		MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, NULL, NULL, false, NULL, NULL, false };
+		MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, -1, NULL, NULL, false, NULL, NULL, false };
 		message.replyto = (char*)replyto;
 		message.rval = rval;
 		message.rcode = rcode;
@@ -381,7 +381,7 @@ void HybridSocketEndpointQueue::run() {
 						queue_lock.lock();
 						while(!send_queue.empty()) {
 							LOG4CXX_DEBUG(logger, (char*) "send message in queue");
-							MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, NULL, NULL, false, NULL, NULL, false };
+							MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, -1, NULL, NULL, false, NULL, NULL, false };
 							message = send_queue.front();
 							_send(message.replyto, message.rval,
 								 message.rcode, message.data, message.len,

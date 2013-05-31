@@ -28,7 +28,7 @@ static void messagesAvailableCallback(int bar, bool remove) { }
 
 static void* APR_THREAD_FUNC wait_cb(apr_thread_t *thd, void* data) {
 	client_ctx_t* ctx = (client_ctx_t*)data;
-	MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, NULL, NULL,
+	MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, 0, NULL, NULL,
 			false, NULL, NULL, false };
 
 	apr_thread_mutex_lock(ctx->mutex);
