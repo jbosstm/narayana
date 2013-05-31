@@ -200,7 +200,7 @@ static bool checkService(char* serverName, const char* serviceName) {
 	for(unsigned int i = 0; i < servers.size(); i ++) {
 		if(ACE_OS::strcmp(serverName, servers[i]->serverName) != 0) {
 			for(unsigned int j = 0; j < servers[i]->serviceVector.size(); j ++) {
-				if(ACE_OS::strcmp(serviceName, servers[i]->serviceVector[j].serviceName) == 0)
+				if(ACE_OS::strcmp(serviceName, servers[i]->serviceVector[j].serviceName) == 0 && ACE_OS::strcmp("topic", servers[i]->serviceVector[j].serviceType) != 0)
 					return true;
 			}
 		}
