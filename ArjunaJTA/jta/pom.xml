@@ -41,6 +41,14 @@
     </testResources>
     <plugins>
       <plugin>
+            <inherited>false</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+                <skip>false</skip>
+            </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -156,4 +164,24 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-install-plugin</artifactId>
+                      <executions>
+                          <execution>
+                              <id>default-install</id>
+                              <phase>install</phase>
+                          </execution>
+                      </executions>
+                      <inherited>false</inherited>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+  </profiles>
 </project>
