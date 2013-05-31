@@ -43,6 +43,27 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <modules>
     <module>util</module>
     <module>tx</module>
