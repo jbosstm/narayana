@@ -203,6 +203,13 @@
 											</xsd:documentation>
 										</xsd:annotation>
 									</xsd:attribute>
+									<xsd:attribute name="xa" type="xsd:boolean" use="optional" default="true" >
+                                                                                <xsd:annotation>
+                                                                                        <xsd:documentation>
+                                                                                                Whether the server is registered with XA Resource managers on startup.
+                                                                                        </xsd:documentation>
+                                                                                </xsd:annotation>
+                                                                        </xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
