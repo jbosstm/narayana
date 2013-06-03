@@ -393,7 +393,6 @@
     <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
     <version.log4j>1.2.15</version.log4j>
     <version.org.slf4j>1.6.1</version.org.slf4j>
-    <version.tanukisoft>3.2.3</version.tanukisoft>
     <version.dom4j>1.6.1</version.dom4j>
     <version.jfree>1.0.9</version.jfree>
     <version.com.h2database>1.3.168</version.com.h2database>
@@ -539,8 +538,10 @@
       <id>community</id>
       <properties>
         <version.orson>0.5.0</version.orson>
+        <version.tanukisoft>3.2.3</version.tanukisoft>
       </properties>
     </profile>
+    <profile>
             <id>findbugs</id>
             <build>
                 <pluginManagement>

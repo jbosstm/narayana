@@ -24,8 +24,11 @@
   <description>arjuna services</description>
   <packaging>jar</packaging>
   <build>
-    <sourceDirectory>classes</sourceDirectory>
+    <sourceDirectory>${sourceDirACS}</sourceDirectory>
   </build>
+  <profiles>
+  <profile>
+  <id>community</id>
   <dependencies>
     <dependency>
       <groupId>tanukisoft</groupId>
@@ -38,4 +41,9 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <sourceDirACS>classes</sourceDirACS>
+  </properties>
+  </profile>
+  </profiles>
 </project>

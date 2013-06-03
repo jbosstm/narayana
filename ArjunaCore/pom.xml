@@ -38,28 +38,33 @@
   </build>
   <modules>
     <module>arjuna</module>
-    <module>arjuna/services</module>
     <module>txoj</module>
     <module>arjunacore</module>
   </modules>
   <profiles>
-    <profile>
-        <id>release</id>
-        <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>default-install</id>
-                    <phase>install</phase>
-                  </execution>
-                </executions>
-                <inherited>false</inherited>
-              </plugin>
-            </plugins>
-        </build>
-    </profile>
-  </profiles>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-install-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>default-install</id>
+                      <phase>install</phase>
+                    </execution>
+                  </executions>
+                  <inherited>false</inherited>
+                </plugin>
+              </plugins>
+          </build>
+      </profile>
+      <profile>
+          <id>community</id>
+          <modules>
+            <module>arjuna/services</module>
+          </modules>
+      </profile>
+    </profiles>
 </project>
