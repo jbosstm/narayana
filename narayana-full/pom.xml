@@ -198,7 +198,7 @@
       <id>community</id>
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <groupId>org.jboss.jbossts.arjunacore</groupId>
       <artifactId>arjunacore-services</artifactId>
       <version>${project.version}</version>
     </dependency>
