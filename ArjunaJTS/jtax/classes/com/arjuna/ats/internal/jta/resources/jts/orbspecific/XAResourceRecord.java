@@ -37,6 +37,9 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -62,15 +65,19 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import com.arjuna.ats.jta.recovery.XARecoveryResource;
 import com.arjuna.ats.jta.resources.EndXAResource;
 import com.arjuna.ats.jta.resources.StartXAResource;
@@ -864,6 +871,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
         					o.close();
 
         					os.packBoolean(true);
+        					
+                            String name = _theXAResource.getClass().getName();
+                            os.packString(name);
 
         					os.packBytes(s.toByteArray());
         				}
@@ -937,12 +947,31 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				{
 					try
 					{
+						// Read the classname of the serialized XAResource
+						String className = os.unpackString();
+
 						byte[] b = os.unpackBytes();
 
 						ByteArrayInputStream s = new ByteArrayInputStream(b);
 						ObjectInputStream o = new ObjectInputStream(s);
 
-						_theXAResource = (XAResource) o.readObject();
+						// Give the list of deserializers a chance to deserialize the record
+						boolean deserialized = false;
+						Iterator<SerializableXAResourceDeserializer> iterator = getXAResourceDeserializers().iterator();
+						while (iterator.hasNext()) {
+							SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
+							if (proxyXAResourceDeserializer.canDeserialze(className)) {
+								_theXAResource = proxyXAResourceDeserializer.deserialze(o);
+								deserialized = true;
+                                break;
+							}
+						}
+
+						// Give it a go ourselves
+						if (!deserialized) {
+							_theXAResource = (XAResource) o.readObject();
+						}
+
 						o.close();
 
 						if (jtaxLogger.logger.isTraceEnabled()) {
@@ -1371,6 +1400,27 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return doEnd;
 	}
 
+    private List<SerializableXAResourceDeserializer> getXAResourceDeserializers() {
+        if (serializableXAResourceDeserializers != null) {
+            return serializableXAResourceDeserializers;
+        }
+        synchronized (this) {
+            if (serializableXAResourceDeserializers != null) {
+                return serializableXAResourceDeserializers;
+            }
+            serializableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
+            for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
+                if (recoveryModule instanceof XARecoveryModule) {
+                    XARecoveryModule xaRecoveryModule = (XARecoveryModule) recoveryModule;
+                    serializableXAResourceDeserializers.addAll(xaRecoveryModule.getSeriablizableXAResourceDeserializers());
+                    return serializableXAResourceDeserializers;
+                }
+            }
+
+        }
+        return serializableXAResourceDeserializers;
+    }
+	
 	protected XAResource _theXAResource;
 
 	private RecoverableXAConnection _recoveryObject;
@@ -1390,4 +1440,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private String _cachedUidStringForm;
 
 	private static boolean _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
+	
+    private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
 }
