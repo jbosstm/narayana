@@ -384,36 +384,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>emma-maven-plugin</artifactId>
-        <version>1.0-alpha-3</version>
-        <inherited>true</inherited>
-        <configuration>
-          <metadataFile>${project.build.directory}/test-classes/coverage.em</metadataFile>
-          <metrics>method:70,block:70,line:80,class:100</metrics>
-          <dataFiles>
-            <dataFile>${project.build.directory}/test-classes/coverage.em</dataFile>
-            <dataFile>${project.build.directory}/test-classes/coverage.ec</dataFile>
-          </dataFiles>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>emma</groupId>
-            <artifactId>emma</artifactId>
-            <version>2.1.5320</version>
-            <scope>system</scope>
-            <systemPath>${emma.jar.location}</systemPath>
-          </dependency>
-        </dependencies>
-      </plugin>
-	  <!-- <plugin> <inherited>true</inherited> <groupId>org.apache.maven.plugins</groupId> 
-				<artifactId>maven-enforcer-plugin</artifactId> <version>1.0-beta-1</version> 
-				<executions> <execution> <id>enforce-property</id> <goals> <goal>enforce</goal> 
-				</goals> <configuration> <rules> <requireProperty> <property>TS_EMMA_JAR</property> 
-				<message>"You must tell me where emma is located - set the -DTS_EMMA_JAR 
-				property"</message> </requireProperty> </rules> <fail>true</fail> </configuration> 
-				</execution> </executions> </plugin> -->
 	  <plugin>
 		  <groupId>org.codehaus.mojo</groupId>
 		  <artifactId>findbugs-maven-plugin</artifactId>
@@ -453,7 +423,6 @@
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
-    <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <findbugs.skip>true</findbugs.skip>
     <jvm.args.byteman>-Dorg.jboss.byteman.verbose
@@ -501,7 +470,6 @@
     <version.log4j>1.2.15</version.log4j>
     <version.org.slf4j>1.6.1</version.org.slf4j>
     <version.tanukisoft>3.2.3</version.tanukisoft>
-    <version.emma>2.0.5312</version.emma>
     <version.orson>0.5.0</version.orson>
     <version.dom4j>1.6.1</version.dom4j>
     <version.jfree>1.0.9</version.jfree>
@@ -624,5 +592,39 @@
           </plugins>
       </build>
     </profile>
+        <profile>
+            <id>codeCoverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>emma-maven-plugin</artifactId>
+                        <version>1.0-alpha-3</version>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <metadataFile>${project.build.directory}/test-classes/coverage.em</metadataFile>
+                            <metrics>method:70,block:70,line:80,class:100</metrics>
+                            <dataFiles>
+                                <dataFile>${project.build.directory}/test-classes/coverage.em</dataFile>
+                                <dataFile>${project.build.directory}/test-classes/coverage.ec</dataFile>
+                            </dataFiles>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>emma</groupId>
+                                <artifactId>emma</artifactId>
+                                <version>2.1.5320</version>
+                                <scope>system</scope>
+                                <systemPath>${emma.jar.location}</systemPath>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
+                <version.emma>2.0.5312</version.emma>
+            </properties>
+        </profile>
   </profiles>
 </project>
