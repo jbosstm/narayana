@@ -882,7 +882,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
             jtaxLogger.logger.trace("TransactionImple.delistResource ( "
-                    + xaRes + " )");
+                    + xaRes + ", " + flags + " )");
         }
 
 		if (xaRes == null)
