@@ -29,6 +29,7 @@ import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
 import org.jboss.stm.internal.PersistentContainer;
 
+import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -164,6 +165,29 @@ public class PersistentContainerUnitTest extends TestCase
             Uid u = theContainer.getUidForOriginal(proxy);
             
             assertNotNull(u);
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace();
+            
+            success = false;
+        }
+        
+        assertTrue(success);
+    }
+    
+    public void testMULTIPLE ()
+    {
+        PersistentContainer<Sample> theContainer = new PersistentContainer<Sample>(ObjectModel.MULTIPLE);
+        SampleLockable tester = new SampleLockable();
+        boolean success = true;
+        
+        try
+        {
+            Sample proxy = theContainer.enlist(tester);
+            
+            proxy.doSomeWork();
+            proxy.doSomeOtherWork();
         }
         catch (final Throwable ex)
         {

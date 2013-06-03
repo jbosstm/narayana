@@ -204,7 +204,7 @@ public class RecoverableContainer<T>
         {
             Class<?> c = member.getClass();
             
-            proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member));
+            proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member, ot));
             
             _transactionalProxies.put(member, proxy);
         }

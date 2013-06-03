@@ -32,6 +32,7 @@ import org.jboss.stm.internal.PersistentContainer;
 import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.ObjectModel;
 
 import junit.framework.TestCase;
 
@@ -153,6 +154,29 @@ public class HammerUnitTest extends TestCase
     public void testPersistentHammer ()
     {
         PersistentContainer<Sample> theContainer = new PersistentContainer<Sample>();
+        Sample obj1 = theContainer.enlist(new SampleLockable(10));
+        Sample obj2 = theContainer.enlist(new SampleLockable(10));
+        Worker worker1 = new Worker(obj1, obj2);
+        Worker worker2 = new Worker(obj1, obj2);
+        
+        worker1.start();
+        worker2.start();
+        
+        try
+        {
+            worker1.join();
+            worker2.join();
+        }
+        catch (final Throwable ex)
+        {
+        }
+        
+        assertEquals(obj1.value()+obj2.value(), 20);
+    }
+    
+    public void testPersistentHammerMULTIPLE ()
+    {
+        PersistentContainer<Sample> theContainer = new PersistentContainer<Sample>(ObjectModel.MULTIPLE);
         Sample obj1 = theContainer.enlist(new SampleLockable(10));
         Sample obj2 = theContainer.enlist(new SampleLockable(10));
         Worker worker1 = new Worker(obj1, obj2);

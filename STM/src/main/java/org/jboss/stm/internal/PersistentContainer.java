@@ -85,6 +85,13 @@ public class PersistentContainer<T> extends RecoverableContainer<T>
     {
         super(objectModel);
         
+        _type = ObjectType.ANDPERSISTENT;
+        
+        /*
+         * If ObjectModel.MULTIPLE is being used then we are sharing instances across
+         * address spaces and need a lock implementation that is not just in VM.
+         */
+        
         if (objectModel == ObjectModel.MULTIPLE)
             txojPropertyManager.getTxojEnvironmentBean().setLockStoreType(BasicPersistentLockStore.class.getName());
     }
@@ -102,6 +109,11 @@ public class PersistentContainer<T> extends RecoverableContainer<T>
         super(name, objectModel);
         
         _type = ObjectType.ANDPERSISTENT;
+        
+        /*
+         * If ObjectModel.MULTIPLE is being used then we are sharing instances across
+         * address spaces and need a lock implementation that is not just in VM.
+         */
         
         if (objectModel == ObjectModel.MULTIPLE)
             txojPropertyManager.getTxojEnvironmentBean().setLockStoreType(BasicPersistentLockStore.class.getName());
@@ -154,7 +166,7 @@ public class PersistentContainer<T> extends RecoverableContainer<T>
         {
             Class<?> c = member.getClass();
             
-            proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member, id));
+            proxy = (T) Proxy.newProxyInstance(c.getClassLoader(), c.getInterfaces(), new InvocationHandler<T>(this, member, ObjectType.ANDPERSISTENT, id));
             
             _transactionalProxies.put(member, proxy);
         }

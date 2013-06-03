@@ -100,12 +100,12 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
     {
         this(c, obj, c.objectType(), null);
     }
-    /*
+
     public InvocationHandler (RecoverableContainer<T> c, T obj, int ot)
     {
         this(c, obj, ot, null);
     }
-    */
+
     public InvocationHandler (RecoverableContainer<T> c, T obj, Uid u)
     {
         this(c, obj, ObjectType.ANDPERSISTENT, u);
@@ -349,7 +349,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
         
                         if (result != LockResult.GRANTED)
                         {
-                            throw new LockException("Could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));
+                            throw new LockException(Thread.currentThread()+" could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));
                         }
                     }
     
@@ -381,7 +381,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                 }
                 catch (final Throwable ex)
                 {
-                    System.err.println("InvocationHandler could not initialise object store for pessimistic concurrency control.");
+                    System.err.println("InvocationHandler could not initialise object store for optimistic concurrency control.");
                     
                     return false;
                 }
