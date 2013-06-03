@@ -84,7 +84,7 @@ public class BasicPersistentLockStore extends LockStore
 
         try
         {
-            return _lockStore.read_committed(u, tName);
+            return _lockStore.read_committed(u, LOCK_ROOT+tName);
         }
         catch (ObjectStoreException e)
         {
@@ -100,7 +100,7 @@ public class BasicPersistentLockStore extends LockStore
 
         try
         {
-            return _lockStore.remove_committed(u, tName);
+            return _lockStore.remove_committed(u, LOCK_ROOT+tName);
         }
         catch (ObjectStoreException e)
         {
@@ -116,7 +116,7 @@ public class BasicPersistentLockStore extends LockStore
 
         try
         {
-            return _lockStore.write_committed(u, tName, state);
+            return _lockStore.write_committed(u, LOCK_ROOT+tName, state);
         }
         catch (ObjectStoreException e)
         {
@@ -125,4 +125,10 @@ public class BasicPersistentLockStore extends LockStore
     }
 
     private ParticipantStore _lockStore;
+    
+    /*
+     * At this time we just place locks in a different sub-tree within the main object store.
+     */
+    
+    private static final String LOCK_ROOT = "LockStore";
 }
