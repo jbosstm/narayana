@@ -787,7 +787,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws IllegalStateException, javax.transaction.SystemException
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("TransactionImple.delistResource ( " + xaRes + " )");
+            jtaLogger.logger.trace("TransactionImple.delistResource ( " + xaRes + ", " + flags + " )");
         }
 
 		if (xaRes == null)
