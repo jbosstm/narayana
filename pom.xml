@@ -229,19 +229,6 @@
                   </action>
                 </pluginExecution>
                 <pluginExecution>
-                	<pluginExecutionFilter>
-                		<groupId>org.codehaus.mojo</groupId>
-                		<artifactId>findbugs-maven-plugin</artifactId>
-                		<versionRange>[2.3.3,)</versionRange>
-                		<goals>
-                			<goal>check</goal>
-                		</goals>
-                	</pluginExecutionFilter>
-                	<action>
-                		<ignore></ignore>
-                	</action>
-                </pluginExecution>
-                <pluginExecution>
                   <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
@@ -384,37 +371,6 @@
           </execution>
         </executions>
       </plugin>
-	  <plugin>
-		  <groupId>org.codehaus.mojo</groupId>
-		  <artifactId>findbugs-maven-plugin</artifactId>
-		  <configuration>
-			  <skip>${findbugs.skip}</skip>
-		  </configuration>
-		  <version>2.3.3</version>
-		  <executions>
-			  <execution>
-				  <id>findbugs</id>
-				  <phase>compile</phase>
-				  <goals>
-					  <goal>check</goal>
-				  </goals>
-			  </execution>
-		  </executions>
-	  </plugin>
-	  <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-		  <artifactId>maven-site-plugin</artifactId>
-		  <version>3.0</version>
-		  <configuration>
-			  <reportPlugins>
-				  <plugin>
-					  <groupId>org.codehaus.mojo</groupId>
-					  <artifactId>findbugs-maven-plugin</artifactId>
-					  <version>2.3.3</version>
-				  </plugin>
-			  </reportPlugins>
-		  </configuration>
-	  </plugin>
     </plugins>
   </build>
   <properties>
@@ -424,7 +380,6 @@
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <findbugs.skip>true</findbugs.skip>
     <jvm.args.byteman>-Dorg.jboss.byteman.verbose
                         -Djboss.modules.system.pkgs=org.jboss.byteman
                         -Dorg.jboss.byteman.transform.all
@@ -580,5 +535,67 @@
         <version.orson>0.5.0</version.orson>
       </properties>
     </profile>
+            <id>findbugs</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.eclipse.m2e</groupId>
+                            <artifactId>lifecycle-mapping</artifactId>
+                            <version>1.0.0</version>
+                            <configuration>
+                                <lifecycleMappingMetadata>
+                                    <pluginExecutions>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>findbugs-maven-plugin</artifactId>
+                                                <versionRange>[2.3.3,)</versionRange>
+                                                <goals>
+                                                    <goal>check</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                    </pluginExecutions>
+                                </lifecycleMappingMetadata>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.3.3</version>
+                        <executions>
+                            <execution>
+                                <id>findbugs</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.0</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>findbugs-maven-plugin</artifactId>
+                                    <version>2.3.3</version>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
   </profiles>
 </project>
