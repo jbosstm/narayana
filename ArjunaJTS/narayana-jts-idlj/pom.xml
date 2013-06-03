@@ -86,7 +86,6 @@
                 <source>../../ArjunaJTA/cdi/classes</source>
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
-                <source>../jts/services/classes</source>
                 <source>../jtax/classes</source>
               </sources>
             </configuration>
@@ -95,23 +94,11 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>com/arjuna/ats/jts/services/**/*.java</include>
-          </includes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>comp</id>
-            <phase>compile</phase>
-            <goals/>
             <configuration>
               <excludes>
                 <exclude>**/*.*</exclude>
               </excludes>
             </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -213,11 +200,13 @@
           </exclusion>
         </exclusions>
     </dependency>
+<!--
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
       <version>${version.tanukisoft}</version>
     </dependency>
+-->
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
@@ -267,5 +256,57 @@
             </plugins>
         </build>
     </profile>
+      <profile>
+          <id>community</id>
+          <build>
+            <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>../jts/services/classes</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration combine.self="override">
+          <includes>
+            <include>com/arjuna/ats/jts/services/**/*.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>comp</id>
+            <phase>compile</phase>
+            <goals/>
+            <configuration>
+              <excludes>
+                <exclude>**/*.*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+            </plugins>
+          </build>
+  <dependencies>
+    <dependency>
+      <groupId>tanukisoft</groupId>
+      <artifactId>wrapper</artifactId>
+      <version>${version.tanukisoft}</version>
+    </dependency>
+  </dependencies>
+      </profile>
   </profiles>
 </project>

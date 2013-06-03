@@ -38,7 +38,6 @@
   </build>
   <modules>
     <module>arjuna</module>
-    <module>arjuna/services</module>
     <module>txoj</module>
     <module>arjunacore</module>
   </modules>
@@ -60,6 +59,12 @@
                 </plugin>
               </plugins>
           </build>
+      </profile>
+      <profile>
+          <id>community</id>
+          <modules>
+            <module>arjuna/services</module>
+          </modules>
       </profile>
     </profiles>
 </project>
