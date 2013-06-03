@@ -374,7 +374,7 @@ public class ShadowingStore extends FileSystemStore
         }
 
         InputObjectState new_image = null;
-
+        
         if (tName != null)
         {
             int state = currentState(objUid, tName);

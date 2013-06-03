@@ -138,7 +138,6 @@ public class TwoPhaseVolatileStore extends ObjectStore
                 {
                     inst.original = inst.shadow;
                     inst.shadow = null;
-                    inst.owner = null;
                     
                     return true;
                 }
@@ -200,7 +199,7 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             synchronized (inst)
             {
-                if ((inst.original != null) && ((inst.owner == null) || (inst.owner == Thread.currentThread())))
+                if (inst.original != null)
                 {
                     return new InputObjectState(inst.original);
                 }
@@ -229,7 +228,7 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             synchronized (inst)
             {
-                if ((inst.shadow != null) && ((inst.owner == null) || (inst.owner == Thread.currentThread())))
+                if (inst.shadow != null)
                 {
                     return new InputObjectState(inst.shadow);
                 }
@@ -263,10 +262,9 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             synchronized (inst)
             {
-                if ((inst.original != null) && (inst.owner == Thread.currentThread()))
+                if (inst.original != null)
                 {
                     inst.original = null;
-                    inst.owner = null;
                     
                     return true;
                 }
@@ -296,10 +294,9 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             synchronized (inst)
             {
-                if ((inst.shadow != null) && (inst.owner == Thread.currentThread()))
+                if (inst.shadow != null)
                 {
                     inst.shadow = null;
-                    inst.owner = null;
                     
                     return true;
                 }
@@ -331,7 +328,7 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             if (inst == null)
             {
-                _stateMap.put(u,  new StateInstance(buff, null, tn, u, Thread.currentThread()));
+                _stateMap.put(u,  new StateInstance(buff, null, tn, u));
             }
             else
             {
@@ -340,7 +337,6 @@ public class TwoPhaseVolatileStore extends ObjectStore
                     if (inst.original == null)
                     {
                         inst.original = buff;
-                        inst.owner = Thread.currentThread();
                     }
                     else
                         return false;
@@ -369,7 +365,7 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
             if (inst == null)
             {
-                inst = new StateInstance(null, buff, tn, u, Thread.currentThread());
+                inst = new StateInstance(null, buff, tn, u);
                 
                 _stateMap.put(u, inst);
             }
@@ -382,7 +378,6 @@ public class TwoPhaseVolatileStore extends ObjectStore
                 else              
                 {
                     inst.shadow = buff;
-                    inst.owner = Thread.currentThread();
                 }
             }
     
@@ -402,25 +397,23 @@ public class TwoPhaseVolatileStore extends ObjectStore
     
     private class StateInstance
     {
-        public StateInstance (OutputObjectState orig, OutputObjectState sd, String tn, Uid u, Thread o)
+        public StateInstance (OutputObjectState orig, OutputObjectState sd, String tn, Uid u)
         {
             original = orig;
             shadow = sd;
             typeName = tn;
             uid = u;
-            owner = o;
         }
         
         public String toString ()
         {
-            return "StateInstance < original "+(original == null ? "empty" : "present")+", shadow "+(shadow == null ? "empty" : "present")+", "+typeName+" "+uid+", "+owner+" >";
+            return "StateInstance < original "+(original == null ? "empty" : "present")+", shadow "+(shadow == null ? "empty" : "present")+", "+typeName+" "+uid+" >";
         }
         
         public OutputObjectState original;
         public OutputObjectState shadow;
         public String typeName;
         public Uid uid;
-        public Thread owner;
     }
     
     /*
