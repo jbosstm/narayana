@@ -37,6 +37,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -62,6 +63,7 @@ import com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.RecoveryRecord;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore;
 
 /**
  * The root of the Arjuna class hierarchy. This class provides state management
@@ -1141,20 +1143,23 @@ public class StateManager
 
             participantStore = StoreManager.setupStore(rootName, sharedStatus);
         }
-        else {
+        else {           
             /*
-             * Currently we should never get here! However, since Arjuna
-             * supports a volatile (in memory) object store we will also
-             * eventually, probably through a set of native methods.
+             * TODO
+             * 
+             * Figure out how (and if) this needs to go into StoreManager.
              */
+            
+            try
+            {
+                participantStore = new TwoPhaseVolatileStore(new ObjectStoreEnvironmentBean());
+            }
+            catch (final Throwable ex)
+            {
+                tsLogger.i18NLogger.warn_StateManager_13();
 
-            tsLogger.i18NLogger.warn_StateManager_13();
-
-            throw new FatalError(tsLogger.i18NLogger.get_StateManager_14());
-
-            // participantStore = new
-            // ObjectStore(ArjunaNames.Implementation_ObjectStore_VolatileStore
-            // (), storeRoot);
+                throw new FatalError(tsLogger.i18NLogger.get_StateManager_14());
+            }
         }
     }
 
