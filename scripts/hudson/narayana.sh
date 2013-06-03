@@ -223,6 +223,7 @@ function qa_tests_once {
   ant -f run-tests.xml $target $QA_PROFILE
   ok=$?
   # archive the jtsremote test output (use a name related to the orb that was used for the tests)
+  mv $WORKSPACE/qa/TEST-*.txt $WORKSPACE/qa/testoutput 2>/dev/null
   ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
   return $ok
 }
