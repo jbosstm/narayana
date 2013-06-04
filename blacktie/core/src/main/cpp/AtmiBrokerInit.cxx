@@ -16,14 +16,16 @@
  * MA  02110-1301, USA.
  */
 
-#include "ace/ACE.h"
 #include "AtmiBrokerInit.h"
 
 #include <log4cxx/propertyconfigurator.h>
 
 #include "btlogger.h"
 
+#include "apr_general.h"
+
 static log4cxx::LoggerPtr logger;
+AtmiBrokerInit* AtmiBrokerInit::mpinstance;
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,16 +37,28 @@ BLACKTIE_CORE_DLL void init_ace() {
 }
 #endif
 
+AtmiBrokerInit* AtmiBrokerInit::instance() {
+	if(mpinstance == NULL)
+		mpinstance = new AtmiBrokerInit();
+
+	return mpinstance;
+}
+
 AtmiBrokerInit::AtmiBrokerInit() {
     btlogger_init();
 
 	logger = log4cxx::Logger::getLogger("AtmiBrokerInit");
-	LOG4CXX_DEBUG(logger, (char*) "Constructed");
-	ACE::init();
+
+        apr_status_t rc = apr_initialize();
+        if (rc != APR_SUCCESS) {
+                LOG4CXX_ERROR(logger, (char*) "Could not initialize: " << rc);
+                throw new std::exception();
+        }
+        LOG4CXX_TRACE(logger, (char*) "Initialized apr");
+
+        LOG4CXX_DEBUG(logger, (char*) "Constructed");
 }
 
 AtmiBrokerInit::~AtmiBrokerInit() {
-	// NB cannot log from ACE singleton destructors since the ACE_Object_Manager calls
-	// finalizers after log4cxx has been finalized.
-	ACE::fini();
+	apr_terminate();
 }

@@ -18,14 +18,13 @@
 #include "TestAssert.h"
 
 #include "TestClientInit.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
 
 #include "xatmi.h"
 extern "C" {
 #include "btclient.h"
 }
+
+#include <stdlib.h>
 
 void TestClientInit::test_clientinit() {
 	btlogger((char*) "TestClientInit::test_clientinit");
@@ -52,9 +51,9 @@ void TestClientInit::test_config_env() {
 	BT_ASSERT(tperrno == 0);
 
 	/* wrong envionment */
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=nosuch_conf");
+	putenv("BLACKTIE_CONFIGURATION_DIR=nosuch_conf");
 	valToTest = ::clientinit();
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=.");
+	putenv("BLACKTIE_CONFIGURATION_DIR=.");
 	BT_ASSERT(valToTest == -1);
 }
 

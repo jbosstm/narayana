@@ -22,17 +22,16 @@
 
 class BLACKTIE_CORE_DLL AtmiBrokerInit : public AtmiBrokerSingleton {
 
+public:
+    static AtmiBrokerInit* instance();
+
 private:
     AtmiBrokerInit();
     ~AtmiBrokerInit();
-	friend class ACE_Singleton<AtmiBrokerInit, ACE_Recursive_Thread_Mutex>;
+
+    static AtmiBrokerInit* mpinstance;
 };
 
-typedef ACE_Singleton<AtmiBrokerInit, ACE_Recursive_Thread_Mutex> AtmiBrokerInitSingleton;
-#if defined (ACE_HAS_EXPLICIT_TEMPLATE_INSTANTIATION)
-template class ACE_Singleton<AtmiBrokerInit, ACE_Recursive_Thread_Mutex>;
-#elif defined (ACE_HAS_TEMPLATE_INSTANTIATION_PRAGMA)
-pragma instantiate ACE_Singleton<AtmiBrokerInit, ACE_Recursive_Thread_Mutex>;
-#endif /* ACE_HAS_EXPLICIT_TEMPLATE_INSTANTIATION */
+typedef AtmiBrokerInit AtmiBrokerInitSingleton;
 
 #endif  /* _ATMIBROKERINIT_H */

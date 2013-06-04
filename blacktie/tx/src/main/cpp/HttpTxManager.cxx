@@ -17,11 +17,12 @@
  */
 #include "HttpTxManager.h"
 #include "HttpControl.h"
+#include "AtmiBrokerEnv.h"
 
-#include "ace/OS_NS_stdio.h"
-#include "ace/ACE.h"
-#include "ace/OS_NS_string.h"
 #include "apr_thread_proc.h"
+#include "apr_portable.h"
+#include "apr_strings.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,7 +46,7 @@ static char * parse_wid(HttpClient &wc, const char *s) {
 	char *wid = 0;
 
 	if (b && e && (b += sizeof (XIDPAT) - 1) < e) {
-		wid = ACE::strndup(b, e - b);
+		wid = strndup(b, e - b);
 	}
 
 	return wid;
@@ -56,6 +57,7 @@ HttpTxManager::HttpTxManager(const char *txmUrl, const char *resUrl) :
 	FTRACE(httptxlogger, "ENTER HttpTxManager constructor");
 	_txmUrl = strdup(txmUrl);
 	_resUrl = strdup(resUrl);
+	_ws = NULL;
 	int rc = apr_pool_create(&_pool, NULL);
 	if (rc != APR_SUCCESS) {
 		LOG4CXX_WARN(httptxlogger, "can not create pool");
@@ -90,7 +92,7 @@ TxManager* HttpTxManager::create(const char *txmUrl, const char *resUrl) {
 int HttpTxManager::associate_transaction(char* txn, long ttl) {
 	FTRACE(httptxlogger, "ENTER" << txn);
 
-	TxControl *tx = new HttpControl(txn, ttl, ACE_OS::thr_self());
+	TxControl *tx = new HttpControl(txn, ttl, apr_os_thread_current());
 	int rc = tx_resume(tx, TMJOIN);
 
 	if (rc != XA_OK)
@@ -110,7 +112,7 @@ void HttpTxManager::release_control(void *ctrl) {
 }
 
 TxControl* HttpTxManager::create_tx(long timeout) {
-	HttpControl* tx = new HttpControl(timeout, ACE_OS::thr_self());
+	HttpControl* tx = new HttpControl(timeout, apr_os_thread_current());
 
 	if (tx->start(_txmUrl) != TX_OK) {
 		LOG4CXX_INFO(httptxlogger, "Unable to start a new txn on URI ");
@@ -139,14 +141,14 @@ char *HttpTxManager::enlist(XAWrapper* resource, TxControl *tx, const char * xid
     	const char *fmt = "Link: <http://%s:%d/xid/%s/terminate>;rel=\"%s\",<http://%s:%d/xid/%s/status>;rel=\"%s\"";
     	http_request_info ri;
 
-		(void) ACE_OS::snprintf(hdr, sizeof (hdr), fmt, host, port, xid,
+		(void) apr_snprintf(hdr, sizeof (hdr), fmt, host, port, xid,
 			HttpControl::PARTICIPANT_TERMINATOR,
 			host, port, xid,
 			HttpControl::PARTICIPANT_RESOURCE);
 
 		// TODO HACK latest wildfly no longer parses the Link header
 		// correctly (when JBTM-1920 is resolved remove the hack)
-		(void) ACE_OS::snprintf(body, BUFSZ, "%s", hdr);
+		(void) apr_snprintf(body, BUFSZ, "%s", hdr);
 
                 if (_wc.send(_pool, &ri, "POST", enlistUrl,
                         HttpControl::POST_MEDIA_TYPE,
@@ -192,7 +194,7 @@ bool HttpTxManager::recover(XAWrapper *resource)
     	const char *fmt = "Link: <http://%s:%d/xid/%s/terminate>;rel=\"%s\",<http://%s:%d/xid/%s/status>;rel=\"%s\"";
    	http_request_info ri;
 
-	(void) ACE_OS::snprintf(hdr, sizeof (hdr), fmt, host, port, xid,
+	(void) apr_snprintf(hdr, sizeof (hdr), fmt, host, port, xid,
 		HttpControl::PARTICIPANT_TERMINATOR,
 		host, port, xid,
 		HttpControl::PARTICIPANT_RESOURCE);
@@ -284,7 +286,7 @@ static int http_printf(HttpClient &wc, http_conn_ctx *conn, const char *fmt, ...
 	va_list ap;
 
 	va_start(ap, fmt);
-	len = ACE_OS::vsnprintf(buf, sizeof(buf), fmt, ap);
+	len = apr_vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
 	return wc.write(conn, buf, (size_t)len);

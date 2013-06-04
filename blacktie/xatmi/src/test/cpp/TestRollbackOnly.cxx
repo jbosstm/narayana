@@ -17,8 +17,6 @@
  */
 #include "TestAssert.h"
 
-//#include "ace/OS_NS_unistd.h"
-
 #include "ThreadLocalStorage.h"
 #include "BaseServerTest.h"
 #include "XATMITestSuite.h"

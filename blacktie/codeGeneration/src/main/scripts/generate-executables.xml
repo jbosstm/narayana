@@ -234,6 +234,7 @@
 
 			<libset libs="stdc++ pthread rt" if="is-gcc" />
 			<libset libs="apr-1 aprutil-1 pthread" if="is-xlC" />
+						<libset libs="ws2_32" if="is-msvc" />
 		</cc>
 		<available file="${output.file}.dll.manifest" property="manifest.towrap" />
 		<antcall target="_compile-msvc" />

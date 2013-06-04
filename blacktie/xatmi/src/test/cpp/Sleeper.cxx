@@ -17,11 +17,11 @@
  */
 
 #include "Sleeper.h"
-#include "ace/OS_NS_unistd.h"
 #include "btlogger.h"
+#include <apr_time.h>
 
 void sleeper(int timeout) {
 	btlogger((char*) "sleeper, sleeping for %d seconds", timeout);
-	ACE_OS::sleep(timeout);
+	apr_sleep(apr_time_from_sec(timeout));
 	btlogger((char*) "sleeper, slept for %d seconds", timeout);
 }

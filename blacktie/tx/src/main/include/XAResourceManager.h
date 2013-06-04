@@ -18,9 +18,7 @@
 #ifndef _XARESOURCEMANAGER_H
 #define _XARESOURCEMANAGER_H
 
-#include "CorbaConnection.h"
 #include "XAWrapper.h"
-#include "XAResourceAdaptorImpl.h"
 #include "SynchronizableObject.h"
 
 class XAResourceAdaptorImpl;
@@ -36,8 +34,8 @@ bool operator< (XID const& xid1, XID const& xid2);
 class BLACKTIE_TX_DLL XAResourceManager : public virtual XABranchNotification
 {
 public:
-	XAResourceManager(CORBA_CONNECTION *, const char *, const char *, const char *,
-		CORBA::Long, long, struct xa_switch_t *, XARecoveryLog& log, PortableServer::POA_ptr poa) throw (RMException);
+	XAResourceManager(const char *, const char *, const char *,
+		long, long, struct xa_switch_t *, XARecoveryLog& log) throw (RMException);
 	virtual ~XAResourceManager();
 
 	int xa_start (XID *, long);
@@ -48,7 +46,7 @@ public:
 	void deactivate_objects(bool deactivate); //TODO #ifdef TEST
 
 	// return the resource id
-	CORBA::Long rmid(void) {return rmid_;};
+	long rmid(void) {return rmid_;};
 	//void notify_error(XID *, int, bool);
 	//void set_complete(XID*);
 	void notify_error(XAWrapper*, int, bool);
@@ -60,17 +58,14 @@ public:
 	static XID gen_xid(long rmid, long sid, XID &gid);
 
 private:
-//	typedef std::map<XID, XAResourceAdaptorImpl *, xid_cmp> XABranchMap;
 	typedef std::map<XID, XAWrapper *> XABranchMap;
 	XABranchMap branches_;
 	SynchronizableObject* branchLock;
 
-	PortableServer::POA_ptr poa_;
-	CORBA_CONNECTION* connection_;
 	const char *name_;
 	const char *openString_;
 	const char *closeString_;
-	CORBA::Long rmid_;
+	long rmid_;
 	long sid_;
 	struct xa_switch_t * xa_switch_;
 	XARecoveryLog& rclog_;

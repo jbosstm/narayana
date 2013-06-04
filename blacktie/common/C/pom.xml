@@ -447,12 +447,5 @@
             <artifactId>log4cxx</artifactId>
             <version>902683</version>
         </dependency>
-        <dependency>
-            <groupId>ace.contrib</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>ace</artifactId>
-            <version>6.0.1</version>
-            <type>zip</type>
-        </dependency>
     </dependencies>
 </project>

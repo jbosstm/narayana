@@ -33,7 +33,6 @@ static Connection* createConnection(char* connectionName,
 struct connection_factory_t connectionFactory = { createConnection };
 
 void TestConnection::test() {
-	init_ace();
 
 	BT_ASSERT(connectionFactory.create_connection((char*) "foo", foo) == NULL);
 }

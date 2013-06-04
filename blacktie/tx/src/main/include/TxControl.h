@@ -20,6 +20,7 @@
 
 #include <map>
 #include "txi.h"
+#include <apr_portable.h>
 
 namespace atmibroker {
 	namespace tx {
@@ -30,7 +31,7 @@ namespace atmibroker {
  */
 class BLACKTIE_TX_DLL TxControl {
 public:
-	TxControl(long timeout, int tid);
+	TxControl(long timeout, apr_os_thread_t tid);
 	virtual ~TxControl();
 
 	virtual int rollback_only() = 0;
@@ -50,7 +51,7 @@ public:
 	 */
 	long ttl();
 	bool isOriginator();	
-	int thr_id() {return _tid;}
+	apr_os_thread_t thr_id() {return _tid;}
 
 	// return a list of outstanding xatmi call descriptors associated with this tx
 	std::map<int, int (*)(int)> &get_cds() {return _cds;}
@@ -69,7 +70,7 @@ private:
 	int end(bool commit, bool reportHeuristics);
 
 	long _ctime;	// creation time in seconds (since 1970)
-	int _tid;	// ACE thread id
+	apr_os_thread_t _tid;	// apr thread id
 	std::map<int, int (*)(int)> _cds;  // xatmi outstanding tpacall descriptors
 };
 } //	namespace tx

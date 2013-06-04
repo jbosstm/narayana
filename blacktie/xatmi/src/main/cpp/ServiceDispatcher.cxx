@@ -22,9 +22,7 @@
 #include "AtmiBrokerMem.h"
 #include "txx.h"
 
-#include "tao/ORB.h"
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
+#include <stdlib.h>
 
 log4cxx::LoggerPtr ServiceDispatcher::logger(log4cxx::Logger::getLogger(
 		"ServiceDispatcher"));
@@ -51,6 +49,7 @@ ServiceDispatcher::ServiceDispatcher(AtmiBrokerServer* server,
 	this->func = func;
 	this->isPause = isPause;
 	session = NULL;
+	thread = NULL;
 	stop = false;
 	this->timeout = (long) (mqConfig.destinationTimeout * 1000000);
 	this->counter = 0;
@@ -156,13 +155,13 @@ int ServiceDispatcher::svc(void) {
 			destination->ack(message);
 			try {
 				counter += 1;
-				ACE_Time_Value start = ACE_OS::gettimeofday();
+				apr_time_t start = apr_time_now();
 				LOG4CXX_DEBUG(logger, (char*) "calling onmessage");
 				onMessage(message);
 				LOG4CXX_DEBUG(logger, (char*) "called onmessage");
-				ACE_Time_Value end = ACE_OS::gettimeofday();
-				ACE_Time_Value tv = end - start;
-				unsigned long responseTime = tv.msec();
+				apr_time_t end = apr_time_now();
+				apr_time_t tv = end - start;
+				unsigned long responseTime = apr_time_as_msec(tv);
 
 				LOG4CXX_DEBUG(logger, (char*) "response time is "
 						<< responseTime);
@@ -181,13 +180,6 @@ int ServiceDispatcher::svc(void) {
 				LOG4CXX_DEBUG(logger, (char*) "min:" << minResponseTime
 						<< (char*) " avg:" << avgResponseTime
 						<< (char*) " max:" << maxResponseTime);
-			} catch (const CORBA::BAD_PARAM& ex) {
-				LOG4CXX_WARN(logger, (char*) "Service dispatcher BAD_PARAM: "
-						<< ex._name());
-			} catch (const CORBA::SystemException& ex) {
-				LOG4CXX_WARN(logger,
-						(char*) "Service dispatcher SystemException: "
-								<< ex._name());
 			} catch (...) {
 				LOG4CXX_ERROR(
 						logger,
@@ -214,7 +206,7 @@ int ServiceDispatcher::svc(void) {
 				while (!stop && !destination->connected()) {
 					LOG4CXX_DEBUG(logger, (char*) "sleeper, sleeping for "
 							<< timeout << " seconds");
-					ACE_OS::sleep(timeout);
+					apr_sleep(apr_time_from_sec(timeout));
 					LOG4CXX_DEBUG(logger, (char*) "sleeper, slept for "
 							<< timeout << " seconds");
 					stopLock->lock();
@@ -335,7 +327,6 @@ void ServiceDispatcher::onMessage(MESSAGE message) {
 
 	// HANDLE THE CLIENT INVOCATION
 	if (message.control != NULL && strcmp((char*) message.control, "null") != 0) {
-		try {
 			if (txx_associate_serialized((char*) message.control, message.ttl)
 					!= XA_OK) {
 				LOG4CXX_ERROR(logger, "Unable to handle control");
@@ -343,10 +334,6 @@ void ServiceDispatcher::onMessage(MESSAGE message) {
 			} else {
 				tpsvcinfo.flags = (tpsvcinfo.flags | TPTRAN);
 			}
-		} catch (const CORBA::SystemException& ex) {
-			LOG4CXX_ERROR(logger, "Unable to handle control: " << ex._name());
-			setSpecific(TPE_KEY, TSS_TPESYSTEM);
-		}
 	}
 
 	if (tperrno == 0) {
@@ -432,3 +419,10 @@ void ServiceDispatcher::getResponseTime(unsigned long* min, unsigned long* avg,
 SynchronizableObject* ServiceDispatcher::getReconnect() {
 	return reconnect;
 }
+
+int ServiceDispatcher::wait() {
+	apr_status_t rv;
+	apr_thread_join(&rv, thread);
+	return rv;
+}
+

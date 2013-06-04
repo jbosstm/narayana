@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "ace/ACE.h"
 #include "log4cxx/logger.h"
 #include "apr_strings.h"
 

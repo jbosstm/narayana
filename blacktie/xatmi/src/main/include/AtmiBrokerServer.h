@@ -21,12 +21,6 @@
 #include <iostream>
 #include <vector>
 
-#ifdef TAO_COMP
-#include "AtmiBrokerS.h"
-#endif
-#include "CorbaConnection.h"
-#include "Connection.h"
-
 #include "xatmi.h"
 #include "AtmiBrokerEnvXml.h"
 #include "btserver.h"
@@ -34,6 +28,7 @@
 #include "Destination.h"
 #include "ServiceDispatcher.h"
 #include "SynchronizableObject.h"
+#include "apr_pools.h"
 
 class ServiceDispatcher;
 
@@ -81,6 +76,8 @@ private:
 	ServerInfo serverInfo;
 	SynchronizableObject* finish;
 	bool isPause;
+
+	apr_pool_t* mp;
 
 	std::vector<ServiceDispatcher*> serviceDispatchersToDelete;
 	std::vector<SynchronizableObject*> reconnectsToDelete;

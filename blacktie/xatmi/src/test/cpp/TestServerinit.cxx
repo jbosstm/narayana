@@ -17,11 +17,10 @@
  */
 #include "TestAssert.h"
 #include "TestServerinit.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
 #include "AtmiBrokerServer.h"
 #include "btclient.h"
+
+#include <stdlib.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -71,9 +70,9 @@ void TestServerinit::test_config_env() {
 
 	clientdone(0);
 
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=nosuch_conf");
+	putenv("BLACKTIE_CONFIGURATION_DIR=nosuch_conf");
 	result = serverinit(argc, argv);
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=.");
+	putenv("BLACKTIE_CONFIGURATION_DIR=.");
 	BT_ASSERT(result == -1);
 }
 

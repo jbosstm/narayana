@@ -17,20 +17,13 @@
  */
 #include "ThreadLocalStorage.h"
 #include "XAResourceManagerFactory.h"
-#include "OrbManagement.h"
-#include "OTSTxManager.h"
 #include "HttpTxManager.h"
 #include "AtmiBrokerEnv.h"
-#include "ace/Thread.h"
 #include "txAvoid.h"
 #include "SynchronizableObject.h"
 
 #define TX_GUARD(cond) {	\
 	FTRACE(txmlogger, "ENTER"); \
-	if (isOTS() && _connection == NULL) { \
-		LOG4CXX_DEBUG(txmlogger, (char*) "Cannot connect to an ORB"); \
-		return TX_ERROR; \
-	} \
 	if (!cond) {  \
 		LOG4CXX_WARN(txmlogger, (char*) "protocol error: open: " << _isOpen << " transaction: " << getSpecific(TSS_KEY));   \
 		return TX_PROTOCOL_ERROR;   \
@@ -57,13 +50,9 @@ TxManager *TxManager::get_instance()
 			LOG4CXX_DEBUG(txmlogger,
 				(char*) "Using RTS for transaction support with manager endpoint: " <<
 				txnConfig.mgrEP << " and participant endpoint: " << txnConfig.resourceEP);
-		} else if (orbConfig.transactionFactoryName == NULL) {
-			LOG4CXX_WARN(txmlogger, (char*) "Please make sure Transaction factory name is set in btconfig,xml");
 		} else {
-			_instance = OTSTxManager::create(orbConfig.transactionFactoryName);
-			LOG4CXX_DEBUG(txmlogger, (char*) "Using OTS for transaction support");
+			LOG4CXX_FATAL(txmlogger, (char*) "Please make sure TXN_CFG is set in btconfig,xml");
 		}
-
 		AtmiBrokerEnv::discard_instance();
 	}
 	globLock.unlock();
@@ -85,7 +74,7 @@ void TxManager::discard_instance()
 }
 
 TxManager::TxManager() : _isOpen(false), _whenReturn(TX_COMMIT_DECISION_LOGGED),
-	_controlMode(TX_UNCHAINED), _timeout (0l), _lock(NULL), _connection(NULL)
+	_controlMode(TX_UNCHAINED), _timeout (0l), _lock(NULL)
 {
 	FTRACE(txmlogger, "ENTER: " << this);
 //	AtmiBrokerEnv::get_instance();
@@ -371,7 +360,7 @@ int TxManager::rm_open(void)
 {
 	FTRACE(txmlogger, "ENTER");
 	try {
-		_xaRMFac.createRMs(_connection);
+		_xaRMFac.createRMs();
 		return 0;
 	} catch (RMException& ex) {
 		LOG4CXX_WARN(txmlogger, (char*) "failed to load RMs: " << ex.what());
@@ -433,9 +422,6 @@ int TxManager::tx_resume(TxControl *tx, int flags, int altflags)
 			LOG4CXX_WARN(txmlogger, (char *) "Resume tx: error: " << rc);
 		}
 	
-	} catch (PortableServer::POA::ObjectAlreadyActive) {
-		// THIS COMES FROM XAResourceManager.cxx:204 poa_->activate_object_with_id(objId, ra);
-		LOG4CXX_WARN(txmlogger, (char *) "Resume tx: ObjectAlreadyActive");
 	} catch (...) {
 		LOG4CXX_WARN(txmlogger, (char *) "Resume tx: generic exception");
 	}
@@ -558,13 +544,6 @@ bool TxManager::isCdTransactional(int cd)
 	return false;
 }
 
-CORBA::ORB_ptr TxManager::getOrb() {
-	if(isOTS())
-		return _connection->orbRef;
-	else
-		return NULL;
-}
-
 char * TxManager::current_to_string(long* ttl) {
 	return TxManager::get_instance()->get_current(ttl);
 }
@@ -573,13 +552,6 @@ int TxManager::guard(bool cond) {
 	TX_GUARD(cond);
 	return TX_OK;
 }
-
-#if defined (ACE_HAS_EXPLICIT_TEMPLATE_INSTANTIATION)
-template class ACE_Singleton<TxManager, ACE_Null_Mutex>;
-#elif defined (ACE_HAS_TEMPLATE_INSTANTIATION_PRAGMA)
-pragma instantiate ACE_Singleton<TxManager, ACE_Null_Mutex>;
-#endif /* ACE_HAS_EXPLICIT_TEMPLATE_INSTANTIATION */
-
 
 } //	namespace tx
 } //namespace atmibroker

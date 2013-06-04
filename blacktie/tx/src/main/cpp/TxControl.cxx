@@ -20,9 +20,6 @@
 #include "TxControl.h"
 #include "TxManager.h"
 
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
-
 #define TX_GUARD(msg, expect) { \
 	FTRACE(txclogger, "ENTER"); \
 	if (!isActive(msg, expect)) {   \
@@ -34,10 +31,10 @@ namespace atmibroker {
 
 log4cxx::LoggerPtr txclogger(log4cxx::Logger::getLogger("TxControl"));
 
-TxControl::TxControl(long timeout, int tid) : _rbonly(false), _ttl(timeout), _tid(tid) {
+TxControl::TxControl(long timeout, apr_os_thread_t tid) : _rbonly(false), _ttl(timeout), _tid(tid) {
 	FTRACE(txclogger, "ENTER new TXCONTROL: " << this);
 
-	_ctime = (long) (ACE_OS::gettimeofday().sec());
+	_ctime = (long) (apr_time_sec(apr_time_now()));
 
 	if (timeout <= 0l)
 		_ttl = -1l;
@@ -87,12 +84,12 @@ int TxControl::rollback()
  */
 long TxControl::ttl()
 {
-	FTRACE(txclogger, "ENTER ttl=" << _ttl << " ctime=" << _ctime << " now=" << ACE_OS::gettimeofday().sec());
+	FTRACE(txclogger, "ENTER ttl=" << _ttl << " ctime=" << _ctime << " now=" << apr_time_sec(apr_time_now()));
 
 	if (_ttl == -1l)
 		return -1l;
 
-	long ttl = _ttl - (long) (ACE_OS::gettimeofday().sec()) + _ctime;
+	long ttl = _ttl - (long) (apr_time_sec(apr_time_now())) + _ctime;
 
 	LOG4CXX_TRACE(txclogger, (char*) "> ttl=" << ttl);
 

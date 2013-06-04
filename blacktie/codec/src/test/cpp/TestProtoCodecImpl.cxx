@@ -25,11 +25,11 @@
 
 #include "malloc.h"
 #include "person.pb.h"
-
+#include <fstream>
+using namespace std;
 using namespace org::jboss::blacktie::proto;
 
 void TestProtoCodecImpl::setUp() {
-	init_ace();
 	AtmiBrokerEnv::get_instance();
 
 	// Perform global set up
