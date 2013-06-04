@@ -27,6 +27,10 @@
 #include "AtmiBrokerEnvXml.h"
 #include "AtmiBrokerSignalHandler.h"
 
+#ifdef WIN32
+extern BLACKTIE_CORE_DLL char* strndup(const char*, size_t);
+#endif
+
 class BLACKTIE_CORE_DLL AtmiBrokerEnv {
 
 public:

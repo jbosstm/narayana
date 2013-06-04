@@ -251,12 +251,6 @@
 			<dependency>
 				<groupId>org.jboss.narayana.blacktie</groupId>
 				<classifier>${bpa}</classifier>
-				<artifactId>blacktie-idl-tao</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.narayana.blacktie</groupId>
-				<classifier>${bpa}</classifier>
 				<artifactId>blacktie-tx-test-utilities</artifactId>
 				<version>${project.version}</version>
 			</dependency>

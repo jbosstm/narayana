@@ -21,16 +21,8 @@
 #include "AtmiBrokerEnv.h"
 #include "TxControl.h"
 
-#include "ace/DLL.h"
-#include "ace/ACE.h"
-#ifdef ACE_HAS_POSITION_INDEPENDENT_POINTERS
-#include "ace/Based_Pointer_Repository.h"
-#endif /* ACE_HAS_POSITION_INDEPENDENT_POINTERS */
-#include "ace/Malloc_T.h"
-#include "ace/MMAP_Memory_Pool.h"
-#include "ace/PI_Malloc.h"
-#include "ace/Null_Mutex.h"
-#include "ace/Based_Pointer_T.h"
+#include <stddef.h>
+#include <stdlib.h>
 
 log4cxx::LoggerPtr xarflogger(log4cxx::Logger::getLogger("TxXAResourceManagerFactory"));
 
@@ -102,7 +94,7 @@ static int _rmiter(ResourceManagerMap& rms, int (*func)(XAResourceManager *, XID
 	return XA_OK;
 }
 
-XAResourceManagerFactory::XAResourceManagerFactory() : poa_(0)
+XAResourceManagerFactory::XAResourceManagerFactory() 
 {
 	FTRACE(xarflogger, "ENTER");
 /*
@@ -119,10 +111,6 @@ XAResourceManagerFactory::~XAResourceManagerFactory()
 	FTRACE(xarflogger, "ENTER");
 	destroyRMs();
 
-	if (!CORBA::is_nil(poa_)) {
-		CORBA::release(poa_);
-		poa_ = NULL;
-	}
 }
 
 XAResourceManager * XAResourceManagerFactory::findRM(long id)
@@ -177,7 +165,7 @@ void XAResourceManagerFactory::run_recovery()
 	 */
 	for (rrec_t* rrp = rclog_.find_next(0); rrp; rrp = rclog_.find_next(rrp)) {
 		// the first long in the XID data contains the RM id
-		long rmid = ACE_OS::atol((char *) ((rrp->xid).data + (rrp->xid).gtrid_length));
+		long rmid = atol((char *) ((rrp->xid).data + (rrp->xid).gtrid_length));
 		XAResourceManager *rm = findRM(rmid);
 
 		if (rm != NULL) {
@@ -189,15 +177,12 @@ void XAResourceManagerFactory::run_recovery()
 	}
 }
 
-void XAResourceManagerFactory::createRMs(CORBA_CONNECTION * connection) throw (RMException)
+void XAResourceManagerFactory::createRMs() throw (RMException)
 {
 	FTRACE(xarflogger, "ENTER rmsize: " << rms_.size());
 
 	if (!rclog_.isOpen())
 		throw new RMException("Could not load recovery log", EINVAL);
-
-	if (connection != NULL && CORBA::is_nil(poa_))
-		create_poa(connection);
 
 	if (rms_.size() == 0) {
 		AtmiBrokerEnv::get_instance();
@@ -217,7 +202,7 @@ void XAResourceManagerFactory::createRMs(CORBA_CONNECTION * connection) throw (R
 				<< (char *) " xaLibName: " << rmp->xalib
 			);
 
-			(void) createRM(connection, rmp);
+			(void) createRM(rmp);
 
 			rmp = rmp->next;
 		}
@@ -237,7 +222,6 @@ void XAResourceManagerFactory::createRMs(CORBA_CONNECTION * connection) throw (R
  * (a branch is created when start on the RM is called).
  */
 XAResourceManager * XAResourceManagerFactory::createRM(
-	CORBA_CONNECTION * connection,
 	xarm_config_t *rmp)
 	throw (RMException)
 {
@@ -283,8 +267,8 @@ XAResourceManager * XAResourceManagerFactory::createRM(
 
 	LOG4CXX_TRACE(xarflogger,  (char *) "creating xa rm: " << xa_switch->name);
 	XAResourceManager * a = new XAResourceManager(
-		connection, rmp->resourceName, rmp->openString, rmp->closeString, rmp->resourceMgrId, ACE_OS::atol((char *) serverId),
-		xa_switch, rclog_, poa_);
+		rmp->resourceName, rmp->openString, rmp->closeString, rmp->resourceMgrId, atol((char *) serverId),
+		xa_switch, rclog_);
 
 	LOG4CXX_TRACE(xarflogger,  (char *) "created xarm");
 
@@ -294,52 +278,3 @@ XAResourceManager * XAResourceManagerFactory::createRM(
 	return a;
 }
 
-// All resource managers share the same POA.
-void XAResourceManagerFactory::create_poa(CORBA_CONNECTION * connection) throw (RMException) {
-	FTRACE(xarflogger, "ENTER");
-
-	AtmiBrokerEnv* env = AtmiBrokerEnv::get_instance();
-	const char* poaname = env->getenv("BLACKTIE_SERVER_NAME", "ATMI_RM_POA");
-	AtmiBrokerEnv::discard_instance();
-	PortableServer::POAManager_ptr poa_manager = (PortableServer::POAManager_ptr) connection->root_poa_manager;
-	PortableServer::POA_ptr parent_poa = (PortableServer::POA_ptr) connection->root_poa;
-	PortableServer::LifespanPolicy_var p1 = parent_poa->create_lifespan_policy(PortableServer::PERSISTENT);
-	PortableServer::IdAssignmentPolicy_var p2 = parent_poa->create_id_assignment_policy(PortableServer::USER_ID);
-
-	CORBA::PolicyList policies;
-	policies.length(2); // set number of policies to 1 to disable USER_ID policy
-
-	// the servant object references must survive failure of the ORB in order to support recover of 
-	// transaction branches (the default orb policy for servants is transient)
-	policies[0] = PortableServer::LifespanPolicy::_duplicate(p1);
-	policies[1] = PortableServer::IdAssignmentPolicy::_duplicate(p2);
-
-	// create a the POA
-	try {
-		this->poa_ = parent_poa->create_POA(poaname, poa_manager, policies);
-		p1->destroy(); p2->destroy();
-	} catch (PortableServer::POA::AdapterAlreadyExists &) {
-		p1->destroy(); p2->destroy();
-		try {
-			this->poa_ = parent_poa->find_POA(poaname, false);
-		} catch (const PortableServer::POA::AdapterNonExistent &) {
-			LOG4CXX_ERROR(xarflogger, (char *) "Duplicate RM POA with name " << poaname <<
-				" (check that the server was started with a unique name using the -n <name> flag)");
-			RMException ex("Duplicate RM POA", EINVAL);
-			throw ex;
-		}
-	} catch (PortableServer::POA::InvalidPolicy &) {
-		p1->destroy(); p2->destroy();
-		LOG4CXX_WARN(xarflogger, (char *) "Invalid RM POA policy");
-		RMException ex("Invalid RM POA policy", EINVAL);
-		throw ex;
-	}
-
-	// take the POA out of its holding state
-	LOG4CXX_TRACE(xarflogger,  (char *) "activating RM POA");
-
-	PortableServer::POAManager_var mgr = this->poa_->the_POAManager();
-	mgr->activate();
-
-	FTRACE(xarflogger, ">");
-}

@@ -19,14 +19,11 @@
 #include "btclient.h"
 
 #include <stdlib.h>
+#include <vector>
 
 #include "xatmi.h"
 #include "btlogger.h"
 #include "string.h"
-
-#include "ace/Thread_Manager.h"
-#include "ace/Thread.h"
-#include "ace/Synch.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -34,11 +31,18 @@
 
 #ifndef WIN32
 #include "tx.h"
+#include <unistd.h>
 #endif
+
+#include "apr-1/apr_thread_mutex.h"
+#include "apr-1/apr_thread_proc.h"
+#include "apr-1/apr_portable.h"
 
 #ifdef WIN32
 #include "atmiBrokerTxMacro.h"
 #define TX_OK			  0   /* normal execution */
+#define SIGALRM 1
+typedef SSIZE_T ssize_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,7 +55,7 @@ extern BLACKTIE_TX_DLL int tx_open(void);
 #endif
 #endif
 
-static ACE_Mutex mutex_;
+static apr_thread_mutex_t* mutex_;
 const char *MSG1 = "CLIENT REQUEST		";
 const char *MSG2 = "PAUSE - CLIENT REQUEST";
 //static char huge_buf[0x100000]; 
@@ -207,32 +211,38 @@ static int do_tpcall(thr_arg_t *args) {
 }
 
 // thread entry point
-static void* work(void *args)
+static void* APR_THREAD_FUNC work(apr_thread_t * thread, void *args)
 {
 	(void) do_tpcall((thr_arg_t *) args);
 	return args;
 }
 
-static void signal_thread(ACE_thread_t& tid, int signum)
+static void signal_thread(apr_thread_t* tid, int signum)
 {
 	btlogger((char*) "sleep 2 secs before sending signal %d to thread %d", signum, tid);
 	// allow enough time for the thread to perform a tpcall request
-	ACE_OS::sleep(2);
+	apr_sleep(apr_time_from_sec(2));
 	btlogger((char*) "sending signal %d to thread %d", signum, tid);
-	int rv1 = ACE_Thread::kill (tid, signum);
+#ifndef WIN32
+	apr_os_thread_t* osthd;
+	apr_os_thread_get(&osthd, tid);
+	int rv1 = pthread_kill (*osthd, signum);
 	btlogger((char*) "thread kill returned %d", rv1);
+#endif
 	// sending a signal to the process doesn't really test TPSIGRSTRT since the
 	// signal is unlikely to be sent to the thread that issued the tpcall with
 	// the TPSIGRSTRT flag set. But we test it anyway.
 #if 0
-	int rv2 = ACE_OS::kill(ACE_OS::getpid(), signum);
+	apr_proc_t proc;
+	proc.pid = getpid();
+	int rv2 = apr_proc_kill(&proc, signum);
 	btlogger((char*) "process kill returned %d", rv2);
 #endif
 }
 
 // another thread entry point
 static int tcnt_ = 0;
-static void* work2(void *args)
+static void* APR_THREAD_FUNC work2(apr_thread_t* thread, void *args)
 {
 	thr_arg_t *params = (thr_arg_t *) args;
 	char *s1, *s2;
@@ -243,7 +253,7 @@ static void* work2(void *args)
 	s1 = (char *) "BAR";
 	s2 = (char *) "BAR";
 
-	mutex_.acquire();
+	apr_thread_mutex_lock(mutex_);
 	tcnt_ += 1;
 	tpfree(tpalloc((char *) params->sndtype, 0, 10));
 #if 0	/* I've disabled using multiple service since it fails with just one service */
@@ -252,9 +262,9 @@ static void* work2(void *args)
 	else
 		s1 = (char *) "TestTPCall";
 #endif
-	mutex_.release();
+	apr_thread_mutex_unlock(mutex_);
 
-//XXX	ACE_OS::sleep(4);	// yield to ensure that all threads have initialised env (see bug BLACKTIE-211)
+//XXX	apr_sleep(apr_time_from_sec(4));	// yield to ensure that all threads have initialised env (see bug BLACKTIE-211)
 
 	for (int i = 0; i < ncalls; i++) {
 		btlogger((char*) "%s: loop %d of %d", params->svc, i, ncalls);
@@ -277,37 +287,44 @@ static void* work2(void *args)
 	return args;
 }
 
-static int lotsofwork(int nthreads, ACE_THR_FUNC tfunc, thr_arg_t* arg) {
-	ACE_thread_t *tids = new ACE_thread_t[nthreads];
-	ACE_hthread_t *handles = new ACE_hthread_t[nthreads];
+static int lotsofwork(int nthreads, apr_thread_start_t tfunc, thr_arg_t* arg) {
+	std::vector<apr_thread_t*> tids;
 	int i;
 
-	for (i = 0; i < nthreads; i++)
-		handles[i] = 0;
+	apr_pool_t* pool;
+
+	if(apr_pool_create(&pool,NULL) != APR_SUCCESS)
+		btlogger("Unable to create apr pool\n");
+
+        if(apr_thread_mutex_create(&mutex_,0, pool) != APR_SUCCESS)
+                btlogger("Unable to initialise mutex\n");
 
 	btlogger("lotsofwork: spawning %d threads\n", nthreads);
 	// spawn nthreads threads
-	if (ACE_Thread::spawn_n(tids, // return thread id for each thread
-		nthreads,
-		tfunc, // entry point for new thread
-		(void *) arg,	// args for thread entry point
-		THR_JOINABLE | THR_NEW_LWP,
-		ACE_DEFAULT_THREAD_PRIORITY,
-		0, 0, handles) != (size_t) nthreads) {
+	for(i = 0; i < nthreads; i++)
+	{
+		apr_thread_t* tid;
+		if (apr_thread_create(&tid, // return thread id for each thread
+			NULL,
+			tfunc, // entry point for new thread
+			(void *) arg,	// args for thread entry point
+			pool) != APR_SUCCESS) {
 				btlogger("Unable to start request number of threads\n");
+		}
+		tids.push_back(tid);
 	}
 
 	if (arg->signum > 0)
 		signal_thread(tids[0], arg->signum);
 
 	btlogger("lotsofwork: joining ...\n");
+	apr_status_t status;
 	for (int i = 0; i < nthreads; i++)
-		if (handles[i] != 0)
-			ACE_Thread::join(handles[i]);
+		if (tids[i] != 0)
+			apr_thread_join(&status, tids[i]);
 
 	btlogger("lotsofwork: joined res=%d\n", arg->result);
-	delete[] tids;
-	delete[] handles;
+	apr_pool_destroy(pool);
 
 	return arg->result;
 }
@@ -315,7 +332,7 @@ static int lotsofwork(int nthreads, ACE_THR_FUNC tfunc, thr_arg_t* arg) {
 // XsdValidator is not thread safe
 static int bug211() {
 	thr_arg_t args = {1, MSG1, "bug211: two threads reading env", "BAR", X_OCTET, X_OCTET, 0, 0, 99, 0};
-	return lotsofwork(2, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(2, work, &args);
 }
 
 // tpcall should return TPEINVAL if the service name is invalid
@@ -332,7 +349,7 @@ static int bug212a() {
 	long flags2 = TPNOTRAN | TPNOTIME;
 	thr_arg_t arg1 = {1, MSG1, "bug212a: TPNOTIME", "BAR", X_OCTET, X_OCTET, flags2, 0, 99, 0};
 
-	return lotsofwork(1, ACE_THR_FUNC(&work), &arg1);
+	return lotsofwork(1, work, &arg1);
 }
 static int bug212b() {
 	// Similarly specifying TPNOBLOCK means that if a blocking condition does exist then the caller
@@ -354,7 +371,7 @@ static int bug212b() {
 	thr_arg_t args = {1, huge_buf, "bug212b: TPNOBLOCK", "BAR", X_OCTET, X_OCTET, flags3, TPEBLOCK, 99, 0};
 
 #ifndef WIN32
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 #else
 	btlogger((char*) "DISABLING TEST 2121 for WIN32 build");
 	return 0;
@@ -364,29 +381,29 @@ static int bug212b() {
 // TPSIGRSTRT flag isn't supported on tpcall
 static int bug214() {
 	thr_arg_t args = {1, MSG1, "bug214: TPSIGRSTRT flag not supported on tpcall", "BAR", X_OCTET, X_OCTET, TPSIGRSTRT, 0, 99, 0};
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 
 // tpcall failure with multiple threads
 static int bug215() {
 	thr_arg_t args = {0, MSG1, "bug215: tpcall failure with lots of threads", "BAR", X_OCTET, X_OCTET, 0, 0, 99, 0};
-	return lotsofwork(2, ACE_THR_FUNC(&work2), &args);
+	return lotsofwork(2, work2, &args);
 }
 
 static int bug216a() {
 	thr_arg_t args = {1, MSG1, "bug216: tp bufs should morph if they're the wrong type", "BAR", X_OCTET, X_C_TYPE, 0, 0, 99, 0};
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 
 static int bug216b() {
 	thr_arg_t args = {1, MSG1, "bug216: passing the wrong return buffer type with TPNOCHANGE",
 		"BAR", X_OCTET, X_C_TYPE, TPNOCHANGE, TPEOTYPE, 99, 0};
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 
 static int bug217() {
 	thr_arg_t args = {1, MSG1, "bug217: make sure tpurcode works", "BAR", X_OCTET, X_OCTET, 0, 0, 99, 0};
-	(void) lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	(void) lotsofwork(1, work, &args);
 	return args.result;
 }
 
@@ -434,12 +451,12 @@ static int t5() {
 static int t6() {
 	// TODO this test is for tpcall. Add tests for other xatmi API calls (tpacall etc_)
 	thr_arg_t args = {1, "T6=4", "set TPSIGRSTRT flag and send a signal", "BAR", X_OCTET, X_OCTET, TPSIGRSTRT, 0, 99, SIGALRM};
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 
 static int t7() {
 	thr_arg_t args = {1, "T6=4", "do not set TPSIGRSTRT flag and send a signal", "BAR", X_OCTET, X_OCTET, 0, TPGOTSIG, 99, SIGALRM};
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 static int t8() {
 	thr_arg_t args = {1, "T8", "commit tx with active descriptors", "BAR", X_OCTET, X_OCTET, 0, TPEBADDESC, 99, 0};
@@ -456,7 +473,7 @@ static int t9() {
 
 	thr_arg_t args = {1, large_buf, "large buffer test", "BAR", X_OCTET, X_OCTET, 0, 0, 99, 0};
 
-	return lotsofwork(1, ACE_THR_FUNC(&work), &args);
+	return lotsofwork(1, work, &args);
 }
 
 static int startTx(int enable) {
@@ -476,6 +493,8 @@ int run_client(int argc, char **argv) {
 
 	if (argc > 1)
 		bug = atoi(argv[1]);
+
+	apr_initialize();
 
 	btlogger((char*) "starting test %d", bug);
 
@@ -514,6 +533,8 @@ int run_client(int argc, char **argv) {
 	btlogger((char*) "test %d %s with code %d", bug, (res == 0 ? "passed" : "failed"), res);
 	clientdone(0);
 
+	apr_terminate();
+
 	return res;
 }
 
@@ -541,7 +562,7 @@ void BAR(TPSVCINFO * svcinfo) {
 		rval = TPFAIL;
 	} else if (strcmp(svcinfo->data, "T6") == 0 && arg != NULL) {
 		btlogger((char*) "bar sleeping for %d seconds", larg);
-		ACE_OS::sleep(larg);
+		apr_sleep(apr_time_from_sec(larg));
 	}
 
 	buffer = tpalloc((char *) "X_OCTET", 0, sendlen);
@@ -571,10 +592,9 @@ int run_server(int argc, char **argv) {
 	if (exit_status != -1) {
 		tpadvertise((char *) "BAR", BAR);
 		tpadvertise((char *) "TestTPCall", TestTPCall);
-		if (write(1, HANDSHAKE, HANDSHAKE_LEN) != HANDSHAKE_LEN) {
+		if (fwrite(HANDSHAKE, sizeof(char), HANDSHAKE_LEN, stdout) != HANDSHAKE_LEN) {
 			return -1;
 		}
-
 		/* flush stdout */
 		fprintf(stdout, "\n");
 		exit_status = serverrun();

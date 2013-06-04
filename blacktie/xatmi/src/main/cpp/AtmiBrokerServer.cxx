@@ -18,31 +18,23 @@
 #include <string>
 #include <sstream>
 #include <queue>
-
-#ifdef TAO_COMP
-#include <orbsvcs/CosNamingS.h>
-#endif
+#include <stdlib.h>
 
 #include "log4cxx/logger.h"
 #include "AtmiBrokerInit.h"
 #include "AtmiBrokerServer.h"
-#include "AtmiBrokerPoaFac.h"
 #include "AtmiBrokerEnv.h"
 #include "AtmiBrokerEnvXml.h"
 #include "btserver.h"
 #include "AtmiBrokerMem.h"
 #include "txx.h"
-#include "OrbManagement.h"
 #include "SymbolLoader.h"
-#include "ace/Get_Opt.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_string.h"
-#include "ace/Default_Constants.h"
-#include "ace/Signal.h"
 #include "ThreadLocalStorage.h"
 #include "xatmi.h"
 #include "apr_general.h"
+#include "apr_thread_proc.h"
+#include "apr_getopt.h"
+#include "apr_strings.h"
 
 // WORK AROUND FOR NO tx.h
 #define TX_OK              0
@@ -57,11 +49,21 @@ extern BLACKTIE_TX_DLL int tx_open(void);
 extern void ADMIN(TPSVCINFO* svcinfo);
 extern const char* version;
 
+static void* APR_THREAD_FUNC activateDispatcher(apr_thread_t *thd, void* data)
+{
+    ServiceDispatcher* dispatcher = (ServiceDispatcher*) data;
+
+    int ret = dispatcher->svc();
+
+    apr_thread_exit(thd,APR_SUCCESS);
+
+    return NULL;
+}
+
 log4cxx::LoggerPtr loggerAtmiBrokerServer(log4cxx::Logger::getLogger(
 		"AtmiBrokerServer"));
 AtmiBrokerServer * ptrServer = NULL;
 bool serverInitialized = false;
-PortableServer::POA_var server_poa;
 bool configFromCmdline = false;
 int errorBootAdminService = 0;
 char configDir[256];
@@ -90,30 +92,50 @@ int serverrun() {
 }
 
 void parsecmdline(int argc, char** argv) {
-	ACE_Get_Opt getopt(argc, argv, ACE_TEXT("c:i:s:p:"));
-	int c;
+
+        apr_pool_t *mp;
+
+	apr_pool_create(&mp, NULL);
+
+    static const apr_getopt_option_t opt_option[] = {
+        /* long-option, short-option, has-arg flag, description */
+        { "config", 'c', TRUE, "config file" },
+        { "id", 'i', TRUE, "server id" },  
+        { "server", 's', TRUE, "server name" }, 
+	{ "port", 'p', TRUE, "port number" },  
+        { NULL, 0, 0, NULL }, /* end (a.k.a. sentinel) */
+    };
+
+    apr_getopt_t *opt;
+    int optch;
+    const char *optarg;
+
+    /* initialize apr_getopt_t */
+    apr_getopt_init(&opt, mp, argc, argv);
 
 	configFromCmdline = false;
-	while ((c = getopt()) != -1) {
-		switch ((char) c) {
+	while ( (apr_getopt_long(opt, opt_option, &optch, &optarg)) == APR_SUCCESS ) {
+		switch ( optch) {
 		case 'c':
 			configFromCmdline = true;
-			ACE_OS::strncpy(configDir, getopt.opt_arg(), 256);
+			strncpy(configDir, optarg, 256);
 			break;
 		case 'i':
-			serverid = atoi(getopt.opt_arg());
+			serverid = atoi(optarg);
 			if (serverid <= 0 || serverid > 9) {
 				serverid = -1;
 			}
 			break;
 		case 's':
-			ACE_OS::strncpy(server, getopt.opt_arg(), 30);
+			strncpy(server, optarg, 30);
 			break;
 		case 'p':
-			cbport = atoi(getopt.opt_arg());
+			cbport = atoi(optarg);
 			break;
 		}
 	}
+
+   apr_pool_destroy(mp);
 }
 
 const char* getConfiguration() {
@@ -127,7 +149,6 @@ const char* getConfiguration() {
 }
 
 int serverinit(int argc, char** argv) {
-	apr_initialize();
 	AtmiBrokerInitSingleton::instance();
 	setSpecific(TPE_KEY, TSS_TPERESET);
 	int toReturn = 0;
@@ -139,11 +160,11 @@ int serverinit(int argc, char** argv) {
 		LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 				(char*) "serverinit getting config");
 		// Check the configuration
-		const char* serverName = ACE_OS::getenv("BLACKTIE_SERVER");
+		const char* serverName = getenv("BLACKTIE_SERVER");
 		if (serverName != NULL) {
-			ACE_OS::strncpy(server, serverName, 30);
+			strncpy(server, serverName, 30);
 		}
-		const char* serverId = ACE_OS::getenv("BLACKTIE_SERVER_ID");
+		const char* serverId = getenv("BLACKTIE_SERVER_ID");
 		if (serverId != NULL) {
 			serverid = atoi(serverId);
 		} else {
@@ -338,7 +359,7 @@ int getServerId() {
 // require arguments, even those that we inherit indirectly.
 //
 AtmiBrokerServer::AtmiBrokerServer() {
-	try {
+		apr_pool_create(&mp,NULL);
 		finish = new SynchronizableObject();
 		serverName = server;
 		isPause = false;
@@ -353,7 +374,7 @@ AtmiBrokerServer::AtmiBrokerServer() {
 				serverInfo.serverName = strdup(servers[i]->serverName);
 				// add service ADMIN
 				char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-				ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d",
+				apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d",
 						server, serverid);
 				ServiceInfo service;
 				memset(&service, 0, sizeof(ServiceInfo));
@@ -430,7 +451,7 @@ AtmiBrokerServer::AtmiBrokerServer() {
 		} else {
 			// make ADMIN service mandatory for server
 			char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-			ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d",
+			apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d",
 					server, serverid);
 			if (!advertiseService(adm, ADMIN)) {
 				LOG4CXX_FATAL(loggerAtmiBrokerServer,
@@ -497,12 +518,6 @@ AtmiBrokerServer::AtmiBrokerServer() {
 			LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 					(char*) "server_init(): finished.");
 		}
-	} catch (CORBA::Exception& e) {
-		LOG4CXX_ERROR(loggerAtmiBrokerServer,
-				(char*) "serverinit - Unexpected CORBA exception: "
-						<< e._name());
-		setSpecific(TPE_KEY, TSS_TPESYSTEM);
-	}
 }
 
 // ~AtmiBrokerServer destructor.
@@ -603,6 +618,7 @@ AtmiBrokerServer::~AtmiBrokerServer() {
 	delete finish;
 	finish = NULL;
 	serverInitialized = false;
+	apr_pool_destroy(mp);
 }
 
 int AtmiBrokerServer::block() {
@@ -637,11 +653,11 @@ void AtmiBrokerServer::shutdown() {
 int AtmiBrokerServer::pause() {
 	if (!isPause) {
 		char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-		ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
+		apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
 				serverid);
 		for (std::vector<ServiceData>::iterator i = serviceData.begin(); i
 				!= serviceData.end(); i++) {
-			if (ACE_OS::strcmp((*i).serviceInfo->serviceName, adm) != 0) {
+			if (strcmp((*i).serviceInfo->serviceName, adm) != 0) {
 				LOG4CXX_DEBUG(loggerAtmiBrokerServer, (char*) "pausing service"
 						<< (*i).serviceInfo->serviceName);
 				for (std::vector<ServiceDispatcher*>::iterator j =
@@ -698,23 +714,23 @@ int AtmiBrokerServer::getServiceStatus(char** toReturn, char* svc) {
 	char* str;
 	int size = sizeof(char) * (9 + 14 + strlen(serverName) + 11 + 12 + 10);
 	char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-	ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
+	apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
 			serverid);
 
 	str = (char*) malloc(size);
-	len += ACE_OS::sprintf(str + len, "<server>");
-	len += ACE_OS::sprintf(str + len, "<name>%s</name>", serverName);
-	len += ACE_OS::sprintf(str + len, "<services>");
+	len += sprintf(str + len, "<server>");
+	len += sprintf(str + len, "<name>%s</name>", serverName);
+	len += sprintf(str + len, "<services>");
 	for (std::vector<ServiceStatus>::iterator i = serviceStatus.begin(); i
 			!= serviceStatus.end(); i++) {
-		if (strcmp(adm, (*i).name) != 0 && (svc == NULL || ACE_OS::strcmp(svc,
+		if (strcmp(adm, (*i).name) != 0 && (svc == NULL || strcmp(svc,
 				(*i).name) == 0)) {
 			int svcsize = sizeof(char) * (50 + strlen((*i).name));
 			size += svcsize;
 			str = (char*) realloc(str, size);
 
 			len
-					+= ACE_OS::sprintf(
+					+= sprintf(
 							str + len,
 							"<service><name>%.128s</name><status>%d</status></service>",
 							(*i).name, isPause && (*i).status ? 2 : (*i).status);
@@ -723,8 +739,8 @@ int AtmiBrokerServer::getServiceStatus(char** toReturn, char* svc) {
 		}
 	}
 
-	len += ACE_OS::sprintf(str + len, "</services>");
-	len += ACE_OS::sprintf(str + len, "</server>");
+	len += sprintf(str + len, "</services>");
+	len += sprintf(str + len, "</server>");
 	*toReturn = str;
 	return len;
 }
@@ -747,7 +763,7 @@ void AtmiBrokerServer::updateServiceStatus(ServiceInfo* service, SVCFUNC func,
 	if (found == false) {
 		ServiceStatus aServiceStatus;
 		memset(&aServiceStatus, 0, sizeof(aServiceStatus));
-		ACE_OS::strncpy(aServiceStatus.name, service->serviceName,
+		strncpy(aServiceStatus.name, service->serviceName,
 				XATMI_SERVICE_NAME_LENGTH);
 		aServiceStatus.func = func;
 		aServiceStatus.status = status;
@@ -879,15 +895,14 @@ bool AtmiBrokerServer::advertiseService(char * svcname,
 														isPause,
 														reconnect,
 														entry.serviceInfo->conversational, entry.serviceInfo->serviceType);
-								if (dispatcher->activate(THR_NEW_LWP
-										| THR_JOINABLE, 1, 0,
-										ACE_DEFAULT_THREAD_PRIORITY, -1, 0, 0,
-										0, 0, 0, 0) != 0) {
+								apr_thread_t* thd;
+								if(apr_thread_create(&thd, NULL, activateDispatcher, (void*)dispatcher, mp) != APR_SUCCESS) {
 									delete dispatcher;
 									LOG4CXX_ERROR(
 											loggerAtmiBrokerServer,
 											(char*) "Could not start thread pool");
 								} else {
+									dispatcher->setThread(thd);
 									entry.dispatchers.push_back(dispatcher);
 									LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 											(char*) " destination "
@@ -907,24 +922,6 @@ bool AtmiBrokerServer::advertiseService(char * svcname,
 									(char*) "advertised service "
 											<< serviceName);
 							toReturn = true;
-						}
-					} catch (CORBA::Exception& e) {
-						LOG4CXX_ERROR(
-								loggerAtmiBrokerServer,
-								(char*) "CORBA::Exception creating the destination: "
-										<< serviceName << " Exception: "
-										<< e._name());
-						setSpecific(TPE_KEY, TSS_TPEMATCH);
-						try {
-							if (service->externally_managed_destination
-									== false) {
-								removeAdminDestination(serviceName, true);
-							}
-						} catch (...) {
-							LOG4CXX_ERROR(
-									loggerAtmiBrokerServer,
-									(char*) "Could not remove the destination: "
-											<< serviceName);
 						}
 					} catch (...) {
 						LOG4CXX_ERROR(loggerAtmiBrokerServer,
@@ -1070,7 +1067,7 @@ bool AtmiBrokerServer::createAdminDestination(char* serviceName, bool conversati
 
 	bool isadm = false;
 	char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-	ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
+	apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
 			serverid);
 	if (strcmp(adm, serviceName) == 0) {
 		isadm = true;

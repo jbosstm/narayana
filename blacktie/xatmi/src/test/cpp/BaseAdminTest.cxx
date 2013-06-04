@@ -17,12 +17,11 @@
  */
 #include "TestAssert.h"
 
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
 #include "xatmi.h"
 #include "btlogger.h"
 #include "BaseAdminTest.h"
+
+#include <stdlib.h>
 
 void BaseAdminTest::setUp() {
 	BaseServerTest::setUp();
@@ -46,13 +45,13 @@ int BaseAdminTest::callADMIN(char* command, char expect, int r, char** n) {
 	BT_ASSERT(recvbuf[0] == expect);
 	BT_ASSERT(r == tperrno);
 
-	if(ACE_OS::strncmp(command, "counter", 7) == 0 ||
-	   ACE_OS::strncmp(command, "error_counter", 13) == 0 ||
-	   ACE_OS::strncmp(command, "version", 7) == 0) {
+	if(strncmp(command, "counter", 7) == 0 ||
+	   strncmp(command, "error_counter", 13) == 0 ||
+	   strncmp(command, "version", 7) == 0) {
 		*n = (char*) malloc(recvlen);
 		memset(*n, 0, recvlen);
 		memcpy(*n, &recvbuf[1], recvlen -1);
-	} else if(ACE_OS::strncmp(command, "status", 6) == 0) {
+	} else if(strncmp(command, "status", 6) == 0) {
 		btlogger((char*) "len is %d, service status: %s", recvlen, &recvbuf[1]);
 	}
 

@@ -22,6 +22,8 @@
 #include "btlogger.h"
 #include "AtmiBrokerEnv.h"
 
+#include <stdlib.h>
+
 #include "atmiBrokerTxMacro.h"
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +44,6 @@ void messagesAvailableCallbackXA(int bar, bool remove) {
 }
 
 void TestXAStompConnection::setUp() {
-	init_ace();
 	btlogger("TestXAStompConnection::setUp");
 
 	serverConnection = NULL;

@@ -21,18 +21,14 @@
 
 #include "xatmi.h"
 
-#include "ace/DLL.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
-
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
 
 #ifdef WIN32
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION=win32");
+	putenv("BLACKTIE_CONFIGURATION=win32");
 #else
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION=linux");
+	putenv("BLACKTIE_CONFIGURATION=linux");
 #endif
 
 	int exit_status = serverinit(argc, argv);

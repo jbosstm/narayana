@@ -34,12 +34,6 @@ extern "C" {
 
 #define MAXLOGSIZE 2048
 
-#include "ace/ACE.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
-
-
 log4cxx::LoggerPtr loggerAtmiBrokerLogc(log4cxx::Logger::getLogger(
 		"AtmiBrokerLogc"));
 
@@ -105,7 +99,7 @@ void btlogger_warn(const char * format, ...) {
 
 extern void btlogger_init() {
 	if (!loggerInitialized) {
-		char* config = ACE_OS::getenv("LOG4CXXCONFIG");
+		char* config = getenv("LOG4CXXCONFIG");
 		if (config != NULL) {
 			log4cxx::PropertyConfigurator::configure(config);
 		} else {

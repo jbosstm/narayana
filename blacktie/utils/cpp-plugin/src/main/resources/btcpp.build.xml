@@ -381,6 +381,7 @@
 			<includepath path="target/cxx/compile/include/expat" />
 
 			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
+			<libset libs="ws2_32" if="is-msvc" />
 		</cc>
 		<available file="target/${configuration.type}/${lib.type}/${project.artifactId}.dll.manifest" property="manifest.towrap" />
 		<antcall target="_compile-msvc" />
@@ -466,6 +467,7 @@
 			<libset dir="target/${configuration.type}/${lib.type}" libs="${project.artifactId}" if="main.built" />
 			<libset libs="stdc++ pthread rt" if="is-gcc" />
 			<libset libs="pthread" if="is-xlC" />
+			<libset libs="ws2_32" if="is-msvc" />
 		</cc>
 	</target>
 
@@ -497,6 +499,7 @@
 			<libset dir="${project.build.directory}/cxx/test/lib" libs="${test.libs}" if="test.libs"/>
 			<libset libs="stdc++ pthread rt" if="is-gcc" />
 			<libset libs="pthread" if="is-xlC" />
+						<libset libs="ws2_32" if="is-msvc" />
 		</cc>
 	</target>
 
@@ -563,6 +566,7 @@
 			<libset dir="target/${configuration.type}/${lib.type}" libs="${project.artifactId}" if="main.built" />
 			<libset libs="stdc++ pthread rt" if="is-gcc" />
 			<libset libs="pthread" if="is-xlC" />
+                        <libset libs="ws2_32" if="is-msvc" />
 		</cc>
 		<available file="target/testsuite.dll.manifest" property="manifest.towrap" />
 		<antcall target="_test-compile-msvc" />

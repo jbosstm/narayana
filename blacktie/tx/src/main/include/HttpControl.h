@@ -27,8 +27,8 @@ namespace atmibroker {
 
 class BLACKTIE_TX_DLL HttpControl :public virtual TxControl {
 public:
-	HttpControl(long timeout, int tid);
-	HttpControl(char* txn, long ttl, int tid);
+	HttpControl(long timeout, apr_os_thread_t tid);
+	HttpControl(char* txn, long ttl, apr_os_thread_t tid);
 	virtual ~HttpControl();
 
 	int start(const char* txnMgrUrl);

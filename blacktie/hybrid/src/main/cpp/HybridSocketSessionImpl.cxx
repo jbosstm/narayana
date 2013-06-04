@@ -17,6 +17,7 @@
  */
 #include <string.h>
 #include <exception>
+#include <stdlib.h>
 
 #include "apr_strings.h"
 

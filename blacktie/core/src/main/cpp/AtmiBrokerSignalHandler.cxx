@@ -17,45 +17,89 @@
  */
 #include "AtmiBrokerSignalHandler.h"
 #include "ThreadLocalStorage.h"
-#include "ace/Thread.h"
-#include "ace/OS_NS_Thread.h"
+#include "apr_signal.h"
+#include <stdlib.h>
 
 #define SIGCHK(err, msg)	{if ((err) != 0) LOG4CXX_WARN(logger_, (char*) (msg) << " error: " << err);}
 
+#ifndef WIN32
 int default_handlesigs[] = {SIGINT, SIGTERM, 0};
 int default_blocksigs[] = {SIGQUIT, SIGABRT, SIGHUP, SIGALRM, SIGUSR1, SIGUSR2, 0};
+#else
+int default_handlesigs[] = {0};
+int default_blocksigs[] = {0};
+#endif
 
 log4cxx::LoggerPtr AtmiBrokerSignalHandler::logger_(log4cxx::Logger::getLogger("AtmiBrokerSignalHandler"));
 
-ACE_Sig_Handler AtmiBrokerSignalHandler::handler_;
+std::multimap<int, AtmiBrokerSignalHandler*> AtmiBrokerSignalHandler::handler_;
+
+void static_handler(int sig)
+{
+     std::pair< 
+	std::multimap<int, AtmiBrokerSignalHandler*>::iterator,
+        std::multimap<int, AtmiBrokerSignalHandler*>::iterator> ret;
+
+     ret = AtmiBrokerSignalHandler::handler_.equal_range(sig);
+
+     for(std::multimap<int, AtmiBrokerSignalHandler*>::iterator it = ret.first; it != ret.second; ++it)
+     {
+	it->second->handle_signal(sig);
+     }
+
+}
 
 AtmiBrokerSignalHandler::AtmiBrokerSignalHandler(int* hsignals, int* bsignals)
 {
 	int* sigp;
 
-	SIGCHK(ACE_OS::sigemptyset(&hss_), "sigemptyset");
-	SIGCHK(ACE_OS::sigemptyset(&bss_), "sigemptyset");
+#ifndef WIN32
+	SIGCHK(sigemptyset(&hss_), "sigemptyset");
+	SIGCHK(sigemptyset(&bss_), "sigemptyset");
 
 	for (sigp = hsignals; *sigp != 0; sigp++) {
-		SIGCHK(ACE_OS::sigaddset(&hss_, *sigp), "sigaddset");
-		SIGCHK(ACE_OS::sigaddset(&bss_, *sigp), "sigaddset");
+		SIGCHK(sigaddset(&hss_, *sigp), "sigaddset");
+		SIGCHK(sigaddset(&bss_, *sigp), "sigaddset");
 	}
 	for (sigp = bsignals; *sigp != 0; sigp++) {
-		SIGCHK(ACE_OS::sigaddset(&bss_, *sigp), "sigaddset");
+		SIGCHK(sigaddset(&bss_, *sigp), "sigaddset");
 	}
-#ifndef WIN32
-	for (int i = 1; i < ACE_NSIG; i++)
-		if (ACE_OS::sigismember(&bss_, i))
-			handler_.register_handler(i, this);
+	for (int i = 1; i < NSIG; i++)
+		if (sigismember(&bss_, i))
+		{
+			if(handler_.find(i) == handler_.end())
+			   apr_signal(i, static_handler);
+			handler_.insert(std::pair<int, AtmiBrokerSignalHandler*>(i, (AtmiBrokerSignalHandler*)this));
+		}
 #endif
 }
 
 AtmiBrokerSignalHandler::~AtmiBrokerSignalHandler()
 {
 #ifndef WIN32
-	for (int i = 1; i < ACE_NSIG; i++)
-		if (ACE_OS::sigismember(&bss_, i))
-			handler_.remove_handler(i);
+     std::pair<
+        std::multimap<int, AtmiBrokerSignalHandler*>::iterator,
+        std::multimap<int, AtmiBrokerSignalHandler*>::iterator> ret;
+
+	for (int i = 1; i < NSIG; i++)
+        {
+		if (sigismember(&bss_, i))
+                {
+		  ret = handler_.equal_range(i);
+                  std::multimap<int, AtmiBrokerSignalHandler*>::iterator found = handler_.end();
+                  for(std::multimap<int, AtmiBrokerSignalHandler*>::iterator it = ret.first; it != ret.second && found == handler_.end(); ++it)
+                  {
+			if(it->second == this)
+			  found = it;
+                  }
+                  if(found != handler_.end())
+			handler_.erase(found);
+		  if(handler_.find(i) == handler_.end())
+			apr_signal(i,NULL);
+                }
+
+       }
+
 #endif
 }
 
@@ -71,16 +115,17 @@ void AtmiBrokerSignalHandler::addSignalHandler(int (*handler)(int signum), bool 
         handlers_.insert(handlers_.end(), handler);
 }
 
-int AtmiBrokerSignalHandler::handle_signal(int sig, siginfo_t *, ucontext_t *)
+int AtmiBrokerSignalHandler::handle_signal(int sig)
 {
+#ifndef WIN32
 	sigset_t* pending = (sigset_t*) getSpecific(TSS_SIG_KEY);
 	std::vector<int (*)(int)>::iterator it;
 	bool doexit = false;
 
 	if (pending)
-		SIGCHK(ACE_OS::sigaddset(pending, sig), "sigaddset");
+		SIGCHK(sigaddset(pending, sig), "sigaddset");
 
-	if (ACE_OS::sigismember(&hss_, sig)) {
+	if (sigismember(&hss_, sig)) {
 		LOG4CXX_DEBUG(logger_, (char*) "handling signal " << sig);
 
 		for (it = handlers_.begin(); it < handlers_.end(); it++) {
@@ -95,28 +140,37 @@ int AtmiBrokerSignalHandler::handle_signal(int sig, siginfo_t *, ucontext_t *)
 	if (doexit) {
 		LOG4CXX_INFO(logger_, (char*) "Unregistering signal handler after signal " << sig);
 	}
-
+#endif
 	return 0;	// -1 unregisters this handler
 }
 
 int AtmiBrokerSignalHandler::blockSignals(bool sigRestart) {
+#ifndef WIN32
 	return block_sigs(&bss_, NULL, true, !sigRestart);
+#else
+	return 0;
+#endif
 }
 
 int AtmiBrokerSignalHandler::unblockSignals() {
+#ifndef WIN32
 	sigset_t pending;
 	int nsigs = block_sigs(&bss_, &pending, false, false);
 
 	LOG4CXX_DEBUG(logger_, (char*) " unblockSignals returned " << nsigs);
 	for (int i = 1; i <= NSIG; i++) {
-		if (ACE_OS::sigismember(&pending, i) == 1) {
+		if (sigismember(&pending, i) == 1) {
 			LOG4CXX_DEBUG(logger_, (char*) " \treceived sig during syscall " <<  i);
 		}
 	}
 
 	return nsigs;
+#else
+	return 0;
+#endif
 }
 
+#ifndef WIN32
 /**
  * block or unblock signals.
  * @param mask
@@ -145,7 +199,7 @@ int AtmiBrokerSignalHandler::block_sigs(sigset_t* mask, sigset_t* pending, bool 
 			// the next matching call
 			if ((tsspending = (sigset_t*) malloc(sizeof (sigset_t))) == NULL)
 				err = -1;
-			else if (ACE_OS::sigemptyset(tsspending) != 0)
+			else if (sigemptyset(tsspending) != 0)
 				err = -1;
 			else
 				setSpecific(TSS_SIG_KEY, tsspending);
@@ -164,7 +218,7 @@ int AtmiBrokerSignalHandler::block_sigs(sigset_t* mask, sigset_t* pending, bool 
 				// see if there are any pending signals
 				sigset_t pmask;
 
-				if (ACE_OS::sigemptyset(pending) == -1 || ACE_OS::sigemptyset(&pmask) == -1) {
+				if (sigemptyset(pending) == -1 || sigemptyset(&pmask) == -1) {
 					LOG4CXX_WARN(logger_, (char*) " sigemptyset error");
 					err = -1;
 				} else {
@@ -174,11 +228,11 @@ int AtmiBrokerSignalHandler::block_sigs(sigset_t* mask, sigset_t* pending, bool 
 						err = -1;
 #endif
 					for (i = 1; i <= NSIG; i++)
-						if (ACE_OS::sigismember(tsspending, i) == 1 ||
-							ACE_OS::sigismember(&pmask, i) == 1) {
+						if (sigismember(tsspending, i) == 1 ||
+							sigismember(&pmask, i) == 1) {
 
 							setSpecific(TPE_KEY, TSS_TPGOTSIG);
-    						(void) ACE_OS::sigaddset(pending, i);
+    						(void) sigaddset(pending, i);
 							sigcnt += 1;
 						}
 				}
@@ -192,10 +246,11 @@ int AtmiBrokerSignalHandler::block_sigs(sigset_t* mask, sigset_t* pending, bool 
 	if (!informational) {
 #ifndef WIN32
 		// TODO figure out how to handle signals on windows
-    	if (ACE_OS::pthread_sigmask((block ? SIG_BLOCK : SIG_UNBLOCK), mask, NULL) != 0)
+    	if (pthread_sigmask((block ? SIG_BLOCK : SIG_UNBLOCK), mask, NULL) != 0)
 			err = -1;
 #endif
 	}
 
 	return (err != 0 ? err : sigcnt);
 }
+#endif

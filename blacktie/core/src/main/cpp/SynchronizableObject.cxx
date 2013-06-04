@@ -18,29 +18,42 @@
 
 #include "SynchronizableObject.h"
 
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
+#include "apr_strings.h"
 
 log4cxx::LoggerPtr SynchronizableObject::logger(log4cxx::Logger::getLogger(
 		"SynchronizableObject"));
 
-SynchronizableObject::SynchronizableObject() :
-	mutex(), cond(mutex) {
+SynchronizableObject::SynchronizableObject() 
+	{
 	waitingCount = 0;
 	notifiedCount = 0;
 // NOT SAFE ON FEDORA 15 either
 //#ifndef WIN32
 	//LOG4CXX_DEBUG(logger, (char*) "SynchronizableObject created: " << this);
 //#endif
+#ifdef WIN32
+	apr_initialize();
+#endif
+	apr_pool_create(&pool,NULL);
+
+        apr_thread_cond_create(&cond, pool);
+
+	apr_thread_mutex_create(&mutex, APR_THREAD_MUTEX_NESTED, pool);
 }
 
 SynchronizableObject::~SynchronizableObject() {
 	//BLACKTIE-339 LOG4CXX_DEBUG(logger, (char*) "SynchronizableObject destroyed: " << this);
+
+	apr_thread_cond_destroy(cond);
+
+	apr_thread_mutex_destroy(mutex);
+
+        apr_pool_destroy(pool);
 }
 
 bool SynchronizableObject::lock() {
 	LOG4CXX_TRACE(logger, (char*) "Acquiring mutex: " << this);
-	bool toReturn = mutex.acquire();
+	bool toReturn = (apr_thread_mutex_lock(mutex) == APR_SUCCESS);
 	LOG4CXX_TRACE(logger, (char*) "acquired: " << this);
 	return toReturn;
 }
@@ -50,14 +63,10 @@ bool SynchronizableObject::wait(long timeout) {
 	waitingCount++;
 	bool toReturn = false;
 	if (timeout > 0) {
-		ACE_Time_Value timeoutval = ACE_OS::gettimeofday();
-		timeoutval += timeout;
-
-		LOG4CXX_TRACE(logger, (char*) "Timed wait: " << timeoutval.msec());
-		toReturn = cond.wait(&timeoutval);
+		toReturn = apr_thread_cond_timedwait(cond, mutex, apr_time_from_sec(timeout));
 	} else {
 		LOG4CXX_TRACE(logger, (char*) "Blocking wait: " << this);
-		toReturn = cond.wait();
+		toReturn = apr_thread_cond_wait(cond, mutex);
 	}
 	waitingCount--;
 	if (notifiedCount > 0) {
@@ -71,7 +80,7 @@ bool SynchronizableObject::notify() {
 	LOG4CXX_TRACE(logger, (char*) "Notifying cond: " << this);
 	bool toReturn = false;
 	if (notifiedCount < waitingCount) {
-		toReturn = cond.signal();
+		toReturn = apr_thread_cond_signal(cond);
 		notifiedCount++;
 		LOG4CXX_TRACE(logger, (char*) "notified: " << this);
 	} else {
@@ -82,14 +91,14 @@ bool SynchronizableObject::notify() {
 
 bool SynchronizableObject::notifyAll() {
 	LOG4CXX_TRACE(logger, (char*) "Notifying All cond: " << this);
-	bool toReturn = cond.broadcast();
+	bool toReturn = apr_thread_cond_broadcast(cond);
 	LOG4CXX_TRACE(logger, (char*) "All notified: " << this);
 	return toReturn;
 }
 
 bool SynchronizableObject::unlock() {
 	LOG4CXX_TRACE(logger, (char*) "Releasing mutex: " << this);
-	bool toReturn = mutex.release();
+	bool toReturn = apr_thread_mutex_unlock(mutex);
 	LOG4CXX_TRACE(logger, (char*) "released mutex: " << this);
 	return toReturn;
 }

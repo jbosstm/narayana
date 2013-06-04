@@ -17,45 +17,75 @@
  */
 #include "ThreadLocalStorage.h"
 
-#include "ace/TSS_T.h"
-#include <map>
 #include <iostream>
+#include <map>
 
-class TSSData {
-public:
-	~TSSData() {
-	}
-	bool set(int k, void* v) {
-		tssmap[k] = v;
-		return true;
-	}
-	void* get(int k) {
-		return tssmap[k];
-	}
-	bool destroy(int k) {
-		tssmap[k] = 0;
-		return true;
-	}
+#include "apr_portable.h"
+#include "apr_thread_proc.h"
 
-	std::map<int, void*> tssmap;
-};
+std::map<apr_os_thread_t, apr_pool_t*> tls_pools;
 
-static ACE_TSS<TSSData> tss;
+apr_pool_t* mutex_pool = NULL;
+apr_thread_mutex_t* mutex = NULL;
 
 extern int getKey() {
 	return -1;
 }
 
 extern bool setSpecific(int key, void* threadData) {
-	return tss->set(key, threadData);
+        apr_os_thread_t os_th = apr_os_thread_current();
+
+        std::map<apr_os_thread_t, apr_pool_t*>::iterator it = tls_pools.find(os_th);
+       
+        apr_pool_t * tls_pool = NULL;
+ 
+        if(it == tls_pools.end())
+        {
+          apr_pool_create(&tls_pool,NULL);
+	  
+	  if(mutex == NULL)
+	  {
+	    apr_pool_create(&mutex_pool,NULL);
+	    apr_thread_mutex_create(&mutex, 0, mutex_pool);
+	  }
+          apr_thread_mutex_lock(mutex);
+          tls_pools.insert(std::make_pair<apr_os_thread_t, apr_pool_t*>(os_th,tls_pool));
+	  apr_thread_mutex_unlock(mutex);
+
+        }
+        else
+           tls_pool = it->second;
+
+        apr_thread_t* thread = NULL;
+	apr_os_thread_put(&thread, &os_th, tls_pool);
+	apr_status_t ret = apr_thread_data_set(threadData, (const char*)&key, NULL, thread);
+	return (ret == APR_SUCCESS);
 }
 
 extern void* getSpecific(int key) {
-	return tss->get(key);
+        apr_os_thread_t os_th = apr_os_thread_current();
+
+        std::map<apr_os_thread_t, apr_pool_t*>::iterator it = tls_pools.find(os_th);
+        
+        apr_pool_t * tls_pool = NULL; 
+        if(it == tls_pools.end())
+        {
+          return NULL;
+        }
+        else
+        {
+           tls_pool = it->second;
+        }
+
+        apr_thread_t* thread = NULL;
+        apr_os_thread_put(&thread, &os_th, tls_pool);
+        void* threadData = NULL;
+        apr_thread_data_get(&threadData, (const char*)&key, thread);
+	return threadData;
 }
 
 extern bool destroySpecific(int key) {
-	return tss->destroy(key);
+	return setSpecific(key, 0);
 }
 
 char* TSS_TPERESET = (char*) "0";
