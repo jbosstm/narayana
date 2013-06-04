@@ -26,10 +26,9 @@
 #include "Sleeper.h"
 #include "malloc.h"
 
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
 #include "AtmiBrokerEnv.h"
+
+#include <stdlib.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -48,7 +47,7 @@ void TestSecurity::setUp() {
 	btlogger((char*) "TestSecurity::setUp");
 	sendbuf = NULL;
 	rcvbuf = NULL;
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=serv");
+	putenv("BLACKTIE_CONFIGURATION_DIR=serv");
 
 	BaseTest::setUp();
 
@@ -71,7 +70,7 @@ void TestSecurity::setUp() {
 void TestSecurity::tearDown() {
 	btlogger((char*) "TestSecurity::tearDown");
 	// Do local work
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=.");
+	putenv("BLACKTIE_CONFIGURATION_DIR=.");
 	::tpfree( sendbuf);
 	::tpfree( rcvbuf);
 
@@ -95,7 +94,7 @@ void TestSecurity::test_tpcall_guest() {
     AtmiBrokerEnv::discard_instance();
     AtmiBrokerEnv::discard_instance();
 
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=guest");
+	putenv("BLACKTIE_CONFIGURATION_DIR=guest");
 
 	sendlen = strlen("test_tpcall_guest") + 1;
 	rcvlen = sendlen;
@@ -127,7 +126,7 @@ void TestSecurity::test_tpcall_dynsub() {
     AtmiBrokerEnv::discard_instance();
     AtmiBrokerEnv::discard_instance();
 
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=dynsub");
+	putenv("BLACKTIE_CONFIGURATION_DIR=dynsub");
 
 	sendlen = strlen("test_tpcall_dynsub") + 1;
 	rcvlen = sendlen;

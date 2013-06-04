@@ -65,7 +65,6 @@ void TestSpecQuickstartOne::tearDown() {
 /* this test is taken from the XATMI specification */
 
 void TestSpecQuickstartOne::test_specquickstartone() {
-	init_ace();
 	btlogger((char*) "TestSpecQuickstartOne::test_specquickstartone");
 	DATA_BUFFER *dptr; /* DATA_BUFFER is a typed buffer of type */
 	DATA_BUFFER *cptr; /* X_C_TYPE and subtype dc_buf. The structure */
@@ -94,7 +93,6 @@ void TestSpecQuickstartOne::test_specquickstartone() {
 
 /* this routine is used for DEBIT and CREDIT */
 void debit_credit_svc(TPSVCINFO *svcinfo) {
-	init_ace();
 	btlogger((char*) "debit_credit_svc");
 	DATA_BUFFER *dc_ptr;
 	int rval;

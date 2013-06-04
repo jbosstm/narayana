@@ -27,8 +27,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ExceptionCase);
 CPPUNIT_TEST_SUITE_REGISTRATION( ODBCTest);
 #include "TestUserlog.h"
 CPPUNIT_TEST_SUITE_REGISTRATION( TestUserlog);
-#include "TestMultiOrb.h"
-CPPUNIT_TEST_SUITE_REGISTRATION( TestMultiOrb);
 #include "TestSynchronizableObject.h"
 CPPUNIT_TEST_SUITE_REGISTRATION( TestSynchronizableObject);
 #include "TestSocketServer.h"

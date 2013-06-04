@@ -18,25 +18,24 @@
 
 #include "TestAssert.h"
 #include "testTxAvoid.h"
-#include "OrbManagement.h"
-#include "XAResourceAdaptorImpl.h"
-#include "ace/OS_NS_unistd.h"
 #include "TxManager.h"
 #include "btlogger.h"
 
 #include "AtmiBrokerEnv.h"
 
+#include <stdlib.h>
+
 void initEnv() {	
 #ifdef WIN32
-	::putenv("BLACKTIE_CONFIGURATION=win32");
+	putenv("BLACKTIE_CONFIGURATION=win32");
 #else
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION=linux");
+	putenv("BLACKTIE_CONFIGURATION=linux");
 #endif
 	AtmiBrokerEnv::get_instance();
 }
 
 void destroyEnv(){
-	::putenv((char*) "BLACKTIE_CONFIGURATION=");
+	putenv((char*) "BLACKTIE_CONFIGURATION=");
 	AtmiBrokerEnv::discard_instance();
 }
 
@@ -99,7 +98,7 @@ void doTwo() {
 
  
 void doThree(long delay) {
-(void) ACE_OS::sleep(delay);
+(void) apr_sleep(apr_time_from_sec(delay));
 }
 
 void doFour() {
@@ -127,59 +126,8 @@ static XID xid = {
 };
 
 
-
-void* doFive() {
-	XARecoveryLog log;
-	CosTransactions::Control_ptr curr = (CosTransactions::Control_ptr) txx_get_control();
-	// there should be a transaction running
-	BT_ASSERT_MESSAGE("curr is nil", !CORBA::is_nil(curr));
-	CosTransactions::Coordinator_ptr c = curr->get_coordinator(); // will leak curr if exception
-	txx_release_control(curr);
-	// and it should have a coordinator
-	BT_ASSERT_MESSAGE("coordinator is nil", !CORBA::is_nil(c));
-
-	// a side effect of starting a transaction is to start an orb
-	CORBA::ORB_var orb = atmibroker::tx::TxManager::get_instance()->getOrb();
-	if (CORBA::is_nil(orb))
-		return NULL;
-
-	BT_ASSERT_MESSAGE("orb is nil", !CORBA::is_nil(orb));
-	// get a handle on a poa
-	CORBA::Object_var obj = orb->resolve_initial_references("RootPOA");
-	PortableServer::POA_var poa = PortableServer::POA::_narrow(obj);
-
-	PortableServer::POAManager_var mgr = poa->the_POAManager();
-	mgr->activate();
-
-	// now for the real test:
-	// - create a CosTransactions::Resource ...
-	//XAResourceAdaptorImpl * ra = new XAResourceAdaptorImpl(findConnection("ots"), "Dummy", "", "", 123L, &real_resource, log);
-	XAResourceAdaptorImpl * ra = new XAResourceAdaptorImpl(NULL, xid, 123L, &real_resource, log);
-	//XAResourceAdaptorImpl * ra = new XAResourceAdaptorImpl(123L, &real_resource, log);
-	CORBA::Object_ptr ref = poa->servant_to_reference(ra);
-	CosTransactions::Resource_var v = CosTransactions::Resource::_narrow(ref);
-
-	try {
-		// ... and enlist it with the transaction
-		CosTransactions::RecoveryCoordinator_ptr rc = c->register_resource(v);
-		BT_ASSERT_MESSAGE("recovery coordinator is nil", !CORBA::is_nil(rc));
-	} catch (CosTransactions::Inactive&) {
-		BT_FAIL("corba resource registration error - inactive");
-	} catch (const CORBA::SystemException& ex) {
-		ex._tao_print_exception("Resource registration error: ");
-		BT_FAIL("corba resource registration error - system ex");
-	}
-	return ra;
-}
-
 void doSix(long delay) {
-	(void) ACE_OS::sleep(delay);
-}
-void doSeven(void* rad) {
-	XAResourceAdaptorImpl * ra = (XAResourceAdaptorImpl *) rad;
-	// the resource should have been committed
-	BT_ASSERT_MESSAGE("resource did not complete", ra->is_complete());
-
+	(void) apr_sleep(apr_time_from_sec(delay));
 }
 
 int count_log_records() {

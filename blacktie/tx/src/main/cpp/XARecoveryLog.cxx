@@ -20,14 +20,12 @@
 #include <sstream>
 #include <stdio.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "xa.h"
 
 #if 1
 #include "log4cxx/logger.h"
-#include "ace/OS_NS_string.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_stdlib.h"
 #include "AtmiBrokerEnv.h"
 #include "SynchronizableObject.h"
 #else
@@ -36,6 +34,8 @@
 #endif
 
 #include "XARecoveryLog.h"
+
+#include "apr_strings.h"
 
 #define INUSE 0xaf12L   // marker to indicate that the block is allocated
 #define NBLOCKS 0x100   // the minimum number of blocks to allocate when expanding the arena
@@ -78,19 +78,19 @@ static int compareXids(const XID& xid1, const XID& xid2)
 static void init_logpath(const char *fname)
 {
 	if (fname) {
-		ACE_OS::snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", fname);
+		apr_snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", fname);
 	} else {
 		// if fname is not passed see if the log name is set in the environent
 #if 1
 		AtmiBrokerEnv* env = AtmiBrokerEnv::get_instance();
 		const char *rcLog   = env->getenv((char*) "BLACKTIE_RC_LOG_NAME", DEF_LOG);
 		const char *servName = env->getenv((char*) "BLACKTIE_SERVER_NAME", rcLog);
-		ACE_OS::snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", servName);
+		apr_snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", servName);
 		AtmiBrokerEnv::discard_instance();
 #else
 		const char *rcLog   = DEF_LOG;
 		const char *servName = rcLog;
-		ACE_OS::snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", servName);
+		apr_snprintf(RCLOGPATH, sizeof (RCLOGPATH), "%s", servName);
 
 #endif
 	}

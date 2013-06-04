@@ -33,11 +33,8 @@
 
 
 #include "log4cxx/logger.h"
-#include "ace/ACE.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
-#include "ace/Default_Constants.h"
+
+#include "apr_strings.h"
 
 #include <string>
 using namespace std;
@@ -134,9 +131,9 @@ static char * copy_value_impl(char *value) {
 
 	if (s && *(s + 1) == '{' && (e = (char *) strchr(s, '}'))) {
 		size_t esz = e - s - 2;
-		char *en = ACE::strndup(s + 2, esz);
-		char *ev = ACE_OS::getenv(en); /* ACE_OS::getenv(en);*/
-		char *pr = ACE::strndup(value, (s - value));
+		char *en = strndup(s + 2, esz);
+		char *ev = getenv(en); /* getenv(en);*/
+		char *pr = strndup(value, (s - value));
 		size_t rsz;
 		char *v;
 
@@ -149,11 +146,11 @@ static char * copy_value_impl(char *value) {
 				<< (s + 2) << (char *) " and e=" << e << (char *) " and en="
 				<< en << (char *) " and pr=" << pr << (char *) " and ev=" << ev);
 		e += 1;
-		rsz = ACE_OS::strlen(pr) + ACE_OS::strlen(e) + ACE_OS::strlen(ev) + 1; /* add 1 for null terminator */
+		rsz = strlen(pr) + strlen(e) + strlen(ev) + 1; /* add 1 for null terminator */
 		v = (char *) malloc(rsz);
 		LOG4CXX_TRACE(loggerAtmiBrokerEnvHandlers, "copy_value_impl malloc");
 
-		ACE_OS::snprintf(v, rsz, "%s%s%s", pr, ev, e);
+		apr_snprintf(v, rsz, "%s%s%s", pr, ev, e);
 		LOG4CXX_TRACE(loggerAtmiBrokerEnvHandlers, value << (char*) " -> " << v);
 
 		free(en);
@@ -172,9 +169,9 @@ static char * copy_value_impl(char *value) {
 
 static bool applicable_config(const char *config, const char *attribute) {
        
-	if (config == NULL || ACE_OS::strlen(config) == 0) {
+	if (config == NULL || strlen(config) == 0) {
 		// see if it is set in the environment
-		if ((config = ACE_OS::getenv("BLACKTIE_CONFIGURATION")) == 0)
+		if ((config = getenv("BLACKTIE_CONFIGURATION")) == 0)
 			return false;
 	}
 
@@ -190,9 +187,9 @@ static bool applicable_config(const char *config, const char *attribute) {
 
 static bool checkService(char* serverName, const char* serviceName) {
 	for(unsigned int i = 0; i < servers.size(); i ++) {
-		if(ACE_OS::strcmp(serverName, servers[i]->serverName) != 0) {
+		if(strcmp(serverName, servers[i]->serverName) != 0) {
 			for(unsigned int j = 0; j < servers[i]->serviceVector.size(); j ++) {
-				if(ACE_OS::strcmp(serviceName, servers[i]->serviceVector[j].serviceName) == 0 && ACE_OS::strcmp("topic", servers[i]->serviceVector[j].serviceType) != 0)
+				if(strcmp(serviceName, servers[i]->serviceVector[j].serviceName) == 0 && strcmp("topic", servers[i]->serviceVector[j].serviceType) != 0)
 					return true;
 			}
 		}
@@ -545,7 +542,7 @@ void AtmiBrokerEnvHandlers::startElement(const XMLCh* const uri, const XMLCh* co
 
 			server = servers.back()->serverName;
 			memset(&service, 0, sizeof(ServiceInfo));
-			ACE_OS::strcpy(adm, ".");
+			strcpy(adm, ".");
 
 			service.serviceType = NULL;
 			service.coding_type = NULL;

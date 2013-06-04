@@ -17,12 +17,11 @@
  */
 
 #include "log4cxx/logger.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
 #include "btserver.h"
 #include "xatmi.h"
 #include "string.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 extern const char* version;
 log4cxx::LoggerPtr loggerAtmiBrokerAdmin(log4cxx::Logger::getLogger(
@@ -76,7 +75,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 		len += getServiceStatus(&status, svc) + 1;
 		if (len > 1 && status != NULL) {
 			toReturn = tprealloc(toReturn, len + 1);
-			ACE_OS::memcpy(&toReturn[1], status, len);
+			memcpy(&toReturn[1], status, len);
 			free(status);
 			toReturn[0] = '1';
 		} else {
@@ -86,7 +85,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 	} else if (strncmp(req, "version", 7) == 0) {
 		LOG4CXX_DEBUG(loggerAtmiBrokerAdmin, (char*) "get version command");
 		toReturn = tprealloc(toReturn, strlen(version) + 1 + 1);
-		len += ACE_OS::sprintf(&toReturn[1], "%s", version);
+		len += sprintf(&toReturn[1], "%s", version);
 		toReturn[0] = '1';
 	} else if (strncmp(req, "counter", 7) == 0) {
 		LOG4CXX_DEBUG(loggerAtmiBrokerAdmin, (char*) "get counter command");
@@ -95,7 +94,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 		if (svc != NULL) {
 			toReturn = tprealloc(toReturn, 16);
 			counter = getServiceMessageCounter(svc);
-			len += ACE_OS::sprintf(&toReturn[1], "%ld", counter);
+			len += sprintf(&toReturn[1], "%ld", counter);
 			toReturn[0] = '1';
 		} else {
 			LOG4CXX_WARN(loggerAtmiBrokerAdmin,
@@ -109,7 +108,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 		if (svc != NULL) {
 			toReturn = tprealloc(toReturn, 16);
 			counter = getServiceErrorCounter(svc);
-			len += ACE_OS::sprintf(&toReturn[1], "%ld", counter);
+			len += sprintf(&toReturn[1], "%ld", counter);
 			toReturn[0] = '1';
 		} else {
 			LOG4CXX_WARN(loggerAtmiBrokerAdmin,
@@ -136,7 +135,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 			getResponseTime(svc, &min, &avg, &max);
 			LOG4CXX_DEBUG(loggerAtmiBrokerAdmin, (char*) "min = " << min
 					<< (char*) " avg=" << avg << (char*) " max=" << max);
-			len += ACE_OS::sprintf(&toReturn[1], "%d,%d,%d", min, avg, max);
+			len += sprintf(&toReturn[1], "%d,%d,%d", min, avg, max);
 			toReturn[0] = '1';
 		} else {
 			LOG4CXX_WARN(loggerAtmiBrokerAdmin,

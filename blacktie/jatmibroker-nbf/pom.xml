@@ -158,8 +158,8 @@
             <groupId>org.jboss.narayana.blacktie</groupId>
             <artifactId>blacktie-xsd</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
+         <dependency>
+             <groupId>org.jboss.narayana.blacktie</groupId>
             <artifactId>blacktie-idl-jacorb</artifactId>
         </dependency>
         <dependency>

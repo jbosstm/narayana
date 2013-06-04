@@ -21,7 +21,6 @@
 #ifndef _TXMANAGER_H
 #define _TXMANAGER_H
 
-#include "CorbaConnection.h"
 #include "TxControl.h"
 #include "XAResourceManagerFactory.h"
 #include "SynchronizableObject.h"
@@ -131,7 +130,6 @@ public:	// suspend and resume
 	int resume(int cd);
 	int suspend(int cd, int (*invalidate)(int cd));
 	bool isCdTransactional(int cd);
-	CORBA::ORB_ptr getOrb();
 
 	int rm_end(int flags, int altflags = -1);
 
@@ -171,8 +169,6 @@ protected:
 	TxManager();
 	virtual ~TxManager();
 	void dispose();
-
-	CORBA_CONNECTION *_connection;
 
 	static TxManager *_instance;
 };

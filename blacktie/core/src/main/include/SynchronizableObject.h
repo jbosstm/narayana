@@ -21,8 +21,9 @@
 #include "atmiBrokerCoreMacro.h"
 #include "SynchronizableObject.h"
 #include "log4cxx/logger.h"
-#include <ace/Thread.h>
-#include <ace/Synch.h>
+
+#include "apr_thread_mutex.h"
+#include "apr_thread_cond.h"
 
 class BLACKTIE_CORE_DLL SynchronizableObject {
 
@@ -67,8 +68,9 @@ public:
 	bool unlock();
 private:
 	static log4cxx::LoggerPtr logger;
-	ACE_Recursive_Thread_Mutex mutex;
-	ACE_Condition<ACE_Recursive_Thread_Mutex> cond;
+	apr_thread_mutex_t* mutex;
+	apr_thread_cond_t* cond;
+	apr_pool_t* pool;
 	int waitingCount;
 	int notifiedCount;
 };

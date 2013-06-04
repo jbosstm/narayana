@@ -71,7 +71,6 @@
         </license>
     </licenses>
     <modules>
-        <module>tao</module>
         <module>jacorb</module>
     </modules>
     <build>

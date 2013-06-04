@@ -101,11 +101,6 @@
 -->
         </dependency>
         <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>blacktie-idl-tao</artifactId>
-        </dependency>
-        <dependency>
             <groupId>apache-xercesc.contrib</groupId>
             <classifier>${bpa}</classifier>
             <artifactId>xercesc</artifactId>

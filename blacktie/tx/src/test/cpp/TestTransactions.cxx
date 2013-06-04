@@ -52,7 +52,6 @@ void TestTransactions::setUp()
 {
 	apr_initialize();
 	fault_t fault = {-1};
-	init_ace();
 
 	txx_stop();
 	initEnv();
@@ -421,17 +420,10 @@ void TestTransactions::test_register_resource()
 	BT_ASSERT_EQUAL(TX_OK, tx_open());
 	BT_ASSERT_EQUAL(TX_OK, tx_begin());
 
-	void* ra = doFive();
-
 	// commit the transaction
 	BT_ASSERT_EQUAL(TX_OK, tx_commit());
-	if (ra == NULL) {
-// TODO  if (atmibroker::tx::TxManager::get_instance()->isOTS()) then doSeven else
-// do the equivalent for Http
-		btlogger("TestTransactions::test_register_resource TODO XXX add HTTP part of this test");
-	} else {
-		doSeven(ra);
-	}
+
+	btlogger("TestTransactions::test_register_resource TODO XXX add HTTP part of this test");
 
 	// clean up
 	BT_ASSERT_EQUAL(TX_OK, tx_close());

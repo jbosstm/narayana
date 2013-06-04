@@ -84,6 +84,7 @@ void TestSocketSession::test_queue() {
 		msg->flags = 0;
 		msg->rval = 0;
 		msg->rcode = 1;
+                msg->schedtime = -1;
 		msg->data = new char[8];
 		memcpy(msg->data, (char*)"test1234", 8);;
 		msg->len = 8;
