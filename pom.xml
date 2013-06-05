@@ -494,71 +494,20 @@
     <version.org.jboss.arquillian.osgi>2.0.0.CR2</version.org.jboss.arquillian.osgi>
     <version.org.jboss.jboss-transaction-spi>7.0.1.Final</version.org.jboss.jboss-transaction-spi>
   </properties>
+  <modules>
+    <module>common</module>
+    <module>ArjunaCore</module>
+    <module>ArjunaJTA</module>
+    <module>XTS</module>
+    <module>ArjunaJTS</module>
+    <module>rest-tx</module>
+    <module>txbridge</module>
+    <module>fileio</module>
+    <module>STM</module>
+    <module>txframework</module>
+    <module>narayana-full</module>
+  </modules>
   <profiles>
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-        <module>ArjunaJTA</module>
-        <module>XTS</module>
-        <module>ArjunaJTS</module>
-        <module>rest-tx</module>
-        <module>txbridge</module>
-        <module>fileio</module>
-        <module>STM</module>
-        <module>txframework</module>
-        <module>narayana-full</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>core</id>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>jta</id>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-        <module>ArjunaJTA</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>jts</id>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-        <module>ArjunaJTA</module>
-        <module>ArjunaJTS</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>jts-idlj</id>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore</module>
-        <module>ArjunaJTA</module>
-        <module>ArjunaJTS</module>
-      </modules>
-      <properties>
-        <idlj-enabled>true</idlj-enabled>
-      </properties>
-    </profile>
-    <profile>
-      <id>stm</id>
-      <modules>
-        <module>common</module>
-        <module>ArjunaCore/arjuna</module>
-        <module>ArjunaCore/txoj</module>
-        <module>STM</module>
-      </modules>
-    </profile>
     <profile>
       <id>release</id>
       <build>
