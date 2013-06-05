@@ -34,13 +34,7 @@
 
 #include <CosTransactions.idl>
 
-#ifndef NO_PRAGMA_SUPPORT
 #pragma prefix "omg.org"
-#endif
-
-#ifdef HAVE_JAVAPACKAGE
-#pragma javaPackage "org.omg"
-#endif
 
 module XA
 {
