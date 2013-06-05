@@ -517,6 +517,14 @@
                                 <dataFile>${project.build.directory}/test-classes/coverage.ec</dataFile>
                             </dataFiles>
                         </configuration>
+                        <executions>
+                          <execution>
+                            <phase>test</phase>
+                            <goals>
+                              <goal>emma</goal>
+                            </goals>
+                          </execution>
+                        </executions>
                         <dependencies>
                             <dependency>
                                 <groupId>emma</groupId>
