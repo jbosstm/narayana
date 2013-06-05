@@ -215,7 +215,7 @@
       </dependencies>
     </profile>
     <profile>
-      <id>community</profile>
+      <id>community</id>
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
