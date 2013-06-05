@@ -35,12 +35,12 @@ import javax.transaction.xa.Xid;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CORBA.WrongTransaction;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.Status;
 import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;

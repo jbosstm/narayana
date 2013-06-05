@@ -71,9 +71,8 @@ module CosTransactions
     exception TransactionRequired {};
     exception TransactionRolledBack {};
     exception InvalidTransaction {};
-#endif
-
     exception WrongTransaction {};
+#endif
 
     // Heuristic exceptions
 

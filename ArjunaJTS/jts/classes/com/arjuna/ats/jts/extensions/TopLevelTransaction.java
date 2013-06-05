@@ -32,6 +32,7 @@
 package com.arjuna.ats.jts.extensions;
 
 import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.WrongTransaction;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Coordinator;
@@ -39,7 +40,6 @@ import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;

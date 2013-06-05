@@ -36,8 +36,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.omg.CORBA.WrongTransaction;
+
 import org.junit.Test;
-import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.SubordinateAtomicTransaction;

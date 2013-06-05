@@ -49,6 +49,7 @@ import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.WrongTransaction;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
@@ -224,7 +225,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				_theTransaction.end(true);
 			}
-			catch (org.omg.CosTransactions.WrongTransaction wt)
+			catch (WrongTransaction wt)
 			{
                 InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx());
@@ -313,7 +314,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	                        
 				_theTransaction.abort();
 			}
-			catch (org.omg.CosTransactions.WrongTransaction e1)
+			catch (WrongTransaction e1)
 			{
                 InactiveTransactionException inactiveTransactionException =new InactiveTransactionException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx());
@@ -1294,7 +1295,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				_theTransaction.commit(true);
 			}
-			catch (org.omg.CosTransactions.WrongTransaction wt)
+			catch (WrongTransaction wt)
 			{
 				throw new IllegalStateException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx(), wt);
@@ -1373,7 +1374,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				_theTransaction.rollback();
 			}
-			catch (org.omg.CosTransactions.WrongTransaction e1)
+			catch (WrongTransaction e1)
 			{
 				throw new IllegalStateException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx(), e1);

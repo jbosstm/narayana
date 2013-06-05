@@ -37,6 +37,7 @@ import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.WrongTransaction;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
@@ -53,7 +54,6 @@ import org.omg.CosTransactions.SubtransactionsUnavailable;
 import org.omg.CosTransactions.Synchronization;
 import org.omg.CosTransactions.SynchronizationUnavailable;
 import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jts.ControlWrapper;
