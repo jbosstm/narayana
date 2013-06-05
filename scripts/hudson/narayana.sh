@@ -76,8 +76,8 @@ function build_as {
   [ $? = 0 ] || fatal "git clone $GIT_URL failed"
 
   cd jboss-as
-  git checkout -t origin/4_BRANCH_NEW
-  [ $? = 0 ] || fatal "git checkout 4_BRANCH_NEW failed"
+  git checkout -t origin/4_BRANCH
+  [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
 
 #  UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
 #  git remote add upstream $UPSTREAM_GIT_URL
