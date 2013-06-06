@@ -34,7 +34,13 @@
 
 #include <orb.idl>
 
+#ifndef NO_PRAGMA_SUPPORT
 #pragma prefix "omg.org"
+#endif
+
+#ifdef HAVE_JAVAPACKAGE
+#pragma javaPackage "org.omg"
+#endif
 
 //
 // If Draft3 is defined includes most (but not all of the features
@@ -101,11 +107,19 @@ module CosTransactions
     
     // Formally part of CosTSInteroperation
 
+#ifdef NO_ANONYMOUS_SEQUENCES
+    typedef sequence<octet> tranID;
+#endif
+
     struct otid_t
     {
 	long formatID;  /* format identifier. 0 is OSI TP */
 	long bqual_length;
+#ifndef NO_ANONYMOUS_SEQUENCES	
 	sequence <octet> tid;
+#else
+	tranID tid;
+#endif
     };
 
     struct TransIdentity
@@ -115,15 +129,31 @@ module CosTransactions
 	otid_t otid;
     };
 
+#ifdef NO_ANONYMOUS_SEQUENCES
+    typedef sequence<TransIdentity> hierarchy;
+#endif
+
     struct PropagationContext
     {
 	unsigned long timeout;
+#ifdef LEGAL_IDL
+	TransIdentity currentTransaction;
+#else
 	TransIdentity current;
+#endif
+#ifndef NO_ANONYMOUS_SEQUENCES
 	sequence <TransIdentity> parents;
+#else
+	hierarchy parents;
+#endif
 	any implementation_specific_data;
     };
-     
+    
+#ifdef ORB_CURRENT_SUPPORT    
     interface Current : CORBA::Current
+#else
+    interface Current
+#endif
     {
 	void begin () raises (SubtransactionsUnavailable);
 	void commit (in boolean report_heuristics) raises (NoTransaction, HeuristicMixed, HeuristicHazard);

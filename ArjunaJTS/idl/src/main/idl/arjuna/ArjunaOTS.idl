@@ -32,9 +32,15 @@
 #ifndef ARJUNAOTS_IDL_
 #define ARJUNAOTS_IDL_
 
+#ifndef NO_PRAGMA_SUPPORT
 #pragma prefix "arjuna.com"
+#endif
 
 #include <CosTransactions.idl>
+
+#ifdef HAVE_JAVAPACKAGE
+#pragma javaPackage "com.arjuna"
+#endif
 
 module ArjunaOTS
 {
