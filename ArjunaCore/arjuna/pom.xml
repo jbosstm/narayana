@@ -417,7 +417,7 @@
           <inherited>false</inherited>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-        <configuration combine.self="override">
+        <configuration combine.children="append">
           <excludes>
           </excludes>
         </configuration>
