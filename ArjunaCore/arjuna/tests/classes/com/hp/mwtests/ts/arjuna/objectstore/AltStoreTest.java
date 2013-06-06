@@ -68,7 +68,7 @@ public class AltStoreTest
         assertTrue(StoreManager.getRecoveryStore().write_committed(new Uid(), tn, buff));
 
         // validate that there was no change to the filesystem
-        System.out.println("Chacking that " + defaultStoreDir + " was not created by the test");
+        System.out.println("Checking that " + defaultStoreDir + " was not created by the test");
         assertFalse(new File(defaultStoreDir).exists());
     }
 
