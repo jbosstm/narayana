@@ -21,8 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>service</artifactId>
   <packaging>jar</packaging>
-  <name>xts sar</name>
-  <description>xts sar</description>
+  <name>Narayana: XTS sar</name>
+  <description>Narayana: XTS sar</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>

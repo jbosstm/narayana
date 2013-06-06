@@ -21,8 +21,8 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jacorb-idl</artifactId>
-  <name>JBossJTS jacorb idl</name>
-  <description>jacorb idl</description>
+  <name>Narayana: ArjunaJTS idl jacorb</name>
+  <description>Narayana: ArjunaJTS idl jacorb</description>
   <packaging>jar</packaging>
 
   <build>

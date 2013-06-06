@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>localjunit-unit-tests</artifactId>
     <packaging>jar</packaging>
-    <name>unit tests</name>
-    <description>unit tests</description>
+    <name>Narayana: XTS localjunit unit</name>
+    <description>Narayana: XTS localjunit unit</description>
 
     <properties>
         <skipEnabledPropagationTests>false</skipEnabledPropagationTests>

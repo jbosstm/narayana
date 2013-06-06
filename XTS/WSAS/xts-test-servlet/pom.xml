@@ -21,8 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xts-test-servlet</artifactId>
   <packaging>jar</packaging>
-  <name>xts test servlet</name>
-  <description>xts test servlet</description>
+  <name>Narayana: XTS WSAS xts-test-servlet</name>
+  <description>Narayana: XTS WSAS xts-test-servlet</description>
   <build>
     <sourceDirectory>../tests/classes</sourceDirectory>
     <plugins>

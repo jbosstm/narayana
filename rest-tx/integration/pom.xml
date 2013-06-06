@@ -21,8 +21,8 @@
     <artifactId>restat-integration</artifactId>
     <packaging>jar</packaging>
 
-    <name>REST-AT Integration</name>
-    <description></description>
+    <name>Narayana: rest-tx integration</name>
+    <description>REST-AT Integration</description>
 
 
     <dependencies>

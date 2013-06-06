@@ -15,7 +15,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>byteman_support</artifactId>
     <packaging>jar</packaging>
-    <name>Reusable Byteman rules for xts</name>
+    <name>Narayana: XTS byteman_support</name>
+    <description>Reusable Byteman rules for xts</description>
     <build>
         <plugins>
             <plugin>

@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-integration</artifactId>
-  <name>JBossJTS ATX module</name>
-  <description>atx</description>
+  <name>Narayana: ArjunaJTS integration</name>
+  <description>Narayana: ArjunaJTS integration (atx)</description>
   <packaging>jar</packaging>
   <build>
     <plugins>

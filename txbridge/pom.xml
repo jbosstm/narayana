@@ -20,8 +20,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jbosstxbridge</artifactId>
-    <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <name>Narayana: txbridge</name>
+    <description>Narayana: txbridge</description>
     <packaging>jar</packaging>
     <properties>
         <version.plugin.antrun>1.7</version.plugin.antrun>

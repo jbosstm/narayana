@@ -22,8 +22,8 @@
   <groupId>org.jboss.narayana.xts</groupId>
   <artifactId>xts-all</artifactId>
   <packaging>pom</packaging>
-  <name>xts all</name>
-  <description>xts all</description>
+  <name>Narayana: XTS</name>
+  <description>Narayana: XTS</description>
   <build>
     <plugins>
       <plugin>

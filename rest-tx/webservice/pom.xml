@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>restat-web</artifactId>
   <packaging>war</packaging>
-  <name>RESTful Atomic Transactions War Packaging</name>
+  <name>Narayana: rest-tx webservice</name>
   <description>Provides Transactions for web applications</description>
   <properties>
     <version.artifactId>5.0.0.M4-SNAPSHOT</version.artifactId>

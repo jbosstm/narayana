@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jts</artifactId>
-  <name>JBossJTS jts</name>
-  <description>jts</description>
+  <name>Narayana: ArjunaJTS jts</name>
+  <description>Narayana: ArjunaJTS jts</description>
   <packaging>jar</packaging>
   <properties>
     <!-- This module builds two jars each holding different sets of IDL stubs (JacORB or Sun orb) -->

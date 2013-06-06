@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.jboss.narayana.stm</groupId>
   <artifactId>core</artifactId>
-  <name>core</name>
+  <name>Narayana: STM</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
