@@ -25,7 +25,7 @@ git pull --rebase --ff-only upstream $UPSTREAM_AS_BRANCH
 if [ $? != 0 ]; then
   echo "Merge conflict needs manual intervention. Please go to '$TEMPORARY_REBASE_LOCATION/jboss-as' and resolve, then run:"
   echo ""
-  echo "    git push origin $ORIGIN_AS_BRANCH -f"
+  echo "    git push origin $ORIGIN_AS_BRANCH"
   echo "    rm -rf $TEMPORARY_REBASE_LOCATION"
   exit -1
 fi
