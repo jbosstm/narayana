@@ -129,6 +129,16 @@
                     </filesets>
                 </configuration>
             </plugin>
+            <plugin>
+                <inherited>false</inherited>
+                <groupId>org.jboss.byteman</groupId>
+                <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+                <configuration>
+                    <packages>
+                        <package>org.jboss.jbossts.xts.recovery.participant.at</package>
+                    </packages>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
         	<plugins>

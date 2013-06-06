@@ -376,6 +376,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.jboss.byteman</groupId>
+        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+        <version>${version.org.jboss.byteman}</version>
+        <executions>
+          <execution>
+             <id>rulecheck</id>
+             <goals>
+               <goal>rulecheck</goal>
+             </goals>
+             <configuration>
+                 <includes>
+                     <include>**/*.txt</include>
+                     <include>**/*.btm</include>
+                 </includes>
+				 <failOnWarning>false</failOnWarning>
+             </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <properties>
@@ -447,7 +467,7 @@
     <version.com.sun.grizzly>1.9.18-i</version.com.sun.grizzly>
     <version.org.codehaus.jettison>1.3.1</version.org.codehaus.jettison>
     <version.junit>4.10</version.junit> 
-    <version.org.jboss.byteman>2.1.2</version.org.jboss.byteman>
+    <version.org.jboss.byteman>2.1.3</version.org.jboss.byteman>
     <version.org.jboss.arquillian.core>1.0.3.Final</version.org.jboss.arquillian.core>
     <version.javax.annotation>1.2-b04</version.javax.annotation>
     <version.org.jboss.arquillian.osgi>2.0.0.CR2</version.org.jboss.arquillian.osgi>
