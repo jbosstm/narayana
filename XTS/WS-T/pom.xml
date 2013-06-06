@@ -21,8 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-t11</artifactId>
   <packaging>jar</packaging>
-  <name>wst11</name>
-  <description>wst11</description>
+  <name>Narayana: XTS WS-T</name>
+  <description>Narayana: XTS WS-T (wst11)</description>
   <build>
     <sourceDirectory>dev/src</sourceDirectory>
     <resources>

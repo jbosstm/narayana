@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-idl</artifactId>
-  <name>JBossJTS idl stubs</name>
-  <description>jts idl stubs</description>
+  <name>Narayana: ArjunaJTS idl</name>
+  <description>Narayana: ArjunaJTS idl</description>
   <packaging>pom</packaging>
 
   <build>

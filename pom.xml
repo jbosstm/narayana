@@ -18,7 +18,7 @@
   <version>5.0.0.M4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
-  <name>${project.artifactId}</name>
+  <name>Narayana: all</name>
   <description>${project.artifactId}</description>
   <issueManagement>
     <system>JIRA</system>

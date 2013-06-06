@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jta</artifactId>
-  <name>JBossJTA packaged module</name>
-  <description>jta uber jar</description>
+  <name>Narayana: ArjunaJTA narayana-jta</name>
+  <description>Narayana: ArjunaJTA narayana-jta (jta uber jar)</description>
   <packaging>jar</packaging>
   <build>
     <plugins>

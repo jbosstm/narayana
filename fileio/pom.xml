@@ -20,7 +20,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jbossts-transactional-fileio</artifactId>
-	<name>JBoss Transactional File I/O</name>
+	<name>Narayana: fileio</name>
 	<description>Transactional file I/O</description>
 	<url>http://www.jboss.org/jbosstm/fileio/</url>
 	<build>

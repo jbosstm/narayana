@@ -26,8 +26,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>txframework</artifactId>
     <packaging>jar</packaging>
-    <name>txframework</name>
-    <description>txframework</description>
+    <name>Narayana: txframework</name>
+    <description>Narayana: txframework</description>
 
     <parent>
         <groupId>org.jboss.narayana</groupId>

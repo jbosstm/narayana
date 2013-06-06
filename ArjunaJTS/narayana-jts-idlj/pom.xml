@@ -20,9 +20,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-idlj</artifactId>
-  <name>JBossJTS packaged module with idlj stubs</name>
+  <name>Narayana: ArjunaJTS narayana-jts-idlj</name>
   <packaging>jar</packaging>
-  <description>jts uber with idlj stubs</description>
+  <description>JTS uber jar with idlj stubs</description>
   <build>
     <plugins>
       <plugin>

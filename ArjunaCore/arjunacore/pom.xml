@@ -20,7 +20,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>arjunacore</artifactId>
-  <name>arjunacore</name>
+  <name>Narayana: ArjunaCore arjunacore</name>
   <description>ArjunaCore packaged module</description>
   <packaging>jar</packaging>
   <build>

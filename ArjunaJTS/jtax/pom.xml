@@ -20,9 +20,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jtax</artifactId>
-  <name>JBossJTS jtax module</name>
+  <name>Narayana: ArjunaJTS jtax</name>
   <packaging>jar</packaging>
-  <description>jtax</description>
+  <description>Narayana: ArjunaJTS jtax</description>
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests/classes</testSourceDirectory>

@@ -15,7 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xtstest</artifactId>
     <packaging>war</packaging>
-    <name>Test service for use by recovery tests</name>
+    <name>Narayana: XTS localjunit xtstest</name>
     <description>Test service for use by recovery tests</description>
     <build>
         <finalName>${project.artifactId}</finalName>

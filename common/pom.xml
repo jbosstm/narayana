@@ -13,8 +13,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>common</artifactId>
-  <name>common</name>
-  <description>common</description>
+  <name>Narayana: common</name>
+  <description>Narayana: common</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>classes</sourceDirectory>

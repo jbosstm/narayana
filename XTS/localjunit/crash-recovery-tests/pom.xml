@@ -15,6 +15,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>localjunit-crash-recovery-tests</artifactId>
     <packaging>jar</packaging>
-    <name>xts crash recovery tests</name>
+    <name>Narayana: XTS localjunit crash-recovery-tests</name>
     <description>xts crash recovery tests</description>
 </project>

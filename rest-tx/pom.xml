@@ -26,8 +26,8 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <groupId>org.jboss.narayana.rts</groupId>
   <artifactId>rest-tx</artifactId>
   <packaging>pom</packaging>
-  <name>RESTful Transactions</name>
-  <description>rest tx</description>
+  <name>Narayana: rest-tx</name>
+  <description>RESTful transactions</description>
   <url>http://www.jboss.org/jbosstm</url>
  
   <build>

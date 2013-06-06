@@ -21,8 +21,8 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>idlj-idl</artifactId>
-  <name>JBossJTS idlj idl</name>
-  <description>idlj idl</description>
+  <name>Narayana: ArjunaJTS idl idlj</name>
+  <description>Narayana: ArjunaJTS idl idlj</description>
   <packaging>jar</packaging>
 
   <build>

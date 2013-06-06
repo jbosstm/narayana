@@ -18,8 +18,7 @@
     <artifactId>jbossts-build</artifactId>
     <packaging>jar</packaging>
     <version>unknown</version>
-    <name>JBossTS jbossts-build</name>
-
+    <name>Narayana: qa</name>
 
     <repositories>
         <repository>

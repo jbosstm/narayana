@@ -21,8 +21,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>arjuna</artifactId>
-  <name>arjuna</name>
-  <description>ArjunaCore arjuna module</description>
+  <name>Narayana: ArjunaCore arjuna</name>
+  <description>Narayana: ArjunaCore Arjuna</description>
   <packaging>jar</packaging>
 
   <build>
