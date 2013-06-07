@@ -218,6 +218,58 @@ public class SpecTest extends BaseTest {
     }
 
     @Test
+    public void testRollbackOnly() throws Exception {
+        TxSupport txn = new TxSupport();
+
+        txn.startTx();
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLBACK_ONLY, txn.markTxRollbackOnly());
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
+
+        /*
+        296... Upon termination, the resource and all associated
+        297resources are implicitly deleted. For any subsequent PUT invocation, such as due to a
+        298timeout/retry, then an implementation MAY return 410 if the implementation records information
+        299about transactions that have rolled back, (not necessary for presumed rollback semantics) but at
+        300a minimum MUST return 404. The invoker can assume this was a rollback.
+        */
+        try {
+            txn.rollbackTx();
+        } catch (HttpResponseException e) {
+            Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE ||
+                    e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
+        }
+    }
+
+    @Test
+    public void testRollbackOnlyWithCommit() throws Exception {
+        TxSupport txn = new TxSupport();
+
+        txn.startTx();
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLBACK_ONLY, txn.markTxRollbackOnly());
+
+        /*
+         * committing a transaction marked rollback only should automatically abort the transaction
+         */
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.commitTx());
+
+        /*
+        296... Upon termination, the resource and all associated
+        297resources are implicitly deleted. For any subsequent PUT invocation, such as due to a
+        298timeout/retry, then an implementation MAY return 410 if the implementation records information
+        299about transactions that have rolled back, (not necessary for presumed rollback semantics) but at
+        300a minimum MUST return 404. The invoker can assume this was a rollback.
+        */
+        try {
+            txn.rollbackTx();
+        } catch (HttpResponseException e) {
+            Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE ||
+                    e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
+        }
+    }
+
+    @Test
     public void testEnlistResource() throws Exception {
         TxSupport txn = new TxSupport();
 

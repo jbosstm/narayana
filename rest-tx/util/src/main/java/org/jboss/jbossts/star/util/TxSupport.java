@@ -180,6 +180,10 @@ public class TxSupport
         return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkNames.TERMINATOR), "PUT",
                 TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_ROLLEDBACK, null);
     }
+    public String markTxRollbackOnly() throws HttpResponseException {
+        return httpRequest(new int[] {HttpURLConnection.HTTP_OK}, links.get(TxLinkNames.TERMINATOR), "PUT",
+                TxMediaType.TX_STATUS_MEDIA_TYPE, TxStatusMediaType.TX_ROLLBACK_ONLY, null);
+    }
 
     /**
      * Get the status of the current transacton
