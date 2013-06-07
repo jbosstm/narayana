@@ -292,6 +292,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>2.3.1</version>
         <configuration>
@@ -504,21 +509,13 @@
                         <artifactId>emma-maven-plugin</artifactId>
                         <version>1.0-alpha-3</version>
                         <inherited>true</inherited>
-                        <configuration>
-                            <metadataFile>${project.build.directory}/test-classes/coverage.em</metadataFile>
-                            <metrics>method:70,block:70,line:80,class:100</metrics>
-                            <dataFiles>
-                                <dataFile>${project.build.directory}/test-classes/coverage.em</dataFile>
-                                <dataFile>${project.build.directory}/test-classes/coverage.ec</dataFile>
-                            </dataFiles>
-                        </configuration>
                         <executions>
                           <execution>
-                            <phase>test</phase>
+                            <phase>process-classes</phase>               
                             <goals>
-                              <goal>emma</goal>
+                              <goal>instrument</goal>
                             </goals>
-                          </execution>
+                            </execution>
                         </executions>
                         <dependencies>
                             <dependency>
@@ -528,13 +525,80 @@
                             </dependency>
                         </dependencies>
                     </plugin>
-                </plugins>
-            </build>
-            <properties>
-                <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
-                <version.emma>2.0.5312</version.emma>
-            </properties>
-        </profile>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-surefire-plugin</artifactId>
+                      <configuration>
+                        <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>    
+                      </configuration>
+                    </plugin>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-antrun-plugin</artifactId>
+                      <version>${version.plugin.antrun}</version>
+                      <executions>
+                        <execution>
+                          <id>create-report</id>
+                          <phase>install</phase>
+                          <configuration>
+                            <target>
+                              <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
+                              <if>
+                                <available file="${project.build.directory}/test-classes/coverage.ec"/>
+                                <then>
+                                  <java classname="emma">
+                                    <arg value="report"/>
+                                    <arg value="-r"/>
+                                    <arg value="html"/>
+                                    <arg value="-in"/>
+                                    <arg value="${project.build.directory}/coverage.em"/>
+                                    <arg value="-in"/>
+                                    <arg value="${project.build.directory}/test-classes/coverage.ec"/>
+                                    <arg value="-Dreport.html.out.file=${project.build.directory}/coverage.html"/>
+                                    <arg value="-Dreport.metrics=method:70,block:70,line:80,class:100"/>
+                                    <classpath>
+                                      <pathelement path="${maven.dependency.emma.emma.jar.path}"/> 
+                                    </classpath>
+                                  </java>
+                                </then>
+                              </if>
+                            </target>
+                          </configuration>
+                          <goals>
+                            <goal>run</goal>
+                          </goals>
+                        </execution>
+                      </executions>
+                      <dependencies>
+                        <dependency>
+                          <groupId>emma</groupId>
+                          <artifactId>emma</artifactId>
+                          <version>2.0.12224-adinn</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>ant-contrib</groupId>
+                            <artifactId>ant-contrib</artifactId>
+                            <version>1.0b3</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>ant</groupId>
+                                    <artifactId>ant</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-nodeps</artifactId>
+                            <version>1.8.1</version>
+                        </dependency>
+                      </dependencies>
+                    </plugin>
+                  </plugins>
+                </build>
+                <properties>
+                  <version.plugin.antrun>1.7</version.plugin.antrun>
+                </properties>
+              </profile>
     <profile>
       <id>community</id>
       <properties>
