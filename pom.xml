@@ -449,6 +449,7 @@
     <version.org.jboss.jboss-transaction-spi>7.0.1.Final</version.org.jboss.jboss-transaction-spi>
   </properties>
   <modules>
+    <module>ext</module>
     <module>common</module>
     <module>ArjunaCore</module>
     <module>ArjunaJTA</module>
@@ -523,9 +524,7 @@
                             <dependency>
                                 <groupId>emma</groupId>
                                 <artifactId>emma</artifactId>
-                                <version>2.1.5320</version>
-                                <scope>system</scope>
-                                <systemPath>${emma.jar.location}</systemPath>
+                                <version>2.0.12224-adinn</version>
                             </dependency>
                         </dependencies>
                     </plugin>
