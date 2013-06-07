@@ -84,6 +84,10 @@ public enum TxStatus {
         return this.equals(TxStatus.TransactionReadOnly);
     }
 
+    public boolean isRollbackOnly() {
+        return this.equals(TxStatus.TransactionRollbackOnly);
+    }
+
     public boolean isRunning() {
         return this.equals(TransactionActive);
     }
