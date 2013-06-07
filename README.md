@@ -27,44 +27,13 @@ To use this wrapper to build an individual module (say arjuna) you would type:
 
 	./build.[sh|bat] clean install -pl :arjuna
 
-If you are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
+If you are building the "community" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 
-	-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar -Demma.jar.location=/full/path/to/checkout/location/ext/emma.jar
+	-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar
 
-If you want to be able to cd into a folder to call our shipped maven or a version of maven not shipped with our project (on linux):
-
-	1. Create a file called $HOME/bin/txmvn (assuming $HOME/bin is in the path)
-	2. Add the following contents to this file:
-	#!/bin/bash
-	M2_HOME=~/projects/narayana/trunk/tools/maven/
-	PATH=$M2_HOME/bin:$PATH
-	EXT_JARS="-Demma.jar.location=\${user.home}/projects/narayana/trunk/ext/emma.jar -Dorson.jar.location=\${user.home}/projects/narayana/trunk/ext/orson-0.5.0.jar"
-	mvn $EXT_JARS $@
-	3. Ensure that $HOME/bin/txmvn is executable
-	4. type something like "txmvn clean install"
-
-NOTE: This does not set the memory options etc that build.[sh|bat] does so you will need to update this script to reflect our changes in build.[sh|bat]
-
-Build Profiles
---------------
-To speed up the build, several profiles are provided to restrict what is built. The available options are:
-
-1. all  This builds everything
-2. docs  This builds the documentation only
-3. core  This builds the common and arjunacore modules
-4. jta  This builds common, arjunacore and JTA
-5. jts  This builds common, arjunacore, JTA and JTS
-6. idlj When combine with the jts or all profiles the resulting jar will be configured to use the ORB bundled with the JDK
-7. xts  This builds common, arjunacore, JTA and XTS
-8. stm  This builds common, arjuna, txoj and the STM module
-
-So, for example, to build stm you can type:
-
-	./build.[sh|bat] clean install -P stm
-
-Note that by default, if a parent module has documentation, it will be built, to disable this you can deactive the docs profile as follows:
-
-	./build.[sh|bat] clean install -P !docs
+Code Coverage Testing
+---------------------
+  ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
 
 Build QA
 --------
@@ -91,7 +60,7 @@ JTA and JTA in turn a superset of Core.
 pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the top level pom.xml
 You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
 
-The build currently requires Java 6 and maven 3.0.3. Maven is provided in the tools/maven section, though later versions of these tools may work. Download locations are:
+Maven is provided in the tools/maven section, though later versions of this may work. Download locations are:
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 http://maven.apache.org/
 
