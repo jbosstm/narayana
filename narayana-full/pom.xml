@@ -24,10 +24,6 @@
   <name>Narayana: narayana-full</name>
   <description>Narayana: narayana-full</description>
   
-  <properties>
-    <skip.from.idlj>**</skip.from.idlj>
-  </properties>
-  
   <build>
     <plugins>
       <plugin>
@@ -196,11 +192,7 @@
           <value>true</value>
         </property>
       </activation>
-      
-      <properties>
-        <skip.from.idlj></skip.from.idlj>
-      </properties>
-      
+     
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
