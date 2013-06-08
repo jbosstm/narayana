@@ -875,7 +875,7 @@ public class IDLCompiler extends Task
 			}
 			else
 			{
-			    throw new BuildException("Unknow variable element '"+variableElement+"'");
+			    throw new BuildException("Unknown variable element '"+variableElement+"'");
 			}
 		    }
 		}
