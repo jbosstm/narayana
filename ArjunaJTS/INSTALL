@@ -42,8 +42,8 @@ Each MBean corresponding to an transaction contains an operation for removing th
 record from the object store. After this operation the system will no longer have
 any knowledge of the transaction.
 
-Transactions contain participants such datasources. These have MBean representations in
-the JMX viewer. It sometimes happens that a particpant made a different transaction
+Transactions contain participants such as datasources. These have MBean representations in
+the JMX viewer. It sometimes happens that a participant made a different transaction
 completion decision from the one the Transaction Manager expected - such a state is
 called a heuristic. Heuristics will never be completed automatically so the MBean
 contains an operation (called clearHeuristic) for moving the participant back into
