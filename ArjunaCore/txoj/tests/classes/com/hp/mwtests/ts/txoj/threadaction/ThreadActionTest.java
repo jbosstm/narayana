@@ -33,6 +33,8 @@ package com.hp.mwtests.ts.txoj.threadaction;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.hp.mwtests.ts.txoj.common.resources.BasicThreadedObject;
 
@@ -46,6 +48,8 @@ public class ThreadActionTest
 
 	System.out.println("Main thread has action "+BasicAction.Current());
 
+	assertEquals(BasicAction.Current(), null);
+	
 	object1.start();
 	object2.start();
 
@@ -61,6 +65,7 @@ public class ThreadActionTest
 	}
 
 	System.out.println("Main thread has action "+BasicAction.Current());
+	
+	assertEquals(BasicAction.Current(), null);
     }
-    
 }
