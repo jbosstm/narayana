@@ -36,6 +36,18 @@
 
 #pragma prefix "omg.org"
 
+/*
+ * See https://issues.jboss.org/browse/JBTM-1756 for why this is
+ * necessary at the moment.
+ */
+ 	 
+#ifndef ORB_CURRENT_SUPPORT
+module CORBA
+{
+	interface Current {};
+};
+#endif
+
 //
 // If Draft3 is defined includes most (but not all of the features
 // of the revised OTS spec at Draft3 (Nov 22, 96).
@@ -122,17 +134,8 @@ module CosTransactions
 	sequence <TransIdentity> parents;
 	any implementation_specific_data;
     };
- 
- 	/*
- 	 * See https://issues.jboss.org/browse/JBTM-1756 for why this is
- 	 * necessary at the moment.
- 	 */
- 	 
-#ifdef ORB_CURRENT_SUPPORT
-    interface Current : CORBA::Current
-#else
-	interface Current
-#endif
+
+	interface Current : CORBA::Current
     {
 	void begin () raises (SubtransactionsUnavailable);
 	void commit (in boolean report_heuristics) raises (NoTransaction, HeuristicMixed, HeuristicHazard);
