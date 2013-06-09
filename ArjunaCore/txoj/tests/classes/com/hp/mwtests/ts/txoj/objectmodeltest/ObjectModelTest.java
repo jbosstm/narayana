@@ -45,18 +45,34 @@ import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 public class ObjectModelTest
 {
     @Test
-    public void test() throws IOException, TestException
+    public void testSINGLE() throws IOException, TestException
     {
         AtomicObject obj = new AtomicObject(ObjectModel.SINGLE);
         AtomicAction A = new AtomicAction();
 
         A.begin();
 
-            obj.set(1234);
+        obj.set(1234);
 
         A.commit();
 
         assertEquals(1234, obj.get());
+    }
+    
+    @Test
+    public void testMULTIPLE() throws IOException, TestException
+    {
+        AtomicObject obj1 = new AtomicObject(ObjectModel.MULTIPLE);
+        AtomicObject obj2 = new AtomicObject(obj1.get_uid(), ObjectModel.MULTIPLE);
+        AtomicAction A = new AtomicAction();
+
+        A.begin();
+
+        obj1.set(1234);
+
+        A.commit();
+
+        assertEquals(1234, obj2.get());
     }
 
 }
