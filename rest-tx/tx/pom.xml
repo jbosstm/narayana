@@ -25,8 +25,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>restat-api</artifactId>
   <packaging>jar</packaging>
-  <name>Narayana: rest-tx tx (RESTful API for Atomic Transactions)</name>
-  <description>Provides Transactions for web applications</description>
+  <name>Narayana: rest-tx tx</name>
+  <description>Provides RESTful Atomic Transactions for web applications</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
