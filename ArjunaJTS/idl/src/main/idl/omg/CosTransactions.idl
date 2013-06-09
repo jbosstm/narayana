@@ -35,7 +35,7 @@
 #include <orb.idl>
 
 #pragma prefix "omg.org"
-
+/*
 #ifndef ORB_CURRENT_SUPPORT
 module CORBA
 {
@@ -44,7 +44,7 @@ module CORBA
   	 interface Current {};
 }
 #endif
-
+*/
 //
 // If Draft3 is defined includes most (but not all of the features
 // of the revised OTS spec at Draft3 (Nov 22, 96).
@@ -132,11 +132,11 @@ module CosTransactions
 	any implementation_specific_data;
     };
  
-/*#ifdef ORB_CURRENT_SUPPORT  */
+#ifdef ORB_CURRENT_SUPPORT
     interface Current : CORBA::Current
-/*#else
+#else
 	interface Current
-#endif*/
+#endif
     {
 	void begin () raises (SubtransactionsUnavailable);
 	void commit (in boolean report_heuristics) raises (NoTransaction, HeuristicMixed, HeuristicHazard);
