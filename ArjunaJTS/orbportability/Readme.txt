@@ -20,7 +20,7 @@ MA  02110-1301, USA.
 ->	Configuration script options
 
 		-d
-	Use the default answers for aquestions.  Using this will override
+	Use the default answers for questions.  Using this will override
 	environment variables (-e option).
 
 		-e
@@ -68,7 +68,7 @@ The questions and environment variables used for the orbportability module are :
 
 	Location of properties file	$PROPERTIES
 
-	Versioon of properties file	$ORBPORTABILITY_PROPERTIES_VERSION [5]
+	Version of properties file	$ORBPORTABILITY_PROPERTIES_VERSION [5]
 
 	Install test programs [n]	$INSTALL_TESTS
 
