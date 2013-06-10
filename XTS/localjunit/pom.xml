@@ -233,6 +233,7 @@
     </profiles>
     <modules>
         <module>unit</module>
+        <module>disabled-context-propagation</module>
         <module>WSTX11-interop</module>
         <module>WSTFSC07-interop</module>
         <module>xtstest</module>
