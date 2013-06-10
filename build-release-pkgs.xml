@@ -112,14 +112,14 @@
   <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
     <!-- build the binary releases -->
     <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
-      <arg line="clean -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/"/>
+      <arg line="clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
     <!-- package the full source release (all src tree) -->
     <delete file="${workdir}/narayana-full-${tag}-src.zip"/>
     <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
     <!-- build the binary releases -->
     <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
-      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Demma.jar.location=${user.dir}/ext/emma.jar -Dorson.jar.location=${user.dir}/ext/"/>
+      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
   </target>
   <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->

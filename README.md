@@ -7,7 +7,9 @@ This build uses a patch of the EMMA Jar, the source code for the patch is availa
 
 	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
 
-The latest version of the patched emma is available from /ext folder.
+To install the patched Emma jar in your Maven repository, you need to have performed the following command (or run a complete build with the codeCoverage profile):
+
+./build.sh -PcodeCoverage -pl ext
 
 
 Requirements
@@ -34,6 +36,8 @@ If you are building the "community" profile and are using a different maven inst
 Code Coverage Testing
 ---------------------
   ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
+
+See the notes on installing the patched emma jar above if you have not installed it into your Maven repository yet.
 
 Build QA
 --------
