@@ -72,6 +72,17 @@ http://maven.apache.org/
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
 
+Building specific components
+----------------------------
+
+Narayana supports building specific components using Maven build options.
+
+ArjunaCore - ./build.[sh|bat] -am -pl :arjunacore
+NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
+NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb
+NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Didlj-enabled=trued
+XTS - ./build.[sh|bat] -am -pl :jboss-xts
+STM - ./build.[sh|bat] -am -pl :core
 
 Developing Narayana
 -------------------
