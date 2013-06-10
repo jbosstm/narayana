@@ -62,22 +62,22 @@ public class AtomicIntegerUnitTest extends TestCase
     {
         AtomicAction act = new AtomicAction();
         AtomicInteger ai = AtomicFactory.instance().createInteger();
-        
+
         assertEquals(ai.get(), 0);
         
         /*
          * Do this within a transaction so we can roll it all back
          * afterwards.
          */
-        
+
         act.begin();
         
         ai.set(1);
         
         assertEquals(ai.get(), 1);
-        
+
         act.abort();
-        
+
         assertEquals(ai.get(), 0);
     }
 }

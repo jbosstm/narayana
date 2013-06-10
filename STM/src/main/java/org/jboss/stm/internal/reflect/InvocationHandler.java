@@ -344,7 +344,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                         }          
         
                         // TODO type specific concurrency control (define Lock class in annotation?)
-        
+
                         int result = _txObject.setlock(new Lock(cachedLock._lockType), cachedLock._retry, cachedLock._timeout);
         
                         if (result != LockResult.GRANTED)

@@ -24,6 +24,7 @@ package org.jboss.stm.internal.proxy;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import org.jboss.stm.InvalidAnnotationException;
@@ -119,10 +120,20 @@ public class LockManagerProxy<T> extends LockManager
                         for (Field afield : fields)
                         {
                             // ignore if flagged with @NotState
-                            
+
                             if (!afield.isAnnotationPresent(NotState.class) && (!THIS_NAME.equals(afield.getName())))
                             {
-                                _fields.add(afield);
+                                /*
+                                 * DO NOT try to save final values, since we cannot restore them
+                                 * anyway!
+                                 */
+                                
+                                if (!((afield.getModifiers() & Modifier.FINAL) == Modifier.FINAL))
+                                {
+                                    System.err.println("**NOT final");
+                                    
+                                    _fields.add(afield);
+                                }
                             }
                         }
                     }
@@ -203,7 +214,12 @@ public class LockManagerProxy<T> extends LockManager
                             
                             if (!afield.isAnnotationPresent(NotState.class) && (!THIS_NAME.equals(afield.getName())))
                             {
-                                _fields.add(afield);
+                                /*
+                                 * DO NOT try to restore final values!
+                                 */
+                                
+                                if (!((afield.getModifiers() & Modifier.FINAL) == Modifier.FINAL))
+                                    _fields.add(afield);
                             }
                         }
                     }
@@ -576,7 +592,7 @@ public class LockManagerProxy<T> extends LockManager
         
         return true;
     }
-    
+
     // the object we are working on.
     
     private T _theObject;
