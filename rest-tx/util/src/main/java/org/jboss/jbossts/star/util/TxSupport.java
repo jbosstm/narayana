@@ -690,6 +690,12 @@ public class TxSupport
         return getUriBuilder(info, npaths, paths).build();
     }
 
+    public static String extractUri(UriInfo info, String ... paths) {
+        // careful with extracting the uri from a UriInfo since it casues issues with emma
+        // also info.getBaseUri() + info.getPath() fail running the wildfly testsuite
+        return getUri(info, info.getPathSegments().size(), paths).toASCIIString();
+    }
+
     public static String buildURI(UriBuilder builder, String ... pathComponents)
     {
         for (String component : pathComponents)

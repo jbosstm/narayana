@@ -89,12 +89,15 @@ public class Coordinator
     {
         log.trace("coordinator: list: transaction-coordinator");
         StringBuilder txns = new StringBuilder();
+        Iterator<String> i;
+        String statisticsUri = TxSupport.extractUri(info, TxLinkNames.STATISTICS);
+
         updateTransactions();
-        Iterator<String> i = transactions.keySet().iterator();
+        i = transactions.keySet().iterator();
 
         while (i.hasNext()) {
             URI uri = TxSupport.getUri(info, info.getPathSegments().size(), i.next());
-            txns.append(uri.toString());
+            txns.append(uri.toASCIIString());
 
             if (i.hasNext())
                 txns.append(TxSupport.URI_SEPARATOR);
@@ -109,7 +112,7 @@ public class Coordinator
         builder.header("Content-Length", txns.length());
 
         TxSupport.setLinkHeader(builder, "Transaction Statistics", TxLinkNames.STATISTICS,
-                info.getAbsolutePath().toString() + "/" + TxLinkNames.STATISTICS, TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
+                statisticsUri, TxMediaType.TX_STATUS_EXT_MEDIA_TYPE);
 
         return builder.build();
     }
@@ -132,7 +135,7 @@ public class Coordinator
 
         for (String s : transactions.keySet()) {
             URI uri = TxSupport.getUri(info, info.getPathSegments().size(), s);
-            tm.addCoordinator(uri.toString());
+            tm.addCoordinator(uri.toASCIIString());
         }
 
         tm.setCreated(new Date(age));
@@ -223,14 +226,14 @@ public class Coordinator
         String terminator = TxLinkNames.TERMINATOR;
         Collection<String> enlistmentIds = new ArrayList<String>();
         CoordinatorElement coordinatorElement = txn.toXML();
-        String txnURI = TxSupport.getUri(info, info.getPathSegments().size()).toString();
+        String txnURI = TxSupport.getUri(info, info.getPathSegments().size()).toASCIIString();
         URI terminateURI = TxSupport.getUri(info, info.getPathSegments().size(),terminator);
         URI volatileURI = TxSupport.getUri(info, info.getPathSegments().size(), TxLinkNames.VOLATILE_PARTICIPANT);
 
         coordinatorElement.setTxnURI(txnURI);
-        coordinatorElement.setTerminateURI(terminateURI.toString());
+        coordinatorElement.setTerminateURI(terminateURI.toASCIIString());
         coordinatorElement.setDurableParticipantEnlistmentURI(txnURI);
-        coordinatorElement.setVolatileParticipantEnlistmentURI(volatileURI.toString());
+        coordinatorElement.setVolatileParticipantEnlistmentURI(volatileURI.toASCIIString());
 
         txn.getParticipants(enlistmentIds);
 

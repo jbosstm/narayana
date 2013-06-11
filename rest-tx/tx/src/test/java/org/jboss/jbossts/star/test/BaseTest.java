@@ -372,7 +372,7 @@ public class BaseTest {
             if (name.length() != 0) {
                 if (value.length() != 0) {
                     if (work == null){
-                        work = makeWork(new TxSupport(), info.getAbsolutePath().toString(), String.valueOf(++pid),
+                        work = makeWork(new TxSupport(), TxSupport.extractUri(info), String.valueOf(++pid),
                                 null, null, isTwoPhaseAware, isVolatile, null, null);
                         work.oldState.put(name, value);
                         faults.put(work.id, work);
@@ -430,14 +430,15 @@ public class BaseTest {
             boolean isVolatileParticipant = "true".equals(isVolatile);
             String vRegistration = null; // URI for registering with the volatile phase
             String vParticipantLink = null;  // URI for handling pre and post 2PC phases
+            String path = TxSupport.extractUri(info);
 
             if (work == null) {
                 int id = ++pid;
 
-                work = makeWork(txn, info.getAbsolutePath().toString(), String.valueOf(id), txId, enlistUrl,
+                work = makeWork(txn, path, String.valueOf(id), txId, enlistUrl,
                         isTwoPhaseAware, isVolatileParticipant, null, fault);
             } else {
-                Work newWork = makeWork(txn, info.getAbsolutePath().toString(), work.id, txId, enlistUrl,
+                Work newWork = makeWork(txn, path, work.id, txId, enlistUrl,
                         isTwoPhaseAware, isVolatileParticipant, null, fault);
                 newWork.oldState = work.oldState;
                 newWork.newState = work.newState;
@@ -453,7 +454,7 @@ public class BaseTest {
                 enlistUrl = urls[0];
                 vRegistration = urls[1];
 
-                String vParticipant = new StringBuilder(info.getAbsolutePath().toString()).append('/').append(work.id)
+                String vParticipant = new StringBuilder(path).append('/').append(work.id)
                         .append('/').append(txId).append('/').append("vp").toString();
                 vParticipantLink = txn.addLink2(
                         new StringBuilder(), TxLinkNames.VOLATILE_PARTICIPANT, vParticipant,true).toString();
@@ -480,8 +481,8 @@ public class BaseTest {
         @PUT
         @Path("{pId}/{tId}/vp")
         public Response directSynchronizations(@PathParam("pId") @DefaultValue("")String pId,
-                                         @PathParam("tId") @DefaultValue("")String tId,
-                                         String content) {
+                                               @PathParam("tId") @DefaultValue("")String tId,
+                                               String content) {
             return synchronizations(pId, tId, content);
         }
 
@@ -515,7 +516,7 @@ public class BaseTest {
             else if (vStatus == 2 && "V_COMMIT".equals(work.fault))
                 return Response.status(HttpURLConnection.HTTP_CONFLICT).build();
 
-             return Response.ok().build();
+            return Response.ok().build();
         }
 
         @SuppressWarnings({"UnusedDeclaration"})
