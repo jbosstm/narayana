@@ -217,4 +217,38 @@ public class OptionalSpecTest extends BaseTest {
             Assert.assertEquals(syncCount, "4");
         }
     }
+
+    @Test
+    public void testVolatilePrepareFail() {
+        String enlistUrl = PURL + "?isVolatile=true&fault=V_PREPARE";
+        String[] workIds = new String[1];
+        TxSupport txn = new TxSupport(60000);
+        txn.startTx();
+
+        // enlist Transactional Participants and volatile participants with the transaction
+        for (int i = 0; i < workIds.length; i++) {
+            /*
+             * the resource implementation will enlist in the volatile protocol twice:
+             * - once directly using the coordinator volatile-participant registration link
+             * - and then indirectly during participant enlistment by including a link header with
+             *  value TxLinkRel.VOLATILE_PARTICIPANT
+             * This will mean that two before and after synchronisations will be called resulting in a
+             * total of 4 synchronisations
+             */
+            workIds[i] = txn.enlistTestResource(enlistUrl, true);
+        }
+        /*
+            555In this case the Volatile prepare phase executes prior to the Durable prepare where the
+            556transaction-coordinator sends a PUT request to the registered volatile-participant: only if this
+            557prepare succeeds will the Durable protocol be executed
+         */
+        // the volatile participants should have failed the volatile prepare phase (  "?fault=V_PREPARE" in the url)
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.commitTx());
+
+        for (int i = 0; i < workIds.length; i++) {
+            String syncCount = getResourceProperty(txn, PURL, workIds[i], "syncCount");
+            // there should have been 2 before and 2 after synchronisation calls:
+            Assert.assertEquals(syncCount, "4");
+        }
+    }
 }
