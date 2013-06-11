@@ -513,31 +513,47 @@
                       </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>emma-maven-plugin</artifactId>
-                        <version>1.0-alpha-3</version>
-                        <inherited>true</inherited>
-                        <executions>
-                          <execution>
-                            <phase>process-classes</phase>               
-                            <goals>
-                              <goal>instrument</goal>
-                            </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>emma</groupId>
-                                <artifactId>emma</artifactId>
-                                <version>2.0.12224-adinn</version>
-                            </dependency>
-                        </dependencies>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-surefire-plugin</artifactId>
+                      <configuration>
+                        <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
+                        <additionalClasspathElements>
+                          <additionalClasspathElement>${emma.jar.location}/emma.jar</additionalClasspathElement>
+                        </additionalClasspathElements>
+                      </configuration>
                     </plugin>
                     <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-antrun-plugin</artifactId>
                       <version>${version.plugin.antrun}</version>
                       <executions>
+                        <execution>
+                          <id>instrument</id>
+                          <phase>process-classes</phase>
+                          <configuration>
+                            <target>
+                                  <java classname="emma">
+                                    <arg value="instr"/>
+                                    <arg value="-instrpath"/>
+                                    <arg value="${project.build.directory}/classes/"/>
+                                    <arg value="-outfile"/>
+                                    <arg value="${project.build.directory}/coverage.em"/>
+                                    <arg value="-outdir"/>
+                                    <arg value="${project.build.directory}/generated-classes/emma/"/>
+                                    <arg value="-merge"/>
+                                    <arg value="y"/>
+                                    <arg value="-outmode"/>
+                                    <arg value="fullcopy"/>
+                                    <classpath>
+                                      <pathelement path="${emma.jar.location}/emma.jar"/> 
+                                    </classpath>
+                                  </java>
+                            </target>
+                          </configuration>
+                          <goals>
+                            <goal>run</goal>
+                          </goals>
+                        </execution>
                         <execution>
                           <id>create-report</id>
                           <phase>install</phase>
@@ -558,7 +574,7 @@
                                     <arg value="-Dreport.html.out.file=${project.build.directory}/coverage.html"/>
                                     <arg value="-Dreport.metrics=method:70,block:70,line:80,class:100"/>
                                     <classpath>
-                                      <pathelement path="${maven.dependency.emma.emma.jar.path}"/> 
+                                      <pathelement path="${emma.jar.location}/emma.jar"/> 
                                     </classpath>
                                   </java>
                                 </then>
@@ -571,11 +587,6 @@
                         </execution>
                       </executions>
                       <dependencies>
-                        <dependency>
-                          <groupId>emma</groupId>
-                          <artifactId>emma</artifactId>
-                          <version>2.0.12224-adinn</version>
-                        </dependency>
                         <dependency>
                             <groupId>ant-contrib</groupId>
                             <artifactId>ant-contrib</artifactId>

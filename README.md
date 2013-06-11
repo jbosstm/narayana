@@ -7,9 +7,9 @@ This build uses a patch of the EMMA Jar, the source code for the patch is availa
 
 	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
 
-To install the patched Emma jar in your Maven repository, you need to have performed the following command (or run a complete build with the codeCoverage profile):
+If you are building the "codeCoverage" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 
-./build.sh -PcodeCoverage -pl ext
+	-Demma.jar.location=/full/path/to/checkout/location/ext/
 
 
 Requirements
@@ -31,13 +31,11 @@ To use this wrapper to build an individual module (say arjuna) you would type:
 
 If you are building the "community" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 
-	-Dorson.jar.location=/full/path/to/checkout/location/ext/orson-0.5.0.jar
+	-Dorson.jar.location=/full/path/to/checkout/location/ext/
 
 Code Coverage Testing
 ---------------------
   ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
-
-See the notes on installing the patched emma jar above if you have not installed it into your Maven repository yet.
 
 Build QA
 --------
