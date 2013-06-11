@@ -194,6 +194,18 @@
     <profiles>
         <profile>
           <id>codeCoverage</id>
+          <build>
+            <plugins>            
+              <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                  <excludes>
+                    <exclude>**/DataManagementTest.java</exclude>
+                  </excludes>
+                </configuration>
+              </plugin>
+            </plugins>
+          </build>
           <dependencies>
             <dependency>
               <groupId>emma</groupId>
