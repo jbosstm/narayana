@@ -81,6 +81,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+          <groupId>org.jboss.narayana.arjunacore</groupId>
+          <artifactId>arjunacore</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>byteman_support</artifactId>
             <version>${project.version}</version>

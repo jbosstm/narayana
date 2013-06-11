@@ -609,6 +609,7 @@
                 </build>
                 <properties>
                   <version.plugin.antrun>1.7</version.plugin.antrun>
+                  <version.emma>2.0.12224-adinn</version.emma>
                 </properties>
               </profile>
     <profile>

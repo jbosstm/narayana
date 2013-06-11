@@ -122,6 +122,7 @@
                   <include>org.jboss.narayana.xts:ws-t11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:wstx11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:bridge:jar:api:${project.version}</include>
+                  <include>emma:emma</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -138,9 +139,7 @@
               <artifactSet>
                 <includes>
                   <include>org.jboss.narayana.xts</include>
-                </includes>
-                <includes>
-                  <include>org.jboss.narayana.xts</include>
+                  <include>emma:emma</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -150,6 +149,12 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>wsas</artifactId>
@@ -225,35 +230,11 @@
   <profiles>
     <profile>
       <id>codeCoverage</id>
-      <build>
-        <plugins>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes combine.children="append">
-                  <include>emma:emma</include>
-                </includes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
-        </plugin>
-        </plugins>
-      </build>
       <dependencies>
         <dependency>
           <groupId>emma</groupId>
           <artifactId>emma</artifactId>
-          <version>2.0.12224-adinn</version>
+          <version>${version.emma}</version>
         </dependency>
       </dependencies>
     </profile>

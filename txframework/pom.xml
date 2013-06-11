@@ -193,6 +193,17 @@
 
     <profiles>
         <profile>
+          <id>codeCoverage</id>
+          <dependencies>
+            <dependency>
+              <groupId>emma</groupId>
+              <artifactId>emma</artifactId>
+              <version>${version.emma}</version>
+              <scope>test</scope>
+            </dependency>
+          </dependencies>
+        </profile>
+        <profile>
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
