@@ -465,20 +465,17 @@
     <emma enabled="true">
       <report>
         <fileset dir="..">
-          <include name="**/target/**/metadata.emma"/>
-        </fileset>
-        <fileset dir="testoutput">
-          <include name="**/*-coverage.ec"/>
+          <include name="**/*.em"/>
         </fileset>
         <fileset dir="..">
-          <include name="**/target/**/coverage.ec"/>
+          <include name="**/*coverage.ec"/>
         </fileset>
         <sourcepath>
           <dirset dir="..">
             <include name="**/classes"/>
+            <include name="**/java"/>
           </dirset>
         </sourcepath>
-        <txt outfile="testoutput/emma/coverage.txt"/>
         <html outfile="testoutput/emma/coverage.html"/>
       </report>
     </emma>
