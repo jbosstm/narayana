@@ -220,18 +220,6 @@ cat << 'EOF' > $WORKSPACE/qa/dist/${NARAYANA_VERSION}/etc/log4j.xml
 EOF
 }
 
-function qa_tests_list_failures {
-  echo "QA Test Suite Failures:"
-
-  for f in $WORKSPACE/qa/TEST-*; do
-    # pick out lines containing FAILED and print the previous line whose second word contains the test name
-    sed -n '/FAILED/{g;1!p;};h' $f | while read ln; do
-      echo $ln | cut -d' ' -f2
-    done
-  done
-
-}
-
 function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
@@ -306,12 +294,15 @@ function qa_tests_once {
     else
       ant -f run-tests.xml $target $QA_PROFILE
       ok=$?
+    fi
 
-      [ $ok = 0 ] || qa_tests_list_failures
+    if [ -f TEST-failures.txt ]; then
+      echo "Test Failures:"
+      cat TEST-failures.txt 
     fi
 
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
-    mv "$WORKSPACE/qa/TEST-*.txt" $WORKSPACE/qa/testoutput 2>/dev/null
+    mv TEST-*.txt testoutput 2>/dev/null
     ant -f run-tests.xml testoutput.zip -Dtestoutput.zipname=$testoutputzip
     return $ok
   fi
