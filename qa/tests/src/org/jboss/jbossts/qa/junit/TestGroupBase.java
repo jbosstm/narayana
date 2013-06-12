@@ -38,6 +38,7 @@ import java.util.Map;
 public class TestGroupBase
 {
     @Rule public final QATestNameRule testName = new QATestNameRule();
+    @Rule public final QATaskWatchman testWatcher = new QATaskWatchman(testName, "TEST-passes.txt", "TEST-failures.txt");
 
     protected boolean isRecoveryManagerNeeded = false;
     private Task recoveryManager;
