@@ -330,7 +330,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						if (endAssociation())
 						{
-							_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+							_theXAResource.end(_tranID, XAResource.TMFAIL);
 						}
 					}
 				}
@@ -343,6 +343,18 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					 * Has been marked as rollback-only. We still
 					 * need to call rollback.
 					 */
+				    } else if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL)){
+				    	    try {
+				    	    	    _theXAResource.rollback(_tranID);
+				    	    } catch (XAException e2)
+				    	    {	
+                                		jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
+                                XAHelper.printXAErrorCode(e2), _theXAResource.toString(), XAHelper.xidToString(_tranID), e2);
+
+                                		    removeConnection();
+
+                                		    throw new UNKNOWN();
+				    	    }
 				    }
 				    else
 				    {
