@@ -308,7 +308,7 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						if (endAssociation())
 						{
-							_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+							_theXAResource.end(_tranID, XAResource.TMFAIL);
 						}
 					}
 				}
@@ -321,6 +321,19 @@ public class XAResourceRecord extends AbstractRecord
 					 * Has been marked as rollback-only. We still
 					 * need to call rollback.
 					 */
+					 
+				    } else if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL)){
+				    	    try {
+				    	    	    _theXAResource.rollback(_tranID);
+				    	    } catch (XAException e2)
+				    	    {
+				    	    	    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+                                _theXAResource.toString(), XAHelper.printXAErrorCode(e2), e2);
+
+                                		    removeConnection();
+
+                                		    return TwoPhaseOutcome.FINISH_ERROR;
+				    	    }
 				    }
 				    else
 				    {
