@@ -122,7 +122,7 @@ public class CurrentTest
             sysEx.printStackTrace(System.err);
         }
 
-        // no problem setting and getting the elememt:
+        // no problem setting and getting the element:
         System.out.println("grid[2,4] is "+v);
 
         // sanity check: make sure we got the value 123 back:
