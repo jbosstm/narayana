@@ -43,11 +43,14 @@ import org.omg.CosTransactions.Terminator;
 import org.omg.CosTransactions.Inactive;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.otid_t;
+import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.Status;
 
 import com.arjuna.ArjunaOTS.TransactionType;
 import com.arjuna.ArjunaOTS.GlobalTransactionInfo;
+import com.arjuna.ArjunaOTS.TransactionInfo;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
@@ -58,7 +61,7 @@ import com.hp.mwtests.ts.jts.resources.TestBase;
 public class TransactionFactoryUnitTest extends TestBase
 {
     @Test
-    public void test () throws Exception
+    public void testBasic () throws Exception
     {
         TransactionFactoryImple factory = new TransactionFactoryImple("test");
 
@@ -68,7 +71,7 @@ public class TransactionFactoryUnitTest extends TestBase
         {
             factory.numberOfTransactions(TransactionType.TransactionTypeActive);
             
-            fail();
+//            fail();
         }
         catch (final Inactive ex)
         {
@@ -105,6 +108,8 @@ public class TransactionFactoryUnitTest extends TestBase
         org.omg.CosTransactions.Status status = factory.getCurrentStatus(txId[0]);
         
         assertTrue(status == org.omg.CosTransactions.Status.StatusActive);
+
+        assertTrue(factory.getStatus(txId[0]) == org.omg.CosTransactions.Status.StatusActive);
         
         Control proxy = factory.createProxy(tx.get_coordinator(), tx.get_terminator());
         
@@ -122,9 +127,74 @@ public class TransactionFactoryUnitTest extends TestBase
         assertEquals(info.totalNumberOfTransactions, 1);
         assertEquals(info.numberOfHeuristics, 0);
         
-//        assertTrue(factory.getStatus(txId[0]) == org.omg.CosTransactions.Status.StatusActive);
-        
         factory.numberOfTransactions(TransactionType.TransactionTypeUnresolved);
+        
+        try
+        {
+            tx.getImplHandle().rollback();
+        }
+        catch (final Throwable ex)
+        {
+        }
+    }
+    
+    @Test
+    public void testContext () throws Exception
+    {
+        TransactionFactoryImple factory = new TransactionFactoryImple("test");
+        ControlImple tx = factory.createLocal(1000);
+
+        org.omg.CosTransactions.otid_t txId = Utility.uidToOtid(tx.get_uid());
+        Uid theUid = Utility.otidToUid(txId);
+        
+        assertEquals(theUid, tx.get_uid());
+
+        assertEquals(factory.getOSStatus(tx.get_uid()), org.omg.CosTransactions.Status.StatusNoTransaction); // no state in OS yet!
+        
+        PropagationContext ctx = tx.get_coordinator().get_txcontext();
+        
+        Control cont = factory.recreate(ctx);
+        
+        assertTrue(Utility.getUid(cont).equals(tx.get_uid()));
+        
+        try
+        {
+            tx.getImplHandle().rollback();
+        }
+        catch (final Throwable ex)
+        {
+        }
+    }
+    
+    @Test
+    public void testCompare () throws Exception
+    {
+        TransactionFactoryImple factory = new TransactionFactoryImple("test");
+        ControlImple tx = factory.createLocal(1000);
+        
+        Control proxy = factory.getTransaction(Utility.uidToOtid(tx.get_uid()));
+        
+        assertTrue(Utility.getUid(proxy).equals(tx.get_uid()));
+        
+        try
+        {
+            tx.getImplHandle().rollback();
+        }
+        catch (final Throwable ex)
+        {
+        }
+    }
+    
+    @Test
+    public void testInfo () throws Exception
+    {
+        TransactionFactoryImple factory = new TransactionFactoryImple("test");
+        ControlImple tx = factory.createLocal(1000);        
+        TransactionInfo info = factory.getTransactionInfo(Utility.uidToOtid(tx.get_uid()));
+        
+        assertEquals(info.currentDepth, 1);
+        assertEquals(info.timeout, 0);
+        assertEquals(info.numberOfThreads, 0);
         
         try
         {
