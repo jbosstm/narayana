@@ -544,6 +544,10 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 	/**
 	 * Transaction needs to call these methods to enable garbage collection to
 	 * occur.
+	 * 
+	 * Note, we assume that one ContorlImple per transaction is maintained per address
+	 * space, so that overwriting a previously added ControlImple for the same tx is
+	 * not possible.
 	 */
 
 	protected boolean addControl ()
