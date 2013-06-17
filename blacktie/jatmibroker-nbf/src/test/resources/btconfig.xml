@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<ENVIRONMENT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.jboss.org/blacktie">
+	<DOMAIN>fooapp</DOMAIN>
+	<MACHINES>
+		<MACHINE id="myserv1" hostname="albany" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv2" hostname="albany" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv3" ipAddress="127.0.0.1"
+			pathToExecutable="notExist" workingDirectory="." argLine="foo"
+			serverId="1" />
+		<MACHINE id="myserv4" ipAddress="127.0.0.1"
+			pathToExecutable="notExist" workingDirectory="." argLine="foo"
+			serverId="2" />
+		<MACHINE id="myserv5" hostname="beacon" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv6" hostname="beacon" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv7" hostname="catskill" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv8" hostname="catskill" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv9" hostname="winxp08" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv10" hostname="winxp08" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv11" hostname="tarrytown" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv12" hostname="tarrytown" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv13" hostname="sol2" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv14" hostname="sol2" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv15" hostname="wicket" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv16" hostname="wicket" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv17" hostname="hoboken.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv18" hostname="hoboken.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv19" hostname="tenafly.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv20" hostname="tenafly.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv21" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv22" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv23" hostname="jaime" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv24" hostname="jaime" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv25" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv26" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv27" hostname="cersei"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="1"
+			argLine =" -p 12341"/>
+		<MACHINE id="myserv28" hostname="cersei"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="2"
+			argLine =" -p 12342"/>
+		<MACHINE id="myserv29" hostname="janei"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="1"
+			argLine =" -p 12341"/>
+		<MACHINE id="myserv30" hostname="janei"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="2"
+			argLine =" -p 12342"/>
+		<MACHINE id="myserv31" hostname="lancel"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="1"
+			argLine =" -p 12341"/>
+		<MACHINE id="myserv32" hostname="lancel"
+			pathToExecutable="../cs"
+			workingDirectory="."
+			serverId="2"
+			argLine =" -p 12342"/>
+	</MACHINES>
+	<SERVERS>
+		<SERVER name='myserv'>
+			<MACHINE-REF id="myserv1" />
+			<MACHINE-REF id="myserv2" />
+			<MACHINE-REF id="myserv3" />
+			<MACHINE-REF id="myserv4" />
+			<MACHINE-REF id="myserv5" />
+			<MACHINE-REF id="myserv6" />
+			<MACHINE-REF id="myserv7" />
+			<MACHINE-REF id="myserv8" />
+			<MACHINE-REF id="myserv9" />
+			<MACHINE-REF id="myserv10" />
+			<MACHINE-REF id="myserv11" />
+			<MACHINE-REF id="myserv12" />
+			<MACHINE-REF id="myserv13" />
+			<MACHINE-REF id="myserv14" />
+			<MACHINE-REF id="myserv15" />
+			<MACHINE-REF id="myserv16" />
+			<MACHINE-REF id="myserv17" />
+			<MACHINE-REF id="myserv18" />
+			<MACHINE-REF id="myserv19" />
+			<MACHINE-REF id="myserv20" />
+			<MACHINE-REF id="myserv21" />
+			<MACHINE-REF id="myserv22" />
+			<MACHINE-REF id="myserv23" />
+			<MACHINE-REF id="myserv24" />
+			<MACHINE-REF id="myserv25" />
+			<MACHINE-REF id="myserv26" />
+			<SERVICE_NAMES>
+				<SERVICE name='TestOne'  externally-managed-destination='true'/>
+				<SERVICE name='TestTwo'  externally-managed-destination='true'/>
+				<SERVICE name='ConvService' conversational='true'  externally-managed-destination='true'/>
+				<SERVICE name='JAVA_Converse'  externally-managed-destination='true'
+					java_class_name="org.jboss.narayana.blacktie.jatmibroker.xatmi.services.TPCallXOctetService"
+					advertised="true" size="1">
+				</SERVICE>
+				<SERVICE name='XMLParserTest' type='queue' coding_type="xml"/>
+				<SERVICE name='JAVA_Topic' type='topic' externally-managed-destination='true'/>
+			</SERVICE_NAMES>
+		</SERVER>
+	</SERVERS>
+	<ORB
+		OPT="-ORBInitRef NameService=corbaloc::${JBOSSAS_IP_ADDR}:3528/NameService -ORBListenEndpoints iiop://${JBOSSAS_IP_ADDR}:0"
+		TRANS_FACTORY_ID="TransactionManagerService.OTS" />
+	<SOCKETSERVER PORT="12341" />
+	<MQ HOST="${JBOSSAS_IP_ADDR}" PORT="61613" USER="guest" PASSWORD="password1@"
+		RECEIVE_TIMEOUT="10" TIME_TO_LIVE="40"  />
+	<BUFFERS>
+		<BUFFER name="abcdefghijklmnop">
+			<ATTRIBUTE id="key" type="char[]" arrayLength="10" />
+		</BUFFER>
+		<BUFFER name="test">
+			<ATTRIBUTE id="key" type="char[]" arrayLength="28" />
+		</BUFFER>
+		<BUFFER name="acct_info">
+			<ATTRIBUTE id="acct_no" type="long" />
+			<ATTRIBUTE id="name" type="char[]" arrayLength="50" />
+			<ATTRIBUTE id="address" type="char[]" arrayLength="100" />
+			<ATTRIBUTE id="foo" type="float[]" arrayLength="2" />
+			<ATTRIBUTE id="balances" type="double[]" arrayLength="2" />
+		</BUFFER>
+		<BUFFER name="deposit">
+			<ATTRIBUTE id="acct_no" type="long" />
+			<ATTRIBUTE id="amount" type="short" />
+			<ATTRIBUTE id="balance" type="short" />
+			<ATTRIBUTE id="status" type="char[]" arrayLength="128" />
+			<ATTRIBUTE id="status_len" type="short" />
+		</BUFFER>
+		<BUFFER name="inq_buf">
+			<ATTRIBUTE id="input" type="char[]" arrayLength="100" />
+			<ATTRIBUTE id="output" type="int" />
+			<ATTRIBUTE id="failTest" type="int" />
+		</BUFFER>
+		<BUFFER name="dc_buf">
+			<ATTRIBUTE id="input" type="char[]" arrayLength="100" />
+			<ATTRIBUTE id="output" type="int" />
+			<ATTRIBUTE id="failTest" type="int" />
+		</BUFFER>
+	</BUFFERS>
+</ENVIRONMENT>

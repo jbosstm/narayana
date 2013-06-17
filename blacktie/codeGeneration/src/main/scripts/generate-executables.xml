@@ -1,0 +1,269 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2008, Red Hat, Inc., and others contributors as indicated
+  by the @authors tag. All rights reserved.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+-->
+<!DOCTYPE project [
+<!ENTITY compiler-args-gcc '
+<compilerarg value="-O0" if="debug" />
+<compilerarg value="-g3" if="debug" />
+<compilerarg value="-O3" unless="debug" />
+<compilerarg value="-Wall" />
+<compilerarg value="-c" />
+<compilerarg value="-fmessage-length=0" />
+<compilerarg value="-fPIC" />
+'>
+<!ENTITY linker-args-gcc '
+<linkerarg value="-E" />
+'>
+<!ENTITY compiler-args-xlC '
+<compilerarg value="-O0" if="debug" />
+<compilerarg value="-g" if="debug" />
+<compilerarg value="-O3" unless="debug" />
+<compilerarg value="-c" />
+<compilerarg value="-fmessage-length=0" />
+<compilerarg value="-fPIC" />
+'>
+<!ENTITY linker-args-xlC '
+<linkerarg value="-brtl" />
+<linkerarg value="-bexpall" />
+'>
+<!ENTITY compiler-args-msvc '
+<compilerarg value="/wd4820" />
+<compilerarg value="/wd4668" />
+<compilerarg value="/wd4365" />
+<compilerarg value="/wd4996" />
+<compilerarg value="/wd4625" />
+<compilerarg value="/wd4626" />
+<compilerarg value="/wd4619" />
+<compilerarg value="/wd4505" />
+<compilerarg value="/wd4640"/>
+'>
+<!ENTITY includepath-main-dependencies '
+	<includepath path="${env.BLACKTIE_HOME}/include"/>
+'>
+<!ENTITY libsets-main-dependencies '
+	<libset dir="${env.BLACKTIE_HOME}/lib/cxx" libs="${expat.prefix}expat TAO_CosNaming${lib.suffix} TAO_AnyTypeCode${lib.suffix} TAO${lib.suffix} TAO_PortableServer${lib.suffix} ACE${lib.suffix} TAO_PI${lib.suffix} TAO_CodecFactory${lib.suffix} TAO_IORInterceptor${lib.suffix} TAO_ObjRefTemplate${lib.suffix} TAO_Valuetype${lib.suffix} TAO_PI_Server${lib.suffix} log4cxx blacktie-idl-tao blacktie-core blacktie-tx blacktie-xatmi blacktie-queue blacktie-nbf" />
+'>
+]>
+<project name="generate-executables">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<taskdef resource="cpptasks.tasks" />
+	<property environment="env" />
+	<property name="src.main" value="." />
+	<property name="src.excludes" value="" />
+	<property name="lib.type" value="shared" />
+	<property name="runtime" value="dynamic" />
+    
+	<target name="init">
+		<fail unless="env.BLACKTIE_HOME" />
+		<fail unless="configuration.type" />
+
+		<condition property="toolchain.compiler" value="gcc">
+			<os name="Linux" />
+		</condition>
+		<condition property="toolchain.compiler" value="xlC">
+			<os name="AIX" />
+		</condition>
+		<condition property="toolchain.compiler" value="msvc">
+			<os family="windows" />
+		</condition>
+
+		<condition property="is-gcc">
+			<equals arg1="${toolchain.compiler}" arg2="gcc" />
+		</condition>
+		<condition property="is-xlC">
+			<equals arg1="${toolchain.compiler}" arg2="xlC" />
+		</condition>
+		<condition property="is-msvc">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="debug" value="true">
+			<and>
+				<equals arg1="${configuration.type}" arg2="debug" casesensitive="false" />
+			</and>
+		</condition>
+		<condition property="lib.suffix" value="d">
+			<and>
+				<isset property="is-msvc" />
+				<isset property="debug" />
+			</and>
+		</condition>
+		<condition property="lib.suffix" value="">
+			<not>
+				<equals arg1="lib.suffix" arg2="d" />
+			</not>
+		</condition>
+		<condition property="lib.prefix" value="lib">
+			<not>
+				<isset property="is-msvc" />
+			</not>
+		</condition>
+		<condition property="lib.prefix" value="">
+			<isset property="is-msvc" />
+		</condition>
+		<condition property="expat.prefix" value="">
+			<not>
+				<isset property="is-msvc" />
+			</not>
+		</condition>
+		<condition property="expat.prefix" value="lib">
+			<isset property="is-msvc" />
+		</condition>
+		<!-- define some defaults for extra libs - use something valid to stop cpptasks complaining -->
+		<condition property="x.lib.dir" value="${env.BLACKTIE_HOME}/lib"><not><isset property="x.lib.dir" /></not></condition>
+		<condition property="x.libs" value="log4cxx"><not><isset property="x.libs" /></not></condition>
+		<condition property="x.lib.dir2" value="${env.BLACKTIE_HOME}/lib"><not><isset property="x.lib.dir2" /></not></condition>
+		<condition property="x.libs2" value="log4cxx"><not><isset property="x.libs2" /></not></condition>
+		<condition property="x.lib.dir3" value="${env.BLACKTIE_HOME}/lib"><not><isset property="x.lib.dir3" /></not></condition>
+		<condition property="x.libs3" value="log4cxx"><not><isset property="x.libs3" /></not></condition>
+	</target>
+
+	<target name="library" depends="init,clean-library">
+        <property name="outtype" value="shared"/>
+		<fail unless="library.includes" />
+		
+		<property name="library.output.file" value="myxatmiservice" />
+		<property name="library.src.tobuild" value="${library.includes}" />
+		<propertycopy property="output.file" from="library.output.file" override="true" />
+		<propertycopy property="src.tobuild" from="library.src.tobuild" override="true" />
+		<antcall target="compile" />
+		<delete file="history.xml" />
+		<delete dir="target" deleteonexit="true"/>
+	</target>
+
+	<target name="server" depends="init,clean-server">
+		<fail unless="server.name" />
+        <property name="outtype" value="executable"/>
+		<delete file="server.c" />
+		<delete file="log4cxx.properties" />
+		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.M4-SNAPSHOT.jar" dest=".">
+			<patternset>
+				<include name="server.c" />
+				<include name="log4cxx.properties" />
+			</patternset>
+		</unzip>
+		<antcall target="generate-server" />
+
+		<property name="server.output.file" value="server" />
+		<property name="server.src.tobuild" value="server.c ${server.includes}" />
+		<propertycopy property="output.file" from="server.output.file" override="true" />
+		<propertycopy property="src.tobuild" from="server.src.tobuild" override="true" />
+		<antcall target="compile" />
+		<delete file="server.c" />
+		<delete file="history.xml" />
+		<delete dir="target" deleteonexit="true"/>
+	</target>
+
+
+	<target name="generate-server" depends="init">
+        <property name="service.names" value=""/>
+        <property file="server-services.properties"/>
+		<for list="${service.names}" param="service.name">
+			<sequential>
+                <var name="serviceFunction" value="@{service.name}"/>
+                <propertycopy override="true" silent="true" name="serviceFunction" from="${server.name}.@{service.name}"/>
+				<replaceregexp file="server.c" match="//SERVICE_DEFINITIONS" replace="void ${serviceFunction} (TPSVCINFO *);${line.separator}//SERVICE_DEFINITIONS" byline="true" />
+				<replaceregexp file="server.c" match="//SERVICE_ADVERTISEMENTS" replace="tpadvertise(&quot;@{service.name}&quot;, ${serviceFunction});${line.separator}        //SERVICE_ADVERTISEMENTS" byline="true" />
+			</sequential>
+		</for>
+	</target>
+
+
+	<target name="client" depends="init,clean-client">
+        <property name="outtype" value="executable"/>
+		<fail unless="client.includes" />
+		<delete file="log4cxx.properties" />
+		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.M4-SNAPSHOT.jar" dest=".">
+			<patternset>
+				<include name="log4cxx.properties" />
+			</patternset>
+		</unzip>
+		<property name="client.output.file" value="client" />
+		<property name="client.src.tobuild" value="${client.includes}" />
+		<propertycopy property="output.file" from="client.output.file" override="true" />
+		<propertycopy property="src.tobuild" from="client.src.tobuild" override="true" />
+		<antcall target="compile" />
+		<delete file="history.xml" />
+		<delete dir="target" deleteonexit="true"/>
+	</target>
+
+	<target name="compile" depends="init">
+		<mkdir dir="target/classes" />
+		<mkdir dir="target/${configuration.type}/${lib.type}" />
+		<cc name="${toolchain.compiler}" exceptions="true" outfile="${output.file}" subsystem="console" multithreaded="true" runtime="${runtime}" outtype="${outtype}" objdir="target/classes" debug="${debug}">
+			<compiler name="${toolchain.compiler}" if="is-gcc"> &compiler-args-gcc; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-xlC"> &compiler-args-xlC; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-msvc"> &compiler-args-msvc; </compiler>
+            <linker name="${toolchain.compiler}" if="is-gcc"> &linker-args-gcc; </linker>
+            <linker name="${toolchain.compiler}" if="is-xlC"> &linker-args-xlC; </linker>
+
+
+			<fileset dir="${src.main}" includes="${src.tobuild}" excludes="${src.excludes}" />
+
+			<defineset>
+				<define name="WIN32" if="is-msvc"/>
+				<define name="SunOS" if="isSunOS"/>
+
+                <define name="${x.define}" if="x.define"/>
+                <define name="${x.define2}" if="x.define2"/>
+                <define name="${x.define3}" if="x.define3"/>
+			</defineset>
+
+			&includepath-main-dependencies;
+			<includepath path="${x.inc.dir}"/>
+			<includepath path="${x.inc.dir2}"/>
+			<includepath path="${x.inc.dir3}"/>
+
+			&libsets-main-dependencies;
+			<libset dir="${x.lib.dir}" libs="${x.libs}"/>
+			<libset dir="${x.lib.dir2}" libs="${x.libs2}"/>
+			<libset dir="${x.lib.dir3}" libs="${x.libs3}"/>
+
+			<libset libs="stdc++ pthread rt" if="is-gcc" />
+			<libset libs="apr-1 aprutil-1 pthread" if="is-xlC" />
+		</cc>
+		<available file="${output.file}.dll.manifest" property="manifest.towrap" />
+		<antcall target="_compile-msvc" />
+	</target>
+	<target name="_compile-msvc" if="manifest.towrap">
+		<exec dir="." executable="mt">
+			<arg value="-outputresource:${output.file}.dll;#2" />
+			<arg value="-manifest" />
+			<arg value="${output.file}.dll.manifest" />
+		</exec>
+	</target>
+
+	<target name="clean-library" depends="init">
+		<property name="library.output.file" value="myxatmiservice" />
+		<propertycopy property="output.file" from="library.output.file" override="true" />
+		<delete file="${output.file}" />
+		<delete dir="target" />
+	</target>
+
+	<target name="clean-server" depends="init">
+		<property name="server.output.file" value="server" />
+		<propertycopy property="output.file" from="server.output.file" override="true" />
+		<delete file="${output.file}" />
+		<delete dir="target" />
+	</target>
+
+	<target name="clean-client" depends="init">
+		<property name="client.output.file" value="client" />
+		<propertycopy property="output.file" from="client.output.file" override="true" />
+		<delete file="${output.file}" />
+		<delete dir="target" />
+	</target>
+</project>

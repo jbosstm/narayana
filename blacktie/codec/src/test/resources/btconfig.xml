@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+	<!--
+		JBoss, Home of Professional Open Source Copyright 2008, Red Hat
+		Middleware LLC, and others contributors as indicated by the @authors
+		tag. All rights reserved. See the copyright.txt in the distribution
+		for a full listing of individual contributors. This copyrighted
+		material is made available to anyone wishing to use, modify, copy, or
+		redistribute it subject to the terms and conditions of the GNU Lesser
+		General Public License, v. 2.1. This program is distributed in the
+		hope that it will be useful, but WITHOUT A WARRANTY; without even the
+		implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU Lesser General Public License for more details.
+		You should have received a copy of the GNU Lesser General Public
+		License, v.2.1 along with this distribution; if not, write to the Free
+		Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<ENVIRONMENT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.jboss.org/blacktie">
+	<DOMAIN>fooapp</DOMAIN>
+	
+	<ORB
+		OPT="-ORBInitRef NameService=corbaloc::${JBOSSAS_IP_ADDR}:3528/NameService"
+		TRANS_FACTORY_ID="TransactionManagerService.OTS" />
+	<SOCKETSERVER PORT="12341" />
+	<MQ HOST="${JBOSSAS_IP_ADDR}" PORT="61613" USER="guest" PASSWORD="password1@"
+		 RECEIVE_TIMEOUT="10" TIME_TO_LIVE="40" />
+	<BUFFERS>
+		<BUFFER name="DEPOSIT">
+			<ATTRIBUTE type="long" id="acct_no" />
+			<ATTRIBUTE type="short" id="amount" />
+			<ATTRIBUTE type="double" id="balance" />
+			<ATTRIBUTE type="char[]" id="status" arrayLength="128" />
+			<ATTRIBUTE type="short" id="status_len" />
+		</BUFFER>
+		<BUFFER name="EXAMPLE">
+			<ATTRIBUTE type="int"  id="id" />
+			<ATTRIBUTE type="int[]"  id="test1" arrayLength="2"/>
+			<ATTRIBUTE type="float[]"  id="test2" arrayLength="2"/>
+			<ATTRIBUTE type="char"  id="test3" />
+			<ATTRIBUTE type="float" id="test4" />
+		</BUFFER>
+	</BUFFERS>
+</ENVIRONMENT>

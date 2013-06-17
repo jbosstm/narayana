@@ -1,0 +1,9 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>apache-log4cxx.contrib</groupId>
+	<artifactId>log4cxx</artifactId>
+	<name>log4cxx</name>
+	<version>902683</version>
+	<packaging>jar</packaging>
+	<description>Re-packaging of log4cxx, a logging framework for C++ patterned after Apache log4j</description>
+</project>

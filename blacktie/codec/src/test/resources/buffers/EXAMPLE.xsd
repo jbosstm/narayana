@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:bt="http://www.jboss.org/blacktie" 
+	targetNamespace="http://www.jboss.org/blacktie"
+	elementFormDefault="qualified">
+	<xsd:element name="X_C_TYPE">
+		<xsd:complexType> 
+			<xsd:sequence minOccurs="0" maxOccurs="1">
+				<xsd:element name="id" type="xsd:integer" />
+				<xsd:element name="test1" type="xsd:base64Binary" />
+				<xsd:element name="test2" type="xsd:base64Binary" />
+				<xsd:element name="test3">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="1"/>
+							<xsd:maxLength value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="test4" type="xsd:float" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<ENVIRONMENT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.jboss.org/blacktie">
+	<DOMAIN>fooapp</DOMAIN>
+	<SERVERS>
+		<SERVER name='cbr'>
+			<SERVICE_NAMES>
+				<SERVICE name='CBR_Request' externally-managed-destination='true'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='cbrone'>
+			<SERVICE_NAMES>
+				<SERVICE name='CBR_TestOne' externally-managed-destination='true' size='1' />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='cbrtwo'>
+			<SERVICE_NAMES>
+				 <SERVICE name='CBR_TestTwo' externally-managed-destination='true' size='1' />
+			</SERVICE_NAMES>
+		</SERVER>
+	
+		<SERVER name='nbfserv'>
+			<SERVICE_NAMES>
+				<SERVICE name='NBFEXAMPLE'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='integra'>
+			<SERVICE_NAMES>
+				<SERVICE name='CREDITEXAMPLE' />
+				<SERVICE name='DEBITEXAMPLE' />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='txfooap'>
+			<SERVICE_NAMES>
+				<SERVICE name='TXFOOAPP'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='queues'>
+			<SERVICE_NAMES>
+				<SERVICE name='QUEUES'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='iniDone'>
+			<SERVICE_NAMES>
+				<SERVICE name='INIDONE'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='library'>
+			<SERVICE_NAMES>
+				<SERVICE name='LIBRARY'/>         
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='fooapp'>
+			<SERVICE_NAMES>
+				<SERVICE name='FOOAPP'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='javaser'>
+			<SERVICE_NAMES>
+				<SERVICE name='JAVASERV'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='server'>
+			<SERVICE_NAMES>
+				<SERVICE name='FOO'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='clientA'>
+			<SERVICE_NAMES>
+				<SERVICE name='CLIENTRESPONSEHANDLER_1'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='clientB'>
+			<SERVICE_NAMES>
+				<SERVICE name='CLIENTRESPONSEHANDLER_2'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='hiprio'>
+			<SERVICE_NAMES>
+				<SERVICE name='ONE'/>
+				<SERVICE name='TWO'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='loprio'>
+			<SERVICE_NAMES>
+				<SERVICE name='THREE'/>
+				<SERVICE name='FOUR'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name="secure">
+			<SERVICE_NAMES>
+				<SERVICE name="SECURE" />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name="foo">
+			<SERVICE_NAMES>
+				<SERVICE name="FOOTest" />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name="ejbtest">
+			<SERVICE_NAMES>
+				<SERVICE name="EchoService" />
+				<SERVICE name="TxEchoService" />
+				<SERVICE name="TxCreateService" />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name="myserv">
+			<SERVICE_NAMES>
+				<SERVICE name='TestOne' externally-managed-destination='true'/>
+				<SERVICE name='TestTwo' externally-managed-destination='true'/>
+				<SERVICE name='ConvService'  externally-managed-destination='true'/>
+				<SERVICE name='JAVA_Converse' externally-managed-destination='true'/>
+				<SERVICE name='XMLParserTest'/>
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name="testsui">
+			<SERVICE_NAMES>
+				<SERVICE name='PBF' />
+				<SERVICE name='NBF' />
+				<SERVICE name='BAR' />
+				<SERVICE name='TestTPFree' />
+				<SERVICE name='TestTPCall' />
+				<SERVICE name='TestTPAdvertise' size="2" />
+				<SERVICE name='LOOPY' />
+				<SERVICE name='TestTPConversat' conversational='true' />
+				<SERVICE name='TestTPACall' />
+				<SERVICE name='TestTPCancel' />
+				<SERVICE name='TestTPConnect' conversational='true' />
+				<SERVICE name='TestTPDiscon' conversational='true' />
+				<SERVICE name='TestTPGetrply' />
+				<SERVICE name='TestTPGetAnyA' />
+				<SERVICE name='TestTPGetAnyB' />
+				<SERVICE name='TestTPSend' conversational='true' />
+				<SERVICE name='TestTPRecv' conversational='true' />
+				<SERVICE name='TestTPService' />
+				<SERVICE name='TestTPReturnA' />
+				<SERVICE name='TestTPReturnB' />
+				<SERVICE name='a12345678901234' />
+				<SERVICE name='abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789abcdefghij0123456789abcdefg' />
+				<SERVICE name='underscore_name' />
+				<SERVICE name='TestTPUnadverti' />
+				<SERVICE name='tpcall_x_octet' />
+				<SERVICE name='tpcall_x_common' />
+				<SERVICE name='tpcall_x_c_type' />
+				<SERVICE name='DEBIT' />
+				<SERVICE name='CREDIT' />
+				<SERVICE name='INQUIRY' conversational='true' />
+				<SERVICE name='TestRbkOnly' />
+				<SERVICE name='TestRbkOnly2' conversational='true' />
+				<SERVICE name='TTL' />
+				<SERVICE name='TestTopic' type='topic'/>
+			</SERVICE_NAMES>
+		</SERVER>
+	</SERVERS>
+	<ORB OPT="-ORBInitRef NameService=corbaloc::${jboss.bind.address}:3528/NameService -ORBListenEndpoints iiop://${jboss.bind.address}:0"
+		TRANS_FACTORY_ID="TransactionManagerService.OTS" />
+	<SOCKETSERVER PORT="12340" />
+	<MQ HOST="${jboss.bind.address}" PORT="61613" USER="guest" PASSWORD="password1@"
+		RECEIVE_TIMEOUT="10" TIME_TO_LIVE="40"  />
+	<ENV_VARIABLES>
+		<ENV_VARIABLE>
+			<NAME>QueueReaperInterval</NAME>
+			<VALUE>30</VALUE>
+		</ENV_VARIABLE>
+	</ENV_VARIABLES>
+</ENVIRONMENT>

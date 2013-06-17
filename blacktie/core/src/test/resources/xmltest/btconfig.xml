@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+	<!--
+		JBoss, Home of Professional Open Source Copyright 2008, Red Hat
+		Middleware LLC, and others contributors as indicated by the @authors
+		tag. All rights reserved. See the copyright.txt in the distribution
+		for a full listing of individual contributors. This copyrighted
+		material is made available to anyone wishing to use, modify, copy, or
+		redistribute it subject to the terms and conditions of the GNU Lesser
+		General Public License, v. 2.1. This program is distributed in the
+		hope that it will be useful, but WITHOUT A WARRANTY; without even the
+		implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU Lesser General Public License for more details.
+		You should have received a copy of the GNU Lesser General Public
+		License, v.2.1 along with this distribution; if not, write to the Free
+		Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<ENVIRONMENT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.jboss.org/blacktie">
+	<DOMAIN>fooapp</DOMAIN>
+	
+	<SERVERS>
+		<SERVER name='default'>
+			<SERVICE_NAMES>
+				<SERVICE name='TEST' />
+			</SERVICE_NAMES>
+		</SERVER>
+		<SERVER name='foo'>
+			<SERVICE_NAMES>
+				<SERVICE name='BAR' function_name='BAR' advertised='true'
+					size='5' conversational='true' externally-managed-destination='true'>
+					<LIBRARY_NAME configuration="xmltest" value="libXMLTESTSERVICE.so" />
+					<LIBRARY_NAME configuration="win32" value="win32.dll" />
+					<LIBRARY_NAME configuration="linux" value="linux.so" />
+				</SERVICE>
+				<SERVICE name='ECHO' type="topic" coding_type="xml"/>
+			</SERVICE_NAMES>
+		</SERVER>
+	</SERVERS>
+	<XA_RESOURCES>
+		<XA_RESOURCE configuration="xmltest">
+			<XA_RESOURCE_MGR_ID>100</XA_RESOURCE_MGR_ID>
+			<XA_RESOURCE_NAME>DummyDb</XA_RESOURCE_NAME>
+			<XA_OPEN_STRING></XA_OPEN_STRING>
+			<XA_CLOSE_STRING></XA_CLOSE_STRING>
+			<XA_SWITCH>testxasw</XA_SWITCH>
+			<XA_LIB_NAME>xmltestblacktie-tx-test-utilities.xmltest</XA_LIB_NAME>
+		</XA_RESOURCE>
+	</XA_RESOURCES>
+	<ORB
+		OPT="-ORBInitRef NameService=corbaloc::${JBOSSAS_IP_ADDR}:3528/NameService"
+		TRANS_FACTORY_ID="TransactionManagerService.OTS" />
+	<SOCKETSERVER PORT="12345" />
+	<MQ HOST="${JBOSSAS_IP_ADDR}" PORT="61613" USER="guest" PASSWORD="password1@"
+		 RECEIVE_TIMEOUT="10" TIME_TO_LIVE="40" />
+	<ENV_VARIABLES>
+		<ENV_VARIABLE configuration="linux">
+			<NAME>MYLIBTEST</NAME>
+			<VALUE>libfoo.so</VALUE>
+		</ENV_VARIABLE>
+		<ENV_VARIABLE configuration="xmltest">
+			<NAME>MYLIBTEST</NAME>
+			<VALUE>xmltestfoo.xmltest</VALUE>
+		</ENV_VARIABLE>
+		<ENV_VARIABLE configuration="win32">
+			<NAME>MYLIBTEST</NAME>
+			<VALUE>foo.dll</VALUE>
+		</ENV_VARIABLE>
+	</ENV_VARIABLES>
+	<BUFFERS>
+		<BUFFER name="foo">
+			<ATTRIBUTE id="Balance2" type="float[]" arrayLength="3" />
+			<ATTRIBUTE id="Balance" type="long" />
+			<ATTRIBUTE id="Balance" type="int" />
+			<ATTRIBUTE id="accountName" type="char[][]" arrayLength="10"
+				arrayCount="2" />
+		</BUFFER>
+		<BUFFER name="bar">
+			<ATTRIBUTE id="barlance" type="int[]" arrayLength="4" />
+			<ATTRIBUTE id="barbq" type="short" />
+			<ATTRIBUTE id="barlance1" type="int[]" arrayLength="4" />
+			<ATTRIBUTE id="barbq2" type="short" />
+		</BUFFER>
+		<BUFFER name="bar">
+			<ATTRIBUTE id="barlance" type="int[]" arrayLength="4" />
+		</BUFFER>
+	</BUFFERS>
+</ENVIRONMENT>

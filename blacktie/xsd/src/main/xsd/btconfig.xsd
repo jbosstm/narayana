@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.jboss.org/blacktie" xmlns="http://www.jboss.org/blacktie"
+	elementFormDefault="qualified">
+	<!-- The service name must be a valid C identifier -->
+	<xsd:simpleType name="svcstring">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="128" />
+			<xsd:pattern value="[A-Za-z_]+[A-Za-z0-9_]*" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- The service type could be queue or topic -->
+	<xsd:simpleType name="svctype">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="queue|topic"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- The server name cannot use a number as the numbers are allocated by 
+		the core engine and the name can be determined by the portion of text between 
+		a period and a number -->
+	<xsd:simpleType name="svrstring">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="7" />
+			<xsd:pattern value="[A-Za-z]+" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- The buffer name must be a valid C identifier -->
+	<xsd:simpleType name="buffername">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="16" />
+			<xsd:pattern value="[A-Za-z_]+" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="attributeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="short" />
+			<xsd:enumeration value="int" />
+			<xsd:enumeration value="long" />
+			<xsd:enumeration value="float" />
+			<xsd:enumeration value="double" />
+			<xsd:enumeration value="char" />
+			<xsd:enumeration value="char[]" />
+			<xsd:enumeration value="short[]" />
+			<xsd:enumeration value="int[]" />
+			<xsd:enumeration value="long[]" />
+			<xsd:enumeration value="float[]" />
+			<xsd:enumeration value="double[]" />
+			<xsd:enumeration value="char[][]" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="arrayCount">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="arrayLength">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="ENVIRONMENT">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="DOMAIN" type="xsd:string" />
+				<xsd:element name="MACHINES" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="MACHINE" minOccurs="1" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:attribute name="id" type="xsd:string" />
+									<xsd:attribute name="hostname" type="xsd:string" />
+									<xsd:attribute name="ipAddress" type="xsd:string" />
+									<xsd:attribute name="pathToExecutable" type="xsd:string" />
+									<xsd:attribute name="workingDirectory" type="xsd:string" />
+									<xsd:attribute name="serverId" type="xsd:int" />
+									<xsd:attribute name="argLine" type="xsd:string"
+										use="optional" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="SERVERS" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="SERVER" minOccurs="1" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="INIT_FUNCTION_LIBRARY_NAME"
+											minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:attribute name="configuration" type="xsd:string"
+													use="required" />
+												<xsd:attribute name="value" type="xsd:string"
+													use="required" />
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="MACHINE-REF" minOccurs="0"
+											maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:attribute name="id" type="xsd:string"
+													use="required" />
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="security" minOccurs="0"
+											maxOccurs="1">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="role" minOccurs="1"
+														maxOccurs="unbounded">
+														<xsd:complexType>
+															<xsd:attribute name="name" type="xsd:string" />
+															<xsd:attribute name="read" type="xsd:boolean" />
+															<xsd:attribute name="write" type="xsd:boolean" />
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+										<xsd:element name="SERVICE_NAMES">
+											<xsd:complexType>
+												<xsd:sequence>
+													<xsd:element name="SERVICE" minOccurs="1"
+														maxOccurs="unbounded">
+														<xsd:complexType>
+															<xsd:sequence>
+																<xsd:element name="security" minOccurs="0"
+																	maxOccurs="1">
+																	<xsd:complexType>
+																		<xsd:sequence>
+																			<xsd:element name="role" minOccurs="1"
+																				maxOccurs="unbounded">
+																				<xsd:complexType>
+																					<xsd:attribute name="name" type="xsd:string" />
+																					<xsd:attribute name="read" type="xsd:boolean" />
+																					<xsd:attribute name="write" type="xsd:boolean" />
+																				</xsd:complexType>
+																			</xsd:element>
+																		</xsd:sequence>
+																	</xsd:complexType>
+																</xsd:element>
+																<xsd:element name="LIBRARY_NAME" minOccurs="0"
+																	maxOccurs="unbounded">
+																	<xsd:complexType>
+																		<xsd:attribute name="configuration"
+																			type="xsd:string" use="required" />
+																		<xsd:attribute name="value" type="xsd:string"
+																			use="required" />
+																	</xsd:complexType>
+																</xsd:element>
+															</xsd:sequence>
+															<xsd:attribute name="name" type="svcstring"
+																use="required" />
+															<xsd:attribute name="type" type="svctype"
+																default="queue" />
+															<xsd:attribute name="coding_type" type="xsd:string" />
+															<xsd:attribute name="function_name" type="xsd:string" />
+															<xsd:attribute name="java_class_name" type="xsd:string" />
+															<xsd:attribute name="advertised" type="xsd:boolean"
+																default="false" />
+															<xsd:attribute name="conversational" type="xsd:boolean"
+																default="false" />
+															<xsd:attribute name="externally-managed-destination"
+																type="xsd:boolean" default="false" />
+															<xsd:attribute name="size" type="xsd:integer" />
+														</xsd:complexType>
+													</xsd:element>
+												</xsd:sequence>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+									<xsd:attribute name="name" type="svrstring" use="required" />
+									<xsd:attribute name="init_function" type="xsd:string" use="optional" >
+										<xsd:annotation>
+											<xsd:documentation>
+												The name of function that BlackTie will call just before a server begins
+												processing service requests. The name must correspond to a symbol
+												in the server executable or library and must have C linkage.
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+									<xsd:attribute name="done_function" type="xsd:string" use="optional" >
+										<xsd:annotation>
+											<xsd:documentation>
+												The name of function that BlackTie will call just before a server exits
+												and just after it has unadvertised its services. The name must correspond
+												to a symbol in the server executable or library and must have C linkage.
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="XA_RESOURCES" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="XA_RESOURCE" minOccurs="1"
+								maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="XA_RESOURCE_MGR_ID" type="xsd:string" />
+										<xsd:element name="XA_RESOURCE_NAME" type="xsd:string" />
+										<xsd:element name="XA_OPEN_STRING" type="xsd:string" />
+										<xsd:element name="XA_CLOSE_STRING" type="xsd:string" />
+										<xsd:element name="XA_SWITCH" type="xsd:string" />
+										<xsd:element name="XA_LIB_NAME" type="xsd:string" />
+									</xsd:sequence>
+									<xsd:attribute name="configuration" type="xsd:string"
+										use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ORB" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="OPT" type="xsd:string" use="required" />
+						<xsd:attribute name="TRANS_FACTORY_ID" type="xsd:string"
+							use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="TXN_CFG" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="MGR_URL" type="xsd:string" use="required" />
+						<xsd:attribute name="RES_EP" type="xsd:string" use="required" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="SOCKETSERVER" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="HOST" type="xsd:string" />
+						<xsd:attribute name="PORT" type="xsd:int" use="required"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="MQ" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="HOST" type="xsd:string" use="required" />
+						<xsd:attribute name="PORT" type="xsd:int" use="required" />
+						<xsd:attribute name="USER" type="xsd:string" use="required" />
+						<xsd:attribute name="PASSWORD" type="xsd:string"
+							use="required" />
+						<xsd:attribute name="RECEIVE_TIMEOUT" type="xsd:int"
+							use="required" />
+						<xsd:attribute name="TIME_TO_LIVE" type="xsd:int"
+							use="required" />
+						<xsd:attribute name="NOREPLY_TIME_TO_LIVE" type="xsd:int"
+							use="optional" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="ENV_VARIABLES" minOccurs="0"
+					maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ENV_VARIABLE" minOccurs="1"
+								maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="NAME" type="xsd:string"
+											minOccurs="1" maxOccurs="unbounded" />
+										<xsd:element name="VALUE" type="xsd:string"
+											minOccurs="1" maxOccurs="unbounded" />
+									</xsd:sequence>
+									<xsd:attribute name="configuration" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="BUFFERS" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="BUFFER" minOccurs="1" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="ATTRIBUTE" minOccurs="1"
+											maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:attribute name="id" type="xsd:string"
+													use="required" />
+												<xsd:attribute name="type" type="attributeType"
+													use="required" />
+												<xsd:attribute name="arrayCount" type="arrayCount"
+													use="optional" />
+												<xsd:attribute name="arrayLength" type="arrayLength"
+													use="optional" />
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:sequence>
+									<xsd:attribute name="name" type="buffername" use="required" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

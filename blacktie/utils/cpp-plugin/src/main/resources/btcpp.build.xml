@@ -1,0 +1,712 @@
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2008, Red Hat, Inc., and others contributors as indicated
+    by the @authors tag. All rights reserved.
+    See the copyright.txt in the distribution for a
+    full listing of individual contributors.
+    This copyrighted material is made available to anyone wishing to use,
+    modify, copy, or redistribute it subject to the terms and conditions
+    of the GNU Lesser General Public License, v. 2.1.
+    This program is distributed in the hope that it will be useful, but WITHOUT A
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+    You should have received a copy of the GNU Lesser General Public License,
+    v.2.1 along with this distribution; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+    MA 02110-1301, USA.
+-->
+<!DOCTYPE project [
+<!ENTITY compiler-args-gcc '
+<compilerarg value="-O0" if="debug" />
+<compilerarg value="-g3" if="debug" />
+<compilerarg value="-O3" unless="debug" />
+<compilerarg value="-Wall" />
+<compilerarg value="-c" />
+<compilerarg value="-fmessage-length=0" />
+<compilerarg value="-fPIC" />
+'>
+<!ENTITY linker-args-gcc '
+<linkerarg value="-E" />
+'>
+<!ENTITY compiler-args-xlC '
+<compilerarg value="-O0" if="debug" />
+<compilerarg value="-g" if="debug" />
+<compilerarg value="-O3" unless="debug" />
+<compilerarg value="-c" />
+<compilerarg value="-fmessage-length=0" />
+<compilerarg value="-fPIC" />
+'>
+<!ENTITY linker-args-xlC '
+<linkerarg value="-brtl" />
+'>
+<!ENTITY compiler-args-msvc '
+<compilerarg value="/wd4820" />
+<compilerarg value="/wd4668" />
+<compilerarg value="/wd4365" />
+<compilerarg value="/wd4996" />
+<compilerarg value="/wd4625" />
+<compilerarg value="/wd4626" />
+<compilerarg value="/wd4619" />
+<compilerarg value="/wd4505" />
+<compilerarg value="/wd4640"/>
+'>
+]>
+<project name="blacktie-cpp-plugin">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<taskdef resource="cpptasks.tasks" />
+	<property environment="env" />
+	<property file="build.properties" />
+	<property name="src.dir" value="src" />
+	<property name="src.main" value="src/main/cpp" />
+	<property name="src.test" value="src/test/cpp" />
+	<property name="src.excludes" value="" />
+	<property name="test.includes" value="*" />
+	<property name="test.excludes" value="" />
+	<property name="lib.type" value="shared" />
+	<property name="runtime" value="dynamic" />
+	<property name="idl.output.dir" value="target/generated/tao_idl" />
+	<property name="src.idl.main" value="${idl.output.dir}" />
+	<property name="proto.output.dir" value="target/generated/proto" />
+	<property name="src.proto.test" value="${proto.output.dir}" />
+
+	<!--
+          TODO fix it so that every goal doesn't need to define toolchain.compiler and configuration.type
+               -->
+	<target name="init">
+		<fail unless="configuration.type" />
+		<condition property="isSunOS">
+			<os name="SunOS" />
+		</condition>
+
+		<condition property="toolchain.compiler" value="gcc">
+			<os name="Linux" />
+		</condition>
+		<condition property="toolchain.compiler" value="xlC">
+			<os name="AIX" />
+		</condition>
+		<condition property="toolchain.compiler" value="msvc">
+			<os family="windows" />
+		</condition>
+
+		<condition property="is-gcc">
+			<equals arg1="${toolchain.compiler}" arg2="gcc" />
+		</condition>
+		<condition property="is-xlC">
+			<equals arg1="${toolchain.compiler}" arg2="xlC" />
+		</condition>
+		<condition property="is-msvc">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="lib.convert.pattern" value="lib*.so*">
+			<isset property="is-gcc"/>
+		</condition>
+		<condition property="lib.convert.pattern" value="lib*.a,lib*.so">
+			<isset property="is-xlC"/>
+		</condition>
+		<condition property="lib.convert.pattern" value="*.lib">
+			<isset property="is-msvc"/>
+		</condition>
+		<condition property="define.dll">
+			<and>
+				<isset property="is-msvc" />
+				<isset property="export.dll" />
+			</and>
+		</condition>
+		<condition property="debug" value="true">
+			<equals arg1="${configuration.type}" arg2="debug" casesensitive="false" />
+		</condition>
+		<condition property="lib.suffix" value="d">
+			<and>
+				<isset property="is-msvc" />
+				<isset property="debug" />
+			</and>
+		</condition>
+		<condition property="lib.suffix" value="">
+			<not>
+				<equals arg1="lib.suffix" arg2="d" />
+			</not>
+		</condition>
+		<condition property="lib.prefix" value="lib">
+			<not>
+				<isset property="is-msvc" />
+			</not>
+		</condition>
+		<condition property="lib.prefix" value="">
+			<isset property="is-msvc" />
+		</condition>
+		<condition property="lib.regexp" value="lib([\w-_+]*)\.so">
+			<isset property="is-gcc" />
+		</condition>
+		<condition property="lib.regexp" value="lib([\w-_+]*)\.[a|so]">
+			<isset property="is-xlC" />
+		</condition>
+		<condition property="lib.regexp" value="([\w-_+]*)\.lib">
+			<isset property="is-msvc" />
+		</condition>
+		<condition property="have.src.main.file">
+			<isset property="src.main.file" />
+		</condition>
+		<condition property="use-valgrind">
+			<or>
+				<equals arg1="${use.valgrind}" arg2="TRUE" />
+				<equals arg1="${use.valgrind}" arg2="True" />
+				<equals arg1="${use.valgrind}" arg2="true" />
+				<equals arg1="${use.valgrind}" arg2="1" />
+			</or>
+		</condition>
+		<condition property="unix-valgrind">
+			<and>
+				<not>
+					<isset property="is-msvc"/>
+				</not>
+				<isset property="use-valgrind"/>
+			</and>
+		</condition>
+		<condition property="unix-no-valgrind">
+			<and>
+				<not>
+					<isset property="is-msvc"/>
+				</not>
+				<not>
+					<isset property="use-valgrind"/>
+				</not>
+			</and>
+		</condition>
+		<condition property="include-jni-win32">
+			<available file="${env.JAVA_HOME}/include/win32"/>
+		</condition>
+		<condition property="include-jni-linux">
+			<available file="${env.JAVA_HOME}/include/linux"/>
+		</condition>
+		<condition property="include-jni-solaris">
+			<available file="${env.JAVA_HOME}/include/solaris"/>
+		</condition>
+		<available file="${src.dir}" property="src.dir.exists"/>
+		<available file="${idl.src.dir}" property="idl.src.dir.exists"/>
+		<available file="${proto.src.dir}" property="proto.src.dir.exists"/>
+		<available file="${src.main}" property="src.main.exists"/>
+		<available file="${src.test}" property="src.test.exists"/>
+	</target>
+
+	<target name="clean" >
+		<delete dir="target/classes/lib" failonerror="false"/>
+		<delete dir="target/classes/include" failonerror="false"/>
+		<delete dir="target/cpp-classes" failonerror="false"/>
+		<delete dir="target/cpp-test-classes" failonerror="false"/>
+	</target>
+
+	<target name="generate-proto-sources" depends="fileset.main.check" if="proto.src.dir.exists">
+		<condition property="exe" value=".exe">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="exe" value="">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+
+		<condition property="neutral.path.key" value="Path">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="neutral.path.key" value="PATH">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+		<condition property="neutral.path.value" value="${env.Path}">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="neutral.path.value" value="${env.PATH}">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+
+		<property name="proto.lroot" value="${project.build.directory}/cxx/compile" />
+		<property name="proto.iroot" value="${project.build.directory}/cxx/compile/include" />
+		<property name="proto.broot" value="${project.build.directory}/cxx/compile/bin" />
+		<property name="protoc" value="${proto.broot}/protoc${exe}" />
+
+		<available file="${protoc}" property="protoc.exe.exists"/>
+		<fail message="missing protoc compiler: ${protoc}" unless="protoc.exe.exists" />
+		<chmod file="${protoc}" perm="755"/>
+
+		<mkdir dir="${proto.output.dir}" />
+		<apply executable="${protoc}" parallel="false" failonerror="true" newenvironment="false" relative="true" dir="${proto.src.dir}">
+			<env key="LD_LIBRARY_PATH" path="${proto.lroot}/lib:${proto.broot}" />
+			<env key="${neutral.path.key}" path="${neutral.path.value};${proto.lroot}/lib;${proto.broot}" />
+			<env key="SystemRoot" path="${env.SystemRoot}" />
+			<arg line="--cpp_out=../../../${proto.output.dir}" />
+			<fileset dir="${proto.src.dir}" casesensitive="yes">
+				<patternset id="idl.sources">
+					<include name="**/*.proto" />
+				</patternset>
+			</fileset>
+		</apply>
+	</target>
+
+	<target name="generate-idl-sources" depends="fileset.main.check" if="idl.src.dir.exists">
+		<condition property="exe" value=".exe">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="exe" value="">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+
+		<condition property="neutral.path.key" value="Path">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="neutral.path.key" value="PATH">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+		<condition property="neutral.path.value" value="${env.Path}">
+			<equals arg1="${toolchain.compiler}" arg2="msvc" />
+		</condition>
+		<condition property="neutral.path.value" value="${env.PATH}">
+			<not>
+				<equals arg1="${toolchain.compiler}" arg2="msvc" />
+			</not>
+		</condition>
+
+		<property name="ace.lroot" value="${project.build.directory}/cxx/compile" />
+		<property name="ace.iroot" value="${project.build.directory}/cxx/compile/include" />
+		<property name="ace.broot" value="${project.build.directory}/cxx/compile/bin" />
+		<property name="idl.compiler" value="${ace.broot}/tao_idl${exe}" />
+		<property name="gperf" value="${ace.broot}/ace_gperf${exe}" />
+
+		<available file="${idl.compiler}" property="tao_idl.exe.exists"/>
+		<fail message="missing idl compiler: ${idl.compiler}" unless="tao_idl.exe.exists" />
+		<chmod file="${idl.compiler}" perm="755"/>
+
+		<available file="${gperf}" property="gperf.exists"/>
+		<fail message="missing gperf ${gperf}" unless="gperf.exists" />
+		<chmod file="${gperf}" perm="755"/>
+
+		<mkdir dir="${idl.output.dir}" />
+		<apply executable="${idl.compiler}" parallel="false" failonerror="true" newenvironment="false">
+			<env key="ACE_ROOT" path="${ace.lroot}" />
+			<env key="TAO_ROOT" path="${ace.iroot}" />
+			<env key="LD_LIBRARY_PATH" path="${ace.lroot}/lib:${ace.broot}" />
+			<env key="${neutral.path.key}" path="${neutral.path.value};${ace.lroot}/lib;${ace.broot}" />
+			<env key="SystemRoot" path="${env.SystemRoot}" />
+
+			<arg line="-o ${idl.output.dir} -Wb,pre_include=ace/pre.h -Wb,post_include=ace/post.h -I${ace.iroot}/tao -I${ace.iroot}/orbsvcs -I${idl.src.dir} -Wb,export_macro=BLACKTIE_IDL_DLL -Wb,export_include=atmiBrokerIdlMacro.h -DTAO=1 -DNO_ANONYMOUS_SEQUENCES" />
+
+			<fileset dir="${idl.src.dir}" casesensitive="yes">
+				<patternset id="idl.sources">
+					<include name="**/*.idl" />
+				</patternset>
+			</fileset>
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*" to="${idl.output.dir}/*" />
+					<mapper>
+						<globmapper from="*.idl" to="*C.cpp" />
+						<globmapper from="*.idl" to="*C.h" />
+						<globmapper from="*.idl" to="*S.cpp" />
+						<globmapper from="*.idl" to="*S.h" />
+					</mapper>
+				</chainedmapper>
+			</mapper>
+
+		</apply>
+	</target>
+
+	<target name="fileset.main.check" depends="init" if="src.main.exists">
+		<fileset id="fileset.main" dir="${src.main}" includes="**/*.cxx **/*.c **/*.cpp" excludes="${src.excludes}" />
+		<pathconvert refid="fileset.main" property="have-srcs" setonempty="false"/>
+	</target>
+	<target name="fileset.test.check" depends="init" if="src.test.exists">
+		<condition property="need-testrunner">
+			<and>
+				<isset property="generate.testrunner" />
+				<equals arg1="${generate.testrunner}" arg2="true"/>
+			</and>
+		</condition>
+
+		<echo message="${src.test} **/${test.includes}.c*"/>
+		<fileset id="fileset.test" dir="${src.test}" includes="**/${test.includes}.c*" excludes="${test.excludes}" />
+		<pathconvert refid="fileset.test" property="xhave-tests" setonempty="false"/>
+		<condition property="have-tests">
+			<and>
+				<isset property="xhave-tests" />
+				<not>
+					<or>
+						<equals arg1="${maven.test.skip}" arg2="true"/>
+						<equals arg1="${skipTests}" arg2="true"/>
+					</or>
+				</not>
+			</and>
+		</condition>
+	</target>
+
+	<target name="compile" depends="fileset.main.check,package" if="have-srcs">
+		<mkdir dir="target/cpp-classes" />
+		<mkdir dir="target/${configuration.type}/${lib.type}" />
+
+		<!--
+             create a comma separated list of libraries from all the libraries in target/cxx/compile/lib
+             -->
+		<fileset id="fileset.compile.libs" dir="target/cxx/compile/lib" includes="${lib.convert.pattern}" erroronmissingdir="false"/>
+		<property name="xcompile.libs" value="${toString:fileset.compile.libs}"/>
+		<convert-libset libdir="${xcompile.libs}" propname="compile.libs"/>
+		<cc name="${toolchain.compiler}" rebuild="true" exceptions="true" outfile="target/${configuration.type}/${lib.type}/${project.artifactId}" subsystem="console" multithreaded="true" runtime="${runtime}" outtype="${lib.type}" objdir="target/cpp-classes" debug="${debug}">
+
+			<compiler name="${toolchain.compiler}" if="is-gcc"> &compiler-args-gcc; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-xlC"> &compiler-args-xlC; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-msvc"> &compiler-args-msvc; </compiler>
+
+            <linker name="${toolchain.compiler}" if="is-gcc"> &linker-args-gcc; </linker>
+			<linker name="${toolchain.compiler}" if="is-xlC"> &linker-args-xlC; <linkerarg value="-bnoentry" /> </linker>
+
+			<fileset refid="fileset.main"/>
+
+			<defineset>
+				<define name="TAO_COMP"/>
+				<define name="${export.dll}" if="define.dll" />
+				<define name="WIN32" if="is-msvc"/>
+				<define name="SunOS" if="isSunOS"/>
+			</defineset>
+
+			<includepath path="src/main/include" />
+			<includepath path="${src.idl.main}/include" />
+			<includepath path="target/cxx/compile/include" />
+			<includepath path="target/cxx/compile/include/apr-1" />
+			<includepath path="target/cxx/compile/include/stomp" />
+			<includepath path="target/cxx/compile/include/expat" />
+
+			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
+		</cc>
+		<available file="target/${configuration.type}/${lib.type}/${project.artifactId}.dll.manifest" property="manifest.towrap" />
+		<antcall target="_compile-msvc" />
+	</target>
+	<target name="_compile-msvc" if="manifest.towrap">
+		<exec dir="target/${configuration.type}/${lib.type}" executable="mt">
+			<arg value="-outputresource:${project.artifactId}.dll;#2" />
+			<arg value="-manifest" />
+			<arg value="${project.artifactId}.dll.manifest" />
+		</exec>
+	</target>
+
+	<target name="gen-test-runner1" if="need-testrunner">
+		<mkdir dir="${project.build.directory}/generated-sources" />
+		<mkdir dir="${project.build.directory}/generated/proto" />
+		<fileset id="fileset.gen.test" dir="${project.build.directory}/generated-sources" includes="**/*.cxx"/>
+		<fileset id="fileset.proto.test" dir="${project.build.directory}/generated/proto" includes="**/*.cc"/>
+		<taskdef name="add.common.src" classname="org.jboss.narayana.blacktie.plugins.AddCommonSources"/>
+		<!-- For includes see java.util.regex.Pattern for valid pattern syntax -->
+		<add.common.src mavenProject="gen-common-sources" includes=".*.cxx" outputDir="${project.build.directory}/generated-sources"/>
+	</target>
+	<target name="gen-test-runner2" unless="need-testrunner">
+		<fileset id="fileset.gen.test" dir="." excludes="**/*"/>
+		<fileset id="fileset.proto.test" dir="." excludes="**/*"/>
+	</target>
+	<target name="gen-test-runner" depends="gen-test-runner1,gen-test-runner2" />
+
+	<target name="init-cpp-test" depends="init">
+		<mkdir dir="target/cpp-test-classes" />
+		<copy todir="target/cpp-test-classes" failonerror="false" overwrite="true">
+			<fileset dir="src/test/resources" />
+		</copy>
+
+		<!--
+             create a comma separated list of libraries for use in <libset> 
+         -->
+		<fileset id="fileset.compile.libs" dir="target/cxx/compile/lib"
+                 includes="${lib.convert.pattern}" erroronmissingdir="false"/>
+		<property name="xcompile.libs" value="${toString:fileset.compile.libs}"/>
+		<convert-libset libdir="${xcompile.libs}" propname="compile.libs"/>
+		<fileset id="fileset.test.libs" dir="target/cxx/test/lib" includes="${lib.convert.pattern}"/>
+		<property name="xtest.libs" value="${toString:fileset.test.libs}"/>
+		<convert-libset libdir="${xtest.libs}" propname="test.libs"/>
+	</target>
+
+	<target name="generate-test-lib" depends="init-cpp-test" if="have.src.main.file">
+		<available file="target/${configuration.type}/${lib.type}" type="dir" property="main.built" />
+		<cc name="${toolchain.compiler}" exceptions="true" outfile="target/${src.main.file}" subsystem="console" multithreaded="true" runtime="${runtime}" outtype="shared" objdir="target/cpp-test-classes" debug="${debug}">
+
+			<compiler name="${toolchain.compiler}" if="is-gcc"> &compiler-args-gcc; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-xlC"> &compiler-args-xlC; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-msvc"> &compiler-args-msvc; </compiler>
+
+            <linker name="${toolchain.compiler}" if="is-gcc"> &linker-args-gcc; </linker>
+			<linker name="${toolchain.compiler}" if="is-xlC"> &linker-args-xlC; <linkerarg value="-bnoentry" /></linker>
+
+			<fileset dir="${src.test}" includes="**/${src.main.file}.cxx **/${src.main.file}.c" excludes="${src.excludes}" />
+
+			<defineset define="TAO_COMP, UNITTEST"/>
+			<defineset define="${export.dll}" if="define.dll" />
+			<defineset define="WIN32" if="is-msvc"/>
+
+			<includepath path="src/test/include" />
+			<includepath path="src/main/include" />
+			<includepath path="${src.idl.main}/include" />
+			<includepath path="target/cxx/compile/include" />
+			<includepath path="target/cxx/compile/include/apr-1" />
+			<includepath path="target/cxx/compile/include/stomp" />
+
+			<includepath path="target/cxx/compile/include/expat" />
+			<includepath path="target/cxx/test/include" />
+
+			<!-- Should we allow the user to use JNI, if JAVA_HOME is set assume so -->
+			<includepath path="${env.JAVA_HOME}/include/win32" if="include-jni-win32"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-win32"/>
+			<includepath path="${env.JAVA_HOME}/include/linux" if="include-jni-linux"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-linux"/>
+			<includepath path="${env.JAVA_HOME}/include/solaris" if="include-jni-solaris"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-solaris"/>
+
+			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
+			<libset dir="${project.build.directory}/cxx/test/lib" libs="${test.libs}" if="test.libs"/>
+			<libset dir="target/${configuration.type}/${lib.type}" libs="${project.artifactId}" if="main.built" />
+			<libset libs="stdc++ pthread rt" if="is-gcc" />
+			<libset libs="pthread" if="is-xlC" />
+		</cc>
+	</target>
+
+	<target name="generate-exe" depends="init-cpp-test" if="have.src.main.file">
+		<cc name="${toolchain.compiler}" exceptions="true" outfile="target/${src.main.file}" subsystem="console" multithreaded="true" runtime="${runtime}" outtype="executable" objdir="target/cpp-test-classes" debug="${debug}">
+
+			<compiler name="${toolchain.compiler}" if="is-gcc"> &compiler-args-gcc; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-xlC"> &compiler-args-xlC; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-msvc"> &compiler-args-msvc; </compiler>
+
+            <linker name="${toolchain.compiler}" if="is-gcc"> &linker-args-gcc; </linker>
+			<linker name="${toolchain.compiler}" if="is-xlC"> &linker-args-xlC; </linker>
+
+			<fileset dir="${src.test}" includes="**/${src.main.file}.cxx" excludes="${src.excludes}" />
+
+			<defineset define="TAO_COMP, UNITTEST"/>
+			<defineset define="WIN32" if="is-msvc"/>
+
+			<includepath path="src/test/include" />
+			<includepath path="src/main/include" />
+			<includepath path="${src.idl.main}/include" />
+			<includepath path="target/cxx/compile/include" />
+			<includepath path="target/cxx/compile/include/apr-1" />
+			<includepath path="target/cxx/compile/include/stomp" />
+			<includepath path="target/cxx/compile/include/expat" />
+			<includepath path="target/cxx/test/include" />
+
+			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
+			<libset dir="${project.build.directory}/cxx/test/lib" libs="${test.libs}" if="test.libs"/>
+			<libset libs="stdc++ pthread rt" if="is-gcc" />
+			<libset libs="pthread" if="is-xlC" />
+		</cc>
+	</target>
+
+	<target name="test-compile" depends="fileset.test.check,gen-test-runner,package,init" if="have-tests">
+		<mkdir dir="target/cpp-test-classes" />
+		<fail unless="test.output.type" />
+		<copy todir="target/cpp-test-classes" failonerror="false" overwrite="true">
+			<fileset dir="src/test/resources" />
+		</copy>
+
+		<available file="target/${configuration.type}/${lib.type}" type="dir" property="main.built" />
+
+		<!--
+             create a comma separated list of libraries from all the libraries in target/cxx/compile/lib
+         -->
+		<fileset id="fileset.compile.libs" dir="target/cxx/compile/lib" includes="${lib.convert.pattern}" erroronmissingdir="false"/>
+		<property name="xcompile.libs" value="${toString:fileset.compile.libs}"/>
+		<convert-libset libdir="${xcompile.libs}" propname="compile.libs"/>
+
+		<!--
+             create a comma separated list of libraries from all the libraries in target/cxx/test/lib
+         -->
+		<fileset id="fileset.test.libs" dir="target/cxx/test/lib" includes="${lib.convert.pattern}"/>
+		<property name="xtest.libs" value="${toString:fileset.test.libs}"/>
+		<convert-libset libdir="${xtest.libs}" propname="test.libs"/>
+		<!-- rebuild="true" -->
+		<cc name="${toolchain.compiler}" exceptions="true" outfile="target/testsuite" subsystem="console" multithreaded="true" runtime="${runtime}" outtype="${test.output.type}" objdir="target/cpp-test-classes" debug="${debug}">
+
+			<compiler name="${toolchain.compiler}" if="is-gcc"> &compiler-args-gcc; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-xlC"> &compiler-args-xlC; </compiler>
+			<compiler name="${toolchain.compiler}" if="is-msvc"> &compiler-args-msvc; </compiler>
+
+            <linker name="${toolchain.compiler}" if="is-gcc"> &linker-args-gcc; </linker>
+			<linker name="${toolchain.compiler}" if="is-xlC"> &linker-args-xlC; </linker>
+
+			<fileset refid="fileset.test"/>
+			<fileset refid="fileset.gen.test"/>
+			<fileset refid="fileset.proto.test"/>
+
+			<defineset define="TAO_COMP, UNITTEST"/>
+			<defineset define="WIN32" if="is-msvc"/>
+			<defineset define="PROTOBUF_USE_DLLS" if="is-msvc"/>
+
+			<includepath path="src/test/include" />
+			<includepath path="src/main/include" />
+			<includepath path="${src.idl.main}/include" />
+			<includepath path="${src.proto.test}" />
+			<includepath path="target/cxx/compile/include" />
+			<includepath path="target/cxx/compile/include/apr-1" />
+			<includepath path="target/cxx/compile/include/stomp" />
+			<includepath path="target/cxx/compile/include/expat" />
+			<includepath path="target/cxx/test/include" />
+
+			<!-- Should we allow the user to use JNI, if JAVA_HOME is set assume so -->
+			<includepath path="${env.JAVA_HOME}/include/win32" if="include-jni-win32"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-win32"/>
+			<includepath path="${env.JAVA_HOME}/include/linux" if="include-jni-linux"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-linux"/>
+			<includepath path="${env.JAVA_HOME}/include/solaris" if="include-jni-solaris"/>
+			<includepath path="${env.JAVA_HOME}/include/" if="include-jni-solaris"/>
+
+			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
+			<libset dir="${project.build.directory}/cxx/test/lib" libs="${test.libs}" if="test.libs"/>
+			<libset dir="target/${configuration.type}/${lib.type}" libs="${project.artifactId}" if="main.built" />
+			<libset libs="stdc++ pthread rt" if="is-gcc" />
+			<libset libs="pthread" if="is-xlC" />
+		</cc>
+		<available file="target/testsuite.dll.manifest" property="manifest.towrap" />
+		<antcall target="_test-compile-msvc" />
+	</target>
+	<target name="_test-compile-msvc" if="manifest.towrap">
+		<exec dir="target" executable="mt">
+			<arg value="-outputresource:testsuite.dll;#2" />
+			<arg value="-manifest" />
+			<arg value="testsuite.dll.manifest" />
+		</exec>
+	</target>
+
+	<target name="test" depends="fileset.test.check,init" if="have-tests">
+		<antcall target="_test-msvc"/>
+		<antcall target="_test-unix-valgrind" />
+		<antcall target="_test-unix-no-valgrind" />
+	</target>
+
+	<target name="_test-unix-valgrind" depends="init" if="unix-valgrind">
+		<echo message="Executing tests under valgrind"/>
+		<exec dir="target/cpp-test-classes" newenvironment="true" resolveexecutable="true" executable="valgrind" failonerror="${failOnErrorTests}">
+			<env key="LD_LIBRARY_PATH" value="../cxx/runtime/lib:../cxx/test/lib:../${configuration.type}/${lib.type}" />
+			<env key="BLACKTIE_SCHEMA_DIR" value="${blacktie.schema.dir}" />
+			<env key="BLACKTIE_CONFIGURATION_DIR" value="${blacktie.configuration.dir}" />
+			<env key="BUILD_DIR" value="${project.build.directory}" />
+			<env key="JBOSSAS_IP_ADDR" value="${jbossas.ip.addr}"/>
+			<arg value="--tool=memcheck" />
+			<arg value="--leak-check=full" />
+			<arg value="--log-file=${project.artifactId}-valgrind.log" />
+			<arg value="-v" />
+			<arg value="-d" />
+			<arg value="--track-origins=yes" />
+			<arg value="--leak-resolution=low" />
+			<arg value="--num-callers=40" />
+			<arg value="../testsuite" />
+		</exec>
+
+        <loadfile property="noValgrindIssues1" srcfile="target/cpp-test-classes/${project.artifactId}-valgrind.log">
+            <filterchain>
+                <striplinebreaks/>
+                <linecontainsregexp>
+                    <regexp pattern="definitely lost: 0 bytes in 0 blocks"/>
+                </linecontainsregexp>
+                <linecontainsregexp>
+                    <regexp pattern="indirectly lost: 0 bytes in 0 blocks"/>
+                </linecontainsregexp>
+<!-- Can enable this when clean up more data
+                <linecontainsregexp>
+                    <regexp pattern="possibly lost: 0 bytes in 0 blocks"/>
+                </linecontainsregexp>
+                <linecontainsregexp>
+                    <regexp pattern="ERROR SUMMARY: 0 errors from 0 contexts"/>
+                </linecontainsregexp>
+-->
+            </filterchain>
+        </loadfile>
+        <loadfile property="noValgrindIssues2" srcfile="target/cpp-test-classes/${project.artifactId}-valgrind.log">
+            <filterchain>
+                <striplinebreaks/>
+                <linecontainsregexp>
+                    <regexp pattern="All heap blocks were freed -- no leaks are possible"/>
+                </linecontainsregexp>
+            </filterchain>
+        </loadfile>
+		<condition property="noValgrindIssues">
+			<or>
+				<isset property="noValgrindIssues1"/>
+				<isset property="noValgrindIssues2"/>
+			</or>
+		</condition>
+        <fail message="Found memory issues in target/cpp-test-classes/${project.artifactId}-valgrind.log" unless="noValgrindIssues"/>
+	</target>
+	<target name="_test-unix-no-valgrind" depends="init" if="unix-no-valgrind">
+		<echo message="Executing tests without valgrind"/>
+		<exec dir="target/cpp-test-classes" newenvironment="true" resolveexecutable="true" executable="../testsuite" failonerror="${failOnErrorTests}">
+			<env key="LD_LIBRARY_PATH" value="../cxx/runtime/lib:../cxx/test/lib:../${configuration.type}/${lib.type}" />
+			<env key="BLACKTIE_SCHEMA_DIR" value="${blacktie.schema.dir}" />
+			<env key="BLACKTIE_CONFIGURATION_DIR" value="${blacktie.configuration.dir}" />
+			<env key="BUILD_DIR" value="${project.build.directory}" />
+			<env key="JBOSSAS_IP_ADDR" value="${jbossas.ip.addr}"/>
+		</exec>
+	</target>
+	<target name="_test-msvc" depends="init" if="is-msvc">
+		<exec dir="target/cpp-test-classes" newenvironment="false" resolveexecutable="true" executable="../testsuite.exe" failonerror="${failOnErrorTests}">
+			<env key="Path" value="${env.Path};..\cxx\runtime\lib;..\cxx\test\lib;..\${configuration.type}\${lib.type}" />
+			<env key="BLACKTIE_SCHEMA_DIR" value="${blacktie.schema.dir}" />
+			<env key="BLACKTIE_CONFIGURATION_DIR" value="${blacktie.configuration.dir}" />
+			<env key="BUILD_DIR" value="${project.build.directory}" />
+			<env key="JBOSSAS_IP_ADDR" value="${jbossas.ip.addr}"/>
+		</exec>
+	</target>
+
+	<target name="copy-check">
+		<available property="have-idl" file="${idl.output.dir}" />
+		<available property="have-proto" file="${proto.output.dir}" />
+		<available property="have-includes" file="src/main/include/" type="dir"/>
+		<available file="target/${configuration.type}/${lib.type}" property="have-target-lib-dir" />
+	</target>
+	<target name="copy-idl" if="have-idl">
+		<copy todir="target/classes/include" overwrite="true" failonerror="true">
+			<fileset dir="${idl.output.dir}"/>
+		</copy>
+	</target>
+    <target name="copy-includes" if="have-includes">
+            <copy todir="target/classes/include" overwrite="true" failonerror="true">
+                    <fileset dir="src/main/include/"/>
+            </copy>
+    </target>
+	<target name="copy-libs" if="have-target-lib-dir">
+		<copy todir="target/classes/lib" overwrite="true" failonerror="false">
+			<fileset dir="target/${configuration.type}/${lib.type}/" includes="*.so,*.so.*,*.dll,*.lib,*.a,*.a*"/>
+		</copy>
+	</target>
+
+	<target name="process-classes" depends="copy-check,package,copy-idl,copy-includes,copy-libs">
+	</target>
+
+	<target name="package" depends="init">
+		<mkdir dir="target/classes/lib" />
+		<mkdir dir="target/classes/include" />
+	</target>
+
+	<macrodef name="convert-libset">
+		<attribute name="propname" />
+		<attribute name="libdir" />
+		<element name="dotasks" optional="yes"/>
+		<sequential>
+			<pathconvert property="@{propname}" pathsep=",">
+				<path path="@{libdir}"/>
+				<!--
+                     flatten and strip off prefix and suffix from the libraries under libdir
+                     for use as a libset attribute of the cc cpptasks task
+                 -->
+				<mapper>
+					<chainedmapper>
+						<flattenmapper/>
+						<regexpmapper from="${lib.regexp}" to="\1"/>
+
+<!--						<globmapper from="${lib.convert.pattern}" to="*" casesensitive="no"/>-->
+					</chainedmapper>
+				</mapper>
+			</pathconvert>
+			<dotasks/>
+		</sequential>
+	</macrodef>
+
+</project>

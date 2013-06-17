@@ -1,0 +1,4 @@
+java -Dlog4j.configuration=log4j.xml org.jboss.narayana.blacktie.btadmin.BTAdmin "$@"
+if [ "$?" != "0" ]; then
+	exit -1
+fi

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messaging-deployment xmlns="urn:jboss:messaging-deployment:1.0">
+    <hornetq-server>
+        <jms-destinations>
+            <jms-queue name="BTR_BTStompAdmin">
+                <entry name="/queue/BTR_BTStompAdmin"/>
+            </jms-queue>
+            <jms-queue name="BTR_BTDomainAdmin">
+                <entry name="/queue/BTR_BTDomainAdmin"/>
+            </jms-queue>
+        </jms-destinations>
+    </hornetq-server>
+</messaging-deployment>

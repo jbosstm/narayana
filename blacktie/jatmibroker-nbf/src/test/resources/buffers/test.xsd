@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.jboss.org/blacktie" 
+	xmlns="http://www.jboss.org/blacktie"
+	elementFormDefault="qualified">
+	<xsd:include schemaLocation="employee.xsd"/>
+	<xsd:element name="test" type="employees_type"/>
+</xsd:schema>
