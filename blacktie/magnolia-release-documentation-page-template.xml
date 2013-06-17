@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="@pageName@" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>mgnl:content</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>mix:lockable</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>e3bc5b11-fbd1-4e76-9006-6f7b658c051a</sv:value>
+  </sv:property>
+  <sv:property sv:name="enableRSS" sv:type="String">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hideInNav" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="menubar" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="metaCache" sv:type="String">
+    <sv:value>disable</sv:value>
+  </sv:property>
+  <sv:property sv:name="metaExpire" sv:type="String">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="metaRobots" sv:type="String">
+    <sv:value>all</sv:value>
+  </sv:property>
+  <sv:property sv:name="redirectWindow" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="title" sv:type="String">
+    <sv:value>BlackTie Documentation @tag@</sv:value>
+  </sv:property>
+  <sv:property sv:name="useTitle" sv:type="Boolean">
+    <sv:value>true</sv:value>
+  </sv:property>
+  <sv:node sv:name="MetaData">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>mgnl:metaData</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:activated" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:activatorid" sv:type="String">
+      <sv:value>superuser</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:authorid" sv:type="String">
+      <sv:value>blacktie</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:comment" sv:type="String">
+      <sv:value>roadmap</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:creationdate" sv:type="Date">
+      <sv:value>@date@</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:lastaction" sv:type="Date">
+      <sv:value>@date@</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:lastmodified" sv:type="Date">
+      <sv:value>@date@</sv:value>
+    </sv:property>
+    <sv:property sv:name="mgnl:template" sv:type="String">
+      <sv:value>jbossorgProjectSubPage</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="mainColumnParagraphs">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>mgnl:contentNode</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:lockable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>ecd5f437-4034-4dad-bc28-d068fd189fd8</sv:value>
+    </sv:property>
+    <sv:node sv:name="MetaData">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>mgnl:metaData</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:activated" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:activatorid" sv:type="String">
+        <sv:value>superuser</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:authorid" sv:type="String">
+        <sv:value>blacktie</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:creationdate" sv:type="Date">
+        <sv:value>@date@</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:lastaction" sv:type="Date">
+        <sv:value>@date@</sv:value>
+      </sv:property>
+      <sv:property sv:name="mgnl:lastmodified" sv:type="Date">
+        <sv:value>@date@</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="0">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>mgnl:contentNode</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:lockable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>6fdc2f16-5249-46fa-8128-7caabb038a43</sv:value>
+      </sv:property>
+      <sv:property sv:name="flow" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="headerSize" sv:type="String">
+        <sv:value>h3</sv:value>
+      </sv:property>
+      <sv:property sv:name="imageLinkNewWindow" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="imageLocation" sv:type="String">
+        <sv:value>left</sv:value>
+      </sv:property>
+      <sv:property sv:name="inherit" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="lineAbove" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkImage" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkText" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkTitle" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkWindow" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkWindowMenubar" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="spacer" sv:type="Long">
+        <sv:value>0</sv:value>
+      </sv:property>
+      <sv:property sv:name="text" sv:type="String">
+        <sv:value>&lt;h1&gt;JBoss Blacktie Documentation Library&lt;/h1&gt; &lt;p&gt; &lt;table cellspacing="5" style="margin: 2px; padding: 2px; font-size: 90%;" class="infotable"&gt;     &lt;tbody&gt;         &lt;tr&gt;             &lt;th width="220" class="grey"&gt;JBoss Blacktie Document&lt;/th&gt;             &lt;th width="80" class="grey"&gt;Version&lt;/th&gt;             &lt;th width="80" class="grey"&gt;Released&lt;/th&gt;             &lt;th class="blank"&gt;&amp;nbsp;&lt;/th&gt;             &lt;th class="blank"&gt;&amp;nbsp;&lt;/th&gt;         &lt;/tr&gt;         &lt;tr&gt;             &lt;td&gt;&lt;b&gt;BlackTie User Guide&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;&lt;b&gt;@tag@&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;@date@&lt;/td&gt;             &lt;td class="button"&gt;&lt;a onmouseout="this. parentNode.style.backgroundColor='#777777';" onmouseover="this.parentNode.style.backgroundColor='#cccccc';" href="http://docs.jboss.org/blacktie/@tag@/guides/userguide/index.html"&gt;View Online&lt;/a&gt;&lt;/td&gt;         &lt;/tr&gt;         &lt;tr&gt;             &lt;td&gt;&lt;b&gt;jatmibroker-xatmi API&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;&lt;b&gt;@tag@&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;@date@&lt;/td&gt;             &lt;td class="button"&gt;&lt;a onmouseout="this. parentNode.style.backgroundColor='#777777';" onmouseover="this.parentNode.style.backgroundColor='#cccccc';" href="http://docs.jboss.org/blacktie/@tag@/api/jatmibroker/overview-summary.html"&gt;View Online&lt;/a&gt;&lt;/td&gt;             &lt;td class="button"&gt;&lt;a onmouseout="this. parentNode.style.backgroundColor='#777777';" onmouseover="this.parentNode.style.backgroundColor='#cccccc';" href="http://download.jboss.org/blacktie/@tag@/api/blacktie-jatmibroker-xatmi/blacktie-jatmibroker-xatmi-@tag@-javadoc.jar"&gt;Download&lt;/a&gt;&lt;/td&gt;         &lt;/tr&gt;         &lt;tr&gt;             &lt;td&gt;&lt;b&gt;BlackTie XSD - btconfig.xml&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;&lt;b&gt;@tag@&lt;/b&gt;&lt;/td&gt;             &lt;td&gt;@date@&lt;/td&gt;             &lt;td class="button"&gt;&lt;a onmouseout="this. parentNode.style.backgroundColor='#777777';" onmouseover="this.parentNode.style.backgroundColor='#cccccc';" href="http://download.jboss.org/blacktie/@tag@/xsd/btconfig.xsd"&gt;Download&lt;/a&gt;&lt;/td&gt;         &lt;/tr&gt;     &lt;/tbody&gt; &lt;/table&gt; &lt;/p&gt;</sv:value>
+      </sv:property>
+      <sv:property sv:name="titleLinkNewWindow" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:node sv:name="MetaData">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>mgnl:metaData</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:activated" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:activatorid" sv:type="String">
+          <sv:value>superuser</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:authorid" sv:type="String">
+          <sv:value>blacktie</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:creationdate" sv:type="Date">
+          <sv:value>@date@</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:lastaction" sv:type="Date">
+          <sv:value>@date@</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:lastmodified" sv:type="Date">
+          <sv:value>@date@</sv:value>
+        </sv:property>
+        <sv:property sv:name="mgnl:template" sv:type="String">
+          <sv:value>richTextHtml</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="text_files">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>mgnl:contentNode</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>mix:lockable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>76192ea7-3abb-41bd-a875-3e3be0a2915b</sv:value>
+        </sv:property>
+        <sv:node sv:name="MetaData">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>mgnl:metaData</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:activated" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:activatorid" sv:type="String">
+            <sv:value>superuser</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:creationdate" sv:type="Date">
+            <sv:value>@date@</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:lastaction" sv:type="Date">
+            <sv:value>@date@</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="imageFooter_files">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>mgnl:contentNode</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>mix:lockable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>1c8ad0c3-943a-49ec-93df-39be94aa772d</sv:value>
+        </sv:property>
+        <sv:node sv:name="MetaData">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>mgnl:metaData</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:activated" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:activatorid" sv:type="String">
+            <sv:value>superuser</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:creationdate" sv:type="Date">
+            <sv:value>@date@</sv:value>
+          </sv:property>
+          <sv:property sv:name="mgnl:lastaction" sv:type="Date">
+            <sv:value>@date@</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

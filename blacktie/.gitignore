@@ -1,0 +1,16 @@
+.classpath
+.settings/
+.project
+target/
+
+
+instantclient-basiclite-win32-11.2.0.1.0.zip
+instantclient-sdk-win32-11.2.0.1.0.zip
+instantclient_11_2/
+
+jboss-as/
+wildfly-8.0.0.Alpha2-SNAPSHOT/
+
+
+
+

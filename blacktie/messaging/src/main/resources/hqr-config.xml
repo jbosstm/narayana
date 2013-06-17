@@ -1,0 +1,13 @@
+<rest-messaging>
+   <server-in-vm-id>0</server-in-vm-id>
+   <use-link-headers>false</use-link-headers>
+   <default-durable-send>false</default-durable-send>
+   <dups-ok>true</dups-ok>
+   <topic-push-store-dir>topic-push-store</topic-push-store-dir>
+   <queue-push-store-dir>queue-push-store</queue-push-store-dir>
+   <producer-time-to-live>0</producer-time-to-live>
+   <producer-session-pool-size>10</producer-session-pool-size>
+   <session-timeout-task-interval>1</session-timeout-task-interval>
+   <consumer-session-timeout-seconds>300</consumer-session-timeout-seconds>
+   <consumer-window-size>-1</consumer-window-size>
+</rest-messaging>

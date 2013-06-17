@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2007-2009,
+  @author JBoss Inc. (jonathan.halliday@redhat.com)
+-->
+<!--
+    build-release-pkgs.xml: Utility script for building release artifacts.
+    Probably only useful for dev team. Everyone else should only need the
+    regular build.xml.
+
+    This script automates the some steps of the release build and packaging process
+    to reduce the opportunities for users to get it wrong. For example, it works from
+    a fresh checkout to ensure locally modified files in a dev's working copy
+    don't sneak into the release bundle.
+
+    usage:
+
+      Tag the release in scm.
+        or you can do a snapshot release direct from trunk, see properties below.
+
+      Check the version of JBossAS referenced in pom.xml is sane.
+        In general, use the oldest JBossAS release the JBossTS release is intended to support.
+
+      Update the properties section below to suit your machine.
+
+      Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
+
+      ant -f build-release-pkgs.xml dist downloads
+
+      rsync or sftp the downloads to publish to the web site (careful with the trailing '/') e.g.
+        rsync \-\-protocol=29 -avz 4.11.0.Final blacktie@filemgmt.jboss.org:downloads_htdocs/blacktie/
+
+      Log in to magnolia cms at https://www.jboss.org/author, create page under blacktie/downloads
+       (note: 'magnolia' target below may help) then edit downloads node itself to update table in downloads.html
+
+      Update appropriate wiki pages, such as the 'which version to use' page.
+        http://community.jboss.org/wiki/BlackTie
+
+      Then login to https://repository.jboss.org/nexus/ and publish the artifacts.
+
+      This version only applies to the version it was downloaded with.
+-->
+<project name="Release Packaging" default="fail" basedir=".">
+  <description>
+        package binary + src files for upload to website and other repos.
+    </description>
+  <!-- you probably need to change these properties to suit your machine -->
+  <!-- uncomment the block of properties below to do a snapshot release.
+            you need permissions to webdav upload to the server for this to work
+            http://www.jboss.org/community/docs/DOC-11381  -->
+  <!--
+    <property name="tag" value="trunk"/>
+    <property name="version" value="5.0.0.M4-SNAPSHOT"/>
+-->
+  <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
+  <property name="workdir" location="/tmp/blacktie_releases"/>
+  <!-- where to get the source -->
+  <property name="gitbase" value="git@github.com:jbosstm/blacktie.git"/>
+  <!-- The tag as it appears under gitbase -->
+  <property name="pageName" value="5.0.0.M4-SNAPSHOT"/>
+  <property name="tag" value="5.0.0.M4-SNAPSHOT"/>
+  <!-- the location the web site content is copied to -->
+  <property name="downloads.dir" value="${user.home}/blacktie/filemgmt.jboss.org/downloads_htdocs/blacktie/"/>
+  <property name="docs.dir" value="${user.home}/blacktie/filemgmt.jboss.org/docs_htdocs/blacktie/"/>
+  <property name="bpa" value="centos54x64"/>
+  <!-- you probably don't need to change anything below here -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="./antbuildsystem/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+  <target name="fail">
+    <fail message="you must specify a target"/>
+  </target>
+  <target name="all" depends="dist,downloads"/>
+  <target name="dist-init" unless="dist-init">
+    <tstamp/>
+    <fail message="You must set a workdir">
+      <condition>
+        <not>
+          <isset property="workdir"/>
+        </not>
+      </condition>
+    </fail>
+    <fail message="You must not already have a local maven cached repository to do a release build">
+      <condition>
+        <available file="repository" type="dir"/>
+      </condition>
+    </fail>
+    <fail message="You cannot perform a build without cleaning the old version out">
+      <condition>
+        <available file="${workdir}/${tag}" type="dir"/>
+      </condition>
+    </fail>
+    <mkdir dir="${workdir}"/>
+    <!-- pull the source code from scm -->
+    <exec executable="git" dir="${workdir}">
+      <arg value="clone"/>
+      <arg value="${gitbase}"/>
+      <arg value="${tag}"/>
+    </exec>
+    <exec executable="git" dir="${workdir}/${tag}">
+      <arg value="checkout"/>
+      <arg value="${tag}"/>
+    </exec>
+  </target>
+  <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
+    <!-- build the binary releases -->
+    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
+      <arg line="clean -gs tools/maven/conf/settings.xml -Dbpa=${bpa}"/>
+    </exec>
+    <!-- package the full source release (all src tree) -->
+    <delete file="${workdir}/blacktie-${tag}-src.zip"/>
+    <zip basedir="${workdir}" destfile="${workdir}/blacktie-${tag}-src.zip" includes="${tag}/**" excludes="${tag}/repository/**"/>
+    <!-- build the binary releases -->
+    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
+      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dbpa=${bpa}"/>
+    </exec>
+  </target>
+  <!-- copy the release into the downloads dir tree (http://www.jboss.org/blacktie web site content) -->
+  <target name="downloads" description="copy release bundles to web site content">
+    <fail>
+      <condition>
+        <not>
+          <available file="${downloads.dir}" type="dir"/>
+        </not>
+      </condition>
+    </fail>
+    <fail>
+      <condition>
+        <available file="${downloads.dir}/${tag}" type="dir"/>
+      </condition>
+    </fail>
+    <fail>
+      <condition>
+        <not>
+          <available file="${docs.dir}" type="dir"/>
+        </not>
+      </condition>
+    </fail>
+    <fail>
+      <condition>
+        <available file="${docs.dir}/${tag}" type="dir"/>
+      </condition>
+    </fail>
+    
+    <delete dir="tmp-downloads-dir"/>
+    <mkdir dir="tmp-downloads-dir"/>
+    <mkdir dir="tmp-downloads-dir/src"/>
+    <mkdir dir="tmp-downloads-dir/binary"/>
+    <mkdir dir="tmp-downloads-dir/xsd"/>
+    <delete dir="tmp-docs-dir"/>
+    <mkdir dir="tmp-docs-dir"/>
+    
+    <copy todir="tmp-downloads-dir/src">
+      <fileset dir="${workdir}" includes="blacktie-${tag}-src.zip"/>
+    </copy>
+    <copy todir="tmp-downloads-dir/binary">
+      <fileset dir="${user.home}" includes="blacktie-${tag}-vc9x32-bin.zip"/>
+      <fileset dir="${workdir}" includes="blacktie/${tag}/blacktie/target/blacktie-${tag}-centos54x64-bin.tar.gz"/>
+    </copy>
+    <copy todir="tmp-downloads-dir/xsd">
+      <fileset dir="${workdir}/${tag}/xsd/src/main/xsd/">
+        <include name="*.xsd"/>
+      </fileset>
+    </copy>
+    <copy file="${workdir}/${tag}/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/blacktie-jatmibroker-xatmi"/>
+    <unzip src="${workdir}/${tag}/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jatmibroker"/>
+    <move todir="${downloads.dir}/${tag}" verbose="true">
+      <fileset dir="tmp-downloads-dir"/>
+    </move>
+    <move todir="${docs.dir}/${tag}" verbose="true">
+      <fileset dir="tmp-docs-dir"/>
+    </move>
+  </target>
+  <!-- magnolia (the cms that sits behind jboss.org/blacktie pages) is a pain. This target generates
+     xml for /downloads/somerelease.xml pages to ease some of the pain in publishing an upload
+      right click blacktie/downloads node, import from xml, then right click new node and activate.
+      download ordering in the rollover menu is determined by ordering the GUI - move new page as needed.
+      edit the 'downloads' node itself to link the new release from downloads.html, it's not automatic. -->
+  <target name="magnolia">
+    <exec executable="date" outputproperty="date">
+      <arg line="+'%FT%H:%M:%S.000Z'"/>
+    </exec>
+    <length property="src-length" file="${workdir}/blacktie-${tag}-src.zip"/>
+    <length property="centos54x64-bin-length" file="${downloads.dir}/${tag}/binary/blacktie-${tag}-centos54x64-bin.tar.gz"/>
+    <length property="vc9x32-bin-length" file="${downloads.dir}/${tag}/binary/blacktie-${tag}-vc9x32-bin.zip"/>
+    <copy file="magnolia-release-download-page-template.xml" tofile="${workdir}/website.downloads.${pageName}.xml" filtering="true" overwrite="true">
+      <filterset>
+        <filter token="pageName" value="${pageName}"/>
+        <filter token="tag" value="${tag}"/>
+        <filter token="date" value="${date}"/>
+        <filter token="src-length" value="${src-length}"/>
+        <filter token="centos54x64-bin-length" value="${centos54x64-bin-length}"/>
+        <filter token="vc9x32-bin-length" value="${vc9x32-bin-length}"/>
+      </filterset>
+    </copy>
+    <copy file="magnolia-release-documentation-page-template.xml" tofile="${workdir}/website.documentation.${pageName}.xml" filtering="true" overwrite="true">
+      <filterset>
+        <filter token="pageName" value="${pageName}"/>
+        <filter token="tag" value="${tag}"/>
+        <filter token="date" value="${date}"/>
+      </filterset>
+    </copy>
+  </target>
+</project>

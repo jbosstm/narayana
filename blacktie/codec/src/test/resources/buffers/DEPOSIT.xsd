@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:bt="http://www.jboss.org/blacktie" 
+	targetNamespace="http://www.jboss.org/blacktie"
+	elementFormDefault="qualified">
+	<xsd:element name="X_C_TYPE">
+		<xsd:complexType> 
+			<xsd:sequence minOccurs="0" maxOccurs="1">
+				<xsd:element name="acct_no" type="xsd:long" />
+				<xsd:element name="amount" type="xsd:short" />
+				<xsd:element name="balance" type="xsd:double" />
+				<xsd:element name="status">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:base64Binary">
+							<xsd:maxLength value="128"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="status_len" type="xsd:short" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

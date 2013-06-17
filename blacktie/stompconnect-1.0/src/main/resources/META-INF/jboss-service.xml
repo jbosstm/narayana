@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server xmlns="urn:jboss:service:7.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="urn:jboss:service:7.0 jboss-service_7_0.xsd">
+ 
+    <mbean code="org.jboss.narayana.blacktie.stompconnect.StompConnectService" name="service.server.monitor:service=StompConnectService">
+         <attribute name="ConnectionFactoryName">java:/JmsXA</attribute>
+         <attribute name="Port">61613</attribute>
+    </mbean>
+ 
+</server>

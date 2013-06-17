@@ -1,6 +1,6 @@
-call:comment_on_pull "Starting tests %BUILD_URL%"
+call:comment_on_pull "Started testing this pull request: %BUILD_URL%"
 
-call build.bat clean install "-DskipTests" || (call:comment_on_pull "Tests Failed" && exit -1)
+call build.bat clean install "-DskipTests" || (call:comment_on_pull "Narayana Failed %BUILD_URL%" && exit -1)
 
 echo "Cloning AS"
 rmdir /S /Q jboss-as
@@ -15,9 +15,18 @@ if %ERRORLEVEL% NEQ 0 exit -1
 
 echo "Building AS"
 set MAVEN_OPTS="-Xmx768M"
-call build.bat clean install -DskipTests || (call:comment_on_pull "Tests Failed" && exit -1)
+call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "AS Failed %BUILD_URL%" && exit -1)
 
-call:comment_on_pull "Tests Passed"
+echo "Building BlackTie
+cd ..\blacktie
+rmdir wildfly-8.0.0.Alpha2-SNAPSHOT /s /q
+unzip ..\jboss-as\dist\target\wildfly-8.0.0.Alpha2-SNAPSHOT.zip
+set JBOSS_HOME=%CD%\wildfly-8.0.0.Alpha2-SNAPSHOT\
+copy ..\rest-tx\webservice\target\restat-web-%NARAYANA_CURRENT_VERSION%.war %JBOSS_HOME%\standalone\deployments\
+set WORKSPACE=%WORKSPACE%\blacktie 
+call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BlackTie Failed %BUILD_URL%" && exit -1)
+
+call:comment_on_pull "All tests passed - Job complete %BUILD_URL%"
 
 rem -------------------------------------------------------
 rem -                 Functions bellow                    -

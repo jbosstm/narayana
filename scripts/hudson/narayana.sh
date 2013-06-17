@@ -1,5 +1,5 @@
 function fatal {
-  comment_on_pull "Tests failed: $1"
+  comment_on_pull "Tests failed ($BUILD_URL): $1"
   echo "$1"
   exit 1
 }
@@ -93,8 +93,7 @@ function build_as {
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
-  export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
+  JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
   init_jboss_home
 }
@@ -131,6 +130,17 @@ function rest_at_integration_tests {
   echo "#0. REST-AT Integration Test"
   ./build.sh -f ./rest-tx/integration/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
+}
+
+function blacktie {
+  echo "#0. BlackTie"
+  cd blacktie
+  rm -rf $PWD/wildfly-8.0.0.Alpha2-SNAPSHOT
+  unzip ../jboss-as/dist/target/wildfly-8.0.0.Alpha2-SNAPSHOT.zip
+  cp ../rest-tx/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-8.0.0.Alpha2-SNAPSHOT/standalone/deployments/
+  WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-8.0.0.Alpha2-SNAPSHOT ./scripts/hudson/blacktie-linux.sh "$@"
+  [ $? = 0 ] || fatal "BlackTie build failed"
+  cd -
 }
 
 function jta_cdi_tests {
@@ -338,6 +348,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
 [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
 [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
+[ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
 [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
@@ -372,6 +383,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
+[ $BLACKTIE = 1 ] && blacktie "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests
@@ -381,5 +393,5 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $REST_AT_INTEGRATION_TESTS = 1 ] && rest_at_integration_test "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
-comment_on_pull "All tests passed - Job complete"
+comment_on_pull "All tests passed - Job complete $BUILD_URL"
 exit 0 # any failure would have resulted in fatal being called which exits with a value of 1

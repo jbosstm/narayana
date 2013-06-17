@@ -1,0 +1,103 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2008, Red Hat, Inc., and others contributors as indicated
+ * by the @authors tag. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ */
+
+#ifndef _ATMI_BROKER_IDL
+#define _ATMI_BROKER_IDL
+
+#include "CosTransactions.idl"
+
+
+// ***************************************************************
+//       module:  AtmiBroker
+// ***************************************************************
+module AtmiBroker {
+
+	typedef sequence<octet> octetSeq;
+
+    struct EnvVariableInfo 
+	{
+		       string   	name;
+		       string   	value;
+    };
+	typedef sequence<EnvVariableInfo> EnvVariableInfoSeq;
+	
+	struct ServiceInfo 
+	{
+		       string		serviceName;
+		       short   		poolSize;
+		       string  		securityType;
+    };
+	typedef sequence<ServiceInfo> ServiceInfoSeq;
+
+	typedef sequence<octetSeq> ServiceNameSeq;
+	
+	struct ServerInfo 
+	{
+		       short   		maxChannels;
+		       short   		maxSuppliers;
+		       short   		maxConsumers;
+		       short   		maxReplicas;
+		       short   		logLevel;
+		       string  		securityType;
+		       string  		orbType;
+		       string  		queueSpaceName;
+		       ServiceNameSeq	serviceNames;
+    };
+	typedef sequence<ServerInfo> ServerInfoSeq;
+
+	interface Server
+	{
+		short server_init();
+		
+		void  server_done();
+		
+		ServerInfo  get_server_info();
+		
+		ServiceInfoSeq  get_all_service_info();
+		
+		EnvVariableInfoSeq  get_environment_variable_info();
+		
+		void  set_server_descriptor(in string xml_descriptor);
+		
+		void  set_service_descriptor(in string serviceName, in string xml_descriptor);
+		
+		void  set_environment_descriptor(in string xml_descriptor);
+		
+		void  stop_service(in string service_name);
+		
+		void  start_service(in string service_name);
+	};
+	
+	interface EndpointQueue
+	{
+		void send(
+				  in string replyto_ior,
+				  in short rval,
+				  in long rcode, 
+				  in octetSeq idata,
+				  in long ilen,
+				  in long correlationId, 
+				  in long flags, 
+				  in string type,
+				  in string subtype);	  
+	
+		void disconnect();
+	};
+};
+
+#endif  // _ATMI_BROKER_IDL

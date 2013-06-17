@@ -1,0 +1,1034 @@
+<plugin>
+  <description></description>
+  <groupId>org.jboss.narayana.blacktie.plugins</groupId>
+  <artifactId>blacktie-cpp-plugin</artifactId>
+  <version>5.0.0.M4-SNAPSHOT</version>
+  <goalPrefix>cpp</goalPrefix>
+  <isolatedRealm>false</isolatedRealm>
+  <inheritedByDefault>true</inheritedByDefault>
+  <mojos>
+    <mojo>
+      <goal>compile</goal>
+      <description>compile main sources</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>compile</phase>
+      <implementation>/btcpp.build.xml:compile</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>src.main</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>location of main sources</description>
+        </parameter>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <src.main implementation="java.lang.String" default-value="src/main/cpp"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>generate-idl-sources</goal>
+      <description>generate sources prior to compilation</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>generate-sources</phase>
+      <implementation>/btcpp.build.xml:generate-idl-sources</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>idl.src.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The directory where the idl files live</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <idl.src.dir implementation="java.lang.String" default-value="src/main/idl"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+	<mojo>
+      <goal>generate-proto-sources</goal>
+      <description>generate sources prior to compilation</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>generate-sources</phase>
+      <implementation>/btcpp.build.xml:generate-proto-sources</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+		<parameter>
+		  <name>proto.src.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The directory where the proto files live</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <proto.src.dir implementation="java.lang.String" default-value="src/test/proto"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>test</goal>
+      <description>run the cpp unit tests</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>test</phase>
+      <implementation>/btcpp.build.xml:test</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>use.valgrind</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Should tests be executed using valgrind</description>
+        </parameter>
+        <parameter>
+          <name>blacktie.schema.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Schema directory</description>
+        </parameter>
+        <parameter>
+          <name>blacktie.configuration.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Configuration directory</description>
+        </parameter>
+        <parameter>
+          <name>jbossas.ip.addr</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The IP address of the app server</description>
+        </parameter>
+        <parameter>
+          <name>failOnErrorTests</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Whether to stop the build after test failure. Valid values are false|true</description>
+        </parameter>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>maven.test.skip</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Skip tests</description>
+        </parameter>
+        <parameter>
+          <name>skipTests</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Skip tests</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <jbossas.ip.addr implementation="java.lang.String" default-value="localhost"/>
+        <blacktie.schema.dir implementation="java.lang.String" default-value="../cxx/compile/"/>
+        <failOnErrorTests implementation="java.lang.String" default-value="true"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <skipTests implementation="java.lang.String" default-value="false"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <maven.test.skip implementation="java.lang.String" default-value="false"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <blacktie.configuration.dir implementation="java.lang.String" default-value="."/>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>test-compile</goal>
+      <description>compile test sources</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>test-compile</phase>
+      <implementation>/btcpp.build.xml:test-compile</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>generate.testrunner</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Generate a test runner</description>
+        </parameter>
+        <parameter>
+          <name>gen-common-sources</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Generate common resources</description>
+        </parameter>
+        <parameter>
+          <name>projectHelper</name>
+          <type></type>
+          <required>false</required>
+          <editable>true</editable>
+          <description></description>
+        </parameter>
+        <parameter>
+          <name>src.main</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>location of main sources</description>
+        </parameter>
+        <parameter>
+          <name>test.includes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>includes test source files</description>
+        </parameter>
+        <parameter>
+          <name>test.excludes</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>exculdes test source files</description>
+        </parameter>
+        <parameter>
+          <name>test.output.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Control whether an executable or shared object is generated</description>
+        </parameter>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <src.main implementation="java.lang.String" default-value="src/main/cpp"/>
+        <test.output.type implementation="java.lang.String" default-value="executable"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <gen-common-sources implementation="org.apache.maven.project.MavenProject" default-value="${project}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <projectHelper>${org.jboss.narayana.blacktie.plugins.AddCommonSources}</projectHelper>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+        <generate.testrunner implementation="java.lang.String" default-value="false"/>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>process-classes</goal>
+      <description>process compiled sources</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>process-classes</phase>
+      <implementation>/btcpp.build.xml:process-classes</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>clean</goal>
+      <description>clean mojo outputs</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>clean</phase>
+      <implementation>/btcpp.build.xml:clean</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>project.name</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Project name.</description>
+        </parameter>
+        <parameter>
+          <name>project.version</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact version.</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.version implementation="java.lang.String" default-value="${project.version}"/>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <project.name implementation="java.lang.String" default-value="${project.name}"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>generate-test-lib</goal>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>false</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>test-compile</phase>
+      <implementation>/btcpp.build.xml:generate-test-lib</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>src.main.file</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of src file (without the .cxx extension) contain a C++ main</description>
+        </parameter>
+        <parameter>
+          <name>project.artifactId</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>false</editable>
+          <description>The artifact name.</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>blacktie.configuration.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Configuration directory</description>
+        </parameter>
+        <parameter>
+          <name>export.dll</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>export.dll</description>
+        </parameter>
+        <parameter>
+          <name>jbossas.ip.addr</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The IP address of the app server</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <jbossas.ip.addr implementation="java.lang.String" default-value="localhost"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <project.artifactId implementation="java.lang.String" default-value="${project.artifactId}"/>
+        <blacktie.configuration.dir implementation="java.lang.String" default-value="."/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>generate-exe</goal>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>false</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>false</inheritedByDefault>
+      <phase>test-compile</phase>
+      <implementation>/btcpp.build.xml:generate-exe</implementation>
+      <language>ant-mojo</language>
+      <configurator>map-oriented</configurator>
+      <composer>map-oriented</composer>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>src.main.file</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>Name of src file (without the .cxx extension) contain a C++ main</description>
+        </parameter>
+        <parameter>
+          <name>configuration.type</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build type. Permissable values are debug|release</description>
+        </parameter>
+        <parameter>
+          <name>project.build.directory</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Build directory.</description>
+        </parameter>
+        <parameter>
+          <name>blacktie.configuration.dir</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>Configuration directory</description>
+        </parameter>
+        <parameter>
+          <name>jbossas.ip.addr</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The IP address of the app server</description>
+        </parameter>
+        <parameter>
+          <name>basedir</name>
+          <alias>ant.basedir</alias>
+          <type>java.io.File</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The base directory from which to execute the Ant script.</description>
+        </parameter>
+        <parameter>
+          <name>messageLevel</name>
+          <alias>ant.messageLevel</alias>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The message-level used to tune the verbosity of Ant logging.</description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <project.build.directory implementation="java.lang.String" default-value="${project.build.directory}"/>
+        <jbossas.ip.addr implementation="java.lang.String" default-value="localhost"/>
+        <configuration.type implementation="java.lang.String" default-value="debug"/>
+        <blacktie.configuration.dir implementation="java.lang.String" default-value="."/>
+        <basedir implementation="java.io.File" default-value="${basedir}">${antBasedir}</basedir>
+        <messageLevel implementation="java.lang.String" default-value="info">${antMessageLevel}</messageLevel>
+      </configuration>
+    </mojo>
+  </mojos>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-script-ant</artifactId>
+      <type>jar</type>
+      <version>2.1.0-M1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <type>jar</type>
+      <version>1.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-launcher</artifactId>
+      <type>jar</type>
+      <version>1.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <type>jar</type>
+      <version>2.1.0-M1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-ant-factory</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <type>jar</type>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>classworlds</groupId>
+      <artifactId>classworlds</artifactId>
+      <type>jar</type>
+      <version>1.1-alpha-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-9-stable-1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <type>jar</type>
+      <version>3.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-profile</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact-manager</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-repository-metadata</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <type>jar</type>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <type>jar</type>
+      <version>1.0-alpha-5</version>
+    </dependency>
+    <dependency>
+      <groupId>ant-contrib</groupId>
+      <artifactId>cpptasks</artifactId>
+      <type>jar</type>
+      <version>1.0b5</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <type>jar</type>
+      <version>1.6.5</version>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <type>jar</type>
+      <version>2.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <type>jar</type>
+      <version>1.3.03</version>
+    </dependency>
+    <dependency>
+      <groupId>ant-contrib</groupId>
+      <artifactId>ant-contrib</artifactId>
+      <type>jar</type>
+      <version>1.0b2</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>optional</artifactId>
+      <type>jar</type>
+      <version>1.5.4</version>
+    </dependency>
+  </dependencies>
+</plugin>

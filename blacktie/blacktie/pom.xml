@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<!--
+		JBoss, Home of Professional Open Source Copyright 2008, Red Hat
+		Middleware LLC, and others contributors as indicated by the @authors
+		tag. All rights reserved. See the copyright.txt in the distribution
+		for a full listing of individual contributors. This copyrighted
+		material is made available to anyone wishing to use, modify, copy, or
+		redistribute it subject to the terms and conditions of the GNU Lesser
+		General Public License, v. 2.1. This program is distributed in the
+		hope that it will be useful, but WITHOUT A WARRANTY; without even the
+		implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU Lesser General Public License for more details.
+		You should have received a copy of the GNU Lesser General Public
+		License, v.2.1 along with this distribution; if not, write to the Free
+		Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jboss.narayana.blacktie</groupId>
+        <artifactId>blacktie-all</artifactId>
+        <version>5.0.0.M4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.narayana.blacktie</groupId>
+    <artifactId>blacktie</artifactId>
+    <packaging>pom</packaging>
+    <name>Blacktie Distribution</name>
+    <url>http://www.jboss.org/blacktie</url>
+    <description>A BlackTie component</description>
+    <developers>
+        <developer>
+            <id>tomjenkinson</id>
+            <name>Thomas Jenkinson</name>
+            <email>tom.jenkinson@redhat.com</email>
+            <organization>JBoss</organization>
+            <organizationUrl>http://www.jboss.org/</organizationUrl>
+            <roles>
+                <role>Project Lead</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>mmusgrov</id>
+            <name>Michael Musgrove</name>
+            <email>mmusgrov@redhat.com</email>
+            <organization>JBoss</organization>
+            <organizationUrl>http://www.jboss.org/</organizationUrl>
+            <roles>
+                <role>Core Developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>zfeng</id>
+            <name>Amos Feng</name>
+            <email>zfeng@redhat.com</email>
+            <organization>JBoss</organization>
+            <organizationUrl>http://www.jboss.org/</organizationUrl>
+            <roles>
+                <role>Core Developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>LGPL 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
+    <distributionManagement>
+        <repository>
+            <id>jboss-releases-repository</id>
+            <name>JBoss Release Repository</name>
+            <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshot Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:svn:http://anonsvn.jboss.org/repos/blacktie/trunk/blacktie</connection>
+        <developerConnection>scm:svn:https://svn.jboss.org/repos/blacktie/trunk/blacktie</developerConnection>
+        <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/blacktie/trunk/blacktie</url>
+    </scm>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                    </descriptors>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-symlinks</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/${project.artifactId}-${project.version}/lib/cxx"/>
+                                <echo message="copying symlinks from xatmi runtime library"/>
+                                <exec executable="find" dir="target" failonerror="true">
+                                    <arg line="../../xatmi/target/cxx/runtime/lib -type l -exec cp -rpP {} ${project.artifactId}-${project.version}/lib/cxx ;"/>
+                                </exec>
+                                <echo message="update symlinks to zip"/>
+                                <exec executable="/bin/sh" dir="target" failonerror="true">
+                                    <arg line="-c 'zip -q -u -y ${project.artifactId}-${project.version}-${bpa}-bin.zip ${project.artifactId}-${project.version}/lib/cxx/*'"/>
+                                </exec>
+                                <echo message="update symlinks to tar.gz"/>
+                                <exec executable="gunzip" dir="target" failonerror="true">
+                                    <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar.gz"/>
+                                </exec>
+                                <exec executable="tar" dir="target" failonerror="true">
+                                    <arg line="uf ${project.artifactId}-${project.version}-${bpa}-bin.tar ${project.artifactId}-${project.version}/lib/cxx"/>
+                                </exec>
+                                <exec executable="gzip" dir="target" failonerror="true">
+                                    <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar"/>
+                                </exec>
+                            </tasks>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-jatmibroker-xatmi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-jatmibroker-nbf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-codeGeneration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>btadmin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-admin-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-admin-services-ear</artifactId>
+            <type>ear</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-stompconnect</artifactId>
+        </dependency>
+    </dependencies>
+</project>

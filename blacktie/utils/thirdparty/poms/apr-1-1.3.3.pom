@@ -1,0 +1,9 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>apr-1.contrib</groupId>
+	<artifactId>apr-1</artifactId>
+	<name>apr-1</name>
+	<version>1.3.3</version>
+	<packaging>jar</packaging>
+	<description>Apache Portable Runtime (APR)</description>
+</project>

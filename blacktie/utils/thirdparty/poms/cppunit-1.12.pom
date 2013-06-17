@@ -1,0 +1,9 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cppunit.contrib</groupId>
+	<artifactId>cppunit</artifactId>
+	<name>cppunit</name>
+	<version>1.12</version>
+	<packaging>zip</packaging>
+	<description>repackage of CppUnit, the C++ port of the famous JUnit framework for unit testing</description>
+</project>
