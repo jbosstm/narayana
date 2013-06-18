@@ -49,11 +49,11 @@ do
     cd $REPO
     git checkout $BRANCH || fatal
 
-    find . -type f | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT-SNAPSHOT/$CURRENT/g" || fatal
+    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name \*.sh -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT-SNAPSHOT/$CURRENT/g" || fatal
     git commit -am "Updated to $CURRENT" || fatal
     git tag $CURRENT || fatal
 
-    find . -type f | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT/$NEXT/g" || fatal
+    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name \*.sh -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT/$NEXT/g" || fatal
     git commit -am "Updated to $NEXT" || fatal
     git push origin $BRANCH --tags || fatal
     cd ..
