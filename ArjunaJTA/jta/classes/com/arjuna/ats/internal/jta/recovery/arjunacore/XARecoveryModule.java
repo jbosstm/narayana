@@ -538,6 +538,32 @@ public class XARecoveryModule implements RecoveryModule
                             + ((trans != null) ? trans.length : 0)
                             + " xids in doubt");
                 }
+				if (jtaLogger.logger.isTraceEnabled()) {
+					for (Xid xid : trans) {
+						byte[] globalTransactionId = xid.getGlobalTransactionId();
+						byte[] branchQualifier = xid.getBranchQualifier();
+	
+						StringBuilder stringBuilder = new StringBuilder();
+						stringBuilder.append("< ");
+						stringBuilder.append(xid.getFormatId());
+						stringBuilder.append(", ");
+						stringBuilder.append(globalTransactionId.length);
+						stringBuilder.append(", ");
+						stringBuilder.append(branchQualifier.length);
+						stringBuilder.append(", ");
+						for (int i = 0; i < globalTransactionId.length; i++) {
+							stringBuilder.append(globalTransactionId[i]);
+						}
+						stringBuilder.append(", ");
+						for (int i = 0; i < branchQualifier.length; i++) {
+							stringBuilder.append(branchQualifier[i]);
+						}
+						stringBuilder.append(" >");
+	
+						jtaLogger.logger.debug("Recovered: "
+								+ stringBuilder.toString());
+					}
+				}
 			}
 			catch (XAException e)
 			{
