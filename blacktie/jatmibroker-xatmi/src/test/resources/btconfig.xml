@@ -69,36 +69,18 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv26" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv27" hostname="cersei"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv28" hostname="cersei"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv29" hostname="janei"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv30" hostname="janei"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv31" hostname="lancel"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv32" hostname="lancel"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
+		<MACHINE id="myserv27" hostname="cersei" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv28" hostname="cersei" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv29" hostname="janei" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv30" hostname="janei" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv31" hostname="lancel" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv32" hostname="lancel" pathToExecutable="noExist"
+			workingDirectory="." argLine="foo" serverId="2" />
 	</MACHINES>
 	<SERVERS>
 		<SERVER name='myserv'>
@@ -128,6 +110,12 @@
 			<MACHINE-REF id="myserv24" />
 			<MACHINE-REF id="myserv25" />
 			<MACHINE-REF id="myserv26" />
+			<MACHINE-REF id="myserv27" />
+			<MACHINE-REF id="myserv28" />
+			<MACHINE-REF id="myserv29" />
+			<MACHINE-REF id="myserv30" />
+			<MACHINE-REF id="myserv31" />
+			<MACHINE-REF id="myserv32" />
 			<SERVICE_NAMES>
 				<SERVICE name='TestOne'  externally-managed-destination='true'/>
 				<SERVICE name='TestTwo'  externally-managed-destination='true'/>

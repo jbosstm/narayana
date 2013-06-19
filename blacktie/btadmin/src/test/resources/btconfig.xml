@@ -209,6 +209,12 @@
 			<MACHINE-REF id="myserv24" />
 			<MACHINE-REF id="myserv25" />
 			<MACHINE-REF id="myserv26" />
+			<MACHINE-REF id="myserv27" />
+			<MACHINE-REF id="myserv28" />
+			<MACHINE-REF id="myserv29" />
+			<MACHINE-REF id="myserv30" />
+			<MACHINE-REF id="myserv31" />
+			<MACHINE-REF id="myserv32" />
 			<SERVICE_NAMES>
 				<SERVICE name='BAR' function_name='BAR' size="1">
 					<LIBRARY_NAME configuration="linux" value="../libtestsuite.so" />
