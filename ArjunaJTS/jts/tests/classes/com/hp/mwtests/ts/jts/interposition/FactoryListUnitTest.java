@@ -40,7 +40,7 @@ import org.junit.Test;
 import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.Control;
 
-import org.omg.CORBA.INVALID_TRANSACTION;;
+import org.omg.CORBA.INVALID_TRANSACTION;
 
 import com.arjuna.ats.internal.jts.interposition.FactoryList;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
