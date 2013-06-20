@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.jboss.jbossts.stm</groupId>
   <artifactId>core</artifactId>
-  <name>core</name>
+  <name>JBossTS: STM</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>

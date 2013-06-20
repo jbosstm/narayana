@@ -22,8 +22,8 @@
   <groupId>org.jboss.jbossts.jta</groupId>
   <artifactId>narayana-jta-all</artifactId>
   <packaging>pom</packaging>
-  <name>JBossJTA everything</name>
-  <description>jta all</description>
+  <name>JBossTS: ArjunaJTA</name>
+  <description>JBossTS: ArjunaJTA</description>
   <build>
     <plugins>
       <plugin>

@@ -14,7 +14,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xtstest</artifactId>
 	<packaging>war</packaging>
-	<name>junit tests for xts crash recovery</name>
+	<name>JBossTS: XTS localjunit xtstest</name>
 	<description>junit tests for xts crash recovery</description>
     <build>
         <finalName>${project.artifactId}</finalName>
