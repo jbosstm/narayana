@@ -22,8 +22,8 @@
   <groupId>org.jboss.jbossts.arjunacore</groupId>
   <artifactId>arjunacore-all</artifactId>
   <packaging>pom</packaging>
-  <name>arjunacore-all</name>
-  <description>Arjunacore All</description>
+  <name>JBossTS: Arjunacore</name>
+  <description>JBossTS: Arjunacore All</description>
   <build>
     <plugins>
       <plugin>

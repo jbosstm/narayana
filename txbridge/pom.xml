@@ -20,8 +20,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jbosstxbridge</artifactId>
-    <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <name>JBossTS: txbridge</name>
+    <description>JBossTS: txbridge</description>
     <packaging>jar</packaging>
     <properties>
         <version.jbossas>7.1.1.Final</version.jbossas>
