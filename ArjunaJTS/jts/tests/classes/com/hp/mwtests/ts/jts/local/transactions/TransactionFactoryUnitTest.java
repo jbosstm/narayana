@@ -151,9 +151,14 @@ public class TransactionFactoryUnitTest extends TestBase
 
         assertEquals(factory.getOSStatus(tx.get_uid()), org.omg.CosTransactions.Status.StatusNoTransaction); // no state in OS yet!
         
-        PropagationContext ctx = tx.get_coordinator().get_txcontext();
+        PropagationContext ctx = tx.get_coordinator().get_txcontext();       
+        Control cont = factory.recreate(ctx);       
+        String toString = Utility.getHierarchy(ctx);
         
-        Control cont = factory.recreate(ctx);
+        System.out.println(toString);
+        
+        assertTrue(toString != null);
+        assertTrue(toString.length() > 1);
         
         assertTrue(Utility.getUid(cont).equals(tx.get_uid()));
         
