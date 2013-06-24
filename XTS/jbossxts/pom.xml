@@ -21,8 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jbossxts</artifactId>
   <packaging>jar</packaging>
-  <name>${project.artifactId}</name>
-  <description>${project.artifactId}</description>
+  <name>JBossTS: XTS jbossxts</name>
+  <description>JBossTS: XTS jbossxts</description>
   <build>
     <plugins>
       <plugin>

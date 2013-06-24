@@ -22,8 +22,8 @@
   <groupId>org.jboss.jbossts.xts</groupId>
   <artifactId>xts-all</artifactId>
   <packaging>pom</packaging>
-  <name>xts all</name>
-  <description>xts all</description>
+  <name>JBossTS: XTS</name>
+  <description>JBossTS: XTS</description>
   <build>
     <plugins>
       <plugin>
