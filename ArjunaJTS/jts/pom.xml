@@ -38,24 +38,6 @@
     </resources>
     <testSourceDirectory>tests/classes</testSourceDirectory>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <!-- the next three maven plugins (dependency, antrun and jar) are to ensure that the
         default stubs are packaged with the final artifact of this module. Putting the stubs
@@ -78,7 +60,6 @@
                 <skip>false</skip>
                 <excludes>
                   <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
-                  <exclude>**/common/**</exclude>
                   <exclude>**/exceptions/**</exclude>
                   <exclude>**/orbspecific/resources/**</exclude>
                   <exclude>**/resources/**</exclude>
@@ -139,6 +120,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
@@ -149,6 +137,13 @@
       <artifactId>jboss-logging-processor</artifactId>
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>

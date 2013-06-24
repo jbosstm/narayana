@@ -39,7 +39,6 @@
             </goals>
             <configuration>
               <sources>
-                <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
                 <source>${basedir}/../../ArjunaJTA/jta/tests/classes/com/hp/mwtests/ts/jta/subordinate</source>
                 <source>${basedir}/../../ArjunaJTA/jta/tests/classes/com/hp/mwtests/ts/jta/common</source>
               </sources>
@@ -144,6 +143,13 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${version.junit}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
