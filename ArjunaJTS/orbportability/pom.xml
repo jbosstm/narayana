@@ -36,24 +36,6 @@
     <testSourceDirectory>tests/classes</testSourceDirectory>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
          <executions>
@@ -69,7 +51,6 @@
                 <systemProperties combine.children="append"/>
                 <excludes>
                   <!-- exclude tests which we don't want to run -->
-                  <exclude>**/common/**</exclude>
                   <exclude>**/initialisation/postinit/**</exclude>
                   <exclude>**/initialisation/postset/**</exclude>
                   <exclude>**/initialisation/preinit/**</exclude>
@@ -122,6 +103,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

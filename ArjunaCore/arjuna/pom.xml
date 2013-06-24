@@ -62,31 +62,11 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <useManifestOnlyJar>false</useManifestOnlyJar>
           <excludes>
-            <!-- Dont run the common tests -->
-            <exclude>com/arjuna/common/tests/**</exclude>
             <exclude>**/resources/**</exclude>
             <exclude>**/DummyCheckedAction.java</exclude>
             <exclude>**/MyAccess.java</exclude>
@@ -133,6 +113,13 @@
       <artifactId>jboss-logging-processor</artifactId>
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
