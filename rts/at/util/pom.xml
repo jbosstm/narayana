@@ -151,22 +151,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>create_javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <detectOfflineLinks>false</detectOfflineLinks>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
@@ -194,8 +178,24 @@
                       </executions>
                       <inherited>false</inherited>
                   </plugin>
-              </plugins>
-          </build>
-      </profile>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create_javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>prepare-package</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <detectOfflineLinks>false</detectOfflineLinks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
