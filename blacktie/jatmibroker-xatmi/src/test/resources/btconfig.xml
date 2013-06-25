@@ -69,13 +69,13 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv26" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv27" hostname="cersei" pathToExecutable="notExist"
+		<MACHINE id="myserv27" hostname="cersei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv28" hostname="cersei" pathToExecutable="notExist"
+		<MACHINE id="myserv28" hostname="cersei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv29" hostname="janei" pathToExecutable="notExist"
+		<MACHINE id="myserv29" hostname="janei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv30" hostname="janei" pathToExecutable="notExist"
+		<MACHINE id="myserv30" hostname="janei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv31" hostname="lancel" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
