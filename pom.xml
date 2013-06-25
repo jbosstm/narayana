@@ -465,11 +465,13 @@
     <module>fileio</module>
     <module>STM</module>
     <module>txframework</module>
-    <module>narayana-full</module>
   </modules>
   <profiles>
     <profile>
       <id>release</id>
+      <modules>
+        <module>narayana-full</module>
+      </modules>
       <build>
           <pluginManagement>
               <plugins>
