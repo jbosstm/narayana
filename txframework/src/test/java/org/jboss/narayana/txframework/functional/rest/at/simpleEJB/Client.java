@@ -22,6 +22,7 @@
 
 package org.jboss.narayana.txframework.functional.rest.at.simpleEJB;
 
+import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.impl.handlers.restat.client.Required;
 import org.jboss.resteasy.client.ClientResponse;
@@ -33,8 +34,9 @@ import org.jboss.resteasy.client.ProxyFactory;
 public class Client {
 
     // construct the endpoint for the example web service that will take part in a transaction
+    private static final URLUtils URL_UTILS = new URLUtils();
     private static final int SERVICE_PORT = 8080;
-    private static final String SERVICE_URL = "http://localhost:" + SERVICE_PORT + "/test";
+    private static final String SERVICE_URL = URL_UTILS.getBaseUrl() + ":" + SERVICE_PORT + "/test";
 
     @Required
     public void invoke() throws Exception {

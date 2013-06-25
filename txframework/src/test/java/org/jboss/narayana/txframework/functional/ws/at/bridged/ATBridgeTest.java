@@ -27,6 +27,7 @@ import com.arjuna.mw.wst11.UserTransactionFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
+import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -52,6 +53,7 @@ public class ATBridgeTest {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackage(ATBridgeTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
+                .addClass(URLUtils.class)
                 .addAsManifestResource("persistence.xml")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));

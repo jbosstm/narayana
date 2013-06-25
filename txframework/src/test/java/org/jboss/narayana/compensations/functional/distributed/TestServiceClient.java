@@ -24,6 +24,8 @@ package org.jboss.narayana.compensations.functional.distributed;
 
 import com.arjuna.mw.wst11.client.WSTXFeature;
 import org.jboss.narayana.compensations.api.Compensatable;
+import org.jboss.narayana.common.URLUtils;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import java.net.URL;
@@ -33,8 +35,9 @@ public class TestServiceClient implements TestService {
     private TestService testService;
 
     public TestServiceClient() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/TestServiceService/TestService?wsdl");
+        URLUtils urlUtils = new URLUtils();
+        URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
+                + "/test/TestServiceService/TestService?wsdl");
         QName serviceName = new QName("http://www.jboss.com/functional/compensations/distributed/", "TestServiceService");
         QName portName = new QName("http://www.jboss.com/functional/compensations/distributed/", "TestServiceService");
 
