@@ -135,10 +135,10 @@ function rest_at_integration_tests {
 function blacktie {
   echo "#0. BlackTie"
   cd blacktie
-  rm -rf $PWD/wildfly-8.0.0.Alpha2-SNAPSHOT
-  unzip ../jboss-as/dist/target/wildfly-8.0.0.Alpha2-SNAPSHOT.zip
-  cp ../rest-tx/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-8.0.0.Alpha2-SNAPSHOT/standalone/deployments/
-  WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-8.0.0.Alpha2-SNAPSHOT ./scripts/hudson/blacktie-linux.sh "$@"
+  rm -rf $PWD/wildfly-8.0.0.Alpha3-SNAPSHOT
+  unzip ../jboss-as/dist/target/wildfly-8.0.0.Alpha3-SNAPSHOT.zip
+  cp ../rest-tx/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-8.0.0.Alpha3-SNAPSHOT/standalone/deployments/
+  WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-8.0.0.Alpha3-SNAPSHOT ./scripts/hudson/blacktie-linux.sh "$@"
   [ $? = 0 ] || fatal "BlackTie build failed"
   cd -
 }

@@ -19,9 +19,9 @@ call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_
 
 echo "Building BlackTie
 cd ..\blacktie
-rmdir wildfly-8.0.0.Alpha2-SNAPSHOT /s /q
-unzip ..\jboss-as\dist\target\wildfly-8.0.0.Alpha2-SNAPSHOT.zip
-set JBOSS_HOME=%CD%\wildfly-8.0.0.Alpha2-SNAPSHOT\
+rmdir wildfly-8.0.0.Alpha3-SNAPSHOT /s /q
+unzip ..\jboss-as\dist\target\wildfly-8.0.0.Alpha3-SNAPSHOT.zip
+set JBOSS_HOME=%CD%\wildfly-8.0.0.Alpha3-SNAPSHOT\
 copy ..\rest-tx\webservice\target\restat-web-%NARAYANA_CURRENT_VERSION%.war %JBOSS_HOME%\standalone\deployments\
 set WORKSPACE=%WORKSPACE%\blacktie 
 call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BlackTie Failed %BUILD_URL%" && exit -1)
