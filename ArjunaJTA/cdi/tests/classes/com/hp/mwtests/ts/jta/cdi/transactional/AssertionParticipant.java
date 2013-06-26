@@ -11,22 +11,36 @@ import javax.transaction.xa.Xid;
  */
 public class AssertionParticipant implements XAResource {
 
-    private static boolean committed;
+    private static Boolean committed = null;
 
     public static void enlist() throws Exception {
         Utills.getCurrentTransaction().enlistResource(new AssertionParticipant());
     }
 
     public static void assertCommitted() {
+
+        if (committed == null) {
+            Assert.fail("Neither committed or rolled back");
+        }
+
         if (!committed) {
             Assert.fail("Should have committed, but Rolled back");
         }
     }
 
     public static void assertRolledBack() {
+
+        if (committed == null) {
+            Assert.fail("Neither committed or rolled back");
+        }
+
         if (committed) {
             Assert.fail("Should have rolled back, but committed");
         }
+    }
+
+    public static void reset() {
+        committed = null;
     }
 
     @Override
