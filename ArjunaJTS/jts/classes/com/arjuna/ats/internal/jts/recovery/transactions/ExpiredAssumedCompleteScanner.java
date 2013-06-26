@@ -52,6 +52,7 @@ import com.arjuna.ats.jts.logging.jtsLogger;
 
 public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 {
+    @SuppressWarnings("unused")
     private ExpiredAssumedCompleteScanner ()
     {
 	// unused
