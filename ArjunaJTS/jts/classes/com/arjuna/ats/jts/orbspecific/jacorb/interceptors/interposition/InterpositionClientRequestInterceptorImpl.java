@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.LocalObject;

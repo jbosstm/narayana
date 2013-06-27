@@ -118,7 +118,6 @@ public String name ()
                 request_info.request_id(), ((ServerRequestInfoImpl) request_info).target().toString());
     }
 
-
 public void receive_request_service_contexts (ServerRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isTraceEnabled())
