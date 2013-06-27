@@ -40,8 +40,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author paul.robinson@redhat.com 07/04/2012
  */
-@Path("/")
+@Path("/" + RestParticipantEndpointImpl.PATH_SEGMENT)
 public class RestParticipantEndpointImpl {
+
+    static final String PATH_SEGMENT = "rest-participant-endpoint";
 
     private static String FAIL_COMMIT;
 
@@ -73,8 +75,9 @@ public class RestParticipantEndpointImpl {
          * The next call constructs the participant-resource and participant-terminator URIs for participants
          * in the format: "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminator"
          */
+        String baseUrl = info.getBaseUri().toString() + PATH_SEGMENT;
         String linkHeader = txSupport.makeTwoPhaseAwareParticipantLinkHeader(
-                info.getAbsolutePath().toString(), txid, String.valueOf(pid));
+                baseUrl, txid, String.valueOf(pid));
         String recoveryUri = txSupport.enlistParticipant(enlistUrl, linkHeader);
 
         // TODO the recovery URI should be used by the framework to provide recovery support
@@ -95,7 +98,7 @@ public class RestParticipantEndpointImpl {
     * participants to prepare/commit/rollback their transactional work.commitCount
     */
     @PUT
-    @Path("{whats_this}/{txid}/{pId}/terminator")
+    @Path("{txid}/{pId}/terminator")
     public Response terminate(@PathParam("pId") @DefaultValue("") Integer pId, String content) {
 
         RESTAT2PCParticipant participant = participants.get(pId);
@@ -126,7 +129,7 @@ public class RestParticipantEndpointImpl {
      * This method handles requests from the REST-AT coordinator for the participant terminator URI
      */
     @HEAD
-    @Path("{whats_this}/{txid}/{pId}/participant")
+    @Path("{txid}/{pId}/participant")
     public Response getTerminator(@Context UriInfo info, @PathParam("pId") @DefaultValue("") String wId) {
 
         String serviceURL = info.getBaseUri() + info.getPath();
