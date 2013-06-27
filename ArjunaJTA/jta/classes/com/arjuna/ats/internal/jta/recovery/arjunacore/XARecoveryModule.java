@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -154,11 +153,11 @@ public class XARecoveryModule implements RecoveryModule
 		// the start scan to make sure that we have loaded all the XAResources we possibly can to assist subordinate transactions recovering
 
 		// scan using statically configured plugins;
-		List<XAResource> resources = resourceInitiatedRecovery();
+		_resources = resourceInitiatedRecovery();
 		// scan using dynamically configured plugins:
-		resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
+		_resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
 
-		for (XAResource xaResource : resources) {
+		for (XAResource xaResource : _resources) {
 			try {
 				// This calls out to remote systems and may block. Consider
 				// using alternate concurrency
@@ -407,9 +406,7 @@ public class XARecoveryModule implements RecoveryModule
 	 * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
 	 */
     private void bottomUpRecovery() {
-    	if (_xidScans != null) {
-            List<XAResource> resources = Collections.list(_xidScans.keys());
-			for (XAResource xaResource : resources) {
+			for (XAResource xaResource : _resources) {
 				try {
 					// This calls out to remote systems and may block. Consider
 					// using alternate concurrency
@@ -421,7 +418,6 @@ public class XARecoveryModule implements RecoveryModule
 					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 				}
 			}
-    	}
 
 
         // JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
@@ -579,7 +575,7 @@ public class XARecoveryModule implements RecoveryModule
 
 				return;
 			}
-			
+
 			RecoveryXids xidsToRecover = null;
 
 			if (_xidScans == null)
@@ -588,7 +584,7 @@ public class XARecoveryModule implements RecoveryModule
 			{
                 refreshXidScansForEquivalentXAResourceImpl(xares, trans);
 
-                xidsToRecover = _xidScans.get(xares);
+				xidsToRecover = _xidScans.get(xares);
 
 				if (xidsToRecover == null)
 				{
@@ -918,7 +914,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	private InputObjectState _uids = new InputObjectState();
 
-//	private List<XAResource> _resources;
+	private List<XAResource> _resources;
 
 	private boolean requireFirstPass = true;
 
