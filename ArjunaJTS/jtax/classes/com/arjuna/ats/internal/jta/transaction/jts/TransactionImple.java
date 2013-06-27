@@ -734,6 +734,12 @@ public class TransactionImple implements javax.transaction.Transaction,
                             try {
                                 RecoveryCoordinator recCoord = _theTransaction.registerResource(xaResourceRecord.getResource());
                                 xaResourceRecord.setRecoveryCoordinator(recCoord);
+                                if (jtaxLogger.logger.isTraceEnabled()) {
+                                    jtaxLogger.logger.tracef("TransactionImple.enlistResource: "
+                                        + "resource_trace: txn uid=%s XAReource=%s resource uid=%s\n",
+                                        get_uid(), xaRes, xaResourceRecord.get_uid());
+                                }
+
                             } catch(Exception e) {
                                 // we called start on the resource, but _theTransaction did not accept it.
                                 // we therefore have a mess which we must now clean up by ensuring the start is undone:
