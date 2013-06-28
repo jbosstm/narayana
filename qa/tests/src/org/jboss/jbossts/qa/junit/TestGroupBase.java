@@ -49,6 +49,8 @@ public class TestGroupBase
     private int clientCount = 0;
     private int taskCount = 0;
 
+    private static final boolean usingExecutionWrapper = System.getProperty("additional.elements", "").contains(ExecutionWrapper.class.getCanonicalName());
+
     @Before public void setUp()
 	{
         clientCount = 0;
@@ -199,5 +201,9 @@ public class TestGroupBase
         // does not bother with the plugin abstraction used by RemoveServerIORStore/ServerIORStore
         FileServerIORStore store = new FileServerIORStore();
         store.remove();
+    }
+
+    protected boolean isUsingExecutionWrapper() {
+        return usingExecutionWrapper;
     }
 }
