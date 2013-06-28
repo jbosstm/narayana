@@ -105,6 +105,19 @@ public class tx
 	return toReturn;
     }
 
+    public static final synchronized int tx_disable_nesting ()
+    {
+        int toReturn = tx.TX_PROTOCOL_ERROR;
+
+        if (!__tx_open)
+        {
+            __tx_allow_nesting = false;
+            toReturn = tx.TX_OK;
+        }
+
+        return toReturn;
+    }
+    
     public static final synchronized int tx_allow_nesting ()
     {
 	int toReturn = tx.TX_PROTOCOL_ERROR;
@@ -269,9 +282,8 @@ public class tx
 
 	return toReturn;
     }
-
+    
     private static boolean   __tx_open = false;
     private static boolean   __tx_allow_nesting = false;
     private static Hashtable __tx_report_heuristics = new Hashtable();
-
 }
