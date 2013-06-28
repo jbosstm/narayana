@@ -43,6 +43,7 @@ import com.arjuna.ArjunaOTS.UidCoordinator;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jts.utils.Helper;
+import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 
 /**
  * Some useful utility functions for the OTS. Use with care!
@@ -54,7 +55,6 @@ import com.arjuna.ats.internal.jts.utils.Helper;
 
 public class Utility
 {
-
     public static String getHierarchy (PropagationContext ctx)
     {
 	int depth = ((ctx.parents != null) ? ctx.parents.length : 0);
@@ -95,6 +95,83 @@ public class Utility
 	strm.print(stringStatus(res));
 
 	return strm;
+    }
+    
+    public static String exceptionCode (int code)
+    {
+        switch (code)
+        {
+        case ExceptionCodes.ADD_FAILED:
+            return "ExceptionCodes.ADD_FAILED";
+        case ExceptionCodes.ALREADY_BEGUN:
+            return "ExceptionCodes.ALREADY_BEGUN";
+        case ExceptionCodes.ALREADY_ROLLEDBACK:
+            return "ExceptionCodes.ALREADY_ROLLEDBACK";
+        case ExceptionCodes.ALREADY_TERMINATED:
+            return "ExceptionCodes.ALREADY_TERMINATED";
+        case ExceptionCodes.ATOMICACTION_COMMIT:
+            return "ExceptionCodes.ATOMICACTION_COMMIT";
+        case ExceptionCodes.ATOMICACTION_ROLLBACK:
+            return "ExceptionCodes.ATOMICACTION_ROLLBACK";
+        case ExceptionCodes.BAD_TRANSACTION_CONTEXT:
+            return "ExceptionCodes.BAD_TRANSACTION_CONTEXT";
+        case ExceptionCodes.FAILED_TO_COMMIT:
+            return "ExceptionCodes.FAILED_TO_COMMIT";
+        case ExceptionCodes.GETTIMEOUT_FAILED:
+            return "ExceptionCodes.GETTIMEOUT_FAILED";
+        case ExceptionCodes.HEURISTIC_COMMIT:
+            return "ExceptionCodes.HEURISTIC_COMMIT";
+        case ExceptionCodes.INACTIVE_TRANSACTION:
+            return "ExceptionCodes.INACTIVE_TRANSACTION";
+        case ExceptionCodes.INVALID_ACTION:
+            return "ExceptionCodes.INVALID_ACTION";
+        case ExceptionCodes.INVALID_TIMEOUT:
+            return "ExceptionCodes.INVALID_TIMEOUT";
+        case ExceptionCodes.INVALID_TRANSACTION_BASE:
+            return "ExceptionCodes.INVALID_TRANSACTION_BASE";
+        case ExceptionCodes.MARKED_ROLLEDBACK:
+            return "ExceptionCodes.MARKED_ROLLEDBACK";
+        case ExceptionCodes.NO_TRANSACTION:
+            return "ExceptionCodes.NO_TRANSACTION";
+        case ExceptionCodes.NO_TXCONTEXT:
+            return "ExceptionCodes.NO_TXCONTEXT";
+        case ExceptionCodes.NOT_CURRENT_TRANSACTION:
+            return "ExceptionCodes.NOT_CURRENT_TRANSACTION";
+        case ExceptionCodes.OTS_BAD_OPERATION_BASE:
+            return "ExceptionCodes.OTS_BAD_OPERATION_BASE";
+        case ExceptionCodes.OTS_BAD_PARAM_BASE:
+            return "ExceptionCodes.OTS_BAD_PARAM_BASE";
+        case ExceptionCodes.OTS_GENERAL_BASE:
+            return "ExceptionCodes.OTS_GENERAL_BASE";
+        case ExceptionCodes.OTS_UNKNOWN_BASE:
+            return "ExceptionCodes.OTS_UNKNOWN_BASE";
+        case ExceptionCodes.SERVERAA_COMMIT:
+            return "ExceptionCodes.SERVERAA_COMMIT";
+        case ExceptionCodes.SERVERAA_NO_CONTROL:
+            return "ExceptionCodes.SERVERAA_NO_CONTROL";
+        case ExceptionCodes.SERVERAA_PREPARE:
+            return "ExceptionCodes.SERVERAA_PREPARE";
+        case ExceptionCodes.SYNCHRONIZATION_EXCEPTION:
+            return "ExceptionCodes.SYNCHRONIZATION_EXCEPTION";
+        case ExceptionCodes.TRANSACTION_REQUIRED_BASE:
+            return "ExceptionCodes.TRANSACTION_REQUIRED_BASE";
+        case ExceptionCodes.TRANSACTION_ROLLEDBACK_BASE:
+            return "ExceptionCodes.TRANSACTION_ROLLEDBACK_BASE";
+        case ExceptionCodes.UNAVAILABLE_COORDINATOR:
+            return "ExceptionCodes.UNAVAILABLE_COORDINATOR";
+        case ExceptionCodes.UNAVAILABLE_TRANSACTION:
+            return "ExceptionCodes.UNAVAILABLE_TRANSACTION";
+        case ExceptionCodes.UNEXPECTED_SYSTEMEXCEPTION:
+            return "ExceptionCodes.UNEXPECTED_SYSTEMEXCEPTION";
+        case ExceptionCodes.UNKNOWN_EXCEPTION:
+            return "ExceptionCodes.UNKNOWN_EXCEPTION";
+        case ExceptionCodes.UNKNOWN_INVALID:
+            return "ExceptionCodes.UNKNOWN_INVALID";
+        case ExceptionCodes.WRONG_TRANSACTION_BASE:
+            return "ExceptionCodes.WRONG_TRANSACTION_BASE";
+        default:
+                return "Unknown";
+        }
     }
 
     /**
@@ -221,5 +298,4 @@ public class Utility
 	else
 	    return Uid.nullUid();  // error, deal with in caller!
     }
-
 }
