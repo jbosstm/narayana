@@ -52,25 +52,8 @@
          <executions>
             <execution>
               <id>default-test</id>
-              <phase>test</phase>
-              <goals>
-                <goal>test</goal>
-              </goals>
               <configuration>
-                <skip>false</skip>
-                <argLine>-Xss2048k</argLine>
-                <systemProperties combine.children="append"/>
-                <excludes>
-                  <exclude>**/common/**</exclude>
-                  <exclude>**/ExampleXAResource.java</exclude>
-                  <exclude>**/JTSTestCase.java</exclude>
-                  <exclude>**/LastOnePhaseResource.java</exclude>
-                  <exclude>**/implicit/**</exclude>
-                </excludes>
-                <classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
-                </classpathDependencyExcludes>
+                <skip>true</skip>
               </configuration>
             </execution>
           </executions>
@@ -88,20 +71,6 @@
       <artifactId>jts</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jacorb-idl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jacorb-idl</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
@@ -120,12 +89,6 @@
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>provided</scope>
       <!-- TODO AS7 -->
-    </dependency>
-    <dependency>
-      <groupId>jacorb</groupId>
-      <artifactId>jacorb</artifactId>
-      <version>${version.jacorb}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
@@ -179,6 +142,71 @@
   </dependencies>
 
   <profiles>
+    <profile>
+      <id>jts-jacorb</id>
+      <activation>
+        <property>
+          <name>!jacorb-disabled</name>
+        </property>
+      </activation>
+
+      <dependencies>
+        <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jacorb-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jacorb-idl</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>jacorb</groupId>
+          <artifactId>jacorb</artifactId>
+          <version>${version.jacorb}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-jacorb</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <argLine>-Xss2048k</argLine>
+                  <systemProperties combine.children="append"/>
+                  <excludes>
+                    <exclude>**/common/**</exclude>
+                    <exclude>**/ExampleXAResource.java</exclude>
+                    <exclude>**/JTSTestCase.java</exclude>
+                    <exclude>**/LastOnePhaseResource.java</exclude>
+                    <exclude>**/implicit/**</exclude>
+                  </excludes>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>jts-idlj</id>
       <activation>

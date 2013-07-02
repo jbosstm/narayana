@@ -38,57 +38,44 @@
     </resources>
     <testSourceDirectory>tests/classes</testSourceDirectory>
     <plugins>
-
-      <!-- the next three maven plugins (dependency, antrun and jar) are to ensure that the
-        default stubs are packaged with the final artifact of this module. Putting the stubs
-        in the default classesDirectory fails because we need to run the maven surefire
-        plugin twice, once against the JacORB stubs and another run using the Sun ORB stubs
-        and the surefire plugin puts the classes dir on the classpath
-        -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <configuration>
+              <excludes>
+                <exclude>**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <configuration>
+              <testExcludes>
+                <exclude>**</exclude>
+              </testExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-          <executions>
-            <execution>
-              <!--id>surefire-jacorb</id-->
-              <id>default-test</id>
-              <phase>test</phase>
-              <goals>
-                <goal>test</goal>
-              </goals>
-              <configuration>
-                <skip>false</skip>
-                <excludes>
-                  <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
-                  <exclude>**/exceptions/**</exclude>
-                  <exclude>**/orbspecific/resources/**</exclude>
-                  <exclude>**/resources/**</exclude>
-                  <exclude>**/utils/ResourceTrace.java</exclude>
-                  <exclude>**/utils/Util.java</exclude>
-                  <exclude>**/TransactionTest2.java</exclude>
-                  <exclude>**/CheckedTransactions.java</exclude>
-                  <exclude>**/GridTest.java</exclude>
-                  <exclude>**/remote/**</exclude>
-                  <exclude>**/DefaultTimeout.java</exclude>
-                </excludes>
-                <classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
-                  <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
-                </classpathDependencyExcludes>
-              </configuration>
-            </execution>
-          </executions>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
-    <dependency>
-      <groupId>jacorb</groupId>
-      <artifactId>jacorb</artifactId>
-      <version>${version.jacorb}</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
@@ -104,21 +91,6 @@
       <artifactId>orbportability</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <!-- pull in IDL stubs for each supported ORB (JacORB and Sun) -->
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jacorb-idl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>jacorb-idl</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
@@ -185,6 +157,101 @@
 
   <profiles>
     <profile>
+      <id>jts-jacorb</id>
+      <activation>
+        <property>
+          <name>!jacorb-disabled</name>
+        </property>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>jacorb</groupId>
+          <artifactId>jacorb</artifactId>
+          <version>${version.jacorb}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jacorb-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jacorb-idl</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jacorb-compile</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>**/javaidl/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>jacorb-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <testExcludes>
+                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                  </testExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-jacorb</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <excludes>
+                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                    <exclude>**/exceptions/**</exclude>
+                    <exclude>**/orbspecific/resources/**</exclude>
+                    <exclude>**/resources/**</exclude>
+                    <exclude>**/utils/ResourceTrace.java</exclude>
+                    <exclude>**/utils/Util.java</exclude>
+                    <exclude>**/TransactionTest2.java</exclude>
+                    <exclude>**/CheckedTransactions.java</exclude>
+                    <exclude>**/GridTest.java</exclude>
+                    <exclude>**/remote/**</exclude>
+                    <exclude>**/DefaultTimeout.java</exclude>
+                  </excludes>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>jts-idlj</id>
       <activation>
         <property>
@@ -207,9 +274,38 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-  
+
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>idlj-compile</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>**/jacorb/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>idlj-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <testExcludes>
+                    <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORBRecoveryUnitTest.java</exclude>
+                    <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
+                  </testExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -224,8 +320,11 @@
                   <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
+                    <!-- JavaIdlRecoveryUnitTest fails because of unset ID -->
                     <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
                     <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORBRecoveryUnitTest.java</exclude>
+                    <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/common/**</exclude>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>

@@ -41,10 +41,20 @@
     <module>idl</module>
     <module>jts</module>
     <module>jtax</module>
-    <module>narayana-jts-jacorb</module>
     <module>integration</module>
   </modules>
   <profiles>
+      <profile>
+          <id>jts-jacorb</id>
+          <activation>
+              <property>
+                  <name>!jacorb-disabled</name>
+              </property>
+          </activation>
+          <modules>
+              <module>narayana-jts-jacorb</module>
+          </modules>
+      </profile>
       <profile>
         <id>jts-idlj</id>
         <activation>
@@ -54,7 +64,7 @@
             </property>
         </activation>
         <modules>
-          <module>narayana-jts-idlj</module>
+            <module>narayana-jts-idlj</module>
         </modules>
       </profile>
       <profile>

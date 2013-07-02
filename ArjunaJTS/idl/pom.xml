@@ -45,11 +45,18 @@
     </plugins>
   </build>
 
-  <modules>
-    <module>jacorb</module>
-  </modules>
-  
   <profiles>
+    <profile>
+      <id>jts-jacorb</id>
+      <activation>
+        <property>
+          <name>!jacorb-disabled</name>
+        </property>
+      </activation>
+      <modules>
+        <module>jacorb</module>
+      </modules>
+    </profile>
     <profile>
       <id>jts-idlj</id>
       <activation>
