@@ -35,23 +35,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 public class RecoveryEnablementUnitTest extends TestBase
-{
-    @BeforeClass
-    public static void setupClass() {
+{ 
+    public void beforeSetupClass() {
         // persistent POAs can't be anonymous, need a name:
         System.setProperty("jacorb.implname", "arjuna");
     }
     
-    @AfterClass
-    public static void tearDownClass() {
+    @After
+    public void tearDown() {
         System.clearProperty("jacorb.implname");
     }
 
