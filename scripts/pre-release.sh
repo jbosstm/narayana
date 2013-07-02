@@ -51,11 +51,11 @@ do
     git checkout $BRANCH || fatal
 	echo here2
 
-    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT-SNAPSHOT/$CURRENT/g" || fatal
+    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT-SNAPSHOT/$CURRENT/g" || fatal
     git commit -am "Updated to $CURRENT" || fatal
     git tag $CURRENT || fatal
 
-    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT/$NEXT/g" || fatal
+    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT/$NEXT/g" || fatal
     git commit -am "Updated to $NEXT" || fatal
     git push origin $BRANCH --tags || fatal
     cd ..
