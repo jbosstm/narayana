@@ -225,6 +225,7 @@
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                    <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/common/**</exclude>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>

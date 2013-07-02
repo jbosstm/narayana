@@ -29,7 +29,7 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jts.recovery;
+package com.hp.mwtests.ts.jts.orbspecific.recovery;
 
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
-public class GenericRecoveryCreatorUnitTest extends TestBase
+public class JacORBGenericRecoveryCreatorUnitTest extends TestBase
 {
     @Test
     public void testFail () throws Exception
