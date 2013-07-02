@@ -116,7 +116,6 @@ public static void register(RcvCoManager theManager)
 	    // Is this transaction a ServerTransaction?
 	    boolean isServerTransaction = (otsTransaction instanceof ServerTransaction);
 
-
 	    // Now ask the orb-specific bit to make the RecoveryCoordinator IOR
 	    //  (it may or may not actually make the RC itself)
 	    recoveryCoordinator = _orbSpecificManager.makeRC (RCUid, rootActionUid, processUid, isServerTransaction);
