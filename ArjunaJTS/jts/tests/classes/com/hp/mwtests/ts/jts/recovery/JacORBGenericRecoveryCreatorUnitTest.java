@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jts.recovery;
 
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -44,16 +45,24 @@ import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOr
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit;
 import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
-
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
-
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 public class JacORBGenericRecoveryCreatorUnitTest extends TestBase
-{
+{    
+    public void beforeSetupClass() {
+        // persistent POAs can't be anonymous, need a name:
+        System.setProperty("jacorb.implname", "arjuna");
+    }
+    
+    @After
+    public void tearDown() {
+        System.clearProperty("jacorb.implname");
+    }
+    
     @Test
     public void testFail () throws Exception
     {
