@@ -10,14 +10,13 @@ taskkill /F /IM client.exe
 taskkill /F /IM cs.exe
 tasklist
 
-if not defined WORKSPACE echo "WORKSPACE not set" & exit -1
+if not defined WORKSPACE (call:fail_build && exit -1)
 
 if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
 
 rem INITIALIZE JBOSS
 cd %WORKSPACE%
-call ant -f scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=%JBOSS_HOME% -Dbasedir=. initializeJBoss -debug
-IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Build failed %BUILD_URL%" & exit -1
+call ant -f scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=%JBOSS_HOME% -Dbasedir=. initializeJBoss -debug || (call:fail_build && exit -1)
 
 rem wget -P jboss-as\standalone\deployments\ -N http://172.17.131.2/job/narayana-populateM2-taconic/lastSuccessfulBuild/artifact/rest-tx/webservice/target/restat-web-5.0.0.M2-SNAPSHOT.war
 rem IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Can not wget restat-web war" & exit -1
@@ -33,8 +32,7 @@ echo "Started server"
 
 rem BUILD BLACKTIE
 cd %WORKSPACE%
-call build.bat clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%"
-IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Build failed %BUILD_URL%" & echo "Failing build 2" & tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i & exit -1
+call build.bat clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build && exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
@@ -44,6 +42,12 @@ rem -------------------------------------------------------
 rem -                 Functions bellow                    -
 rem -------------------------------------------------------
 
+goto:eof
+
+:fail_build
+  call:comment_on_pull "Build failed %BUILD_URL%"
+  tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+  exit -1
 goto:eof
 
 :comment_on_pull
