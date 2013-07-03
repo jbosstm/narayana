@@ -157,7 +157,8 @@ public class XARecoveryModule implements RecoveryModule
 		// scan using dynamically configured plugins:
 		_resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
 
-		for (XAResource xaResource : _resources) {
+		List<XAResource> resources = new ArrayList<XAResource>(_resources);
+		for (XAResource xaResource : resources) {
 			try {
 				// This calls out to remote systems and may block. Consider
 				// using alternate concurrency
@@ -811,6 +812,11 @@ public class XARecoveryModule implements RecoveryModule
                 // a different XAResource. rekey the hashtable to use the new one.
                 _xidScans.remove(theKey);
                 _xidScans.put(xares, recoveryXids);
+                _resources.remove(theKey);
+                // There could be two datasources pointed at the same resource manager
+                if (!_resources.contains(xares)) {
+                	_resources.add(xares);
+                }
             }
         }
     }
