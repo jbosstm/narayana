@@ -390,7 +390,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $REST_AT_INTEGRATION_TESTS = 1 ] && rest_at_integration_test "$@"
+[ $REST_AT_INTEGRATION_TESTS = 1 ] && rest_at_integration_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
 comment_on_pull "All tests passed - Job complete $BUILD_URL"
