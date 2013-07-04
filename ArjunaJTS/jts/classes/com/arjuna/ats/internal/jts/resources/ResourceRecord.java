@@ -580,12 +580,12 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
 	return false;
     }
-
+/*
     public static AbstractRecord create ()
     {
 	return new ResourceRecord();
     }
-
+*/
     public static void remove (AbstractRecord toDelete)
     {
 	//toDelete = null;
