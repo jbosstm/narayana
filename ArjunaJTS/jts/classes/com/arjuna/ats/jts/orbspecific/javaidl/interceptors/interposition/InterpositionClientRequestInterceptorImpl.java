@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.LocalObject;
@@ -135,11 +136,18 @@ public String name ()
 	return "OTS_Interposition";
     }
 
+    private void trace_request(String method, ClientRequestInfo request_info) {
+        jtsLogger.logger.tracef("InterpositionClientRequestInterceptorImpl::%s ( %s ) nodeId=%s requestId=%d",
+                method, request_info.operation(),
+                arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier(),
+                request_info.request_id());
+    }
+
 public void send_request (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::send_request ( "+request_info.operation()+" )");
+        trace_request("send_request", request_info);
 	}
 
 	if (systemCall(request_info))
@@ -286,7 +294,7 @@ public void send_poll (ClientRequestInfo request_info) throws SystemException
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::send_poll ( "+request_info.operation()+" )");
+        trace_request("send_poll", request_info);
 	}
     }
 
@@ -294,7 +302,7 @@ public void receive_reply (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_reply ( "+request_info.operation()+" )");
+        trace_request("receive_reply", request_info);
 	}
     }
 
@@ -302,7 +310,7 @@ public void receive_exception (ClientRequestInfo request_info) throws SystemExce
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_exception ( "+request_info.operation()+" )");
+        trace_request("receive_exception", request_info);
 	}
 
 	// mark transaction as rollback only if a system exception
@@ -312,7 +320,7 @@ public void receive_other (ClientRequestInfo request_info) throws SystemExceptio
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
-	    jtsLogger.logger.trace("InterpositionClientRequestInterceptorImpl::receive_other ( "+request_info.operation()+" )");
+        trace_request("receive_other", request_info);
 	}
     }
 
