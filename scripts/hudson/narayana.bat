@@ -7,8 +7,6 @@ rmdir /S /Q jboss-as
 git clone https://github.com/jbosstm/jboss-as.git
 if %ERRORLEVEL% NEQ 0 exit -1
 cd jboss-as
-git checkout -t origin/5_BRANCH
-if %ERRORLEVEL% NEQ 0 exit -1
 git remote add upstream https://github.com/wildfly/wildfly.git
 git pull --rebase --ff-only -s recursive -Xtheirs upstream master
 if %ERRORLEVEL% NEQ 0 exit -1
