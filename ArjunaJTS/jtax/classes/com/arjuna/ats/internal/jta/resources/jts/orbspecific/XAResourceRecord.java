@@ -249,6 +249,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
             jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_preparefailed(_theXAResource.toString(),
                     XAHelper.xidToString(_tranID), XAHelper.printXAErrorCode(e1), e1);
 
+			if (jtaxLogger.logger.isTraceEnabled()) {
+				jtaxLogger.logger.tracef(
+				    "XAResourceRecord.prepare exception %s resource_trace: txn uid=%s " +
+				    "resource uid=%s\n",
+				    XAHelper.printXAErrorCode(e1), _tranID, get_uid());
+			}
+
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 			 * XAER_PROTO.
@@ -379,6 +386,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                         jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.rollback",
                                 XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
 
+						if (jtaxLogger.logger.isTraceEnabled()) {
+							jtaxLogger.logger.tracef(
+							    "XAResourceRecord.rollback exception %s " +
+							    "resource_trace: " +
+							    "txn uid=%s resource uid=%s\n",
+							    XAHelper.printXAErrorCode(e1), _tranID,
+							    get_uid());
+						}
+
 						switch (e1.errorCode)
 						{
 						case XAException.XAER_RMERR:
@@ -492,6 +508,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                         jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_xaerror("XAResourceRecord.commit",
                                 XAHelper.printXAErrorCode(e1), _theXAResource.toString(), XAHelper.xidToString(_tranID), e1);
 
+						if (jtaxLogger.logger.isTraceEnabled()) {
+							jtaxLogger.logger.tracef(
+							    "XAResourceRecord.commit exception %s " +
+							    "resource_trace: txn uid=%s resource uid=%s\n",
+							    XAHelper.printXAErrorCode(e1), _tranID,
+							    get_uid());
+						}
 						/*
 						 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
 						 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
