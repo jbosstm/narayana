@@ -31,24 +31,24 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		return "crashrecovery12";
 	}
 
-	protected Task server0 = null;
-
 	@Before public void setUp()
 	{
-		super.setUp();
+		/*
+		 * Always run the hornetq store in process since that store is loaded only once
+		 * on startup (ie subsequent additions to the store by external processes will
+		 * never be loaded).
+		 */
+		isRecoveryManagerNeeded = !isUsingExecutionWrapper();
+
+
 		Task setup0 = createTask("setup0", org.jboss.jbossts.qa.CrashRecovery12Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		setup0.perform("CR12_01.log");
-		server0 = createTask("server0", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 240);
-		server0.start("-test");
+		super.setUp();
 	}
 
 	@After public void tearDown()
 	{
-		try {
-			server0.terminate();
-		} finally {
-			super.tearDown();
-		}
+		super.tearDown();
 	}
 
 	@Test public void CrashRecovery12_Test01()
@@ -73,9 +73,9 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 	@Test public void CrashRecovery12_Test03()
 	{
 		setTestName("Test03");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		client0.start("commit", "CR12_03.log");
-		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
+		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		outcome0.start("CR12_03.log", "yes");
 		outcome0.waitFor();
         client0.waitFor();
@@ -106,10 +106,10 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 	@Test public void CrashRecovery12_Test06()
 	{
 		setTestName("Test06");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		client0.start("commit", "CR12_06.log");
 		client0.waitFor();
-		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
+		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		outcome0.start("CR12_06.log", "yes");
 		outcome0.waitFor();
 	}
