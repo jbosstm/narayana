@@ -30,7 +30,7 @@ import org.jboss.jbossts.star.util.TxSupport;
 //todo: this is a quick and dirty naive implementation. Belongs in REST-TX
 public class UserTransaction {
 
-    private static final String coordinatorUrl = "http://localhost:8080/rest-tx/tx/transaction-manager";
+    private static final String coordinatorUrl = getBaseUrl() + "/rest-tx/tx/transaction-manager";
 
     private static ThreadLocal<TxSupport> threadTX = new ThreadLocal<TxSupport>();
 
@@ -70,5 +70,22 @@ public class UserTransaction {
     public static TxSupport getTXSupport() {
 
         return threadTX.get();
+    }
+
+    private static String getBaseUrl() {
+        String baseAddress = System.getProperty("jboss.bind.address");
+        String basePort = System.getProperty("jboss.bind.port");
+
+        if (baseAddress == null) {
+            baseAddress = "http://localhost";
+        } else if (!baseAddress.toLowerCase().startsWith("http://") && !baseAddress.toLowerCase().startsWith("https://")) {
+            baseAddress = "http://" + baseAddress;
+        }
+
+        if (basePort == null) {
+            basePort = "8080";
+        }
+
+        return baseAddress + ":" + basePort;
     }
 }

@@ -33,12 +33,14 @@ import javax.xml.ws.handler.Handler;
 
 import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.narayana.common.URLUtils;
 
 public class BABridgedClient {
 
     public static BABridged newInstance() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/BABridgedService/BABridged?wsdl");
+        URLUtils urlUtils = new URLUtils();
+        URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
+                + "/test/BABridgedService/BABridged?wsdl");
         QName serviceName = new QName("http://www.jboss.com/functional/ba/bridged/", "BABridgedService");
         QName portName = new QName("http://www.jboss.com/functional/ba/bridged/", "BABridgedService");
 

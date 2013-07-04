@@ -27,6 +27,7 @@ import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.at.*;
 import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.ServiceCommand;
@@ -61,6 +62,7 @@ public class ATTest {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage(ATTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
+                .addClass(URLUtils.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .addAsWebInfResource("web.xml", "web.xml");
 

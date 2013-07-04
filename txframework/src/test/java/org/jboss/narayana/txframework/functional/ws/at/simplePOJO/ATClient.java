@@ -28,12 +28,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.narayana.common.URLUtils;
 
 public class ATClient {
 
     public static AT newInstance() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATService?wsdl");
+        URLUtils urlUtils = new URLUtils();
+        URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
+                + "/test/ATService?wsdl");
         QName serviceName = new QName("http://www.jboss.com/functional/at/", "ATService");
         QName portName = new QName("http://www.jboss.com/functional/at/", "AT");
 

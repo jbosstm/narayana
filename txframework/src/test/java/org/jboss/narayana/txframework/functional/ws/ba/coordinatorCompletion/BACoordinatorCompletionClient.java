@@ -28,12 +28,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.narayana.common.URLUtils;
 
 public class BACoordinatorCompletionClient {
 
     public static BACoordinatorCompletion newInstance() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");
+        URLUtils urlUtils = new URLUtils();
+        URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
+                + "/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");
         QName serviceName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
         QName portName = new QName("http://www.jboss.com/functional/ba/coordinatorcompletion/", "BACoordinatorCompletionService");
 
