@@ -40,6 +40,9 @@ public class TestGroupBase
     @Rule public final QATestNameRule testName = new QATestNameRule();
     @Rule public final QATaskWatchman testWatcher = new QATaskWatchman(testName, "TEST-passes.txt", "TEST-failures.txt");
 
+    private static final boolean usingExecutionWrapper =
+        System.getProperty("additional.elements", "").contains(ExecutionWrapper.class.getCanonicalName());
+
     protected boolean isRecoveryManagerNeeded = false;
     private Task recoveryManager;
 
@@ -198,5 +201,9 @@ public class TestGroupBase
         // does not bother with the plugin abstraction used by RemoveServerIORStore/ServerIORStore
         FileServerIORStore store = new FileServerIORStore();
         store.remove();
+    }
+
+    protected boolean isUsingExecutionWrapper() {
+        return usingExecutionWrapper;
     }
 }
