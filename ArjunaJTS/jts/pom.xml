@@ -320,8 +320,6 @@
                   <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
-                    <!-- JavaIdlRecoveryUnitTest fails because of unset ID -->
-                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
                     <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/JacORBRecoveryUnitTest.java</exclude>
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
