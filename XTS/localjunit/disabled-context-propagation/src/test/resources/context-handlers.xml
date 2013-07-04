@@ -20,20 +20,13 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
-<arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://jboss.org/schema/arquillian
-	http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-
-    <container qualifier="jboss-as" default="true">
-        <protocol type="jmx-as7">
-            <property name="executionType">REMOTE</property>
-        </protocol>
-        <configuration>
-            <property name="javaVmArguments">${server.jvm.args}</property>
-            <property name="serverConfig">standalone-xts.xml</property>
-            <property name="managementAddress">${node.address}</property>
-        </configuration>
-    </container>
-    
-</arquillian>
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
+	<handler-chain>
+		<handler>
+			<handler-name>ContextHandler</handler-name>
+			<handler-class>com.arjuna.mw.wst11.service.JaxWSHeaderContextProcessor</handler-class>
+		</handler>
+	</handler-chain>
+</handler-chains>
