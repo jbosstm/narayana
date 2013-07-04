@@ -33,15 +33,20 @@ package com.hp.mwtests.ts.jts.orbspecific.recovery;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.ORBType;
+import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.common.opPropertyManager;
 import org.junit.Test;
 import org.omg.CosTransactions.RecoveryCoordinator;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCShutdown;
@@ -96,23 +101,34 @@ public class JacORBRecoveryUnitTest extends TestBase
     }
     
     @Test
-    public void testRecoverIOR () throws Exception
+    public void testRecoverIORFail () throws Exception
     {
         if (ORBInfo.getOrbEnumValue() != ORBType.JACORB)
             return;
 
         RecoverIOR ior = new RecoverIOR();
-
+        String iorString = "";
+        
         try
         {
-            String iorString = RecoverIOR.newObjectKey("foo", "bar");
+            iorString = RecoverIOR.newObjectKey("foo", "bar");  // no ORB so should fail!
             
-            RecoverIOR.printIORinfo(iorString);
-            
-            assertTrue(iorString != null);
+            fail();
         }
         catch (final Exception ex)
         {
         }
+
+        try
+        {
+            RecoverIOR.printIORinfo(iorString);
+            
+            fail();
+        }
+        catch (final Exception ex)
+        {
+        }
+        
+        assertTrue(iorString == "");
     }
 }
