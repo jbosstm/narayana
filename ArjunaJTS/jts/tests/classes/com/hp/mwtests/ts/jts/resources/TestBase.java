@@ -26,7 +26,7 @@
  * Tyne and Wear,
  * UK.  
  *
- * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
+ * $Id$
  */
 
 package com.hp.mwtests.ts.jts.resources;

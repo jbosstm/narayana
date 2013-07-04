@@ -128,4 +128,11 @@ public class SynchTest
         myOA.destroy();
         myORB.shutdown();
     }
+    
+    public static void main (String[] args)
+    {
+        SynchTest obj = new SynchTest();
+        
+        obj.test();
+    }
 }

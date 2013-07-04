@@ -62,6 +62,7 @@ public class ExtendedResourceUnitTest extends TestBase
         ExtendedResourceRecord res2 = new ExtendedResourceRecord(false, new Uid(), ares.getReference(), null, new Uid(), tx);
         
         assertTrue(res1.resourceHandle() != null);
+        assertTrue(res1.value() != null);
         assertFalse(res1.propagateOnAbort());
         assertFalse(res1.propagateOnCommit());
         assertTrue(res1.order().notEquals(Uid.nullUid()));
@@ -89,6 +90,9 @@ public class ExtendedResourceUnitTest extends TestBase
         res1 = new ExtendedResourceRecord();
         
         assertTrue(res1.getRCUid().notEquals(res2.getRCUid()));
+        
+        res1.alter(res2);
+        res1.merge(res2);
     }
     
     @Test
@@ -165,6 +169,8 @@ public class ExtendedResourceUnitTest extends TestBase
         assertEquals(res.topLevelCommit(), TwoPhaseOutcome.FINISH_OK);
         
         OTSImpleManager.current().rollback();
+        
+        assertTrue(res.forgetHeuristic());  // no heuristic but we can still call method
     }
     
     @Test
