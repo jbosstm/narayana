@@ -1,14 +1,30 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2013, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.wstx.tests.arq.basic;
 
 import javax.xml.ws.soap.SOAPFaultException;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.arjuna.mw.wst11.client.WSTXFeature;
+import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wstx.tests.arq.WarDeployment;
 import com.arjuna.wstx.tests.common.TestService;
 import com.arjuna.wstx.tests.common.TestServiceAT;
@@ -16,24 +32,41 @@ import com.arjuna.wstx.tests.common.TestServiceATClient;
 import com.arjuna.wstx.tests.common.TestServiceATImple;
 import com.arjuna.wstx.tests.common.TestServiceClient;
 import com.arjuna.wstx.tests.common.TestServiceImple;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.arjuna.mw.wst11.client.WSTXFeature;
+
+import java.net.MalformedURLException;
+import java.util.List;
 
 /**
- *
  * Tests WSTXFeature and DisabledWSTXHandler with WS-AT protocol.
  *
  * <code>default-context-propagation</code> in standalone.xml has to be disabled.
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
- *
  */
 @RunWith(Arquillian.class)
-public final class DisabledContextPropagationTest extends AbstractContextPropagationTest {
+public final class DisabledContextPropagationTest {
 
     @Deployment
     public static WebArchive getDeployment() {
-        return WarDeployment.getDeployment(AbstractContextPropagationTest.class, TestService.class, TestServiceImple.class,
+        return WarDeployment.getDeployment(TestService.class, TestServiceImple.class,
                 TestServiceClient.class, TestServiceAT.class, TestServiceATImple.class, TestServiceATClient.class,
                 WSTXFeature.class).addAsResource("context-handlers.xml");
+    }
+
+    @After
+    public void after() {
+        UserTransaction userTransaction = UserTransactionFactory.userTransaction();
+
+        rollbackIfActive(userTransaction);
     }
 
     /**
@@ -258,6 +291,164 @@ public final class DisabledContextPropagationTest extends AbstractContextPropaga
         rollbackTransaction();
 
         assertInvocations(client.getTwoPhaseCommitInvocations(), "rollback");
+    }
+
+    /**
+     * Creates and resets WS-AT and WS-BA unaware client.
+     *
+     * @return TestService
+     */
+    private TestService getClientWithoutFeature() {
+        TestService client;
+
+        try {
+            client = TestServiceClient.getClientWithoutFeature();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Client creation failed.", e);
+        }
+
+        client.reset();
+
+        return client;
+    }
+
+    /**
+     * Creates and resets WS-AT and WS-BA unaware client with WSTXFeature.
+     *
+     * @param isWSTXFeatureEnabled
+     * @return TestServiceClient
+     */
+    private TestService getClientWithFeature(final boolean isWSTXFeatureEnabled) {
+        TestService client;
+
+        try {
+            client = TestServiceClient.getClientWithWSTXFeature(isWSTXFeatureEnabled);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Client creation failed.", e);
+        }
+
+        client.reset();
+
+        return client;
+    }
+
+    /**
+     * Creates and resets WS-AT aware client.
+     *
+     * @return TestServiceAT
+     */
+    private TestServiceAT getATClientWithoutFeature() {
+        TestServiceAT client;
+
+        try {
+            client = TestServiceATClient.getClientWithoutFeature();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Client creation failed.", e);
+        }
+
+        client.reset();
+
+        return client;
+    }
+
+    /**
+     * Creates and resets WS-AT aware client with WSTXFeature.
+     *
+     * @param isWSTXFeatureEnabled
+     * @return TestServiceAT
+     */
+    private TestServiceAT getATClientWithFeature(final boolean isWSTXFeatureEnabled) {
+        TestServiceAT client;
+
+        try {
+            client = TestServiceATClient.getClientWithWSTXFeature(isWSTXFeatureEnabled);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Client creation failed.", e);
+        }
+
+        client.reset();
+
+        return client;
+    }
+
+    /**
+     * Creates and resets WS-AT client with manually added handler.
+     *
+     * @return TestServiceAT
+     */
+    private TestServiceAT getATClientWithManuallyAddedHandler() {
+        TestServiceAT client;
+
+        try {
+            client = TestServiceATClient.getClientWithManuallyAddedHandler();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Client creation failed.", e);
+        }
+
+        client.reset();
+
+        return client;
+    }
+
+    /**
+     * Begins WS-AT transaction.
+     */
+    private void beginTransaction() {
+        UserTransaction userTransaction = UserTransactionFactory.userTransaction();
+
+        try {
+            userTransaction.begin();
+        } catch (Exception e) {
+            throw new RuntimeException("Begin transaction failed.", e);
+        }
+    }
+
+    /**
+     * Commits current WS-AT transaction.
+     */
+    private void commitTransaction() {
+        UserTransaction userTransaction = UserTransactionFactory.userTransaction();
+
+        try {
+            userTransaction.commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Commit transaction failed.", e);
+        }
+    }
+
+    /**
+     * Rolls back current WS-AT transaction.
+     */
+    private void rollbackTransaction() {
+        UserTransaction userTransaction = UserTransactionFactory.userTransaction();
+
+        try {
+            userTransaction.rollback();
+        } catch (Exception e) {
+            throw new RuntimeException("Rollback transaction failed.", e);
+        }
+    }
+
+    /**
+     * Rolls back given transaction if it's active.
+     *
+     * @param userTransaction
+     */
+    private void rollbackIfActive(UserTransaction userTransaction) {
+        try {
+            userTransaction.rollback();
+        } catch (Throwable t) {
+        }
+    }
+
+    /**
+     * Compares and asserts two invocation lists.
+     *
+     * @param actual
+     * @param expected
+     */
+    private void assertInvocations(List<String> actual, String... expected) {
+        Assert.assertArrayEquals(expected, actual.toArray());
     }
 
 }
