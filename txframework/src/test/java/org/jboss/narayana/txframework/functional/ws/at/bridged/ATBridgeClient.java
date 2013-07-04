@@ -28,12 +28,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.narayana.common.URLUtils;
 
 public class ATBridgeClient {
 
     public static ATBridge newInstance() throws Exception {
-
-        URL wsdlLocation = new URL("http://localhost:8080/test/ATBridgeService/ATBridge?wsdl");
+        URLUtils urlUtils = new URLUtils();
+        URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
+                + "/test/ATBridgeService/ATBridge?wsdl");
         QName serviceName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridgeService");
         QName portName = new QName("http://www.jboss.com/functional/at/bridge", "ATBridge");
 
