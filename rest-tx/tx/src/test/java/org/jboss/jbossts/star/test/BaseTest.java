@@ -101,10 +101,10 @@ public class BaseTest {
             for (Class<?> clazz : classes)
                 registry.addPerRequestResource(clazz);
 
-        factory.addExceptionMapper(TMUnavailableMapper.class);
-        factory.addExceptionMapper(TransactionStatusMapper.class);
-        factory.addExceptionMapper(HttpResponseMapper.class);
-        factory.addExceptionMapper(NotFoundMapper.class);
+        factory.registerProvider(TMUnavailableMapper.class);
+        factory.registerProvider(TransactionStatusMapper.class);
+        factory.registerProvider(HttpResponseMapper.class);
+        factory.registerProvider(NotFoundMapper.class);
     }
 
     public static Future<String> submitJob(Callable<String> job) {
