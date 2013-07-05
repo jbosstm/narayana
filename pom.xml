@@ -405,7 +405,7 @@
     <version.org.jboss.ironjacamar>1.0.9.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.remoting>2.5.3</version.org.jboss.remoting>
     <version.org.jboss.ws>1.0.2.Alpha1</version.org.jboss.ws>
-    <version.org.jboss.resteasy>2.3.6.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>3.0.1.Final</version.org.jboss.resteasy>
     <version.org.jboss.weld>2.0.0.CR4</version.org.jboss.weld>
     <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
