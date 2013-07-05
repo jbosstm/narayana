@@ -1067,6 +1067,9 @@ public interface jtsI18NLogger {
     @LogMessage(level = WARN)
     public void warn_server_top_level_action_inactive();
 
+    @Message(id = 22262, value = "The node identifier cannot be null", format = MESSAGE_FORMAT)
+    public String get_nodename_null();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

@@ -451,6 +451,9 @@ public interface jtaI18NLogger {
     @Message(id = 16110, value = "Transaction is required for invocation", format = MESSAGE_FORMAT)
    	public String get_tx_required();
 
+    @Message(id = 16111, value = "The node identifier cannot be null", format = MESSAGE_FORMAT)
+    public String get_nodename_null();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

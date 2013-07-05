@@ -33,6 +33,7 @@ package com.arjuna.ats.jts.utils;
 
 import java.io.PrintWriter;
 
+import com.arjuna.ats.jts.logging.jtsLogger;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.Status;
@@ -250,6 +251,11 @@ public class Utility
 
 	otid_t otid = new otid_t();
 	byte[] b = theUid.getBytes();
+
+	if (TxControl.getXANodeName() == null) {
+		throw new IllegalStateException(jtsLogger.i18NLogger.get_nodename_null());
+	}
+
 	byte[] nodeName = TxControl.getXANodeName().getBytes();
 
 	otid.formatID = 0;
