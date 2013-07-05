@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -89,6 +90,11 @@ public class XATxConverter
         }
 
         String nodeName = TxControl.getXANodeName();
+
+        if (nodeName == null) {
+            throw new IllegalStateException(jtaLogger.i18NLogger.get_nodename_null());
+        }
+
         int nodeNameLengthToUse =  nodeName.getBytes().length;
         xid.gtrid_length = gtridUid.length+nodeNameLengthToUse;
 

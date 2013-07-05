@@ -394,7 +394,9 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 							XidImple loadedXid = (XidImple) saa.getXid();
 							if (loadedXid.getFormatId() == XATxConverter.FORMAT_ID) {
 								String loadedXidSubordinateNodeName = XATxConverter.getSubordinateNodeName(loadedXid.getXID());
-								if (TxControl.getXANodeName().equals(loadedXidSubordinateNodeName)) {
+                                if ((loadedXidSubordinateNodeName == null && loadedXidSubordinateNodeName == TxControl.getXANodeName())
+                                        || loadedXidSubordinateNodeName.equals(TxControl.getXANodeName())) {
+
 									if (parentNodeName.equals(saa.getParentNodeName())) {
 										if (jtaLogger.logger.isDebugEnabled()) {
 											jtaLogger.logger.debug("Found record for " + saa);
