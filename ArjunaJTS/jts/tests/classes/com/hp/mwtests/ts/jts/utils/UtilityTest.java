@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.omg.CosTransactions.otid_t;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jts.recovery.transactions.RecoveryStatus;
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.utils.Utility;
 
@@ -80,6 +81,17 @@ public class UtilityTest
         for (int i = ExceptionCodes.OTS_GENERAL_BASE; i < ExceptionCodes.NO_TXCONTEXT; i++)
         {
             assertTrue(Utility.exceptionCode(i).length() > 1);
+        }
+    }
+    
+    @Test
+    public void testReplayStatus ()
+    {
+        RecoveryStatus s = new RecoveryStatus();
+        
+        for (int i = RecoveryStatus.NEW; i < RecoveryStatus.REPLAY_FAILED + 1; i++)
+        {
+            assertTrue(RecoveryStatus.stringForm(i) != null);
         }
     }
 }

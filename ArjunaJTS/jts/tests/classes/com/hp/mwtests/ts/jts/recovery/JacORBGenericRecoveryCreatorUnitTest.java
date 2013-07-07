@@ -39,45 +39,33 @@ import static org.junit.Assert.assertTrue;
 import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.Control;
 
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit;
 import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit;
 import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 public class JacORBGenericRecoveryCreatorUnitTest extends TestBase
 {    
-    public void beforeSetupClass() {
+    public void beforeSetupClass()
+    {
         // persistent POAs can't be anonymous, need a name:
         System.setProperty("jacorb.implname", "arjuna");
     }
     
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception
+    {
         System.clearProperty("jacorb.implname");
+        
+        super.tearDown();
     }
     
     @Test
     public void testFail () throws Exception
-    {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
-        
+    {       
         JacOrbRCServiceInit init = new JacOrbRCServiceInit();
         JacOrbRecoveryInit rinit = new JacOrbRecoveryInit();
         
@@ -101,18 +89,6 @@ public class JacORBGenericRecoveryCreatorUnitTest extends TestBase
     @Test
     public void testSuccess () throws Exception
     {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
-        
         JacOrbRCServiceInit init = new JacOrbRCServiceInit();
         JacOrbRecoveryInit rinit = new JacOrbRecoveryInit();
         
