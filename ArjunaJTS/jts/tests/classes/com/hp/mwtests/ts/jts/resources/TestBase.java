@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.jts.resources;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.junit.After;
 import org.junit.Before;
+import org.omg.CORBA.BAD_INV_ORDER;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
@@ -67,6 +68,13 @@ public class TestBase
     {
         myOA.destroy();
         myORB.shutdown();
+		// JBTM-1829 as the orbportability version of shutdown does not wait for
+		// completion some jacorb tests will fail due to possible race conditions
+        try {
+        	myORB.orb().shutdown(true);
+        } catch (BAD_INV_ORDER bio) {
+        	// ignore - jacorb can tolerate the second call to shutdown, IDLJ will not
+        }
         emptyObjectStore();
     }
 
