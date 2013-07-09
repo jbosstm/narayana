@@ -90,9 +90,14 @@ public class ORB
         _theORB.init(s, p);
     }
 
+    public void shutdown (boolean waitForCompletion) throws SystemException
+    {
+        _theORB.shutdown(waitForCompletion);
+    }
+    
     public void shutdown () throws SystemException
     {
-        _theORB.shutdown();
+        _theORB.shutdown(false);
     }
 
     public void destroy () throws SystemException
