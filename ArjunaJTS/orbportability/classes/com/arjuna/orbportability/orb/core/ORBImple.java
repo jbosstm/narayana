@@ -50,52 +50,58 @@ import org.omg.CORBA.SystemException;
 
 /**
  * The Object Request Broker interface.
- *
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: ORBImple.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: ORBImple.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.1.
  */
 
 public interface ORBImple
 {
-
     /**
      * Is the ORB initialised?
      */
 
-public boolean initialised ();
+    public boolean initialised ();
 
-/**
- * Initialise the ORB.
- */
- 
-public void init () throws SystemException;
-public void init (Applet a, Properties p) throws SystemException;
-public void init (String[] s, Properties p) throws SystemException;
+    /**
+     * Initialise the ORB.
+     */
 
-/**
- * Shutdown the ORB.
- */
+    public void init () throws SystemException;
 
-public void shutdown () throws SystemException;
+    public void init (Applet a, Properties p) throws SystemException;
 
-/**
- * Destroy the ORB.
- */
+    public void init (String[] s, Properties p) throws SystemException;
 
-public void destroy () throws SystemException;
+    /**
+     * Shutdown the ORB. Do not wait for explicit completion ack from the ORB.
+     */
 
-/**
- * Return a reference to the ORB.
- */
+    public void shutdown () throws SystemException;
 
-public org.omg.CORBA.ORB orb () throws SystemException;
+    /**
+     * Shutdown the ORB and signal whether to do this synchronously.
+     */
 
-/**
- * Provide a reference to the ORB. Used if the application must
- * initialise the ORB separately.
- */
+    public void shutdown (boolean waitForCompletion) throws SystemException;
 
-public void orb (org.omg.CORBA.ORB o) throws SystemException;
+    /**
+     * Destroy the ORB.
+     */
 
+    public void destroy () throws SystemException;
+
+    /**
+     * Return a reference to the ORB.
+     */
+
+    public org.omg.CORBA.ORB orb () throws SystemException;
+
+    /**
+     * Provide a reference to the ORB. Used if the application must initialise
+     * the ORB separately.
+     */
+
+    public void orb (org.omg.CORBA.ORB o) throws SystemException;
 }
