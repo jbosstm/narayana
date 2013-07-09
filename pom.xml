@@ -136,12 +136,21 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-  <distributionManagement>
+
+<repositories>
+    <repository>
+      <id>jboss-thirdparty-releases-repository</id>
+      <name>JBoss Thirdparty Release Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+    </repository>
     <repository>
       <id>jboss-releases-repository</id>
       <name>JBoss Release Repository</name>
-      <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
     </repository>
+</repositories>
+
+  <distributionManagement>
     <snapshotRepository>
       <id>jboss-snapshots-repository</id>
       <name>JBoss Snapshot Repository</name>
