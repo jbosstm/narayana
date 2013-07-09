@@ -62,6 +62,23 @@ public class TransactionServer
     
     public static void main (String[] args)
     {
+        try
+        {
+            doWork(args);
+        }
+        catch (final Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    static void doWork (String[] args) throws Exception
+    {
+        doWork(args, false);
+    }
+    
+    static void doWork (String[] args, boolean exitOnComplete) throws Exception
+    {
 	String refFile = com.arjuna.orbportability.Services.transactionService;
 	String objectName = null;
 	boolean printReady = false;
@@ -77,12 +94,20 @@ public class TransactionServer
 	    if (args[i].compareTo("-help") == 0)
 	    {
 		System.out.println("Usage: [-otsname <name>] [-help] [-version]");
-		System.exit(0);
+		
+		if (exitOnComplete)
+		    return;
+		else
+		    System.exit(0);
 	    }
 	    if (args[i].compareTo("-version") == 0)
 	    {
 		System.out.println("TransactionServer version "+ ConfigurationInfo.getVersion());
-		System.exit(0);
+		
+		if (exitOnComplete)
+		    return;
+		else
+		    System.exit(0);
 	    }
 	}
 
@@ -121,7 +146,11 @@ public class TransactionServer
 	    catch (Exception e1)
 	    {
 		System.err.println("Failed to bind transaction manager: "+e1);
-		System.exit(0);
+		
+		if (exitOnComplete)
+		    throw new Exception("Failed to bind transaction manager:" +e1);
+		else
+		    System.exit(0);
 	    }
 
 	    if (printReady)
@@ -129,10 +158,13 @@ public class TransactionServer
 	    else
 		System.out.println("JBossTS OTS Server startup.");
 
-	    if (resolver == com.arjuna.orbportability.Services.BIND_CONNECT)
-		myOA.run(com.arjuna.orbportability.Services.transactionService);
-	    else
-		myOA.run();
+	    if (!exitOnComplete)
+	    {
+	        if (resolver == com.arjuna.orbportability.Services.BIND_CONNECT)
+	            myOA.run(com.arjuna.orbportability.Services.transactionService);
+	        else
+	            myOA.run();
+	    }
 	}
 	catch (Exception e2)
 	{
