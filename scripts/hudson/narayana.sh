@@ -34,6 +34,26 @@ function check_if_pull_closed
     fi
 }
 
+function kill_qa_suite_processes
+{
+  # list java processes including main class
+  jps -l | while read ln; do
+    pid=$(echo $ln | cut -f1 -d\ )
+    main=$(echo $ln | cut -f2 -d\ )
+    killit=0
+
+    # see if any of the passed in java main patterns match the main class name of the java process
+    for pat in $*; do
+      [[ $main == ${pat}* ]] && killit=1
+    done
+
+    if [[ $killit == 1 ]]; then 
+      echo "Test suite process $pid still running - terminating it with signal 9"
+      kill -9 $pid
+    fi
+
+  done
+}
 
 #BUILD NARAYANA WITH FINDBUGS
 function build_narayana {
@@ -376,6 +396,9 @@ free -m
 
 #Make sure no JBoss processes running
 for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
+#Make sure no processes from a previous test suite run is still running
+MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
+kill_qa_suite_processes $MainClassPatterns
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
