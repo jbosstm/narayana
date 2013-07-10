@@ -43,7 +43,7 @@ MAVEN_SEARCH_PATH="\
     maven"
 
 # the default arguments
-MVN_OPTIONS="$BPA -gs tools/maven/conf/settings.xml"
+MVN_OPTIONS="$BPA -gs tools/maven/conf/settings.xml -Demma.jar.location=`pwd`/../ext/"
 
 # Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
