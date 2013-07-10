@@ -64,8 +64,6 @@ public class RecoveredTransactionReplayerUnitTest extends TestBase
 
         assertTrue(RecoveredTransactionReplayer.isPresent(dummyUid) != null);
 
-        replayer.replayPhase2();
-        
         replayer.swapResource(dummyUid, res.getResource());
         
         replayer.run();  
