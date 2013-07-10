@@ -152,7 +152,7 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <!-- Needed for rest-tx -->
+    <!-- Needed for rts -->
     <repository>
       <id>download-java-net</id>
       <name>download-java-net</name>
@@ -460,7 +460,7 @@
     <module>ArjunaJTA</module>
     <module>XTS</module>
     <module>ArjunaJTS</module>
-    <module>rest-tx</module>
+    <module>rts</module>
     <module>txbridge</module>
     <module>fileio</module>
     <module>STM</module>

@@ -146,7 +146,7 @@ function rts_as_tests {
 
 function rest_at_integration_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f ./rest-tx/integration/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./rts/at/integration/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 }
 
@@ -155,7 +155,7 @@ function blacktie {
   cd blacktie
   rm -rf $PWD/wildfly-${WILDFLY_MASTER_VERSION}
   unzip ../jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip
-  cp ../rest-tx/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
+  cp ../rts/at/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
   WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-${WILDFLY_MASTER_VERSION} ./scripts/hudson/blacktie-linux.sh "$@"
   [ $? = 0 ] || fatal "BlackTie build failed"
   cd -
@@ -169,7 +169,7 @@ function jta_cdi_tests {
 
 function txframework_tests {
   echo "#0. TXFramework Test"
-  cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
+  cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
 }

@@ -267,11 +267,11 @@
     </copy>
     <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-jacorb-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
     <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
-    <copy file="${workdir}/${tag}/rest-tx/tx/target/restat-api-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
+    <copy file="${workdir}/${tag}/rts/at/tx/target/restat-api-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
     <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
     <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-jacorb-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
     <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
-    <unzip src="${workdir}/${tag}/rest-tx/tx/target/restat-api-${tag}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
+    <unzip src="${workdir}/${tag}/rts/at/tx/target/restat-api-${tag}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
     <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${tag}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
     <antcall target="remote-copy">
         <param name="from" value="tmp-downloads-dir"/>
