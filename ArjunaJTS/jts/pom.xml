@@ -298,7 +298,8 @@
                 </goals>
                 <configuration>
                   <testExcludes>
-                    <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORBGenericRecoveryCreatorSuccessUnitTest.java</exclude>
+                    <exclude>**/JacORBGenericRecoveryCreatorFailureUnitTest.java</exclude>
                     <exclude>**/JacORBRecoveryUnitTest.java</exclude>
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
                   </testExcludes>
@@ -320,7 +321,8 @@
                   <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
-                    <exclude>**/JacORBGenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORBGenericRecoveryCreatorSuccessUnitTest.java</exclude>
+                    <exclude>**/JacORBGenericRecoveryCreatorFailureUnitTest.java</exclude>
                     <exclude>**/JacORBRecoveryUnitTest.java</exclude>
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/common/**</exclude>
