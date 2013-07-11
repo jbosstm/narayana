@@ -47,6 +47,7 @@
         <configuration>
           <doCheck>false</doCheck>
           <doUpdate>false</doUpdate>
+          <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
         </configuration>
       </plugin>
       <plugin>
