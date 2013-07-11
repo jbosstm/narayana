@@ -32,6 +32,21 @@ To use this wrapper to build an individual module (say arjuna) you would type:
 If you are building the "community" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/
+	
+The distribution is then available in:
+	./narayana-full/target/narayana-full-5.0.0.M4-SNAPSHOT-bin.zip
+
+Alternatively, the uber jar for JacORB is available here:
+	./ArjunaJTS/narayana-jts-jacorb/target/narayana-jts-jacorb-<VERSION>.jar
+	
+The uber jar for the JDK ORB is available here:
+	./ArjunaJTS/narayana-jts-idlj/target/narayana-jts-idlj-<VERSION>.jar
+
+The local JTA jar is here:
+	./ArjunaJTA/narayana-jta/target/narayana-jta-<VERSION>.jar
+
+If you just need the facilities provided by ArjunaCore:
+	./ArjunaCore/arjunacore/target/arjunacore-<VERSION>.jar
 
 Code Coverage Testing
 ---------------------
