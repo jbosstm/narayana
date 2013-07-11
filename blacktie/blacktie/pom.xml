@@ -150,31 +150,31 @@
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
+                                <configuration>
+                                    <tasks>
+                                        <mkdir dir="target/${project.artifactId}-${project.version}/lib/cxx"/>
+                                        <echo message="copying symlinks from xatmi runtime library"/>
+                                        <exec executable="find" dir="target" failonerror="true">
+                                            <arg line="../../xatmi/target/cxx/runtime/lib -type l -exec cp -rpP {} ${project.artifactId}-${project.version}/lib/cxx ;"/>
+                                        </exec>
+                                        <echo message="update symlinks to zip"/>
+                                        <exec executable="/bin/sh" dir="target" failonerror="true">
+                                            <arg line="-c 'zip -q -u -y ${project.artifactId}-${project.version}-${bpa}-bin.zip ${project.artifactId}-${project.version}/lib/cxx/*'"/>
+                                        </exec>
+                                        <echo message="update symlinks to tar.gz"/>
+                                        <exec executable="gunzip" dir="target" failonerror="true">
+                                            <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar.gz"/>
+                                        </exec>
+                                        <exec executable="tar" dir="target" failonerror="true">
+                                            <arg line="uf ${project.artifactId}-${project.version}-${bpa}-bin.tar ${project.artifactId}-${project.version}/lib/cxx"/>
+                                        </exec>
+                                        <exec executable="gzip" dir="target" failonerror="true">
+                                            <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar"/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/${project.artifactId}-${project.version}/lib/cxx"/>
-                                <echo message="copying symlinks from xatmi runtime library"/>
-                                <exec executable="find" dir="target" failonerror="true">
-                                    <arg line="../../xatmi/target/cxx/runtime/lib -type l -exec cp -rpP {} ${project.artifactId}-${project.version}/lib/cxx ;"/>
-                                </exec>
-                                <echo message="update symlinks to zip"/>
-                                <exec executable="/bin/sh" dir="target" failonerror="true">
-                                    <arg line="-c 'zip -q -u -y ${project.artifactId}-${project.version}-${bpa}-bin.zip ${project.artifactId}-${project.version}/lib/cxx/*'"/>
-                                </exec>
-                                <echo message="update symlinks to tar.gz"/>
-                                <exec executable="gunzip" dir="target" failonerror="true">
-                                    <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar.gz"/>
-                                </exec>
-                                <exec executable="tar" dir="target" failonerror="true">
-                                    <arg line="uf ${project.artifactId}-${project.version}-${bpa}-bin.tar ${project.artifactId}-${project.version}/lib/cxx"/>
-                                </exec>
-                                <exec executable="gzip" dir="target" failonerror="true">
-                                    <arg line="${project.artifactId}-${project.version}-${bpa}-bin.tar"/>
-                                </exec>
-                            </tasks>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
