@@ -21,6 +21,7 @@
 package org.jboss.jbossts.star.test;
 
 import junit.framework.Assert;
+import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.*;
 import org.jboss.jbossts.star.util.media.txstatusext.*;
 import org.junit.BeforeClass;
@@ -155,8 +156,10 @@ public class OptionalSpecTest extends BaseTest {
             log.warn("Not testing extended transaction manager info (reason not supported)");
             return;
         }
-        txn2.commitTx();
-        txn1.rollbackTx();
+
+        Assert.assertEquals(TxStatusMediaType.TX_COMMITTED, txn2.commitTx());
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn1.rollbackTx());
+
         tme2 = txn1.getTransactionManagerInfo();
 
         Date d1 = tme1.getCreated();
@@ -216,6 +219,39 @@ public class OptionalSpecTest extends BaseTest {
             // there should have been 2 before and 2 after synchronisation calls:
             Assert.assertEquals(syncCount, "4");
         }
+    }
+
+    @Test
+    public void testEnlistVolatileParticipantWithRollbackOnly() {
+        String enlistUrl = PURL + "?isVolatile=true";
+        String[] workIds = new String[1];
+        TxSupport txn = new TxSupport(60000);
+        txn.startTx();
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLBACK_ONLY, txn.markTxRollbackOnly());
+
+        // enlisting a participant into a transaction that is marked rollback only should fail:
+        // 385If the transaction is not TransactionActive when registration is attempted, then the implementation
+        // 386MUST return a 412 status code.
+        for (int i = 0; i < workIds.length; i++) {
+            /*
+             * the resource implementation will enlist in the volatile protocol twice:
+             * - once directly using the coordinator volatile-participant registration link
+             * - and then indirectly during participant enlistment by including a link header with
+             *  value TxLinkRel.VOLATILE_PARTICIPANT
+             * This will mean that two before and after synchronisations will be called resulting in a
+             * total of 4 synchronisations
+             */
+            try {
+                workIds[i] = txn.enlistTestResource(enlistUrl, true);
+                Assert.fail("Should have thrown 412");
+            } catch (HttpResponseException e) {
+                if (e.getActualResponse() != HttpURLConnection.HTTP_PRECON_FAILED)
+                    Assert.fail("Should have thrown 412 but actual response was " + e.getActualResponse());
+            }
+        }
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
     }
 
     @Test

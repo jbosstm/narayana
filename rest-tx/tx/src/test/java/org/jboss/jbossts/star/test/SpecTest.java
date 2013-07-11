@@ -210,7 +210,7 @@ public class SpecTest extends BaseTest {
         300a minimum MUST return 404. The invoker can assume this was a rollback.
         */
         try {
-            txn.rollbackTx();
+            Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
         } catch (HttpResponseException e) {
             Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE ||
                     e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
@@ -234,7 +234,7 @@ public class SpecTest extends BaseTest {
         300a minimum MUST return 404. The invoker can assume this was a rollback.
         */
         try {
-            txn.rollbackTx();
+            Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
         } catch (HttpResponseException e) {
             Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE ||
                     e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
@@ -262,7 +262,7 @@ public class SpecTest extends BaseTest {
         300a minimum MUST return 404. The invoker can assume this was a rollback.
         */
         try {
-            txn.rollbackTx();
+            Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
         } catch (HttpResponseException e) {
             Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE ||
                     e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
@@ -295,6 +295,29 @@ public class SpecTest extends BaseTest {
 
         // and finally commit it correctly
         txn.commitTx();
+    }
+
+    @Test
+    public void testEnlistResourceWithRollbackOnly() throws Exception {
+        TxSupport txn = new TxSupport();
+
+        txn.startTx();
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLBACK_ONLY, txn.markTxRollbackOnly());
+
+        // enlisting a participant into a transaction that is marked rollback only should fail:
+        // 385If the transaction is not TransactionActive when registration is attempted, then the implementation
+        // 386MUST return a 412 status code.
+        try {
+            for (int i = 0; i < 2; i++)
+                txn.enlistTestResource(PURL, false);
+            Assert.fail("Should have thrown 412");
+        } catch (HttpResponseException e) {
+            if (e.getActualResponse() != HttpURLConnection.HTTP_PRECON_FAILED)
+                Assert.fail("Should have thrown 412 but actual response was " + e.getActualResponse());
+        }
+
+        Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
     }
 
     @Test
