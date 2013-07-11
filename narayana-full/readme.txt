@@ -56,17 +56,20 @@ This release contains:
           ENABLING JTA
           ------------
 To enable JTA you MUST:
-1. Include lib/ext/*.jar and lib/jta/narayana-jta.jar
-2. If you need to use this version of JTA in an application server, you should also include lib/jta/narayana-jta-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
-3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
+1. Execute jta-setup-env.[bat|sh] to put Narayana in the classpath
+2. export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jta/narayana-jta.jar
+3. If you need to use this version of Narayana in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+4. If you do not intend to launch a recovery manager in your application, execute: ./bin/start-recovery-recovery-manager.[bat|sh]
 
 
-          ENABLING JTS
-          ------------
+          LAUNCHING JTS
+          -------------
 To enable JTS you MUST:
-1. Include lib/ext/*.jar and lib/jts/narayana-jts.jar
-2. If you need to use this version of JTS in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
-3. Execute jta-setup-env.[bat|sh] to put JTA in the classpath
+1. Execute jts-setup-env.[bat|sh] to put Narayana in the classpath
+2. export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jts/narayana-jts-jacorb.jar
+3. If you need to use this version of Narayana in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+4. If you do not intend to launch a recovery manager in your application, execute: ./bin/start-recovery-recovery-manager.[bat|sh]
+5. If you do not intend to launch an in process transaction manager, execute: ./bin/start-transaction-service.[bat|sh]
 
 
           ENABLING XTS
