@@ -18,7 +18,7 @@ rem INITIALIZE JBOSS
 cd %WORKSPACE%
 call ant -f scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=%JBOSS_HOME% -Dbasedir=. initializeJBoss -debug || (call:fail_build && exit -1)
 
-rem wget -P jboss-as\standalone\deployments\ -N http://172.17.131.2/job/narayana-populateM2-taconic/lastSuccessfulBuild/artifact/rest-tx/webservice/target/restat-web-5.0.0.M2-SNAPSHOT.war
+rem wget -P jboss-as\standalone\deployments\ -N http://172.17.131.2/job/narayana-populateM2-taconic/lastSuccessfulBuild/artifact/rts/at/webservice/target/restat-web-5.0.0.M2-SNAPSHOT.war
 rem IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Can not wget restat-web war" & exit -1
 
 set JBOSS_HOME=

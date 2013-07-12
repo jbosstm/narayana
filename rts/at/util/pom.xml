@@ -18,20 +18,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
-    <artifactId>rest-tx</artifactId>
+    <artifactId>restat</artifactId>
     <version>5.0.0.M4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>restat-api</artifactId>
+  <artifactId>restat-util</artifactId>
   <packaging>jar</packaging>
-  <name>Narayana: rest-tx tx</name>
-  <description>Provides RESTful Atomic Transactions for web applications</description>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
-    <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
-  </properties>
+  <name>Narayana: restat util</name>
+  <description>Utility methods to make it easy to conform to the RESTAT specification</description>
 
   <repositories>
     <repository>
@@ -54,12 +49,12 @@
     </repository>
     <!-- end Jersey -->
   </repositories>
-
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>restat-util</artifactId>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -85,48 +80,20 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <version>${version.org.jboss.spec.javax.servlet}</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Jersey -->
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>${version.asm}</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>${version.com.sun.jersey}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey.jersey-test-framework</groupId>
-      <artifactId>jersey-test-framework-grizzly</artifactId>
-      <version>${version.com.sun.jersey}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.grizzly</groupId>
-      <artifactId>grizzly-servlet-webserver</artifactId>
-      <version>${version.com.sun.grizzly}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- end Jersey -->
-    <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>narayana-jta</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>jaxrs-api</artifactId>
+      <version>${version.org.jboss.resteasy}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
       <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
       <!-- filter out unwanted jars -->
       <exclusions>
         <exclusion>
@@ -139,47 +106,12 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxb-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jettison-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>jaxrs-api</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${version.commons-httpclient}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>tjws</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${version.com.h2database}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -247,23 +179,23 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-        <id>release</id>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>default-install</id>
-                            <phase>install</phase>
-                        </execution>
-                    </executions>
-                    <inherited>false</inherited>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-install-plugin</artifactId>
+                      <executions>
+                          <execution>
+                              <id>default-install</id>
+                              <phase>install</phase>
+                          </execution>
+                      </executions>
+                      <inherited>false</inherited>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
   </profiles>
 </project>
