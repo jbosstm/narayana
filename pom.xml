@@ -535,7 +535,7 @@
                                   <java classname="emma">
                                     <arg value="instr"/>
                                     <arg value="-ix"/>
-                                    <arg value="-com.arjuna.ArjunaOTS.*,-org.omg.CORBA.*,-org.omg.CosTransactions.*,-org.omg.XA.*,-*.logging.*"/>
+                                    <arg value="-com.arjuna.ArjunaOTS.*,-org.omg.CORBA.*,-org.omg.CosTransactions.*,-org.omg.XA.*,-*.logging.*,-org.jboss.jbossts.xts.servicetests.*,-com.jboss.transaction.wstf.test.*,-com.jboss.transaction.txinterop.test.*"/>
                                     <arg value="-instrpath"/>
                                     <arg value="${project.build.directory}/classes/"/>
                                     <arg value="-outfile"/>
