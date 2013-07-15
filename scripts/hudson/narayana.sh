@@ -103,6 +103,11 @@ function build_as {
     git remote add upstream $UPSTREAM_GIT_URL
   fi
 
+  [ -z "$AS_BRANCH" ] || git fetch origin +refs/pull/*/head:refs/remotes/origin/pull/*/head
+  [ $? = 0 ] || fatal "git fetch of pulls failed"
+  [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
+  [ $? = 0 ] || fatal "git fetch of pull branch failed"
+
   git fetch upstream
   echo "This is the JBoss-AS commit"
   echo $(git rev-parse upstream/master)
