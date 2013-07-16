@@ -57,18 +57,9 @@ public class TransactionScopedTest {
     @Deployment
     public static JavaArchive createTestArchive() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+        return  ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addClass(TestCDITransactionScopeBean.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.jts export services\n";
-
-        archive.setManifest(new StringAsset(ManifestMF));
-
-        return archive;
     }
 
     @After

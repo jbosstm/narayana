@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
@@ -54,20 +56,11 @@ public class TransactionalImplTest {
     TestTransactionalBean testTransactionalBean;
 
     @Deployment
-    public static JavaArchive createTestArchive() {
+    public static WebArchive createTestArchive() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+        return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("com.hp.mwtests.ts.jta.cdi.transactional")
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.jts export services\n";
-
-        archive.setManifest(new StringAsset(ManifestMF));
-
-        return archive;
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @After

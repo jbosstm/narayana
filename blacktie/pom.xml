@@ -152,13 +152,13 @@
 			<dependency>
 				<groupId>org.wildfly</groupId>
 				<artifactId>wildfly-arquillian-container-remote</artifactId>
-				<version>8.0.0.Alpha2-SNAPSHOT</version>
+				<version>${jboss-as.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.wildfly</groupId>
 				<artifactId>wildfly-controller-client</artifactId>
-				<version>8.0.0.Alpha2-SNAPSHOT</version>
+				<version>${jboss-as.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>jacorb</groupId>
