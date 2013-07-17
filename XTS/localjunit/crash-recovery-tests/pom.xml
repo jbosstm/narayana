@@ -18,15 +18,33 @@
     <name>Narayana: XTS localjunit crash-recovery-tests</name>
     <description>xts crash recovery tests</description>
     <build>
-    <plugins>
-      <plugin>
-        <inherited>false</inherited>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
-        <configuration>
-          <additionalClassPath>../xtstest/target/classes</additionalClassPath>
-        </configuration>
-	  </plugin>
-    </plugins>
+        <plugins>
+            <plugin>
+                <inherited>false</inherited>
+                <groupId>org.jboss.byteman</groupId>
+                <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+                <configuration>
+                    <additionalClassPath>../xtstest/target/classes</additionalClassPath>
+                </configuration>
+	        </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <stripVersion>true</stripVersion>
+                            <includeGroupIds>org.jboss.byteman</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
