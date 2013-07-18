@@ -9,11 +9,14 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.logging.Logger;
+import org.jboss.narayana.rest.integration.api.HeuristicException;
 import org.jboss.narayana.rest.integration.api.Participant;
 import org.jboss.narayana.rest.integration.api.ParticipantDeserializer;
+import org.jboss.narayana.rest.integration.api.ParticipantException;
 import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
 import org.jboss.narayana.rest.integration.api.PersistableParticipant;
 import org.jboss.resteasy.client.ClientRequest;
+import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.spi.Link;
 
 import java.io.ByteArrayInputStream;
@@ -88,7 +91,6 @@ public final class RecoveryManager {
         state.packString(participantInformation.getId());
         state.packString(participantInformation.getApplicationId());
         state.packString(participantInformation.getStatus());
-        state.packString(participantInformation.getBaseUrl());
         state.packString(participantInformation.getRecoveryURL());
         state.packBytes(getParticipantBytes(participantInformation.getParticipant()));
 
@@ -166,7 +168,6 @@ public final class RecoveryManager {
         }
 
         final String status = inputObjectState.unpackString();
-        final String baseUrl = inputObjectState.unpackString();
         final String recoveryUrl = inputObjectState.unpackString();
         final Participant participant = recreateParticipant(inputObjectState, applicationId);
 
@@ -175,13 +176,20 @@ public final class RecoveryManager {
             return null;
         }
 
-        ParticipantInformation participantInformation = new ParticipantInformation(id, applicationId, recoveryUrl,
-                baseUrl, participant, status);
+        final ParticipantInformation participantInformation = new ParticipantInformation(id, applicationId, recoveryUrl,
+                participant, status);
 
-        if (!ParticipantsManagerFactory.getInstance().getBaseUrl().equals(baseUrl)) {
-            notifyCoordinatorAboutNewUrl(participantInformation);
-            participantInformation = new ParticipantInformation(id, applicationId, recoveryUrl,
-                    ParticipantsManagerFactory.getInstance().getBaseUrl(), participant, status);
+        if (!synchronizeParticipantUrlWithCoordinator(participantInformation)) {
+            try {
+                participant.rollback();
+                removeParticipantInformation(participantInformation);
+                // TODO is it OK to leave participant not rolled back in case of Exception?
+            } catch (HeuristicException e) {
+                LOG.warn(e.getMessage(), e);
+            } catch (ParticipantException e) {
+                LOG.warn(e.getMessage(), e);
+            }
+            return null;
         }
 
         return participantInformation;
@@ -205,21 +213,30 @@ public final class RecoveryManager {
         return participant;
     }
 
-    private void notifyCoordinatorAboutNewUrl(final ParticipantInformation participantInformation) {
-        final String participantUrl = getParticipantUrl(participantInformation.getId(), participantInformation.getBaseUrl());
+    private boolean synchronizeParticipantUrlWithCoordinator(final ParticipantInformation participantInformation) {
+        final String participantUrl = getParticipantUrl(participantInformation.getId());
         final Link participantLink = new Link(TxLinkNames.PARTICIPANT_RESOURCE, TxLinkNames.PARTICIPANT_RESOURCE,
                 participantUrl, null, null);
         final Link terminatorLink = new Link(TxLinkNames.PARTICIPANT_TERMINATOR, TxLinkNames.PARTICIPANT_TERMINATOR,
                 participantUrl, null, null);
 
         try {
-            new ClientRequest(participantInformation.getRecoveryURL()).addLink(participantLink).addLink(terminatorLink).put();
+            final ClientResponse response = new ClientRequest(participantInformation.getRecoveryURL())
+                    .addLink(participantLink).addLink(terminatorLink).put();
+            if (response.getStatus() == 404) {
+                return false;
+            }
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
+            return false;
         }
+
+        return true;
     }
 
-    private String getParticipantUrl(final String participantId, String baseUrl) {
+    private String getParticipantUrl(final String participantId) {
+        String baseUrl = ParticipantsManagerFactory.getInstance().getBaseUrl();
+
         if (!baseUrl.substring(baseUrl.length() - 1).equals("/")) {
             baseUrl += "/";
         }

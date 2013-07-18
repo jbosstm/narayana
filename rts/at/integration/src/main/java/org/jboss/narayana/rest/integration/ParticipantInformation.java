@@ -17,19 +17,20 @@ public final class ParticipantInformation {
 
     private final Participant participant;
 
-    private final String baseUrl;
-
     private String status;
 
-    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL, final String baseUrl, final Participant participant) {
-        this(id, applicationId, recoveryURL, baseUrl, participant, null);
+    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL,
+              final Participant participant) {
+
+        this(id, applicationId, recoveryURL, participant, null);
     }
 
-    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL, final String baseUrl, final Participant participant, final String status) {
+    public ParticipantInformation(final String id, final String applicationId, final String recoveryURL,
+              final Participant participant, final String status) {
+
         this.id = id;
         this.applicationId = applicationId;
         this.recoveryURL = recoveryURL;
-        this.baseUrl = baseUrl;
         this.participant = participant;
         this.status = status;
     }
@@ -52,10 +53,6 @@ public final class ParticipantInformation {
 
     public String getRecoveryURL() {
         return recoveryURL;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
     }
 
     public Participant getParticipant() {

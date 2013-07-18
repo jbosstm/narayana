@@ -7,12 +7,12 @@ package org.jboss.narayana.rest.integration.api;
  */
 public interface Participant {
 
-    Vote prepare();
+    Vote prepare() throws ParticipantException;
 
-    void commit() throws HeuristicException;
+    void commit() throws ParticipantException, HeuristicException;
 
-    void commitOnePhase();
+    void commitOnePhase() throws ParticipantException;
 
-    void rollback() throws HeuristicException;
+    void rollback() throws ParticipantException, HeuristicException;
 
 }

@@ -20,6 +20,7 @@ import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.api.Aborted;
 import org.jboss.narayana.rest.integration.api.HeuristicException;
 import org.jboss.narayana.rest.integration.api.HeuristicType;
+import org.jboss.narayana.rest.integration.api.ParticipantException;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.ReadOnly;
 import org.jboss.narayana.rest.integration.api.Vote;
@@ -171,7 +172,13 @@ public final class ParticipantResource {
 
         participantInformation.setStatus(TxStatus.TransactionPreparing.name());
 
-        Vote vote = participantInformation.getParticipant().prepare();
+        final Vote vote;
+        try {
+            vote = participantInformation.getParticipant().prepare();
+        } catch (ParticipantException e) {
+            participantInformation.setStatus(TxStatus.TransactionActive.name());
+            throw e;
+        }
 
         if (vote instanceof Aborted) {
             rollback(participantInformation);
@@ -208,6 +215,9 @@ public final class ParticipantResource {
                     RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
                     throw new HeuristicException(e.getHeuristicType());
                 }
+            } catch (ParticipantException e) {
+                participantInformation.setStatus(TxStatus.TransactionPrepared.name());
+                throw e;
             }
 
             participantInformation.setStatus(TxStatus.TransactionCommitted.name());
@@ -229,7 +239,14 @@ public final class ParticipantResource {
     private void commitOnePhase(final ParticipantInformation participantInformation) {
         if (!isHeuristic(participantInformation)) {
             participantInformation.setStatus(TxStatus.TransactionCommitting.name());
-            participantInformation.getParticipant().commitOnePhase();
+
+            try {
+                participantInformation.getParticipant().commitOnePhase();
+            } catch (ParticipantException e) {
+                participantInformation.setStatus(TxStatus.TransactionActive.name());
+                throw e;
+            }
+
             participantInformation.setStatus(TxStatus.TransactionCommittedOnePhase.name());
             ParticipantsContainer.getInstance().removeParticipantInformation(participantInformation.getId());
         }
@@ -239,6 +256,7 @@ public final class ParticipantResource {
         if (isHeuristic(participantInformation)) {
             rollbackHeuristic(participantInformation);
         } else {
+            final String previousStatus = participantInformation.getStatus();
             participantInformation.setStatus(TxStatus.TransactionRollingBack.name());
 
             try {
@@ -249,6 +267,9 @@ public final class ParticipantResource {
                     RecoveryManager.getInstance().persistParticipantInformation(participantInformation);
                     throw new HeuristicException(e.getHeuristicType());
                 }
+            } catch (ParticipantException e) {
+                participantInformation.setStatus(previousStatus);
+                throw e;
             }
 
             participantInformation.setStatus(TxStatus.TransactionRolledBack.name());
