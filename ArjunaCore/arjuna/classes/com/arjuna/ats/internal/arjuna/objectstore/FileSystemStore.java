@@ -364,14 +364,18 @@ public abstract class FileSystemStore extends ObjectStore
             tsLogger.logger.trace("FileSystemStore.openAndLock(" + fname + ", " + FileLock.modeString(lmode) + ", " + create + ")");
         }
 
-        //      File fd = (File) FdCache(fname);
+        /*
+         * Consider re-introducting the FdCache concept from original Arjuna
+         * to save time on checking if exists etc.
+         */
+
         File fd = null;
 
         if (fd == null)
         {
             fd = new File(fname);
 
-            if (!fd.exists())
+            if (!fd.getParentFile().exists())
             {
                 if (createHierarchy(fname))
                 {
@@ -624,8 +628,8 @@ public abstract class FileSystemStore extends ObjectStore
      * created. So, we have to err on the side of caution and try to create the directory
      * a few times. (This can happen across processes too.)
      */
-
-    protected synchronized final boolean createHierarchy (String path) throws ObjectStoreException
+    
+    protected final synchronized boolean createHierarchy (String path) throws ObjectStoreException
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("FileSystemStore.createHierarchy(" + path + ")");
@@ -662,6 +666,11 @@ public abstract class FileSystemStore extends ObjectStore
                 }
                 else
                 {
+                    /*
+                     * Assume problem is due to concurrent processes, since we're
+                     * synchronized within the same VM.
+                     */
+                    
                     if (!f.mkdirs())
                     {
                         retryLimit--;
