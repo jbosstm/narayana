@@ -160,7 +160,7 @@ function blacktie {
   cd blacktie
   rm -rf $PWD/wildfly-${WILDFLY_MASTER_VERSION}
   unzip ../jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip
-  cp ../rts/at/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
+  cp ../rts/at/webservice/target/restat-web-5.0.0.M4-SNAPSHOT.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
   WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-${WILDFLY_MASTER_VERSION} ./scripts/hudson/blacktie-linux.sh "$@"
   [ $? = 0 ] || fatal "BlackTie build failed"
   cd -
@@ -394,7 +394,6 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 
 [ -z "${WORKSPACE}" ] && fatal "UNSET WORKSPACE"
 [ -z "${WILDFLY_MASTER_VERSION}" ] && fatal "UNSET WILDFLY_MASTER_VERSION"
-[ -z "${NARAYANA_CURRENT_VERSION}" ] && fatal "UNSET NARAYANA_CURRENT_VERSION"
 
 # FOR DEBUGGING SUBSEQUENT ISSUES
 free -m
