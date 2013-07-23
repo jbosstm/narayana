@@ -63,6 +63,19 @@ public class SingleService {
         }
     }
 
+    @Compensatable(dontCancelOn = MyRuntimeException.class)
+    @TxCompensate(DummyCompensationHandler2.class)
+    @TxConfirm(DummyConfirmationHandler2.class)
+    @TxLogged(DummyTransactionLoggedHandler2.class)
+    public void testSingle2DontCancel(boolean throwException) throws MyRuntimeException {
+
+        dummyData.setValue("blah2");
+
+        if (throwException) {
+            throw new MyRuntimeException();
+        }
+    }
+
     @Compensatable
     @TxCompensate(DummyCompensationHandler3.class)
     @TxConfirm(DummyConfirmationHandler3.class)
