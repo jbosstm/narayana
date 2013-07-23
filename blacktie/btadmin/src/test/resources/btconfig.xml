@@ -225,7 +225,7 @@
 	</SERVERS>
 	<ORB OPT="-ORBInitRef NameService=corbaloc::${JBOSSAS_IP_ADDR}:3528/NameService -ORBListenEndpoints iiop://${JBOSSAS_IP_ADDR}:0"
 		TRANS_FACTORY_ID="TransactionManagerService.OTS" />
-	<SOCKETSERVER PORT="12343" />
+	<SOCKETSERVER PORT="0" />
 	<MQ HOST="${JBOSSAS_IP_ADDR}" PORT="61613" USER="guest" PASSWORD="password1@"
 		 RECEIVE_TIMEOUT="10" TIME_TO_LIVE="40"
 		 />
