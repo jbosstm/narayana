@@ -212,11 +212,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.narayana.blacktie</groupId>
-				<artifactId>blacktie-stompconnect</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.narayana.blacktie</groupId>
 				<artifactId>blacktie-jatmibroker-xatmi</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -351,7 +346,6 @@
 		<module>xsd</module>
 		<module>idl</module>
 		<module>messaging</module>
-		<module>stompconnect-1.0</module>
 		<module>jatmibroker-xatmi</module>
 		<module>jatmibroker-nbf</module>
 		<module>blacktie-admin-services</module>
