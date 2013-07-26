@@ -21,6 +21,18 @@ if [ "$?" -ne "1" ]; then
 	else
 		BPA="-Dbpa=centos55x32"
 	fi
+  # This is required for the upgrade of g++ https://issues.jboss.org/browse/JBTM-1787
+  if [ -f /etc/fedora-release ]
+  then
+    grep "Fedora release 18" /etc/fedora-release > /dev/null
+  	if [ "$?" -eq "0" ]; then
+  		BPA="-Dbpa=fc18x64"
+    fi
+    grep "Fedora release 19" /etc/fedora-release > /dev/null
+  	if [ "$?" -eq "0" ]; then
+  		BPA="-Dbpa=fc18x64"
+    fi
+  fi
 fi
 
 PROGNAME=`basename $0`
