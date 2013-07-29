@@ -429,5 +429,6 @@
     <module>blacktie/docs</module>
     <module>docs</module>
     <module>XTS/background</module>
+    <module>rest-tx/docs</module>
   </modules>
 </project>

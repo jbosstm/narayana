@@ -1,0 +1,489 @@
+:doctype: book
+= RESTAT (RESTful Atomic Transactions)
+Mike Musgrove <mmusgrov@redhat.com> Mark Little <mlittle@redhat.com>
+v5.0.0.M4
+:toc:
+
+[preface]
+Preface
+-------
+This guide covers the REST interfaces to the Narayana Transaction Manager. The actual protocol implemented by RESTAT described in this book is taken from the draft RESTAT specification https://github.com/jbosstm/documentation/blob/master/rest-tx/docs/RESTAT-v2-latest.pdf. The specification is still evolving but has reached a stability level such that it can be used in real world environments.
+
+== Overview
+
+Atomic transactions are a well-known technique for guaranteeing consistency in the presence of failures. The ACID properties of atomic transactions (Atomicity, Consistency, Isolation, Durability) ensure that even in complex business applications consistency of state is preserved, despite concurrent accesses and failures. This is extremely useful fault-tolerance technique, especially when multiple, possibly remote resources are involved.
+
+Consistency is especially important in a web application with dynamic servers. When users navigate a web application, they are viewing snapshots of the server state. If the snapshot is computed within a transaction, the state returned to the user is consistent.  For many applications this is important for otherwise the inconsistent view of the data could be confusing to the user. Many developers have the incorrect perception that they do not need transactions if all they are doing is reading a database. However, if you are doing multiple reads and you want them to be consistent, then you need to do them within a transaction.
+
+Furthermore, even in the simplest of system, a single user environment where all operations are idempotent, retrying requires the capability to remember the list of participating resources as well as the operations that must be re-transmitted, potentially many times. As we shall see, fortunately this is an inherent part of a transaction system, provided in a reliable manner such that it can tolerate its own failures as well as those that occur elsewhere within the environment.
+
+Although the Web and REST have progressed well without the need for transactions there are a class of applications where the use of transactions, or at least atomicity, would be beneficial. To support this need, we have created a RESTful interface to the Narayana transaction manager.
+
+== Transaction Model
+
+The REST Atomic Transaction (RESTAT) model uses a traditional two-phase commit protocol with the following optimizations:
+
+* Presumed rollback: the transaction coordinator need not record information about the participants in stable storage until it decides to commit, i.e., until after the prepare phase has completed successfully. A definitive answer that a transaction does not exist can be used to infer that it rolled back.
+
+* One-phase: if the coordinator discovers that only a single participant is registered then it may omit the prepare phase.
+
+* Read-only: a participant that is responsible for a service that did not modify any transactional data during the course of the transaction can indicate to the coordinator during prepare that it is a read-only participant and the coordinator can omit it from the second phase of the commit protocol.
+
+=== Architecture
+
+The diagram below illustrates the various resources defined within the RESTAT protocol. We shall discuss each of these in the following sections.
+
+.Architecture
+image::images/architecture.png[Architecture image]
+
+These components are enumerated below and discussed in the following sections:
+
+* Transaction Manager: this is a factory resource that is responsible for creating new transactions. Once created, the transaction manager has no further role to play in the life of the transaction.
+
+* Transaction Coordinator: this is a specific resource for the transaction. It drives the two-phase commit protocol and manages interactions with participants.
+
+* Client: the user of transactions.
+
+* Service: a transaction-aware service that performs work that may need to be coordinated with other such services elsewhere.
+
+* Participant: a resource that manages the state changes performed by the service in the context of a transaction. The participant is driven through two-phase commit by the coordinator.
+
+=== State Transitions
+
+A transaction coordinator and two-phase participant go through the state transitions shown:
+
+.StateTransitions
+image::images/state_transitions.png[StateTransitions image]
+
+As such, all of the resources in the protocol have statuses that can be represented as one of these values. Asking a resource to change its state from, say, Active to Committed, may drive it through all of the intermediate states and as a result trigger protocol specific events, such as driving the two-phase commit protocol.
+
+=== The Transaction Manager Resource
+
+The transaction manager is represented by a URI (referred to as the transaction-manager URI). It enables clients to create new transaction resources and to query the list of current transactions. The actual URI depends upon how RESTAT is deployed and will be discussed later.
+
+== Client Responsibilities
+
+The RESTAT client is responsible for creating and terminating transaction resources.
+
+=== Starting a Transaction
+
+Performing a POST on the transaction-manager URI with header as shown below will start a new transaction with a default timeout. A successful invocation returns a 201 HTTP status code and the Location header contains the URI of the newly created transaction resource, which we refer to as transaction-coordinator in the rest of this book. At least two related URLs will also be returned, one for use by the transaction terminator (typically referred to as the client) and one used for registering durable participation in the transaction (typically referred to as the server). These URIs are referred to as the transaction-terminator and transaction-enlistment URIs, respectively. Although uniform URL structures are used in the examples, these linked URLs can be of arbitrary format.
+
+[source,html]
+----
+POST /transaction-manager HTTP/1.1
+From: foo@bar.com
+----
+
+The corresponding response would be:
+
+[source,html]
+----
+HTTP 1.1 201 Created
+Location: /transaction-coordinator/1234
+Link:</transaction-coordinator/1234/terminator>; rel=”terminator”,
+    </transaction-coordinator/1234/participant>; rel=”durable-participant”,
+    </transaction-coordinator/1234/vparticipant>; rel=”volatile-participant”
+----
+
+The lifetime of the transaction resource can be controlled by including a timeout in milliseconds in the body of the POST request 
+
+[source,html]
+----
+POST /transaction-manager HTTP/1.1
+From: foo@bar.com
+Content-Type: text/plain
+Content-Length: --
+
+timeout=1000
+----
+
+Performing a HEAD on the transaction-coordinator URI returns the same link information.
+
+Performing a DELETE on the transaction-coordinator or transaction-enlistment URIs are not allowed (and an attempt to do so will result in a 403 status code).
+
+=== Obtaining The Transaction Status
+
+Performing a GET on the transaction-coordinator URI returns the current status of the transaction:
+
+[source,html]
+----
+GET /transaction-coordinator/1234 HTTP/1.1
+Accept: application/txstatus
+----
+
+With an example response:
+
+[source,html]
+----
+HTTP/1.1 200 OK
+Content-Length: --
+Content-Type: application/txstatus
+Link:</transaction-coordinator/1234/terminator>; rel=”terminator”,
+    </transaction-coordinator/1234/participant>; rel=”durable-participant”,
+    </transaction-coordinator/1234/vparticipant>; rel=”volatile-participant”
+
+txstatus=TransactionActive
+----
+
+Additional information about the transaction, such as the number of participants and their individual URIs, is returned if the client specifies the application/txstatusext+xml media type. For full details of this extended media type please refer to the specification and to the xsd in the restat-util jar packaging (https://github.com/jbosstm/narayana/tree/master/rts/at/util/src/main/resources/restat.xsd).
+
+=== Propagating the Context
+
+When making an invocation on a resource that needs to participate in a transaction, either the transaction-coordinator URI or the transaction-enlistment URI (/transaction-coordinator/1234/participant in the previous example) needs to be transmitted to the resource. How this happens is private to the service writer but the following OPTIONAL approach is recommended:
+
+* The URI is passed as a Link header with the relevant service interaction.
+
+If the RESTAT user follows this convention then we can provide tools to the service writer to automate transaction handling. For example, if the client wishes to make a transactional service request then it should include a link to the URI used for enlisting into a transaction (which the client may have obtained when it first created the transaction) as follows:
+
+[source,html]
+----
+Link:</transaction-coordinator/1234/participant>; rel=”durable-participant”
+----
+
+or 
+
+[source,html]
+----
+Link:</transaction-coordinator/1234>; rel=”transaction-coordinator”
+----
+
+and similarly if the client wants to pass the volatile participant URI to the invoked REST service.
+
+=== Discovering Existing Transactions
+
+Performing a GET on the transaction-manager URI with media type application/txlist returns a list of all transaction-coordinator URIs known to the coordinator (active and in recovery). The returned response includes a link header with rel attribute "statistics" linking to a resource that contains statistical information such as the number of transactions that have committed and aborted.
+
+Performing a GET on the transaction-manager URI with media type application/txstatusext+xml returns extended information about the transaction-manager resource such as how long it has been up and all transaction-coordinator URIs.
+
+=== Ending the Transaction
+
+The client can PUT a document containing the desired transaction status to the transaction-terminator URI in order to control the outcome of the transaction. Upon termination, the resource and all associated resources are implicitly deleted. If the client wishes to commit the transaction it sends the following request:
+
+[source,html]
+----
+PUT /transaction-coordinator/1234/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionCommitted
+----
+
+The response body contains the transaction outcome. The state of the transaction must be TransactionActive for this operation to succeed otherwise a 412 status code is returned.
+
+The transaction may be told to rollback with the following PUT request:
+
+[source,html]
+----
+PUT /transaction-coordinator/1234/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionRolledBack
+----
+
+== Service Responsibilities
+
+Once a resource has the transaction or enlistment URI, it can register participation in the transaction. Each participant must be uniquely identified to the transaction coordinator in order that the protocol can guarantee consistency and atomicity in the event of failure and recovery. The participant is free to use whatever URI structure it desires for uniquely identifying itself; in the rest of this manual we shall assume it is /participant-resource and refer to it as the participant-resource URI.
+
+=== Joining the Transaction
+
+==== Two Phase Aware Participants
+
+A participant is registered with the transaction-coordinator using POST on the participant-enlistment URI obtained when the transaction was originally created. The request must include two link headers: one to uniquely identify the participant to the coordinator and one to provide a terminator resource (referred to as the participant-terminator URI) that the coordinator will use to terminate the participant. If the rel attributes of the link are not participant and terminator the implementation will return 400. Note, the following URIs are only examples, and an implementation is free to use whatever structure/format it likes:
+
+[source,html]
+----
+POST /transaction-coordinator/1234/participant HTTP/1.1
+From: foo@bar.com
+Link:</participant-resource>; rel=”participant”,
+    </participant-resource/terminator>; rel=”terminator”
+
+Content-Length: 0
+----
+
+Performing a HEAD on the participant-resource URI will return the terminator reference, as shown below:
+
+[source,html]
+----
+HEAD /participant-resource HTTP/1.1
+From: foo@bar.com
+
+HTTP/1.1 200 OK
+Link:</participant-resource/terminator>; rel=”terminator”
+----
+
+If the transaction is not TransactionActive when registration is attempted, then the implementation returns a 412 status code. If the implementation has seen this participant URI before then it returns 400. Otherwise the operation is considered a success and the implementation will return 201 and uses the Location header to give a participant specific URI that the participant may use later during prepare or for recovery purposes. The lifetime of this URI is the same as the transaction-coordinator URI. In the rest of this specification we shall refer to this as the participant-recovery URI (not to be confused with the participant-resource URI). An example response from the transaction-coordinator to a successful enlistment request is: 
+
+[source,html]
+----
+HTTP/1.1 201 Created
+Location: /participant-recovery/1234
+----
+
+==== Two Phase Unaware Participants
+
+In order for a participant to be enlisted with a transaction it must be transaction aware to fulfill the requirements placed on it to ensure data consistency in the presence of failures or concurrent access. However, it is not necessary that a participant be modified such that it has a terminator resource as outlined previously: it simply needs a way to tell the coordinator which resource(s) to communicate with when driving the two-phase protocol. This type of participant will be referred to as Two-Phase Unaware, though strictly speaking such a participant or service does need to understand the protocol as mentioned earlier.
+
+NOTE: enlisting two-phase unaware participants is not a mandatory requirement on service writers.
+
+During enlistment a service must provide URIs for prepare, commit, rollback and optionally a commit-one-phase URI:
+
+[source,html]
+----
+POST /transaction-coordinator/1234/participant HTTP/1.1
+From: foo@bar.com
+Link:</participant-resource>; rel=”participant”,
+    </participant-resource/prepare>; rel=”prepare”,
+    </participant-resource/commit>; rel=”commit”,
+    </participant-resource/rollback>; rel=”rollback”,
+    </participant-resource/commit-one-phase>; rel=”commit-one-phase”
+
+Content-Length: 0
+----
+
+Performing a HEAD on a registered participant URI must return these references, as shown below:
+
+[source,html]
+----
+HEAD /participant-resource HTTP/1.1
+From: foo@bar.com
+
+HTTP/1.1 200 OK
+Link:</participant-resource/prepare>; rel=”prepare”,
+    </participant-resource/commit>; rel=”commit”,
+    </participant-resource/rollback>; rel=”rollback”,
+    </participant-resource/commit-one-phase>; rel=”commit-one-phase”
+----
+
+A service that registers a participant must therefore either define a terminator relationship for the participant or the relationships/resources needed for the two-phase commit protocol.
+
+==== Obtaining the Participant Status
+
+Performing an HTTP GET request on the participant-resource URI must return the current status of the participant in the same way as for the transaction-coordinator URI discussed earlier. Determining the status of a participant whose URI has been removed is similar to that discussed for the transaction-coordinator URI:
+
+[source,html]
+----
+GET /participant-resource HTTP/1.1
+Accept: application/txstatus
+----
+
+With an example response:
+
+[source,html]
+----
+HTTP/1.1 200 OK
+Content-Length: --
+Content-Type: application/txstatus
+
+txstatus=TransactionActive
+----
+
+=== Leaving the Transaction
+
+A participant can leave the transaction at any time by sending a DELETE request to the coordinator using the URI it obtain during registration (i.e., the participant-recovery URI). Alternatively, it can respond to a prepare request from the coordinator with content body containing txstatus=TransactionReadOnly (in which case the transaction-coordinator will remove it from further participation in the transaction). Otherwise it is the participants responsibility to participate in the <<2PC,transaction termination protocol>> .
+
+[[2PC]]
+=== Preparing and Committing Work
+
+The coordinator drives the participant through the two-phase commit protocol by sending a PUT request to the participant terminator URI, provided to the coordinator during enlistment, with the desired transaction outcome as the content (TransactionPrepared, TransactionCommitted, TransactionRolledBack or TransactionCommittedOnePhase). For instance, here is how the prepare phase would be driven: 
+
+[source,html]
+----
+PUT /participant-resource/terminator HTTP/1.1
+From: foo@bar.com
+Content-Type: application/txstatus
+Content-Length: --
+
+txstatus=TransactionPrepared
+----
+
+If PUT is successful then the implementation returns 200. A subsequent GET on the URI will return the current status of the participant as described previously. It is not always necessary to enquire as to the status of the participant once the operation has been successful.
+
+If PUT fails, e.g., the participant cannot be prepared, then the service writer must return 409. Depending upon the point in the two-phase commit protocol where such a failure occurs the transaction will roll back, e.g., because we use presumed abort semantics, failures prior to the end of the prepare phase *always* result in a roll back. If the participant is not in the correct state for the requested operation, e.g., TransactionPrepared when it has been already been prepared, then the service writer will return 412.
+
+If the transaction coordinator receives any response other than 200 for Prepare then the transaction *always* rolls back.
+
+After a request to change the resource state using TransactionRolledBack, TransactionCommitted or TransactionCommittedOnePhase, any subsequent PUT request will return a 409 or 410 code.
+
+The usual rules of heuristic decisions apply here (i.e., the participant cannot forget the choice it made until it is told to by the coordinator).
+
+Performing a DELETE on the participant-resource URI will cause the participant to forget any heuristic decision it made on behalf of the transaction. If the operation succeeds then 200 will be returned and the implementation will delete the resource; a subsequent PUT or GET request returns 410. Any other response means the coordinator will keep retrying.
+
+=== Recovery
+
+In general it is assumed that failed actors in this protocol, i.e., coordinator or participants, will recover on the same URI as they had prior to the failure. HTTP provides a number of options to support temporary or permanent changes of address, including 301 (Moved Permanently) and 307 (Temporary Redirect). If that is not possible then these endpoints are expected to return a 301 status code or some other way of indicating that the participant has moved elsewhere. HTTP response codes such as 307 are also acceptable if a temporary redirection is used.
+
+However, sometimes it is possible that a participant may crash and recover on a different URI, e.g., the original machine is unavailable, or that for expediency it is necessary to move recovery to a different machine. In that case it may be the case that the transaction coordinator is unable to complete the transaction, even during recovery. As a result this protocol defines a way for a recovering server to update the information maintained by the coordinator on behalf of these participants.
+
+If the recovering participant uses the participant-recovery URI returned by the coordinator during enlistment then a GET on the participant-recovery URI will return the participant resource and terminator as link headers that the participant used during the original registration.
+
+Performing a PUT on the participant-recovery URI will overwrite the old participant URI with the new one supplied. This operation is equivalent to re-enlisting the participant. This will also trigger off a recovery attempt on the associated transaction using the new participant URI. For example to update location URIs, a two phase aware participant would PUT the following document: 
+
+[source,html]
+----
+PUT /participant-recovery/1234 HTTP/1.1
+From: foo@bar.com
+Link:</new-participant-resource>; rel=”participant”,
+    </participant-resource/new-terminator>; rel=”terminator”
+
+Content-Length: 0
+----
+
+Similarly for a two phase unaware participant.
+
+If, after performing the PUT request to the participant-recovery URI, the participant is not asked to complete (within an implementation dependent period) then the protocol requires that the participant reissue the PUT request.
+
+=== Pre- and Post- Two-Phase Commit Processing
+
+Most modern transaction processing systems allow the creation of participants that do not take part in the two-phase commit protocol, but are informed before it begins and after it has completed. They are called Synchronizations, and are typically employed to flush volatile (cached) state, which may be being used to improve performance of an application, to a recoverable object or database prior to the transaction committing.
+
+This additional protocol is accomplished by supporting an additional two-phase commit protocol that encloses the protocol already discussed. This will be termed the Volatile Two Phase Commit protocol, as the participants involved in it are not required to be durable for the purposes of data consistency, whereas the other protocol will be termed the Durable Two Phase Commit protocol. The coordinator will not record any durable information on behalf of Volatile participants.
+
+In this enclosing protocol the Volatile prepare phase executes prior to the Durable prepare. The transaction-coordinator sends a PUT request to the registered volatile-participant: only if this prepare succeeds will the Durable protocol be executed. The volatile-participant has to indicate success by returning a 200 status code (any other code indicates failure). If the Durable protocol completes then this may be communicated to the Volatile participants through the commit or rollback phases.
+In this case the transaction-coordinator sends a PUT request to the registered volatile-participant with the outcome in the request body (using content type application/txstatus). However, because the coordinator does not maintain any information about these participants and the Durable protocol has completed, this is a best-effort approach only, i.e., such participants should not assume they will be informed about the transaction outcome. If that is a necessity then they should register with the Durable protocol instead.
+
+The primary difference between the Volatile and Durable protocols is that there is no recovery associated with the Volatile protocol so enlistment of volatile participants does not return a participant-recovery URI. In addition there can be no heuristic outcomes associated with the Volatile protocol. Once the Durable protocol has started no more registration in the Volatile protocol are allowed.  And finally, there is no one-phase commit optimization for the Volatile protocol.
+
+== Container Integration
+
+The RESTAT protocol described here is implemented as a JAX-RS service, deploys as a Servlet 3.0 application and depends on the Narayana TM as the back-end transaction engine. JAX-RS is the Java language support for building REST based applications - it is both an annotation-based API for defining resources and a run-time for mapping HTTP requests to Java methods. Thus any container supporting these two requirements (servlet 3.0 and the Narayana TM) will work.
+
+=== Deploying as a Wildfly Subsystem
+
+The RESTAT coordinator is integrated with the 8.0.0.Alpha3 release of the Wildfly application server (http://www.wildfly.org/download/) as a subsystem (called RTS) so you do not have to explicitly deploy it. You do, however, need to start the application server using an optional server configuration:
+
+--------------------------------------------------------------------------
+    change directory to where the application server is installed
+    Linux:   ./bin/standalone.sh --server-config=../../docs/examples/configs/standalone-rts.xml
+    Windows: bin\standalone.bat --server-config=..\..\docs\examples\configs\standalone-rts.xml
+--------------------------------------------------------------------------
+
+For this mode of deployment the transaction-manager URI is http://<host>:<port>/rest-at-coordinator/tx/transaction-manager
+
+=== Deploying into a Servlet Container
+
+For other versions of the applications server you will need to deploy the coordinator as a war archive using the standard war deployment mechanism appropriate to your particular container. The archive is contained in the bin folder of the narayana download (restat-web.war). If you are building from source the archive is located in rts/at/webservice/target/restat-web-<version>.war.
+
+For this mode of deployment the transaction-manager URI is http://<host>:<port>/rest-tx/tx/transaction-manager
+
+== Examples
+
+The quickstarts contained in the release bundles or in the quickstart repo (https://github.com/jbosstm/quickstart) contain examples of all the features provided by RESTAT. The unit tests in the source bundle are also a good resource for further examples.
+
+=== Support For Java based Services
+
+For REST services written in Java there is a Utility class called org.jboss.jbossts.star.util.TxSupport in the source bundle (or is available at https://github.com/jbosstm/narayana) which contains a variety of methods which help service writers to conform to the specification. The majority of the RESTAT quickstarts use this utility API.
+
+Alternatively, there is a RESTAT integration API for service writers. This API takes care of transaction enlistment and handles the responsibility for listening for transaction completion requests on HTTP endpoints from the transaction coordinator. Normally when a services wishes to join an existing transaction it sends a message to the coordinator containing HTTP endpoints on which it will be notified when the transaction progresses through its prepare and commit stages. The integration API simplifies this task and instead the service enlists a participant which implements a callback interface (org.jboss.narayana.rest.integration.api.ParticipantsManager). The API will then invoke the callback transparently (to the service) when the completion protocol begins executing. This makes managing participants much cleaner for the service writer. The service writer should implement the interface org.jboss.narayana.rest.integration.api.Participant:
+
+[source,java]
+----
+    public interface Participant {
+        Vote prepare();
+        void commit() throws HeuristicException;
+        void commitOnePhase();
+        void rollback() throws HeuristicException;
+    }
+----
+
+and register this implementation with the participant service manager:
+
+[source,java]
+----
+    ParticipantsManagerFactory.getInstance().enlist(...);
+----
+
+The getInstance method on the ParticipantsManagerFactory returns an instance of the interface ParticipantsManager which is global to the (JAX-RS) application:
+
+[source,java]
+----
+    public interface ParticipantsManager {
+        ...
+        String enlist(String applicationId,
+            String participantEnlistmentURL,
+            Participant participant);
+        void registerDeserializer(String applicationId,
+            ParticipantDeserializer deserializer);
+        void reportHeuristic(String participantId,
+            HeuristicType heuristicType);
+    }
+----
+
+The participantEnlistmentURL in the enlist method corresponds to a running REST transaction which the service acquires during normal interactions with service clients. To register for completion callbacks the service writer registers an interface using the enlist method and passes in an implementation of Participant. For full details of this interface please refer to the javadoc for org.jboss.narayana.rest.integration.api.ParticipantsManager
+
+NOTE: Now when a service client terminates a transaction the services' callback methods will be invoked by the RESTAT coordinator which may or may not be running locally (since these are distributed transactions). It is interesting to note that the wildfly application server is a modular container so subsystems and applications run in their own class loaders. In the event of failures a recovery system will need to recreate participant callback registrations in order to complete any pending transaction and therefore will no longer have access to the original class. The service writer must help the recovery system in this task via the registerDeserializer call. The final method on the interface (reportHeuristic) is to allow services to independently abort or commit work before being asked to via the callback interface.
+
+For full details of this interface please refer to the javadoc for org.jboss.narayana.rest.integration.api.ParticipantsManager
+
+The accessibility of the ParticipantsManagerFactory from your application depends upon whether the container contains the RTS subsystem. Versions of the wildfly application server from 8.0.0.Alpha3 onwards contain this subsystem so your manifest should declare a dependency on it by adding the line "Dependencies: org.jboss.narayana.rts" to the MANIFEST.MF file in your archive. For other containers you should register the dependency programatically. The quickstarts contain examples of how to do this for the embedded Resteasy and Jersey JAX-RS containers (look for classes called JaxrsServer in the quickstart source for rts/at/service/service2 and rts/at/recovery/recovery2).
+
+== Interoperating With Other Transaction Models
+
+Narayana in general supports a number of different transaction models other than the one described in this book. Of particular importance are the standard ones supported by the standards, namely JTA and Web Services Transactions.
+
+=== JTA Bridge
+
+==== Inbound Bridge
+
+Enabling JTA resources to participate in a RESTAT transaction.
+
+NOTE: TODO Inbound bridging (https://issues.jboss.org/browse/JBTM-1364) is planned for the next Narayana release (M4)
+NOTE: TODO Check with Gytis to see what text he wants to reuse from his thesis
+
+==== Outbound Bridge
+
+Enabling RESTAT participants to participate in a JTA transaction.
+
+WARNING: Outbound bridging is not currently implemented
+
+=== Web Services Transactions
+
+WS includes two transaction models referred to as WSAT and WSBA. WSAT integration with JTA is documented in the Transaction Bridging Guide (http://docs.jboss.org/jbosstm/5.0.0.M3/guides/txbridge_guide/index.html). By using this bridge in conjunction with the RESTAT JTA bridge full interoperability between RESTAT and WSAT can be realised.
+
+NOTE: RESTAT outbound bridging is not currently supported so interoperability is one way only.
+
+[appendix]
+Transaction Statuses
+--------------------
+
+Resources return the following status values in response to GET requests on the appropriate transaction-coordinator or participant-resource URI:
+
+TransactionRollbackOnly::
+    the status of the endpoint is that it will roll back eventually.
+TransactionRollingBack::
+    the endpoint is in the process of rolling back. If the recipient has already rolled back then it must return a 410 error code.
+TransactionRolledBack::
+    the endpoint has rolled back. 
+TransactionCommitting::
+    the endpoint is in the process of committing. This does not mean that the final outcome will be Committed. If the recipient has already committed then it must return a 410 error code.
+TransactionCommitted::
+    the endpoint has committed.
+TransactionCommittedOnePhase::
+    the recipient has committed the transaction without going through a prepare phase. If the recipient has previously been asked to prepare then it must return a 412 error code. If the recipient has already terminated, then it must return a 410 error code.
+TransactionHeuristicRollback::
+    all of the participants rolled back when they were asked to commit.
+TransactionHeuristicCommit::
+    all of the participants committed when they were asked to rollback.
+TransactionHeuristicHazard::
+    some of the participants rolled back, some committed and the outcome of others is indeterminate.
+TransactionHeuristicMixed::
+    some of the participants rolled back whereas the remainder committed.
+TransactionPreparing::
+    the endpoint is preparing.
+TransactionPrepared::
+    the endpoint has prepared. 
+TransactionActive::
+    the transaction is active, i.e., has not begun to terminate.
+TransactionStatusUnknown::
+    the status of the transaction is unknown
+
+//[colophon]
+//Colophon
+//----------------
+
+//This book was created using an asciidoc to docbook converter.
+
+//[index]
