@@ -11,10 +11,13 @@ This version of Narayana contains a JTA/JTS/XTS and RTS. You should never includ
           ---------------
 This release contains:
   bin/
-    rest-tx-web.war - This can be deployed into a server running Narayana JTA to expose the Rest-TX API
+    restat-web.war - This can be deployed into a server running Narayana JTA
+    to expose the Rest-TX API
     ws-*.war - These wars can be used to deploy XTS standalone
-    jbossts-jopr-plugin - This can be deployed into a server running Narayana JTA and RHQ to administer the server - more details below
-    start-*.[bat|sh] - These scripts can be used to launch standalone transaction managers and recovery managers
+    jbossts-jopr-plugin - This can be deployed into a server running Narayana
+    JTA and RHQ to administer the server - more details below
+    start-*.[bat|sh] - These scripts can be used to launch standalone
+    transaction managers and recovery managers
   
   docs/
     api - The various project components javadocs
@@ -32,7 +35,7 @@ This release contains:
     xts/jbossxts*.jar - More details are available in the XTS guide.
     jta/narayana-jta*.jar - See below for usage information
     jts/narayana-jts*.jar - See below for usage information
-    rts/rest-tx-api.jar
+    rts/restat-api.jar
     
   services/
     This directory contains the files required to install Narayana as an operating system service
@@ -42,21 +45,32 @@ This release contains:
     jts-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
     copyright.txt - A file to provide the copyright
     readme.txt - This file
-    run_all_quickstarts.[bat|sh] - scripts to run all quickstarts. You will need to separately download and unzip the quickstarts before running these scripts
+    run_all_quickstarts.[bat|sh] - scripts to run all quickstarts. You will
+    need to separately download and unzip the quickstarts before running these
+    scripts
 
           WHAT'S NOT INCLUDED
           -------------------
 This release download does not contain project documentation or quickstarts.
 
-PDF versions of the documentation are available from the project website at https://www.jboss.org/jbosstm/documentation/<release version>. For example, if this is release 5_0_0_M4 then the documentation can be found at the following URL: https://www.jboss.org/jbosstm/documentation/5_0_0_M4
+PDF versions of the documentation are available from the project website at
+https://www.jboss.org/jbosstm/documentation/<release version>. For example, if
+this is release 5_0_0_M4 then the documentation can be found at the following
+URL: https://www.jboss.org/jbosstm/documentation/5_0_0_M4
 
-Documentation source is now in docbook format and the associated files are tagged at github: https://github.com/jbosstm/documentation/releases. Select the archive corresponding to this release.
+Documentation source is now in docbook format and the associated files are
+tagged at github: https://github.com/jbosstm/documentation/releases. Select
+the archive corresponding to this release.
 
-Previous releases contained a separate guide for the trailmap which has now been moved to the "Narayana JTS Development Guide"
+Previous releases contained a separate guide for the trailmap which has now
+been moved to the "Narayana JTS Development Guide"
 
 Examples to get you up and running quickly are now tagged at github:
 https://github.com/jbosstm/quickstart/releases
-Select the archive corresponding to this release and unzip it. The run_all_quickstarts shell and batch scripts will run all the quickstarts. Make sure you update the scripts to point to the directory where you unzipped the quickstart archive.
+Select the archive corresponding to this release and unzip it. The
+run_all_quickstarts shell and batch scripts will run all the quickstarts.
+Make sure you update the scripts to point to the directory where you unzipped
+the quickstart archive.
 
           ENABLING JTA
           ------------
@@ -96,7 +110,7 @@ Please read the txbridge guide for details on this, you will need to include the
           ENABLING REST-TX API
           -------------------- 
 Please read the rts guide for details on this, you will need to include the following file:
-1. lib/rts/rest-tx-api.jar
+1. lib/rts/restat-api.jar
 
 
           EMBEDDED TOOLS
