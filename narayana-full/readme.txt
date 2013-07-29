@@ -7,8 +7,8 @@ Integration with JBossAS 6 or earlier is no longer supported.
 
 This version of Narayana contains a JTA/JTS/XTS and RTS. You should never include both lib/jts/*.jar and lib/jta/*.jar as they will conflict with each other.
 
-          WHATS INCLUDED
-          --------------
+          WHAT'S INCLUDED
+          ---------------
 This release contains:
   bin/
     rest-tx-web.war - This can be deployed into a server running Narayana JTA to expose the Rest-TX API
@@ -18,12 +18,7 @@ This release contains:
   
   docs/
     api - The various project components javadocs
-    guides - PDF versions of the projects documentation
     idl - The IDL files for integration with the JTS
-    jts/
-      trailmap - A trailmap for the project
-    xts/
-      demo - A trailmap for the project
       
   etc/
     Some example configuration files are available here, remove the .jts or .jta suffix to enable the operation mode you require
@@ -39,9 +34,6 @@ This release contains:
     jts/narayana-jts*.jar - See below for usage information
     rts/rest-tx-api.jar
     
-  quickstarts/
-    Some examples to get you up and running quickly
-  
   services/
     This directory contains the files required to install Narayana as an operating system service
     
@@ -50,8 +42,21 @@ This release contains:
     jts-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
     copyright.txt - A file to provide the copyright
     readme.txt - This file
+    run_all_quickstarts.[bat|sh] - scripts to run all quickstarts. You will need to separately download and unzip the quickstarts before running these scripts
 
-    
+          WHAT'S NOT INCLUDED
+          -------------------
+This release download does not contain project documentation or quickstarts.
+
+PDF versions of the documentation are available from the project website at https://www.jboss.org/jbosstm/documentation/<release version>. For example, if this is release 5_0_0_M4 then the documentation can be found at the following URL: https://www.jboss.org/jbosstm/documentation/5_0_0_M4
+
+Documentation source is now in docbook format and the associated files are tagged at github: https://github.com/jbosstm/documentation/releases. Select the archive corresponding to this release.
+
+Previous releases contained a separate guide for the trailmap which has now been moved to the "Narayana JTS Development Guide"
+
+Examples to get you up and running quickly are now tagged at github:
+https://github.com/jbosstm/quickstart/releases
+Select the archive corresponding to this release and unzip it. The run_all_quickstarts shell and batch scripts will run all the quickstarts. Make sure you update the scripts to point to the directory where you unzipped the quickstart archive.
 
           ENABLING JTA
           ------------
@@ -90,7 +95,7 @@ Please read the txbridge guide for details on this, you will need to include the
 
           ENABLING REST-TX API
           -------------------- 
-Please read the txbridge guide for details on this, you will need to include the following file:
+Please read the rts guide for details on this, you will need to include the following file:
 1. lib/rts/rest-tx-api.jar
 
 
