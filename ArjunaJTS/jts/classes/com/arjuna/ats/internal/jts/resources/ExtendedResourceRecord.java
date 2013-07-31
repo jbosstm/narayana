@@ -977,7 +977,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
-					// A common example of this is when two XA resources return XA_RDONLY
+					// This is expected to happen whenever a resource has gone away, for example during a crash or if it has exited the 2PC process early by returning XA_RDONLY out of prepare
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1011,7 +1011,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
-					// A common example of this is when two XA resources return XA_RDONLY
+					// This is expected to happen whenever a resource has gone away, for example during a crash or if it has exited the 2PC process early by returning XA_RDONLY out of prepare
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1045,7 +1045,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
-					// A common example of this is when two XA resources return XA_RDONLY
+					// This is expected to happen whenever a resource has gone away, for example during a crash or if it has exited the 2PC process early by returning XA_RDONLY out of prepare
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1079,7 +1079,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
-					// A common example of this is when two XA resources return XA_RDONLY
+					// This is expected to happen whenever a resource has gone away, for example during a crash or if it has exited the 2PC process early by returning XA_RDONLY out of prepare
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
