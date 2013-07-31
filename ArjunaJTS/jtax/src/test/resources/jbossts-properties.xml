@@ -12,4 +12,18 @@
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.h2.jdbcx.JdbcDataSource;URL=jdbc:h2:target/h2/JBTMDB;User=sa;Password=sa</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
 	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+	
+    <entry key="OrbPortabilityEnvironmentBean.orbInitializationProperties">
+        com.arjuna.orbportability.orb.PreInit1=com.arjuna.ats.internal.jts.context.ContextPropagationManager
+        com.arjuna.orbportability.orb.PostInit=com.arjuna.ats.jts.utils.ORBSetup
+        com.arjuna.orbportability.orb.PostInit2=com.arjuna.ats.internal.jts.recovery.RecoveryInit
+        com.arjuna.orbportability.orb.PostSet1=com.arjuna.ats.jts.utils.ORBSetup
+    </entry>
+    
+    <entry key="RecoveryEnvironmentBean.recoveryActivatorClassNames">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
+
+	<entry key="JTAEnvironmentBean.transactionManagerClassName">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>
+
+	<entry key="JTAEnvironmentBean.userTransactionClassName">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</entry>
+    
 </properties>
