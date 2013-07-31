@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
@@ -130,5 +131,101 @@ public class AtomicActionUnitTest
         A.abort();
         
         assertEquals(A.deactivate(), true);
+    }
+    
+    @Test
+    public void testCanCommitSuspendedTransaction() throws Exception
+    {
+    	AtomicAction aa = new AtomicAction();
+    	aa.begin();
+    	assertTrue(aa.Current() != null);
+    	aa.suspend();
+    	assertTrue(aa.Current() == null);
+    	SimpleAbstractRecord simpleAbstractRecord = new SimpleAbstractRecord();
+    	aa.add(simpleAbstractRecord);
+    	aa.commit();
+    	assertTrue(simpleAbstractRecord.wasCommitted());
+    }
+    
+    private class SimpleAbstractRecord extends AbstractRecord {
+
+		private boolean wasCommitted;
+
+		@Override
+		public int typeIs() {
+			return 0;
+		}
+
+		public boolean wasCommitted() {
+			return wasCommitted;
+		}
+
+		@Override
+		public Object value() {
+			return null;
+		}
+
+		@Override
+		public void setValue(Object o) {
+		}
+
+		@Override
+		public int nestedAbort() {
+			return 0;
+		}
+
+		@Override
+		public int nestedCommit() {
+			return 0;
+		}
+
+		@Override
+		public int nestedPrepare() {
+			return 0;
+		}
+
+		@Override
+		public int topLevelAbort() {
+			return 0;
+		}
+
+		@Override
+		public int topLevelCommit() {
+			wasCommitted = true;
+			return 0;
+		}
+
+		@Override
+		public int topLevelPrepare() {
+			return 0;
+		}
+
+		@Override
+		public void merge(AbstractRecord a) {
+		}
+
+		@Override
+		public void alter(AbstractRecord a) {
+		}
+
+		@Override
+		public boolean shouldAdd(AbstractRecord a) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldAlter(AbstractRecord a) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldMerge(AbstractRecord a) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldReplace(AbstractRecord a) {
+			return false;
+		}
     }
 }
