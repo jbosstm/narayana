@@ -977,6 +977,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
+					// A common example of this is when two XA resources return XA_RDONLY
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1010,6 +1011,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
+					// A common example of this is when two XA resources return XA_RDONLY
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1043,6 +1045,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
+					// A common example of this is when two XA resources return XA_RDONLY
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
@@ -1076,6 +1079,7 @@ public class ExtendedResourceRecord extends
 				}
 				catch (OBJECT_NOT_EXIST ex)
 				{
+					// A common example of this is when two XA resources return XA_RDONLY
 				}
 				catch (Exception e) {
                     _endpointFailed = true;
