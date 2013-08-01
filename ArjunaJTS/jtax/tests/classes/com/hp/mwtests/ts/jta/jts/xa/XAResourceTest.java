@@ -79,6 +79,7 @@ public class XAResourceTest {
 
 		assertTrue(theTransaction.enlistResource(new XA_READONLYXAResource()));
 		assertTrue(theTransaction.enlistResource(new XA_READONLYXAResource()));
+		assertTrue(theTransaction.enlistResource(new XA_READONLYXAResource()));
 
 		tm.commit();
 
