@@ -40,8 +40,6 @@
             <configuration>
               <sources>
                 <source>${basedir}/../../common/tests/com/arjuna/common/tests/simple</source>
-                <source>${basedir}/../../ArjunaJTA/jta/tests/classes/com/hp/mwtests/ts/jta/subordinate</source>
-                <source>${basedir}/../../ArjunaJTA/jta/tests/classes/com/hp/mwtests/ts/jta/common</source>
               </sources>
             </configuration>
           </execution>
@@ -145,7 +143,13 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.jboss.jbossts.jta</groupId>
+      <artifactId>jta</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>orbportability</artifactId>

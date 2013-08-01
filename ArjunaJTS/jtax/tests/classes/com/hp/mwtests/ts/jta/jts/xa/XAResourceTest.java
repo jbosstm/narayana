@@ -37,8 +37,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -48,15 +46,6 @@ import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 
 public class XAResourceTest {
-	@Before
-	public void setup() {
-		System.setProperty("jacorb.implname", "1");
-	}
-
-	@After
-	public void tearDown() {
-		System.setProperty("jacorb.implname", "");
-	}
 
 	@Test
 	public void testTwoResourcesReturnXA_RDONLY() throws Exception {
