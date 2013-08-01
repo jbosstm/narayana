@@ -13,7 +13,7 @@
         com.arjuna.orbportability.orb.PostSet1=com.arjuna.ats.jts.utils.ORBSetup
     </entry>
     
-    <entry key="RecoveryEnvironmentBean.recoveryActivatorClassNames">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
+<!--  <entry key="RecoveryEnvironmentBean.recoveryActivatorClassNames">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>-->
 
 	<entry key="JTAEnvironmentBean.transactionManagerClassName">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>
 

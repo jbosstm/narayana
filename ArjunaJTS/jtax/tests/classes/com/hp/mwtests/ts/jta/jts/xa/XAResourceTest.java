@@ -33,6 +33,8 @@ package com.hp.mwtests.ts.jta.jts.xa;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -41,6 +43,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
@@ -50,12 +54,14 @@ import com.arjuna.orbportability.RootOA;
 public class XAResourceTest {
 	@Before
 	public void setup() {
-		System.setProperty("jacorb.implname", "1");
+//		System.setProperty("jacorb.implname", "1");
+//		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryActivatorClassNames(Arrays.asList(new String[] {com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement.class.getName()}));
 	}
 
 	@After
 	public void tearDown() {
-		System.setProperty("jacorb.implname", "");
+//		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryActivatorClassNames(null);
+//		System.setProperty("jacorb.implname", "");
 	}
 
 	@Test
