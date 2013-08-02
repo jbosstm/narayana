@@ -22,6 +22,7 @@
 
 package org.jboss.narayana.compensations.impl;
 
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
@@ -41,23 +42,25 @@ import java.util.Map;
 public class Participant implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
 
     private Class<? extends CompensationHandler> compensationHandler;
-
     private Class<? extends ConfirmationHandler> confirmationHandler;
-
     private Class<? extends TransactionLoggedHandler> transactionLoggedHandler;
 
     private BeanManager beanManager;
+    private ClassLoader applicationClassloader;
+    private TxContext currentTX;
 
     private Map txDataMapState;
 
-    public Participant(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) {
+    public Participant(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, TxContext currentTX) {
 
         this.compensationHandler = compensationHandlerClass;
         this.confirmationHandler = confirmationHandlerClass;
         this.transactionLoggedHandler = transactionLoggedHandlerClass;
+        this.currentTX = currentTX;
 
         beanManager = BeanManagerUtil.getBeanManager();
         txDataMapState = TXDataMapImpl.getState();
+        applicationClassloader = Thread.currentThread().getContextClassLoader();
     }
 
     private <T extends Object> T instantiate(Class<T> clazz) {
@@ -72,10 +75,16 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     public void confirmCompleted(boolean confirmed) {
 
         if (transactionLoggedHandler != null) {
+
+            ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(applicationClassloader);
+
             TXDataMapImpl.resume(txDataMapState);
             TransactionLoggedHandler handler = instantiate(transactionLoggedHandler);
             handler.transactionLogged(confirmed);
             TXDataMapImpl.suspend();
+
+            Thread.currentThread().setContextClassLoader(origClassLoader);
         }
     }
 
@@ -83,10 +92,18 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
     public void close() throws WrongStateException, SystemException {
 
         if (confirmationHandler != null) {
+
+            ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(applicationClassloader);
+            CompensationContext.setTxContextToExtend(currentTX);
+
             TXDataMapImpl.resume(txDataMapState);
             ConfirmationHandler handler = instantiate(confirmationHandler);
             handler.confirm();
             TXDataMapImpl.suspend();
+
+            CompensationContext.close(currentTX);
+            Thread.currentThread().setContextClassLoader(origClassLoader);
         }
     }
 
@@ -100,10 +117,18 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
 
         try {
             if (compensationHandler != null) {
+
+                ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(applicationClassloader);
+                CompensationContext.setTxContextToExtend(currentTX);
                 TXDataMapImpl.resume(txDataMapState);
+
                 CompensationHandler handler = instantiate(compensationHandler);
                 handler.compensate();
+
                 TXDataMapImpl.suspend();
+                CompensationContext.close(currentTX);
+                Thread.currentThread().setContextClassLoader(origClassLoader);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -41,8 +41,9 @@ import java.util.Map;
 
 public class CompensationContext implements Context {
 
-    //TODO: garbage collect. Register a participant and remove at end?
-    private static final Map<TxContext, Map<String, Object>> localTXMap = new HashMap<TxContext, Map<String, Object>>();
+    private static final Map<TxContext, Map<String, Object>> beanStorePerTransaction = new HashMap<TxContext, Map<String, Object>>();
+
+    private static ThreadLocal<TxContext> txContextToExtend = new ThreadLocal<TxContext>();
 
     @Override
     public Class<? extends Annotation> getScope() {
@@ -82,13 +83,17 @@ public class CompensationContext implements Context {
     private Map getBeansForThisTransaction() {
 
         try {
-            BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
-            TxContext currentTX = bam.currentTransaction();
 
-            if (localTXMap.get(currentTX) == null) {
-                localTXMap.put(currentTX, new HashMap<String, Object>());
+            TxContext currentTX = txContextToExtend.get();
+            if (currentTX == null) {
+                BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
+                currentTX = bam.currentTransaction();
             }
-            return localTXMap.get(currentTX);
+
+            if (beanStorePerTransaction.get(currentTX) == null) {
+                beanStorePerTransaction.put(currentTX, new HashMap<String, Object>());
+            }
+            return beanStorePerTransaction.get(currentTX);
 
         } catch (SystemException e) {
             throw new CompensationTransactionRuntimeException("Error looking up Transaction", e);
@@ -97,6 +102,10 @@ public class CompensationContext implements Context {
 
     public boolean isActive() {
 
+        if (txContextToExtend.get() != null) {
+            return true;
+        }
+
         try {
             BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
             TxContext currentTX = bam.currentTransaction();
@@ -104,6 +113,20 @@ public class CompensationContext implements Context {
         } catch (SystemException e) {
             throw new CompensationTransactionRuntimeException("Error looking up Transaction", e);
         }
+    }
+
+    public static void setTxContextToExtend(TxContext currentTX) {
+
+        txContextToExtend.set(currentTX);
+    }
+
+    /**
+     * Garbage collect the beans. Call when the context is closed and can't be used again.
+     *
+     * @param currentTX the Transaction Context associated with this context.
+     */
+    public static void close(TxContext currentTX) {
+        beanStorePerTransaction.remove(currentTX);
     }
 }
 
