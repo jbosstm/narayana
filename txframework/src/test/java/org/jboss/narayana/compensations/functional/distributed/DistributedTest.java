@@ -71,8 +71,7 @@ public class DistributedTest {
                 .addPackage(DummyCompensationHandler1.class.getPackage())
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addClass(URLUtils.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", "services/javax.enterprise.inject.spi.Extension");
+                .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 

@@ -23,6 +23,7 @@
 package org.jboss.narayana.txframework.impl.as;
 
 import org.jboss.narayana.compensations.impl.CancelOnFailureInterceptor;
+import org.jboss.narayana.compensations.impl.CompensationContext;
 import org.jboss.narayana.compensations.impl.CompensationInterceptor;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.TxCompensateInterceptor;
@@ -35,7 +36,7 @@ import org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequired
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBATxControlImpl;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
@@ -66,5 +67,10 @@ public class TXFrameworkCDIExtension implements Extension {
         bbd.addAnnotatedType(bm.createAnnotatedType(TxConfirmInterceptor.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TxLoggedInterceptor.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(CancelOnFailureInterceptor.class));
+    }
+
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
+
+        event.addContext(new CompensationContext());
     }
 }

@@ -64,8 +64,7 @@ public class DataMapTest {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", "services/javax.enterprise.inject.spi.Extension");
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 

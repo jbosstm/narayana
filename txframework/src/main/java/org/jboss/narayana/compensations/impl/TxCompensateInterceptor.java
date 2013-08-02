@@ -61,7 +61,7 @@ public class TxCompensateInterceptor extends ParticipantInterceptor {
         }
 
         Class<? extends CompensationHandler> compensationHandler = getCompensationHandler(method);
-        Participant compensationParticipant = new Participant(compensationHandler, null, null);
+        Participant compensationParticipant = new Participant(compensationHandler, null, null, bam.currentTransaction());
         return bam.enlistForBusinessAgreementWithParticipantCompletion(compensationParticipant, String.valueOf(UUID.randomUUID()));
     }
 
