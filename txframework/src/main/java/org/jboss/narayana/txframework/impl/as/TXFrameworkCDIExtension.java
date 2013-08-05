@@ -24,7 +24,12 @@ package org.jboss.narayana.txframework.impl.as;
 
 import org.jboss.narayana.compensations.impl.CancelOnFailureInterceptor;
 import org.jboss.narayana.compensations.impl.CompensationContext;
-import org.jboss.narayana.compensations.impl.CompensationInterceptor;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorMandatory;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorNever;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorNotSupported;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorRequired;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorRequiresNew;
+import org.jboss.narayana.compensations.impl.CompensationInterceptorSupports;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.TxCompensateInterceptor;
 import org.jboss.narayana.compensations.impl.TxConfirmInterceptor;
@@ -62,7 +67,12 @@ public class TXFrameworkCDIExtension implements Extension {
         bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControlImpl.class));
 
         bbd.addAnnotatedType(bm.createAnnotatedType(CompensationManagerImpl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptor.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorMandatory.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorNever.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorNotSupported.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorRequired.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorRequiresNew.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(CompensationInterceptorSupports.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TxCompensateInterceptor.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TxConfirmInterceptor.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TxLoggedInterceptor.class));

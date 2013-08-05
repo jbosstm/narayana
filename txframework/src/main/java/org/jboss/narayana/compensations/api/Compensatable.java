@@ -25,6 +25,7 @@ package org.jboss.narayana.compensations.api;
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -46,11 +47,35 @@ import java.lang.annotation.Target;
  *
  * @author paul.robinson@redhat.com 21/03/2013
  */
+@Inherited
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Compensatable {
 
-    @Nonbinding
     public CompensationTransactionType value() default CompensationTransactionType.REQUIRED;
+
+    /**
+     * The cancelOn element can be set to indicate exceptions that must cause
+     *  the interceptor to mark the transaction for compensation. Conversely, the dontCancelOn
+     *  element can be set to indicate exceptions that must not cause the interceptor to mark
+     *  the transaction for compensation. When a class is specified for either of these elements,
+     *  the designated behavior applies to subclasses of that class as well. If both elements
+     *  are specified, dontCancelOn takes precedence.
+     * @return Class[] of Exceptions
+     */
+    @Nonbinding
+    Class[] cancelOn() default {};
+
+    /**
+     * The dontCancelOn element can be set to indicate exceptions that must not cause
+     *  the interceptor to mark the transaction for compensation. Conversely, the cancelOn element
+     *  can be set to indicate exceptions that must cause the interceptor to mark the transaction
+     *  for compensation. When a class is specified for either of these elements,
+     *  the designated behavior applies to subclasses of that class as well. If both elements
+     *  are specified, dontCancelOn takes precedence.
+     * @return Class[] of Exceptions
+     */
+    @Nonbinding
+    Class[] dontCancelOn() default {};
 }
