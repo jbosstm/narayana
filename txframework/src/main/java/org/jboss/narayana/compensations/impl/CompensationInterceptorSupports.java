@@ -19,52 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.narayana.compensations.impl;
 
-package org.jboss.narayana.compensations.functional.common;
-
+import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import org.jboss.narayana.compensations.api.Compensatable;
+import org.jboss.narayana.compensations.api.CompensationManager;
+import org.jboss.narayana.compensations.api.CompensationTransactionType;
 
+import javax.annotation.Priority;
 import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 
 /**
- * @author paul.robinson@redhat.com 22/03/2013
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class MultiService {
+@Compensatable(CompensationTransactionType.SUPPORTS)
+@Interceptor
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 197)
+public class CompensationInterceptorSupports extends CompensationInterceptorBase {
 
-    @Inject
-    DummyData dummyData;
-
-    @Inject
-    SingleService singleService;
-
-    @Compensatable
-    public void testsMulti(boolean throwException) throws MyRuntimeException {
-
-        dummyData.setValue("blah");
-
-        singleService.testSingle1(false);
-        singleService.testSingle2(false);
-
-        if (throwException) {
-            throw new MyRuntimeException();
+    @AroundInvoke
+    public Object intercept(final InvocationContext ic) throws Exception {
+        if (BusinessActivityManagerFactory.businessActivityManager().currentTransaction() == null) {
+            return invokeInNoTx(ic);
+        } else {
+            return invokeInCallerTx(ic);
         }
     }
 
-    @Compensatable
-    public void testAlternative(boolean throwException) throws MyRuntimeException {
-
-        singleService.testSingle1(false);
-
-        dummyData.setValue("blah");
-
-        try {
-            singleService.testSingle2DontCancel(true);
-        } catch (MyRuntimeException e) {
-            singleService.testSingle3(false);
-        }
-
-        if (throwException) {
-            throw new MyRuntimeException();
-        }
-    }
 }

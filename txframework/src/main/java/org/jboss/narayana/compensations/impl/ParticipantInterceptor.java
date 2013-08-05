@@ -66,6 +66,9 @@ public abstract class ParticipantInterceptor {
         } catch (RuntimeException e) {
             participantManager.exit();
             throw e;
+        } catch (Exception e) {
+            participantManager.completed();
+            throw e;
         } finally {
             if (initilisedDataMap) {
                 TXDataMapImpl.suspend();
