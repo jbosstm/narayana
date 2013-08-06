@@ -6,7 +6,6 @@
 <book lang="en">
 <bookinfo>
     <title>RESTAT (RESTful Atomic Transactions)</title>
-    <date>v5.0.0.M4</date>
     <authorgroup>
       <author>
         <firstname>Mark</firstname>
@@ -24,9 +23,16 @@
         </affiliation-->
         <email>mmmusgrov@redhat.com</email>
       </author>
-  </authorgroup>
+      <author>
+        <firstname>Gytis</firstname>
+        <surname>Trikleris</surname>
+        <!--affiliation>
+          <orgname>Red Hat</orgname>
+        </affiliation-->
+        <email>gytis@redhat.com</email>
+      </author>
+    </authorgroup>
     <authorinitials>M</authorinitials>
-<revhistory><revision><date>v5.0.0.M4</date><authorinitials>M</authorinitials></revision></revhistory>
 </bookinfo>
 <preface id="_preface">
 <title>Preface</title>
@@ -359,9 +365,39 @@ In this case the transaction-coordinator sends a PUT request to the registered v
 <title>JTA Bridge</title>
 <section id="_inbound_bridge">
 <title>Inbound Bridge</title>
-<simpara>Enabling JTA resources to participate in a RESTAT transaction.</simpara>
-<note><simpara>TODO Inbound bridging (<ulink url="https://issues.jboss.org/browse/JBTM-1364">https://issues.jboss.org/browse/JBTM-1364</ulink>) is planned for the next Narayana release (M4)
-NOTE: TODO Check with Gytis to see what text he wants to reuse from his thesis</simpara></note>
+<simpara>REST-AT to JTA bridge (also called inbound bridge) allows JTA resources to be enlisted in REST-AT transaction. Therefore, tools such as JPA and JMS can be used by JAX-RS endpoints and their XA resources will participate in the REST-AT transaction together with RESTful participants.</simpara>
+<simpara>This functionality is provided by Wildfly RTS subsytem. Therefore, modular dependency on org.jboss.narayana.rts has to be defined in deployment&#8217;s manifest file.
+In order to enable bridging, service writer has to annotate either JAX-RS resource class or specific JAX-RS resource method with one of two annotations: javax.ejb.TransactionAttribute, javax.transaction.Transactional.</simpara>
+<programlisting language="java" linenumbering="unnumbered">    @Path("/")
+    public class JAXRSResource {
+
+        @GET
+        public void get() {
+            // Do work witout JTA.
+        }
+
+        @POST
+        @TransactionAttribute
+        public void post() {
+            // Do work with JTA.
+        }
+
+    }</programlisting>
+<programlisting language="java" linenumbering="unnumbered">    @Path("/")
+    @Transactional
+    public class JAXRSResource {
+
+        @GET
+        public void get() {
+            // Do work with JTA.
+        }
+
+        @POST
+        public void post() {
+            // Do work with JTA.
+        }
+
+    }</programlisting>
 </section>
 <section id="_outbound_bridge">
 <title>Outbound Bridge</title>

@@ -1,7 +1,6 @@
 :doctype: book
 = RESTAT (RESTful Atomic Transactions)
-Mike Musgrove <mmusgrov@redhat.com> Mark Little <mlittle@redhat.com>
-v5.0.0.M4
+Mike Musgrove <mmusgrov@redhat.com> Mark Little <mlittle@redhat.com> Gytis Trikleris <gytis@redhat.com>
 :toc:
 
 [preface]
@@ -428,10 +427,48 @@ Narayana in general supports a number of different transaction models other than
 
 ==== Inbound Bridge
 
-Enabling JTA resources to participate in a RESTAT transaction.
+REST-AT to JTA bridge (also called inbound bridge) allows JTA resources to be enlisted in REST-AT transaction. Therefore, tools such as JPA and JMS can be used by JAX-RS endpoints and their XA resources will participate in the REST-AT transaction together with RESTful participants.
 
-NOTE: TODO Inbound bridging (https://issues.jboss.org/browse/JBTM-1364) is planned for the next Narayana release (M4)
-NOTE: TODO Check with Gytis to see what text he wants to reuse from his thesis
+This functionality is provided by Wildfly RTS subsytem. Therefore, modular dependency on org.jboss.narayana.rts has to be defined in deployment's manifest file.
+In order to enable bridging, service writer has to annotate either JAX-RS resource class or specific JAX-RS resource method with one of two annotations: javax.ejb.TransactionAttribute, javax.transaction.Transactional.
+
+[source,java]
+----
+    @Path("/")
+    public class JAXRSResource {
+
+        @GET
+        public void get() {
+            // Do work witout JTA.
+        }
+
+        @POST
+        @TransactionAttribute
+        public void post() {
+            // Do work with JTA.
+        }
+    
+    }
+----
+
+[source,java]
+----
+    @Path("/")
+    @Transactional
+    public class JAXRSResource {
+
+        @GET
+        public void get() {
+            // Do work with JTA.
+        }
+
+        @POST
+        public void post() {
+            // Do work with JTA.
+        }
+
+    }
+----
 
 ==== Outbound Bridge
 

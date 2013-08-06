@@ -15,4 +15,12 @@
         </affiliation-->
         <email>mmmusgrov@redhat.com</email>
       </author>
+      <author>
+        <firstname>Gytis</firstname>
+        <surname>Trikleris</surname>
+        <!--affiliation>
+          <orgname>Red Hat</orgname>
+        </affiliation-->
+        <email>gytis@redhat.com</email>
+      </author>
   </authorgroup>
