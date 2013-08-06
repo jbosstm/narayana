@@ -176,3 +176,27 @@ void TestAtmiBrokerXml::test_same_service() {
 		btlogger((char*) "same services test ok");
 	}
 }
+
+void TestAtmiBrokerXml::test_invalid_xml() {
+        putenv("BLACKTIE_CONFIGURATION_DIR=invalidtest");
+
+        try {
+                AtmiBrokerEnv::get_instance();
+                AtmiBrokerEnv::discard_instance();
+                BT_FAIL("INVALID XML");
+        } catch (std::exception& e) {
+                btlogger((char*) "invalid xml test ok");
+        }
+}
+
+void TestAtmiBrokerXml::test_no_config() {
+        putenv("BLACKTIE_CONFIGURATION_DIR=noexisttest");
+
+        try {
+                AtmiBrokerEnv::get_instance();
+                AtmiBrokerEnv::discard_instance();
+                BT_FAIL("NO CONFIG");
+        } catch (std::exception& e) {
+                btlogger((char*) "no config file test ok");
+        }
+}

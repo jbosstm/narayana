@@ -30,18 +30,6 @@ typedef struct {
 	char * value;
 } envVar_t;
 
-class BLACKTIE_CORE_DLL AtmiBrokerEnvXml {
-public:
-
-	AtmiBrokerEnvXml();
-
-	~AtmiBrokerEnvXml();
-
-	bool parseXmlDescriptor(std::vector<envVar_t>*,
-			const char * ConfigurationDir,
-			char * configuration);
-};
-
 typedef struct BLACKTIE_CORE_DLL xarm_config {
 	long resourceMgrId;
 	char * resourceName;
