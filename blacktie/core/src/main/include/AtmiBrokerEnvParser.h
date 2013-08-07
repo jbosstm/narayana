@@ -15,46 +15,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-#ifndef TEST_BLACKTIE_XML_H
-#define TEST_BLACKTIE_XML_H
+#ifndef AtmiBroker_ENVParser_H
+#define AtmiBroker_ENVParser_H
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <log4cxx/logger.h>
 
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/TestFixture.h>
+#if defined(XERCES_NEW_IOSTREAMS)
+#include <iostream>
+#include <fstream>
+#else
+#include <iostream.h>
+#include <fstream.h>
+#endif
 
-struct foo_t {
-	float Balance2[3];
-	long Balance;
-	char accountName[2][10];
-};
-typedef struct foo_t FOO;
+#include <AtmiBrokerEnvHandlers.h>
 
-struct bar_t {
-	int barlance[4];
-	short barbq;
-	int barlance1[4];
-	short barbq2;
-};
-typedef struct bar_t BAR;
-
-class TestAtmiBrokerXml: public CppUnit::TestFixture {
-	CPPUNIT_TEST_SUITE( TestAtmiBrokerXml);
-	CPPUNIT_TEST( test_env);
-	CPPUNIT_TEST( test_define_adminservice);
-	CPPUNIT_TEST( test_same_service);
-	CPPUNIT_TEST( test_invalid_xml);
-	CPPUNIT_TEST( test_no_config);
-	CPPUNIT_TEST_SUITE_END();
-
+class AtmiBrokerEnvParser {
 public:
-	virtual void setUp();
-	virtual void tearDown();
-	void test_env();
-	void test_define_adminservice();
-	void test_same_service();
-	void test_invalid_xml();
-	void test_no_config();
+	AtmiBrokerEnvParser();
+	~AtmiBrokerEnvParser();
+	bool parse(const char*, AtmiBrokerEnvHandlers*);
+
 private:
-	char* env;
+	bool checkFile(const char*, const char*);
+	
+	bool isInitial;
+	SAX2XMLReader* parser;
+
+	static log4cxx::LoggerPtr logger;
 };
 
 #endif

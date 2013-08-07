@@ -24,7 +24,8 @@
 
 #include "btlogger.h"
 #include "AtmiBrokerEnv.h"
-#include "AtmiBrokerEnvXml.h"
+#include "AtmiBrokerEnvParser.h"
+#include "AtmiBrokerEnvHandlers.h"
 #include "SynchronizableObject.h"
 #include "log4cxx/logger.h"
 #include "ace/ACE.h"
@@ -263,7 +264,7 @@ void AtmiBrokerEnv::destroy() {
 			buffer->wireSize = -1;
 
 			//std::vector<ServiceInfo>* services = &(*server)->serviceVector;
-			Attributes::iterator i;
+			::Attributes::iterator i;
 			for (i = buffer->attributes.begin(); i != buffer->attributes.end(); ++i) {
 				Attribute* attribute = i->second;
 				free(attribute->id);
@@ -396,9 +397,10 @@ int AtmiBrokerEnv::readenv() {
 					(char*) "readenv default configuration");
 		}
 
-		AtmiBrokerEnvXml aAtmiBrokerEnvXml;
-		if (aAtmiBrokerEnvXml.parseXmlDescriptor(&envVariableInfoSeq,
-				ENVIRONMENT_DIR, configuration)) {
+		AtmiBrokerEnvParser aAtmiBrokerEnvParser;
+		AtmiBrokerEnvHandlers handler(envVariableInfoSeq, configuration);
+		
+		if (aAtmiBrokerEnvParser.parse(ENVIRONMENT_DIR, &handler)) {
 			readEnvironment = true;
 		} else {
 			if (ENVIRONMENT_DIR != NULL) {
