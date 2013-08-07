@@ -24,39 +24,22 @@ package org.jboss.narayana.compensations.functional.distributed;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.UnknownTransactionException;
-import com.arjuna.wst.WrongStateException;
 import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
-import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
-import org.jboss.narayana.txframework.functional.common.EventLog;
-import org.jboss.narayana.txframework.functional.common.ServiceCommand;
-import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
 
 @RunWith(Arquillian.class)
 public class DistributedTest {
@@ -69,7 +52,6 @@ public class DistributedTest {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(false, DistributedTest.class.getPackage())
                 .addPackage(DummyCompensationHandler1.class.getPackage())
-                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addClass(URLUtils.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
@@ -83,18 +65,6 @@ public class DistributedTest {
         return archive;
     }
 
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
 
     @Before
     public void setupTest() throws Exception {
@@ -113,8 +83,6 @@ public class DistributedTest {
     @Test
     public void testSimple() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
-
         client.saveData(false);
 
         Assert.assertEquals(true, client.wasTransactionLoggedHandlerInvoked());
@@ -127,8 +95,6 @@ public class DistributedTest {
 
     @Test
     public void testClientDrivenCompensate() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         uba.begin();
         client.saveData(false);

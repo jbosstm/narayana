@@ -14,6 +14,13 @@
       </wsdl:input>
     </wsdl:operation>
 
+    <wsdl:operation name="SynchronousCompletedOperation">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/SynchronousCompleted" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+
     <wsdl:operation name="FailOperation">
       <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail" style="document"/>
       <wsdl:input>

@@ -28,6 +28,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
+import com.arjuna.wst11.stub.BAParticipantCompletionParticipantManagerStub;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.interceptor.AroundInvoke;
@@ -61,13 +62,13 @@ public abstract class ParticipantInterceptor {
 
 
             result = ic.proceed();
-            participantManager.completed();
+            complete(participantManager);
 
         } catch (RuntimeException e) {
             participantManager.exit();
             throw e;
         } catch (Exception e) {
-            participantManager.completed();
+            complete(participantManager);
             throw e;
         } finally {
             if (initilisedDataMap) {
@@ -76,6 +77,16 @@ public abstract class ParticipantInterceptor {
         }
 
         return result;
+    }
+
+    private void complete(final BAParticipantManager participantManager)
+            throws WrongStateException, UnknownTransactionException, SystemException {
+
+        if (participantManager instanceof BAParticipantCompletionParticipantManagerStub) {
+            ((BAParticipantCompletionParticipantManagerStub) participantManager).synchronousCompleted();
+        } else {
+            participantManager.completed();
+        }
     }
 
     protected abstract BAParticipantManager enlistParticipant(BusinessActivityManager bam, Method method) throws WrongStateException, UnknownTransactionException, SystemException;

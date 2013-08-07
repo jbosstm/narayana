@@ -68,6 +68,24 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
      *
      * @param parameters
      */
+    @WebMethod(operationName = "SynchronousCompletedOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/SynchronousCompleted")
+    @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/SynchronousCompleted")
+    public void synchronousCompletedOperation(
+            @WebParam(name = "SynchronousCompleted", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
+            NotificationType parameters)
+    {
+        MessageContext ctx = webServiceCtx.getMessageContext();
+        final NotificationType completed = parameters;
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
+        final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
+
+        ParticipantCompletionCoordinatorProcessor.getProcessor().completed(completed, inboundMap, arjunaContext) ;
+    }
+
+    /**
+     *
+     * @param parameters
+     */
     @WebMethod(operationName = "FailOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail")
     @Oneway
     @Action(input="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Fail")

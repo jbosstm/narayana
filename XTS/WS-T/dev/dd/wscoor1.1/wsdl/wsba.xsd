@@ -19,6 +19,7 @@
 	<xsd:element name="Closed" type="wsba:NotificationType"/>
 	<xsd:element name="Compensated" type="wsba:NotificationType"/>
 	<xsd:element name="Completed" type="wsba:NotificationType"/>
+    <xsd:element name="SynchronousCompleted" type="wsba:NotificationType"/>
 	<xsd:element name="Exit" type="wsba:NotificationType"/>
       <xsd:element name="CannotComplete" type="wsba:NotificationType"/>
 	<xsd:element name="Fail" type="wsba:ExceptionType"/>
