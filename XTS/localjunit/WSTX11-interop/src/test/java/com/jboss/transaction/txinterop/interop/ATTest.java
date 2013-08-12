@@ -26,10 +26,14 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.jbossts.xts.bytemanSupport.BMScript;
+import org.jboss.jbossts.xts.bytemanSupport.participantReadOnly.ParticipantCompletionReadOnlyRules;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 
 import com.jboss.transaction.txinterop.proxy.ProxyConversation;
@@ -52,6 +56,16 @@ public class ATTest {
     @Deployment
     public static WebArchive createDeployment() {
         return WarDeployment.getDeployment();
+    }
+
+    @BeforeClass
+    public static void submitBytemanScript() throws Exception {
+        BMScript.submit(ParticipantCompletionReadOnlyRules.RESOURCE_PATH);
+    }
+
+    @AfterClass
+    public static void removeBytemanScript() {
+        BMScript.remove(ParticipantCompletionReadOnlyRules.RESOURCE_PATH);
     }
     
     @Before
@@ -101,6 +115,7 @@ public class ATTest {
     
     @Test
     public void testAT4_1() throws Exception {
+        ParticipantCompletionReadOnlyRules.enableReadOnlyCheck();
         test.testAT4_1();
     }
     

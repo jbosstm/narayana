@@ -22,6 +22,7 @@
 
 package com.jboss.transaction.txinterop.interop;
 
+import org.jboss.jbossts.xts.bytemanSupport.participantReadOnly.ParticipantCompletionReadOnlyRules;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -82,6 +83,7 @@ public class WarDeployment {
                 .addPackage(CoordinationContextHandler.class.getPackage())
                 .addPackage(SoapFaultClient.class.getPackage())
                 .addPackage(SoapFaultPortType.class.getPackage())
+                .addPackage(ParticipantCompletionReadOnlyRules.class.getPackage())
                 .addAsResource("interop11/participanthandlers.xml", "com/jboss/transaction/txinterop/webservices/atinterop/sei/participanthandlers.xml")
                 .addAsResource("interop11/participanthandlers.xml", "com/jboss/transaction/txinterop/webservices/bainterop/sei/participanthandlers.xml")
                 .addAsWebInfResource("interop11/wsdl/interopat.wsdl", "classes/com/jboss/transaction/txinterop/webservices/atinterop/generated/wsdl/interopat.wsdl")
