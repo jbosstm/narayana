@@ -1,5 +1,6 @@
 package org.jboss.narayana.rest.integration.test.integration;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.provider.HttpResponseException;
@@ -7,6 +8,7 @@ import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatusElement;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.Vote;
 import org.jboss.narayana.rest.integration.test.common.LoggingParticipant;
+import org.jboss.narayana.rest.integration.test.common.RestATManagementResource;
 import org.jboss.narayana.rest.integration.test.common.TransactionalService;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
@@ -51,7 +53,41 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
     }
 
     @Test
-    public void testCommit() throws Exception {
+    public void testCrashAfterPrepare() throws Exception {
+        startContainer(VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashAfterPrepare"));
+
+        txSupport.startTx();
+
+        enlistParticipant(txSupport.getDurableParticipantEnlistmentURI(), new Prepared());
+        enlistParticipant(txSupport.getDurableParticipantEnlistmentURI(), new Prepared());
+
+        Assert.assertEquals(2, txSupport.getTransactionInfo().getTwoPhaseAware().size());
+
+        try {
+            // JVM is killed here.
+            txSupport.commitTx();
+        } catch (HttpResponseException e) {
+        }
+
+        restartContainer(VM_ARGUMENTS);
+        registerDeserializer();
+
+        TransactionStatusElement status;
+        int cycles = 0;
+        JSONArray partricipantsInformation;
+
+        do {
+            Thread.sleep(RECOVERY_PERIOD * 2000);
+            partricipantsInformation = getParticipantsInformation();
+        } while (cycles++ < RECOVERY_WAIT_CYCLES && partricipantsInformation.length() > 0);
+
+        if (partricipantsInformation.length() > 0) {
+            Assert.fail("Recovery failed");
+        }
+    }
+
+    @Test
+    public void testCrashBeforeCommit() throws Exception {
         startContainer(VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashBeforeCommit"));
 
         txSupport.startTx();
@@ -103,6 +139,18 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
                 .put(String.class);
 
         Assert.assertEquals(204, clientResponse.getStatus());
+    }
+
+    private JSONArray getParticipantsInformation() {
+        try {
+            final ClientResponse<String> response = new ClientRequest(DEPLOYMENT_URL + "/"
+                    + RestATManagementResource.BASE_URL_SEGMENT + "/"
+                    + RestATManagementResource.PARTICIPANTS_URL_SEGMENT).get(String.class);
+            return new JSONArray(response.getEntity());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONArray();
+        }
     }
 
 }

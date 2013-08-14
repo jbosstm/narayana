@@ -317,7 +317,7 @@ public final class ParticipantResourceTestCase {
             throws MalformedURLException {
 
         ParticipantInformation participantInformation = new ParticipantInformation(participantId, APPLICATION_ID, "",
-                BASE_URL, participant);
+                participant);
         participantInformation.setStatus(TxStatus.TransactionActive.name());
         ParticipantsContainer.getInstance().addParticipantInformation(participantId, participantInformation);
     }

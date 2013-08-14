@@ -40,7 +40,7 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
         String participantRecoveryURL = enlistParticipant(participantUrl, participantEnlistmentURL);
 
         ParticipantInformation participantInformation = new ParticipantInformation(participantId, applicationId,
-                participantRecoveryURL, baseUrl, participant);
+                participantRecoveryURL, participant);
         participantInformation.setStatus(TxStatus.TransactionActive.name());
 
         ParticipantsContainer.getInstance().addParticipantInformation(participantId, participantInformation);
