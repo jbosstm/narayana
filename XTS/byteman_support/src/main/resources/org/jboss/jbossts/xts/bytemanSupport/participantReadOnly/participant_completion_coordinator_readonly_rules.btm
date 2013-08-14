@@ -1,0 +1,39 @@
+RULE enable readonly check
+CLASS org.jboss.jbossts.xts.bytemanSupport.participantReadOnly.ParticipantCompletionReadOnlyRules
+METHOD enableReadOnlyCheck()
+BIND NOTHING
+IF TRUE
+DO debug("participant_completion_readonly.enable"),
+  flag("enabled")
+ENDRULE
+
+RULE readonly delay 3s for test
+CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
+METHOD readOnly(Notification, MAP, ArjunaContext)
+AT ENTRY
+IF TRUE
+DO debug("readonly delay 3s"),
+   Thread.sleep(3000)
+ENDRULE
+
+RULE readonly called
+CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
+METHOD readOnly(Notification, MAP, ArjunaContext)
+AT RETURN
+BIND NOTHING
+IF (flagged("enabled"))
+DO debug("coordinator_processor_readonly.called.waking"),
+   signalWake("readonly", true),
+   debug("coordinator_processor_readonly.called.donewake")
+ENDRULE
+
+RULE prepare called
+CLASS com.arjuna.wst11.messaging.ParticipantProcessorImpl
+METHOD prepare(Notification, MAP, ArjunaContext)
+BIND NOTHING
+IF (flagged("enabled"))
+DO debug("participant_processor.prepare.waiting"),
+   waitFor("readonly"),
+   debug("participant_processor.prepare.woken"),
+   clear("enabled")
+ENDRULE
