@@ -1,5 +1,6 @@
 package org.jboss.narayana.rest.integration;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,10 @@ public final class ParticipantsContainer {
 
     private ParticipantsContainer() {
         participantsInformation = new ConcurrentHashMap<String, ParticipantInformation>();
+    }
+
+    public Map<String, ParticipantInformation> getAllParticipantsInformation() {
+        return Collections.unmodifiableMap(participantsInformation);
     }
 
     public ParticipantInformation getParticipantInformation(final String participantId) {

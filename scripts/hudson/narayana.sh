@@ -149,10 +149,14 @@ function rts_as_tests {
 }
 
 
-function rest_at_integration_tests {
+function rts_tests {
   echo "#0. REST-AT Integration Test"
   ./build.sh -f ./rts/at/integration/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
+
+  echo "#0. REST-AT To JTA Bridge Test"
+    ./build.sh -f ./rts/at/bridge/pom.xml -P$ARQ_PROF "$@" test
+    [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
 function blacktie {
@@ -376,7 +380,7 @@ comment_on_pull "Started testing this pull request: $BUILD_URL"
 [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
 [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
 [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
-[ $REST_AT_INTEGRATION_TESTS ] || REST_AT_INTEGRATION_TESTS=1 # REST-AT Integration Test
+[ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
 [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
 [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
 [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
@@ -417,7 +421,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $REST_AT_INTEGRATION_TESTS = 1 ] && rest_at_integration_tests "$@"
+[ $RTS_TESTS = 1 ] && rts_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
 comment_on_pull "All tests passed - Job complete $BUILD_URL"
