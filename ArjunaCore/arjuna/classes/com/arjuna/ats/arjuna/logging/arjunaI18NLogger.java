@@ -1470,6 +1470,14 @@ public interface arjunaI18NLogger {
 	public void warn_objectstore_JDBCImple_over_max_image_size(int imageSize,
 			int maxStateSize);
 
+	// jump from id 12371 to ensure the same code as on the master branch
+	@Message(id = 12376, value = "ObjectStore remove_state caught exception:", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_objectstore_remove_state_exception(@Cause() Throwable arg0);
+
+	@Message(id = 12377, value = "HornetqObjectStore remove_state caught exception:", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_hornetqobjectstore_remove_state_exception(@Cause() Throwable arg0);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
