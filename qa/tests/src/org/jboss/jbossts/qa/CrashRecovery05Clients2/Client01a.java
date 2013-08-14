@@ -106,7 +106,7 @@ public class Client01a
 			correct = correct && service1.is_correct();
 			correct = correct && service2.is_correct();
 
-			CrashRecoveryDelays.awaitReplayCompletionCR05();
+			CrashRecoveryDelays.awaitReplayCompletionCR05(5); // scale factor could maybe be reduced
 
 			ResourceTrace resourceTrace1 = service1.get_resource_trace(0);
 			ResourceTrace resourceTrace2 = service2.get_resource_trace(0);
