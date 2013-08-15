@@ -17,7 +17,8 @@ cd $TEMPORARY_REBASE_LOCATION || fatal
 
 git clone $GIT_URL || fatal
 cd jboss-as
-git checkout -t origin/$ORIGIN_AS_BRANCH || fatal
+git fetch
+git checkout $ORIGIN_AS_BRANCH || fatal
 
 git remote add upstream $UPSTREAM_GIT_URL
 git pull --rebase --ff-only upstream $UPSTREAM_AS_BRANCH
