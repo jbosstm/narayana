@@ -63,9 +63,9 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
         if (!(outcome instanceof Prepared)) {
             cleanup();
+        } else {
+            stopBridge();
         }
-
-        stopBridge();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("InboundBridgeParticipant.prepare: xid=" + xid + ", outcome=" + outcome.getClass().getName());
@@ -82,10 +82,11 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
         startBridge();
 
-        commitSubordinate();
-        cleanup();
-
-        stopBridge();
+        try {
+            commitSubordinate();
+        } finally {
+            cleanup();
+        }
     }
 
     @Override
@@ -105,12 +106,11 @@ public class InboundBridgeParticipant implements Participant, Serializable {
         if (outcome instanceof Prepared) {
             try {
                 commitSubordinate();
-                cleanup();
             } catch (HeuristicException e) {
             }
         }
 
-        stopBridge();
+        cleanup();
     }
 
     @Override
@@ -121,10 +121,11 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
         startBridge();
 
-        rollbackSubordinate();
-        cleanup();
-
-        stopBridge();
+        try {
+            rollbackSubordinate();
+        } finally {
+            cleanup();
+        }
     }
 
     private void startBridge() {
@@ -175,16 +176,12 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_COMMIT);
                 case XAException.XA_HEURRB:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_ROLLBACK);
                 case XAException.XA_HEURMIX:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_MIXED);
                 case XAException.XA_HEURHAZ:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_MIXED);
             }
         }
@@ -202,22 +199,19 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_COMMIT);
                 case XAException.XA_HEURRB:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_ROLLBACK);
                 case XAException.XA_HEURMIX:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_MIXED);
                 case XAException.XA_HEURHAZ:
-                    cleanup();
                     throw new HeuristicException(HeuristicType.HEURISTIC_MIXED);
             }
         }
     }
 
     private void cleanup() {
+        stopBridge();
         InboundBridgeManager.getInstance().removeInboundBridge(xid);
     }
 
