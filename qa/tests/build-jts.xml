@@ -22,7 +22,7 @@
 
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="narayana.version" value="5.0.0.M4"/>
+	<property name="narayana.version" value="5.0.0.M5-SNAPSHOT"/>
 	<property name="isIdlj" value="0"/>
 	<condition property="useJavaIdl">
 		<equals arg1="${isIdlj}" arg2="1"/>
