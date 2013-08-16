@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.jboss.narayana.blacktie</groupId>
 		<artifactId>blacktie-java</artifactId>
-		<version>5.0.0.M4-SNAPSHOT</version>
+		<version>5.0.0.M4</version>
 		<relativePath>../common/java/pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -203,7 +203,7 @@
 											blacktie-cpp-plugin
 										</artifactId>
 										<versionRange>
-											[5.0.0.M4-SNAPSHOT,)
+											[5.0.0.M4,)
 										</versionRange>
 										<goals>
 											<goal>process-classes</goal>
