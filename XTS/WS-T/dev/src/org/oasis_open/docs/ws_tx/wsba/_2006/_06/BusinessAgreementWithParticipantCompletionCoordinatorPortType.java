@@ -36,6 +36,15 @@ public interface BusinessAgreementWithParticipantCompletionCoordinatorPortType {
         NotificationType parameters);
 
     /**
+     *
+     * @param parameters
+     */
+    @WebMethod(operationName = "SynchronousCompletedOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/SynchronousCompleted")
+    public void synchronousCompletedOperation(
+            @WebParam(name = "SynchronousCompleted", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
+            NotificationType parameters);
+
+    /**
      * 
      * @param parameters
      */

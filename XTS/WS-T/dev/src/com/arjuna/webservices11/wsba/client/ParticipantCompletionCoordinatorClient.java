@@ -58,6 +58,10 @@ public class ParticipantCompletionCoordinatorClient
      */
     private String completedAction = null;
     /**
+     * The synchronous completed action.
+     */
+    private String synchronousCompletedAction = null;
+    /**
      * The fault action.
      */
     private String failAction = null;
@@ -107,6 +111,7 @@ public class ParticipantCompletionCoordinatorClient
     {
         final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         completedAction = BusinessActivityConstants.WSBA_ACTION_COMPLETED;
+        synchronousCompletedAction = BusinessActivityConstants.WSBA_ACTION_SYNCHRONOUS_COMPLETED;
         failAction = BusinessActivityConstants.WSBA_ACTION_FAIL;
         compensatedAction = BusinessActivityConstants.WSBA_ACTION_COMPENSATED;
         closedAction = BusinessActivityConstants.WSBA_ACTION_CLOSED;
@@ -141,6 +146,25 @@ public class ParticipantCompletionCoordinatorClient
         NotificationType completed = new NotificationType();
 
         port.completedOperation(completed);
+    }
+
+    /**
+     * Send a synchronous completed request.
+     * @param map addressing context initialised with to and message ID.
+     * @param identifier The identifier of the initiator.
+     * @throws com.arjuna.webservices.SoapFault For any errors.
+     * @throws java.io.IOException for any transport errors.
+     */
+    public void sendSynchronousCompleted(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
+            throws SoapFault, IOException
+    {
+        MAPEndpoint participant = getParticipant(endpoint, map);
+        AddressingHelper.installFromFaultTo(map, participant, identifier);
+        BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
+        port = getPort(endpoint, map, synchronousCompletedAction);
+        NotificationType completed = new NotificationType();
+
+        port.synchronousCompletedOperation(completed);
     }
 
     /**

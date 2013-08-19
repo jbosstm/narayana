@@ -19,6 +19,9 @@
   <wsdl:message name="Completed">
     <wsdl:part name="parameters" element="wsba:Completed"/>
   </wsdl:message>
+  <wsdl:message name="SynchronousCompleted">
+    <wsdl:part name="parameters" element="wsba:SynchronousCompleted"/>
+  </wsdl:message>
   <wsdl:message name="Close">
     <wsdl:part name="parameters" element="wsba:Close"/>
   </wsdl:message>
@@ -68,6 +71,9 @@
   <wsdl:portType name="BusinessAgreementWithParticipantCompletionCoordinatorPortType">
     <wsdl:operation name="CompletedOperation">
       <wsdl:input message="wsba:Completed"/>
+    </wsdl:operation>
+    <wsdl:operation name="SynchronousCompletedOperation">
+      <wsdl:input message="wsba:SynchronousCompleted"/>
     </wsdl:operation>
     <wsdl:operation name="FailOperation">
       <wsdl:input message="wsba:Fail"/>

@@ -26,8 +26,6 @@ import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
-import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
 import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
 import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
@@ -37,10 +35,8 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,7 +59,6 @@ public class DataMapTest {
 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, "org.jboss.narayana.compensations.functional")
-                .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
@@ -74,19 +69,6 @@ public class DataMapTest {
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
-    }
-
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
 
@@ -113,8 +95,6 @@ public class DataMapTest {
     @Test
     public void testSimple() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
-
         service.doWork();
         Assert.assertEquals(true, DataConfirmationHandler.getDataNotNull());
         Assert.assertEquals(true, DataConfirmationHandler.getDataAvailable());
@@ -128,8 +108,6 @@ public class DataMapTest {
 
     @Test
     public void testCompensate() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         uba.begin();
         service.doWork();

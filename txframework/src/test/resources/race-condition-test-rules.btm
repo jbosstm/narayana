@@ -1,0 +1,7 @@
+RULE complete called
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
+METHOD completed(NotificationType, MAP, ArjunaContext)
+AT ENTRY
+IF TRUE
+DO Thread.sleep(2000)
+ENDRULE

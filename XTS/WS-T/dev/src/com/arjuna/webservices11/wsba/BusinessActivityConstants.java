@@ -176,6 +176,18 @@ public interface BusinessActivityConstants
      */
     public String WSBA_ACTION_COMPLETED = WSBA_NAMESPACE + "/" + WSBA_ELEMENT_COMPLETED ;
     /**
+     * The SynchronousCompleted element.
+     */
+    public String WSBA_ELEMENT_SYNCHRONOUS_COMPLETED = "SynchronousCompleted" ;
+    /**
+     * The SynchronousCompleted QName.
+     */
+    public QName WSBA_ELEMENT_SYNCHRONOUS_COMPLETED_QNAME = new QName(WSBA_NAMESPACE, WSBA_ELEMENT_SYNCHRONOUS_COMPLETED, WSBA_PREFIX) ;
+    /**
+     * The SynchronousCompleted Action.
+     */
+    public String WSBA_ACTION_SYNCHRONOUS_COMPLETED = WSBA_NAMESPACE + "/" + WSBA_ELEMENT_SYNCHRONOUS_COMPLETED ;
+    /**
      * The Exit element.
      */
     public String WSBA_ELEMENT_EXIT = "Exit" ;

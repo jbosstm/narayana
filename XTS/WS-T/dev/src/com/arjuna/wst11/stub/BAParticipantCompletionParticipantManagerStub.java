@@ -77,6 +77,15 @@ public class BAParticipantCompletionParticipantManagerStub implements BAParticip
         }
     }
 
+    public synchronized void synchronousCompleted() throws WrongStateException, UnknownTransactionException, SystemException
+    {
+        final State state = coordinator.synchronousCompleted() ;
+        if ((state != State.STATE_ACTIVE) && (state != State.STATE_COMPLETED))
+        {
+            throw new WrongStateException() ;
+        }
+    }
+
     public void cannotComplete()
         throws WrongStateException, UnknownTransactionException, SystemException
     {
