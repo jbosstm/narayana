@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver;
@@ -38,13 +39,14 @@ public class postgresql_driver extends JDBCImple_driver {
 	}
 
 	@Override
-	protected void checkDropTableException(SQLException ex) throws SQLException {
+	protected void checkDropTableException(Connection connection,
+			SQLException ex) throws SQLException {
 		if (!ex.getSQLState().equals("42P01")) {
 			throw ex;
 		} else {
 			// For some reason PSQL leaves the transaction in a bad state on a
 			// failed drop
-			connection.get().commit();
+			connection.commit();
 		}
 	}
 }

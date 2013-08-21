@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -48,7 +47,7 @@ import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 public class DynamicDataSourceJDBCAccess implements JDBCAccess {
 	private DataSource dataSource;
 
-	public Connection getConnection() throws SQLException, NamingException {
+	public Connection getConnection() throws SQLException {
 		Connection connection = dataSource.getConnection();
 		connection.setAutoCommit(false);
 		return connection;
