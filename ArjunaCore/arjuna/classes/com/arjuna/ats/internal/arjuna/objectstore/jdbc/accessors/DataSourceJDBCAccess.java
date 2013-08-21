@@ -44,11 +44,11 @@ import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 public class DataSourceJDBCAccess implements JDBCAccess {
 
+	private DataSource dataSource;
 	private String datasourceName;
 
-	public Connection getConnection() throws SQLException, NamingException {
-		Connection connection = ((DataSource) new InitialContext()
-				.lookup(datasourceName)).getConnection();
+	public Connection getConnection() throws SQLException {
+		Connection connection = dataSource.getConnection();
 		connection.setAutoCommit(false);
 		return connection;
 	}
@@ -69,6 +69,12 @@ public class DataSourceJDBCAccess implements JDBCAccess {
 			throw new FatalError(
 					"The JDBC ObjectStore was not configured with a datasource name");
 		}
+		
+		try {
+			InitialContext context = new InitialContext();
+			dataSource = (DataSource) context.lookup(datasourceName);
+		} catch (NamingException ex) {
+			throw new FatalError(toString() + " : " + ex, ex);
+		}
 	}
-
 }
