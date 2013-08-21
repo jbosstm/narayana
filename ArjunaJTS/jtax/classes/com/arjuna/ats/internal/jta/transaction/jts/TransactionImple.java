@@ -164,6 +164,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	/**
+   * TransactionImple (which could be a proxy to the remote transaction) will
+   * return up to two different hashCodes. It will return a valid hashcode if
+   * the remote transaction is active and it will return -1 if the transaction
+   * is no longer active.
+   * The hashcode is the uid of the transaction, when the transaction completes
+   * it no longer has a uid in theory hence the -1. With raw JTA as we don't
+   * reset the uid when the transaction completes it will still get a hashcode
+   * based off the uid.
 	 * Return -1 if we fail.
 	 */
 
