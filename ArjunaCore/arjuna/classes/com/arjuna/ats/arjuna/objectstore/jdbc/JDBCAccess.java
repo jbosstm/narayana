@@ -55,7 +55,7 @@ public interface JDBCAccess
      * @throws NamingException 
      */
 
-    public Connection getConnection () throws SQLException, NamingException;
+    public Connection getConnection () throws SQLException;
 
     /**
      * This method can be used to pass additional information to the

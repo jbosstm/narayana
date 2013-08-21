@@ -42,6 +42,7 @@
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 import java.sql.Blob;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -76,7 +77,8 @@ public class oracle_driver extends JDBCImple_driver {
 	}
 
 	@Override
-	protected void checkDropTableException(SQLException ex) throws SQLException {
+	protected void checkDropTableException(Connection connection,
+			SQLException ex) throws SQLException {
 		if (!ex.getSQLState().equals("42000") && ex.getErrorCode() != 942) {
 			throw ex;
 		}

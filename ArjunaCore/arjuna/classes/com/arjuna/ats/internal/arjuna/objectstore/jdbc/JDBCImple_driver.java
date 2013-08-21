@@ -57,8 +57,9 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 public abstract class JDBCImple_driver {
 
-	protected static ThreadLocal<Connection> connection;
+	// protected Connection connection;
 	protected String tableName;
+	private JDBCAccess jdbcAccess;
 
 	public boolean commit_state(Uid objUid, String typeName)
 			throws ObjectStoreException {
@@ -70,13 +71,12 @@ public abstract class JDBCImple_driver {
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmt2 = null;
 		try {
+			Connection connection = jdbcAccess.getConnection();
 			// Delete any previously committed state
 			pstmt = connection
-					.get()
-					.prepareStatement(
-							"DELETE FROM "
-									+ tableName
-									+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+					.prepareStatement("DELETE FROM "
+							+ tableName
+							+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
 
 			pstmt.setString(1, objUid.stringForm());
 			pstmt.setString(2, typeName);
@@ -90,12 +90,10 @@ public abstract class JDBCImple_driver {
 
 			// now do the commit itself:
 			pstmt2 = connection
-					.get()
-					.prepareStatement(
-							"UPDATE "
-									+ tableName
-									+ " SET StateType = 1 WHERE UidString = ? AND TypeName = ? AND StateType = "
-									+ StateStatus.OS_UNCOMMITTED);
+					.prepareStatement("UPDATE "
+							+ tableName
+							+ " SET StateType = 1 WHERE UidString = ? AND TypeName = ? AND StateType = "
+							+ StateStatus.OS_UNCOMMITTED);
 
 			pstmt2.setString(1, objUid.stringForm());
 			pstmt2.setString(2, typeName);
@@ -103,10 +101,11 @@ public abstract class JDBCImple_driver {
 			int rowcount2 = pstmt2.executeUpdate();
 			if (rowcount2 > 0) {
 				result = true;
-				connection.get().commit();
+				connection.commit();
 			} else {
-				connection.get().rollback();
+				connection.rollback();
 			}
+			connection.close();
 
 		} catch (SQLException e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
@@ -139,12 +138,11 @@ public abstract class JDBCImple_driver {
 
 		PreparedStatement pstmt = null;
 		try {
+			Connection connection = jdbcAccess.getConnection();
 			pstmt = connection
-					.get()
-					.prepareStatement(
-							"UPDATE "
-									+ tableName
-									+ " SET Hidden = 1 WHERE UidString = ? AND TypeName = ? AND Hidden = 0");
+					.prepareStatement("UPDATE "
+							+ tableName
+							+ " SET Hidden = 1 WHERE UidString = ? AND TypeName = ? AND Hidden = 0");
 
 			pstmt.setString(1, objUid.stringForm());
 			pstmt.setString(2, typeName);
@@ -153,7 +151,8 @@ public abstract class JDBCImple_driver {
 			if (rowcount > 0) {
 				result = true;
 			}
-			connection.get().commit();
+			connection.commit();
+			connection.close();
 		} catch (SQLException e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_1(e);
 		} finally {
@@ -178,12 +177,11 @@ public abstract class JDBCImple_driver {
 
 		PreparedStatement pstmt = null;
 		try {
+			Connection connection = jdbcAccess.getConnection();
 			pstmt = connection
-					.get()
-					.prepareStatement(
-							"UPDATE "
-									+ tableName
-									+ " SET Hidden = 0 WHERE UidString = ? AND TypeName = ? AND Hidden = 1");
+					.prepareStatement("UPDATE "
+							+ tableName
+							+ " SET Hidden = 0 WHERE UidString = ? AND TypeName = ? AND Hidden = 1");
 
 			pstmt.setString(1, objUid.stringForm());
 			pstmt.setString(2, typeName);
@@ -192,7 +190,8 @@ public abstract class JDBCImple_driver {
 			if (rowcount > 0) {
 				result = true;
 			}
-			connection.get().commit();
+			connection.commit();
+			connection.close();
 		} catch (SQLException e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_2(e);
 		} finally {
@@ -223,8 +222,10 @@ public abstract class JDBCImple_driver {
 
 		PreparedStatement pstmt = null;
 		try {
-			pstmt = connection.get().prepareStatement(
-					"SELECT StateType, Hidden FROM " + tableName
+			Connection connection = jdbcAccess.getConnection();
+			pstmt = connection
+					.prepareStatement("SELECT StateType, Hidden FROM "
+							+ tableName
 							+ " WHERE UidString = ? AND TypeName = ?");
 
 			pstmt.setString(1, objUid.stringForm());
@@ -261,7 +262,8 @@ public abstract class JDBCImple_driver {
 					break;
 				}
 			}
-			connection.get().commit();
+			connection.commit();
+			connection.close();
 
 			// examine in reverse order:
 			if (have_OS_COMMITTED_HIDDEN) {
@@ -311,7 +313,8 @@ public abstract class JDBCImple_driver {
 		try {
 			OutputObjectState store = new OutputObjectState();
 
-			Statement stmt = connection.get().createStatement();
+			Connection connection = jdbcAccess.getConnection();
+			Statement stmt = connection.createStatement();
 			ResultSet rs = null;
 
 			try {
@@ -339,7 +342,8 @@ public abstract class JDBCImple_driver {
 						finished = true;
 					}
 				}
-				connection.get().commit();
+				connection.commit();
+				connection.close();
 			} catch (Exception e) {
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 			} finally {
@@ -368,7 +372,8 @@ public abstract class JDBCImple_driver {
 		try {
 			OutputObjectState store = new OutputObjectState();
 
-			Statement stmt = connection.get().createStatement();
+			Connection connection = jdbcAccess.getConnection();
+			Statement stmt = connection.createStatement();
 			ResultSet rs = null;
 
 			try {
@@ -395,7 +400,8 @@ public abstract class JDBCImple_driver {
 					}
 				}
 
-				connection.get().commit();
+				connection.commit();
+				connection.close();
 			} catch (Exception e) {
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 			} finally {
@@ -428,12 +434,11 @@ public abstract class JDBCImple_driver {
 
 				PreparedStatement pstmt = null;
 				try {
+					Connection connection = jdbcAccess.getConnection();
 					pstmt = connection
-							.get()
-							.prepareStatement(
-									"DELETE FROM "
-											+ tableName
-											+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+							.prepareStatement("DELETE FROM "
+									+ tableName
+									+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
 
 					pstmt.setString(1, objUid.stringForm());
 					pstmt.setString(2, typeName);
@@ -443,7 +448,8 @@ public abstract class JDBCImple_driver {
 						result = true;
 					}
 
-					connection.get().commit();
+					connection.commit();
+					connection.close();
 				} catch (SQLException e) {
 					tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
 				} finally {
@@ -480,19 +486,16 @@ public abstract class JDBCImple_driver {
 
 			PreparedStatement pstmt = null;
 			try {
+				Connection connection = jdbcAccess.getConnection();
 				pstmt = connection
-						.get()
-						.prepareStatement(
-								"SELECT ObjectState FROM "
-										+ tableName
-										+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+						.prepareStatement("SELECT ObjectState FROM "
+								+ tableName
+								+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
 				pstmt.setString(1, objUid.stringForm());
 				pstmt.setString(2, typeName);
 				pstmt.setInt(3, stateType);
 
 				rs = pstmt.executeQuery();
-
-				connection.get().commit();
 				if (rs.next()) {
 
 					byte[] buffer = rs.getBytes(1);
@@ -504,6 +507,9 @@ public abstract class JDBCImple_driver {
 								.warn_objectstore_JDBCImple_readfailed();
 					}
 				}
+
+				connection.commit();
+				connection.close();
 			} catch (SQLException e) {
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(e);
 			} finally {
@@ -546,8 +552,8 @@ public abstract class JDBCImple_driver {
 			PreparedStatement pstmt = null;
 			PreparedStatement pstmt2 = null;
 			try {
+				Connection connection = jdbcAccess.getConnection();
 				pstmt = connection
-						.get()
 						.prepareStatement(
 								"SELECT ObjectState, UidString, StateType, TypeName FROM "
 										+ tableName
@@ -565,14 +571,12 @@ public abstract class JDBCImple_driver {
 					updateBytes(rs, 1, b);
 					rs.updateRow();
 				} else {
-					connection.get().commit();
+					// TODO connection.get().commit();
 					// not in database, do insert:
 					pstmt2 = connection
-							.get()
-							.prepareStatement(
-									"INSERT INTO "
-											+ tableName
-											+ " (StateType,Hidden,TypeName,UidString,ObjectState) VALUES (?,0,?,?,?)");
+							.prepareStatement("INSERT INTO "
+									+ tableName
+									+ " (StateType,Hidden,TypeName,UidString,ObjectState) VALUES (?,0,?,?,?)");
 
 					pstmt2.setInt(1, stateType);
 					pstmt2.setString(2, typeName);
@@ -582,7 +586,8 @@ public abstract class JDBCImple_driver {
 					pstmt2.executeUpdate();
 				}
 
-				connection.get().commit();
+				connection.commit();
+				connection.close();
 				result = true;
 			} catch (SQLException e) {
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
@@ -623,20 +628,23 @@ public abstract class JDBCImple_driver {
 	public void initialise(final JDBCAccess jdbcAccess, String tableName,
 			ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)
 			throws SQLException, NamingException {
+		this.jdbcAccess = jdbcAccess;
 
-		connection = new ThreadLocal<Connection>() {
+		// connection = new ThreadLocal<Connection>() {
+		//
+		// @Override
+		// protected Connection initialValue() {
+		// try {
+		// return jdbcAccess.getConnection();
+		// } catch (Exception e) {
+		// throw new RuntimeException(e);
+		// }
+		// }
+		// };
 
-			@Override
-			protected Connection initialValue() {
-				try {
-					return jdbcAccess.getConnection();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		};
+		Connection connection = jdbcAccess.getConnection();
 
-		Statement stmt = connection.get().createStatement();
+		Statement stmt = connection.createStatement();
 
 		// table [type, object UID, format, blob]
 
@@ -644,7 +652,7 @@ public abstract class JDBCImple_driver {
 			try {
 				stmt.executeUpdate("DROP TABLE " + tableName);
 			} catch (SQLException ex) {
-				checkDropTableException(ex);
+				checkDropTableException(connection, ex);
 			}
 		}
 
@@ -659,9 +667,11 @@ public abstract class JDBCImple_driver {
 		stmt.close();
 
 		// This can be the case when triggering via EmptyObjectStore
-		if (!connection.get().getAutoCommit()) {
-			connection.get().commit();
+		if (!connection.getAutoCommit()) {
+			connection.commit();
 		}
+		connection.close();
+
 		this.tableName = tableName;
 	}
 
@@ -687,7 +697,7 @@ public abstract class JDBCImple_driver {
 	protected abstract void checkCreateTableError(SQLException ex)
 			throws SQLException;
 
-	protected abstract void checkDropTableException(SQLException ex)
+	protected abstract void checkDropTableException(Connection connection, SQLException ex)
 			throws SQLException;
 
 	public int getMaxStateSize() {
