@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -43,7 +44,8 @@ public class mysql_ab_driver extends
 	}
 
 	@Override
-	protected void checkDropTableException(SQLException ex) throws SQLException {
+	protected void checkDropTableException(Connection connection,
+			SQLException ex) throws SQLException {
 		if (!ex.getSQLState().equals("42S02")) {
 			throw ex;
 		}
