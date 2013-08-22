@@ -27,6 +27,7 @@ import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.narayana.rest.bridge.inbound.test.common.AdvancedInboundBridgeResource;
@@ -98,7 +99,16 @@ public abstract class AbstractTestCase {
         } catch (Throwable t){
         }
 
-        Assert.assertEquals(0, txSupport.txCount());
+        try {
+            txSupport.getTransactionInfo();
+            Assert.fail("Failed to rollback the transaction.");
+        } catch (HttpResponseException e) {
+            // Expected if transaction was rolled back.
+        } catch (IllegalStateException e) {
+            // Expected if transaction didn't exist in a first place.
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 
     protected void startContainer() {
