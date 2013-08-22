@@ -74,6 +74,7 @@ import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -1336,7 +1337,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				tsLogger.i18NLogger.warn_objectstore_remove_state_exception(e);
 
 				_valid = false;
 			}

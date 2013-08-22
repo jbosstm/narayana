@@ -1484,6 +1484,14 @@ public interface arjunaI18NLogger {
     @Message(id = 12375, value = "The node identifier cannot be null, aborting initialization", format = MESSAGE_FORMAT)
     public String get_fatal_nodename_null();
 
+    @Message(id = 12376, value = "ObjectStore remove_state caught exception:", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_objectstore_remove_state_exception(@Cause() Throwable arg0);
+
+    @Message(id = 12377, value = "HornetqObjectStore remove_state caught exception:", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_hornetqobjectstore_remove_state_exception(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
