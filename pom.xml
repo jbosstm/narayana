@@ -403,7 +403,6 @@
              </goals>
              <configuration>
                  <includes>
-                     <include>**/*.txt</include>
                      <include>**/*.btm</include>
                  </includes>
 				 <failOnWarning>false</failOnWarning>
