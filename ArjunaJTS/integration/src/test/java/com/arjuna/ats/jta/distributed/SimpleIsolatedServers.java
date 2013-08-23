@@ -268,7 +268,7 @@ public class SimpleIsolatedServers {
 		synchronized (phase2CommitAborted) {
 		    int waitedCount = 0;
 			while (phase2CommitAborted.getCount() < 2) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 				waitedCount++;
 	            if (waitedCount > 2 && phase2CommitAborted.getCount() < 2) {
 	                fail("Servers were not aborted");
@@ -379,7 +379,7 @@ public class SimpleIsolatedServers {
 		thread.start();
 		synchronized (phase2CommitAborted) {
 			if (phase2CommitAborted.getCount() < 1) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 			}
             if (phase2CommitAborted.getCount() < 1) {
                 fail("Servers were not aborted");
@@ -460,7 +460,7 @@ public class SimpleIsolatedServers {
 		thread.start();
 		synchronized (phase2CommitAborted) {
 			if (phase2CommitAborted.getCount() < 1) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 			}
             if (phase2CommitAborted.getCount() < 1) {
                 fail("Servers were not aborted");
@@ -547,7 +547,7 @@ public class SimpleIsolatedServers {
 		thread.start();
 		synchronized (phase2CommitAborted) {
 			if (phase2CommitAborted.getCount() < 1) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 			}
             if (phase2CommitAborted.getCount() < 1) {
                 fail("Servers were not aborted");
@@ -636,7 +636,7 @@ public class SimpleIsolatedServers {
 		thread.start();
 		synchronized (phase2CommitAborted) {
 			if (phase2CommitAborted.getCount() < 1) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 			}
             if (phase2CommitAborted.getCount() < 1) {
                 fail("Servers were not aborted");
@@ -689,7 +689,7 @@ public class SimpleIsolatedServers {
 		synchronized (phase2CommitAborted) {
 			int count = 0;
 			while (phase2CommitAborted.getCount() != 1 && count < 20) {
-				phase2CommitAborted.wait(5000);
+				phase2CommitAborted.wait(50000);
 				if (phase2CommitAborted.getCount() != 1) {
 					count++;
 				} else {
@@ -830,8 +830,10 @@ public class SimpleIsolatedServers {
 	@Test
 	public void testMigrateTransactionSubordinateTimeout() throws Exception {
 		System.out.println("testMigrateTransactionSubordinateTimeout");
+		tearDown();
+		setup();
 		int rootTimeout = 10000;
-		int subordinateTimeout = 1;
+		int subordinateTimeout = 1; // artificially low to ensure the timeout is performed by the subordinate
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -872,9 +874,12 @@ public class SimpleIsolatedServers {
 	}
 
 	@Test
-	public void testTransactionReaperIsCleanedUp() throws Exception {
-		System.out.println("testTransactionReaperIsCleanedUp");
+	public void testMigrateTransactionParentTimeout() throws Exception {
+		System.out.println("testMigrateTransactionParentTimeout");
+		tearDown();
+		setup();
 		int rootTimeout = 5;
+		int subordinateTimeout = 20; // artificially high to ensure the timeout is performed by the parent
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -885,7 +890,6 @@ public class SimpleIsolatedServers {
 		Xid currentXid = originalServer.getCurrentXid();
 		originalServer.storeRootTransaction();
 		originalTransaction.enlistResource(new TestResource(originalServer.getNodeName(), false));
-		int subordinateTimeout = (int) (originalServer.getTimeLeftBeforeTransactionTimeout() / 1000);
 		transactionManager.suspend();
 
 		// Migrate a transaction
@@ -902,14 +906,23 @@ public class SimpleIsolatedServers {
 		XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", migratedXid);
 		originalTransaction.enlistResource(proxyXAResource);
 		originalServer.removeRootTransaction(currentXid);
-		transactionManager.commit();
-		Thread.currentThread().setContextClassLoader(classLoader);
-		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 1);
-		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 2);
-		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
-		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
-
-		Thread.currentThread().sleep((subordinateTimeout + 4) * 1000);
+		Thread.sleep(rootTimeout * 2000);
+		try {
+			transactionManager.commit();
+			fail("Committed a transaction that should have rolled back");
+		} catch (RollbackException rbe) {
+			// This is OK
+		} finally {
+			Thread.currentThread().setContextClassLoader(classLoader);
+		}
+		assertTrue("" + completionCounter.getCommitCount("2000"),
+				completionCounter.getCommitCount("2000") == 0);
+		assertTrue("" + completionCounter.getCommitCount("1000"),
+				completionCounter.getCommitCount("1000") == 0);
+		assertTrue("" + completionCounter.getRollbackCount("2000"),
+				completionCounter.getRollbackCount("2000") == 1);
+		assertTrue("" + completionCounter.getRollbackCount("1000"),
+				completionCounter.getRollbackCount("1000") == 2);
 	}
 
 	private void doRecursiveTransactionalWork(int startingTimeout, List<String> nodesToFlowTo, boolean commit, boolean rollbackOnlyOnLastNode) throws Exception {
