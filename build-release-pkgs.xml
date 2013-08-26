@@ -110,7 +110,7 @@
     </exec>
   </target>
   <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
-    <!-- build the binary releases -->
+    <!-- Clean all generated artefacts -->
     <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
       <arg line="clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
