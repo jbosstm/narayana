@@ -34,12 +34,13 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013
  */
 
-public class TransactionalInterceptorBase {
+public class TransactionalInterceptorBase implements Serializable {
 
     private boolean previousUserTransactionAvailability;
 
