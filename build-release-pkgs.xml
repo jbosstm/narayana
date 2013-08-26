@@ -119,7 +119,7 @@
     <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
     <!-- build the binary releases -->
     <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
-      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
+      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
     </exec>
   </target>
   <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
