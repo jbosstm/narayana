@@ -40,7 +40,7 @@ import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
 
-public class PerformanceTest1
+public class PerformanceTest1 extends PerformanceTestBase
 {
     @Test
     public void recoverableTest()
@@ -59,6 +59,8 @@ public class PerformanceTest1
         }
 
         A.commit();
+
+        reportThroughput("recoverableTest", iters, t1);
     }
 
     @Test
@@ -84,5 +86,7 @@ public class PerformanceTest1
         }
 
         A.commit();
+
+        reportThroughput("persistentTest", iters, t1);
     }
 }
