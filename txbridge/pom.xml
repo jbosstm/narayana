@@ -24,7 +24,6 @@
     <description>Narayana: txbridge</description>
     <packaging>jar</packaging>
     <properties>
-        <version.plugin.antrun>1.7</version.plugin.antrun>
         <byteman.home>${project.build.directory}/byteman</byteman.home>
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true</ipv6.server.jvm.args>
         <byteman.server.jvm.args>
@@ -79,7 +78,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>${version.plugin.antrun}</version>
+                <version>${version.org.apache.maven.plugins.maven-antrun-plugin}</version>
                 <executions>
                     <execution>
                         <id>create-disabled-context-propagation-configuration</id>
