@@ -187,7 +187,7 @@ public class CompensationScopedTest {
     @Test
     public void testCompensationHandler() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
@@ -206,7 +206,7 @@ public class CompensationScopedTest {
     @Test
     public void testConfirmationHandler() throws Exception {
 
-        ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
