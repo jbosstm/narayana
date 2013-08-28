@@ -22,38 +22,16 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import static org.junit.Assert.assertEquals;
 
+import com.hp.mwtests.ts.arjuna.resources.DummyHeuristic;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.HeuristicNotification;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 import com.hp.mwtests.ts.arjuna.resources.HeuristicRecord;
 
 public class HeuristicNotificationUnitTest
 {
-    class DummyHeuristic extends HeuristicNotification
-    {
-        public int getStatus ()
-        {
-            return _status;
-        }
-        
-        @Override
-        public void heuristicOutcome (int actionStatus)
-        {
-            _status = actionStatus;
-        }
-
-        @Override
-        public int compareTo (Object o)
-        {
-            return 0;
-        }
-        
-        private int _status = -1;
-    }
-    
     @Test
     public void test () throws Exception
     {

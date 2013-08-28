@@ -18,34 +18,38 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 1998, 1999, 2000, 2001,
- *
- * Hewlett Packard Arjuna Labs,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: SynchronizationRecord.java 2342 2006-03-30 13:06:17Z  $
- */
+package com.hp.mwtests.ts.arjuna.resources;
 
-package com.arjuna.ats.arjuna.coordinator;
+import com.arjuna.ats.arjuna.coordinator.HeuristicNotification;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-/*
- * @author Mark Little (mark@arjuna.com)
- * @version $Id: SynchronizationRecord.java 2342 2006-03-30 13:06:17Z  $
- * @since 3.0.
- */
-
-public interface SynchronizationRecord extends Comparable
+public class DummyHeuristic extends HeuristicNotification
 {
-    public Uid get_uid ();
+    public int getStatus ()
+    {
+        return _status;
+    }
 
-    public boolean beforeCompletion ();
+    @Override
+    public void heuristicOutcome (int actionStatus)
+    {
+        _status = actionStatus;
+    }
 
-    public boolean afterCompletion (int status);
+    @Override
+    public int compareTo (Object o)
+    {
+        DummyHeuristic sr = (DummyHeuristic) o;
+        if (get_uid().equals(sr.get_uid())) {
+            return 0;
+        } else {
+            return get_uid().lessThan(sr.get_uid()) ? -1 : 1;
+        }
+    }
 
-    boolean isInterposed();
+    private int _status = -1;
+
+    @Override
+    public boolean isInterposed() {
+        return false;
+    }
 }
