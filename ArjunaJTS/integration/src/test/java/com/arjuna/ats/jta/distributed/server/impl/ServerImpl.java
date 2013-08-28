@@ -170,12 +170,12 @@ public class ServerImpl implements LocalServer {
 	}
 
 	@Override
-	public void doRecoveryManagerScan(boolean hackSafetyInterval) {
+	public void doRecoveryManagerScan(boolean shortenSafetyInterval) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(getClassLoader());
 		int originalSafetyInterval = -1;
 
-		if (hackSafetyInterval) {
+		if (shortenSafetyInterval) {
 			try {
 				Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
 				safetyIntervalMillis.setAccessible(true);
@@ -184,11 +184,28 @@ public class ServerImpl implements LocalServer {
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
+		} else {
+			try {
+				Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
+				safetyIntervalMillis.setAccessible(true);
+				originalSafetyInterval = (Integer) safetyIntervalMillis.get(null);
+				safetyIntervalMillis.set(null, 60000);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 		}
 
 		_recoveryManager.scan();
 
-		if (hackSafetyInterval) {
+		if (shortenSafetyInterval) {
+			try {
+				Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
+				safetyIntervalMillis.setAccessible(true);
+				safetyIntervalMillis.set(null, originalSafetyInterval);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		} else {
 			try {
 				Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
 				safetyIntervalMillis.setAccessible(true);
