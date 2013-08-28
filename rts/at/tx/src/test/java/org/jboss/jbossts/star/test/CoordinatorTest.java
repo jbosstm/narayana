@@ -149,6 +149,72 @@ public class CoordinatorTest extends BaseTest {
         }
     }
 
+    @Test
+    public void test2PCCommitWithoutResponse() throws Exception
+    {
+        TxSupport txn = new TxSupport();
+        String pUrl = PURL;
+        String[] pid = new String[2];
+        String[] pVal = new String[2];
+
+        for (int i = 0; i < pid.length; i++) {
+            pid[i] = modifyResource(txn, pUrl, null, "p1", "v1");
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+            Assert.assertEquals(pVal[i], "v1");
+        }
+
+        txn.startTx();
+
+        for (int i = 0; i < pid.length; i++) {
+            enlistResource(txn, PURL_NO_RESPONSE + "?pId=" + pid[i]);
+
+            modifyResource(txn, pUrl, pid[i], "p1", "v2");
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+
+            Assert.assertEquals(pVal[i], "v2");
+        }
+
+        String status = txn.commitTx();
+
+        for (int i = 0; i < pid.length; i++) {
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+            Assert.assertEquals(pVal[i], "v2");
+        }
+    }
+
+    @Test
+    public void test2PCRollbackWithoutResponse() throws Exception
+    {
+        TxSupport txn = new TxSupport();
+        String pUrl = PURL;
+        String[] pid = new String[2];
+        String[] pVal = new String[2];
+
+        for (int i = 0; i < pid.length; i++) {
+            pid[i] = modifyResource(txn, pUrl, null, "p1", "v1");
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+            Assert.assertEquals(pVal[i], "v1");
+        }
+
+        txn.startTx();
+
+        for (int i = 0; i < pid.length; i++) {
+            enlistResource(txn, PURL_NO_RESPONSE + "?pId=" + pid[i]);
+
+            modifyResource(txn, pUrl, pid[i], "p1", "v2");
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+
+            Assert.assertEquals(pVal[i], "v2");
+        }
+
+        String status = txn.rollbackTx();
+
+        for (int i = 0; i < pid.length; i++) {
+            pVal[i] = getResourceProperty(txn, pUrl, pid[i], "p1");
+            Assert.assertEquals(pVal[i], "v1");
+        }
+    }
+
     // commit an invalid transaction
     @Test
     public void testCommitInvalidTx() throws IOException
