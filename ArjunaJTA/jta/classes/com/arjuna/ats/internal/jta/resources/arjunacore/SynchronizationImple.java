@@ -120,6 +120,8 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 	 */
 	public int compareTo(Object object)
 	{
+        // register synch but always after some other one
+        //
 		SynchronizationImple other = (SynchronizationImple)object;
 
 		if(this._isInterposed && (!other._isInterposed))
@@ -142,6 +144,10 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 
     public String toString() {
         return "SynchronizationImple< "+_theUid.stringForm()+", "+_theSynch+" >";
+    }
+
+    public boolean isInterposed() {
+        return _isInterposed;
     }
 
     private javax.transaction.Synchronization _theSynch;

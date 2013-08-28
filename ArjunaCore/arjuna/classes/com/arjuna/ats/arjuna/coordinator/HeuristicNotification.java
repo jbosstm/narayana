@@ -56,6 +56,11 @@ public abstract class HeuristicNotification implements SynchronizationRecord
     {
         return true;
     }
-    
+
+    @Override
+    public boolean isInterposed() {
+        return false;
+    }
+
     private Uid _uid = new Uid();
 }
