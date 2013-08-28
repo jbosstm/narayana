@@ -4,6 +4,46 @@ function fatal {
   exit 1
 }
 
+function init_test_options {
+    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.7.Final-SNAPSHOT"
+    [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+
+    if [ "$PROFILE" == "NO_TEST" ]; then
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "MAIN" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "XTS" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "QA_JTA" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts
+    elif [ "$PROFILE" == "QA_JTS_JACORB" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests
+    elif [ "$PROFILE" == "QA_JTS_JDKORB" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
+    elif [ "$PROFILE" == "BLACKTIE" ]; then
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    else
+        # if the following env variables have not been set initialize them to their defaults
+        [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
+        [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
+        [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
+        [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+        [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
+        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+        [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
+        [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+        [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
+        [ $txbridge ] || txbridge=1 # bridge tests
+    fi
+}
+
 function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
@@ -45,25 +85,6 @@ function build_narayana {
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
-}
-
-function cp_narayana_to_as {
-  echo "Copying Narayana to AS"
-  cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  [ $? = 0 ] || return 1
-  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
-  [ -d $JBOSS_HOME ] || return 1
-
-  echo "WARNING - check that narayana version ${NARAYANA_VERSION} is the one you want"
-  JAR1=jbossjts-integration-${NARAYANA_VERSION}.jar
-  JAR2=jbossjts-${NARAYANA_VERSION}.jar
-# TODO make sure ${JBOSS_HOME} doesn't already contain a different version of narayana
-  echo "cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/"
-  echo "cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/"
-  cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/
-  [ $? = 0 ] || return 1
-  cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/
 }
 
 function build_as {
@@ -260,21 +281,8 @@ check_if_pull_closed
 
 comment_on_pull "Started testing this pull request: $BUILD_URL"
 
-# if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.0.Final-SNAPSHOT"
-[ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+init_test_options
 
-[ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
-[ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
-[ $CP_NARAYANA_AS ] || CP_NARAYANA_AS=1 # build narayana
-[ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-[ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
-[ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
-[ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
-[ $QA_TESTS ] || QA_TESTS=1 # QA test suite
-[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
-[ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-[ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
 [ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
@@ -298,7 +306,6 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $CP_NARAYANA_AS = 1 ] && cp_narayana_to_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
