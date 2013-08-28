@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -878,8 +879,8 @@ public class SimpleIsolatedServers {
 		System.out.println("testMigrateTransactionParentTimeout");
 		tearDown();
 		setup();
-		int rootTimeout = 5;
-		int subordinateTimeout = 20; // artificially high to ensure the timeout is performed by the parent
+		int rootTimeout = 20;
+		int subordinateTimeout = 60; // artificially high to ensure the timeout is performed by the parent
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -902,12 +903,18 @@ public class SimpleIsolatedServers {
 		Thread.currentThread().setContextClassLoader(parentsClassLoader);
 
 		// Complete the transaction at the original server
+		System.out.println(new Date() + " resuming");
 		transactionManager.resume(originalTransaction);
+		System.out.println(new Date() + " generating");
 		XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", migratedXid);
+		System.out.println(new Date() + " enlisting");
 		originalTransaction.enlistResource(proxyXAResource);
+		System.out.println(new Date() + " removing");
 		originalServer.removeRootTransaction(currentXid);
+		System.out.println(new Date() + " sleeping");
 		Thread.sleep(rootTimeout * 2000);
 		try {
+			System.out.println(new Date() + " committing");
 			transactionManager.commit();
 			fail("Committed a transaction that should have rolled back");
 		} catch (RollbackException rbe) {
