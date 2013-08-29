@@ -4,6 +4,50 @@ function fatal {
   exit 1
 }
 
+function init_test_options {
+    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
+    [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+
+    if [ "$PROFILE" == "NO_TEST" ]; then
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "MAIN" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "XTS" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [ "$PROFILE" == "QA_JTA" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts
+    elif [ "$PROFILE" == "QA_JTS_JACORB" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests
+    elif [ "$PROFILE" == "QA_JTS_JDKORB" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
+    elif [ "$PROFILE" == "BLACKTIE" ]; then
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    else
+        # if the following env variables have not been set initialize them to their defaults
+        [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
+        [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
+        [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
+        [ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
+        [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+        [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
+        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+        [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
+        [ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
+        [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
+        [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
+        [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+        [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
+        [ $txbridge ] || txbridge=1 # bridge tests
+    fi
+}
+
 function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
@@ -368,24 +412,8 @@ check_if_pull_closed
 
 comment_on_pull "Started testing this pull request: $BUILD_URL"
 
-# if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
-[ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+init_test_options
 
-[ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
-[ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
-[ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-[ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
-[ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
-[ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
-[ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
-[ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
-[ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
-[ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
-[ $QA_TESTS ] || QA_TESTS=1 # QA test suite
-[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
-[ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-[ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
 [ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=http://172.17.131.2/userContent/dbdrivers"
