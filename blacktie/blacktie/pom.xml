@@ -206,5 +206,9 @@
             <artifactId>blacktie-admin-services-ear</artifactId>
             <type>ear</type>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>blacktie-stompconnect</artifactId>
+        </dependency>
     </dependencies>
 </project>

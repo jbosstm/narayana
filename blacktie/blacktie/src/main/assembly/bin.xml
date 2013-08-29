@@ -51,11 +51,22 @@
 			<outputDirectory>blacktie-admin-services</outputDirectory>
 		</dependencySet>
 		<dependencySet>
+			<includes>
+				<include>org.jboss.narayana.blacktie:blacktie-stompconnect</include>
+			</includes>
+			<useProjectArtifact>false</useProjectArtifact>
+			<unpack>false</unpack>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<outputDirectory>blacktie-admin-services</outputDirectory>
+		</dependencySet>
+		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
 				<exclude>org.jboss.narayana.blacktie:btadmin</exclude>
 				<exclude>org.jboss.narayana.blacktie:blacktie-codeGeneration</exclude>
 				<exclude>org.jboss.narayana.blacktie:blacktie-admin-services-ear:ear</exclude>
+				<exclude>org.jboss.narayana.blacktie:blacktie-stompconnect</exclude>
+				<exclude>org.jboss.logmanager:log4j-jboss-logmanager:jar</exclude>
 				<exclude>*:javadoc</exclude>
 				<exclude>*:jdocbook</exclude>
 			</excludes>
