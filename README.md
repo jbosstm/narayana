@@ -3,7 +3,7 @@ Narayana
 
 NOTE: PATCHED EMMA JAR
 ----------------------
-This build uses a patch of the EMMA Jar, the source code for the patch is available from:
+This build uses a patched version of the EMMA Jar, the source code for the patch is available from:
 
 	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
 
