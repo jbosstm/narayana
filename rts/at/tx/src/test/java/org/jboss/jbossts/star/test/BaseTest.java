@@ -80,7 +80,9 @@ public class BaseTest {
     protected static final int PORT = 58081;
     protected static final String SURL = "http://localhost:" + PORT + '/';
     protected static final String PSEGMENT = "txresource";
+    protected static final String NO_RESPONSE_SEGMENT = "no-response";
     protected static final String PURL = SURL + PSEGMENT;
+    protected static final String PURL_NO_RESPONSE = PURL + "/" + NO_RESPONSE_SEGMENT;
     protected static String TXN_MGR_URL = SURL + "tx/transaction-manager";
     private static TJWSEmbeddedJaxrsServer server = null;
     private static SelectorThread threadSelector = null;
@@ -477,6 +479,19 @@ public class BaseTest {
 
             return work.id;
         }
+
+        @POST
+        @Produces(TxMediaType.PLAIN_MEDIA_TYPE)
+        @Path(NO_RESPONSE_SEGMENT)
+        public String enlistNoResponseParticipant(@Context UriInfo info, @QueryParam("pId") @DefaultValue("")String pId,
+                             @QueryParam("fault") @DefaultValue("")String fault,
+                             @QueryParam("twoPhaseAware") @DefaultValue("true")String twoPhaseAware,
+                             @QueryParam("isVolatile") @DefaultValue("false")String isVolatile,
+                             String enlistUrl) throws IOException {
+
+            return enlist(info, pId, fault, twoPhaseAware, isVolatile, enlistUrl);
+        }
+
         @SuppressWarnings({"UnusedDeclaration"})
         @PUT
         @Path("{pId}/{tId}/vp")
@@ -598,6 +613,17 @@ public class BaseTest {
 
             //return TxSupport.toStatusContent(work.status);
             return Response.ok(TxSupport.toStatusContent(work.status)).build();
+        }
+
+        @PUT
+        @Path(NO_RESPONSE_SEGMENT + "/{pId}/{tId}/terminator")
+        public Response terminateWithoutResponse(@PathParam("pId") @DefaultValue("")String pId,
+                                  @PathParam("tId") @DefaultValue("")String tId,
+                                  String content) {
+
+            Response response = terminate(pId, tId, content);
+
+            return Response.status(response.getStatus()).build();
         }
 
         @PUT

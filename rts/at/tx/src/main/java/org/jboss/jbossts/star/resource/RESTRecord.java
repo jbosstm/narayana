@@ -215,14 +215,16 @@ public class RESTRecord extends AbstractRecord
 
         try
         {
-            String res = TxSupport.getStatus(
-                new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-                    this.prepareURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
-                    TxSupport.toStatusContent(TxStatus.TransactionPrepared.name())));
+            String body = new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.prepareURI, "PUT",
+                    TxMediaType.TX_STATUS_MEDIA_TYPE, TxSupport.toStatusContent(TxStatus.TransactionPrepared.name()));
+
+            if (body.isEmpty()) {
+                status = TxStatus.TransactionPrepared;
+            } else {
+                status = TxStatus.fromStatus(TxSupport.getStatus(body));
+            }
 
             prepared = true;
-            status = TxStatus.fromStatus(res);
-
             int outcome = statusToOutcome();
 
             if (outcome != TwoPhaseOutcome.FINISH_ERROR)
@@ -253,11 +255,14 @@ public class RESTRecord extends AbstractRecord
             return TwoPhaseOutcome.FINISH_ERROR;
 
         try {
-            String res = TxSupport.getStatus(new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-                    this.rollbackURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
-                    TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name())));
+            String body = new TxSupport().httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.rollbackURI, "PUT",
+                    TxMediaType.TX_STATUS_MEDIA_TYPE, TxSupport.toStatusContent(TxStatus.TransactionRolledBack.name()));
 
-            status = TxStatus.fromStatus(res);
+            if (body.isEmpty()) {
+                status = TxStatus.TransactionRolledBack;
+            } else {
+                status = TxStatus.fromStatus(TxSupport.getStatus(body));
+            }
         } catch (HttpResponseException e) {
 
             if (checkFinishError(e.getActualResponse(), TxStatus.TransactionRolledBack))
@@ -314,11 +319,14 @@ public class RESTRecord extends AbstractRecord
 
             if (!TxStatus.TransactionReadOnly.equals(status)) {
                 txs = new TxSupport();
-                String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
-                    this.commitURI, "PUT", TxMediaType.TX_STATUS_MEDIA_TYPE,
-                    TxSupport.toStatusContent(nextState.name()));
+                String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.commitURI, "PUT",
+                        TxMediaType.TX_STATUS_MEDIA_TYPE, TxSupport.toStatusContent(nextState.name()));
 
-                status = TxStatus.fromStatus(TxSupport.getStatus(body));
+                if (body.isEmpty()) {
+                    status = TxStatus.TransactionCommitted;
+                } else {
+                    status = TxStatus.fromStatus(TxSupport.getStatus(body));
+                }
 
                 if (log.isTraceEnabled())
                     log.tracef("commit http status: %s RTS status: %s", txs.getStatus(), status);
