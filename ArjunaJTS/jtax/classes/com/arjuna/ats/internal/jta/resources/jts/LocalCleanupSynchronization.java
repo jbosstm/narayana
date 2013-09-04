@@ -69,6 +69,11 @@ public class LocalCleanupSynchronization implements com.arjuna.ats.arjuna.coordi
 	return true;
     }
 
+    @Override
+    public boolean isInterposed() {
+        return false;
+    }
+
     public Uid get_uid ()
     {
 	return _theUid;
