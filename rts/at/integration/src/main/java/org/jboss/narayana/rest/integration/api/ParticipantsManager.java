@@ -27,11 +27,21 @@ public interface ParticipantsManager {
      * Enlist participant to REST-AT transaction.
      *
      * @param applicationId Application ID unique in the container scope.
-     * @param participantEnlistmentURL Participant enlistment URL returned by the transaction manager after creating REST-AT transaction.
+     * @param participantEnlistmentURL Participant enlistment URL returned by the transaction manager after creating
+     *                                 REST-AT transaction.
      * @param participant Participant to be enlisted.
      * @return Participant ID which can be later used to report heuristic decision.
      */
     String enlist(String applicationId, String participantEnlistmentURL, Participant participant);
+
+    /**
+     * Enlist volatile participant to REST-AT transaction.
+     *
+     * @param volatileParticipantEnlistmentURL VolatileParticipant enlistment URL returned by the transaction manager
+     *                                         after creating REST-AT transaction.
+     * @param volatileParticipant VolatileParticipant to be enlisted.
+     */
+    void enlistVolatileParticipant(String volatileParticipantEnlistmentURL, VolatileParticipant volatileParticipant);
 
     /**
      * Register ParticipantDeserializer instance which can be used during recovery to recreate participant instances.
