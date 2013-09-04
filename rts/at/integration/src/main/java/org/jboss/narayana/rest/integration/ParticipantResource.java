@@ -31,7 +31,7 @@ import org.jboss.resteasy.client.ClientRequest;
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  *
  */
-@Path("/" + ParticipantResource.BASE_PATH_SEGMENT + "/{participantId}")
+@Path(ParticipantResource.BASE_PATH_SEGMENT + "/{participantId}")
 public final class ParticipantResource {
 
     public static final String BASE_PATH_SEGMENT = "rest-at-participant";

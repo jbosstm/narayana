@@ -13,7 +13,6 @@ import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantResource;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
 import org.jboss.narayana.rest.integration.api.Aborted;
-import org.jboss.narayana.rest.integration.api.HeuristicType;
 import org.jboss.narayana.rest.integration.api.Participant;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.ReadOnly;
@@ -49,11 +48,6 @@ public final class ParticipantResourceTestCase {
     private static NettyJaxrsServer NETTY;
 
     private String participantId;
-
-    @Test
-    public void simpleTest() {
-        System.out.println(HeuristicType.valueOf("HEURISTIC_ROLLBACK"));
-    }
 
     @BeforeClass
     public static void beforeClass() {

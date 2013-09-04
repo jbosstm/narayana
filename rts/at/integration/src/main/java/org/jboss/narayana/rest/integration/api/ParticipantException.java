@@ -13,4 +13,8 @@ public class ParticipantException extends RuntimeException {
         super(message);
     }
 
+    public ParticipantException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
 }

@@ -1,13 +1,17 @@
 package org.jboss.narayana.rest.integration;
 
+import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.narayana.rest.integration.api.ParticipantDeserializer;
 import org.jboss.narayana.rest.integration.api.HeuristicType;
 import org.jboss.narayana.rest.integration.api.Participant;
+import org.jboss.narayana.rest.integration.api.ParticipantException;
 import org.jboss.narayana.rest.integration.api.ParticipantsManager;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import org.jboss.narayana.rest.integration.api.VolatileParticipant;
 
 /**
  *
@@ -49,6 +53,22 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
     }
 
     @Override
+    public void enlistVolatileParticipant(final String volatileParticipantEnlistmentURL,
+            final VolatileParticipant volatileParticipant) {
+
+        if (baseUrl == null) {
+            throw new IllegalStateException("Base URL was not defined.");
+        }
+
+        final String participantId = new Uid().toString();
+        final String participantUrl = getVolatileParticipantUrl(participantId, baseUrl);
+
+        enlistVolatileParticipant(participantUrl, volatileParticipantEnlistmentURL);
+
+        ParticipantsContainer.getInstance().addVolatileParticipant(participantId, volatileParticipant);
+    }
+
+    @Override
     public void registerDeserializer(final String applicationId, final ParticipantDeserializer deserializer) {
         RecoveryManager.getInstance().registerDeserializer(applicationId, deserializer);
     }
@@ -85,9 +105,29 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
     private String enlistParticipant(final String participantUrl, final String participantEnlistmentURL) {
         TxSupport txSupport = new TxSupport();
         String participantLinkHeader = txSupport.makeTwoPhaseAwareParticipantLinkHeader(participantUrl, participantUrl);
-        String recoveryUrl = txSupport.enlistParticipant(participantEnlistmentURL, participantLinkHeader);
+
+        final String recoveryUrl;
+        try {
+            recoveryUrl = txSupport.enlistParticipant(participantEnlistmentURL, participantLinkHeader);
+        } catch (HttpResponseException e) {
+            throw new ParticipantException("Failed to enlist participant", e);
+        }
 
         return recoveryUrl;
+    }
+
+    private void enlistVolatileParticipant(final String participantUrl, final String volatileParticipantEnlistmentURL) {
+        final StringBuilder linkHeader = new StringBuilder();
+        linkHeader.append("<").append(participantUrl).append(">; rel=\"")
+                .append(TxLinkNames.VOLATILE_PARTICIPANT).append("\"");
+
+        final String participantLinkHeader = linkHeader.toString();
+
+        try {
+            new TxSupport().enlistVolatileParticipant(volatileParticipantEnlistmentURL, participantLinkHeader);
+        } catch (HttpResponseException e) {
+            throw new ParticipantException("Failed to enlist volatile participant", e);
+        }
     }
 
     private String getParticipantUrl(final String participantId, String baseUrl) {
@@ -96,6 +136,14 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
         }
 
         return baseUrl + ParticipantResource.BASE_PATH_SEGMENT + "/" + participantId;
+    }
+
+    private String getVolatileParticipantUrl(final String participantId, String baseUrl) {
+        if (!baseUrl.substring(baseUrl.length() - 1).equals("/")) {
+            baseUrl += "/";
+        }
+
+        return baseUrl + VolatileParticipantResource.BASE_PATH_SEGMENT + "/" + participantId;
     }
 
 }
