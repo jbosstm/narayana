@@ -40,6 +40,10 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile boolean asyncCommit = false;
     private volatile boolean asyncPrepare = false;
     private volatile boolean asyncRollback = false;
+
+    private volatile boolean asyncBeforeSynchronization;
+    private volatile boolean asyncAfterSynchronization;
+
     private volatile boolean commitOnePhase = true;
     private volatile boolean maintainHeuristics = true;
     @Deprecated
@@ -739,5 +743,45 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setFinalizeBasicActions(boolean finalizeBasicActions)
     {
         this.finalizeBasicActions = finalizeBasicActions;
+    }
+
+    /**
+     * Returns true if asynchronous before completion behaviour is enabled.
+     *
+     * Default: false
+     *
+     * @return true if asynchronous before completion is enabled, value otherwise.
+     */
+    public boolean isAsyncBeforeSynchronization() {
+        return asyncBeforeSynchronization;
+    }
+
+    /**
+     * Sets if asynchronous before completion behaviour should be enabled or not.
+     *
+     * @param asyncBeforeSynchronization true to enable asynchronous before completion, false to disable.
+     */
+    public void setAsyncBeforeSynchronization(boolean asyncBeforeSynchronization) {
+        this.asyncBeforeSynchronization = asyncBeforeSynchronization;
+    }
+
+    /**
+     * Returns true if asynchronous after completion behaviour is enabled.
+     *
+     * Default: false
+     *
+     * @return true if asynchronous after completion is enabled, value otherwise.
+     */
+    public boolean isAsyncAfterSynchronization() {
+        return asyncAfterSynchronization;
+    }
+
+    /**
+     * Sets if asynchronous after completion behaviour should be enabled or not.
+     *
+     * @param asyncAfterSynchronization true to enable asynchronous after completion, false to disable.
+     */
+    public void setAsyncAfterSynchronization(boolean asyncAfterSynchronization) {
+        this.asyncAfterSynchronization = asyncAfterSynchronization;
     }
 }

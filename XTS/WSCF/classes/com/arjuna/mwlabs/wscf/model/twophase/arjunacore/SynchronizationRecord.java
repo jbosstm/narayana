@@ -105,6 +105,11 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
         return false;
     }
 
+    @Override
+    public boolean isInterposed() {
+        return false;
+    }
+
     public Uid get_uid ()
     {
 	return _id;
