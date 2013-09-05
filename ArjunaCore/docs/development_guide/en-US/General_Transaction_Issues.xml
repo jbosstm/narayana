@@ -66,12 +66,28 @@
     <para>
       By default, the Transaction Service executes the <methodname>commit</methodname> protocol of a top-level
       transaction in a synchronous manner. All registered resources will be told to prepare in order by a single thread,
-      and then they will be told to commit or rollback. This has several possible disadvantages:
+      and then they will be told to commit or rollback. A similar comment
+      applies to the volatile phase of the protocol which provides a
+      synchronization mechanism that allows an interested party to be notified
+      before and after the transaction completes. This has several possible
+      disadvantages:
     </para>
     <itemizedlist>
       <listitem>
         <para>
-          In the case of many registered resources, the <methodname>prepare</methodname> operating can logically be
+          In the case of many registered synchronizations, the
+	  <methodname>beforeSynchronization</methodname> operation can
+	  logically be invoked in parallel on each non interposed
+	  synchronization (and similary for the interposed synchronizations).
+	  The disadvantage is that if an “early” synchronization in the list of
+          registered resource forces a rollback by throwing an unchecked
+	  exception, possibly many beforeCompletion operations will have been
+	  made needlessly.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          In the case of many registered resources, the <methodname>prepare</methodname> operation can logically be
           invoked in parallel on each resource. The disadvantage is that if an “early” resource in the list of
           registered resource forces a rollback during <methodname>prepare</methodname>, possibly many prepare
           operations will have been made needlessly.
@@ -79,18 +95,31 @@
       </listitem>
       <listitem>
         <para>
-          In the case where heuristic reporting is not required by the application, the second phase of the commit
-          protocol can be done asynchronously, since its success or failure is not important.
+          In the case where heuristic reporting is not required by the
+	  application, the second phase of the commit protocol (including any
+	  afterCompletion synchronizations) can be done asynchronously, since
+	  its success or failure is not important to the outcome of the
+	  transaction.
         </para>
       </listitem>
     </itemizedlist>
     <para>
-      Therefore, JBoss Transaction Service provides runtime options to enable possible threading optimizations. By
-      setting the <varname>CoordinatorEnvironmentBean.asyncPrepare</varname> environment variable to
+      Therefore, JBoss Transaction Service provides runtime options to enable possible threading optimizations. By setting the
+      <varname>CoordinatorEnvironmentBean.asyncBeforeSynchronization</varname>
+      environment variable to <literal>YES</literal>, during the
+      <methodname>beforeSynchronization</methodname> phase a separate thread
+      will be created for each synchronization registered with the transaction.
+      By setting the <varname>CoordinatorEnvironmentBean.asyncPrepare</varname> environment variable to
       <literal>YES</literal>, during the <methodname>prepare</methodname> phase a separate thread will be created for
       each registered participant within the transaction. By setting
       <varname>CoordinatorEnvironmentBean.asyncCommit</varname> to <literal>YES</literal>, a separate thread will be
-      created to complete the second phase of the transaction if knowledge about heuristics outcomes is not required.
+      created to complete the second phase of the transaction provided knowledge about heuristics outcomes is not required.
+      By setting the
+      <varname>CoordinatorEnvironmentBean.asyncAfterSynchronization</varname>
+      environment variable to <literal>YES</literal>, during the
+      <methodname>afterSynchronization</methodname> phase a separate thread
+      will be created for each synchronization registered with the transaction
+      provided knowledge about heuristics outcomes is not required.
     </para>
   </section>
 
