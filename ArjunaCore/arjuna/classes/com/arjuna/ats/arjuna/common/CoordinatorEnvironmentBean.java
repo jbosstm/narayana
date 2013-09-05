@@ -105,6 +105,9 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
      * Sets if asynchronous commit behaviour should be enabled or not.
      * Note: heuristics cannot be reported programatically if asynchronous commit is used.
      *
+     * If true then a separate thread will be created to complete the second phase of the action
+     * (provided that knowledge about heuristic outcomes is not required).
+     *
      * @param asyncCommit true to enable asynchronous commit, false to disable.
      */
     public void setAsyncCommit(boolean asyncCommit)
@@ -114,6 +117,9 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns true if asynchronous prepare behaviour is enabled.
+     *
+     * If true then during the prepare phase of an action a separate thread will be created for
+     * preparing each participant registered with the action
      *
      * Default: false
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.asyncPrepare
@@ -137,6 +143,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns true if asynchronous rollback behaviour is enabled.
+     *
+     * If true then a separate thread will be created to complete the second phase of the action
      *
      * Default: false
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.asyncRollback
@@ -748,6 +756,12 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     /**
      * Returns true if asynchronous before completion behaviour is enabled.
      *
+     * The option is applicable to the volatile phase of the two phase commit protocol
+     * which provides a synchronization mechanism that allows an interested party to be notified
+     * before and after the transaction completes. If set to true then the beforeCompletion method will be
+     * called on all non interposed synchronizations in parallel, after which the beforeCompletion method
+     * will be called on all interposed synchronizations in parallel.
+     *
      * Default: false
      *
      * @return true if asynchronous before completion is enabled, value otherwise.
@@ -767,6 +781,15 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns true if asynchronous after completion behaviour is enabled.
+     *
+     * The option is applicable to the volatile phase of the two phase commit protocol
+     * which provides a synchronization mechanism that allows an interested party to be notified
+     * before and after the transaction completes. If set to true then the afterCompletion method will be
+     * called on all interposed synchronizations in parallel, after which the afterCompletion method
+     * will be called on all non interposed synchronizations in parallel.
+     *
+     * Caveat: if an action is committed and the caller wishes to be notified of heuristics outcomes then this
+     * behaviour is not available and the afterCompletion callbacks will be invoked synchronously. .
      *
      * Default: false
      *
