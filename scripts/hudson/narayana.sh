@@ -177,7 +177,19 @@ function build_as {
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
+  build_blacktie_subsystem
   init_jboss_home
+}
+
+function build_blacktie_subsystem {
+  echo "Building Blacktie Subsystem"
+  GIT_URL="https://github.com/zhfeng/wildfly-blacktie.git"
+  cd ${WORKSPACE}
+  rm -rf wildfly-blacktie
+  git clone $GIT_URL
+  cd wildfly-blacktie
+  ../tools/maven/bin/mvn clean install
+  [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
 }
 
 function init_jboss_home {
@@ -223,6 +235,7 @@ function blacktie {
   cd blacktie
   rm -rf $PWD/wildfly-${WILDFLY_MASTER_VERSION}
   unzip ../jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip
+  unzip ${WORKSPACE}/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/wildfly-${WILDFLY_MASTER_VERSION}
   cp ../rts/at/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
   WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-${WILDFLY_MASTER_VERSION} ./scripts/hudson/blacktie-linux.sh "$@"
   [ $? = 0 ] || fatal "BlackTie build failed"

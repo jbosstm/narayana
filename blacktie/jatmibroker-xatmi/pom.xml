@@ -172,11 +172,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-stompconnect</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
             <artifactId>blacktie-xsd</artifactId>
         </dependency>
         <dependency>

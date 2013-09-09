@@ -93,11 +93,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-stompconnect</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
             <classifier>${bpa}</classifier>
             <artifactId>blacktie-codec</artifactId>
         </dependency>
