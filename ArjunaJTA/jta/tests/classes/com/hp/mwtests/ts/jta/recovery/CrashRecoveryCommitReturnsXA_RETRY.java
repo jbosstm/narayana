@@ -34,7 +34,6 @@ package com.hp.mwtests.ts.jta.recovery;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -46,27 +45,18 @@ import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.recovery.ActionStatusService;
-import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 @RunWith(BMUnitRunner.class)
 @BMScript("recovery")
 public class CrashRecoveryCommitReturnsXA_RETRY {
+	private volatile boolean committed;
+
 	@Test
 	public void test() throws Exception {
 		// this test is supposed to leave a record around in the log store
@@ -114,9 +104,8 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		}
 
 		XAResource firstResource = new SimpleResource();
-		Object toWakeUp = new Object();
 		final SimpleResourceXA_RETRY secondResource = new SimpleResourceXA_RETRY(
-				toWakeUp);
+				this);
 
 		xaRecoveryModule
 				.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
@@ -151,9 +140,16 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 
 		tm.commit();
 
-		synchronized (toWakeUp) {
-			toWakeUp.wait();
+		synchronized (this) {
+			while (!committed) {
+				wait();
+			}
 		}
 		assertTrue(secondResource.wasCommitted());
+	}
+
+	public synchronized void committed() {
+		committed = true;
+		notify();
 	}
 }

@@ -28,9 +28,9 @@ public class SimpleResourceXA_RETRY implements XAResource {
 	private Xid xid;
 	private boolean firstAttemptToCommit = true;
 	private boolean committed = false;
-	private Object toWakeUp;
+	private CrashRecoveryCommitReturnsXA_RETRY toWakeUp;
 
-	public SimpleResourceXA_RETRY(Object toWakeUp) {
+	public SimpleResourceXA_RETRY(CrashRecoveryCommitReturnsXA_RETRY toWakeUp) {
 		this.toWakeUp = toWakeUp;
 	}
 
@@ -44,7 +44,7 @@ public class SimpleResourceXA_RETRY implements XAResource {
 		xid = null;
 		committed = true;
 		synchronized (toWakeUp) {
-			toWakeUp.notify();
+			toWakeUp.committed();
 		}
 	}
 
