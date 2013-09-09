@@ -44,6 +44,7 @@ fi
 # KILL ANY PREVIOUS BUILD REMNANTS
 ps -f
 for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
+killall -9 -r memcheck
 killall -9 testsuite
 killall -9 server
 killall -9 client
