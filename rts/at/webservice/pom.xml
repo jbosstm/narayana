@@ -139,9 +139,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <trimStackTrace>false</trimStackTrace>
-          <printSummary>true</printSummary>
           <includes>
             <include>**/*UnitTest.java</include>
           </includes>
