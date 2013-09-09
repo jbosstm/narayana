@@ -29,112 +29,109 @@
 
 package org.jboss.jbossts.qa.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Properties;
 
 public class PerformanceProfileStore
 {
-	private final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
+    public static final String DEFAULT_VARIANCE_PROPERTY_NAME = "org.jboss.jbossts.qa.Utils.PerformanceVariance";
+    public static Float DEFAULT_VARIANCE = 1.1F; // percentage variance that can be tolerated
+    public static String PERFDATAFILENAME = "PerformanceProfiles.last";
+
+    private final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
+    private final static String baseDir = System.getProperty(BASE_DIRECTORY_PROPERTY);
+    private static PerformanceProfileStore metrics;
+
+    private Properties data;
+    private File dataFile;
+    private float variance;
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private Calendar cal = Calendar.getInstance();
+
+    private static float getMinVariance() {
+        return Float.parseFloat(System.getProperty(DEFAULT_VARIANCE_PROPERTY_NAME, DEFAULT_VARIANCE.toString()));
+    }
+
+    public PerformanceProfileStore() throws IOException {
+        this(getMinVariance());
+    }
+
+    public PerformanceProfileStore(float variance) throws IOException {
+        if (baseDir == null)
+            throw new RuntimeException(BASE_DIRECTORY_PROPERTY + " property not set - cannot find performance test profiles!");
+
+        this.variance = variance;
+        data = new Properties();
+        dataFile = new File(baseDir + File.separator + PERFDATAFILENAME);
+
+        if (!dataFile.exists()) {
+            dataFile.createNewFile();
+        }
+
+        InputStream is = new FileInputStream(dataFile);
+
+        data.load(is);
+        is.close();
+    }
+
+    float getMetric(String name, float defaultValue) {
+        return Float.parseFloat(data.getProperty(name, Float.toString(defaultValue)));
+    }
+
+    float getMetric(String name) {
+        return getMetric(name, (float) 0.0);
+    }
+
+    public boolean withinVariance(String metricName, Float metricValue) {
+        Float canonicalValue =  getMetric(metricName, metricValue);
+
+        return metricValue < (variance * canonicalValue);
+    }
+
+    public boolean updateMetric(String metricName, Float metricValue) throws IOException {
+        Float canonicalValue =  getMetric(metricName, metricValue);
+
+        if (!data.contains(metricValue) || metricValue.compareTo(canonicalValue) < 0) {
+            data.put(metricName, Float.toString(metricValue));
+            data.store(new FileOutputStream(dataFile), dateFormat.format(cal.getTime()).toString() + ": Performance profile (time in milli-seconds)");
+        }
+
+        return metricValue < (variance * canonicalValue);
+    }
+
+    public static PerformanceProfileStore getMetrics() throws IOException {
+        if (metrics == null)
+            metrics = new PerformanceProfileStore();
+
+        return metrics;
+    }
 
 	public static boolean checkPerformance(String performanceName, float operationDuration)
 	{
-		boolean correct;
-
 		try
 		{
-			float expectedOperationDuration = loadPerformance(performanceName);
+			float expectedOperationDuration = getMetrics().getMetric(performanceName);
+            boolean withinVariance =  getMetrics().updateMetric(performanceName, operationDuration);
 
-			System.out.println("Operation duration change: " + ((float) (100.0 * (operationDuration - expectedOperationDuration) / expectedOperationDuration)) + "%");
+			System.out.printf("Operation duration change: %f%n",
+                    ((float) (100.0 * (operationDuration - expectedOperationDuration) / expectedOperationDuration)));
 
-			correct = (operationDuration < (1.1 * expectedOperationDuration));
+            if (!withinVariance) {
+                System.out.printf("\tTarget Duration:\t%f%n", expectedOperationDuration);
+                System.out.printf("\tActual Duration:\t%f%n", operationDuration);
+            }
+
+            return withinVariance;
 		}
 		catch (Exception exception1)
 		{
 			System.err.println("checkPerformance: " + exception1);
 			exception1.printStackTrace(System.err);
-			try
-			{
-				storePerformance(performanceName, operationDuration);
 
-				correct = false;
-			}
-			catch (Exception exception2)
-			{
-				System.err.println("checkPerformance: " + exception2);
-				exception2.printStackTrace(System.err);
-				correct = false;
-			}
+            return false;
 		}
-
-		return correct;
-	}
-
-	private static void storePerformance(String performanceName, float operationDuration)
-			throws Exception
-	{
-		Properties performanceProfile = new Properties();
-
-		try
-		{
-			FileInputStream performanceProfileFileInputStream = new FileInputStream(getBaseDir() + File.separator + "PerformanceProfiles");
-			performanceProfile.load(performanceProfileFileInputStream);
-			performanceProfileFileInputStream.close();
-		}
-		catch (Exception exception)
-		{
-			System.err.println("storePerformance: " + exception);
-			exception.printStackTrace(System.err);
-		}
-
-		performanceProfile.put(performanceName, Float.toString(operationDuration));
-
-		FileOutputStream performanceProfileFileOutputStream = new FileOutputStream(getBaseDir() + File.separator + "PerformanceProfiles");
-		performanceProfile.store(performanceProfileFileOutputStream, "Performance profile (time in milli-seconds)");
-		performanceProfileFileOutputStream.close();
-	}
-
-	private static float loadPerformance(String performanceName)
-			throws Exception
-	{
-		float operationDuration = (float) 0.0;
-
-		Properties performanceProfile = new Properties();
-
-		FileInputStream performanceProfileFileInputStream = new FileInputStream(getBaseDir() + File.separator + "PerformanceProfiles");
-		performanceProfile.load(performanceProfileFileInputStream);
-		performanceProfileFileInputStream.close();
-
-		operationDuration = Float.parseFloat((String) performanceProfile.get(performanceName));
-
-		return operationDuration;
-	}
-
-	private static void remove()
-	{
-		try
-		{
-			File file = new File(getBaseDir() + File.separator + "PerformanceProfiles");
-
-			file.delete();
-		}
-		catch (Exception exception)
-		{
-			System.err.println("Failed to remove \"perf_profile" + File.separator + "PerformanceProfiles\": " + exception);
-			exception.printStackTrace(System.err);
-		}
-	}
-
-	private static String getBaseDir() throws Exception
-	{
-		String baseDir = System.getProperty(BASE_DIRECTORY_PROPERTY);
-
-		if (baseDir == null)
-		{
-			throw new Exception(BASE_DIRECTORY_PROPERTY + " property not set - cannot find performance test profiles!");
-		}
-
-		return baseDir;
 	}
 }

@@ -36,7 +36,6 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.RootOA;
-import io.narayana.perf.PerformanceTester;
 import io.narayana.perf.Result;
 
 public class PerfHammer
