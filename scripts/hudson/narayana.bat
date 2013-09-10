@@ -1,6 +1,6 @@
-call:comment_on_pull "Started testing this pull request: %BUILD_URL%"
+call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
 
-call build.bat clean install "-DskipTests" || (call:comment_on_pull "Narayana Failed %BUILD_URL%" && exit -1)
+call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" && exit -1)
 
 echo "Cloning AS"
 rmdir /S /Q jboss-as
@@ -13,11 +13,11 @@ if %ERRORLEVEL% NEQ 0 exit -1
 
 echo "Building AS"
 set MAVEN_OPTS="-Xmx768M"
-call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "AS Failed %BUILD_URL%" && exit -1)
+call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - AS Failed %BUILD_URL%" && exit -1)
 
 echo "Building Blacktie Subsystem"
 cd ..\
-call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comment_on_pull "Build Blacktie Subsystem Failed %BUILD_URL%" && exit -1)
+call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" && exit -1)
 
 echo "Building BlackTie
 cd blacktie
@@ -27,9 +27,9 @@ set JBOSS_HOME=%CD%\wildfly-%WILDFLY_MASTER_VERSION%\
 copy ..\rts\at\webservice\target\restat-web-%NARAYANA_CURRENT_VERSION%.war %JBOSS_HOME%\standalone\deployments\
 unzip wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
 set WORKSPACE=%WORKSPACE%\blacktie 
-call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BlackTie Failed %BUILD_URL%" && exit -1)
+call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - BlackTie Failed %BUILD_URL%" && exit -1)
 
-call:comment_on_pull "All tests passed - Job complete %BUILD_URL%"
+call:comment_on_pull "BLACKTIE profile tests passed on Windows - Job complete %BUILD_URL%"
 
 rem -------------------------------------------------------
 rem -                 Functions bellow                    -
