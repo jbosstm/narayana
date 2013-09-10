@@ -1,5 +1,10 @@
 function fatal {
-  comment_on_pull "Tests failed ($BUILD_URL): $1"
+  if [[ -z $PROFILE ]]; then
+      comment_on_pull "Tests failed ($BUILD_URL): $1"
+  else
+      comment_on_pull "$PROFILE profile tests failed ($BUILD_URL): $1"
+  fi
+
   echo "$1"
   exit 1
 }
@@ -21,27 +26,35 @@ function init_test_options {
     PULL_DESCRIPTION=$(get_pull_description)
 
     if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION =~ "NO_TEST" ]]; then
+        export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION =~ "!MAIN" ]]; then
+        comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION =~ "!XTS" ]]; then
+        comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts
     elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JACORB" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests
     elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JDKORB" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
     elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION =~ "!BLACKTIE" ]]; then
+        echo not notifying
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ -z $PROFILE ]]; then
+        comment_on_pull "Started testing this pull request: $BUILD_URL"
         # if the following env variables have not been set initialize them to their defaults
         [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
         [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
@@ -54,6 +67,7 @@ function init_test_options {
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
         [ $txbridge ] || txbridge=1 # bridge tests
     else
+        export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     fi
@@ -294,8 +308,6 @@ function qa_tests {
 
 check_if_pull_closed
 
-comment_on_pull "Started testing this pull request: $BUILD_URL"
-
 init_test_options
 
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
@@ -328,5 +340,11 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
-comment_on_pull "All tests passed - Job complete: $BUILD_URL"
+if [[ -z $PROFILE ]]; then
+    comment_on_pull "All tests passed - Job complete $BUILD_URL"
+elif [[ $PROFILE == "BLACKTIE" ]]; then
+    echo not notifying
+else
+    comment_on_pull "$PROFILE profile tests passed - Job complete $BUILD_URL"
+fi
 exit 0 # any failure would have resulted in fatal being called which exits with a value of 1
