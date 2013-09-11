@@ -46,7 +46,6 @@ public class AdministrationProxy implements BlacktieAdministration {
     private Properties prop = new Properties();
     private MBeanServerConnection beanServerConnection;
     private Connection connection;
-    private List<String> servers;
 
     public static Boolean isDomainPause = false;
 
@@ -60,7 +59,6 @@ public class AdministrationProxy implements BlacktieAdministration {
     public void onConstruct() throws ConfigurationException {
         log.info("onConstruct load btconfig.xml");
         XMLParser.loadProperties("btconfig.xsd", "btconfig.xml", prop);
-        servers = (List<String>) prop.get("blacktie.domain.servers");
         ConnectionFactory cf = ConnectionFactory.getConnectionFactory();
         connection = cf.getConnection();
     }
@@ -187,16 +185,6 @@ public class AdministrationProxy implements BlacktieAdministration {
         return callAdminCommand(serverName, id, "resume");
     }
 
-    public List<String> getServerList() {
-        log.trace("getServerList");
-        ArrayList<String> serverList = new ArrayList<String>();
-
-        for (String server : servers) {
-            serverList.add(server);
-        }
-        return serverList;
-    }
-
     @SuppressWarnings("unchecked")
     public List<String> listRunningServers() {
         log.trace("listRunningServers");
@@ -215,8 +203,7 @@ public class AdministrationProxy implements BlacktieAdministration {
                     serviceComponentOfObjectName = serviceComponentOfObjectName.substring(1);
                     serviceComponentOfObjectName = serviceComponentOfObjectName.replaceAll("[0-9]", "");
                     log.trace("contains?: " + serviceComponentOfObjectName);
-                    if (servers.contains(serviceComponentOfObjectName)
-                            && !runningServerList.contains(serviceComponentOfObjectName)) {
+                    if (!runningServerList.contains(serviceComponentOfObjectName)) {
                         log.trace("contains!: " + serviceComponentOfObjectName);
                         runningServerList.add(serviceComponentOfObjectName);
                     }
@@ -264,6 +251,8 @@ public class AdministrationProxy implements BlacktieAdministration {
         log.trace("listServersStatus");
 
         String status = "<servers>\n";
+
+        List<String> servers = listRunningServers();
 
         for (String server : servers) {
             status += "\t<server>\n";
@@ -348,6 +337,7 @@ public class AdministrationProxy implements BlacktieAdministration {
 
     public Boolean shutdown(String serverName, int id) {
         log.trace("shutdown");
+        List<String> servers = listRunningServers(); 
         if (servers.contains(serverName)) {
             String command = "serverdone";
             boolean shutdown = false;

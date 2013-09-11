@@ -88,13 +88,6 @@ public class BlacktieAdminService implements BlacktieAdminServiceMBean {
     }
 
     /**
-     * List the servers
-     */
-    public List<String> getServerList() {
-        return administrationProxy.getServerList();
-    }
-
-    /**
      * List the running servers
      */
     public List<String> listRunningServers() {

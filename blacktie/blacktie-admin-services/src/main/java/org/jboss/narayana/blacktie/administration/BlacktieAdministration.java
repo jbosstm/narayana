@@ -45,11 +45,6 @@ public interface BlacktieAdministration {
     public String getServerVersionById(String serverName, int id);
 
     /**
-     * Retrieve the full list of servers
-     */
-    public java.util.List<String> getServerList();
-
-    /**
      * Discover running servers
      */
     public java.util.List<String> listRunningServers();

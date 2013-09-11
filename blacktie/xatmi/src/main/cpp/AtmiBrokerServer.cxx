@@ -829,7 +829,7 @@ bool AtmiBrokerServer::advertiseService(char * svcname,
 					try {
 						bool created = false;
 						if (service->externally_managed_destination == false) {
-							created = createAdminDestination(serviceName);
+							created = createAdminDestination(serviceName, service->conversational, service->serviceType);
 							LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 									(char*) "advertiseService status="
 											<< toReturn);
@@ -878,7 +878,7 @@ bool AtmiBrokerServer::advertiseService(char * svcname,
 														func,
 														isPause,
 														reconnect,
-														entry.serviceInfo->conversational);
+														entry.serviceInfo->conversational, entry.serviceInfo->serviceType);
 								if (dispatcher->activate(THR_NEW_LWP
 										| THR_JOINABLE, 1, 0,
 										ACE_DEFAULT_THREAD_PRIORITY, -1, 0, 0,
@@ -1063,7 +1063,7 @@ void AtmiBrokerServer::unadvertiseService(char * svcname, bool decrement) {
 	finish->unlock();
 }
 
-bool AtmiBrokerServer::createAdminDestination(char* serviceName) {
+bool AtmiBrokerServer::createAdminDestination(char* serviceName, bool conversational, const char* type) {
 	LOG4CXX_DEBUG(loggerAtmiBrokerServer, (char*) "Creating admin queue for: "
 			<< serviceName);
 	bool toReturn = false;
@@ -1078,14 +1078,20 @@ bool AtmiBrokerServer::createAdminDestination(char* serviceName) {
 				(char*) "advertising admin service");
 	}
 
+        if(type == NULL)
+        {
+           type = "queue";
+        }
+
 	long commandLength;
 	long responseLength = 1;
-	commandLength = strlen(serverName) + strlen(serviceName) + strlen(version)
-			+ 15 + 1;
+	commandLength = strlen(serverName) + strlen(serviceName) + strlen(version) + strlen(type) + 1
+			+ 17 + 1;
 	char* command = (char*) ::tpalloc((char*) "X_OCTET", NULL, commandLength);
 	char* response = (char*) ::tpalloc((char*) "X_OCTET", NULL, responseLength);
+
 	memset(command, '\0', commandLength);
-	sprintf(command, "tpadvertise,%s,%s,%s,", serverName, serviceName, version);
+	sprintf(command, "tpadvertise,%s,%s,%d,%s,%s,", serverName, serviceName, conversational, type, version);
 	LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 			(char*) "createAdminDestination with command " << command);
 

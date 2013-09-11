@@ -34,7 +34,7 @@ extern void setTpurcode(long rcode);
 ServiceDispatcher::ServiceDispatcher(AtmiBrokerServer* server,
 		Destination* destination, Connection* connection,
 		const char *serviceName, void(*func)(TPSVCINFO *), bool isPause,
-		SynchronizableObject* reconnect, bool isConversational) {
+		SynchronizableObject* reconnect, bool isConversational, const char* type) {
 
 	if (strncmp(serviceName, ".", 1) == 0) {
 		this->isadm = true;
@@ -60,6 +60,14 @@ ServiceDispatcher::ServiceDispatcher(AtmiBrokerServer* server,
 	this->avgResponseTime = 0;
 	this->maxResponseTime = 0;
 	this->isConversational = isConversational;
+	if(type != NULL)
+        {
+	  this->type = strdup(type);
+        }
+        else
+        {
+          this->type = strdup("queue");
+        }
 	pauseLock = new SynchronizableObject();
 	LOG4CXX_DEBUG(logger, "Created lock: " << pauseLock);
 	stopLock = new SynchronizableObject();
@@ -71,6 +79,7 @@ ServiceDispatcher::ServiceDispatcher(AtmiBrokerServer* server,
 ServiceDispatcher::~ServiceDispatcher() {
 	LOG4CXX_TRACE(logger, (char*) "ServiceDispatcher destroyed: " << this);
 	free(this->serviceName);
+	free(this->type);
 	delete pauseLock;
 	delete stopLock;
 }
@@ -210,7 +219,7 @@ int ServiceDispatcher::svc(void) {
 							<< timeout << " seconds");
 					stopLock->lock();
 					if (!stop && this->server->createAdminDestination(
-							serviceName)) {
+							serviceName, isConversational, type)) {
 						LOG4CXX_INFO(logger,
 								(char*) "Service dispatcher recreated: "
 										<< serviceName);
