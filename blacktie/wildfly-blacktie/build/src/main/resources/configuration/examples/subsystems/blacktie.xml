@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--  See src/resources/configuration/ReadMe.txt for how the configuration assembly works -->
+<config>
+   <extension-module>org.wildfly.extension.blacktie</extension-module>
+   <subsystem xmlns="urn:jboss:domain:blacktie:1.0">
+	   <stompconnect connection-factoryname="java:/JmsXA" socket-binding="stomp"/>
+   </subsystem>
+
+   <socket-binding name="stomp" port="61613"/>
+</config>

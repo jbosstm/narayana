@@ -2,11 +2,6 @@ call:comment_on_pull "Started testing this pull request: %BUILD_URL%"
 
 call build.bat clean install "-DskipTests" || (call:comment_on_pull "Narayana Failed %BUILD_URL%" && exit -1)
 
-echo "Cloning Blacktie Subsystem"
-rmdir /S /Q wildfly-blacktie
-git clone https://github.com/zhfeng/wildfly-blacktie.git
-if %ERRORLEVEL% NEQ 0 exit -1
-
 echo "Cloning AS"
 rmdir /S /Q jboss-as
 git clone https://github.com/jbosstm/jboss-as.git
@@ -21,17 +16,16 @@ set MAVEN_OPTS="-Xmx768M"
 call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "AS Failed %BUILD_URL%" && exit -1)
 
 echo "Building Blacktie Subsystem"
-cd ..\wildfly-blacktie
-set M2_HOME=
-call ..\tools\maven\bin\mvn.bat clean install || (call:comment_on_pull "Build Blacktie Subsystem Failed %BUILD_URL%" && exit -1)
+cd ..\
+call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comment_on_pull "Build Blacktie Subsystem Failed %BUILD_URL%" && exit -1)
 
 echo "Building BlackTie
-cd ..\blacktie
+cd blacktie
 rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
 unzip ..\jboss-as\dist\target\wildfly-%WILDFLY_MASTER_VERSION%.zip
 set JBOSS_HOME=%CD%\wildfly-%WILDFLY_MASTER_VERSION%\
 copy ..\rts\at\webservice\target\restat-web-%NARAYANA_CURRENT_VERSION%.war %JBOSS_HOME%\standalone\deployments\
-unzip ..\wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
+unzip wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
 set WORKSPACE=%WORKSPACE%\blacktie 
 call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BlackTie Failed %BUILD_URL%" && exit -1)
 

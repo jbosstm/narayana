@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--  See src/resources/configuration/ReadMe.txt for how the configuration assembly works -->
+<config>
+   <extension-module>org.jboss.as.remoting</extension-module>
+   <subsystem xmlns="urn:jboss:domain:remoting:2.0">
+       <http-connector name="http-remoting-connector" connector-ref="default" security-realm="ApplicationRealm"/>
+   </subsystem>
+</config>
