@@ -67,7 +67,7 @@ public:
 	void shutdown();
 	int  pause();
 	int  resume();
-	bool createAdminDestination(char* svcname);
+	bool createAdminDestination(char* svcname, bool conversational, const char* type);
 	Destination* createDestination(char* svcname, bool conversational, char* type);
 
 private:

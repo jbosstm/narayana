@@ -101,9 +101,6 @@ public class BlacktieAdminServiceXATMI extends MDBBlacktieService implements jav
             } else if (operation.equals("resumeDomain")) {
                 boolean response = resumeDomain();
                 toReturn = convertBoolean(response);
-            } else if (operation.equals("getServerList")) {
-                List<String> response = getServerList();
-                toReturn = convertListString(response);
             } else if (operation.equals("listRunningServers")) {
                 List<String> response = listRunningServers();
                 toReturn = convertListString(response);
@@ -284,13 +281,6 @@ public class BlacktieAdminServiceXATMI extends MDBBlacktieService implements jav
      */
     public Boolean resumeDomain() {
         return administrationProxy.resumeDomain();
-    }
-
-    /**
-     * List the servers
-     */
-    public List<String> getServerList() {
-        return administrationProxy.getServerList();
     }
 
     /**

@@ -72,8 +72,20 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
     private static Properties prop = new Properties();
 
     private static Hashtable<String, Long> QUEUE_CREATION_TIMES = new Hashtable<String, Long>();
+    private static Hashtable<String, ServerInfo> SERVICE_OWNERS = new Hashtable<String, ServerInfo>();
 
     private static ModelControllerClient client;
+
+    private class ServerInfo {
+	public final String name;
+        public final boolean conversational;
+        public final String type;
+        public ServerInfo(String name, boolean conversational, String type) {
+           this.name = name;
+           this.conversational = conversational;
+           this.type = type; 
+        } 
+    }
 
     public BlacktieStompAdministrationService() throws ConfigurationException {
         super("BlacktieStompAdministrationService");
@@ -97,8 +109,16 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
         boolean conversational = false;
         String type = "queue";
         if (!serviceName.startsWith(".")) {
-            conversational = (Boolean) getProperty("blacktie." + serviceName + ".conversational");
-            type = (String) getProperty("blacktie." + serviceName + ".type");
+            ServerInfo info = SERVICE_OWNERS.get(serviceName);
+	    if(info != null)
+            {
+               conversational = info.conversational;
+               type = info.type;
+            }
+            else
+            {
+               return false;
+            }
         }
         String prefix = null;
         if (conversational) {
@@ -161,8 +181,9 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
         String type = "queue";
 
         if (!serviceName.startsWith(".")) {
-            conversational = (Boolean) getProperty("blacktie." + serviceName + ".conversational");
-            type = (String) getProperty("blacktie." + serviceName + ".type");
+            ServerInfo info = SERVICE_OWNERS.get(serviceName);
+            conversational = info.conversational;
+            type = info.type;
         }
         String prefix = null;
         if (conversational) {
@@ -232,7 +253,7 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
         }
     }
 
-    public int deployQueue(String serviceName, String version) throws ConfigurationException, UnknownHostException {
+    public int deployQueue(String serviceName, String serverName, boolean conversational, String type, String version) throws ConfigurationException, UnknownHostException {
         log.trace("deployQueue: " + serviceName + " version: " + version);
 
         if (version == null || !version.equals(getProperty("blacktie.domain.version"))) {
@@ -253,12 +274,6 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
                 if (queue == false) {
                     log.debug("Creating " + serviceName);
                     log.trace("Lock acquired");
-                    boolean conversational = false;
-                    String type = "queue";
-                    if (!serviceName.startsWith(".")) {
-                        conversational = (Boolean) getProperty("blacktie." + serviceName + ".conversational");
-                        type = (String) getProperty("blacktie." + serviceName + ".type");
-                    }
                     String prefix = null;
                     if (conversational) {
                         prefix = "BTC_";
@@ -266,6 +281,8 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
                         prefix = "BTR_";
                     }
                     QUEUE_CREATION_TIMES.put(serviceName, System.currentTimeMillis());
+		    SERVICE_OWNERS.put(serviceName, new ServerInfo(serverName, conversational, type));
+
                     log.trace(serviceName);
 
                     log.debug("Invoking hornetq to deploy queue");
@@ -313,8 +330,9 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
                 boolean conversational = false;
                 String type = "queue";
                 if (!serviceName.startsWith(".")) {
-                    conversational = (Boolean) getProperty("blacktie." + serviceName + ".conversational");
-                    type = (String) getProperty("blacktie." + serviceName + ".type");
+                    ServerInfo info = SERVICE_OWNERS.get(serviceName);
+                    conversational = info.conversational;
+                    type = info.type;
                 }
                 String prefix = null;
                 if (conversational) {
@@ -375,23 +393,28 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
             if (serviceName.indexOf(".") > -1) {
                 server = serviceName.substring(1);
                 server = server.replaceAll("[0-9]", "");
-                List<String> servers = (List<String>) getProperty("blacktie.domain.servers");
-                if (servers.contains(server) == false) {
-                    log.warn("Could not find the server to advertise for: " + server);
-                    server = null;
-                } else {
-                    log.trace("Located server: " + server);
-                }
             } else {
-                server = (String) getProperty("blacktie." + serviceName + ".server");
+
+                ServerInfo info = SERVICE_OWNERS.get(serviceName);
+
+                if(info == null)
+                {
+                   server = serverName;
+                }
+                else
+                {
+                   server = info.name;
+                }
             }
 
             if (server != null && server.equals(serverName)) {
                 log.trace("Service " + serviceName + " exists for server: " + server);
                 if (operation.equals("tpadvertise")) {
                     log.trace("Advertising: " + serviceName);
+		    boolean conversational = st.nextToken().equals("1");
+		    String type = st.nextToken();
                     String version = st.nextToken();
-                    success[0] = (byte) deployQueue(serviceName, version);
+                    success[0] = (byte) deployQueue(serviceName, serverName, conversational, type, version);
                     log.trace("Advertised: " + serviceName);
                 } else if (operation.equals("decrementconsumer")) {
                     log.trace("Decrement consumer: " + serviceName);
@@ -402,7 +425,7 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
                     success[0] = 0;
                 }
             } else {
-                log.error("Service " + serviceName + " cannot be located for server");
+                log.error("Service " + serviceName + " already exists for a different server (" + server + ")");
                 success[0] = 0;
             }
 

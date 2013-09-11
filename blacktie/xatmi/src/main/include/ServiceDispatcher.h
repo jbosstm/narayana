@@ -34,7 +34,7 @@ public:
 	ServiceDispatcher(AtmiBrokerServer* server, Destination* destination,
 			Connection* connection, const char *serviceName, void(*func)(
 					TPSVCINFO *), bool isPause,
-			SynchronizableObject* reconnect, bool isConversational);
+			SynchronizableObject* reconnect, bool isConversational, const char* type);
 	~ServiceDispatcher();
 	int svc();
 	int pause();
@@ -59,6 +59,7 @@ private:
 	bool stop;
 	bool isPause;
 	bool isConversational;
+        char* type;
 	long timeout;
 	long counter;
 	long error_counter;
