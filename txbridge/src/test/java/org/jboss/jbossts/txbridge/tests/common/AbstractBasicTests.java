@@ -56,7 +56,6 @@ public abstract class AbstractBasicTests {
         Archive<?> archive = ShrinkWrap.create(WebArchive.class, INBOUND_SERVICE_DEPLOYMENT_NAME + ".war")
                 .addPackage("org.jboss.jbossts.txbridge.tests.inbound.service")
                 .addPackage("org.jboss.jbossts.txbridge.tests.inbound.utility")
-                .addAsResource("inbound/jaxws-handlers-server.xml", "jaxws-handlers-server.xml")
 //                .addAsManifestResource("inbound/jboss-beans.xml", "jboss-beans.xml")
                 .addAsManifestResource(new StringAsset("Dependencies: org.jboss.xts,org.jboss.jts\n"), "MANIFEST.MF");
 //        archive.as(ZipExporter.class).exportTo(new File("/tmp/deployment.zip"), true);
