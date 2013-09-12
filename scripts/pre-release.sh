@@ -47,9 +47,7 @@ do
 
     git clone git@github.com:jbosstm/$REPO.git || fatal
     cd $REPO
-	echo here
     git checkout $BRANCH || fatal
-	echo here2
 
     find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT-SNAPSHOT/$CURRENT/g" || fatal
     git commit -am "Updated to $CURRENT" || fatal
