@@ -8,7 +8,7 @@ function get_pull_description {
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
 
     if [ "$PULL_NUMBER" != "" ]; then
-        echo $(curl -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep \"body\":)
+        echo $(curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep \"body\":)
     else
         echo ""
     fi
@@ -82,7 +82,7 @@ function check_if_pull_closed
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
-	wget https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER -O - | grep "\"closed\""
+	curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep -q "\"state\": \"closed\""
 	if [ $? -eq 1 ] 
 	then
 		echo "pull open"
