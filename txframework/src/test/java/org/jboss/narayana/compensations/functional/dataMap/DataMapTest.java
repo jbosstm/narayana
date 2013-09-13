@@ -66,13 +66,6 @@ public class DataMapTest {
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.narayana.txframework,org.jboss.xts\n";
-
-        archive.setManifest(new StringAsset(ManifestMF));
-
         return archive;
     }
 

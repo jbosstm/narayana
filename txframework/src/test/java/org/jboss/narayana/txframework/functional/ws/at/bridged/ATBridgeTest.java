@@ -58,13 +58,6 @@ public class ATBridgeTest {
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"));
 
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.xts\n";
-
-        archive.setManifest(new StringAsset(ManifestMF));
-
         return archive;
     }
 
