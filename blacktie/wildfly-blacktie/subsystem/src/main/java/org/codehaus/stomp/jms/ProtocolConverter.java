@@ -38,6 +38,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.Xid;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +47,8 @@ import org.codehaus.stomp.Stomp;
 import org.codehaus.stomp.StompFrame;
 import org.codehaus.stomp.StompFrameError;
 import org.codehaus.stomp.tcp.TcpTransport;
+import org.jboss.narayana.rest.bridge.inbound.InboundBridge;
+import org.jboss.narayana.rest.bridge.inbound.InboundBridgeManager;
 import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
@@ -55,7 +58,7 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 /**
  * A protocol switch between JMS and Stomp
-  *
+ *
  * @author <a href="http://people.apache.org/~jstrachan/">James Strachan</a>
  * @author <a href="http://hiramchirino.com">chirino</a>
  */
@@ -65,7 +68,7 @@ public class ProtocolConverter {
     private ConnectionFactory noneXAConnectionFactory;
     private XAConnectionFactory xaConnectionFactory;
     private StompSession noneXaSession;
-    private Map<TransactionImple, StompSession> xaSessions = new ConcurrentHashMap<TransactionImple, StompSession>();
+    private Map<Xid, StompSession> xaSessions = new ConcurrentHashMap<Xid, StompSession>();
 
     private TransactionManager tm;
     private String login;
@@ -86,9 +89,9 @@ public class ProtocolConverter {
 
     /**
      * Convert an IOR representing an OTS transaction into a JTA transaction
-          *
+     *
      * @param orb
-          *
+     *
      * @param ior the CORBA reference for the OTS transaction
      * @return a JTA transaction that wraps the OTS transaction
      */
@@ -102,7 +105,6 @@ public class ProtocolConverter {
             log.debug("controlToTx: creating a new tx - wrapper: " + cw);
             tx = new JtsTransactionImple(cw);
         }
-
         return tx;
     }
 
@@ -147,7 +149,7 @@ public class ProtocolConverter {
 
     /**
      * Process a Stomp Frame
-          *
+     *
      * @throws IOException
      */
     public void onStompFrame(StompFrame command) throws IOException {
@@ -275,18 +277,33 @@ public class ProtocolConverter {
         String xid = (String) headers.get("messagexid");
 
         if (xid != null) {
-            log.trace("Transaction was propagated: " + xid);
-            TransactionImple tx = controlToTx(xid);
-            tm.resume(tx);
-            log.trace("Resumed transaction: " + tx);
+            if (xid.startsWith("IOR")) {
+                log.trace("OTS Transaction was propagated: " + xid);
+                TransactionImple tx = controlToTx(xid);
+                tm.resume(tx);
+                log.trace("Resumed transaction: " + tx);
 
-            // Enlist the resource BLACKTIE-308 we no longer need to enlist the JMS resource as JCA does this for us
-            StompSession session = getXASession(tx);
+                // Enlist the resource BLACKTIE-308 we no longer need to enlist the JMS resource as JCA does this for us
+                StompSession session = getXASession(tx.getTxId());
 
-            session.sendToJms(command);
+                session.sendToJms(command);
 
-            tm.suspend();
-            log.trace("Suspended transaction: " + tx);
+                tm.suspend();
+                log.trace("Suspended transaction: " + tx);
+            } else if (xid.startsWith("http")) {
+                log.trace("RTS Transaction was propagated: " + xid);
+
+                String enlistmentUrl = xid;
+                final InboundBridge inboundBridge = InboundBridgeManager.getInstance().createInboundBridge(enlistmentUrl);
+                log.trace("Start inboundBridge");
+                inboundBridge.start();
+                StompSession session = getXASession(inboundBridge.getXid());
+                session.sendToJms(command);
+                inboundBridge.stop();
+                log.trace("Stop inboundBridge");
+            } else {
+                log.error(xid + " is not OTS or RTS transaction");
+            }
         } else {
             String destinationName = (String) headers.get(Stomp.Headers.Send.DESTINATION);
             log.trace("WAS NULL XID: " + destinationName);
@@ -304,21 +321,37 @@ public class ProtocolConverter {
         Map<String, Object> headers = command.getHeaders();
         String destinationName = (String) headers.remove(Stomp.Headers.Send.DESTINATION);
         String xid = (String) headers.get("messagexid");
-        Message msg;
-        StompSession session;
+        Message msg = null;
+        StompSession session = null;
         if (xid != null) {
-            log.trace("Transaction was propagated: " + xid);
-            TransactionImple tx = controlToTx(xid);
-            tm.resume(tx);
-            log.trace("Resumed transaction: " + tx);
+            if (xid.startsWith("IOR")){
+                log.trace("OTS Transaction was propagated: " + xid);
+                TransactionImple tx = controlToTx(xid);
+                tm.resume(tx);
+                log.trace("Resumed transaction: " + tx);
 
-            // Enlist the resource
-            session = getXASession(tx);
+                // Enlist the resource
+                session = getXASession(tx.getTxId());
 
-            msg = session.receiveFromJms(destinationName, headers);
+                msg = session.receiveFromJms(destinationName, headers);
 
-            tm.suspend();
-            log.trace("Suspended transaction: " + tx);
+                tm.suspend();
+                log.trace("Suspended transaction: " + tx);
+            } else if (xid.startsWith("http")){
+                log.trace("RTS Transaction was propagated: " + xid);
+
+                String enlistmentUrl = xid;
+                final InboundBridge inboundBridge = InboundBridgeManager.getInstance().createInboundBridge(enlistmentUrl);
+                log.trace("Start inboundBridge");
+                inboundBridge.start();
+                session = getXASession(inboundBridge.getXid());
+                msg = session.receiveFromJms(destinationName, headers);
+                inboundBridge.stop();
+                log.trace("Stop inboundBridge");
+
+            } else {
+                log.error(xid + " is not OTS or RTS transaction");
+            }
         } else {
             log.trace("WAS NULL XID");
             session = noneXaSession;
@@ -415,8 +448,8 @@ public class ProtocolConverter {
         return "/subscription-to/" + headers.get(Stomp.Headers.Subscribe.DESTINATION);
     }
 
-    protected StompSession getXASession(TransactionImple tx) throws JMSException {
-        StompSession xaSession = xaSessions.get(tx);
+    protected StompSession getXASession(Xid xid) throws JMSException {
+        StompSession xaSession = xaSessions.get(xid);
         if (xaSession == null) {
 
             XAConnection xaConnection;
@@ -435,7 +468,7 @@ public class ProtocolConverter {
             }
             xaSession = new StompSession(initialContext, this, session, xaConnection);
             log.trace("Created XA Session");
-            xaSessions.put(tx, xaSession);
+            xaSessions.put(xid, xaSession);
         } else {
             log.trace("Returned existing XA session");
         }
@@ -473,7 +506,7 @@ public class ProtocolConverter {
 
         /**
          * Construct a transaction based on an OTS control
-                  *
+         *
          * @param wrapper the wrapped OTS control
          */
         public JtsTransactionImple(ControlWrapper wrapper) {

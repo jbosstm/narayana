@@ -44,5 +44,7 @@
         <module name="org.apache.log4j"/>
         <module name="org.apache.commons.logging"/>
         <module name="org.omg.api"/>
+
+        <module name="org.jboss.narayana.rts"/>
     </dependencies>
 </module>
