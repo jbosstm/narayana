@@ -38,6 +38,7 @@
   </build>
   <modules>
     <module>jta</module>
+    <module>spi</module>
     <module>cdi</module>
     <module>jdbc</module>
     <module>narayana-jta</module>
