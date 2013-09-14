@@ -52,7 +52,6 @@ import org.jboss.logging.Logger;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
-
 @Path(TxSupport.TX_PATH)
 public class Coordinator
 {
@@ -355,9 +354,9 @@ public class Coordinator
             if (timeout < 0)
                 timeout = 0;
             else
-            	timeout /= 1000;
+                timeout /= 1000;
         }
-		
+
         int status = tx.begin(timeout);
 
         try {
@@ -507,8 +506,12 @@ public class Coordinator
     public Response enlistParticipant(@HeaderParam("Link") String linkHeader, @Context UriInfo info,
                                       @PathParam("TxId")String txId, String content)
     {
-        log.tracef("enlistParticipant request uri %s txid:  %s content: %s", info.getRequestUri(), txId, content);
-        Transaction tx = transactions.get(txId);
+        log.tracef("enlistParticipant request uri %s txid: %s Link: %s content: %s",
+                info.getRequestUri(), txId,
+                linkHeader != null ? linkHeader : "null",
+                content != null ? content : "null");
+
+        Transaction tx = getTransaction(txId);
 
         /*
          * If the transaction is not TransactionActive then the implementation MUST return a 412 status
@@ -517,7 +520,14 @@ public class Coordinator
         if (!tx.isRunning())
             return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
 
+        // TODO HACK alert - blacktie Link headers don't get passed through correctly
+        if (linkHeader == null || linkHeader.indexOf('<') == -1)
+            linkHeader = content;
+
         Map<String, String> links = TxSupport.decodeLinkHeader(linkHeader);
+//        Map<String, String> links = new HashMap<String, String>();
+//        for (Map.Entry<String, Link> link : linkHeader.getLinksByRelationship().entrySet())
+//            links.put(link.getKey(), link.getValue().getHref());
 
         if (links.containsKey(TxLinkNames.VOLATILE_PARTICIPANT))
             tx.addVolatileParticipant(links.get(TxLinkNames.VOLATILE_PARTICIPANT));
@@ -582,7 +592,7 @@ public class Coordinator
     public Response enlistVolatileParticipant(@HeaderParam("Link") String linkHeader, @Context UriInfo info,
                                       @PathParam("TxId")String txId) {
         log.tracef("enlistParticipant request uri %s txid:  %s", info.getRequestUri(), txId);
-        Transaction tx = transactions.get(txId);
+        Transaction tx = getTransaction(txId);
 
         if (tx.isFinishing())
             return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
