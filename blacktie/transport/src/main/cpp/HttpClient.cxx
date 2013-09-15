@@ -136,6 +136,7 @@ int HttpClient::send(apr_pool_t* pool, http_request_info* ri, const char* method
         int i = 0;
 
 		for (; headers[i]; i++) {
+			LOG4CXX_DEBUG(logger, "Header: " << headers[i]);
 			http_print(conn, "%s\r\n", headers[i]);
 		}
 	}
