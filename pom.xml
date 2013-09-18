@@ -492,7 +492,7 @@
     <version.org.apache.maven.plugins.maven-war-plugin>2.4</version.org.apache.maven.plugins.maven-war-plugin>
     <version.org.apache.maven.plugins.maven-compiler-plugin>3.1</version.org.apache.maven.plugins.maven-compiler-plugin>
     <version.org.apache.maven.plugins.maven-deploy-plugin>2.7</version.org.apache.maven.plugins.maven-deploy-plugin>
-    <version.org.apache.maven.plugins.maven-surefire-plugin>2.16</version.org.apache.maven.plugins.maven-surefire-plugin>
+    <version.org.apache.maven.plugins.maven-surefire-plugin>2.12.4</version.org.apache.maven.plugins.maven-surefire-plugin>
     <version.org.apache.maven.plugins.maven-source-plugin>2.2.1</version.org.apache.maven.plugins.maven-source-plugin>
     <version.org.apache.maven.plugins.maven-antrun-plugin>1.7</version.org.apache.maven.plugins.maven-antrun-plugin>
     <version.org.apache.maven.plugins.maven-install-plugin>2.4</version.org.apache.maven.plugins.maven-install-plugin>
