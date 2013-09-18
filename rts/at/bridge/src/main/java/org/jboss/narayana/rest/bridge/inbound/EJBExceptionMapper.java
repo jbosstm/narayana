@@ -4,10 +4,12 @@ import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
+@Provider
 public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
 
     public static final String TRANSACTIONA_REQUIRED_MESSAGE = "REST-AT transaction is required for this request.";
