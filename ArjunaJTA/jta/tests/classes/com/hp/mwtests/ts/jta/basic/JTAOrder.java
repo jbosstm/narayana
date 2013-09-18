@@ -63,7 +63,7 @@ public class JTAOrder
         theTransaction.enlistResource(last);
         theTransaction.enlistResource(first);
 
-        System.err.println("Committing transaction.");
+        System.out.println("Committing transaction.");
 
         tm.commit();
 
