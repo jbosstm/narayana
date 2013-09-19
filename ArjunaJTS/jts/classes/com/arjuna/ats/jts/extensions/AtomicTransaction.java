@@ -613,7 +613,9 @@ public class AtomicTransaction
 
 				if ((_theAction == null) && (txControl == null))
 					return true;
-				else
+				else if (_theAction != null) {
+					return false;
+				} else 
 					return _theAction.equals(txControl);
 			}
 			catch (Exception e)
