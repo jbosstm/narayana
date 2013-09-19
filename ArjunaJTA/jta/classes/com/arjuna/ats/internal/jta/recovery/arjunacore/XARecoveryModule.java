@@ -771,7 +771,7 @@ public class XARecoveryModule implements RecoveryModule
         }
         catch (XAException e1)
         {
-            e1.printStackTrace();
+        	jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
 
             switch (e1.errorCode)
             {
