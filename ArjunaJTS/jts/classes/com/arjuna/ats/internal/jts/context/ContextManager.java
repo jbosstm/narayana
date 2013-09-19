@@ -535,7 +535,7 @@ public class ContextManager
 	 * later.
 	 */
 
-	if (action != null)
+//	if (action != null)
 	    action.determineLocality();
 
 	/*
