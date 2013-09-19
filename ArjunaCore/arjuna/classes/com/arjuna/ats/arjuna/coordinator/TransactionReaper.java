@@ -206,6 +206,13 @@ public class TransactionReaper
                         // reschedule the element for a later
                         // check to ensure the thread responded to
                         // the kick
+                    	
+                    	StringBuilder sb = new StringBuilder();
+                        for (StackTraceElement element : reaperElement._worker.getStackTrace()) {
+                            sb.append(element.toString());
+                            sb.append("\n");
+                        }                    	
+                        tsLogger.i18NLogger.wedged_reaperelement(sb.toString());
 
                         reaperElement._status = ReaperElement.CANCEL_INTERRUPTED;
 
