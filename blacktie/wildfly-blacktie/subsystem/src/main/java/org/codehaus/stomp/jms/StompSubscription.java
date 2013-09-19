@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
 import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
@@ -37,7 +36,7 @@ import org.codehaus.stomp.StompFrame;
   *
  * @version $Revision: 50 $
  */
-public class StompSubscription implements MessageListener {
+public class StompSubscription {
     public static final String AUTO_ACK = Stomp.Headers.Subscribe.AckModeValues.AUTO;
     public static final String CLIENT_ACK = Stomp.Headers.Subscribe.AckModeValues.CLIENT;
     private static final transient Log log = LogFactory.getLog(StompSubscription.class);
@@ -45,6 +44,7 @@ public class StompSubscription implements MessageListener {
     private final String subscriptionId;
     private MessageConsumer consumer;
     private Map<String, Object> headers;
+    private boolean closed;
 
     public StompSubscription(StompSession session, String subscriptionId, StompFrame frame) throws JMSException,
             ProtocolException, NamingException {
@@ -52,10 +52,36 @@ public class StompSubscription implements MessageListener {
         this.session = session;
         this.headers = frame.getHeaders();
         this.consumer = session.createConsumer(headers);
-        this.consumer.setMessageListener(this);
+        (new Thread() {
+
+            @Override
+            public void run() {
+                while (!closed) {
+                    try {
+                        log.debug("Dequeuing from HQ");
+                        Message receive = consumer.receive();
+                        log.debug("Dequeued from HQ");
+                        if (receive != null) {
+                            onMessage(receive);
+                        } else {
+                            log.debug("Must be closing");
+                            if (!closed) {
+                                log.fatal("Fatal issue, receive returned null before connection closed!");
+                            }
+                        }
+                    } catch (JMSException e) {
+                        if (!closed) {
+                            log.warn("Could not receive a message", e);
+                        }
+                    }
+                }
+            }
+
+        }).start();
     }
 
     public void close() throws JMSException {
+        closed = true;
         consumer.close();
     }
 
