@@ -44,10 +44,16 @@ import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 public class DataSourceJDBCAccess implements JDBCAccess {
 
-	private DataSource dataSource;
 	private String datasourceName;
+	private InitialContext context;
 
 	public Connection getConnection() throws SQLException {
+		DataSource dataSource;
+		try {
+			dataSource = (DataSource) context.lookup(datasourceName);
+		} catch (NamingException ex) {
+			throw new FatalError(toString() + " : " + ex, ex);
+		}
 		Connection connection = dataSource.getConnection();
 		connection.setAutoCommit(false);
 		return connection;
@@ -71,8 +77,7 @@ public class DataSourceJDBCAccess implements JDBCAccess {
 		}
 		
 		try {
-			InitialContext context = new InitialContext();
-			dataSource = (DataSource) context.lookup(datasourceName);
+			context = new InitialContext();
 		} catch (NamingException ex) {
 			throw new FatalError(toString() + " : " + ex, ex);
 		}
