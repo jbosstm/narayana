@@ -40,7 +40,7 @@ import org.jboss.tm.TxUtils;
  */
 @RunWith(Arquillian.class)
 public class TestSPI {
-    @Resource(lookup = "java:jboss/TransactionManager")
+    @Inject
     private javax.transaction.TransactionManager transactionManager;
 
     @Deployment
