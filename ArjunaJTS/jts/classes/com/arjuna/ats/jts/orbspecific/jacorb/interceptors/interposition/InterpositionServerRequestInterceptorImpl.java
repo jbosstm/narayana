@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition;
 
+import org.jacorb.orb.portableInterceptor.ServerRequestInfoImpl;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
@@ -111,10 +112,10 @@ public String name ()
     }
 
     private void trace_request(String method, ServerRequestInfo request_info) {
-        jtsLogger.logger.tracef("InterpositionServerRequestInterceptorImpl::%s ( %s ) nodeId=%s requestId=%d",
+        jtsLogger.logger.tracef("InterpositionServerRequestInterceptorImpl::%s ( %s ) nodeId=%s requestId=%d target=%s",
                 method, request_info.operation(),
                 arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier(),
-                request_info.request_id());
+                request_info.request_id(), ((ServerRequestInfoImpl) request_info).target().toString());
     }
 
 public void receive_request_service_contexts (ServerRequestInfo request_info) throws SystemException
