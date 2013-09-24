@@ -394,7 +394,6 @@
                  <includes>
                      <include>**/*.btm</include>
                  </includes>
-				 <failOnWarning>false</failOnWarning>
              </configuration>
           </execution>
         </executions>
