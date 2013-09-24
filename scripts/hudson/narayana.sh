@@ -136,7 +136,7 @@ function build_narayana {
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Pfindbugs,release,community$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
