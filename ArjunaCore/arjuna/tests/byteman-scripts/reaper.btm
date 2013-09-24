@@ -56,34 +56,6 @@ DO debug("reaper2"),
    rendezvous("reaper2")
 ENDRULE
 
-# rendezvous before queueing in the worker queue a timed out reaper element tagged for cancellation
-
-RULE pause transaction reaper 3
-CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD check
-AT CALL add 2
-BIND NOTHING
-IF isRendezvous("reaper3", 2)
-DO debug("reaper3"),
-   rendezvous("reaper3"),
-   debug("reaper3"),
-   rendezvous("reaper3")
-ENDRULE
-
-# rendezvous before rescheduling checkup on a timed out reaper element tagged for cancellation
-
-RULE pause transaction reaper 4
-CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD check
-AT CALL add 3
-BIND NOTHING
-IF isRendezvous("reaper4", 2)
-DO debug("reaper4"),
-   rendezvous("reaper4"),
-   debug("reaper4"),
-   rendezvous("reaper4")
-ENDRULE
-
 # rendezvous before interrupting a timed out reaper element tagged for cancellation
 
 RULE pause transaction reaper 5
@@ -182,7 +154,7 @@ ENDRULE
 RULE pause transaction reaper worker 4
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
 METHOD doCancellations
-AT CALL prevent_commit
+AT CALL preventCommit
 BIND NOTHING
 IF isRendezvous("reaperworker4", 2)
 DO debug("reaperworker4"),
