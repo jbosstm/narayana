@@ -710,6 +710,9 @@
                                 <goals>
                                     <goal>check</goal>
                                 </goals>
+                                <configuration>
+                                  <failOnError>false</failOnError>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
