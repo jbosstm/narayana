@@ -32,6 +32,8 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
+import com.arjuna.ats.internal.jts.ORBManager;
+
 public class ORBRunner extends Thread 
 {
     
@@ -64,6 +66,7 @@ public class ORBRunner extends Thread
 	catch (Exception ex)
 	{
 	}
+	JacOrbRCServiceInit.orbRunnerCompleted();
     }
     
 }
