@@ -317,6 +317,10 @@ public class ORB
 
             // _postORBShutdown.clear();
         }
+    _orbMap.remove(_orbName);
+    if (_orbShutdownListener != null) {
+        _orbShutdownListener.orbShutdown();
+    }
     }
 
     /**
@@ -493,6 +497,10 @@ public class ORB
         return (_orbName);
     }
 
+public void setORBShutdownListener(ORBShutdownListener orbShutdownListener) {
+	_orbShutdownListener = orbShutdownListener;
+}
+
     com.arjuna.orbportability.orb.core.ORB _orb = new com.arjuna.orbportability.orb.core.ORB();
 
     private Hashtable _preORBShutdown = new Hashtable();
@@ -505,7 +513,9 @@ public class ORB
 
     private String _orbName = null;
 
-    private static HashMap _orbMap = new HashMap();
+private ORBShutdownListener _orbShutdownListener;
+
+private volatile static HashMap	 _orbMap = new HashMap();
 
     static final String ORB_INITIALISER_NS = "com.arjuna.orbportability.orb";
 

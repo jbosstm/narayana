@@ -168,6 +168,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
             jtsLogger.i18NLogger.info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6a();
         }
+        ORBManager.getPOA().addPreShutdown(new JacOrbRCShutdown());
     }
 
     /**
@@ -225,7 +226,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 _oa.rootPoa().the_POAManager().activate();
 
                 //_oa.run();
-                ORBRunner _runOA = new ORBRunner();
+                _runOA = new ORBRunner();
 
                 return true;
             } catch (Exception ex) {
@@ -254,5 +255,28 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     protected static com.arjuna.orbportability.RootOA _oa = null;
 
     static protected String uid4Recovery = "0:ffff52e38d0c:c91:4140398c:0";
+
+    private static Object orbRunnerLock = new Object();
+    private static ORBRunner _runOA;
+
+    public static void waitForRunningORBRunner() {
+        synchronized (orbRunnerLock) {
+            if (_runOA != null) {
+                try {
+                    orbRunnerLock.wait();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void orbRunnerCompleted() {
+        synchronized (orbRunnerLock) {
+            _runOA = null;
+            orbRunnerLock.notify();
+        }
+    }
 
 }
