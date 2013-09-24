@@ -24,7 +24,6 @@ cd blacktie
 rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
 unzip ..\jboss-as\dist\target\wildfly-%WILDFLY_MASTER_VERSION%.zip
 set JBOSS_HOME=%CD%\wildfly-%WILDFLY_MASTER_VERSION%\
-copy ..\rts\at\webservice\target\restat-web-%NARAYANA_CURRENT_VERSION%.war %JBOSS_HOME%\standalone\deployments\
 unzip wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
 set WORKSPACE=%WORKSPACE%\blacktie 
 call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - BlackTie Failed %BUILD_URL%" && exit -1)

@@ -252,7 +252,6 @@ function blacktie {
   rm -rf $PWD/wildfly-${WILDFLY_MASTER_VERSION}
   unzip ../jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip
   unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/wildfly-${WILDFLY_MASTER_VERSION}
-  cp ../rts/at/webservice/target/restat-web-${NARAYANA_CURRENT_VERSION}.war $PWD/wildfly-${WILDFLY_MASTER_VERSION}/standalone/deployments/
   WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-${WILDFLY_MASTER_VERSION} ./scripts/hudson/blacktie-linux.sh "$@"
   [ $? = 0 ] || fatal "BlackTie build failed"
   cd -
