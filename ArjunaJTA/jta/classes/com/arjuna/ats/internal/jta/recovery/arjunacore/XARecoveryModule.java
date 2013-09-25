@@ -47,6 +47,7 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -71,7 +72,6 @@ import com.arjuna.ats.jta.utils.XAHelper;
 
 public class XARecoveryModule implements RecoveryModule
 {
-
 	public XARecoveryModule()
 	{
 		this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(),
@@ -91,6 +91,15 @@ public class XARecoveryModule implements RecoveryModule
 
     public void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
         synchronized (_xaResourceRecoveryHelpers) {
+			if (scanning) {
+				try {
+					// do not allow a recovery helper to be removed while the
+					// scan is in progress
+					_xaResourceRecoveryHelpers.wait();
+				} catch (InterruptedException e) {
+					tsLogger.logger.warn("problem waiting for scanLock", e);
+				}
+			}
             _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
         }
     }
@@ -121,8 +130,12 @@ public class XARecoveryModule implements RecoveryModule
 	public synchronized void periodicWorkFirstPass()
 	{
 		// JBTM-1354 allow a second thread to execute the first pass but make sure it is only done once per scan (TMSTART/ENDSCAN)
-		if (!requireFirstPass) {
-			return;
+		synchronized (_xaResourceRecoveryHelpers) {
+			if (scanning) {
+				return;
+			} else {
+				scanning = true;
+			}
 		}
         if(jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debugv("{0} - first pass", _logName);
@@ -160,17 +173,11 @@ public class XARecoveryModule implements RecoveryModule
 		List<XAResource> resources = new ArrayList<XAResource>(_resources);
 		for (XAResource xaResource : resources) {
 			try {
-				// This calls out to remote systems and may block. Consider
-				// using alternate concurrency
-				// control rather than sync on __xaResourceRecoveryHelpers
-				// to
-				// avoid blocking problems?
 				xaRecoveryFirstPass(xaResource);
 			} catch (Exception ex) {
 				jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 			}
 		}
-		requireFirstPass = false;
 	}
 
 	public void periodicWorkSecondPass()
@@ -205,8 +212,9 @@ public class XARecoveryModule implements RecoveryModule
 
 		clearAllFailures();
 
-		synchronized (this) {
-			requireFirstPass = true;
+		synchronized (_xaResourceRecoveryHelpers) {
+			scanning = false;
+			_xaResourceRecoveryHelpers.notify();
 		}
 	}
 
@@ -409,11 +417,6 @@ public class XARecoveryModule implements RecoveryModule
     private void bottomUpRecovery() {
 			for (XAResource xaResource : _resources) {
 				try {
-					// This calls out to remote systems and may block. Consider
-					// using alternate concurrency
-					// control rather than sync on __xaResourceRecoveryHelpers
-					// to
-					// avoid blocking problems?
 					xaRecoverySecondPass(xaResource);
 				} catch (Exception ex) {
 					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
@@ -927,7 +930,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	private List<XAResource> _resources;
 
-	private boolean requireFirstPass = true;
+	private boolean scanning;
 
 	private final List<XAResourceRecovery> _xaRecoverers;
 
