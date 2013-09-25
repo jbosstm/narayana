@@ -63,6 +63,9 @@ public class CrashRecovery2 {
 			HeuristicMixedException, HeuristicRollbackException,
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
+	    
+	    jtaPropertyManager.getJTAEnvironmentBean().setOrphanSafetyInterval(0);
+	    
 		recoveryPropertyManager.getRecoveryEnvironmentBean()
 				.setRecoveryBackoffPeriod(1);
 
@@ -115,11 +118,6 @@ public class CrashRecovery2 {
 		RecoveryManager manager = RecoveryManager
 				.manager(RecoveryManager.DIRECT_MANAGEMENT);
 		manager.initialize();
-
-		Field safetyIntervalMillis = RecoveryXids.class
-				.getDeclaredField("safetyIntervalMillis");
-		safetyIntervalMillis.setAccessible(true);
-		safetyIntervalMillis.set(null, 0);
 
 		manager.scan();
 

@@ -90,6 +90,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
 	private int asyncCommitPoolSize = 10;
 
+    private int orphanSafetyInterval = 10000;
+
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -966,4 +968,22 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setAsyncCommitPoolSize(int asyncCommitPoolSize) {
 		this.asyncCommitPoolSize = asyncCommitPoolSize;
 	}
+
+    public int getOrphanSafetyInterval() {
+        return orphanSafetyInterval;
+    }
+
+    /**
+     * Set the amount of time to wait before deciding if the Xid is orphaned.
+     * 
+     * It is important because if this is too short and a transaction completes
+     * between the two recovery scan phases the xids from the RM will be considered
+     * as orphaned. Although this does not cause data integrity issues it can
+     * appear unsettling.
+     * 
+     * @param orphanSafetyInterval
+     */
+    public void setOrphanSafetyInterval(int orphanSafetyInterval) {
+        this.orphanSafetyInterval = orphanSafetyInterval;
+    }
 }
