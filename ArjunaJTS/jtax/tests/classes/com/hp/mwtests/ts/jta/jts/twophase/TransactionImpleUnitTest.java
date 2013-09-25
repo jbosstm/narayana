@@ -46,11 +46,13 @@ import javax.transaction.xa.XAResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.internal.jts.context.ContextManager;
 import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
@@ -66,6 +68,9 @@ public class TransactionImpleUnitTest
     @Test
     public void test () throws Exception
     {
+        ThreadActionData.purgeActions();        
+        OTSImpleManager.current().contextManager().purgeActions();
+        
         TransactionImple tx = new TransactionImple();
 
         DummyXA res = new DummyXA(false);
@@ -97,6 +102,9 @@ public class TransactionImpleUnitTest
     @Test
     public void testSynchronization () throws Exception
     {
+        ThreadActionData.purgeActions();        
+        OTSImpleManager.current().contextManager().purgeActions();
+        
         TransactionImple tx = new TransactionImple();
 
         tx.registerSynchronization(new Synchronization());
@@ -114,12 +122,15 @@ public class TransactionImpleUnitTest
         catch (final RollbackException ex)
         {
         }
+        
+        tx.rollback();
     }
     
     @Test
     public void testEnlist () throws Exception
     {
-        ThreadActionData.purgeActions();
+        ThreadActionData.purgeActions();        
+        OTSImpleManager.current().contextManager().purgeActions();
         
         TransactionImple tx = new TransactionImple();
         
@@ -165,7 +176,7 @@ public class TransactionImpleUnitTest
         {
         }
         
-        OTSImpleManager.current().suspend();
+        Control suspend = OTSImpleManager.current().suspend();
         
         tx = new TransactionImple();
         
@@ -177,12 +188,15 @@ public class TransactionImpleUnitTest
         tx.enlistResource(res);
         
         tx.commit();
+        
     }
     
     @Test
     public void testDelist () throws Exception
     {
         ThreadActionData.purgeActions();
+        OTSImpleManager.current().contextManager().purgeActions();
+        
         
         TransactionImple tx = new TransactionImple();
 
@@ -228,6 +242,7 @@ public class TransactionImpleUnitTest
     public void testFailure () throws Exception
     {
         ThreadActionData.purgeActions();
+        OTSImpleManager.current().contextManager().purgeActions();
         
         TransactionImple tx = new TransactionImple();
         
