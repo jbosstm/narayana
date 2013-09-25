@@ -117,10 +117,7 @@ public class XARecoveryModuleUnitTest2 {
 		tx.commit();
 
 		// Wait till the safety interval has expired
-		Field safetyIntervalMillis = RecoveryXids.class
-				.getDeclaredField("safetyIntervalMillis");
-		safetyIntervalMillis.setAccessible(true);
-		int safetyInterval = (Integer) safetyIntervalMillis.get(null);
+		int safetyInterval = jtaPropertyManager.getJTAEnvironmentBean().getOrphanSafetyInterval();
 		Thread.sleep(safetyInterval);
 		// Trigger phase two recovery and make sure the orphan is detected
 		xarm.periodicWorkSecondPass();
