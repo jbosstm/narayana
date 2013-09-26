@@ -173,7 +173,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
+        <version>${version.junit}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.narayana.jts</groupId>
@@ -372,132 +372,23 @@
 					<artifactId>blacktie-cpp-plugin</artifactId>
 					<version>${project.version}</version>
 				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.7</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>idlj-maven-plugin</artifactId>
-					<version>1.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-ear-plugin</artifactId>
-					<version>2.5</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.8</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.6</version>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.7.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>2.1.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.jboss.maven.plugins</groupId>
-					<artifactId>maven-jdocbook-plugin</artifactId>
-					<version>2.3.5</version>
-					<extensions>true</extensions>
-					<dependencies>
-						<dependency>
-							<groupId>org.jboss.pressgang</groupId>
-							<!--Non-namespaced version for DocBook 4.5 compatibility. For XSD namespaced version, use pressgang-xslt-ns-->
-							<artifactId>pressgang-xslt</artifactId>
-							<version>2.0.0</version>
-						</dependency>
-						<dependency>
-							<groupId>org.jboss.pressgang</groupId>
-							<artifactId>pressgang-jdocbook-style</artifactId>
-							<type>jdocbook-style</type>
-							<version>2.0.0</version>
-						</dependency>
-					</dependencies>
-					<configuration>
-						<sourceDirectory>${project.basedir}/src/main/docbook</sourceDirectory>
-						<sourceDocumentName>${docname}.xml</sourceDocumentName>
-						<masterTranslation>en-US</masterTranslation>
-						<imageResource>
-							<directory>${project.basedir}/src/main/docbook/en-US</directory>
-							<includes>
-								<include>images/*.png</include>
-							</includes>
-						</imageResource>
-						<formats>
-							<format>
-								<formatName>pdf</formatName>
-								<stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
-								<finalName>${docname}.pdf</finalName>
-							</format>
-							<format>
-								<formatName>html</formatName>
-								<stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
-								<finalName>index.html</finalName>
-							</format>
-						</formats>
-						<options>
-							<xmlTransformerType>saxon</xmlTransformerType>
-							<xincludeSupported>true</xincludeSupported>
-							<docbookVersion>1.72.0</docbookVersion>
-							<useRelativeImageUris>true</useRelativeImageUris>
-						</options>
-					</configuration>
-				</plugin>
+                               <plugin>
+                                       <groupId>org.apache.maven.plugins</groupId>
+                                       <artifactId>maven-ear-plugin</artifactId>
+                                       <version>2.5</version>
+                               </plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-			<plugin>
-				<inherited>false</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+               <plugins>
+                       <plugin>
+                               <inherited>false</inherited>
+                               <groupId>org.apache.maven.plugins</groupId>
+                               <artifactId>maven-deploy-plugin</artifactId>
+                               <configuration>
+                                       <skip>false</skip>
+                               </configuration>
+                       </plugin>
+               </plugins>
 	</build>
 	<profiles>
 		<profile>
