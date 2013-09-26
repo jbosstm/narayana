@@ -33,7 +33,7 @@ set M2_HOME=
 set MAVEN_HOME=
 
 set MAVEN_OPTS=%MAVEN_OPTS% -Xms512m -XX:MaxPermSize=256m
-set MVN_OPTIONS=-gs tools\maven\conf\settings.xml -Dorson.jar.location=%PWD%\ext\
+set MVN_OPTIONS=-gs tools\maven\conf\settings.xml -Dorson.jar.location=%PWD%\ext\ -Dbpa=vc9x32
 
 REM ******************************************************
 REM - "for" loops have been unrolled for compatibility

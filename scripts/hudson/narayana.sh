@@ -197,15 +197,7 @@ function build_as {
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
-  build_blacktie_subsystem
   init_jboss_home
-}
-
-function build_blacktie_subsystem {
-  echo "Building Blacktie Subsystem"
-  cd ${WORKSPACE}
-  ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install
-  [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
 }
 
 function init_jboss_home {
@@ -248,13 +240,67 @@ function rts_tests {
 
 function blacktie {
   echo "#0. BlackTie"
-  cd blacktie
-  rm -rf $PWD/wildfly-${WILDFLY_MASTER_VERSION}
-  unzip ../jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/wildfly-${WILDFLY_MASTER_VERSION}
-  WORKSPACE=$WORKSPACE/blacktie JBOSS_HOME=$PWD/wildfly-${WILDFLY_MASTER_VERSION} ./scripts/hudson/blacktie-linux.sh "$@"
-  [ $? = 0 ] || fatal "BlackTie build failed"
-  cd -
+  ulimit -c unlimited
+  if [ -z "${JBOSSAS_IP_ADDR+x}" ]; then
+    echo JBOSSAS_IP_ADDR not set
+    JBOSSAS_IP_ADDR=localhost
+  fi
+  # KILL ANY PREVIOUS BUILD REMNANTS
+  ps -f
+  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
+  killall -9 -r memcheck
+  killall -9 testsuite
+  killall -9 server
+  killall -9 client
+  killall -9 cs
+  ps -f
+  # FOR DEBUGGING SUBSEQUENT ISSUES
+  free -m
+
+  echo "Building Blacktie Subsystem"
+  cd ${WORKSPACE}
+  ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
+  [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
+  rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip -d $PWD/blacktie
+  [ $? = 0 ] || fatal "Could not unzip wildfly"
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
+  # INITIALIZE JBOSS
+  ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
+  if [ "$?" != "0" ]; then
+	  fatal "Failed to init JBoss: $BUILD_URL"
+  fi
+  chmod u+x $WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh
+
+  if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
+    # START JBOSS
+    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="$JAVA_OPTS -Xmx256m -XX:MaxPermSize=256m" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR&
+    sleep 5
+  fi
+
+  # BUILD BLACKTIE
+  ./build.sh -f blacktie/pom.xml clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  if [ "$?" != "0" ]; then
+  	ps -f
+	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
+  	killall -9 testsuite
+	  killall -9 server
+	  killall -9 client
+  	killall -9 cs
+    ps -f
+  	fatal "Some tests failed: $BUILD_URL"
+  fi
+
+  # KILL ANY BUILD REMNANTS
+  ps -f
+  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
+  killall -9 testsuite
+  killall -9 server
+  killall -9 client
+  killall -9 cs
+  ps -f
+  [ $? = 0 ] || fatal "BlackTie build failed: $BUILD_URL"
 }
 
 function jta_cdi_tests {

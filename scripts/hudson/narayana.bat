@@ -1,3 +1,5 @@
+if not defined WORKSPACE (call:fail_build && exit -1)
+
 call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
 
 call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" && exit -1)
@@ -10,13 +12,12 @@ cd jboss-as
 git remote add upstream https://github.com/wildfly/wildfly.git
 git pull --rebase --ff-only -s recursive -Xtheirs upstream master
 if %ERRORLEVEL% NEQ 0 exit -1
-
 echo "Building AS"
 set MAVEN_OPTS="-Xmx768M"
 call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - AS Failed %BUILD_URL%" && exit -1)
+cd ..\
 
 echo "Building Blacktie Subsystem"
-cd ..\
 call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" && exit -1)
 
 echo "Building BlackTie
@@ -25,15 +26,55 @@ rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
 unzip ..\jboss-as\dist\target\wildfly-%WILDFLY_MASTER_VERSION%.zip
 set JBOSS_HOME=%CD%\wildfly-%WILDFLY_MASTER_VERSION%\
 unzip wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
-set WORKSPACE=%WORKSPACE%\blacktie 
-call scripts\hudson\blacktie-vc9x32.bat || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - BlackTie Failed %BUILD_URL%" && exit -1)
+cd ..\
+
+set NOPAUSE=true
+
+rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
+FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+tasklist
+taskkill /F /IM mspdbsrv.exe
+taskkill /F /IM testsuite.exe
+taskkill /F /IM server.exe
+taskkill /F /IM client.exe
+taskkill /F /IM cs.exe
+tasklist
+
+if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
+
+rem INITIALIZE JBOSS
+call ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss -debug || (call:fail_build && exit -1)
+
+rem wget -P jboss-as\standalone\deployments\ -N http://172.17.131.2/job/narayana-populateM2-taconic/lastSuccessfulBuild/artifact/rts/at/webservice/target/restat-web-5.0.0.M2-SNAPSHOT.war
+rem IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Can not wget restat-web war" & exit -1
+
+set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-${WILDFLY_MASTER_VERSION}
+
+rem START JBOSS
+rem set JAVA_OPTS="%JAVA_OPTS% -Xmx1024m -XX:MaxPermSize=512m"
+start /B %JBOSS_HOME%\bin\standalone.bat -c standalone-blacktie.xml -Djboss.bind.address=%JBOSSAS_IP_ADDR% -Djboss.bind.address.unsecure=%JBOSSAS_IP_ADDR%
+echo "Started server"
+@ping 127.0.0.1 -n 20 -w 1000 > nul
+
+rem BUILD BLACKTIE
+call build.bat -f blacktie/pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build && exit -1)
+
+rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
+tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+echo "Finished build"
 
 call:comment_on_pull "BLACKTIE profile tests passed on Windows - Job complete %BUILD_URL%"
 
-rem -------------------------------------------------------
-rem -                 Functions bellow                    -
-rem -------------------------------------------------------
+rem ------------------------------------------------------
+rem -                 Functions below                    -
+rem ------------------------------------------------------
 
+goto:eof
+
+:fail_build
+  call:comment_on_pull "Build failed %BUILD_URL%"
+  tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+  exit -1
 goto:eof
 
 :comment_on_pull

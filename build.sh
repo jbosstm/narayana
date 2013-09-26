@@ -10,6 +10,30 @@
 
 # $Id: build.sh 105735 2010-06-04 19:45:13Z pgier $
 
+# Create the bpa if you can
+BPA=
+uname | grep Linux >> /dev/null
+if [ "$?" -ne "1" ]; then
+	uname -a | grep x86_64 >> /dev/null
+	if [ "$?" -ne "1" ]; then
+		BPA="-Dbpa=centos54x64"
+	else
+		BPA="-Dbpa=centos55x32"
+	fi
+  # This is required for the upgrade of g++ https://issues.jboss.org/browse/JBTM-1787
+  if [ -f /etc/fedora-release ]
+  then
+    grep "Fedora release 18" /etc/fedora-release > /dev/null
+  	if [ "$?" -eq "0" ]; then
+  		BPA="-Dbpa=fc18x64"
+    fi
+    grep "Fedora release 19" /etc/fedora-release > /dev/null
+  	if [ "$?" -eq "0" ]; then
+  		BPA="-Dbpa=fc18x64"
+    fi
+  fi
+fi
+
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
 GREP="grep"
@@ -30,7 +54,7 @@ MAVEN_SEARCH_PATH="\
     maven"
 
 #  Default arguments
-MVN_OPTIONS="-s tools/maven/conf/settings.xml -Dorson.jar.location=`pwd`/ext/ -Demma.jar.location=`pwd`/ext/"
+MVN_OPTIONS="-s tools/maven/conf/settings.xml -Dorson.jar.location=`pwd`/ext/ -Demma.jar.location=`pwd`/ext/ $BPA"
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
