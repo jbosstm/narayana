@@ -60,7 +60,7 @@ public class CSTest extends CSControl {
     }
 
     // tpcall failure with multiple threads
-    public void test_215() {
+    public void xtest_215() {
         runServer("215");
         runTest("215");
     }
