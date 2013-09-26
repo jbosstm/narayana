@@ -1,5 +1,5 @@
 function fatal {
-  comment_on_pull "Tests failed: $1"
+  comment_on_pull "Tests failed ($BUILD_URL): $1"
   echo "$1"
   exit 1
 }
@@ -306,5 +306,5 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
-comment_on_pull "All tests passed - Job complete"
+comment_on_pull "All tests passed - Job complete: $BUILD_URL"
 exit 0 # any failure would have resulted in fatal being called which exits with a value of 1
