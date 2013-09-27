@@ -101,7 +101,7 @@ public class StompSession {
         long timeToLive = getTimeToLive(headers);
 
         producer.send(destination, message, deliveryMode, priority, timeToLive);
-        log.debug("Sent message: " + message.getJMSMessageID());
+        log.debug("Sent to HQ: " + message.getJMSMessageID());
     }
 
     public void sendToStomp(Message message, String subscriptionID) throws JMSException, IOException {
@@ -366,6 +366,12 @@ public class StompSession {
     public void start() throws JMSException {
         log.debug("Starting session: " + session);
         connection.start();
+
+        Iterator<StompSubscription> iterator = subscriptions.values().iterator();
+        while (iterator.hasNext()) {
+            StompSubscription next = iterator.next();
+            next.resume();
+        }
     }
 
     public void stop() throws JMSException {

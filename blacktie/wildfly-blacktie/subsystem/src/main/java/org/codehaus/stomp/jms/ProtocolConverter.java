@@ -288,9 +288,10 @@ public class ProtocolConverter {
             tm.suspend();
             log.trace("Suspended transaction: " + tx);
         } else {
-            log.trace("WAS NULL XID");
+            String destinationName = (String) headers.get(Stomp.Headers.Send.DESTINATION);
+            log.trace("WAS NULL XID: " + destinationName);
             noneXaSession.sendToJms(command);
-            log.trace("Sent to JMS");
+            log.trace("Sent to JMS: " + destinationName);
         }
         sendResponse(command);
         log.trace("Sent Response");
