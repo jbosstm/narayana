@@ -125,6 +125,12 @@
                     <version>${jboss-as.version}</version>
                     <scope>test</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -155,6 +161,12 @@
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <version>${jboss-as.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
