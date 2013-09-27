@@ -194,6 +194,12 @@
                     <version>${version.org.jboss.arquillian.core}</version>
                     <scope>test</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -228,6 +234,12 @@
                     <groupId>org.jboss.arquillian.protocol</groupId>
                     <artifactId>arquillian-protocol-servlet</artifactId>
                     <version>${version.org.jboss.arquillian.core}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

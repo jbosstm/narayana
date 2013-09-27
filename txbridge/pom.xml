@@ -356,6 +356,12 @@
                         <version>${version.org.jboss.logmanager}</version>
                         <scope>provided</scope>
                     </dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
+                    <scope>test</scope>
+                </dependency>
 			</dependencies>
 		</profile>
 		<profile>
@@ -428,6 +434,12 @@
 					<version>${version.org.jboss.logmanager}</version>
 					<scope>provided</scope>
 				</dependency>
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>${version.org.jboss.xnio}</version>
+                    <scope>test</scope>
+                </dependency>
 			</dependencies>
 		</profile>
         <profile>
