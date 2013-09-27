@@ -43,12 +43,9 @@ tasklist
 if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
 
 rem INITIALIZE JBOSS
-call ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss -debug || (call:fail_build && exit -1)
+call ant -f blacktie\scripts\hudson\initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION% initializeJBoss -debug || (call:fail_build && exit -1)
 
-rem wget -P jboss-as\standalone\deployments\ -N http://172.17.131.2/job/narayana-populateM2-taconic/lastSuccessfulBuild/artifact/rts/at/webservice/target/restat-web-5.0.0.M2-SNAPSHOT.war
-rem IF %ERRORLEVEL% NEQ 0 call:comment_on_pull "Can not wget restat-web war" & exit -1
-
-set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-${WILDFLY_MASTER_VERSION}
+set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION%
 
 rem START JBOSS
 rem set JAVA_OPTS="%JAVA_OPTS% -Xmx1024m -XX:MaxPermSize=512m"
@@ -57,7 +54,7 @@ echo "Started server"
 @ping 127.0.0.1 -n 20 -w 1000 > nul
 
 rem BUILD BLACKTIE
-call build.bat -f blacktie/pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build && exit -1)
+call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build && exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
