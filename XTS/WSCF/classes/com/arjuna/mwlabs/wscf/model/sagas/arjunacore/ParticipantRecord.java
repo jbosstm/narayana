@@ -535,11 +535,6 @@ public class ParticipantRecord extends
 		return new ParticipantRecord();
 	}
 
-	public void remove (AbstractRecord toDelete)
-	{
-		toDelete = null;
-	}
-
 	public void print (PrintWriter strm)
 	{
 		super.print(strm);
