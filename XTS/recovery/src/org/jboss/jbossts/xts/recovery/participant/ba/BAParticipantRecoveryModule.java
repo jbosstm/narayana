@@ -70,17 +70,16 @@ public class BAParticipantRecoveryModule implements XTSRecoveryModule
         // the manager is needed by both the participant or the coordinator recovery modules so whichever
         // one gets there first creates it. No synchronization is needed as modules are only ever
         // installed in a single thread
-        XTSBARecoveryManager baRecoveryManager = XTSBARecoveryManager.getRecoveryManager();
-        if (baRecoveryManager == null) {
-            baRecoveryManager = new XTSBARecoveryManagerImple(_recoveryStore);
-            XTSBARecoveryManager.setRecoveryManager(baRecoveryManager);
+        if (!XTSBARecoveryManagerImple.isRecoveryManagerInitialised()) {
+            XTSBARecoveryManager.setRecoveryManager(new XTSBARecoveryManagerImple(_recoveryStore));
         }
+
         // Subordinate Coordinators register durable participants with their parent transaction so
         // we need to add an XTSBARecoveryModule which knows about the registered participants
 
         subordinateRecoveryModule = new XTSBASubordinateRecoveryModule();
 
-        baRecoveryManager.registerRecoveryModule(subordinateRecoveryModule);
+        XTSBARecoveryManager.getRecoveryManager().registerRecoveryModule(subordinateRecoveryModule);
     }
 
     /**

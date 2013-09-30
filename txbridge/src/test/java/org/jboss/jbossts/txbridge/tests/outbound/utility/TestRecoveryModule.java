@@ -48,19 +48,7 @@ public class TestRecoveryModule implements XTSATRecoveryModule {
     public void postConstruct() {
         log.info("TestRecoveryModule starting");
 
-        //FIXME this is ugly hack!! it seems that dependency names from jboss-beans.xml no longer work in AS7!?
-        XTSATRecoveryManager xtsATRecoveryManager = null;
-        do {
-            xtsATRecoveryManager = XTSATRecoveryManager.getRecoveryManager();
-            log.info("trying to get XTSATRecoverManager = " + xtsATRecoveryManager);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        } while (xtsATRecoveryManager == null);
-
-        xtsATRecoveryManager.registerRecoveryModule(this);
+        XTSATRecoveryManager.getRecoveryManager().registerRecoveryModule(this);
     }
 
     /**
