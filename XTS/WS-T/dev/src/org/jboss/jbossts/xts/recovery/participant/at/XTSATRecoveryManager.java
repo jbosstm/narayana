@@ -23,6 +23,15 @@ public abstract class XTSATRecoveryManager {
      */
     public static XTSATRecoveryManager getRecoveryManager()
     {
+        int i = 0;
+
+        while (theRecoveryManager == null && i++ < 2) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+        }
+
         return theRecoveryManager;
     }
 
@@ -156,5 +165,5 @@ public abstract class XTSATRecoveryManager {
      * the singleton instance of the recovery manager
      */
 
-    private static XTSATRecoveryManager theRecoveryManager = null;
+    protected static XTSATRecoveryManager theRecoveryManager = null;
 }
