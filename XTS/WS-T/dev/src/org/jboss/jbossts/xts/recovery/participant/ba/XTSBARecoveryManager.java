@@ -23,6 +23,15 @@ public abstract class XTSBARecoveryManager {
      */
     public static XTSBARecoveryManager getRecoveryManager()
     {
+        int i = 0;
+
+        while (theRecoveryManager == null && i++ < 2) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+        }
+
         return theRecoveryManager;
     }
 
@@ -156,5 +165,5 @@ public abstract class XTSBARecoveryManager {
      * the singleton instance of the recovery manager
      */
 
-    private static XTSBARecoveryManager theRecoveryManager = null;
+    protected static XTSBARecoveryManager theRecoveryManager = null;
 }

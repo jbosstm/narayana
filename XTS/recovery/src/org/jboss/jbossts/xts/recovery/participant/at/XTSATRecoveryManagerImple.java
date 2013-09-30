@@ -25,6 +25,11 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
         this.txLog = txLog;
     }
 
+    public static boolean isRecoveryManagerInitialised()
+    {
+        return theRecoveryManager != null;
+    }
+
     /**
      * register an application specific recovery module which acts as a helper to recreate
      * a WS-AT durable participant from the participant's recovery data saved at prepare

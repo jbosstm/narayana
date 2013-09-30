@@ -73,9 +73,8 @@ public class BACoordinatorRecoveryModule implements XTSRecoveryModule
         // the manager is needed by both the participant or the coordinator recovery modules so whichever
         // one gets there first creates it. No synchronization is needed as modules are only ever
         // installed in a single thread
-        XTSBARecoveryManager baRecoveryManager = XTSBARecoveryManager.getRecoveryManager();
-        if (baRecoveryManager == null) {
-            baRecoveryManager = new XTSBARecoveryManagerImple(_recoveryStore);
+        if (!XTSBARecoveryManagerImple.isRecoveryManagerInitialised()) {
+            XTSBARecoveryManager baRecoveryManager = new XTSBARecoveryManagerImple(_recoveryStore);
             XTSBARecoveryManager.setRecoveryManager(baRecoveryManager);
         }
         
