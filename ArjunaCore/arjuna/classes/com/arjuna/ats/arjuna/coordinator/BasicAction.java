@@ -1523,7 +1523,7 @@ public class BasicAction extends StateManager
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.tracef("BasicAction::End() result for action-id (%s) is (%s) node id: (%s)",
                     get_uid(),
-                    TwoPhaseOutcome.stringForm(actionStatus),
+                    TwoPhaseOutcome.stringForm(heuristicDecision),
                     arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier());
         }
 
