@@ -37,7 +37,6 @@ import org.jboss.narayana.compensations.impl.TxLoggedInterceptor;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
 import org.jboss.narayana.txframework.api.management.WSBATxControl;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
-import org.jboss.narayana.txframework.impl.handlers.restat.client.RestTXRequiredInterceptor;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBATxControlImpl;
 
 import javax.enterprise.event.Observes;
@@ -60,7 +59,6 @@ public class TXFrameworkCDIExtension implements Extension {
      */
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
 
-        bbd.addAnnotatedType(bm.createAnnotatedType(RestTXRequiredInterceptor.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMap.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMapImpl.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControl.class));

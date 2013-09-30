@@ -28,11 +28,8 @@ import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.wst.SystemException;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
-import org.jboss.narayana.txframework.api.annotation.transaction.Transactional;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
-import org.jboss.narayana.txframework.impl.handlers.restat.service.RESTATHandler;
-import org.jboss.narayana.txframework.impl.handlers.wsat.WSATHandler;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAHandler;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
@@ -56,16 +53,6 @@ public class HandlerFactory {
         Compensatable compensatable = (Compensatable) serviceInvocationMeta.getServiceClass().getAnnotation(Compensatable.class);
         if (compensatable != null) {
             protocolHandler = new WSBAHandler(serviceInvocationMeta, compensatable.completionType());
-        }
-
-        Transactional Transactional = (Transactional) serviceInvocationMeta.getServiceClass().getAnnotation(Transactional.class);
-        if (Transactional != null) {
-            if (isWSATTransactionRunning()) {
-                protocolHandler = new WSATHandler(serviceInvocationMeta);
-            } else //assume it must be a REST-AT transaction running.
-            {
-                protocolHandler = new RESTATHandler(serviceInvocationMeta);
-            }
         }
 
         if (protocolHandler == null) {
