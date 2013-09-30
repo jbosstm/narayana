@@ -49,7 +49,7 @@ public class Unknown implements CompletionStatus
 
     public boolean equals (Object param)
     {
-	return this.equals(param);
+	return this.getClass().equals(param.getClass());
     }	
 
     public String toString ()
