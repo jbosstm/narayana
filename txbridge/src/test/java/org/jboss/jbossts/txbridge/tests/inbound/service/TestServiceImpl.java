@@ -42,9 +42,8 @@ import javax.transaction.xa.XAException;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
  */
 @Stateless
-@WebService(targetNamespace = "http://client.inbound.tests.txbridge.jbossts.jboss.org/")
+@WebService(targetNamespace = "http://client.inbound.tests.txbridge.jbossts.jboss.org/", portName = "TestServiceImpl")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-@HandlerChain(file = "/jaxws-handlers-server.xml") // relative path from the class file
 @TransactionAttribute(TransactionAttributeType.MANDATORY) // default is REQUIRED
 public class TestServiceImpl {
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
