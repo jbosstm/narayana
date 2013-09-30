@@ -15,6 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+#include "apr.h"
 #include "log4cxx/logger.h"
 #include "ThreadLocalStorage.h"
 #include "TxControl.h"
