@@ -100,7 +100,7 @@ public class XAResourceRecord extends AbstractRecord
 		super(new Uid(), null, ObjectType.ANDPERSISTENT);
 
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.XAResourceRecord ( " + xid + ", " + res + " )");
+            jtaLogger.logger.trace("XAResourceRecord.XAResourceRecord ( " + xid + ", " + res + " ), record id=" + order());
         }
 
 		_theXAResource = res;
@@ -188,7 +188,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelPrepare()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + this);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + this + ", record id=" + order());
         }
 
 		if (!_valid || (_theXAResource == null) || (_tranID == null))
@@ -270,7 +270,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelAbort()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelAbort for " + this);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelAbort for " + this + ", record id=" + order());
         }
 
 		if (!_valid)
@@ -431,7 +431,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelCommit()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelCommit for " + this);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelCommit for " + this + ", record id=" + order());
         }
 
 		if (!_prepared)
@@ -577,7 +577,7 @@ public class XAResourceRecord extends AbstractRecord
 	public int topLevelOnePhaseCommit()
 	{
 	    if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelOnePhaseCommit for " + this);
+            jtaLogger.logger.trace("XAResourceRecord.topLevelOnePhaseCommit for " + this + ", record id=" + order());
         }
 
 	    boolean commit = true;
