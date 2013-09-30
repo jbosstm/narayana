@@ -34,9 +34,7 @@ public class BaseCrashTest
     private static final Logger logger = Logger.getLogger(BaseCrashTest.class.getName());
 
     protected String XTSServiceTest = " -Dorg.jboss.jbossts.xts.servicetests.XTSServiceTestName=@TestName@";
-    protected String BytemanArgs = "-Xms64m -Xmx1024m -XX:MaxPermSize=512m -Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:target/lib/byteman.jar=script:target/test-classes/scripts/@BMScript@.btm,boot:target/lib/byteman.jar,listener:true";
-    protected String iPv6Args = "-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1] ";
-    protected String javaVmArguments = "-server ";
+    protected String javaVmArguments;
     protected String testName;
     protected String scriptName;
     private final static String xtstestWar = "../xtstest/target/xtstest.war";
@@ -61,10 +59,11 @@ public class BaseCrashTest
     @Before
     public void setUp()
     {
-        if (isIPv6())
-            javaVmArguments += iPv6Args + BytemanArgs.replace("@BMScript@", scriptName);
-        else
-            javaVmArguments += BytemanArgs.replace("@BMScript@", scriptName);
+        javaVmArguments = System.getProperty("server.jvm.args")
+                .replaceAll("=listen","=script:target/test-classes/scripts/@BMScript@.btm,boot:target/lib/byteman.jar,listen");
+
+        javaVmArguments = javaVmArguments.replace("@BMScript@", scriptName);
+
 
         System.out.println("Starting arquillian with java VM args: " +
                 javaVmArguments + " isIPv6: " + isIPv6());
@@ -193,8 +192,6 @@ public class BaseCrashTest
         logger.info("Test starting, server should be down: " + scriptName + ":" + testName);
 
         Config config = new Config();
-        config.add("testClass", testClass);
-        config.add("scriptName", scriptName);
         config.add("javaVmArguments", javaVmArguments + XTSServiceTest.replace("@TestName@", testClass));
 
         controller.start("jboss-as", config.map());
