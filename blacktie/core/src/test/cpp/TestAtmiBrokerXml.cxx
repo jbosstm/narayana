@@ -20,28 +20,26 @@
 #include "TestAtmiBrokerXml.h"
 #include "AtmiBrokerEnvXml.h"
 #include "AtmiBrokerEnv.h"
-#include "ace/OS_NS_stdlib.h"
-#include "ace/OS_NS_stdio.h"
 #include "btlogger.h"
 
 #include "malloc.h"
 #include <string.h>
+#include <stdlib.h>
 void TestAtmiBrokerXml::setUp() {
-	init_ace();
 	// Perform global set up
 	TestFixture::setUp();
 }
 
 void TestAtmiBrokerXml::tearDown() {
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=.");
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION=");
+	putenv("BLACKTIE_CONFIGURATION_DIR=.");
+	putenv("BLACKTIE_CONFIGURATION=");
 	// Perform global clean up
 	TestFixture::tearDown();
 }
 void TestAtmiBrokerXml::test_env() {
 	btlogger((char*) "RUNNING");
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=xmltest");
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION=xmltest");
+	putenv("BLACKTIE_CONFIGURATION_DIR=xmltest");
+	putenv("BLACKTIE_CONFIGURATION=xmltest");
 	AtmiBrokerEnv* env = AtmiBrokerEnv::get_instance();
 	char* value;
 	value = env->getenv((char*) "MYLIBTEST");
@@ -154,7 +152,7 @@ void TestAtmiBrokerXml::test_env() {
 }
 
 void TestAtmiBrokerXml::test_define_adminservice() {
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=wrongtest");
+	putenv("BLACKTIE_CONFIGURATION_DIR=wrongtest");
 
 	try {
 		AtmiBrokerEnv::get_instance();
@@ -166,7 +164,7 @@ void TestAtmiBrokerXml::test_define_adminservice() {
 }
 
 void TestAtmiBrokerXml::test_same_service() {
-	ACE_OS::putenv("BLACKTIE_CONFIGURATION_DIR=sametest");
+	putenv("BLACKTIE_CONFIGURATION_DIR=sametest");
 
 	try {
 		AtmiBrokerEnv::get_instance();

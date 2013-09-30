@@ -26,7 +26,6 @@
 #include "malloc.h"
 
 void TestDefaultCodecImpl::setUp() {
-	init_ace();
 	AtmiBrokerEnv::get_instance();
 
 	// Perform global set up

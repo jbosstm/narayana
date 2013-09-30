@@ -21,14 +21,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "btlogger.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern BLACKTIE_CORE_DLL void init_ace();
-#ifdef __cplusplus
-}
-#endif
-
 #define	BTDBGPOST	\
 	btlogger_debug("POST ASSERT %s:%d", __FILE__, __LINE__)
 #define	BTDBGPRE	\

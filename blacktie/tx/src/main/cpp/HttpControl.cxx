@@ -17,17 +17,16 @@
  */
 #include <string>
 #include <string.h>
+#include <stdlib.h>
+
+#include <apr_strings.h>
+
 #include "log4cxx/logger.h"
 #include "ThreadLocalStorage.h"
 #include "HttpControl.h"
 #include "TxManager.h"
 #include "Http.h"
-
-#include "ace/ACE.h"
-#include "ace/OS_NS_stdio.h"
-#include "ace/OS_NS_string.h"
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
+#include "AtmiBrokerEnv.h"
 
 #define TX_GUARD(msg, expect) { \
 	FTRACE(httpclogger, "ENTER"); \
@@ -144,7 +143,7 @@ static char *last_path(char *url) {
 	return p;
 }
 
-HttpControl::HttpControl(long timeout, int tid) : TxControl(timeout, tid),
+HttpControl::HttpControl(long timeout, apr_os_thread_t tid) : TxControl(timeout, tid),
 	_txnUrl(NULL), _endUrl(NULL), _enlistUrl(NULL), _xid(NULL)
 {
 	FTRACE(httpclogger, "ENTER new HTTPTXCONTROL: " << this);
@@ -157,7 +156,7 @@ HttpControl::HttpControl(long timeout, int tid) : TxControl(timeout, tid),
 	}
 }
 
-HttpControl::HttpControl(char* txn, long ttl, int tid) : TxControl(ttl, tid),
+HttpControl::HttpControl(char* txn, long ttl, apr_os_thread_t tid) : TxControl(ttl, tid),
 	_txnUrl(NULL), _endUrl(NULL), _enlistUrl(NULL)
 {
 	FTRACE(httpclogger, "ENTER reassociate HTTPTXCONTROL: " << this << " txn=" << txn);
@@ -205,9 +204,9 @@ int HttpControl::decode_headers(http_request_info *ri) {
 				LOG4CXX_DEBUG(httpclogger, "check header: cmp " << v
 					<< " with " << DUR_PARTICIPANT);
 				if (strstr(v, DUR_PARTICIPANT) != 0)
-					_enlistUrl = ACE::strndup(v, ep - v);
+					_enlistUrl = strndup(v, ep - v);
 				else if (strstr(v, TERMINATOR) != 0)
-					_endUrl = ACE::strndup(v, ep - v);
+					_endUrl = strndup(v, ep - v);
 			}
 		}
 	}
@@ -288,7 +287,7 @@ int HttpControl::do_end(int how)
 			break;
 	}
 
-	(void) ACE_OS::snprintf(p, sizeof (content), "%s%s", TXSTATUS, status);
+	(void) apr_snprintf(p, sizeof (content), "%s%s", TXSTATUS, status);
 	if (_wc.send(_pool, &ri, "PUT", _endUrl, TX_STATUS_MEDIA_TYPE, NULL, p, strlen(p), &resp, &nread) != 0) {
 		LOG4CXX_DEBUG(httpclogger, "do_end: HTTP PUT error");
 

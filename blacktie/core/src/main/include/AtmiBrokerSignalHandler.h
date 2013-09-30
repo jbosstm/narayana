@@ -21,19 +21,19 @@
 #include <vector>
 #include "atmiBrokerCoreMacro.h"
 #include "log4cxx/logger.h"
-#include "ace/OS_NS_signal.h"
-#include "ace/Sig_Handler.h"
+
+#include <signal.h>
 
 extern int default_handlesigs[];
 extern int default_blocksigs[];
 
-class BLACKTIE_CORE_DLL AtmiBrokerSignalHandler : public ACE_Event_Handler
+class BLACKTIE_CORE_DLL AtmiBrokerSignalHandler 
 {
 public:
 	AtmiBrokerSignalHandler(int* hsignals = default_handlesigs, int* bsignals = default_blocksigs);
 	virtual ~AtmiBrokerSignalHandler();
 
-	virtual int handle_signal(int signum, siginfo_t *, ucontext_t *);
+	virtual int handle_signal(int signum);
 
 	/**
 	 * Add a handler to be called when one of the signals in the set of handleable signals
@@ -68,14 +68,20 @@ public:
 	int unblockSignals();
 
 private:
+#ifndef WIN32
 	sigset_t bss_;
 	sigset_t hss_;
+#endif
 	std::vector<int (*)(int)> handlers_;	// the actual signal handlers
 
+#ifndef WIN32
 	int block_sigs(sigset_t*, sigset_t*, bool, bool);
+#endif
 
 private:
-	static ACE_Sig_Handler handler_;
 	static log4cxx::LoggerPtr logger_;
+
+public:
+        static std::multimap<int, AtmiBrokerSignalHandler*> handler_;
 };
 #endif // _ATMIBROKERSIGNALHANDLER_H

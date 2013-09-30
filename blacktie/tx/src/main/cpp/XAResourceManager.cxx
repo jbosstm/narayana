@@ -16,15 +16,15 @@
  * MA  02110-1301, USA.
  */
 #include <string.h>
+#include <ostream>
+#include <stdlib.h>
+
 #include "XAResourceManager.h"
 #include "XAWrapper.h"
 #include "TxManager.h"
-#include "XAResourceAdaptorImpl.h"
 #include "ThreadLocalStorage.h"
 #include "AtmiBrokerEnv.h"
-
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
+#include "xa.h"
 
 log4cxx::LoggerPtr xarmlogger(log4cxx::Logger::getLogger("XAResourceManager"));
 
@@ -36,7 +36,7 @@ static const char HTTP_PREFIX[] = "http://";
 SynchronizableObject* XAResourceManager::lock = new SynchronizableObject();
 long XAResourceManager::counter = 0l;
 
-ostream& operator<<(ostream &os, const XID& xid)
+std::ostream& operator<<(std::ostream &os, const XID& xid)
 {
 	os << xid.formatID << ':' << xid.gtrid_length << ':' << xid.bqual_length << ':' << xid.data;
 	return os;
@@ -77,16 +77,15 @@ bool operator<(XID const& xid1, XID const& xid2) {
 }
 
 XAResourceManager::XAResourceManager(
-	CORBA_CONNECTION* connection,
 	const char * name,
 	const char * openString,
 	const char * closeString,
-	CORBA::Long rmid,
+	long rmid,
 	long sid,
 	struct xa_switch_t * xa_switch,
-	XARecoveryLog& log, PortableServer::POA_ptr poa) throw (RMException) :
+	XARecoveryLog& log) throw (RMException) :
 
-	poa_(poa), connection_(connection), name_(name), openString_(openString), closeString_(closeString),
+	name_(name), openString_(openString), closeString_(closeString),
 	rmid_(rmid), sid_(sid), xa_switch_(xa_switch), rclog_(log) {
 
 	FTRACE(xarmlogger, "ENTER " << (char *) "new RM name: " << name << (char *) " openinfo: " <<
@@ -124,16 +123,9 @@ XAResourceManager::~XAResourceManager() {
 		// which should remove (and delete) the resource from branches_
 		LOG4CXX_WARN(xarmlogger, (char *) "There are still incomplete branches");
 
-		if (!xaw->isOTS()) {
-			LOG4CXX_WARN(xarmlogger, (char *) "Deleting branch " << (*iter).first <<
-				" address: " << xaw);
-			delete xaw;
-		} else {
-			XAResourceAdaptorImpl *r = (XAResourceAdaptorImpl *) xaw;
-			PortableServer::ObjectId_var id(poa_->servant_to_id(r));
-
-			poa_->deactivate_object(id.in());
-		}
+		LOG4CXX_WARN(xarmlogger, (char *) "Deleting branch " << (*iter).first <<
+			" address: " << xaw);
+		delete xaw;
 	}
 
 	int rv = xa_switch_->xa_close_entry((char *) closeString_, rmid_, TMNOFLAGS);
@@ -166,8 +158,6 @@ int  XAResourceManager::getRRType(const char* rc)
 bool XAResourceManager::recover(XID& bid, const char* rc)
 {
 	switch (getRRType(rc)) {
-	case RR_TYPE_IOR:
-		return recoverIOR(bid, rc);
 	case RR_TYPE_RTS:
 		return recoverRTS(bid, rc);
 	default:
@@ -204,309 +194,6 @@ bool XAResourceManager::recoverRTS(XID& bid, const char* rc)
 	return false;
 }
 
-bool XAResourceManager::recoverIOR(XID& bid, const char* rc)
-{
-	bool delRecoveryRec = true;
-
-	FTRACE(xarmlogger, "ENTER");
-
-	try {
-	CORBA::Object_var ref = connection_->orbRef->string_to_object(rc);
-	XAResourceAdaptorImpl *ra = NULL;
-
-	if (CORBA::is_nil(ref)) {
-		LOG4CXX_INFO(xarmlogger, (char *) "Invalid recovery coordinator ref: " << rc);
-
-		return delRecoveryRec;
-	} else {
-		CosTransactions::RecoveryCoordinator_var rcv = CosTransactions::RecoveryCoordinator::_narrow(ref);
-
-		if (CORBA::is_nil(rcv)) {
-			LOG4CXX_INFO(xarmlogger, (char *) "Could not narrow recovery coordinator ref: " << rc);
-		} else {
-			int rv;
-
-			ra = new XAResourceAdaptorImpl(this, bid, rmid_, xa_switch_, rclog_, rc);
-
-			if (branches_.find(bid) != branches_.end()) {
-				// log an error since we forgot to clean up the previous servant
-				LOG4CXX_ERROR(xarmlogger, (char *) "Recovery: branch already exists: " << bid);
-			}
-
-			// activate the servant
-			std::string s = (char *) (bid.data + bid.gtrid_length);
-			PortableServer::ObjectId_var objId = PortableServer::string_to_ObjectId(s.c_str());
-
-			try {
-				poa_->activate_object_with_id(objId, ra); // POA should set ref count to 2
-			} catch (PortableServer::POA::ObjectAlreadyActive& e) {
-				ra->_add_ref();
-				LOG4CXX_WARN(xarmlogger, (char*) "resource was already active " << ra->get_name());
-			}
-
-			// get a CORBA reference to the servant so that it can be enlisted in the OTS transaction
-			CORBA::Object_var ref = poa_->id_to_reference(objId.in());
-
-			// make sure only the POA has a reference to ra. When deactivate_object is
-			// invoked on the POA it will remove it from its active object map and drop the
-			// count back to zero which triggers delete on ra
-			ra->_remove_ref();
-
-			CosTransactions::Resource_var v = CosTransactions::Resource::_narrow(ref);
-			CORBA::String_var  vs = connection_->orbRef->object_to_string(v);
-
-			LOG4CXX_DEBUG(xarmlogger, (char*) "Recovering resource with branch id: " << bid <<
-				" and recovery IOR: " << vs);
-
-			try {
-				/*
-				 * Replay phase 2. The spec says we should use the same resource.
-				 * If we really do need to use the same one then we need to reconstruct it
-				 * with the same reference by setting the PortableServer::USER_ID
-				 * policy on the creating POA (and use the same name based on the branch id).
-				 *
-				 * Remember to deal with heuristics (see section 2-50 of the OMG OTS spec).
-				 */
-				Status txs = rcv->replay_completion(v);
-
-				LOG4CXX_DEBUG(xarmlogger, (char *) "Recovery: TM reports transaction status: " << txs
-					<< " (" << CosTransactions::StatusActive);
-
-				switch (txs) {
-				case CosTransactions::StatusNoTransaction:
-					// the TM must have presumed abort and discarded the transaction
-					// fallthru to next case
-				case CosTransactions::StatusRolledBack:
-					// the TM has already rolled back the transaction
-
-					// presumed abort - force the branch to rollback
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: rolling back branch for RM " << xa_switch_->name);
-					rv = xa_switch_->xa_rollback_entry(&bid, rmid_, TMNOFLAGS);
-
-					if (rv != XA_OK) {
-						// ? under what circumstances is it possible to recover from this error
-						LOG4CXX_INFO(xarmlogger, (char *) "Recovery: RM returned XA error " << rv);
-					}
-
-					break;
-				case CosTransactions::StatusCommitted:
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: committing branch for RM " << xa_switch_->name);
-					rv = xa_switch_->xa_commit_entry(&bid, rmid_, TMNOFLAGS);
-
-					if (rv != XA_OK) {
-						// ? under what circumstances is it possible to recover from this error
-						LOG4CXX_INFO(xarmlogger, (char *) "Recovery: RM returned XA error " << rv);
-					}
-
-					break;
-				/*
-				 * Note that the BlackTie server should only try to recover XIDs it finds in its prepared log
-				 * so the following status codes should never occur:
-				 */
-				case CosTransactions::StatusActive:
-				case CosTransactions::StatusMarkedRollback:
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: TM returned an unexpected status");
-					break;
-				/*
-				 * The remaining cases imply that the TM will eventually tell us how to complete the branch
-				 */
-				case CosTransactions::StatusUnknown:
-				case CosTransactions::StatusPrepared:
-				case CosTransactions::StatusPreparing:
-				case CosTransactions::StatusRollingBack:
-				case CosTransactions::StatusCommitting:
-					// the XAResourceAdapterImpl corresponding to the branch will remove the recovery record
-					LOG4CXX_INFO(xarmlogger,
-						(char *) "Recovery: replaying transaction (TM reports prepared/preparing or completing)");
-					LOG4CXX_TRACE(xarmlogger, (char*) "adding branch: " << bid);
-
-					branchLock->lock();
-					branches_[bid] = ra;
-					branchLock->unlock();
-					delRecoveryRec = false;
-					break;
-				default:
-					// shouldn't happend all cases have been dealt with
-					break;
-				}
-			} catch (CosTransactions::NotPrepared& e) {
-				LOG4CXX_WARN(xarmlogger, (char *) "Recovery: TM says the transaction as not prepared: " << e._name());
-			} catch (const CORBA::SystemException& e) {
-				LOG4CXX_WARN(xarmlogger, (char*) "Recovery: replay error: " << e._name() << " minor: " << e.minor());
-			}
-
-			if (delRecoveryRec && ra != NULL) {
-				LOG4CXX_TRACE(xarmlogger, (char*) "deactivating " << ra << " using poa " << poa_);
-
-				try {
-					PortableServer::ObjectId_var id(poa_->servant_to_id(ra));
-
-					poa_->deactivate_object(id.in());
-					delete ra;
-				} catch (PortableServer::POA::ServantNotActive& e) {
-					LOG4CXX_WARN(xarmlogger, (char*) "servant not active " << rmid_);
-				}
-			}
-		}
-	}
-	} catch (const CORBA::SystemException& e) {
-		LOG4CXX_WARN(xarmlogger, (char *) "Cannot recover xid " << bid << " with recovery IOR " <<
-			rc << " reason " << e._name() << " minor: " << e.minor());
-		return false;
-	}
-
-	return delRecoveryRec;
-}
-
-#if 0
-bool XAResourceManager::recoverIOR(XID& bid, const char* rc)
-{
-	bool delRecoveryRec = true;
-
-	FTRACE(xarmlogger, "ENTER");
-
-	CORBA::Object_var ref = connection_->orbRef->string_to_object(rc);
-	XAResourceAdaptorImpl *ra = NULL;
-
-	if (CORBA::is_nil(ref)) {
-		LOG4CXX_INFO(xarmlogger, (char *) "Invalid recovery coordinator ref: " << rc);
-
-		return delRecoveryRec;
-	} else {
-		CosTransactions::RecoveryCoordinator_var rcv = CosTransactions::RecoveryCoordinator::_narrow(ref);
-
-		if (CORBA::is_nil(rcv)) {
-			LOG4CXX_INFO(xarmlogger, (char *) "Could not narrow recovery coordinator ref: " << rc);
-		} else {
-			int rv;
-
-			ra = new XAResourceAdaptorImpl(this, bid, rmid_, xa_switch_, rclog_, rc);
-
-			if (branches_.find(bid) != branches_.end()) {
-				// log an error since we forgot to clean up the previous servant
-				LOG4CXX_ERROR(xarmlogger, (char *) "Recovery: branch already exists: " << bid);
-			}
-
-			// activate the servant
-			std::string s = (char *) (bid.data + bid.gtrid_length);
-			PortableServer::ObjectId_var objId = PortableServer::string_to_ObjectId(s.c_str());
-			try {
-				poa_->activate_object_with_id(objId, ra); // POA should set ref count to 2
-			} catch (PortableServer::POA::ObjectAlreadyActive& e) {
-				ra->_add_ref();
-				LOG4CXX_WARN(xarmlogger, (char*) "resource was already active " << ra->get_name());
-			}
-
-			// get a CORBA reference to the servant so that it can be enlisted in the OTS transaction
-			CORBA::Object_var ref = poa_->id_to_reference(objId.in());
-
-			// make sure only the POA has a reference to ra. When deactivate_object is
-			// invoked on the POA it will remove it from its active object map and drop the
-			// count back to zero which triggers delete on ra
-			ra->_remove_ref();
-
-			CosTransactions::Resource_var v = CosTransactions::Resource::_narrow(ref);
-			CORBA::String_var  vs = connection_->orbRef->object_to_string(v);
-
-			LOG4CXX_DEBUG(xarmlogger, (char*) "Recovering resource with branch id: " << bid <<
-				" and recovery IOR: " << vs);
-
-			try {
-				/*
-				 * Replay phase 2. The spec says we should use the same resource.
-				 * If we really do need to use the same one then we need to reconstruct it
-				 * with the same reference by setting the PortableServer::USER_ID
-				 * policy on the creating POA (and use the same name based on the branch id).
-				 *
-				 * Remember to deal with heuristics (see section 2-50 of the OMG OTS spec).
-				 */
-				Status txs = rcv->replay_completion(v);
-
-				LOG4CXX_DEBUG(xarmlogger, (char *) "Recovery: TM reports transaction status: " << txs
-					<< " (" << CosTransactions::StatusActive);
-
-				switch (txs) {
-				case CosTransactions::StatusNoTransaction:
-					// the TM must have presumed abort and discarded the transaction
-					// fallthru to next case
-				case CosTransactions::StatusRolledBack:
-					// the TM has already rolled back the transaction
-
-					// presumed abort - force the branch to rollback
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: rolling back branch for RM " << xa_switch_->name);
-					rv = xa_switch_->xa_rollback_entry(&bid, rmid_, TMNOFLAGS);
-
-					if (rv != XA_OK) {
-						// ? under what circumstances is it possible to recover from this error
-						LOG4CXX_INFO(xarmlogger, (char *) "Recovery: RM returned XA error " << rv);
-					}
-
-					break;
-				case CosTransactions::StatusCommitted:
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: committing branch for RM " << xa_switch_->name);
-					rv = xa_switch_->xa_commit_entry(&bid, rmid_, TMNOFLAGS);
-
-					if (rv != XA_OK) {
-						// ? under what circumstances is it possible to recover from this error
-						LOG4CXX_INFO(xarmlogger, (char *) "Recovery: RM returned XA error " << rv);
-					}
-
-					break;
-				/*
-				 * Note that the BlackTie server should only try to recover XIDs it finds in its prepared log
-				 * so the following status codes should never occur:
-				 */
-				case CosTransactions::StatusActive:
-				case CosTransactions::StatusMarkedRollback:
-					LOG4CXX_INFO(xarmlogger, (char *) "Recovery: TM returned an unexpected status");
-					break;
-				/*
-				 * The remaining cases imply that the TM will eventually tell us how to complete the branch
-				 */
-				case CosTransactions::StatusUnknown:
-				case CosTransactions::StatusPrepared:
-				case CosTransactions::StatusPreparing:
-				case CosTransactions::StatusRollingBack:
-				case CosTransactions::StatusCommitting:
-					// the XAResourceAdapterImpl corresponding to the branch will remove the recovery record
-					LOG4CXX_INFO(xarmlogger,
-						(char *) "Recovery: replaying transaction (TM reports prepared/preparing or completing)");
-					LOG4CXX_TRACE(xarmlogger, (char*) "adding branch: " << bid);
-
-					branchLock->lock();
-					branches_[bid] = ra;
-					branchLock->unlock();
-					delRecoveryRec = false;
-					break;
-				default:
-					// shouldn't happend all cases have been dealt with
-					break;
-				}
-			} catch (CosTransactions::NotPrepared& e) {
-				LOG4CXX_WARN(xarmlogger, (char *) "Recovery: TM says the transaction as not prepared: " << e._name());
-			} catch (const CORBA::SystemException& e) {
-				LOG4CXX_WARN(xarmlogger, (char*) "Recovery: replay error: " << e._name() << " minor: " << e.minor());
-			}
-
-			if (delRecoveryRec && ra != NULL) {
-				LOG4CXX_TRACE(xarmlogger, (char*) "deactivating " << ra << " using poa " << poa_);
-
-				try {
-					PortableServer::ObjectId_var id(poa_->servant_to_id(ra));
-
-					poa_->deactivate_object(id.in());
-					delete ra;
-				} catch (PortableServer::POA::ServantNotActive& e) {
-					LOG4CXX_WARN(xarmlogger, (char*) "servant not active " << rmid_);
-				}
-			}
-		}
-	}
-
-	return delRecoveryRec;
-}
-#endif
-
 /**
  * check whether it is OK to recover a given XID
  */
@@ -518,8 +205,8 @@ bool XAResourceManager::isRecoverable(XID &xid)
 	 */
 	char *bdata = (char *) (xid.data + xid.gtrid_length);
 	char *sp = strchr(bdata, ':');
-	long rmid = ACE_OS::atol(bdata);	// the RM id
-	long sid = (sp == 0 || ++sp == 0 ? 0l : ACE_OS::atol(sp));	// the server id
+	long rmid = atol(bdata);	// the RM id
+	long sid = (sp == 0 || ++sp == 0 ? 0l : atol(sp));	// the server id
 
 	/*
 	 * Only recover our own XIDs - the reason we need to check the server id is to
@@ -593,11 +280,6 @@ int XAResourceManager::createResourceAdapter(XID& xid)
 	if (tx == NULL)
 		return XAER_PROTO;
 
-	LOG4CXX_DEBUG(xarmlogger, (char*) "createResourceAdapter: OTS=" << tx->isOTS());
-
-	if (tx->isOTS())
-		return createServant(xid);
-
 	XID bid = gen_xid(rmid_, sid_, xid);
 	XAWrapper *ra = new XAWrapper(this, bid, rmid_, xa_switch_, rclog_);
 
@@ -618,82 +300,6 @@ int XAResourceManager::createResourceAdapter(XID& xid)
 
 		return XA_OK;
 	}
-}
-
-int XAResourceManager::createServant(XID& xid)
-{
-	FTRACE(xarmlogger, "ENTER");
-	int res = XAER_RMFAIL;
-	XAResourceAdaptorImpl *ra = NULL;
-	CosTransactions::Control_ptr curr = (CosTransactions::Control_ptr) txx_get_control();
-	CosTransactions::Coordinator_ptr coord = NULL;
-
-	if (CORBA::is_nil(curr))
-		return XAER_NOTA;
-
-	try {
-		/*
-		 * Generate an XID for the new branch. The XID should have the same global transaction id
-		 * that the Transaction Manager generated but should have a different branch qualifier
-		 * (since we want to have loose coupling semantics).
-		 */
-		XID bid = gen_xid(rmid_, sid_, xid);
-		// Create a servant to represent the new branch.
-		ra = new XAResourceAdaptorImpl(this, bid, rmid_, xa_switch_, rclog_);
-		std::string s = (char *) (bid.data + bid.gtrid_length);
-		PortableServer::ObjectId_var objId = PortableServer::string_to_ObjectId(s.c_str());
-		poa_->activate_object_with_id(objId, ra);
-		// get a CORBA reference to the servant so that it can be enlisted in the OTS transaction
-		CORBA::Object_var ref = poa_->id_to_reference(objId.in());
-
-		// See earlier comment in XAResourceManager::recover() as to why the servant
-		// is automatically deleted when it is later deactivated.
-		ra->_remove_ref();	// now only the POA has a reference to ra
-
-		CosTransactions::Resource_var v = CosTransactions::Resource::_narrow(ref);
-
-		// enlist it with the transaction
-		LOG4CXX_TRACE(xarmlogger, (char*) "enlisting resource: "); // << connection_->orbRef->object_to_string(v));
-		coord = curr->get_coordinator();
-		CosTransactions::RecoveryCoordinator_ptr rc = coord->register_resource(v);
-		//c->register_synchronization(new XAResourceSynchronization(xid, rmid_, xa_switch_));
-
-		if (CORBA::is_nil(rc)) {
-			LOG4CXX_TRACE(xarmlogger, (char*) "createServant: nill RecoveryCoordinator ");
-			res = XAER_RMFAIL;
-		} else {
-			CORBA::String_var rcref = connection_->orbRef->object_to_string(rc);
-			ra->set_recovery_coordinator(strdup(rcref));
-	   		CORBA::release(rc);
-
-			LOG4CXX_TRACE(xarmlogger, (char*) "adding branch: " << xid);
-			branchLock->lock();
-			branches_[xid] = ra;
-			branchLock->unlock();
-			res = XA_OK;
-			ra = NULL;
-		}
-	} catch (RMException& ex) {
-		LOG4CXX_WARN(xarmlogger, (char*) "unable to create resource adaptor for branch: " << ex.what());
-	} catch (PortableServer::POA::ServantNotActive&) {
-		LOG4CXX_ERROR(xarmlogger, (char*) "createServant: poa inactive");
-	} catch (CosTransactions::Inactive&) {
-		res = XAER_PROTO;
-		LOG4CXX_TRACE(xarmlogger, (char*) "createServant: tx inactive (too late for registration)");
-	} catch (const CORBA::SystemException& e) {
-		LOG4CXX_WARN(xarmlogger, (char*) "Resource registration error: " << e._name() << " minor: " << e.minor());
-	}
-
-	if (ra)
-		delete ra;
-
-	if (!CORBA::is_nil(curr))
-		CORBA::release(curr);
-
-	if (!CORBA::is_nil(coord))
-		CORBA::release(coord);
-
-	return res;
 }
 
 void XAResourceManager::notify_error(XAWrapper* resource, int xa_error, bool forget)
@@ -719,17 +325,7 @@ void XAResourceManager::set_complete(XAWrapper* resource)
 
 		if (ra == resource) {
 			LOG4CXX_TRACE(xarmlogger, (char*) "removing branch");
-
-			if (ra->isOTS()) {
-				XAResourceAdaptorImpl *r = (XAResourceAdaptorImpl *) ra;
-				PortableServer::ObjectId_var id(poa_->servant_to_id(r));
-
-				// Note: deactivate calls ra->_remove_ref() and ra's destructor
-				poa_->deactivate_object(id.in());
-			} else {
-				LOG4CXX_TRACE(xarmlogger, (char*) "deleting branch (not OTS)");
-				delete ra;
-			}
+			delete ra;
 
 			XID xid = i->first;
 			if (rclog_.del_rec(xid) != 0) {
@@ -813,23 +409,6 @@ void XAResourceManager::deactivate_objects(bool deactivate)
 
 		LOG4CXX_TRACE(xarmlogger, (char*) "removing branch " << ra->get_name());
 
-		if (ra->isOTS()) {
-			XAResourceAdaptorImpl *r = (XAResourceAdaptorImpl *) ra;
-			PortableServer::ObjectId_var id(poa_->servant_to_id(r));
-
-			LOG4CXX_TRACE(xarmlogger, (char*) "deactivating ");
-
-			// only the POA has a reference to ra so increment the ref count
-			// otherwise it will be deleted
-			if (deactivate) {
-				r->_add_ref();
-				poa_->deactivate_object(id.in());
-			} else {
-				poa_->activate_object_with_id(id.in(), r); // POA should set ref count to 2
-				r->_remove_ref();
-			}
-		}
-
 //		branches_.erase(i);
 	}
 	branchLock->unlock();
@@ -864,11 +443,13 @@ XID XAResourceManager::gen_xid(long id, long sid, XID &gid)
 	for (i = 0; i < gid.gtrid_length; i++)
 		xid.data[i] = gid.data[i];
 
-	ACE_Time_Value now = ACE_OS::gettimeofday();
+        apr_time_exp_t now;
+        apr_time_exp_gmt(&now, apr_time_now());
+
 	/*
 	 * The first two longs in the XID data should contain the RM id and server id respectively.
 	 */
-	(void) sprintf(xid.data + i, "%ld:%ld:%ld:%ld:%ld", id, sid, myCounter, (long) now.sec(), (long) now.usec());
+	(void) sprintf(xid.data + i, "%ld:%ld:%ld:%ld:%ld", id, sid, myCounter, (long) now.tm_sec, (long) now.tm_usec);
 	xid.bqual_length = strlen(xid.data + i);
 
 	FTRACE(xarmlogger, "Leaving with XID: " << xid);

@@ -25,7 +25,6 @@
 #include "btclient.h"
 
 void LoopyServerAndClient::setUp() {
-	init_ace();
 	btlogger((char*) "LoopyServerAndClient::setUp");
 	// Perform global set up
 	TestFixture::setUp();

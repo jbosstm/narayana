@@ -19,6 +19,7 @@
 #include "XAWrapper.h"
 #include "HttpClient.h"
 #include <string.h>
+#include <stdlib.h>
 
 using namespace atmibroker::xa;
 
@@ -122,7 +123,7 @@ int XAWrapper::do_prepare()
 
 	if (rv2 == XA_OK) {
 #if TX_RC == 3
-		if (ACE_OS::getenv("TEST_BLACKTIE_209")) {
+		if (getenv("TEST_BLACKTIE_209")) {
 			LOG4CXX_INFO(xarwlogger, (char *) "Test BLACKTIE_209:- SEGV after prepare but before writing log");
 			char *s = 0;
 			*s = 0;

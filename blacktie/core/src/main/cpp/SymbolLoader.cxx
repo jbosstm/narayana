@@ -7,16 +7,14 @@
 
 #include "SymbolLoader.h"
 
-#include "ace/DLL.h"
-
 #include "log4cxx/logger.h"
+
+#include "apr_dso.h"
 
 log4cxx::LoggerPtr symbolLoaderLogger(log4cxx::Logger::getLogger(
 		"symbolLoaderLogger"));
 
-
-#include "ace/OS_NS_dlfcn.h"
-#include "ace/Lib_Find.h"
+apr_pool_t* sym_pool = NULL;
 
 void* lookup_symbol(const char *lib, const char *symbol) {
 	if (lib != NULL) {
@@ -32,21 +30,29 @@ void* lookup_symbol(const char *lib, const char *symbol) {
 //		return 0;
 
 	//void* dll = ::dlopen (NULL, RTLD_NOW);
-	void* dll = ACE_OS::dlopen(lib, ACE_DEFAULT_SHLIB_MODE);
+	
+	if(sym_pool == NULL)
+	{
+	  apr_pool_create(&sym_pool,NULL);
+	}
 
-	if (dll == 0) {
+	apr_dso_handle_t* handle = NULL;
+	
+	apr_status_t res = apr_dso_load(&handle, lib, sym_pool);
+
+        apr_dso_handle_sym_t sym;
+
+	if (res != APR_SUCCESS) {
 		LOG4CXX_ERROR(symbolLoaderLogger, (char*) "lookup_symbol: " << symbol
 				<< (char *) " dll.open error");
 		return NULL;
 	}
 
-	void * sym = NULL;
-
 	try {
 		//sym = ::dlsym (dll, symbol);//
-		sym = (void*) ACE_OS::dlsym((ACE_SHLIB_HANDLE)dll, symbol);
+		res = apr_dso_sym(&sym, handle, symbol);
 
-		if (sym == NULL) {
+		if (res != APR_SUCCESS) {
 			LOG4CXX_ERROR(symbolLoaderLogger, (char*) "lookup_symbol: "
 					<< symbol << (char *) " dlsym error");
 			//dll.close();
@@ -54,7 +60,6 @@ void* lookup_symbol(const char *lib, const char *symbol) {
 		}
 
 		LOG4CXX_TRACE(symbolLoaderLogger, (char *) "symbol addr=" << sym);
-
 		return sym;
 	} catch (std::exception& e) {
 		LOG4CXX_ERROR(symbolLoaderLogger, (char *) "symbol addr=" << sym

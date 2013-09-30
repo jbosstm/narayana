@@ -22,12 +22,13 @@
 #include "btlogger.h"
 #include "AtmiBrokerEnv.h"
 
+#include <stdlib.h>
+
 void messagesAvailableCallback(int bar, bool remove) {
 
 }
 
 void TestStompConnection::setUp() {
-	init_ace();
 	btlogger("TestStompConnection::setUp");
 
 	serverConnection = NULL;
@@ -146,6 +147,7 @@ void TestStompConnection::test() {
 		char* serviceData = (char*) malloc(4);
 		memset(serviceData, '\0', 4);
 		strcpy(serviceData, "bye");
+                serviceSend.schedtime = -1;
 		serviceSend.data = serviceData;
 		serviceSend.correlationId = 0;
 		serviceSend.flags = 0;

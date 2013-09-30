@@ -17,7 +17,6 @@
  */
 
 #include "TxManager.h"
-#include "OrbManagement.h"
 #include "ThreadLocalStorage.h"
 
 using namespace atmibroker::tx;

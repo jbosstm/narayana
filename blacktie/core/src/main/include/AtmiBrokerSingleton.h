@@ -19,8 +19,6 @@
 #ifndef _ATMIBROKERSINGLETON_H
 #define _ATMIBROKERSINGLETON_H
 
-#include "ace/Singleton.h"
-
 #include "atmiBrokerCoreMacro.h"
 
 class BLACKTIE_CORE_DLL AtmiBrokerSingleton {

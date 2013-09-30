@@ -28,7 +28,6 @@
 #include "ODBCTest.h"
 
 void ODBCTest::setUp() {
-	init_ace();
 	// Perform global set up
 	TestFixture::setUp();
 

@@ -19,17 +19,17 @@
 #ifndef SERVICEDISPATCHER_H_
 #define SERVICEDISPATCHER_H_
 
-#include <ace/Task.h>
 #include "log4cxx/logger.h"
 #include "xatmi.h"
 #include "Destination.h"
 #include "Connection.h"
 #include "Session.h"
 #include "AtmiBrokerServer.h"
+#include <apr_thread_proc.h>
 
 class AtmiBrokerServer;
 
-class ServiceDispatcher: public ACE_Task_Base {
+class ServiceDispatcher {
 public:
 	ServiceDispatcher(AtmiBrokerServer* server, Destination* destination,
 			Connection* connection, const char *serviceName, void(*func)(
@@ -46,6 +46,9 @@ public:
 	void getResponseTime(unsigned long* min, unsigned long* avg,
 			unsigned long* max);
 	SynchronizableObject* getReconnect();
+	void setThread(apr_thread_t* thd) { thread = thd; } 
+	int wait();
+
 private:
 	void onMessage(MESSAGE message);
 	static log4cxx::LoggerPtr logger;
@@ -69,6 +72,7 @@ private:
 	SynchronizableObject* reconnect;
 	SynchronizableObject* pauseLock;
 	SynchronizableObject* stopLock;
+	apr_thread_t* thread;
 };
 
 #endif

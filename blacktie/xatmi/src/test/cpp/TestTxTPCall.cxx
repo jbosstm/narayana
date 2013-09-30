@@ -17,10 +17,6 @@
  */
 #include "TestAssert.h"
 
-#ifndef WIN32
-#include "ace/OS_NS_unistd.h"
-#endif
-
 #include "ThreadLocalStorage.h"
 #include "BaseServerTest.h"
 #include "XATMITestSuite.h"
@@ -30,6 +26,8 @@
 
 #include "TestTxTPCall.h"
 #include "Sleeper.h"
+
+#include <stdlib.h>
 
 #if defined(__cplusplus)
 extern "C" {

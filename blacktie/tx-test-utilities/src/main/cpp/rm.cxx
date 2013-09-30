@@ -25,9 +25,7 @@
 #include "SynchronizableObject.h"
 
 #include <stdlib.h>
-#include "ace/OS_NS_unistd.h"
-#include "ace/OS_NS_time.h"
-#include "ace/OS_NS_sys_time.h"
+#include <stdio.h>
 
 using namespace std;
 
@@ -43,9 +41,10 @@ static XID gen_xid(long id, long sid, XID &gid)
 	for (i = 0; i < gid.gtrid_length; i++)
 		xid.data[i] = gid.data[i];
 
-	ACE_Time_Value now = ACE_OS::gettimeofday();
+	apr_time_exp_t now;
+	apr_time_exp_gmt(&now, apr_time_now());
 	// the first long in the XID data must contain the RM id
-	(void) sprintf(xid.data + i, "%ld:%ld:%ld:%ld:%ld", id, sid, ++counter, now.sec(), now.usec());
+	(void) sprintf(xid.data + i, "%ld:%ld:%ld:%d:%d", id, sid, ++counter, now.tm_sec, now.tm_usec);
 	xid.bqual_length = strlen(xid.data + i);
 
 	return xid;
@@ -144,7 +143,7 @@ static int apply_faults(XID *xid, enum XA_OP op, int rmid)
 					btlogger_debug("dummy_rm: sleep period is invalid arg=%ld", larg == 0 ? 0 : *larg);
 				} else {
 					btlogger_debug("dummy_rm: delaying for %ld seconds\n", *larg);
-					(void) ACE_OS::sleep(*larg);
+					(void) apr_sleep(apr_time_from_sec(*larg));
 				}
 				break;
 			}

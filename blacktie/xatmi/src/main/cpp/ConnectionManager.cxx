@@ -28,6 +28,8 @@
 #include "xatmi.h"
 #include "HybridConnectionImpl.h"
 
+#include <apr_strings.h>
+
 log4cxx::LoggerPtr loggerConnectionManager(log4cxx::Logger::getLogger(
 		"ConnectionManager"));
 extern char server[30];
@@ -62,7 +64,7 @@ void ConnectionManager::closeConnections() {
 Connection*
 ConnectionManager::getConnection(char* side) {
 	char adm[XATMI_SERVICE_NAME_LENGTH + 1];
-	ACE_OS::snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
+	apr_snprintf(adm, XATMI_SERVICE_NAME_LENGTH + 1, ".%s%d", server,
 			serverid);
 	std::string key = side;
 	key.append("/hybrid");

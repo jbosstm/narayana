@@ -20,12 +20,10 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
-#include <ace/Task.h>
-#include <tao/ORB.h>
 #include "SynchronizableObject.h"
 #include "btlogger.h"
 
-class Waiter: public ACE_Task_Base {
+class Waiter  {
 public:
 	Waiter();
 	~Waiter();
@@ -54,7 +52,6 @@ public:
 	void testNotifyWaitWithTimeout();
 private:
 	Waiter* waiter;
-	CORBA::ORB_var orbRef;
 };
 
 #endif

@@ -24,9 +24,7 @@
 #include "AtmiBrokerEnv.h"
 #include "HybridStompEndpointQueue.h"
 
-#include "OrbManagement.h"
 #include "txx.h"
-#include "AtmiBrokerPoaFac.h"
 
 #include "ThreadLocalStorage.h"
 

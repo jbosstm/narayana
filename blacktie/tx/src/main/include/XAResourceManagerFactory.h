@@ -30,7 +30,7 @@ public:
 	~XAResourceManagerFactory();
 
 	XAResourceManager * findRM(long);
-	void createRMs(CORBA_CONNECTION *) throw (RMException);
+	void createRMs() throw (RMException);
 	void destroyRMs();
 	int startRMs(bool, int flags, int altflags = -1);
 	int endRMs(bool, int flags, int altflags = -1);
@@ -40,9 +40,7 @@ public:
 private:
 	ResourceManagerMap rms_;
 	XARecoveryLog rclog_;
-	PortableServer::POA_ptr poa_;
 
-	XAResourceManager * createRM(CORBA_CONNECTION *, xarm_config_t *) throw (RMException);
-	void create_poa(CORBA_CONNECTION * connection) throw (RMException);
+	XAResourceManager * createRM(xarm_config_t *) throw (RMException);
 };
 #endif	// _XARESOURCEMANAGERFACTORY_H

@@ -25,12 +25,9 @@
 
 #include "btserver.h"
 #include "btclient.h"
-#include "ace/OS_NS_unistd.h"
 #include "xatmi.h"
 #include "btnbf.h"
 #include "XATMITestSuite.h"
-
-#include "ace/OS_NS_unistd.h"
 
 #include "xatmi.h"
 #include "btlogger.h"
