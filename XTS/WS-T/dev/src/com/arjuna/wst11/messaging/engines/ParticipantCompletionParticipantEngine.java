@@ -1028,20 +1028,26 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final FaultedException fe)
         {
+            WSTLogger.i18NLogger.warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCancel_1(fe);
+
             if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.tracev("Faulted exception from participant cancel for WS-BA participant {0}", new Object[] { id}, fe) ;
+                WSTLogger.logger.tracev(fe, "Faulted exception from participant cancel for WS-BA participant") ;
             }
+
             // fail here because the participant doesn't want to retry the cancel
             fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
             return;
         }
         catch (final Throwable th)
         {
+            WSTLogger.i18NLogger.warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCancel_2(th);
+
             if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.tracev("Unexpected exception from participant cancel for WS-BA participant {0}", new Object[] { id}, th) ;
+                WSTLogger.logger.tracev(th, "Unexpected exception from participant cancel for WS-BA participant") ;
             }
+
             /*
              * we only get here in from state ACTIVE so if we are stll in state CANCELING then roll back the
              * state allowing a retry of the cancel
@@ -1069,10 +1075,13 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final Throwable th)
         {
+            WSTLogger.i18NLogger.warn_messaging_engines_ParticipantCompletionParticipantEngine_executeClose_1(th);
+
             if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.tracev("Unexpected exception from participant close for WS-BA participant {0}", th) ;
+                WSTLogger.logger.tracev(th, "Unexpected exception from participant close for WS-BA participant") ;
             }
+
             // restore previous state so we can retry the close otherwise we get stuck in state closing forever
             changeState(State.STATE_COMPLETED);
 
@@ -1111,10 +1120,13 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         }
         catch (final FaultedException fe)
         {
+            WSTLogger.i18NLogger.warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_1(fe);
+
             if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.tracev("Faulted exception from participant compensate for WS-BA participant {0}", new Object[] { id}, fe) ;
+                WSTLogger.logger.tracev(fe, "Faulted exception from participant compensate for WS-BA participant") ;
             }
+
             // fail here because the participant doesn't want to retry the compensate
             fail(BusinessActivityConstants.WSBA_ELEMENT_FAIL_QNAME);
             return;
@@ -1135,10 +1147,13 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 initiateTimer() ;
             }
 
+            WSTLogger.i18NLogger.warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_2(th);
+
             if (WSTLogger.logger.isTraceEnabled())
             {
-                WSTLogger.logger.tracev("Unexpected exception from participant compensate for WS-BA participant {0}", new Object[] { id }, th) ;
+                WSTLogger.logger.tracev(th, "Unexpected exception from participant compensate for WS-BA participant") ;
             }
+
             return ;
         }
 

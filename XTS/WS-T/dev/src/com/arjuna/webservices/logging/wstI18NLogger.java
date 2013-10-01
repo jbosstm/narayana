@@ -292,7 +292,7 @@ public interface wstI18NLogger {
 
 	@Message(id = 43071, value = "Faulted exception from participant compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCompensate_1(String arg0, @Cause() Throwable arg1);
+	public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCompensate_1(Throwable arg0);
 
 //	@Message(id = 43072, value = "Unable to delete recovery record during compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -339,11 +339,11 @@ public interface wstI18NLogger {
 
 	@Message(id = 43083, value = "Faulted exception from participant compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_1(String arg0, @Cause() Throwable arg1);
+	public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_1(Throwable arg0);
 
-//	@Message(id = 43084, value = "Unexpected exception from participant compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
-//	@LogMessage(level = WARN)
-//	public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_2(String arg0);
+	@Message(id = 43084, value = "Unexpected exception from participant compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCompensate_2(Throwable arg0);
 
 	@Message(id = 43085, value = "Unable to delete recovery record during compensate for WS-BA participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -890,6 +890,49 @@ public interface wstI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_participant_ba_BAParticipantRecoveryRecord_saveState_3(String arg0, @Cause() Throwable arg1);
 
+    @Message(id = 43228, value = "SystemException thrown from rollback: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantEngine_executeRollback_1(Throwable arg0);
+
+    @Message(id = 43229, value = "Unexpected exception thrown from rollback: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantEngine_executeRollback_2(Throwable arg0);
+
+    @Message(id = 43230, value = "Unexpected exception thrown from commit: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantEngine_executeCommit_1(Throwable arg0);
+
+    @Message(id = 43231, value = "Faulted exception from participant cancel for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCancel_1(Throwable arg0);
+
+    @Message(id = 43232, value = "Unexpected exception from participant cancel for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCancel_2(Throwable arg0);
+
+    @Message(id = 43233, value = "Unexpected exception from participant close for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeClose_1(Throwable arg0);
+
+    @Message(id = 43234, value = "Unexpected exception from participant compensate for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeCompensate_2(Throwable arg0);
+
+    @Message(id = 43235, value = "Unexpected exception from participant complete for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_CoordinatorCompletionParticipantEngine_executeComplete_1(Throwable arg0);
+
+    @Message(id = 43236, value = "Faulted exception from participant cancel for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCancel_1(Throwable arg0);
+
+    @Message(id = 43237, value = "Unexpected exception from participant cancel for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeCancel_2(Throwable arg0);
+
+    @Message(id = 43238, value = "Unexpected exception from participant close for WS-BA participant: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_messaging_engines_ParticipantCompletionParticipantEngine_executeClose_1(Throwable arg0);
 
     /*
         Allocate new messages directly above this notice.
