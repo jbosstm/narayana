@@ -78,7 +78,7 @@ public class SocketReceiverImpl implements Receiver, Runnable {
     }
 
     public SocketReceiverImpl(Socket socket, String replyto, Properties properties) {
-        log.debug("create socket receiver with socket");
+        log.debug("create socket receiver with socket: " + socket.getRemoteSocketAddress() + " " + socket.getLocalPort());
         this.socket = socket;
         this.replyto = replyto;
         this.data = new ArrayList<Message>();

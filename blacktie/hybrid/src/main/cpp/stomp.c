@@ -63,6 +63,7 @@ apr_status_t stomp_connect(stomp_connection **connection_ref, const char *hostna
 //	CHECK_SUCCESS;
    if( rc != APR_SUCCESS ) {
 		apr_status_t rc2 = apr_socket_shutdown(connection->socket, APR_SHUTDOWN_WRITE);
+		btlogger_debug("from stomp.c (1) closing socket");
 		rc2 = apr_socket_close(connection->socket);
 		return rc;
 	}
@@ -105,6 +106,7 @@ apr_status_t stomp_disconnect(stomp_connection **connection_ref)
 		result = rc;
    
    if( connection->socket != NULL ) {
+      btlogger_debug("from stomp.c (2) closing socket");
       rc = apr_socket_close(connection->socket);
       if( result!=APR_SUCCESS )
          result = rc;

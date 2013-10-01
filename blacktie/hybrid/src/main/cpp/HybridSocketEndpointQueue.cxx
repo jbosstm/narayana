@@ -419,6 +419,7 @@ void HybridSocketEndpointQueue::run() {
 			}
 		}
 	}
+	LOG4CXX_DEBUG(logger, (char*) "from HybridSocketEndpointQueue closing socket");
 	if(socket != NULL) apr_socket_close(socket);
 }
 
