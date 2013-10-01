@@ -65,8 +65,8 @@
   <!-- where to get the source -->
   <property name="gitbase" value="https://github.com/jbosstm"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="pageName" value="5.0.0.M5"/>
-  <property name="tag" value="5.0.0.M5"/>
+  <property name="pageName" value="5.0.0.Final-SNAPSHOT"/>
+  <property name="tag" value="5.0.0.Final-SNAPSHOT"/>
   <!-- which uber jar to use -->
   <property name="orb" value="jacorb"/>
   <!-- the location the JBossTS web site content is copied to -->
