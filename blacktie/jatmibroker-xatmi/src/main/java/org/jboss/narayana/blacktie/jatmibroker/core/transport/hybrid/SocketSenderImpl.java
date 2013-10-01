@@ -63,7 +63,7 @@ public class SocketSenderImpl implements Sender {
     }
 
     public SocketSenderImpl(Socket endpoint, String replyTo) throws ConnectionException {
-        log.debug("create socket sender with receiver endpoint " + endpoint);
+        log.debug("create socket sender with receiver endpoint " + endpoint.getRemoteSocketAddress() + " " + endpoint.getLocalPort());
         this.socket = endpoint;
         try {
             this.outs = new DataOutputStream(socket.getOutputStream());
@@ -131,7 +131,7 @@ public class SocketSenderImpl implements Sender {
                 outs.write(toSend, 0, toSend.length);
             } catch (SocketException e)  {
                 // The socket might be closed by service side
-                log.debug("socket send with " + e);
+                log.warn("socket send with " + e);
             }
 
         } catch (IOException e) {
