@@ -25,7 +25,7 @@
   <property name="isIdlj" value="0"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.0.0.Final-SNAPSHOT"/>
+  <property name="narayana.version" value="5.0.0.M6-SNAPSHOT"/>
   <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
   <property name="org.jboss.jbossts.qa.idlcompiler.lib" location="../ArjunaJTS/orbportability/lib/ext"/>
   <!-- you should not need to configure anything below here -->
