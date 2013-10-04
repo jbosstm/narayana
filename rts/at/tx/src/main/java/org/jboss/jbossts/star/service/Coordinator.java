@@ -480,7 +480,7 @@ public class Coordinator
                 Map.Entry<java.lang.String, HashMap<String, String>> entry = j.next();
                 HashMap<String, String> linkHolder = entry.getValue();
                 String participantTxId = linkHolder.get(TxLinkNames.TRANSACTION);
-                if (participantTxId.equals(txId)) {
+                if (txId.equals(participantTxId)) {
                     j.remove();
                 }
             }
@@ -662,7 +662,10 @@ public class Coordinator
         log.tracef("coordinator: replace: recovery-coordinator/%s?URL=%s", enlistmentId, terminatorUrl);
 
         // check whether the transaction or log still exists
-        getTransaction(txId); // throws not found exception if the txn has finished
+        Transaction tx = getTransaction(txId); // throws not found exception if the txn has finished
+
+        links.put(TxLinkNames.TRANSACTION, txId);
+        links.put(TxLinkNames.PARTICIPANT_RECOVERY, tx.getRecoveryUrl());
 
         participants.put(enlistmentId, new HashMap<String, String>(links));
 

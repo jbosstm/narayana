@@ -320,6 +320,53 @@ public class SpecTest extends BaseTest {
         Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.rollbackTx());
     }
 
+    /*
+     * This test starts a transaction enlists a participant and then asks the participant
+     * to tell the coordinator to terminate it on a different url. Arrange for the transaction to rollback
+     * due to a timeout. This condition tests an edge case that could cause the coordinator not to delete
+     * recovery urls after a transaction completes (causing a memory leak)
+     */
+    @Test
+    public void testRecoveryUrlIsRemovedAfterCompletion() throws Exception {
+        TxSupport txn = new TxSupport();
+        String pUrl = PURL;
+
+        txn.startTx(1000);
+
+        String wid1 = txn.enlistTestResource(pUrl, false);
+        String wid2 = txn.enlistTestResource(pUrl, false);
+
+        String pId1 = PURL + "?pId=" + wid1;
+
+        String recoveryUrl = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+                pId1 + "&query=recoveryUrl",
+                "GET", TxMediaType.PLAIN_MEDIA_TYPE);
+
+        // ask the TransactionalResource to move the participant to a new url:
+        String newPid = txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
+                pId1 + "&query=move&arg=101&register=true&twoPhaseAware=false",
+                "GET", TxMediaType.PLAIN_MEDIA_TYPE);
+
+        newPid = PURL + "?pId=" + newPid;
+        // make sure the TransactionalResource has forgotten about the original pId
+        txn.httpRequest(new int[] {HttpURLConnection.HTTP_NOT_FOUND}, pId1, "GET", TxMediaType.PLAIN_MEDIA_TYPE);
+        // and is listening on the new one
+        txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, newPid, "GET", TxMediaType.PLAIN_MEDIA_TYPE);
+
+        // sleep for longer than the transaction timeout period
+        Thread.sleep(2000);
+
+        try {
+            Assert.assertEquals(txn.commitTx(), TxStatusMediaType.TX_ROLLEDBACK);
+        } catch (HttpResponseException e) {
+            Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE || e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
+        }
+
+        // ask the transaction links using the recovery URL. Since the txn has completed the
+        // coordinator should no longer have any knowledge of the recovery url
+        txn.httpRequest(new int[] {HttpURLConnection.HTTP_NOT_FOUND}, recoveryUrl, "GET", null);
+    }
+
     @Test
     public void testHeuristic() throws Exception {
         TxSupport txn = new TxSupport();
