@@ -416,7 +416,7 @@
     <jvm.args.other>-server</jvm.args.other>
     
     <!-- External dependencies versions -->
-    <jboss-as.version>8.0.0.Beta1-SNAPSHOT</jboss-as.version>    
+    <jboss-as.version>8.0.0.Beta2-SNAPSHOT</jboss-as.version>    
     <version.org.jboss.jbossas>1.0.4.Final</version.org.jboss.jbossas>
     <version.org.jboss>7.0.0.Final</version.org.jboss>
     <version.org.jboss.logmanager>1.4.1.Final</version.org.jboss.logmanager>
