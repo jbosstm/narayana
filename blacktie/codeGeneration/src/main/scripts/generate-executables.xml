@@ -55,7 +55,7 @@
 	<includepath path="${env.BLACKTIE_HOME}/include"/>
 '>
 <!ENTITY libsets-main-dependencies '
-	<libset dir="${env.BLACKTIE_HOME}/lib/cxx" libs="${expat.prefix}expat TAO_CosNaming${lib.suffix} TAO_AnyTypeCode${lib.suffix} TAO${lib.suffix} TAO_PortableServer${lib.suffix} ACE${lib.suffix} TAO_PI${lib.suffix} TAO_CodecFactory${lib.suffix} TAO_IORInterceptor${lib.suffix} TAO_ObjRefTemplate${lib.suffix} TAO_Valuetype${lib.suffix} TAO_PI_Server${lib.suffix} log4cxx blacktie-idl-tao blacktie-core blacktie-tx blacktie-xatmi blacktie-queue blacktie-nbf" />
+	<libset dir="${env.BLACKTIE_HOME}/lib/cxx" libs="log4cxx blacktie-core blacktie-tx blacktie-xatmi blacktie-queue blacktie-nbf" />
 '>
 ]>
 <project name="generate-executables">
