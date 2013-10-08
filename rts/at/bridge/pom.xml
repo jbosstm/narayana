@@ -209,7 +209,7 @@
                             <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
                                 <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args}
+                                    ${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args} ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
@@ -252,7 +252,7 @@
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
                                 <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args}
+                                    ${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>

@@ -309,7 +309,7 @@
 							<!-- System properties passed to test cases -->
 							<systemPropertyVariables>
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args}</server.jvm.args>
+								<server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>localhost</node.address>
 							</systemPropertyVariables>
@@ -385,7 +385,7 @@
 							<!-- System properties passed to test cases -->
 							<systemPropertyVariables>
 								<!-- Used in arquillian.xml - arguments for all JBoss AS instances. -->
-								<server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${byteman.server.jvm.args}</server.jvm.args>
+								<server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${byteman.server.jvm.args} ${jvm.args.debug}</server.jvm.args>
 								<java.rmi.server.codebase>file://target/test-classes/</java.rmi.server.codebase>
 								<node.address>[::1]</node.address>
 							</systemPropertyVariables>

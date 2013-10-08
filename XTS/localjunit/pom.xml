@@ -23,9 +23,6 @@
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
-        <server.debug.args>Xdebug -Xnoagent -Djava.compiler=NONE
-            -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006
-        </server.debug.args>
     </properties>
 
     <build>
@@ -177,7 +174,7 @@
                                 <!--
                                   Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv4.server.jvm.args}
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv4.server.jvm.args} ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
@@ -218,7 +215,7 @@
                                 <!--
                                   Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv6.server.jvm.args}
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv6.server.jvm.args} ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>
