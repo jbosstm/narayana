@@ -118,7 +118,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.jboss.jts</Dependencies>
+							<Dependencies>org.jboss.jts,org.jboss.narayana.rts</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -177,6 +177,10 @@
         <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
             <artifactId>blacktie-idl-jacorb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>restat-bridge</artifactId>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

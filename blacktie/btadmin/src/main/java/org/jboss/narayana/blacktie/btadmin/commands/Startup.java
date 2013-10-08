@@ -92,7 +92,7 @@ public class Startup implements Command {
                         if (localMachine.getArgLine() != null) {
                             argLine = argLine + " " + localMachine.getArgLine();
                         }
-                        String[] split = argLine.split(" ");
+                        String[] split = argLine.split("[ ]+");
                         String[] cmdarray = new String[split.length + 1 + 0];
                         cmdarray[0] = pathToExecutable;
                         System.arraycopy(split, 0, cmdarray, 1, split.length);
