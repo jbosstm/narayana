@@ -252,7 +252,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                         </configuration>
@@ -292,7 +292,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${ipv6.server.jvm.args}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}</server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>
                         </configuration>
@@ -311,6 +311,12 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <systemPropertyVariables combine.children="append">
+                                <!--
+                                    Used in arquillian.xml
+                                -->
+                                <node.address>127.0.0.1</node.address>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
