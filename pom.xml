@@ -440,7 +440,6 @@
     <version.org.jacorb.jacorb>2.3.1.jbossorg-1</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb-idl-compiler>2.2.3</version.org.jacorb.jacorb-idl-compiler>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
-    <version.commons-transaction>1.2</version.commons-transaction>
     <version.javax.annotation>1.2-b04</version.javax.annotation>
     <version.javax.transaction>1.1</version.javax.transaction>
     <version.javax.enterprise>1.1</version.javax.enterprise>
