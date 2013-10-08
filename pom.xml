@@ -507,7 +507,6 @@
     <module>ArjunaJTS</module>
     <module>rts</module>
     <module>txbridge</module>
-    <module>fileio</module>
     <module>STM</module>
     <module>txframework</module>
   </modules>
