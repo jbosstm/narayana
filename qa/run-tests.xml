@@ -367,48 +367,100 @@
 
       <var name="objectStoreElements" value=""/>
       <if>
-	<equals arg1="${profile}" arg2="postgres" />
-	<then>
-		<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.postgresql.ds.PGSimpleDataSource;DatabaseName=jbossts;User=dtf11;Password=dtf11;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=5432 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.postgresql.ds.PGSimpleDataSource;DatabaseName=jbossts;User=dtf11;Password=dtf11;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=5432 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.postgresql.ds.PGSimpleDataSource;DatabaseName=jbossts;User=dtf11;Password=dtf11;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=5432 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-	</then>
-	<elseif>
-		<equals arg1="${profile}" arg2="mysql" />
-		<then>
-			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.mysql.jdbc.jdbc2.optional.MysqlDataSource;DatabaseName=jbossts;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=3306;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.mysql.jdbc.jdbc2.optional.MysqlDataSource;DatabaseName=jbossts;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=3306;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.mysql.jdbc.jdbc2.optional.MysqlDataSource;DatabaseName=jbossts;ServerName=tywin.buildnet.ncl.jboss.com;PortNumber=3306;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-		</then>
-	</elseif>
-	<elseif>
-		<equals arg1="${profile}" arg2="oracle" />
-		<then>
-			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;ServerName=tywin.buildnet.ncl.jboss.com;NetworkProtocol=tcp;DatabaseName=orcl;PortNumber=1521;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;ServerName=tywin.buildnet.ncl.jboss.com;NetworkProtocol=tcp;DatabaseName=orcl;PortNumber=1521;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=oracle.jdbc.pool.OracleDataSource;DriverType=thin;ServerName=tywin.buildnet.ncl.jboss.com;NetworkProtocol=tcp;DatabaseName=orcl;PortNumber=1521;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-		</then>
-	</elseif>
-	<elseif>
-		<equals arg1="${profile}" arg2="db2" />
-		<then>
-			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.ibm.db2.jcc.DB2DataSource;DatabaseName=BTDB1;ServerName=tywin.buildnet.ncl.jboss.com;DriverType=4;PortNumber=50001;User=db2;Password=db2 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.ibm.db2.jcc.DB2DataSource;DatabaseName=BTDB1;ServerName=tywin.buildnet.ncl.jboss.com;DriverType=4;PortNumber=50001;User=db2;Password=db2 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.ibm.db2.jcc.DB2DataSource;DatabaseName=BTDB1;ServerName=tywin.buildnet.ncl.jboss.com;DriverType=4;PortNumber=50001;User=db2;Password=db2 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-		</then>
-	</elseif>
-	<elseif>
-		<equals arg1="${profile}" arg2="sybase" />
-		<then>
-			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.dropTable=false -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.sybase.jdbc3.jdbc.SybDataSource;DatabaseName=jbossts;ServerName=vmg07.mw.lab.eng.bos.redhat.com;PortNumber=5000;User=jbossts0;Password=jbossts0 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-		</then>
-	</elseif>
-	<elseif>
-		<equals arg1="${profile}" arg2="mssql" />
-		<then>
-			<var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=com.microsoft.sqlserver.jdbc.SQLServerDataSource;DatabaseName=jbossts;ServerName=dev30.mw.lab.eng.bos.redhat.com;PortNumber=3918;User=dtf11;Password=dtf11 -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication"/>
-		</then>
-	</elseif>
-	<elseif>
-		<equals arg1="${profile}" arg2="hornetq" />
-		<then>
-			<var name="objectStoreElements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>
-		</then>
-	</elseif>
+        <equals arg1="${profile}" arg2="postgres" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="org.postgresql.ds.PGSimpleDataSource" />
+          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.name" value="jbossts" />
+          <property name="jdbc.db.user" value="dtf11" />
+          <property name="jdbc.db.password" value="dtf11" />
+          <property name="jdbc.db.port" value="5432" />
+          <property name="jdbc.db.properties" value="" />
+        </then>
+      <elseif>
+        <equals arg1="${profile}" arg2="mysql" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
+          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.name" value="jbossts" />
+          <property name="jdbc.db.user" value="dtf11" />
+          <property name="jdbc.db.password" value="dtf11" />
+          <property name="jdbc.db.port" value="3306" />
+          <property name="jdbc.db.properties" value="" />
+        </then>
+      </elseif>
+      <elseif>
+        <equals arg1="${profile}" arg2="oracle" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource" />
+          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.name" value="orcl" />
+          <property name="jdbc.db.user" value="dtf11" />
+          <property name="jdbc.db.password" value="dtf11" />
+          <property name="jdbc.db.port" value="1521" />
+          <property name="jdbc.db.properties" value=";NetworkProtocol=tcp;DriverType=thin" />
+        </then>
+      </elseif>
+      <elseif>
+        <equals arg1="${profile}" arg2="db2" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="com.ibm.db2.jcc.DB2DataSource" />
+          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.name" value="BTDB1" />
+          <property name="jdbc.db.user" value="db2" />
+          <property name="jdbc.db.password" value="db2" />
+          <property name="jdbc.db.port" value="50001" />
+          <property name="jdbc.db.properties" value=";DriverType=4" />
+        </then>
+      </elseif>
+      <elseif>
+        <equals arg1="${profile}" arg2="sybase" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="com.sybase.jdbc3.jdbc.SybDataSource" />
+          <property name="jdbc.db.url" value="vmg07.mw.lab.eng.bos.redhat.com" />
+          <property name="jdbc.db.name" value="jbossts" />
+          <property name="jdbc.db.user" value="jbossts0" />
+          <property name="jdbc.db.password" value="jbossts0" />
+          <property name="jdbc.db.port" value="5000" />
+          <property name="jdbc.db.properties" value=" -DObjectStoreEnvironmentBean.dropTable=false" />        	
+        </then>
+      </elseif>
+      <elseif>
+        <equals arg1="${profile}" arg2="mssql" />
+        <then>
+          <property name="jdbcstore-profile" value="true" />
+          <property name="jdbc.datasource.class" value="com.microsoft.sqlserver.jdbc.SQLServerDataSource" />
+          <property name="jdbc.db.url" value="dev30.mw.lab.eng.bos.redhat.com" />
+          <property name="jdbc.db.name" value="jbossts" />
+          <property name="jdbc.db.user" value="dtf11" />
+          <property name="jdbc.db.password" value="dtf11" />
+          <property name="jdbc.db.port" value="3918" />
+          <property name="jdbc.db.properties" value="" />
+        </then>
+      </elseif>
+      <elseif>
+        <equals arg1="${profile}" arg2="hornetq" />
+        <then>
+          <var name="objectStoreElements" value="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>
+        </then>
+      </elseif>
       </if>
-
+    	
+      <if>
+        <equals arg1="${jdbcstore-profile}" arg2="true" />
+        <then>
+          <var name="jdbcstore.database.properties" value="ClassName=${jdbc.datasource.class};DatabaseName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}" />
+          <var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;${jdbcstore.database.properties}" />
+          <echo message="Running with JDBC object store settings - DB: ${jdbcstore.database.properties}"/>
+          <echo message="MBean settings: ${objectStoreElements}"/>
+        </then>
+      </if>
+    	
       <!-- TODO support JTA mode testing of JTS .jar files? -
             would need classpath munging for props file in TaskImpl.properties -->
       <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
@@ -480,6 +532,7 @@
       </report>
     </emma>
   </target>
+	
   <!--
 
     unused groups, pending cleanup and wiring:
