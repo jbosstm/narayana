@@ -136,7 +136,6 @@ char *HttpTxManager::enlist(XAWrapper* resource, TxControl *tx, const char * xid
 		int port = _ws->get_port();
 
     	char hdr[BUFSZ];
-    	char body[BUFSZ];
 	char *hdrp[] = {hdr, 0};
     	const char *fmt = "Link: <http://%s:%d/xid/%s/terminate>;rel=\"%s\",<http://%s:%d/xid/%s/status>;rel=\"%s\"";
     	http_request_info ri;
@@ -146,14 +145,10 @@ char *HttpTxManager::enlist(XAWrapper* resource, TxControl *tx, const char * xid
 			host, port, xid,
 			HttpControl::PARTICIPANT_RESOURCE);
 
-		// TODO HACK latest wildfly no longer parses the Link header
-		// correctly (when JBTM-1920 is resolved remove the hack)
-		(void) apr_snprintf(body, BUFSZ, "%s", hdr);
-
                 if (_wc.send(_pool, &ri, "POST", enlistUrl,
                         HttpControl::POST_MEDIA_TYPE,
                         (const char **)hdrp,
-                        (const char *)body, strlen(body), NULL, NULL) != 0) {
+                        NULL, 0, NULL, NULL) != 0) {
                         LOG4CXX_DEBUG(httptxlogger, "enlist POST error");
                         return NULL;
                 }

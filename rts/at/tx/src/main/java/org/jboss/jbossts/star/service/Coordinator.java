@@ -520,10 +520,6 @@ public class Coordinator
         if (!tx.isRunning())
             return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
 
-        // TODO HACK alert - blacktie Link headers don't get passed through correctly
-        if (linkHeader == null || linkHeader.indexOf('<') == -1)
-            linkHeader = content;
-
         Map<String, String> links = TxSupport.decodeLinkHeader(linkHeader);
 //        Map<String, String> links = new HashMap<String, String>();
 //        for (Map.Entry<String, Link> link : linkHeader.getLinksByRelationship().entrySet())
