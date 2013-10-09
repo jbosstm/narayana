@@ -135,7 +135,7 @@ void ADMIN(TPSVCINFO* svcinfo) {
 			getResponseTime(svc, &min, &avg, &max);
 			LOG4CXX_DEBUG(loggerAtmiBrokerAdmin, (char*) "min = " << min
 					<< (char*) " avg=" << avg << (char*) " max=" << max);
-			len += sprintf(&toReturn[1], "%d,%d,%d", min, avg, max);
+			len += sprintf(&toReturn[1], "%ld,%ld,%ld", min, avg, max);
 			toReturn[0] = '1';
 		} else {
 			LOG4CXX_WARN(loggerAtmiBrokerAdmin,

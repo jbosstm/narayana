@@ -53,7 +53,7 @@ static void* APR_THREAD_FUNC activateDispatcher(apr_thread_t *thd, void* data)
 {
     ServiceDispatcher* dispatcher = (ServiceDispatcher*) data;
 
-    int ret = dispatcher->svc();
+    dispatcher->svc();
 
     apr_thread_exit(thd,APR_SUCCESS);
 
@@ -67,9 +67,10 @@ bool serverInitialized = false;
 bool configFromCmdline = false;
 int errorBootAdminService = 0;
 char configDir[256];
-char server[30];
+char server[32];
 int serverid = -1;
 int cbport = 0;
+char txn_resource_ep[256];
 
 int passedArgc = -1;
 char** passedArgv = NULL;
@@ -102,7 +103,8 @@ void parsecmdline(int argc, char** argv) {
         { "config", 'c', TRUE, "config file" },
         { "id", 'i', TRUE, "server id" },  
         { "server", 's', TRUE, "server name" }, 
-	{ "port", 'p', TRUE, "port number" },  
+        { "port", 'p', TRUE, "port number" },  
+        { "txn", 't', TRUE, "txn respone url"},
         { NULL, 0, 0, NULL }, /* end (a.k.a. sentinel) */
     };
 
@@ -114,11 +116,13 @@ void parsecmdline(int argc, char** argv) {
     apr_getopt_init(&opt, mp, argc, argv);
 
 	configFromCmdline = false;
+	memset(configDir, 0, 256);
+	memset(txn_resource_ep, 0, 256);
 	while ( (apr_getopt_long(opt, opt_option, &optch, &optarg)) == APR_SUCCESS ) {
 		switch ( optch) {
 		case 'c':
 			configFromCmdline = true;
-			strncpy(configDir, optarg, 256);
+			strncpy(configDir, optarg, 255);
 			break;
 		case 'i':
 			serverid = atoi(optarg);
@@ -131,6 +135,9 @@ void parsecmdline(int argc, char** argv) {
 			break;
 		case 'p':
 			cbport = atoi(optarg);
+			break;
+		case 't':
+			strncpy(txn_resource_ep, optarg, 255);
 			break;
 		}
 	}
@@ -154,7 +161,7 @@ int serverinit(int argc, char** argv) {
 	int toReturn = 0;
 
 	if (ptrServer == NULL) {
-		memset(server, '\0', 30);
+		memset(server, '\0', 32);
 		passedArgc = argc;
 		passedArgv = argv;
 		LOG4CXX_DEBUG(loggerAtmiBrokerServer,
@@ -208,6 +215,14 @@ int serverinit(int argc, char** argv) {
 				if(cbport > 0) {
 					LOG4CXX_DEBUG(loggerAtmiBrokerServer, (char*) "set callback server port by cmdline with " << cbport);
 					cbConfig.port = cbport;
+				}
+
+				if(strlen(txn_resource_ep) > 0) {
+					LOG4CXX_DEBUG(loggerAtmiBrokerServer, (char*) "set txn resource ep by cmdline with " << txn_resource_ep);
+					if(txnConfig.resourceEP != NULL) {
+						free(txnConfig.resourceEP);
+					}
+					txnConfig.resourceEP = strdup(txn_resource_ep);
 				}
 				LOG4CXX_DEBUG(loggerAtmiBrokerServer,
 						(char*) "serverinit called");
