@@ -17,6 +17,7 @@ import org.jboss.narayana.blacktie.jatmibroker.core.transport.Message;
 import org.jboss.narayana.blacktie.jatmibroker.core.tx.TransactionException;
 import org.jboss.narayana.blacktie.jatmibroker.xatmi.BlackTieService;
 import org.jboss.narayana.blacktie.jatmibroker.xatmi.mdb.MDBBlacktieService;
+import org.jboss.narayana.blacktie.jatmibroker.xatmi.impl.X_OCTET_Impl;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -41,6 +42,7 @@ public class AdvertiseUnadvertiseTest {
                         .addPackage(TransactionException.class.getPackage())
                         .addPackage(ConfigurationException.class.getPackage())
                         .addPackage(Message.class.getPackage())
+                        .addPackage(X_OCTET_Impl.class.getPackage())
                         .addAsResource("btconfig.xsd")
                 .addAsResource("btconfig.xml").setManifest(new StringAsset(ManifestMF));
     }
