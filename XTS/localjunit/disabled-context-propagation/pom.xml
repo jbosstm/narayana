@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.jboss.narayana.xts</groupId>
         <artifactId>localjunit</artifactId>
-        <version>5.0.0.M6</version>
+        <version>5.0.0.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
