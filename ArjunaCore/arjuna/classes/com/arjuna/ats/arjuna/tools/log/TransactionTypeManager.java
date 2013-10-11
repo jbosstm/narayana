@@ -23,12 +23,13 @@ package com.arjuna.ats.arjuna.tools.log;
 
 import java.util.HashMap;
 
+import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.arjuna.tools.log.EditableAtomicAction;
 import com.arjuna.ats.internal.arjuna.tools.log.EditableTransaction;
 
 /*
- * A default implementation for the default logstore.
+ * A default implementation for the default logstore implementation.
  */
 
 class AtomicActionTypeMap implements TransactionTypeManager.TransactionTypeMap
@@ -40,8 +41,15 @@ class AtomicActionTypeMap implements TransactionTypeManager.TransactionTypeMap
     
     public String getType ()
     {
-        return "AtomicAction";  // why not Class name?
+        return "AtomicAction";
     }
+    
+    public String getRealType ()
+    {
+        return _type;
+    }
+    
+    private static final String _type = new AtomicAction().type();
 }
 
 public class TransactionTypeManager
@@ -56,7 +64,9 @@ public class TransactionTypeManager
     {
         public EditableTransaction getTransaction (final Uid u);
 
-        public String getType ();
+        public String getType (); // the shorthand name (could be the same as getRealType iff we want people to write really loooong strings).
+        
+        public String getRealType ();  // the real type (used by object store operations)
     }
 
     public EditableTransaction getTransaction (final String type, final Uid u)
@@ -68,6 +78,19 @@ public class TransactionTypeManager
 
         if (map != null)
             return map.getTransaction(u);
+        else
+            return null;
+    }
+    
+    public String getTransactionType (final String type)
+    {
+        if (type == null)
+            throw new IllegalArgumentException();
+
+        TransactionTypeMap map = _maps.get(type);
+
+        if (map != null)
+            return map.getRealType();
         else
             return null;
     }
@@ -105,6 +128,13 @@ public class TransactionTypeManager
         return _manager;
     }
 
+    /*
+     * All log implementations that we want to support should be in here
+     * so they are registered. We could use a dynamic approach, but we don't
+     * have a rapidly growing number of object stores anyway to justify that
+     * overhead.
+     */
+    
     private TransactionTypeManager()
     {   
         addTransaction(new AtomicActionTypeMap());
