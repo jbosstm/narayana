@@ -329,12 +329,14 @@ public class ConnectionImple implements Connection
 
 	                    // no indication about connections, so assume close immediately
 
-	                    if (_theConnection != null && !_theConnection.isClosed())
-	                        _theConnection.close();
-
-	                    _theConnection = null;
-
-	                    return;
+	                    /*
+	                     * Don't return just yet. Drop through bottom of these clauses and
+	                     * close _theConnection and _recoveryConnection.
+	                     * 
+	                     * delayClose is false at this point.
+	                     * 
+	                     * JBTM-789.
+	                     */
 	                }
 	                else
 	                {
