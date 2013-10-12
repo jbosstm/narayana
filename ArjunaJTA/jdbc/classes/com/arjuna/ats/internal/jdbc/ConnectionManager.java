@@ -105,6 +105,13 @@ public class ConnectionManager
                     throw sqlException;
                 }
             }
+            else
+            {
+                // no longer being used by a transaction, so let's discard. JBTM-764
+                
+                if (tx1 == null)
+                    remove(conn);
+            }
         }
 
         ConnectionImple conn = new ConnectionImple(dbUrl, info);
@@ -127,5 +134,4 @@ public class ConnectionManager
     }
 
     private static Set<ConnectionImple> _connections = new HashSet<ConnectionImple>();
-
 }
