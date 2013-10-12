@@ -57,13 +57,13 @@ import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
 public class TransactionalDriver implements java.sql.Driver
 {
-
-public static final String arjunaDriver = "jdbc:arjuna:";
-public static final String jdbc = "jdbc:";
-public static final String userName = "user";
-public static final String password = "password";
-public static final String dynamicClass = "DYNAMIC_CLASS";
-public static final String createDb = "CREATE_DB";
+    public static final String arjunaDriver = "jdbc:arjuna:";
+    public static final String jdbc = "jdbc:";
+    public static final String userName = "user";
+    public static final String password = "password";
+    public static final String dynamicClass = "DYNAMIC_CLASS";
+    public static final String createDb = "CREATE_DB";
+    public static final String poolConnections = "POOL_CONNECTIONS";
 
     public TransactionalDriver ()
     {
@@ -162,6 +162,4 @@ public static final String createDb = "CREATE_DB";
 	    throw new ExceptionInInitializerError(e);
 	}
     }
-
 }
-
