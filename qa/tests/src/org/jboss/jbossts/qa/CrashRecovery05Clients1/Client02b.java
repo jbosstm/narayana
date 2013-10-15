@@ -57,64 +57,32 @@ package org.jboss.jbossts.qa.CrashRecovery05Clients1;
  */
 
 
-import org.jboss.jbossts.qa.CrashRecovery05.*;
-import org.jboss.jbossts.qa.Utils.OAInterface;
-import org.jboss.jbossts.qa.Utils.ORBInterface;
+import org.jboss.jbossts.qa.CrashRecovery05.CrashBehavior;
 import org.jboss.jbossts.qa.Utils.OTS;
-import org.jboss.jbossts.qa.Utils.ServerIORStore;
-import org.omg.CosTransactions.*;
+import org.jboss.jbossts.qa.Utils.OTS;
 
 public class Client02b
 {
 	public static void main(String[] args)
-	{
+    {
+        ClientBeforeCrash beforeCrash = new ClientBeforeCrash(Client01b.class.getSimpleName());
+
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+            beforeCrash.initOrb(args);
+            beforeCrash.initCrashBehaviour(CrashBehavior.CrashBehaviorCrashInCommitOnePhase);
+            beforeCrash.serviceSetup();
 
-			String serviceIOR = ServerIORStore.loadIOR(args[args.length - 1]);
-			BeforeCrashService service = BeforeCrashServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR));
-
-			ResourceBehavior[] resourceBehaviors = new ResourceBehavior[1];
-			resourceBehaviors[0] = new ResourceBehavior();
-			resourceBehaviors[0].crash_behavior = CrashBehavior.CrashBehaviorCrashInCommitOnePhase;
-
-			boolean correct = true;
-
-			OTS.current().begin();
-
-			service.setup_oper(OTS.current().get_control(), resourceBehaviors);
-
-			correct = service.is_correct();
-			
 			OTS.current().commit(false);
 
-			if (correct)
-			{
-				System.out.println("Passed");
-			}
-			else
-			{
-				System.out.println("Failed");
-			}
+            beforeCrash.reportStatus();
 		}
 		catch (Exception exception)
 		{
-			System.out.println("Failed");
-			System.err.println("Client02b.main: " + exception);
-			exception.printStackTrace(System.err);
+			beforeCrash.reportException(exception);
 		}
-
-		try
-		{
-			OAInterface.shutdownOA();
-			ORBInterface.shutdownORB();
-		}
-		catch (Exception exception)
-		{
-			System.err.println("Client02b.main: " + exception);
-			exception.printStackTrace(System.err);
-		}
+        finally {
+            beforeCrash.shutdownOrb();
+        }
 	}
 }
