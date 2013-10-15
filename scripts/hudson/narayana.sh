@@ -32,6 +32,7 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION =~ "!MAIN" ]]; then
+        FINDBUGS=findbugs,
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
@@ -41,7 +42,7 @@ function init_test_options {
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
         comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts
     elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JACORB" ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
@@ -136,7 +137,7 @@ function build_narayana {
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Pfindbugs,release,community$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -P${FINDBUGS}release,community$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
