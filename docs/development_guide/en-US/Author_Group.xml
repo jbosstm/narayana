@@ -36,6 +36,14 @@
     </affiliation-->
     <email>kconnor@redhat.com</email>
   </author>
+    <author>
+        <firstname>Michael</firstname>
+        <surname>Musgrove</surname>
+        <!--affiliation>
+          <orgname>Red Hat</orgname>
+        </affiliation-->
+        <email>mmusgrov@redhat.com</email>
+    </author>
   <editor>
     <firstname>Misty</firstname>
     <surname>Stanley-Jones</surname>

@@ -6,25 +6,177 @@
 <chapter>
   <title>Tools</title>
   <para>
-    This chapter explains how to start and use the tools framework and what tools are available.
+    This chapter describes the various tools for managing transactions.
   </para>
 
     <section>
-      <title>ObjectStore command-line editors</title>
+      <title>ObjectStore command-line browsers and editors</title>
       <para>
-        There are currently two command-line editors for manipulating the ObjectStore. These tools are used to
+        There are currently three command-line editors for manipulating the ObjectStore. These tools are used to
         manipulate the lists of heuristic participants maintained by a transaction log. They allow a heuristic
         participant to be moved from that list back to the list of prepared participants so that transaction recovery
         may attempt to resolve them automatically.
       </para>
 
+
+      <section>
+        <title>Browse and Manage Transactions Using an Application Server</title>
+        <para>
+            The JBoss EAP and WildFly application servers provide a command-line based Management CLI which supports the ability to browse and manipulate transaction records.
+            This functionality is provided by the interaction between the Transaction Manager (TM) and the Management API of the application server.
+            To start the CLI on a non-windows based OS type the following command in application server install directory:
+        </para>
+      	<screen>./bin/jboss-cli.sh --connect controller=IP_ADDRESS</screen>
+        <para>
+      	On Windows platforms use the jboss-cli.bat script
+      	</para>
+          <para>
+            The transaction manager stores information about each active transaction, and the participants involved in the transaction, in a persistent storage area
+            called the <firstterm>object store</firstterm>. The Management API exposes the object store as a resource called the <code>log-store</code>.
+            An API operation called <code>probe</code> reads the transaction logs and creates a node in the management model corresponding to each log.
+            These nodes can be inspected using the CLI. Transaction logs are transient so these nodes quickly become out of date but you can call the <code>probe</code> command
+            manually whenever you need to refresh the <code>log-store</code>.
+      		</para>
+      		<example id="refresh_log_store">
+      			<title>Refresh the Log Store</title>
+      			<para>
+      				This command refreshes the Log Store for server groups which use the profile <literal>default</literal> in a managed domain.
+                    For a standalone server, remove the <literal>profile=default</literal> from the command.
+      			</para>
+      			<screen>/profile=default/subsystem=transactions/log-store=log-store/:probe</screen>
+      		</example>
+      		<example>
+      			<title>View All Prepared Transactions</title>
+      			<para>
+      				To view all prepared transactions, first refresh the log store (see <xref linkend="refresh_log_store"/>), then run the following command,
+                    which functions similarly to a filesystem <command>ls</command> command.
+      			</para>
+      			<screen>ls /profile=default/subsystem=transactions/log-store=log-store/transactions</screen>
+      			<para>
+      				Each transaction is shown, along with its unique identifier. Individual operations can be run against an individual transaction
+                    (see <xref linkend="manage_transaction"/>).
+      			</para>
+      		</example>
+      		<variablelist id="manage_transaction">
+      			<title>Manage a Transaction</title>
+      			<varlistentry>
+      				<term>View a transaction's attributes.</term>
+      				<listitem>
+      					<para>
+      						To view information about a transaction, such as its JNDI name, EIS product name and version, or its status, use the
+                            <code>:read-resource</code> CLI command.
+      					</para>
+      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:read-resource</screen>
+      				</listitem>
+      			</varlistentry>
+      			<varlistentry>
+      				<term>View the participants of a transaction.</term>
+      				<listitem>
+      					<para>
+      						Each transaction log contains a child element called <code>participants</code>. Use the <code>read-resource</code> CLI command on this element
+                            to see the participants of the transaction. Participants are identified by their JNDI names.
+      					</para>
+      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>java\:\/JmsXA</replaceable>:read-resource</screen>
+      					<para>
+      						The result may look similar to this:
+      					</para>
+      					<para>
+                        <screen>
+{
+   "outcome" => "success",
+   "result" => {
+       "eis-product-name" => "HornetQ",
+       "eis-product-version" => "2.0",
+       "jndi-name" => "java:/JmsXA",
+       "status" => "HEURISTIC",
+       "type" => "/StateManager/AbstractRecord/XAResourceRecord"
+   }
+}
+                        </screen>
+
+      					</para>
+      					<para>
+      						The outcome status shown here is in a <code>HEURISTIC</code> state and is eligible for recovery. Refer to <xref linkend="recover_transaction"/>
+                            for more details.
+      					</para>
+      				</listitem>
+      			</varlistentry>
+      			<varlistentry>
+      				<term>Delete a transaction.</term>
+      				<listitem>
+      					<para>
+      						Each transaction log supports a <code>:delete</code> operation, to delete the transaction log representing the transaction.
+      					</para>
+      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:delete</screen>
+      				<warning>
+      					<para>
+      					  If failures occur, transaction logs may remain in the object store until crash recovery facilities have resolved the transactions they represent.
+                            Therefore, it is very important that the contents of the object store are not deleted inadvertently, as this will make it impossible to
+                            resolve in-doubt transactions. In addition, if multiple users share the same object store, they must understand that it is not an exclusive resource,
+                            and not delete transaction logs without careful consideration.
+      					</para>
+      				</warning>
+      				</listitem>
+      			</varlistentry>
+      			<varlistentry id="recover_transaction">
+      				<term>Recover a transaction.</term>
+      				<listitem>
+      					<para>
+      						Each transaction log supports recovery via the <code>:recover</code> CLI command.
+      					</para>
+      					<itemizedlist>
+      						<title>Recovery of Heuristic Transactions and Participants</title>
+      						<listitem>
+      							<para>
+      								If the transaction's status is <literal>HEURISTIC</literal>, the recovery operation changes the state to <literal>PREPARE</literal> and
+                                    triggers a recovery attempt.
+      							</para>
+      						</listitem>
+      						<listitem>
+      							<para>
+      								If one of the transaction participants is in a heuristic state, the recovery operation tries to replay the <code>commit</code> operation.
+                                    If successful, the participant is removed from the transaction log. You can verify this by re-running the <code>:probe</code> operation on
+                                    the <code>log-store</code> and checking that the participant is no longer listed. If this is the last participant, the transaction is also
+                                    deleted.
+      							</para>
+      						</listitem>
+      					</itemizedlist>
+      				</listitem>
+      			</varlistentry>
+      			<varlistentry>
+      				<term>Refresh the status of a transaction which needs recovery.</term>
+      				<listitem>
+      					<para>
+      						If a transaction needs recovery, you can use the <code>:refresh</code> CLI command to be sure it still requires recovery, before attempting the
+                            recovery.
+      					</para>
+      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:refresh</screen>
+      				</listitem>
+      			</varlistentry>
+      		</variablelist>
+      </section>
       
       <section>
         <title>LogEditor</title>
-        <para>
-          Started by executing <methodname>com.arjuna.ats.arjuna.tools.log.LogBrowser</methodname>, this tool supports
-          the following options that can be provided on the command-line.
-        </para>
+          <para>
+              The LogEditor tool is started by executing the following command:
+          </para>
+          <screen>
+java -Dcom.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.objectStoreDir="path to file based object store" com.arjuna.ats.arjuna.tools.log.LogBrowser
+          </screen>
+          <para>
+              This command works with the file based object store. If you want
+      		  to work with the Hornetq store instead then you need to specify
+      		  a different property for the location of the log store and you
+      		  also need to explicity provide the class name of the
+      		  Hornetq Object Store:
+          </para>
+          <screen>
+java -Dcom.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean.storeDir="directory path" -Dcom.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.objectStoreType="com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqObjectStoreAdaptor"
+          </screen>
+          <para>
+              The tool supports the following options that can be provided on the command-line:
+          </para>
         <table>
           <title>LogEditor Options</title>
           <tgroup cols="2">
@@ -131,9 +283,7 @@
     <section>
       <title>Embedded Console</title>
       <para>
-        Transaction management is integrated into the admin console in the form of a JOPR plugin
-        which is located in the install bin directory (jbossts-jopr-plugin.jar). Install it by copying
-        to the admin console plugin directory ($JBOSS_HOME/common/deploy/admin-console.war/plugins).
+        Transaction management is integrated into the JBoss EAP and WildFly application servers.
       </para>
     </section>
     <section>
@@ -151,32 +301,172 @@
         jconsole jars on the classpath:
       </para>
 
-        <screen><command>
-        export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/narayana-jta.jar>"
-        </command></screen>
+        <screen>
+export CLASSPATH="$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$ORSON_HOME/orson-0.5.0.jar:$ORSON_HOME/lib/jfreechart-1.0.6.jar:$ORSON_HOME/lib/jcommon-1.0.10.jar:$INSTALL_ROOT/lib/narayana-jta.jar>"
+        </screen>
 
       <section>
         <title>Standalone Usage</title>
 
-        <screen><command>
-          java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
-        </command></screen>
+        <screen>
+java com.arjuna.ats.arjuna.tools.stats.TxPerfGraph
+        </screen>
 
-		<para>
+      	<para>
           (note that standalone usage does not require the JDK tools and jconsole jars)
-		</para>
+      	</para>
       </section>
       <section>
         <title>Usage with jconsole</title>
 
-        <screen><command>
-          jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana-jta.jar
-        </command></screen>
-		<para>
-          This command will launch the jconsole GUI in which there will be an extra tab for
-          displaying transaction performance statistics.
-		</para>
+        <screen>
+jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana-jta.jar
+        </screen>
+      	<para>
+          This command will launch the jconsole GUI in which there will be an
+      	  extra tab for displaying transaction performance statistics.
+      	</para>
       </section>
     </section>
   </section>
+
+  <section>
+    <title>View Transaction Statistics using an Application Server</title>
+      <para>
+        If you are using the Transaction Manager (TM) inside the JBoss EAP or
+      	WildFly application servers and if the TM statistics are enabled, then
+      	you can view statistics about the TM and transaction subsystem using
+      	tools provide by the application server.
+      </para>
+      		<para>
+      			You can view statistics either via the web-based Management Console or the command-line Management CLI. In the web-based Management Console, Transaction statistics are available via <menuchoice><guimenu>Runtime</guimenu><guimenuitem>Subsystem Metrics</guimenuitem><guimenuitem>Transactions</guimenuitem></menuchoice>. Transaction statistics are available for each server in a managed domain, as well. You can specify the server in the <guilabel>Server</guilabel> selection box at the top left.
+      		</para>
+      		<para>
+      			The following table shows each available statistic, its description, and the CLI command to view the statistic.
+      		</para>
+      		<table>
+      			<title>Transaction Subsystem Statistics</title>
+      			<tgroup cols="3">
+      				<thead>
+      					<row>
+      						<entry>
+      							Statistic
+      						</entry>
+      						<entry>
+      							Description
+      						</entry>
+      						<entry>
+      							CLI Command
+      						</entry>
+      					</row>
+      				</thead>
+      				<tbody>
+      					<row>
+      						<entry>
+      							Total
+      						</entry>
+      						<entry>
+      							<para>
+      								The total number of transactions processed by the TM on this server.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-transactions,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Committed
+      						</entry>
+      						<entry>
+      							<para>
+      								The number of committed transactions processed by the TM on this server.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-committed-transactions,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Aborted
+      						</entry>
+      						<entry>
+      							<para>
+      								The number of aborted transactions processed by the TM on this server.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-aborted-transactions,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Timed Out
+      						</entry>
+      						<entry>
+      							<para>
+      								The number of timed out transactions processed by the TM on this server.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-timed-out-transactions,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Heuristics
+      						</entry>
+      						<entry>
+      							<para>
+      								Not available in the Management Console. Number of transactions in a heuristic state.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-heuristics,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							In-Flight Transactions
+      						</entry>
+      						<entry>
+      							<para>
+      								Not available in the Management Console. Number of transactions which have begun but not yet terminated.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-inflight-transactions,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Failure Origin - Applications
+      						</entry>
+      						<entry>
+      							<para>
+      								The number of failed transactions whose failure origin was an application.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-application-rollbacks,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      					<row>
+      						<entry>
+      							Failure Origin - Resources
+      						</entry>
+      						<entry>
+      							<para>
+      								The number of failed transactions whose failure origin was a resource.
+      							</para>
+      						</entry>
+      						<entry>
+      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-resource-rollbacks,include-defaults=true)</screen>
+      						</entry>
+      					</row>
+      				</tbody>
+      			</tgroup>
+      		</table>
+    </section>
 </chapter>
