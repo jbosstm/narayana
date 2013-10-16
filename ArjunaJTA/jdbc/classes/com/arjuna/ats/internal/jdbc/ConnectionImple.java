@@ -366,7 +366,10 @@ public class ConnectionImple implements Connection
 
 	        if (!delayClose)  // close now
 	        {
-	            _recoveryConnection.closeCloseCurrentConnection();
+	            if (_theModifier != null)
+	                _recoveryConnection.closeCloseCurrentConnection();
+
+	           
 	            if (_theConnection != null && !_theConnection.isClosed())
 	                _theConnection.close();
 
