@@ -9,11 +9,11 @@
   <para>
     The XTS Background Guide explains how to add resilience to distributed business processes based on web services,
     making them reliable in the event of system or network failures. It covers the background theory around Transactions
-    in general and alsot the WS-C, WS-AT and WS-BA Web Services standards.
+    in general and also the WS-C, WS-AT and WS-BA Web Services standards.
   </para>
   <para>
     The &APPSERVER; implements Web Services
-    Transactions standards using <firstterm>XTS (XML Transaction Service)</firstterm>. XTS supports development and
+    Transactions standards using the <firstterm>XTS (XML Transaction Service)</firstterm> component. XTS supports development and
     deployment of transaction-aware web services. It also enables web service clients to create and manage web service
     transactions from which transactional web services can be invoked. XTS ensures that the client and web services
     achieve consistent outcomes even if the systems on which they are running crash or temporarily lose network

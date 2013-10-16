@@ -38,7 +38,7 @@
   <section>
     <title>WS-Coordination</title>
     <para>
-      In general terms, <firstterm>coordination</firstterm> is the act of one entity,known as the coordinator,
+      In general terms, <firstterm>coordination</firstterm> is the act of one entity, known as the coordinator,
       disseminating information to a number of participants for some domain-specific reason. This reason could be to
       reach consensus on a decision by a distributed transaction protocol, or to guarantee that all participants obtain
       a specific message, such as in a reliable multicast environment. When parties are being coordinated, information,
@@ -102,19 +102,6 @@
 
     <section>
       <title>Activation</title>
-
-      <!--
-      <para> The WS-C framework exposes an Activation Service which supports the creation of coordinators for specific
-      coordination protocols and retrieval of associated contexts. Activation services are invoked asynchronously, and
-      so the specification defines the interfaces of the activation service itself and of the invoking service. This
-      allows the activation service to call back to deliver the results of the activation, which consist of a context
-      that identifies the protocol type and coordinator location. These interfaces are presented in <xref
-      linkend="example-wsc-interfaces" />. The code shows that the activation service has a one-way operation that
-      expects to receive a <systemitem>CreateCoordinationContext</systemitem> message. The service that sends the
-      <systemitem>CreateCoordinationContext</systemitem> message expects to be called back with a
-      <systemitem>CreateCoordinationContextResponse message</systemitem>, or to be notified of a problem via an error
-      message.  </para>
-      -->
       <para>
    The WS-C framework exposes an Activation Service which supports the creation of coordinators for specific
    coordination protocols and retrieval of associated contexts. Activation services are invoked synchronously using an
@@ -195,7 +182,7 @@
     <section>
       <title>WS-Transaction Foundations</title>
       <para>
-   WS-Transaction is layered upon the WS-Coordination protocol, as shown in as shown in <xref linkend="wsc-wst-interop"
+   WS-Transaction is layered upon the WS-Coordination protocol, as shown in <xref linkend="wsc-wst-interop"
    />.
       </para>
 
@@ -244,7 +231,7 @@
        <methodname>RegisterResponse</methodname> messages declared in the Registration Service WSDL in <xref
        linkend="example-wsc-registration" />. The <methodname>Register</methodname> message contains the URL of an
        endpoint in the client or web service container. This URL is used when a WS-Transaction coordination service
-       wishes to dispatch a message to the clinet or web service. Similarly, the
+       wishes to dispatch a message to the client or web service. Similarly, the
        <methodname>RegisterResponse</methodname> message contains a URL iendtifying an endpoint for the
        protocol-specific WS-Transaction coordination service for which the client/web service is registered, allowing
        messages to be addressed to the transaction coordinator.
@@ -255,15 +242,9 @@
 
     <section>
       <title>WS-Transaction Architecture</title>
-      <!--
-      <para> WS-Transaction views the service and participant as distinct roles, making the distinction between a
-      transaction-aware service and the participants that act on behalf of the service during a
-      transaction. Transactional services deal with business-level protocols, while the participants handle the
-      underlying WS-Transaction protocols, as shown <xref linkend="ws-trans-global-view" />.  </para>
-      -->
 
       <para>
-   WS-Transaction distnguishes the transaction-aware web service in its role executing business-logic, from the web
+   WS-Transaction distinguishes the transaction-aware web service in its role executing business-logic, from the web
    service acting as a participant in the transaction, communicating with and responding to its transaction
    coordinator. Transaction-aware web services deal with application clients using business-level protocols, while the
    participant handles the underlying WS-Transaction protocols, as shown in <xref linkend="ws-trans-global-view" />.
@@ -300,17 +281,6 @@
       		  <textobject><para>Services and Participants</para></textobject>
    </mediaobject>
       </figure>
-      <!--
-      <para> The transaction-aware Web service and its participant both serve a shared transactional resource, and the
-      JAXTX API provides a control relationship between them. In <xref linkend="ws-trans-services-participants" />, the
-      database is assumed to be accessed through a transactional JDBC database driver, where SQL statements are sent to
-      the database for processing via that driver, but where those statements are tentative and only commit if the
-      transaction does. For this to work, the driver/database associates a participant with the transaction. This
-      participant informs the database of the transaction outcome. Since all transactional invocations on the Web
-      service carry a transaction context, the participant working with the database is able to identify the work that
-      the transactional service has done within the scope of a specific transaction, and either commit or roll back the
-      work.  </para>
-      -->
       <para>
    The transaction-aware web service employs a back end database accessed via a JDBC driver, which sends SQL statements
    to the database for processing. However, those statements should only commit if the enclosing web service transaction
@@ -330,7 +300,7 @@
     </section> <!--       <title>WS-Transaction Architecture</title> -->
 
     <section>
-      <title>WS_Transaction Models</title>
+      <title>WS-Transaction Models</title>
       <para>
    It has been established that traditional transaction models are not appropriate for Web Services. No one specific
    protocol is likely to be sufficient, given the wide range of situations where Web service transactions are likely to
@@ -350,11 +320,7 @@
    <title>Atomic Transactions</title>
    <para>
      An <firstterm>atomic transaction (AT)</firstterm> is similar to traditional ACID transactions, and is designed to
-     support short-duration interactions where ACID semantics are appropriate. <!--Within the scope of an AT, services
-     typically enroll transaction-aware resources, such as databases and message queues, indirectly as participants
-     under the control of the transaction. When the transaction terminates, the outcome decision of the AT is propagated
-     to each enlisted resource via the participant, and the appropriate <systemitem>commit</systemitem> or
-     <systemitem>rollback</systemitem> actions are taken by each.-->Within the scope of an AT, web services typically
+     support short-duration interactions where ACID semantics are appropriate. Within the scope of an AT, web services typically
      employ bridging to allow them to access XA resources, such as databases and message queues, under the control of
      the web service transaction. When the transaction terminates, the participant propagates the outcome decision of
      the AT to the XA resources, and the appropriate commit or rollback actions are taken by each.
@@ -466,7 +432,7 @@
           committed later. None of the original state information can be lost at this point, since the atomic
           transaction may still roll back. If the participant cannot <systemitem>prepare</systemitem>, it must inform
           the coordinator, by means of the <systemitem>aborted</systemitem> message. The transaction will ultimately
-          roll back. If the participant is responsible for a service that did not change any of the transaction's data,,
+          roll back. If the participant is responsible for a service that did not change any of the transaction's data,
           it can return the <systemitem>readonly</systemitem> message, causing it to be omitted from the second phase of
           the commit protocol. Otherwise, the <systemitem>prepared</systemitem> message is sent by the participant.
         </para>
@@ -596,7 +562,7 @@
      the participant can complete its activity, signaling to the coordinator that the work it has done can be
      compensated if, at some later point, another participant notifies a failure to the coordinator. In this latter
      case, the coordinator asks each non-exited participant to compensate for the failure, giving them the opportunity
-     to execute whatever compensating action they consider appropriate. For instance, participant might credit a bank
+     to execute whatever compensating action they consider appropriate. For instance, the participant might credit a bank
      account which it previously debited. If all participants exit or complete without failure, the coordinator notifies
      each completed participant that the activity has been closed.
    </para>
@@ -690,7 +656,7 @@
      </varlistentry>
    </variablelist>
    <para>
-     The advantage of the BA model, compared to the AT model, is that is allows the participation of services that
+     The advantage of the BA model, compared to the AT model, is that it allows the participation of services that
      cannot lock resources for extended periods.
    </para>
    <para>
@@ -771,8 +737,8 @@
        messages using SOAP RPC over SMTP, even though the XTS messages are delivered using a different mechanism.
      </para>
    </note>
-      </section> <!--   <title>WS-C, WS-Atomic Transaction, and WS-Business Activity Messages</title> -->
-    </section> <!--       <title>Application Messages</title> -->
+      </section>
+    </section>
     
   </section>
 
@@ -780,7 +746,7 @@
     <title>Summary</title>
     <para>
       XTS provides a coordination infrastructure which allows transactions to run between services owned by different
-      business, across the Internet. That infrastructure is based on the WS-C, WS-Atomic Transaction and WS-Business
+      businesses, across the Internet. That infrastructure is based on the WS-C, WS-Atomic Transaction and WS-Business
       Activity specifications. It supports two kinds of transactions: atomic transactions and business activities, which
       can be combined in arbitrary ways to map elegantly onto the transactional requirements of the underlying
       problem. The use of the whole infrastructure is simple, because its functionality is exposed through a simple

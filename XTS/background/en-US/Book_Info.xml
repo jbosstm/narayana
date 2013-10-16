@@ -11,7 +11,7 @@
    <pubsnumber>0</pubsnumber>
    <abstract>
       <para>
-        The XTS Background Guide contains background information, required before you can use JBoss Transaction Service to develop service-based
+        The "XTS Background Guide" contains background information, which is important to understand, before you can use JBoss Transaction Service to develop service-based
         applications, that use transaction technology to manage business processes.
       </para>
    </abstract>

@@ -489,7 +489,7 @@
       </para>
       <para>
         Normally, a transactional application client and the transaction web service it invokes will be deployed in
-        different application servers. As long as the XTS is enabled on each of these containers XTS will
+        different application servers. As long as XTS is enabled on each of these containers it will
         transparently route coordination messages from clients or web services to their coordinator and vice versa. When
         the the client begins a transaction by default it creates a context using the coordination services in its local
         container. The context holds a reference to the local Registration Service which means that any web services
@@ -503,9 +503,10 @@
       </para>
       <warning>
         <para>
-          In previous releases, XTS applications were deployed using the appropriate XTS and Transaction Manager
-          <filename>.jar</filename>, <filename>.war</filename>, and configuration files bundled with the
-          application. This deployment method is no longer supported in the &APPSERVER;.
+          In previous releases, the XTS and Transaction Manager
+          <filename>.jar</filename>, <filename>.war</filename> and configuration files needed to be bundled with the
+          application. This deployment method is no longer supported in the &APPSERVER; as XTS is pre-installed as a
+          SubSystem.
         </para>
       </warning>
     </section>

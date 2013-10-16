@@ -45,9 +45,6 @@
 				    This release of the XML Transaction component of Narayana is designed to run within JBoss.
 				</para>
         <para>
-    				This release has been tested on JBoss 7.1.1.Final.
-                </para>
-        <para>
                     To compile, deploy and run the sample application we also recommend using Java SDK 1.6 and Apache Maven 3.0.3 or later.
                     If you do not already have these, you can download them from <ulink url="http://java.sun.com/">java website</ulink> and the <ulink url="http://maven.apache.org/">Maven website</ulink>.
                 </para>

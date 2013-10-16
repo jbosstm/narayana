@@ -110,14 +110,14 @@
         information about about all the transactions which could have entered the <systemitem>commit</systemitem> phase
         before the reboot, since they have entries in the log. It also knows about any active transactions started after
         the reboot. If a participant is waiting for a response, after sending its <systemitem>prepared</systemitem>
-        message, it automatically re sends the <systemitem>prepared</systemitem> message at regular intervals. When the
+        message, it automatically re-sends the <systemitem>prepared</systemitem> message at regular intervals. When the
         coordinator detects a transaction which is not active and has no entry in the log file after the reboot, it
         instructs the participant to abort, ensuring that the web service gets a chance to roll back any provisional
         state changes it made on behalf of the transaction.
       </para>
       <para>
         A web service may decide to unilaterally commit or roll back provisional changes associated with a given
-        participant, if configured to time out after a specified length of time without a response. In this situation,
+        participant, if configured to time-out after a specified length of time without a response. In this situation,
         the the web service should record this action and log a message to persistent storage. When the participant
         receives a request to commit or roll back, it should throw an exception if its unilateral decision action does
         not match the requested action. The coordinator detects the exception and logs a message marking the outcome as
@@ -306,7 +306,7 @@ Interface</title>
         <systemitem>completed</systemitem> message. The coordinator writes a log record storing the details of each
         participant, and indicating that the transaction is ready to close. If the coordinator service crashes after the
         log record is written, the <methodname>close</methodname> operation is still guaranteed to be successful. The
-        coordinator checks the log after the system reboots and re sends a <systemitem>close</systemitem> message to all
+        coordinator checks the log after the system reboots and re-sends a <systemitem>close</systemitem> message to all
         participants. After all participants respond to the <systemitem>close</systemitem> with a
         <systemitem>closed</systemitem> message, the coordinator can safely delete the log entry.
       </para>

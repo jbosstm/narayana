@@ -42,7 +42,7 @@
      <term>Prepared</term>
      <listitem>
        <para>
-         Indicates that the participant can can prepare if the coordinator requests it. Nothing has been committed,
+         Indicates that the participant can prepare if the coordinator requests it. Nothing has been committed,
          because the participant does not know the final outcome of the transaction.
        </para>
      </listitem>
@@ -125,10 +125,7 @@
          <varlistentry>
       <term>timeout</term>
       <listitem>
-        <!--
-        <para> This optional parameter, measured in milliseconds, causes the <methodname>begin</methodname> method to
-        time out.  </para>
-        -->
+
         <para>
           This optional parameter, measured in milliseconds, specifies a time interval after which the newly created
           transaction may be automatically rolled back by the coordinator
@@ -469,7 +466,7 @@
       <listitem>
         <para>
           The activity has been cancelled because one of the Coordinator Completion participants failed to
-          complete. This exception may also thrown if one of the Participant Completion participants has not completed
+          complete. This exception may also be thrown if one of the Participant Completion participants has not completed
           before the client calls close.
         </para>
         <!--
@@ -520,7 +517,7 @@
     <section>
       <title>UserBusinessActivityFactory</title>
       <para>
-   Use the <methodname>getuserbusinessActivity</methodname> method to obtain a <xref linkend="ref-UserBusinessActivity"
+   Use the <methodname>getUserBusinessActivity</methodname> method to obtain a <xref linkend="ref-UserBusinessActivity"
    /> instance from a <classname>userBusinessActivityFactory</classname>.
       </para>
     </section>
@@ -647,7 +644,7 @@
       <term>WrongStateException</term>
       <listitem>
         <para>
-          The transaction is not in a state where new participants may be enrolled, as when it is terminating.
+          The transaction is not in a state where new participants may be enrolled, such as when it is terminating.
         </para>
       </listitem>
          </varlistentry>
@@ -707,7 +704,7 @@
       <term>WrongStateException</term>
       <listitem>
         <para>
-          The transaction is not in a state where new participants may be enrolled, as when it is terminating.
+          The transaction is not in a state where new participants may be enrolled, such as when it is terminating.
         </para>
       </listitem>
          </varlistentry>

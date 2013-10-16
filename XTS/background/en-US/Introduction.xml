@@ -31,7 +31,7 @@
     provides a brief overview of the technologies that form the Web Services standard. Additionally, this chapter
     explores some of the fundamentals of transactioning technology and how it can be applied to Web Services. Much of
     the content presented in this chapter is detailed throughout this guide. However, only overview information about
-    Web Services is provided. If you are new to creating Web services, please see consult your Web Services platform
+    Web Services is provided. If you are new to creating Web services, please consult your Web Services platform
     documentation.
   </para>
   <para>
@@ -64,7 +64,7 @@
     standards-based technologies such as SOAP and HTTP. These standards-based communication technologies enable
     customers, suppliers, and trading partners to access Web Services, independent of hardware operating system, or
     programming environment. The result is a vastly improved collaboration environment as compared to today's EDI and
-    <firstterm>business-to-business (B2B)</firstterm> solutions, an environment where businesses can expose their
+    <firstterm>business-to-business (B2B)</firstterm> solutions; an environment where businesses can expose their
     current and future business applications as Web Services that can be easily discovered and accessed by external
     partners.
   </para>
@@ -74,7 +74,7 @@
     attractive development solution are also the same reasons that service-based applications may have drawbacks.
   </para>
   <itemizedlist>
-    <title>Properties of Web Services</title>
+    <title>Properties of Web Services:</title>
     <listitem><para>Application components that are exposed as Web Services may be owned by third parties, which provides benefits in terms of cost of maintenance, but drawbacks in terms of having exclusive control over their behavior.</para></listitem>
     <listitem><para>Web Services are usually remotely located, increasing risk of failure due to increased network
     travel for invocations.</para></listitem>
@@ -146,15 +146,9 @@
       component</firstterm> that allows them to receive unsolicited messages.
     </para>
     <para>
-      <!--
-      In XTS, the active component is achieved through the use of <firstterm>Java servlet</firstterm> technology. Each
-      endpoint that can be communicated with via SOAP/XML is represented as a servlet, and published within
-      JNDI. Fortunately for the developer, this use of servlets occurs transparently. The only drawback is that clients
-      must reside within a domain capable of hosting servlets, such as an application server. In the case of Enterprise
-      Application Platform, JBoss Application Server provides this functionality.-->
       In XTS, the active component is achieved through deployment of JaxWS
       endpoints. Each XTS endpoint that is reachable through SOAP/XML is
-      published via JaxWS, without developer intevention. The only requirement
+      published via JaxWS, without developer intervention. The only requirement
       is that transactional client applications and transactional web services
       must reside within a domain capable of hosting JaxWS endpoints, such as an
       application server. JBoss Application Server can provide this functionality.

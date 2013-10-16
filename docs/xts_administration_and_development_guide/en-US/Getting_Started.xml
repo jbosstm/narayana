@@ -19,9 +19,7 @@
     <title>Installing the XTS Service Archive into JBoss Transaction Service</title>
     <para>
       XTS, which is the Web Services component of JBoss Transaction Service, provides WS-AT and WS-BA support for Web
-      Services hosted on the &APPSERVER;. The module is packaged as a <firstterm>Service Archive (.sar)</firstterm>
-      located in <filename><replaceable>$JBOSS_HOME</replaceable>/docs/examples/transactions/</filename>. To install it,
-      follow <xref linkend="starting-with-xts" />.
+      Services hosted on the &APPSERVER;. XTS is available as an optional SubSystem, enabled using the standalone-xts.xml configuration.
     </para>
 
     <procedure id="starting-with-xts">
@@ -39,7 +37,7 @@
            Copy the example XTS configuration into the configs directory:
        </para>
        <para>
-           <filename><replaceable>cp docs/examples/configs/standalone-xts.xml</replaceable></filename>
+           <filename><replaceable>cp docs/examples/configs/standalone-xts.xml standalone/configuration</replaceable></filename>
        </para>
       </step>
       <step>

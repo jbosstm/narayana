@@ -30,8 +30,8 @@
   </note>
   <para>
     Transactions have emerged as the dominant paradigm for coordinating interactions between parties in a distributed
-    system, and in particular to manage applications that require concurrent access to shared data. Much of the JBoss
-    Transaction Service Web Service API is based on contemporary transaction APIs whose familiarity will enhance
+    system, and in particular to manage applications that require concurrent access to shared data. Much of the XTS
+    API is based on contemporary transaction APIs whose familiarity will enhance
     developer productivity and lessen the learning curve. While the following section provides the essential information
     that you should know before starting to use XTS for building transactional Web Services, it should not be treated as
     a definitive reference to all transactional technology.
@@ -155,7 +155,7 @@
       minimal involvement required on the part of the client. <!--Using XTS, the context is automatically propagated and
       processed by transaction-aware components of an application. Though XTS removes most of the work associated with
       propagating contexts,--> However, it is still helpful to understand what information is captured in a
-      context. This information is listed in <xref linkend="context-contents" />.
+      context. This information is listed in the following section.
     </para>
 
     <variablelist id="context-contents">
@@ -458,7 +458,7 @@
      </row>
      <row>
        <entry><para>Heuristic Mixed</para></entry>
-       <entry><para>Some participants commit ed, while others were rolled back.</para></entry>
+       <entry><para>Some participants committed, while others were rolled back.</para></entry>
      </row>
      <row>
        <entry><para>Heuristic Hazard</para></entry>
@@ -525,7 +525,7 @@
     <para>
       Many component technologies offer mechanisms for coordinating ACID transactions based on two-phase commit
       semantics. Some of these are CORBA/OTS, JTS/JTA, and MTS/MSDTC. ACID transactions are not suitable for all Web
-      Services transactions, as explained in <xref linkend="acid-not-suitable" />.
+      Services transactions, as explained in the following section.
     </para>
 
     <itemizedlist id="acid-not-suitable">
@@ -564,7 +564,7 @@
    Extended transaction models which relax the ACID properties have been proposed over the years. WS-T provides a new
    transaction protocol to implement these concepts for the Web Services architecture. XTS is designed to accommodate
    four underlying requirements inherent in any loosely coupled architecture like Web Services. These requirements are
-   discussed in <xref linkend="web-services-requirements" />.
+   discussed in the following section.
       </para>
       <itemizedlist id="web-services-requirements">
    <title>Requirements of Web Services</title>

@@ -31,7 +31,7 @@
     provides a brief overview of the technologies that form the Web Services standard. Additionally, this chapter
     explores some of the fundamentals of transactioning technology and how it can be applied to Web Services. Much of
     the content presented in this chapter is detailed throughout this guide. However, only overview information about
-    Web Services is provided. If you are new to creating Web services, please see consult your Web Services platform
+    Web Services is provided. If you are new to creating Web services, please consult your Web Services platform
     documentation.
   </para>
   <para>
@@ -95,7 +95,7 @@
     <para>
       XTS allows you to create transactions that drive complex business processes, spanning multiple Web
       Services. Current Web Services standards do not address the requirements for a high-level coordination of
-      services. This is because in today’s Web Services applications, which use single request/receive interactions,
+      services. This is because in today’s Web Services applications, which use single request/response interactions,
       coordination is typically not a problem. However, for applications that engage multiple services among multiple
       business partners, coordinating and controlling the resulting interactions is essential. This becomes even more
       apparent when you realize that you generally have little in the way of formal guarantees when interacting with
