@@ -27,6 +27,7 @@ import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;
 
 import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
+import org.jboss.logging.Logger.Level;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageLogger;
 
@@ -426,6 +427,11 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_inactive(Uid arg0);
+	
+	@Message(id = 16112, value = "attempted rollback of {0} ({1}) failed with exception code {2}, the branch had been marked TMFAIL previously and had received an XA_RB* exception", format = MESSAGE_FORMAT)
+	@LogMessage(level = Level.DEBUG)
+	public void debug_resources_arjunacore_rollbackerror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
