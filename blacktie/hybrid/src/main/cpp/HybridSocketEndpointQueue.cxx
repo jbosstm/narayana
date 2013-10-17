@@ -288,6 +288,13 @@ bool HybridSocketEndpointQueue::_send(const char* replyto, long rval, long rcode
 		apr_size_t len = strlen(buf) + msglen;
 		int sendlen = htonl(len);
 
+		apr_sockaddr_t *addr_local;
+		char* addr;
+		apr_socket_addr_get(&addr_local, APR_LOCAL, socket);
+		apr_sockaddr_ip_get(&addr, addr_local);
+		LOG4CXX_DEBUG(logger, (char*)"send on " << addr << ":" << addr_local->port << " with " << 
+				len << " bytes and buffer: " << buf);
+
 		if(rc == APR_SUCCESS) {
 			len = sizeof(sendlen);
 			rc = apr_socket_send(socket, (char*)&sendlen, &len);

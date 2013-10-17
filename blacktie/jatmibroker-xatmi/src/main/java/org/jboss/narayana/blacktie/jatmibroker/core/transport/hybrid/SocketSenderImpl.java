@@ -121,7 +121,7 @@ public class SocketSenderImpl implements Sender {
             append(type).append("\n").append(subtype).append("\n");
 
             int sendlen = buffer.length() + toSend.length;
-            log.debug("sendlen is " + sendlen);
+            log.debug("send on " + socket + " len is " + sendlen + " and buffer is " + buffer);
             //log.debug(buffer);
             //log.info("toSend[0] is " + toSend[0]);
 
