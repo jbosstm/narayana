@@ -286,6 +286,7 @@ public class XAResourceRecord extends AbstractRecord
 			return TwoPhaseOutcome.FINISH_OK;
 		}
 
+		boolean branchMarkedRB = false;
 		if (_tranID == null)
 		{
             jtaLogger.i18NLogger.warn_resources_arjunacore_rollbacknulltx("XAResourceRecord.rollback");
@@ -321,6 +322,7 @@ public class XAResourceRecord extends AbstractRecord
 					 * Has been marked as rollback-only. We still
 					 * need to call rollback.
 					 */
+				        branchMarkedRB = true;
 					 
 				    } else if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL)){
 				    	    try {
@@ -364,8 +366,13 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
-                        jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
-                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
+					    if (branchMarkedRB) {
+	                        jtaLogger.i18NLogger.debug_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+	                                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
+					    } else {
+                            jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
+                                    _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
+					    }
 
 						switch (e1.errorCode)
 						{
