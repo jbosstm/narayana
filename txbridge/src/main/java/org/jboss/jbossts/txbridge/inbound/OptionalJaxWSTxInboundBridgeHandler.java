@@ -34,11 +34,7 @@ import javax.xml.ws.handler.MessageContext;
  */
 public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
 
-    final JaxWSTxInboundBridgeHandler delegate;
-
-    public OptionalJaxWSTxInboundBridgeHandler() {
-        delegate = new JaxWSTxInboundBridgeHandler();
-    }
+    private JaxWSTxInboundBridgeHandler delegate;
 
     @Override
     public boolean handleMessage(final MessageContext messageContext) {
@@ -46,11 +42,15 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
             txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleMessage()");
         }
 
-        if (isTransactionAvailable()) {
-            return delegate.handleMessage(messageContext);
-        }
+        final Boolean isOutbound = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
-        return true;
+        if (isOutbound == null) {
+            return true;
+        } else if (isOutbound) {
+            return handleOutbound(messageContext);
+        } else {
+            return handleInbound(messageContext);
+        }
     }
 
     @Override
@@ -59,7 +59,7 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
             txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleFault()");
         }
 
-        if (isTransactionAvailable()) {
+        if (delegate != null) {
             return delegate.handleFault(messageContext);
         }
 
@@ -72,9 +72,35 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
             txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.close()");
         }
 
-        if (isTransactionAvailable()) {
+        if (delegate != null) {
             delegate.close(messageContext);
         }
+    }
+
+    private boolean handleInbound(final MessageContext messageContext) {
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleInbound()");
+        }
+
+        if (isTransactionAvailable()) {
+            delegate = new JaxWSTxInboundBridgeHandler();
+            return delegate.handleInbound(messageContext);
+        }
+
+        delegate = null;
+        return true;
+    }
+
+    private boolean handleOutbound(final MessageContext messageContext) {
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleOutbound()");
+        }
+
+        if (delegate != null) {
+            return delegate.handleOutbound(messageContext);
+        }
+
+        return true;
     }
 
     private boolean isTransactionAvailable() {
