@@ -45,6 +45,8 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.jboss.tm.FirstResource;
+import org.jboss.tm.LastResource;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
@@ -80,8 +82,6 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import com.arjuna.ats.jta.recovery.XARecoveryResource;
-import com.arjuna.ats.jta.resources.EndXAResource;
-import com.arjuna.ats.jta.resources.StartXAResource;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -136,13 +136,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		_theTransaction = tx;
 
-		if (_theXAResource instanceof StartXAResource)
+		if (_theXAResource instanceof FirstResource)
 			_cachedUidStringForm = START_XARESOURCE.stringForm();
-		else
-		{
-			if (_theXAResource instanceof EndXAResource)
-				_cachedUidStringForm = END_XARESOURCE.stringForm();
-		}
+		else if (_theXAResource instanceof LastResource)
+			_cachedUidStringForm = END_XARESOURCE.stringForm();
 	}
 
 	// for recovery only!

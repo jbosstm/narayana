@@ -29,8 +29,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jboss-transaction-spi-tests</artifactId>
-    <name>Narayana: Transaction 7.0.2 SPI Testing</name>
-    <description>Narayana: Transaction 7.0.2 SPI Testing</description>
+    <name>Narayana: Transaction 7.1.0 SPI Testing</name>
+    <description>Narayana: Transaction 7.1.0 SPI Testing</description>
 
     <packaging>jar</packaging>
 
@@ -45,7 +45,10 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <includes>
+                        <include>**/*UnitTests.java</include>
+                    </includes>
+
                 </configuration>
             </plugin>
         </plugins>
@@ -62,6 +65,11 @@
                     <artifactId>jboss-logging-spi</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>jta</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.interceptor</groupId>

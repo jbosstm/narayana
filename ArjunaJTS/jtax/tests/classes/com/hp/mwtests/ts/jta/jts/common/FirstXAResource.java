@@ -20,13 +20,14 @@
  */
 package com.hp.mwtests.ts.jta.jts.common;
 
+import org.jboss.tm.FirstResource;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.jta.resources.StartXAResource;
-
-public class FirstXAResource implements XAResource, StartXAResource
+//@PrioritizableResource(priority = ResourcePriority.FIRST)
+public class FirstXAResource implements XAResource, FirstResource
 {
     public void commit(Xid id, boolean onePhase) throws XAException
     {

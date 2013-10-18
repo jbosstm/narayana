@@ -24,9 +24,9 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.jta.resources.EndXAResource;
+import org.jboss.tm.LastResource;
 
-public class LastXAResource implements XAResource, EndXAResource
+public class LastXAResource implements XAResource, LastResource
 {
     public void commit(Xid id, boolean onePhase) throws XAException
     {

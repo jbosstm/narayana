@@ -169,7 +169,11 @@
       <artifactId>ironjacamar-spec-api</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${version.org.jboss.jboss-transaction-spi}</version>
+    </dependency>
   </dependencies>
 
   <profiles>
