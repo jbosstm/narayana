@@ -42,6 +42,7 @@ import java.util.StringTokenizer;
 import javax.sql.DataSource;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 public class DynamicDataSourceJDBCAccess implements JDBCAccess {
@@ -53,7 +54,7 @@ public class DynamicDataSourceJDBCAccess implements JDBCAccess {
 		return connection;
 	}
 
-	public void initialise(StringTokenizer tokenizer) {
+	public void initialise(StringTokenizer tokenizer) throws ObjectStoreException {
 		while (tokenizer.hasMoreElements()) {
 			Map<String, String> configuration = new HashMap<String, String>();
 			while (tokenizer.hasMoreTokens()) {
@@ -80,7 +81,7 @@ public class DynamicDataSourceJDBCAccess implements JDBCAccess {
 				}
 			} catch (Exception ex) {
 				dataSource = null;
-				throw new FatalError(toString() + " : " + ex, ex);
+				throw new ObjectStoreException(toString() + " : " + ex, ex);
 			}
 		}
 	}
