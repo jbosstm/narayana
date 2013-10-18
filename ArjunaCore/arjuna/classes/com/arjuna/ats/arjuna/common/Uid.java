@@ -572,7 +572,7 @@ public class Uid implements Cloneable, Serializable
     }
 
     /**
-     * Return the maximum Uid (7fffffff:7fffffff:7fffffff:7fffffff:7fffffff)
+     * Return the maximum Uid (7fffffffffffffff:7fffffffffffffff:7fffffff:7fffffff:7fffffff)
      */
     public static final Uid maxUid ()
     {
@@ -581,7 +581,7 @@ public class Uid implements Cloneable, Serializable
 
     /**
      * Return the minimum Uid
-     * (-80000000:-80000000:-80000000:-80000000:-80000000)
+     * (-8000000000000000:-8000000000000000:-80000000:-80000000:-80000000)
      */
     public static final Uid minUid ()
     {
@@ -755,10 +755,10 @@ public class Uid implements Cloneable, Serializable
     private static final Uid LAST_RESOURCE_UID = new Uid("0:0:0:0:1");
 
     private static final Uid MAX_UID = new Uid(
-            "7fffffff:7fffffff:7fffffff:7fffffff:7fffffff");
+            "7fffffffffffffff:7fffffffffffffff:7fffffff:7fffffff:7fffffff");
 
     private static final Uid MIN_UID = new Uid(
-            "-80000000:-80000000:-80000000:-80000000:-80000000");
-    
+            "-8000000000000000:-8000000000000000:-80000000:-80000000:-80000000");
+
     public static final int UID_SIZE = 2*8 + 3*4; // in bytes
 }

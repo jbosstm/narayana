@@ -132,4 +132,21 @@ public class UidUnitTest
         assertTrue(u1.equals(u2));
     }
 
+    @Test
+    public void testMaxMinUid () throws Exception
+    {
+        Uid minUid = Uid.minUid();
+        Uid uid = new Uid();
+        Uid maxUid = Uid.maxUid();
+
+        assertTrue(minUid.lessThan(uid));
+        assertTrue(minUid.lessThan(maxUid));
+        assertTrue(uid.lessThan(maxUid));
+
+        // make sure that the Uid comparator is sane
+
+        assertTrue(uid.greaterThan(minUid));
+        assertTrue(maxUid.greaterThan(minUid));
+        assertTrue(maxUid.greaterThan(uid));
+    }
 }
