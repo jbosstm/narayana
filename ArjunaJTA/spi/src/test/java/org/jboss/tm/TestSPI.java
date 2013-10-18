@@ -30,10 +30,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.transaction.*;
-import org.jboss.tm.TxUtils;
 
 /**
  * Transaction SPI integration tests
