@@ -40,6 +40,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 public class DataSourceJDBCAccess implements JDBCAccess {
@@ -47,19 +48,19 @@ public class DataSourceJDBCAccess implements JDBCAccess {
 	private String datasourceName;
 	private InitialContext context;
 
-	public Connection getConnection() throws SQLException {
+	public Connection getConnection() throws SQLException, ObjectStoreException {
 		DataSource dataSource;
 		try {
 			dataSource = (DataSource) context.lookup(datasourceName);
 		} catch (NamingException ex) {
-			throw new FatalError(toString() + " : " + ex, ex);
+			throw new ObjectStoreException(toString() + " : " + ex, ex);
 		}
 		Connection connection = dataSource.getConnection();
 		connection.setAutoCommit(false);
 		return connection;
 	}
 
-	public void initialise(StringTokenizer tokenizer) {
+	public void initialise(StringTokenizer tokenizer) throws ObjectStoreException {
 		while (tokenizer.hasMoreElements()) {
 			try {
 				String[] split = tokenizer.nextToken().split("=");
@@ -67,7 +68,7 @@ public class DataSourceJDBCAccess implements JDBCAccess {
 					datasourceName = split[1];
 				}
 			} catch (Exception ex) {
-				throw new FatalError(toString() + " : " + ex, ex);
+				throw new ObjectStoreException(toString() + " : " + ex, ex);
 			}
 		}
 

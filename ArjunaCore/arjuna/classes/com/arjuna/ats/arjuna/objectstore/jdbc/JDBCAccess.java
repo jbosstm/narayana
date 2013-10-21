@@ -37,6 +37,8 @@ import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+
 /**
  * Do not return a connection which participates within the
  * transaction 2-phase commit protocol! All connections will have
@@ -52,16 +54,18 @@ public interface JDBCAccess
      * @return the connection to use for the object store.  If a pool of
      * connections is used, this method may be called up to maxpoolsize
      * times.  It <EM>must<EM> not return the same connection each time.
+     * @throws ObjectStoreException 
      * @throws NamingException 
      */
 
-    public Connection getConnection () throws SQLException;
+    public Connection getConnection () throws SQLException, ObjectStoreException;
 
     /**
      * This method can be used to pass additional information to the
      * implementation.
+     * @throws ObjectStoreException 
      */
 
-    public void initialise (StringTokenizer stringTokenizer);
+    public void initialise (StringTokenizer stringTokenizer) throws ObjectStoreException;
 
 }

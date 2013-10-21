@@ -624,10 +624,11 @@ public abstract class JDBCImple_driver {
 	 * Set up the store for use.
 	 * 
 	 * @throws NamingException
+	 * @throws ObjectStoreException 
 	 */
 	public void initialise(final JDBCAccess jdbcAccess, String tableName,
 			ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)
-			throws SQLException, NamingException {
+			throws SQLException, NamingException, ObjectStoreException {
 		this.jdbcAccess = jdbcAccess;
 
 		// connection = new ThreadLocal<Connection>() {
