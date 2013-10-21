@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.narayana.blacktie.plugins</groupId>
     <artifactId>blacktie-cpp-plugin</artifactId>
-    <version>5.0.0.Final-SNAPSHOT</version>
+    <version>5.0.0.M7-SNAPSHOT</version>
     <name>Blacktie C++ Plugin</name>
     <packaging>maven-plugin</packaging>
     <url>http://www.jboss.org/blacktie/</url>
