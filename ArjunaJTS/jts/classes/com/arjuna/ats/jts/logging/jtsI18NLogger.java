@@ -1029,8 +1029,8 @@ public interface jtsI18NLogger {
 	public String get_thread_resumefailederror();
 
 	@Message(id = 22251, value = "The ORBManager is already associated with an ORB/OA.", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_utils_ORBSetup_orbalreadyset();
+	@LogMessage(level = INFO)
+	public void info_utils_ORBSetup_orbalreadyset();
 
     @Message(id = 22252, value = "Failed to remove old ObjectStore entry", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
