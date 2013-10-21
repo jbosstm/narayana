@@ -38,6 +38,7 @@ import java.util.StringTokenizer;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
@@ -192,6 +193,13 @@ public class JDBCStore implements ObjectStoreAPI {
 		this.tableName = buff.unpackString();
 	}
 
+	/**
+	 * Create a new JDBCStore
+	 * 
+	 * @param jdbcStoreEnvironmentBean The environment bean containing the configuration
+	 * @throws ObjectStoreException In case the store environment bean was not correctly configured
+     * @throws {@link FatalError} In case the configured store cannot be connected to
+	 */
 	public JDBCStore(ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)
 			throws ObjectStoreException {
 		this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
