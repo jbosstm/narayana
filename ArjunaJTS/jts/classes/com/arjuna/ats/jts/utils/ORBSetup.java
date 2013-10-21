@@ -95,7 +95,7 @@ public class ORBSetup implements InitClassInterface
         }
         else
         {
-            jtsLogger.i18NLogger.warn_utils_ORBSetup_orbalreadyset();
+            jtsLogger.i18NLogger.info_utils_ORBSetup_orbalreadyset();
         }
     }
 }
