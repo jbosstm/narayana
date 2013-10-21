@@ -37,6 +37,8 @@ import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
+
 /**
  * Do not return a connection which participates within the
  * transaction 2-phase commit protocol! All connections will have
@@ -53,6 +55,7 @@ public interface JDBCAccess
      * connections is used, this method may be called up to maxpoolsize
      * times.  It <EM>must<EM> not return the same connection each time.
      * @throws NamingException 
+     * @throws {@link FatalError} In case the configured store cannot be connected to
      */
 
     public Connection getConnection () throws SQLException;
@@ -60,6 +63,7 @@ public interface JDBCAccess
     /**
      * This method can be used to pass additional information to the
      * implementation.
+     * @throws {@link FatalError} In case the configured store cannot be connected to
      */
 
     public void initialise (StringTokenizer stringTokenizer);
