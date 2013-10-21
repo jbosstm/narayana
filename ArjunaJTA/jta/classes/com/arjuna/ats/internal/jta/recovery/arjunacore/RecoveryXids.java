@@ -203,6 +203,10 @@ public class RecoveryXids
 
         return false;
     }
+    
+    public int size() {
+        return _whenFirstSeen.size();
+    }
 
     // record when we first saw and most recently saw a given Xid. time in system clock (milliseconds).
     // since we don't trust 3rd party hashcode/equals we convert to our own wrapper class.
