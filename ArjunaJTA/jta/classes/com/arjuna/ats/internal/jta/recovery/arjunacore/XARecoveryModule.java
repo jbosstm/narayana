@@ -92,21 +92,23 @@ public class XARecoveryModule implements RecoveryModule
         synchronized (_xaResourceRecoveryHelpers) {
 			if (scanning) {
 			    XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
-			    for (int i = 0; i < xaResources.length; i++) {
-			        RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
-			        if (recoveryXids != null) {
-			            if (recoveryXids.size() > 0) {
-			                jtaLogger.logger.warn("RecoveryManager is using this service, may delay up to 10 seconds");
-			                try {
-			                    // do not allow a recovery helper to be removed while the
-			                    // scan is in progress
-			                    _xaResourceRecoveryHelpers.wait();
-			                } catch (InterruptedException e) {
-			                    tsLogger.logger.warn("problem waiting for scanLock", e);
-			                }
-			                break;
-			            }
-			        }
+			    if (xaResources != null) {
+    			    for (int i = 0; i < xaResources.length; i++) {
+    			        RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
+    			        if (recoveryXids != null) {
+    			            if (recoveryXids.size() > 0) {
+    			                jtaLogger.logger.warn("RecoveryManager is using this service, may delay up to 10 seconds");
+    			                try {
+    			                    // do not allow a recovery helper to be removed while the
+    			                    // scan is in progress
+    			                    _xaResourceRecoveryHelpers.wait();
+    			                } catch (InterruptedException e) {
+    			                    tsLogger.logger.warn("problem waiting for scanLock", e);
+    			                }
+    			                break;
+    			            }
+    			        }
+    			    }
 			    }
 	            _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
 			}
