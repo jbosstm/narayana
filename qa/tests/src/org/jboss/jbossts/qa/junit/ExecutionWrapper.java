@@ -32,8 +32,13 @@ import org.jboss.jbossts.qa.Utils.EmptyObjectStore;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -131,18 +136,7 @@ public class ExecutionWrapper
             p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", ""+recoveryOrbPort);
             p.setProperty("com.sun.CORBA.POA.ORBServerId", ""+recoveryOrbPort);
 
-            try {
-                ORBInterface.initORB(args, p);
-                // use correct call - OAInterface.initOA swallows exception!
-                OAInterface.initializeOA();
-            } catch(Exception e) {
-                // probably recycling port allocation too fast. wait a bit and retry.
-                ORBManager.getORB().shutdown();
-                ORBManager.reset();
-                Thread.sleep(2000);
-                ORBInterface.initORB(args, p);
-                OAInterface.initializeOA();
-            }
+            initOrb(p, 10, args);
 
             RecoveryManager manager = RecoveryManager.manager();
 
@@ -160,6 +154,106 @@ public class ExecutionWrapper
 
             System.exit(0);
         }
+    }
+
+    /**
+     * initialize the orb and OA
+     * @param orbProps
+     * @param retryCount when a socket is closed it transitions into the TIME_WAIT state so it is not always immediately
+     *                   available the next time the orb is initialized. To avoid this problem of rapid recycling of
+     *                   ports between tests we allow retries - note that there is a real time delay before
+     *                   each retry attempt to give the socket close protocol sufficient time to complete.
+     * @param args
+     */
+    private static void initOrb(Properties orbProps, int retryCount, String ... args) {
+        for (int i = 1; i <= retryCount; i++) {
+            try {
+                ORBInterface.initORB(args, orbProps);
+                OAInterface.initializeOA(); // don't use initOA because it swallows exception!
+                return;
+            } catch (Exception e) {
+                System.out.printf("OA init error: %s (attempt %d of %d%n", e.getMessage(), i, retryCount);
+                if (i == retryCount)
+                    fingerCulprit(4731); // JacORB OAPort TODO look it up (how?)
+                // probably recycling port allocation too fast. wait a bit and retry (I have seen it take up to 20 secs).
+                try {
+                    ORBManager.getORB().shutdown();
+                    ORBManager.reset();
+                    Thread.sleep(2000 * i);
+                } catch (Exception e1) {
+                }
+            }
+        }
+
+        throw new RuntimeException("Cannot initialize ORB/OA");
+    }
+    /**
+     * Find out which process has a particular port open and print its pid, its command line and,
+     * if its a JVM its stack traces.
+     *
+     * Only works on platforms that have the lsof command, the proc fs and the jstack command
+     *
+     * @param port port number to debug
+     * @throws Exception
+     */
+    public static void fingerCulprit(int port) {
+        // not supported on windows platforms
+        if (System.getProperty("os.name", "Linux").contains("indows"))
+            return;
+
+        try {
+            // who has tcp port 4731 open
+            String pid = printLines(startProcess("lsof", "-t", "-i", "tcp:" + port), 1);
+            System.out.printf("pid: %s%n", pid);
+            // find its cmd line
+            StringBuilder sb = new StringBuilder("/proc/").append(pid).append("/cmdline");
+            String cmdline = printLines(startProcess("cat", sb.toString()), 1);
+            System.out.printf("cmdline: %s%n", cmdline);
+            // if its a JVM get its stack traces
+            System.out.printf("jstack for JVM %s%n", pid);
+            printLines(startProcess("jstack", pid), -1);
+            System.out.printf("end of jstack for JVM %s%n", pid);
+        } catch (Exception e) {
+            System.out.printf("Exception %s whilst checking who has port %d open%n", e.getMessage(), port);
+        }
+
+    }
+
+    private static String printLines(Process p, int howMany) {
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String s = null;
+
+        try {
+            if (howMany == -1) {
+                while ((s = stdInput.readLine()) != null)
+                    System.out.println(s);
+            } else {
+                for (int i = 0; i < howMany; i++)
+                    s = stdInput.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stdInput.close();
+            } catch (IOException e) {
+            }
+            p.destroy();
+        }
+
+        return s;
+    }
+
+    private static Process startProcess(String ... args) throws Exception {
+        List<String> pArgs = new ArrayList<String>();
+
+        for (String arg : args)
+            pArgs.add(arg);
+
+        Process p = new ProcessBuilder(args).start();
+        p.waitFor();
+
+        return p;
     }
 
     private static void before()
