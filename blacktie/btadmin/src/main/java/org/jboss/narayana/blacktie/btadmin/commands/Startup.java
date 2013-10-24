@@ -19,10 +19,12 @@ package org.jboss.narayana.blacktie.btadmin.commands;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -99,23 +101,31 @@ public class Startup implements Command {
                         String[] envp = null;
                         File dir = new File(localMachine.getWorkingDirectory());
                         try {
-                            Process exec = Runtime.getRuntime().exec(cmdarray, envp, dir);
-                            log.debug("Launched server: " + pathToExecutable);
-                            BufferedReader output = new BufferedReader(new InputStreamReader(exec.getInputStream()));
-                            BufferedReader error = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+                            ProcessBuilder pb = new ProcessBuilder();
+                            pb.command(Arrays.<String>asList(cmdarray));
+                            pb.directory(dir);
+                            
+                            String id = localMachine.getId();
+                            String output_fname = id + "-out";
+                            String error_fname = id + "-err";
+                            pb.redirectError(new File(error_fname));
+                            pb.redirectOutput(new File(output_fname));
+                            Process exec = pb.start();
+
+                            log.debug("Launched server: " + pathToExecutable + " " + argLine);
+                            BufferedReader output = new BufferedReader(new InputStreamReader(new FileInputStream(output_fname)));
+                            BufferedReader error = new BufferedReader(new InputStreamReader(new FileInputStream(error_fname)));
                             while (true) {
                                 String readLine = output.readLine();
                                 if (readLine == null) {
                                     readLine = error.readLine();
                                 }
-                                log.info(readLine);
+                                if(readLine != null) log.info(readLine);
                                 if (readLine == null) {
-                                    throw new CommandFailedException(-3);
+                                    //throw new CommandFailedException(-3);
                                 } else if (readLine.endsWith("serverinit failed")) {
                                     throw new CommandFailedException(-2);
                                 } else if (readLine.endsWith("Server waiting for requests...")) {
-                                    new Thread(new EatIO(exec.getInputStream())).start();
-                                    new Thread(new EatIO(exec.getErrorStream())).start();
                                     found = true;
                                     break;
                                 }
