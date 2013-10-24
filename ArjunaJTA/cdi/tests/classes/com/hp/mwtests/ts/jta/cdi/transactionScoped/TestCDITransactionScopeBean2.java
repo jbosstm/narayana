@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author paul.robinson@redhat.com 01/05/2013
  */
-@Named("TestCDITransactionScopeBean")
+@Named("TestCDITransactionScopeBean2")
 @TransactionScoped
-public class TestCDITransactionScopeBean implements Serializable {
+public class TestCDITransactionScopeBean2 implements Serializable {
 
     private static AtomicInteger preDestroyCnt = new AtomicInteger(0);
 
