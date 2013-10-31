@@ -48,7 +48,7 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<unpack>false</unpack>
-			<outputDirectory>blacktie-admin-services</outputDirectory>
+			<outputDirectory>/</outputDirectory>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -65,7 +65,7 @@
 	</dependencySets>
 	<files>
 		<file>
-			<source>readme.txt</source>
+			<source>README</source>
 			<fileMode>0644</fileMode>
 		</file>
 		<file>
@@ -74,6 +74,10 @@
 		</file>
 		<file>
 			<source>setenv.sh</source>
+			<fileMode>0755</fileMode>
+		</file>
+		<file>
+			<source>setenv.bat</source>
 			<fileMode>0755</fileMode>
 		</file>
 		<file>
@@ -205,6 +209,14 @@
 				<exclude>libTAO*.so</exclude>
 				<exclude>libxerces-c.so</exclude>
 			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>../wildfly-blacktie/build/target/
+			</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>wildfly-blacktie-build-*-bin.zip</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 </assembly> 
