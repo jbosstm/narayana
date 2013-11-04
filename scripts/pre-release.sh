@@ -8,11 +8,11 @@ function fatal {
 }
 
 #Get the versions, stripping off any '-SNAPSHOT' suffix
-CURRENT=$(echo ${CURRENT_SNAPSHOT_VERSION} | awk -F '-SNAPSHOT' '{ print $1 }')
-NEXT=$(echo ${1} | awk -F '-SNAPSHOT' '{ print $1 }')
+CURRENT=$(echo ${1} | awk -F '-SNAPSHOT' '{ print $1 }')
+NEXT=$(echo ${2} | awk -F '-SNAPSHOT' '{ print $1 }')
 
 if [ "$NEXT" == "" ]; then
-    echo "usage: $0 <next version>"
+    echo "usage: $0 <current version> <next version>"
     exit 1
 fi
 
