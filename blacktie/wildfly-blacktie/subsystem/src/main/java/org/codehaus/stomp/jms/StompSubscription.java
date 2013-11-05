@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
@@ -33,107 +34,73 @@ import org.codehaus.stomp.StompFrame;
 
 /**
  * Represents an individual Stomp subscription
-  *
- * @version $Revision: 50 $
  */
-public class StompSubscription {
+public class StompSubscription implements MessageListener {
     public static final String AUTO_ACK = Stomp.Headers.Subscribe.AckModeValues.AUTO;
     public static final String CLIENT_ACK = Stomp.Headers.Subscribe.AckModeValues.CLIENT;
-    private static final transient Log log = LogFactory.getLog(StompSubscription.class);
+    private static final transient Log log = LogFactory
+            .getLog(StompSubscription.class);
     private final StompSession session;
     private final String subscriptionId;
     private MessageConsumer consumer;
     private Map<String, Object> headers;
-    private boolean closed;
-    private volatile boolean stopped;
-    private Object stopLock = new Object();
 
-    public StompSubscription(StompSession session, String subscriptionId, StompFrame frame) throws JMSException,
-            ProtocolException, NamingException {
+    public StompSubscription(StompSession session, String subscriptionId,
+            StompFrame frame) throws JMSException, ProtocolException,
+            NamingException {
         this.subscriptionId = subscriptionId;
         this.session = session;
         this.headers = frame.getHeaders();
         this.consumer = session.createConsumer(headers);
-        (new Thread((String)headers.get(Stomp.Headers.Subscribe.DESTINATION)) {
-            @Override
-            public void run() {
-                while (!closed) {
-                    try {
-                        log.debug("Dequeuing from HQ: " + (String)headers.get(Stomp.Headers.Subscribe.DESTINATION));
-                        synchronized (stopLock) {
-                            if (stopped) {
-                                try {
-                                    stopLock.wait();
-                                } catch (InterruptedException e) {
-                                    log.error("Could not wait", e);
-                                }
-                            }
-                        }
-                        if (!closed) {
-                            Message receive = consumer.receive();
-                            if (receive != null) {
-                                log.debug("Received from HQ: " + receive.getJMSMessageID());
-                                onMessage(receive);
-                            } else {
-                                log.debug("Must be closing: " + (String)headers.get(Stomp.Headers.Subscribe.DESTINATION));
-                                if (!closed) {
-                                    log.fatal("Fatal issue, receive returned null before connection closed!");
-                                }
-                            }
-                        }
-                    } catch (JMSException e) {
-                        if (!closed) {
-                            log.warn("Could not receive a message", e);
-                        }
-                    }
-                }
-            }
-
-        }).start();
+        this.consumer.setMessageListener(this);
     }
 
     public void close() throws JMSException {
-        log.debug("Closing: " + (String)headers.get(Stomp.Headers.Subscribe.DESTINATION));
-        closed = true;
+        log.debug("Closing: "
+                + (String) headers.get(Stomp.Headers.Subscribe.DESTINATION));
         consumer.close();
         resume();
     }
 
     public void resume() {
-        synchronized (stopLock) {
-            log.debug("Resuming: " + (String)headers.get(Stomp.Headers.Subscribe.DESTINATION));
-            stopped = false;
-            stopLock.notify();
+        log.debug("Resuming: "
+                + (String) headers.get(Stomp.Headers.Subscribe.DESTINATION));
+        synchronized (session) {
+            session.notify();
         }
     }
 
     public void onMessage(Message message) {
-        String destinationName = (String) headers.get(Stomp.Headers.Subscribe.DESTINATION);
+
+        String destinationName = (String) headers
+                .get(Stomp.Headers.Subscribe.DESTINATION);
         try {
-            log.debug("received: " + destinationName + " for: " + message.getObjectProperty("messagereplyto"));
+            log.debug("Received from HQ: " + message.getJMSMessageID());
+            log.debug("received: " + destinationName + " for: "
+                    + message.getObjectProperty("messagereplyto"));
         } catch (JMSException e) {
-            log.warn("received: " + destinationName + " with trouble getting the messagereplyto");
+            log.warn("received: " + destinationName
+                    + " with trouble getting the message properties");
         }
         if (message != null) {
             log.debug("Locking session to send a message");
-            // Lock the session so that the connection cannot be started before the acknowledge is done
+            // Lock the session so that the connection cannot be started before
+            // the acknowledge is done
             synchronized (session) {
-                // Stop the session before sending the message
-                try {
-                    synchronized (stopLock) {
-                        session.stop();
-                        stopped = true;
-                    }
-                } catch (JMSException e) {
-                    log.fatal("Could not stop the connection: " + e, e);
-                }
                 // Send the message to the server
                 log.debug("Sending message: " + session);
                 try {
                     session.sendToStomp(message, subscriptionId);
-                    // Acknowledge the message for this connection as we know the server has received it now
                     try {
-                        log.debug("Acking message: " + message.getJMSMessageID());
+                        session.wait();
+                    } catch (InterruptedException e) {
+                        log.error("Could not wait to be woken", e);
+                    }
+                    // Acknowledge the message for this connection as we know
+                    // the server has received it now
+                    try {
+                        log.debug("Acking message: "
+                                + message.getJMSMessageID());
                         message.acknowledge();
                         log.debug("Acked message: " + message.getJMSMessageID());
                     } catch (JMSException e) {
@@ -144,14 +111,20 @@ public class StompSubscription {
                     try {
                         session.recover();
                     } catch (JMSException e1) {
-                        log.fatal("Could not recover the session, possible lost message: " + e, e);
+                        log.fatal(
+                                "Could not recover the session, possible lost message: "
+                                        + e, e);
                     }
                 } catch (JMSException e) {
-                    log.warn("Could not convert message to send to stomp: " + e, e);
+                    log.warn(
+                            "Could not convert message to send to stomp: " + e,
+                            e);
                     try {
                         session.recover();
                     } catch (JMSException e1) {
-                        log.fatal("Could not recover the session, possible lost message: " + e, e);
+                        log.fatal(
+                                "Could not recover the session, possible lost message: "
+                                        + e, e);
                     }
                 }
             }
