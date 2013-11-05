@@ -27,7 +27,6 @@ import javax.jms.JMSException;
 import javax.jms.XAConnectionFactory;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.net.ServerSocketFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +45,6 @@ public class StompConnect {
     private XAConnectionFactory xaConnectionFactory;
     private String uri = "tcp://localhost:61613";
     private URI location;
-    private ServerSocketFactory serverSocketFactory;
     private TcpTransportServer tcpServer;
     private InitialContext initialContext;
     private String connectionFactoryName = "java:/ConnectionFactory";
@@ -118,23 +116,9 @@ public class StompConnect {
         this.location = location;
     }
 
-    public ServerSocketFactory getServerSocketFactory() {
-        if (serverSocketFactory == null) {
-            serverSocketFactory = ServerSocketFactory.getDefault();
-        }
-        return serverSocketFactory;
-    }
-
-    /**
-     * Sets the {@link ServerSocketFactory} to use to listen for STOMP frames
-     */
-    public void setServerSocketFactory(ServerSocketFactory serverSocketFactory) {
-        this.serverSocketFactory = serverSocketFactory;
-    }
-
     public TcpTransportServer getTcpServer() throws IOException, URISyntaxException {
         if (tcpServer == null) {
-            tcpServer = new TcpTransportServer(this, getLocation(), getServerSocketFactory());
+            tcpServer = new TcpTransportServer(this, getLocation());
         }
         return tcpServer;
     }
