@@ -641,6 +641,12 @@
 	</target>
 	<target name="_test-unix-no-valgrind" depends="init" if="unix-no-valgrind">
 		<echo message="Executing tests without valgrind"/>
+		<exec dir="target/cpp-test-classes" newenvironment="true" resolveexecutable="true" executable="bash" failonerror="${failOnErrorTests}">
+			<arg value="-c" />
+			<arg value="ulimit" />
+			<arg value="-c" />
+			<arg value="unlimited" />
+		</exec>
 		<exec dir="target/cpp-test-classes" newenvironment="true" resolveexecutable="true" executable="../testsuite" failonerror="${failOnErrorTests}">
 			<env key="LD_LIBRARY_PATH" value="../cxx/runtime/lib:../cxx/test/lib:../${configuration.type}/${lib.type}" />
 			<env key="BLACKTIE_SCHEMA_DIR" value="${blacktie.schema.dir}" />
