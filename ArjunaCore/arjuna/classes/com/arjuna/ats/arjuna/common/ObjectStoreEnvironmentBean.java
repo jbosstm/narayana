@@ -82,6 +82,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 	
 	private volatile boolean createTable = true;
     
+    private volatile boolean exposeAllLogRecordsAsMBeans = false;
     /**
      * Returns the maximum allowed size, in bytes, of the cache store's in-memory cache.
      *
@@ -753,4 +754,29 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 	public void setCreateTable(boolean createTable) {
 		this.createTable = createTable;
 	}
+
+    /**
+     * @return Whether basic information about all log reccords are exposed
+     */
+    public boolean getExposeAllLogRecordsAsMBeans() {
+        return exposeAllLogRecordsAsMBeans;
+    }
+
+    /**
+     * Determine whether the ObjStoreBrowser should report basic information about all logs.
+     * Because exposing log records has the side effect of activating the default is to
+     * only activate ones for which we know the side effects are harmless
+     * {@link com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser ObjectStoreBrowser}
+     *
+     * Use this method to explicitly set the desired behaviour.
+     *
+     * You can also set this behaviour via JMX using
+     * {@link com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserMBean#setExposeAllRecordsAsMBeans JMX}
+     * 
+     * @param exposeAllLogRecords
+     *            Set to true to expose basic information about all log records
+     */
+    public void setExposeAllLogRecordsAsMBeans(boolean exposeAllLogRecords) {
+        this.exposeAllLogRecordsAsMBeans = exposeAllLogRecords;
+    }
 }

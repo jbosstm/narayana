@@ -2,6 +2,9 @@ package com.hp.mwtests.ts.arjuna.tools;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
@@ -30,10 +33,20 @@ public class ExposeAllLogsTest {
     private static final String osMBeanName = "jboss.jta:type=ObjectStore";
 
     @Test
-    public void test() throws Exception
+    public void test1() throws Exception
+    {
+        test(true);
+    }
+
+    @Test
+    public void test2() throws Exception
+    {
+        test(false);
+    }
+
+    private void test(boolean exposeAllLogsViaJMX) throws Exception
     {
         RecoveryStore store = StoreManager.getRecoveryStore();
-        ObjStoreBrowser osb = new ObjStoreBrowser();
         Set<Uid> uids;
         Map<Uid, ObjectName> uids2 = new HashMap<Uid, ObjectName>();
         JMXServer agent = JMXServer.getAgent();
@@ -46,11 +59,8 @@ public class ExposeAllLogsTest {
         state.packBytes(data);
         assertTrue(store.write_committed(u, FOO_TYPE, state));
 
-        // make sure the object store tooling MBean is ready
-        osb.start();
-
         // check that the record is not exposed
-        osb.probe();
+        probeObjectStore(false, false);
         // get uids via the object store API
         uids = getUids(store, new HashSet<Uid>(), FOO_TYPE);
         // and validate that there is a uid corresponding to u
@@ -62,9 +72,8 @@ public class ExposeAllLogsTest {
         // and validate that there is no MBean corresponding to u
         assertFalse(uids2.containsKey(u));
 
-        // now tell the browser to expose all log records
-        osb.setExposeAllRecordsAsMBeans(true);
-        osb.probe();
+        // now try the same but tell the browser to expose all log records
+        probeObjectStore(true, exposeAllLogsViaJMX);
 
         // and get the uids for log record MBeans
         uids2.clear();
@@ -84,6 +93,23 @@ public class ExposeAllLogsTest {
         uids2.clear();
         getUids(uids2, agent.queryNames(osMBeanName + ",*", null));
         assertFalse(uids2.containsKey(u));
+    }
+
+    private void probeObjectStore(boolean exposeAllLogs, boolean useJMX) {
+        ObjectStoreEnvironmentBean osEnvBean =
+                BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "default");
+
+        osEnvBean.setExposeAllLogRecordsAsMBeans(exposeAllLogs);
+
+        ObjStoreBrowser osb = new ObjStoreBrowser();
+
+        // make sure the object store tooling MBean is ready
+        osb.start();
+
+        if (useJMX)
+            osb.setExposeAllRecordsAsMBeans(exposeAllLogs);
+
+        osb.probe();
     }
 
     // Given a set of MBean names find their corresponding Uids

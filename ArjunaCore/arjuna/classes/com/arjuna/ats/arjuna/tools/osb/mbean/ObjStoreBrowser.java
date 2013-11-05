@@ -127,6 +127,9 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         if (tsLogger.logger.isTraceEnabled())
             tsLogger.logger.trace("ObjectStoreDir: " + arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
 
+        setExposeAllRecordsAsMBeans(arjPropertyManager.
+            getObjectStoreEnvironmentBean().getExposeAllLogRecordsAsMBeans());
+
         allUids = new HashMap<String, List<UidWrapper>> ();
         stateTypes = new HashMap<String, String>();
         beanTypes = new HashMap<String, String>();
