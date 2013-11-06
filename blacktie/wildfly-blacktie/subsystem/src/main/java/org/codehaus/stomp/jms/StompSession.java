@@ -363,20 +363,14 @@ public class StompSession {
         subscription.close();
     }
 
-    public void start() throws JMSException {
-        log.debug("Starting session: " + session);
-        connection.start();
+    public void resume() throws JMSException {
+        log.debug("Resuming session: " + session);
 
         Iterator<StompSubscription> iterator = subscriptions.values().iterator();
         while (iterator.hasNext()) {
             StompSubscription next = iterator.next();
             next.resume();
         }
-    }
-
-    public void stop() throws JMSException {
-        log.debug("Stopping session: " + session);
-        connection.stop();
     }
 
     public void recover() throws JMSException {
