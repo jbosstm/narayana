@@ -237,25 +237,28 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
    private void processTransactionsStatus()
    {
-      // Process the Vector of transaction Uids
-      Enumeration transactionUidEnum = _transactionUidVector.elements() ;
+       // JBTM-2016 If the volatile object store is used we would not be able
+       // to recover anything but if this module is still configured it would 
+       // get an NPE
+        if (_transactionUidVector != null) {
+            // Process the Vector of transaction Uids
+            Enumeration transactionUidEnum = _transactionUidVector.elements();
 
-      while ( transactionUidEnum.hasMoreElements() )
-      {
-         Uid currentUid = (Uid) transactionUidEnum.nextElement();
+            while (transactionUidEnum.hasMoreElements()) {
+                Uid currentUid = (Uid) transactionUidEnum.nextElement();
 
-         try
-         {
-            if ( _recoveryStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
-            {
-               doRecoverTransaction( currentUid ) ;
+                try {
+                    if (_recoveryStore.currentState(currentUid,
+                            _transactionType) != StateStatus.OS_UNKNOWN) {
+                        doRecoverTransaction(currentUid);
+                    }
+                } catch (ObjectStoreException ex) {
+                    tsLogger.i18NLogger
+                            .warn_recovery_AtomicActionRecoveryModule_3(
+                                    currentUid, ex);
+                }
             }
-         }
-         catch ( ObjectStoreException ex )
-         {
-	        tsLogger.i18NLogger.warn_recovery_AtomicActionRecoveryModule_3(currentUid, ex);
-         }
-      }
+        }
    }
 
    // 'type' within the Object Store for AtomicActions.
