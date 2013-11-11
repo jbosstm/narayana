@@ -1,3 +1,15 @@
+function fatal {
+  if [[ -z $PROFILE ]]; then
+      comment_on_pull "Tests failed ($BUILD_URL): $1"
+  elif [[ $PROFILE == "BLACKTIE" ]]; then
+      comment_on_pull "$PROFILE profile tests failed on Linux ($BUILD_URL): $1"
+  else
+      comment_on_pull "$PROFILE profile tests failed ($BUILD_URL): $1"
+  fi
+
+  echo "$1"
+  exit 1
+}
 
 function comment_on_pull
 {
@@ -43,8 +55,8 @@ function rebase_narayana {
   git pull --rebase --ff-only origin $BRANCHPOINT
 
   if [ $? -ne 0 ]; then
-    comment_on_pull "Narayana rebase failed. Please rebase it manually."
-    fatal "Narayana rebase failed"
+    #comment_on_pull "Narayana rebase failed. Please rebase it manually."
+    fatal "Narayana rebase on $BRANCHPOINT failed. Please rebase it manually"
   fi
 }
 
