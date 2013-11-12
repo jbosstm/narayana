@@ -144,6 +144,7 @@ public abstract class AbstractTestCase {
         deployer.undeploy(DEPLOYMENT_NAME);
         containerController.stop(CONTAINER_NAME);
         containerController.kill(CONTAINER_NAME);
+        clearObjectStore();
     }
 
     protected void clearObjectStore() {
