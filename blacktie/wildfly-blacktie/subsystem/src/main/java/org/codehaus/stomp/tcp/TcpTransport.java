@@ -17,20 +17,17 @@
  */
 package org.codehaus.stomp.tcp;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jms.JMSException;
-import javax.net.SocketFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,81 +40,88 @@ import org.codehaus.stomp.jms.ProtocolConverter;
 /**
  * @version $Revision: 65 $
  */
-public class TcpTransport implements Runnable {
+public class TcpTransport {
     private static final Log log = LogFactory.getLog(TcpTransport.class);
     private StompMarshaller marshaller = new StompMarshaller();
     private ProtocolConverter inputHandler;
-    private final URI remoteLocation;
-    private final URI localLocation;
-    private int connectionTimeout = 30000;
-    private Socket socket;
-    private DataOutputStream dataOut;
-    private DataInputStream dataIn;
-    private SocketFactory socketFactory;
-    private Thread runner;
-    private AtomicBoolean started = new AtomicBoolean(false);
     private AtomicBoolean stopped = new AtomicBoolean(false);
+    private TcpTransportServer tcpTransportServer;
+    private SocketChannel socket;
 
     /**
      * Initialize from a server Socket
      */
-    public TcpTransport(Socket socket) throws IOException {
+    public TcpTransport(TcpTransportServer tcpTransportServer,
+            SocketChannel socket) throws IOException {
         this.socket = socket;
-        this.remoteLocation = null;
-        this.localLocation = null;
+        this.tcpTransportServer = tcpTransportServer;
     }
 
     /**
-     * A one way asynchronous send
-     *
      * @throws IOException
      */
     public void onStompFrame(StompFrame command) throws IOException {
 
-        if (!started.get() || stopped.get()) {
+        if (stopped.get()) {
             throw new ProtocolException("The transport is not running.");
         }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DataOutputStream dataOut = new DataOutputStream(byteArrayOutputStream);
         marshaller.marshal(command, dataOut);
         dataOut.flush();
+        tcpTransportServer.send(socket, byteArrayOutputStream.toByteArray());
     }
 
-    /**
-     * @return pretty print of 'this'
-     */
-    public String toString() {
-        return "tcp://" + socket.getInetAddress() + ":" + socket.getPort();
-    }
+    volatile int currentMax = 0;
+    volatile byte[] currentBArray = new byte[] {};
 
     /**
-     * reads packets from a Socket
+     * @param numRead
      */
-    public void run() {
+    public void readMessage(byte[] readBuffer, int numRead) {
         log.trace("StompConnect TCP consumer thread starting");
-        while (!stopped.get()) {
+
+        byte[] data = new byte[currentMax + numRead];
+        System.arraycopy(currentBArray, 0, data, 0, currentMax);
+        System.arraycopy(readBuffer, 0, data, currentMax, numRead);
+        currentMax = data.length;
+        currentBArray = data;
+
+        if (data.length < 3 || data[data.length - 3] != 0
+                || data[data.length - 2] != 10 || data[data.length - 1] != 10) {
+            log.debug("did not read a full frame");
+            return;
+        }
+
+        DataInputStream dataIn = new DataInputStream(new ByteArrayInputStream(
+                currentBArray));
+        currentMax = 0;
+        currentBArray = new byte[] {};
+
+        try {
+            StompFrame frame = marshaller.unmarshal(dataIn);
+            log.debug("Sending stomp frame");
             try {
-                StompFrame frame = marshaller.unmarshal(dataIn);
-                log.debug("Sending stomp frame");
-                try {
-                    inputHandler.onStompFrame(frame);
-                } catch (IOException e) {
-                    if (frame.getAction().equals(Stomp.Responses.ERROR)) {
-                        log.warn("Could not send frame to client: " + new String(frame.getContent()));
-                    }
-                    throw e;
+                inputHandler.onStompFrame(frame);
+            } catch (IOException e) {
+                if (frame.getAction().equals(Stomp.Responses.ERROR)) {
+                    log.warn("Could not send frame to client: "
+                            + new String(frame.getContent()));
                 }
-            } catch (Throwable e) {
-                // no need to log EOF exceptions
-                if (e instanceof EOFException) {
-                    // Happens when the remote side disconnects
-                    log.debug("Caught an EOFException: " + e.getMessage(), e);
-                } else {
-                    log.fatal("Caught an exception: " + e.getMessage(), e);
-                }
-                try {
-                    stop();
-                } catch (Exception e2) {
-                    log.warn("Caught while closing: " + e2 + ". Now Closed", e2);
-                }
+                throw e;
+            }
+        } catch (Throwable e) {
+            // no need to log EOF exceptions
+            if (e instanceof EOFException) {
+                // Happens when the remote side disconnects
+                log.debug("Caught an EOFException: " + e.getMessage(), e);
+            } else {
+                log.fatal("Caught an exception: " + e.getMessage(), e);
+            }
+            try {
+                stop();
+            } catch (Exception e2) {
+                log.warn("Caught while closing: " + e2 + ". Now Closed", e2);
             }
         }
     }
@@ -126,18 +130,8 @@ public class TcpTransport implements Runnable {
         this.inputHandler = protocolConverter;
     }
 
-    public void start() throws IOException, URISyntaxException, IllegalArgumentException, IllegalAccessException,
-    InvocationTargetException {
-        if (started.compareAndSet(false, true)) {
-            connect();
-
-            runner = new Thread(this, "StompConnect Transport: " + toString());
-            runner.setDaemon(true);
-            runner.start();
-        }
-    }
-
-    public void stop() throws InterruptedException, IOException, JMSException, URISyntaxException {
+    public void stop() throws InterruptedException, IOException, JMSException,
+            URISyntaxException {
         if (stopped.compareAndSet(false, true)) {
             try {
                 if (log.isDebugEnabled()) {
@@ -150,59 +144,7 @@ public class TcpTransport implements Runnable {
                 socket.close();
             } finally {
                 stopped.set(true);
-                started.set(false);
             }
         }
-    }
-
-    protected void connect() throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-    URISyntaxException {
-
-        if (socket == null && socketFactory == null) {
-            throw new IllegalStateException("Cannot connect if the socket or socketFactory have not been set");
-        }
-
-        InetSocketAddress localAddress = null;
-        InetSocketAddress remoteAddress = null;
-
-        if (localLocation != null) {
-            localAddress = new InetSocketAddress(InetAddress.getByName(localLocation.getHost()), localLocation.getPort());
-        }
-
-        if (remoteLocation != null) {
-            String host = remoteLocation.getHost();
-            remoteAddress = new InetSocketAddress(host, remoteLocation.getPort());
-        }
-
-        if (socket != null) {
-
-            if (localAddress != null) {
-                socket.bind(localAddress);
-            }
-
-            // If it's a server accepted socket.. we don't need to connect it
-            // to a remote address.
-            if (remoteAddress != null) {
-                if (connectionTimeout >= 0) {
-                    socket.connect(remoteAddress, connectionTimeout);
-                } else {
-                    socket.connect(remoteAddress);
-                }
-            }
-        } else {
-            // For SSL sockets.. you can't create an unconnected socket :(
-            // This means the timout option are not supported either.
-            if (localAddress != null) {
-                socket = socketFactory.createSocket(remoteAddress.getAddress(), remoteAddress.getPort(),
-                        localAddress.getAddress(), localAddress.getPort());
-            } else {
-                socket = socketFactory.createSocket(remoteAddress.getAddress(), remoteAddress.getPort());
-            }
-        }
-
-        // TcpBufferedInputStream buffIn = new TcpBufferedInputStream(socket.getInputStream(), ioBufferSize);
-        this.dataIn = new DataInputStream(socket.getInputStream());// new DataInputStream(buffIn);
-        // TcpBufferedOutputStream buffOut = new TcpBufferedOutputStream(socket.getOutputStream(), ioBufferSize);
-        this.dataOut = new DataOutputStream(socket.getOutputStream());// new DataOutputStream(buffOut);
     }
 }

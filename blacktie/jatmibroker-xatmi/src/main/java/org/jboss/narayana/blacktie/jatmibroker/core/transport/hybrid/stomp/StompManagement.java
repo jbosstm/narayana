@@ -88,6 +88,7 @@ public class StompManagement {
         }
 
         outputStream.write("\000\n\n".getBytes());
+        outputStream.flush();
         log.trace("Wrote on: " + outputStream);
     }
 

@@ -190,7 +190,7 @@ public class ProtocolConverter {
                 log.debug(">>>> " + command.getAction() + " headers: " + command.getHeaders() + " >> done");
             }
         } catch (Exception e) {
-            log.debug("Caught an exception: ", e);
+            log.warn("Caught an exception: ", e);
             // Let the stomp client know about any protocol errors.
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintWriter stream = new PrintWriter(new OutputStreamWriter(baos, "UTF-8"));
