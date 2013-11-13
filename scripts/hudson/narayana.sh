@@ -1,7 +1,76 @@
 function fatal {
-  comment_on_pull "Tests failed ($BUILD_URL): $1"
+  if [[ -z $PROFILE ]]; then
+      comment_on_pull "Tests failed ($BUILD_URL): $1"
+  else
+      comment_on_pull "$PROFILE profile tests failed ($BUILD_URL): $1"
+  fi
+
   echo "$1"
   exit 1
+}
+
+function get_pull_description {
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+
+    if [ "$PULL_NUMBER" != "" ]; then
+        echo $(curl -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep \"body\":)
+    else
+        echo ""
+    fi
+}
+
+function init_test_options {
+    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.7.Final-SNAPSHOT"
+    [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+
+    PULL_DESCRIPTION=$(get_pull_description)
+
+    if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION =~ "NO_TEST" ]]; then
+        export COMMENT_ON_PULL=""
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION =~ "!MAIN" ]]; then
+        comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION =~ "!XTS" ]]; then
+        comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts
+    elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JACORB" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests
+    elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JDKORB" ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
+    elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION =~ "!BLACKTIE" ]]; then
+        echo not notifying
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    elif [[ -z $PROFILE ]]; then
+        comment_on_pull "Started testing this pull request: $BUILD_URL"
+        # if the following env variables have not been set initialize them to their defaults
+        [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
+        [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
+        [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
+        [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+        [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
+        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+        [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
+        [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+        [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
+        [ $txbridge ] || txbridge=1 # bridge tests
+    else
+        export COMMENT_ON_PULL=""
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
+    fi
 }
 
 function comment_on_pull
@@ -45,25 +114,6 @@ function build_narayana {
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
-}
-
-function cp_narayana_to_as {
-  echo "Copying Narayana to AS"
-  cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep jboss-as`
-  [ $? = 0 ] || return 1
-  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
-  [ -d $JBOSS_HOME ] || return 1
-
-  echo "WARNING - check that narayana version ${NARAYANA_VERSION} is the one you want"
-  JAR1=jbossjts-integration-${NARAYANA_VERSION}.jar
-  JAR2=jbossjts-${NARAYANA_VERSION}.jar
-# TODO make sure ${JBOSS_HOME} doesn't already contain a different version of narayana
-  echo "cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/"
-  echo "cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/"
-  cp ./ArjunaJTS/integration/target/$JAR1 ${JBOSS_HOME}/modules/org/jboss/jts/integration/main/
-  [ $? = 0 ] || return 1
-  cp ./ArjunaJTS/narayana-jts/target/$JAR2 ${JBOSS_HOME}/modules/org/jboss/jts/main/
 }
 
 function build_as {
@@ -258,23 +308,8 @@ function qa_tests {
 
 check_if_pull_closed
 
-comment_on_pull "Started testing this pull request: $BUILD_URL"
+init_test_options
 
-# if the following env variables have not been set initialize them to their defaults
-[ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.0.Final-SNAPSHOT"
-[ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
-
-[ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
-[ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
-[ $CP_NARAYANA_AS ] || CP_NARAYANA_AS=1 # build narayana
-[ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-[ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
-[ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
-[ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
-[ $QA_TESTS ] || QA_TESTS=1 # QA test suite
-[ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
-[ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-[ $txbridge ] || txbridge=1 # bridge tests
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
 [ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
@@ -298,7 +333,6 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $CP_NARAYANA_AS = 1 ] && cp_narayana_to_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
@@ -306,5 +340,11 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 
-comment_on_pull "All tests passed - Job complete: $BUILD_URL"
+if [[ -z $PROFILE ]]; then
+    comment_on_pull "All tests passed - Job complete $BUILD_URL"
+elif [[ $PROFILE == "BLACKTIE" ]]; then
+    echo not notifying
+else
+    comment_on_pull "$PROFILE profile tests passed - Job complete $BUILD_URL"
+fi
 exit 0 # any failure would have resulted in fatal being called which exits with a value of 1
