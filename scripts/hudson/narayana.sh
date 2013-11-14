@@ -35,7 +35,7 @@ function init_test_options {
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION =~ "!XTS" ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=0 txbridge=1
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
         comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
@@ -59,7 +59,7 @@ function init_test_options {
         [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
         [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
         [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-        [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+        [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
         [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
