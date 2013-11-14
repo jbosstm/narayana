@@ -25,21 +25,16 @@ package com.hp.mwtests.ts.jta.cdi.transactional;
 import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
@@ -54,6 +49,9 @@ public class TransactionalImplTest {
 
     @Inject
     TestTransactionalBean testTransactionalBean;
+
+    @Inject
+    BusinessLogic businessLogic;
 
     @Deployment
     public static WebArchive createTestArchive() {
@@ -410,5 +408,14 @@ public class TransactionalImplTest {
     public void testEJB() throws Exception {
 
         testTransactionalBean.invokeEJB();
+    }
+
+    /**
+     * Test that business logic annotated with a stereotype that includes @Transactional executes inside a transaction
+     * @throws Exception
+     */
+    @Test(expected = TestException.class)
+    public void testStereotype() throws Exception {
+        businessLogic.doSomething();
     }
 }

@@ -27,6 +27,7 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
 
 import javax.enterprise.context.ContextNotActiveException;
+import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -35,12 +36,16 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013
  */
 
 public class TransactionalInterceptorBase implements Serializable {
+
+    @Inject
+    javax.enterprise.inject.spi.BeanManager beanManager;
 
     private boolean previousUserTransactionAvailability;
 
@@ -57,6 +62,17 @@ public class TransactionalInterceptorBase implements Serializable {
         transactional = targetClass.getAnnotation(Transactional.class);
         if (transactional != null) {
             return transactional;
+        }
+
+        // see if the target is a stereotype
+        for (Annotation annotation : ic.getMethod().getDeclaringClass().getAnnotations()) {
+            if (beanManager.isStereotype(annotation.annotationType())) {
+                for (Annotation stereotyped : beanManager.getStereotypeDefinition(annotation.annotationType())) {
+                    if (stereotyped.annotationType().equals(Transactional.class)) {
+                        return (Transactional) stereotyped;
+                    }
+                }
+            }
         }
 
         throw new RuntimeException(jtaLogger.i18NLogger.get_expected_transactional_annotation());
