@@ -44,8 +44,10 @@ import java.lang.annotation.Annotation;
 
 public class TransactionalInterceptorBase implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Inject
-    javax.enterprise.inject.spi.BeanManager beanManager;
+    transient javax.enterprise.inject.spi.BeanManager beanManager;
 
     private boolean previousUserTransactionAvailability;
 

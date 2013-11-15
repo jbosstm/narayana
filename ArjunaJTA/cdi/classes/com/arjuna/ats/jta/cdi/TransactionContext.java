@@ -135,6 +135,8 @@ public class TransactionContext implements Context {
 
     private TransactionManager getTransactionManager() {
 
+        //  ignore findbugs warning about incorrect lazy initialization of static field since the values are looked up via JNDI
+        // (ie there is no object construction during initialization)
         if (transactionManager == null) {
             try {
                 InitialContext initialContext = new InitialContext();
@@ -148,6 +150,8 @@ public class TransactionContext implements Context {
 
     private TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
 
+        //  ignore findbugs warning about incorrect lazy initialization of static field since the values are looked up via JNDI
+        // (ie there is no object construction during initialization)
         if (transactionSynchronizationRegistry == null) {
             try {
                 InitialContext initialContext = new InitialContext();
