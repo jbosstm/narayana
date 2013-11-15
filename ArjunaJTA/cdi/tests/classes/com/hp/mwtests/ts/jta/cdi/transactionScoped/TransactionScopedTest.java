@@ -84,7 +84,7 @@ public class TransactionScopedTest {
         }
     }
 
-    private void addTimestamp(String message) {
+    private synchronized void addTimestamp(String message) {
         timestamps.add(String.format("%d - %s (%s)%n", System.nanoTime(), Thread.currentThread().getId(), message));
     }
 
