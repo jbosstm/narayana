@@ -217,7 +217,6 @@ public class SocketReceiverImpl implements Receiver, Runnable {
 
             int size;
             while((size = ins.readInt()) != -1) {
-                log.debug("size is " + size);
                 Message message = new Message();
 
                 byte[] buf = new byte[size];
@@ -237,7 +236,7 @@ public class SocketReceiverImpl implements Receiver, Runnable {
                 }
 
                 if(remain == 0) {
-                    //log.debug(buf);
+                    log.debug("receive from " + socket + " and size is " + size + " buffer is " + buf);
                     String[] s = new String(buf).split("\n");
 
                     log.debug("sid is " + s[0]);

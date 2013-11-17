@@ -259,7 +259,7 @@ class Client implements Runnable {
                 }
 
                 if(remain == 0) {
-                    //log.debug(buf);
+                    log.debug("receive from " + socket + " and size is " + size + " buffer is " + buf);
                     String[] s = new String(buf).split("\n");
 
                     log.debug("sid is " + s[0]);
