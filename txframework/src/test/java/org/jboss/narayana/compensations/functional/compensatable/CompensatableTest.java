@@ -47,7 +47,6 @@ import org.jboss.narayana.compensations.impl.CompensationManagerState;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -69,6 +68,8 @@ public class CompensatableTest {
     @Inject
     CompensatableBean testTransactionalBean;
 
+    @Inject
+    StereotypeBean stereotypeBean;
 
     @Deployment
     public static WebArchive createTestArchive() {
@@ -508,6 +509,11 @@ public class CompensatableTest {
         Assert.assertTrue(DummyConfirmationHandler2.getCalled());
         Assert.assertTrue(DummyTransactionLoggedHandler2.getCalled());
         Assert.assertTrue(DummyTransactionLoggedHandler2.getSuccess());
+    }
+
+    @Test(expected = TestException.class)
+    public void testStereotype() throws TestException {
+        stereotypeBean.doSomething();
     }
 
     private void beginBusinessActivity() throws WrongStateException, SystemException {
