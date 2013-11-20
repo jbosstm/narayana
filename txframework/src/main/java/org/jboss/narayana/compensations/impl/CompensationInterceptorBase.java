@@ -33,6 +33,7 @@ import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 
 /**
@@ -42,6 +43,9 @@ public class CompensationInterceptorBase {
 
     @Inject
     CompensationManager compensationManager;
+
+    @Inject
+    javax.enterprise.inject.spi.BeanManager beanManager;
 
     protected Object invokeInOurTx(InvocationContext ic) throws Exception {
         beginBusinessActivity();
@@ -154,6 +158,16 @@ public class CompensationInterceptorBase {
         compensatable = targetClass.getAnnotation(Compensatable.class);
         if (compensatable != null) {
             return compensatable;
+        }
+
+        for (Annotation annotation : ic.getMethod().getDeclaringClass().getAnnotations()) {
+            if (beanManager.isStereotype(annotation.annotationType())) {
+                for (Annotation stereotyped : beanManager.getStereotypeDefinition(annotation.annotationType())) {
+                    if (stereotyped.annotationType().equals(Compensatable.class)) {
+                        return (Compensatable) stereotyped;
+                    }
+                }
+            }
         }
 
         throw new RuntimeException("Expected an @Compensatable annotation at class and/or method level");
