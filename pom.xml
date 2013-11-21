@@ -612,6 +612,8 @@
                   </plugins>
                 </build>
                 <properties>
+                  <maven.compiler.argument.target>1.6</maven.compiler.argument.target>
+                  <maven.compiler.argument.source>1.6</maven.compiler.argument.source>
                   <version.emma>2.0.12224-adinn</version.emma>
                 </properties>
               </profile>
