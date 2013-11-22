@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jdbc.recovery;
 
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -42,6 +43,7 @@ import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import javax.transaction.xa.XAResource;
 
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
@@ -154,7 +156,8 @@ public class JDBCXARecovery implements XAResourceRecovery
         {
             if (_dataSource == null)
             {
-                Context context = new InitialContext();
+                Hashtable env = jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties();
+                Context context = new InitialContext(env);
                 _dataSource = (XADataSource) context.lookup(_dbName);
 
                 if (_dataSource == null)
