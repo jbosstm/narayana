@@ -23,6 +23,7 @@ AT RETURN
 BIND NOTHING
 IF (flagged("enabled"))
 DO debug("coordinator_processor_readonly.called.waking"),
+   clear("enabled"),
    signalWake("readonly", true),
    debug("coordinator_processor_readonly.called.donewake")
 ENDRULE
@@ -34,6 +35,5 @@ BIND NOTHING
 IF (flagged("enabled"))
 DO debug("participant_processor.prepare.waiting"),
    waitFor("readonly"),
-   debug("participant_processor.prepare.woken"),
-   clear("enabled")
+   debug("participant_processor.prepare.woken")
 ENDRULE
