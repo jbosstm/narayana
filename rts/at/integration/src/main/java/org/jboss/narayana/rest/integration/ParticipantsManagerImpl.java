@@ -4,6 +4,7 @@ import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.api.ParticipantDeserializer;
 import org.jboss.narayana.rest.integration.api.HeuristicType;
 import org.jboss.narayana.rest.integration.api.Participant;
@@ -20,6 +21,8 @@ import org.jboss.narayana.rest.integration.api.VolatileParticipant;
  */
 public final class ParticipantsManagerImpl implements ParticipantsManager {
 
+    private static final Logger LOG = Logger.getLogger(ParticipantsManagerImpl.class);
+
     private String baseUrl;
 
     @Override
@@ -29,11 +32,20 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
 
     @Override
     public void setBaseUrl(final String baseUrl) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.setBaseUrl: baseUrl=" + baseUrl);
+        }
+
         this.baseUrl = baseUrl;
     }
 
     @Override
     public String enlist(final String applicationId, final String participantEnlistmentURL, final Participant participant) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.enlist: applicationId=" + applicationId + ", participantEnlistmentURL="
+                    + participantEnlistmentURL + ", participant=" + participant);
+        }
+
         if (baseUrl == null) {
             throw new IllegalStateException("Base URL was not defined.");
         }
@@ -49,12 +61,22 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
 
         ParticipantsContainer.getInstance().addParticipantInformation(participantId, participantInformation);
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.enlist: participant enlisted. participantUrl=" + participantUrl
+                    + ", participantInformation=" + participantInformation);
+        }
+
         return participantId;
     }
 
     @Override
     public void enlistVolatileParticipant(final String volatileParticipantEnlistmentURL,
             final VolatileParticipant volatileParticipant) {
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.enlistVolatileParticipant: volatileParticipantEnlistmentURL="
+                    + volatileParticipantEnlistmentURL + ", volatileParticipant=" + volatileParticipant);
+        }
 
         if (baseUrl == null) {
             throw new IllegalStateException("Base URL was not defined.");
@@ -66,15 +88,30 @@ public final class ParticipantsManagerImpl implements ParticipantsManager {
         enlistVolatileParticipant(participantUrl, volatileParticipantEnlistmentURL);
 
         ParticipantsContainer.getInstance().addVolatileParticipant(participantId, volatileParticipant);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.enlistVolatileParticipant: participant enlisted. participantId="
+                    + participantId + ", participantUrl=" + participantUrl);
+        }
     }
 
     @Override
     public void registerDeserializer(final String applicationId, final ParticipantDeserializer deserializer) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.registerDeserializer: applicationId=" + applicationId + ", deserializer="
+                    + deserializer);
+        }
+
         RecoveryManager.getInstance().registerDeserializer(applicationId, deserializer);
     }
 
     @Override
     public void reportHeuristic(String participantId, HeuristicType heuristicType) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ParticipantsManagerImpl.reportHeuristic: participantId=" + participantId + ", heuristicType="
+                    + heuristicType);
+        }
+
         final ParticipantInformation participantInformation = ParticipantsContainer.getInstance()
                 .getParticipantInformation(participantId);
 

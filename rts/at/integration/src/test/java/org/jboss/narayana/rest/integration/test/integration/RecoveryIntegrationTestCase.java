@@ -30,9 +30,9 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
 
     private static final String DEPENDENCIES = "Dependencies: org.jboss.narayana.rts,org.jboss.jts,org.codehaus.jettison\n";
 
-    private static final int RECOVERY_PERIOD = 2;
+    private static final int RECOVERY_PERIOD = 4;
 
-    private static final int RECOVERY_WAIT_CYCLES = 5;
+    private static final int RECOVERY_WAIT_CYCLES = 8;
 
     private static final String VM_ARGUMENTS = System.getProperty("server.jvm.args").trim()
             + " -Dcom.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod=" + RECOVERY_PERIOD;
