@@ -49,6 +49,11 @@ public final class RecoveryManager {
     }
 
     public void registerDeserializer(final String applicationId, final ParticipantDeserializer deserializer) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("RecoveryManager.registerDeserializer: applicationId=" + applicationId + ", deserializer="
+                    + deserializer);
+        }
+
         if (!deserializers.containsKey(applicationId)) {
             deserializers.put(applicationId, deserializer);
             recoverParticipants();
@@ -56,7 +61,15 @@ public final class RecoveryManager {
     }
 
     public void persistParticipantInformation(final ParticipantInformation participantInformation) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("RecoveryManager.persistParticipantInformation: participantInformation=" + participantInformation);
+        }
+
         if (!isRecoverableParticipant(participantInformation.getParticipant())) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("RecoveryManager.persistParticipantInformation: participant is not recoverable");
+            }
+
             return;
         }
 
@@ -72,6 +85,10 @@ public final class RecoveryManager {
     }
 
     public void removeParticipantInformation(final ParticipantInformation participantInformation) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("RecoveryManager.removeParticipantInformation: participantInformation=" + participantInformation);
+        }
+
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         final Uid uid = new Uid(participantInformation.getId());
 
