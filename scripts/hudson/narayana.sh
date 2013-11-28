@@ -24,6 +24,7 @@ function get_pull_description {
 function init_test_options {
     [ $NARAYANA_VERSION ] || NARAYANA_VERSION="5.0.0.M3-SNAPSHOT"
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+    [ $TIMEOUT_MFACTOR ] || TIMEOUT_MFACTOR=1
 
     PULL_DESCRIPTION=$(get_pull_description)
 
@@ -202,8 +203,6 @@ function build_as {
   
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.conf
-
-  init_jboss_home
 }
 
 function init_jboss_home {
@@ -503,6 +502,38 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
 
+function run_function_with_timeout {
+  FUNCTION_TO_RUN=$1;
+  let TIMEOUT_IN=$2*$TIMEOUT_MFACTOR;
+  FUNCTION_PARAMETERS=$3
+  SLEEP_INTERVAL=30
+  COUNTER=0
+
+  ${FUNCTION_TO_RUN} ${FUNCTION_PARAMETERS} &
+  PID=$!
+
+  echo "Executing ${FUNCTION_TO_RUN}. PID=${PID}, TIMEOUT=${TIMEOUT_IN}s"
+
+  while [ ${COUNTER} -lt ${TIMEOUT_IN} ]; do
+    if ps -p ${PID} > /dev/null; then
+      sleep ${SLEEP_INTERVAL}s
+      let COUNTER=${COUNTER}+${SLEEP_INTERVAL}
+    else
+      COUNTER=${TIMEOUT_IN}
+    fi;
+  done
+
+  if ps -p ${PID} > /dev/null; then
+    echo "Proccess timed out. Killing ${PID}"
+    pkill -3 -P ${PID}
+    pkill -9 -P ${PID}
+    fatal "process timed out"
+  fi;
+
+  wait ${PID}
+  [ $? = 0 ] || exit 1
+}
+
 check_if_pull_closed
 
 init_test_options
@@ -533,17 +564,33 @@ kill_qa_suite_processes $MainClassPatterns
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
-[ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_BUILD = 1 ] && build_as "$@"
-[ $BLACKTIE = 1 ] && blacktie "$@"
-[ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
-[ $XTS_AS_TESTS = 1 ] && xts_as_tests
-[ $RTS_AS_TESTS = 1 ] && rts_as_tests
-[ $TXF_TESTS = 1 ] && txframework_tests "$@"
-[ $XTS_TESTS = 1 ] && xts_tests "$@"
-[ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $RTS_TESTS = 1 ] && rts_tests "$@"
-[ $QA_TESTS = 1 ] && qa_tests "$@"
+if [[ $CHECK_FOR_TIMEOUTS == 1 ]]; then
+  [ $NARAYANA_BUILD = 1 ] && run_function_with_timeout build_narayana 3600 "$@"
+  [ $AS_BUILD = 1 ] && run_function_with_timeout build_as 1200 "$@"
+  [ $AS_BUILD = 1 ] && init_jboss_home "$@"
+  [ $BLACKTIE = 1 ] && run_function_with_timeout blacktie 10800 "$@"
+  [ $JTA_CDI_TESTS = 1 ] && run_function_with_timeout jta_cdi_tests 600 "$@"
+  [ $XTS_AS_TESTS = 1 ] && run_function_with_timeout xts_as_tests 600 "$@"
+  [ $RTS_AS_TESTS = 1 ] && run_function_with_timeout rts_as_tests 600 "$@"
+  [ $TXF_TESTS = 1 ] && run_function_with_timeout txframework_tests 1200 "$@"
+  [ $XTS_TESTS = 1 ] && run_function_with_timeout xts_tests 7200 "$@"
+  [ $txbridge = 1 ] && run_function_with_timeout tx_bridge_tests 3600 "$@"
+  [ $RTS_TESTS = 1 ] && run_function_with_timeout rts_tests 1200 "$@"
+  [ $QA_TESTS = 1 ] && run_function_with_timeout qa_tests 36000 "$@"
+else
+  [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
+  [ $AS_BUILD = 1 ] && build_as "$@"
+  [ $AS_BUILD = 1 ] && init_jboss_home "$@"
+  [ $BLACKTIE = 1 ] && blacktie "$@"
+  [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
+  [ $XTS_AS_TESTS = 1 ] && xts_as_tests "$@"
+  [ $RTS_AS_TESTS = 1 ] && rts_as_tests "$@"
+  [ $TXF_TESTS = 1 ] && txframework_tests "$@"
+  [ $XTS_TESTS = 1 ] && xts_tests "$@"
+  [ $txbridge = 1 ] && tx_bridge_tests "$@"
+  [ $RTS_TESTS = 1 ] && rts_tests "$@"
+  [ $QA_TESTS = 1 ] && qa_tests "$@"
+fi;
 
 if [[ -z $PROFILE ]]; then
     comment_on_pull "All tests passed - Job complete $BUILD_URL"
