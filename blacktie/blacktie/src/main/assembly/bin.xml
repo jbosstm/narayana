@@ -96,12 +96,14 @@
 		<fileSet>
 			<directory>../btadmin/src/main/scripts</directory>
 			<outputDirectory>bin</outputDirectory>
+			<directoryMode>0755</directoryMode>
 			<fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
 			<directory>../codeGeneration/src/main/scripts/
 			</directory>
 			<outputDirectory>bin</outputDirectory>
+			<directoryMode>0755</directoryMode>
 			<fileMode>0775</fileMode>
 		</fileSet>
 		<fileSet>
