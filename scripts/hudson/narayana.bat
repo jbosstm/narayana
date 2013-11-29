@@ -23,7 +23,7 @@ call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comme
 echo "Building BlackTie
 cd blacktie
 rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
-xcopy ..\jboss-as\build\target\wildfly-%WILDFLY_MASTER_VERSION% . /S /Q
+xcopy ..\jboss-as\build\target\wildfly-%WILDFLY_MASTER_VERSION% . /S
 set JBOSS_HOME=%CD%\wildfly-%WILDFLY_MASTER_VERSION%\
 unzip wildfly-blacktie\build\target\wildfly-blacktie-build-%WILDFLY_MASTER_VERSION%-bin.zip -d %JBOSS_HOME%
 cd ..\
