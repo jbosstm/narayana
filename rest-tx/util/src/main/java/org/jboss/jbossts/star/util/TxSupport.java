@@ -69,6 +69,7 @@ public class TxSupport
      * transaction-manager URI
      */
     public static final String TX_SEGMENT = "transaction-manager/";
+	public static final int DEFAULT_READ_TIMEOUT = 20000;
 
     private static int PORT = 8080;
     private static String BIND_ADDRESS = System.getProperty("jboss.bind.address", "localhost");
@@ -86,7 +87,7 @@ public class TxSupport
     private String body = null;
     private String contentType = null;
     private String txnMgr;
-    private int readTimeout = 5000;
+    private int readTimeout = DEFAULT_READ_TIMEOUT;
 
     public static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
@@ -97,7 +98,7 @@ public class TxSupport
     }
 
     public TxSupport(String txnMgr) {
-        this(txnMgr, 5000);
+        this(txnMgr, DEFAULT_READ_TIMEOUT);
     }
 
     public TxSupport() {
