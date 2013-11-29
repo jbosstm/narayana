@@ -196,7 +196,7 @@ function build_as {
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
-  echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
+  echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.conf
 
   init_jboss_home
 }
