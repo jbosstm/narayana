@@ -203,9 +203,7 @@ function build_as {
 
 function init_jboss_home {
   cd $WORKSPACE
-  JBOSS_VERSION=`ls -1 ${WORKSPACE}/jboss-as/build/target | grep wildfly`
-  [ $? = 0 ] || fatal "missing AS - cannot set JBOSS_VERSION"
-  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/${JBOSS_VERSION}
+  export JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_MASTER_VERSION}
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
   echo "JBOSS_HOME=$JBOSS_HOME"
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml ${JBOSS_HOME}/standalone/configuration
@@ -263,7 +261,7 @@ function blacktie {
   ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
   rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
-  unzip ${WORKSPACE}/jboss-as/dist/target/wildfly-${WILDFLY_MASTER_VERSION}.zip -d $PWD/blacktie
+  cp -rp ${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_MASTER_VERSION} -d $PWD/blacktie
   [ $? = 0 ] || fatal "Could not unzip wildfly"
   unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
