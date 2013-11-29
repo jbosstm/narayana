@@ -33,7 +33,7 @@ public class TxSupportTest extends BaseTest {
 
     @Test
     public void testListTransactionsWhenNoActiveTxns() throws IOException {
-        TxSupport txn = new TxSupport();
+        TxSupport txn = new TxSupport(TXN_MGR_URL, 60000);
 
         Collection<String> transactionsInProgress = txn.getTransactions();
 
