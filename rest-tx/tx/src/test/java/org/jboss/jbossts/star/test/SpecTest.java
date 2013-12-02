@@ -174,7 +174,7 @@ public class SpecTest extends BaseTest {
         314return 404.
         */
         try {
-            Assert.assertEquals(txn.commitTx(), TxStatusMediaType.TX_ROLLEDBACK);
+            Assert.assertEquals(TxStatusMediaType.TX_ROLLEDBACK, txn.commitTx());
         } catch (HttpResponseException e) {
             Assert.assertTrue(e.getActualResponse() == HttpURLConnection.HTTP_GONE || e.getActualResponse() == HttpURLConnection.HTTP_NOT_FOUND);
         }
@@ -297,7 +297,7 @@ public class SpecTest extends BaseTest {
         pTerminator = txn.httpRequest(new int[] {HttpURLConnection.HTTP_NOT_FOUND},
                 PURL + "?pId=" + work[1], "GET", TxMediaType.PLAIN_MEDIA_TYPE);
 
-        Assert.assertEquals(pTerminator, "");
+        Assert.assertEquals("", pTerminator);
     }
 
     @Test
@@ -350,7 +350,7 @@ public class SpecTest extends BaseTest {
 
         Future<String> future = submitJob((Callable<String>) new AsynchronousCommit(txn));
 
-        Assert.assertEquals(future.get(), TxStatusMediaType.TX_COMMITTED);
+        Assert.assertEquals(TxStatusMediaType.TX_COMMITTED, future.get());
 
     }
 
@@ -443,7 +443,7 @@ public class SpecTest extends BaseTest {
             String er = txn.enlistTestResource(PURL, false);
             Assert.fail("Should not be able to enlist a resource after 2PC has started: " + er);
         } catch (HttpResponseException e) {
-            Assert.assertEquals(e.getActualResponse(), HttpURLConnection.HTTP_PRECON_FAILED);
+            Assert.assertEquals(HttpURLConnection.HTTP_PRECON_FAILED, e.getActualResponse());
         }
     }
 
@@ -496,8 +496,8 @@ public class SpecTest extends BaseTest {
             if (!twoPhaseAware) {
                 // only 2 phase unaware participants maintain counts so the next 2 asserts validate that the
                 // coordinator invoked the correct termination URIs
-                Assert.assertEquals(getResourceProperty(txn, PURL, wid2, "commitCnt"), "1");
-                Assert.assertEquals(getResourceProperty(txn, PURL, wid2, "rollbackCnt"), "0");
+                Assert.assertEquals("1", getResourceProperty(txn, PURL, wid2, "commitCnt"));
+                Assert.assertEquals("0", getResourceProperty(txn, PURL, wid2, "rollbackCnt"));
             }
         } else {
             // the participant that did not move should have aborted
@@ -511,8 +511,8 @@ public class SpecTest extends BaseTest {
             Assert.assertEquals(TxStatus.TransactionRolledBack.name(), status);
             if (!twoPhaseAware) {
                 // only 2 phase unaware participants maintain counts
-                Assert.assertEquals(getResourceProperty(txn, PURL, wid2, "commitCnt"), "0");
-                Assert.assertEquals(getResourceProperty(txn, PURL, wid2, "rollbackCnt"), "1");
+                Assert.assertEquals("0", getResourceProperty(txn, PURL, wid2, "commitCnt"));
+                Assert.assertEquals("1", getResourceProperty(txn, PURL, wid2, "rollbackCnt"));
             }
         }
     }
@@ -583,9 +583,9 @@ public class SpecTest extends BaseTest {
                     Thread.sleep(delay);
                 status = txn.commitTx();
             } catch (HttpResponseException e) {
-                // ignore
+                status =  e.getMessage() + " status: " + e.getActualResponse();
             } catch (InterruptedException e) {
-                // ignore
+                status =  e.getMessage();
             }
         }
 
@@ -594,7 +594,7 @@ public class SpecTest extends BaseTest {
             try {
                 return txn.commitTx();
             } catch (HttpResponseException e) {
-                return "";
+                return e.getMessage() + " status: " + e.getActualResponse();
             }
         }
     }
