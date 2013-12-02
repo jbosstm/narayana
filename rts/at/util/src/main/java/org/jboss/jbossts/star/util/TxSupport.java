@@ -510,6 +510,8 @@ public class TxSupport
                 return body;
             }
         } catch (IOException e) {
+            if (log.isTraceEnabled())
+                log.tracef("httpRequest: io error: %s%n", e.getMessage());
             throw new HttpResponseException(e, "", expect, HttpURLConnection.HTTP_UNAVAILABLE);
         } finally {
             if (connection != null)
