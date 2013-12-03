@@ -97,7 +97,7 @@ NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
 NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb
 NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Didlj-enabled=true
 XTS - ./build.[sh|bat] -am -pl :jboss-xts
-STM - ./build.[sh|bat] -am -pl :core
+STM - ./build.[sh|bat] -am -pl :stm
 
 Developing Narayana
 -------------------
