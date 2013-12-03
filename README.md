@@ -17,7 +17,9 @@ Requirements
 To build Narayana you should have installed:
 Java 1.7.0 or greater
 
-When building on Mac OS make sure that JAVA_HOME is set.
+When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.7:
+
+	export JAVA_HOME=`/usr/libexec/java_home -v 1.7` 
 
 Building Naryana
 ----------------
