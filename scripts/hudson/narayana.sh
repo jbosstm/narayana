@@ -40,7 +40,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
         comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-tests-nojts
+        export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET="junit-testsuite junit-jdbc-ncl-testsuite"
     elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JACORB" ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
@@ -51,6 +51,7 @@ function init_test_options {
         export QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests
     elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION =~ "!BLACKTIE" ]]; then
         echo not notifying
+        export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     elif [[ -z $PROFILE ]]; then
@@ -271,7 +272,7 @@ function qa_tests_once {
   [ $IDLJ = 1 ] && target="ci-jts-tests" # if called with orb=idlj then only run the jtsremote tests
 
   # QA_TARGET overrides the previous settings
-  [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
+  [[ x$QA_TARGET = x ]] || target=$QA_TARGET # the caller can force the build to run a specific target
 
   # run the ant target
   ant -f run-tests.xml $target $QA_PROFILE
