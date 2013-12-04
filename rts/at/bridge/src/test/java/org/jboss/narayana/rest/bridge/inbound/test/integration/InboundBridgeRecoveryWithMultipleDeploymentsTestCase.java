@@ -150,6 +150,7 @@ public class InboundBridgeRecoveryWithMultipleDeploymentsTestCase extends Abstra
         deployer.undeploy(SECOND_DEPLOYMENT_NAME);
         containerController.stop(CONTAINER_NAME);
         containerController.kill(CONTAINER_NAME);
+        clearObjectStore();
     }
 
 }
