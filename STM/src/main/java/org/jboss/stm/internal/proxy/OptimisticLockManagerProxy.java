@@ -44,40 +44,42 @@ public class OptimisticLockManagerProxy<T> extends OptimisticLockManager
 {
     public OptimisticLockManagerProxy (T candidate)
     {
-        this(candidate, (RecoverableContainer<T>) null);
+        super();
+        
+        _theObject = candidate;
+        _container = null;
     }
     
     public OptimisticLockManagerProxy (T candidate, RecoverableContainer<T> cont)
     {
-        this(candidate, com.arjuna.ats.arjuna.ObjectType.ANDPERSISTENT, cont);
+        super(cont.objectType(), cont.objectModel());
+
+        _theObject = candidate;
+        _container = cont;
     }
     
     public OptimisticLockManagerProxy (T candidate, int ot)
     {
-        this(candidate, ot, null);
-    }
-
-    public OptimisticLockManagerProxy (T candidate, int ot, RecoverableContainer<T> cont)
-    {
-        this(candidate, ot, ObjectModel.SINGLE, cont);
+        super(ot, ObjectModel.SINGLE);
+        
+        _theObject = candidate;
+        _container = null;
     }
       
     public OptimisticLockManagerProxy (T candidate, int ot, int om, RecoverableContainer<T> cont)
     {
         super(ot, om);
-        
+
         _theObject = candidate;
         _container = cont;
     }
        
     public OptimisticLockManagerProxy (T candidate, Uid u)
     {
-        this(candidate, u, ObjectModel.SINGLE);
-    }
-    
-    public OptimisticLockManagerProxy (T candidate, Uid u, int om)
-    {
-        this(candidate, u, om, null);
+        super(u, ObjectModel.SINGLE);
+        
+        _theObject = candidate;
+        _container = null;
     }
     
     // if there's a Uid then this is a persistent object

@@ -173,6 +173,15 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
             
             if (_optimistic)
             {
+                /*
+                 * At this stage we ignore the type and model settings in the container. So annotations override
+                 * the default container settings. Consider re-visiting the model such that either this is explicit
+                 * for all objects where model/type is different to container, or change instance/container relationship
+                 * so the container values continue to match the instance (even if lazily so container data is updated).
+                 * Problem with latter approach is that we can have many different types of object coming from the same
+                 * container.
+                 */
+                
                 _txObject = new OptimisticLockManagerProxy<T>(obj, ObjectType.ANDPERSISTENT, ObjectModel.MULTIPLE, cont);  // recoverable or persistent
             }
             else
