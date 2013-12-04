@@ -2,7 +2,7 @@
 <!--  See src/resources/configuration/ReadMe.txt for how the configuration assembly works -->
 <config>
    <extension-module>org.jboss.as.messaging</extension-module>
-   <subsystem xmlns="urn:jboss:domain:messaging:1.4">
+   <subsystem xmlns="urn:jboss:domain:messaging:2.0">
        <hornetq-server>
            <?CLUSTERED?>
            <persistence-enabled>true</persistence-enabled>
@@ -14,7 +14,6 @@
                <netty-connector name="netty-throughput" socket-binding="messaging-throughput">
                    <param key="batch-delay" value="50"/>
                </netty-connector>
-               <servlet-connector name="servlet" socket-binding="http" host="default-host" />
                <in-vm-connector name="in-vm" server-id="0"/>
            </connectors>
 
@@ -63,14 +62,6 @@
                    </connectors>
                    <entries>
                        <entry name="java:/ConnectionFactory"/>
-                   </entries>
-               </connection-factory>
-               <connection-factory name="ServletConnectionFactory">
-                   <connectors>
-                       <connector-ref connector-name="servlet"/>
-                   </connectors>
-                   <entries>
-                       <entry name="java:jboss/exported/jms/ServletConnectionFactory"/>
                    </entries>
                </connection-factory>
                <connection-factory name="RemoteConnectionFactory">
