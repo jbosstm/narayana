@@ -84,6 +84,9 @@ public class Client01
 			ex.printStackTrace();
 			System.out.println("Failed");
 		}
+
+		System.out.println("Ready");
+
 		try
 		{
 			UserTransaction ut = com.arjuna.ats.jta.UserTransaction.userTransaction();
