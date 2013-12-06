@@ -11,6 +11,18 @@
   <artifactId>stm</artifactId>
   <name>Narayana: STM</name>
   <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -54,7 +66,26 @@
       <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
-    
   </dependencies>
+  <profiles>
+    <profile>
+        <id>release</id>
+        <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                  </execution>
+                </executions>
+                <inherited>false</inherited>
+              </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>
 
