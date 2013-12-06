@@ -201,7 +201,7 @@ public class TaskImpl implements Task
      */
     public void perform(String... params)
     {
-        if(type != TaskType.EXPECT_PASS_FAIL) {
+        if(type == TaskType.EXPECT_READY) {
             throw new RuntimeException(taskPrefix + "can't perform an EXPECT_READY task");
         }
 
@@ -377,7 +377,7 @@ public class TaskImpl implements Task
             taskReaderThread = new TaskReaderThread(taskName, bufferedReader, out, "out: ");
             taskReaderThread.start();
 
-            if(type.equals(TaskType.EXPECT_READY)) {
+            if(type.equals(TaskType.EXPECT_READY) || type.equals(TaskType.EXPECT_READY_PASS_FAIL)) {
                 taskReaderThread.blockingWaitForReady();
                 // System.out.println("got ready");
             }
@@ -451,7 +451,7 @@ public class TaskImpl implements Task
      */
     public void terminate()
     {
-        if(type.equals(TaskType.EXPECT_PASS_FAIL)) {
+        if(type.equals(TaskType.EXPECT_PASS_FAIL) || type.equals(TaskType.EXPECT_READY_PASS_FAIL)) {
             Assert.fail(taskPrefix + "Should not terminate EXPECT_PASS_FAIL tasks (use waitFor)");
         }
 

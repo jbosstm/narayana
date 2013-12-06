@@ -27,7 +27,7 @@ package org.jboss.jbossts.qa.junit;
  */
 public interface Task
 {
-    public enum TaskType { EXPECT_PASS_FAIL, EXPECT_READY }
+    public enum TaskType { EXPECT_PASS_FAIL, EXPECT_READY, EXPECT_READY_PASS_FAIL }
 
     /**
      * execute a type PASS_FAIL task in a subprocess passing no arguments to the Main method of the
