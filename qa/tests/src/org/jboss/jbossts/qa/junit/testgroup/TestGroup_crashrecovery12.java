@@ -73,7 +73,7 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 	@Test public void CrashRecovery12_Test03()
 	{
 		setTestName("Test03");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
+		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_READY_PASS_FAIL, 240, "store");
 		client0.start("commit", "CR12_03.log");
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		outcome0.start("CR12_03.log", "yes");
