@@ -152,10 +152,6 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
     // Return the status of the transaction bound to the current thread at the time this method is called.
     public int getTransactionStatus()
     {
-        if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("TransactionSynchronizationRegistryImple.getTransactionStatus");
-        }
-
         try
         {
             return tm.getStatus();
