@@ -161,10 +161,6 @@ public class BaseTransaction
 
 	public int getStatus() throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("BaseTransaction.getStatus");
-        }
-
 		TransactionImple theTransaction = TransactionImple.getTransaction();
 
 		if (theTransaction == null)
