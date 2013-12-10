@@ -201,9 +201,9 @@ public class ContainerRecreatePessimisticUnitTest extends TestCase
         
         assertEquals(obj1.value(), 10);
         
-        assertTrue(theContainer.getUidForHandle(obj1).notEquals(Uid.nullUid()));
+        assertTrue(theContainer.getIdentifier(obj1).notEquals(Uid.nullUid()));
         
-        Sample2 obj2 = theContainer.clone(new Sample2Imple(), theContainer.getUidForHandle(obj1));
+        Sample2 obj2 = theContainer.clone(new Sample2Imple(), theContainer.getIdentifier(obj1));
 
         assertTrue(obj2 != null);
         

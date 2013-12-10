@@ -186,7 +186,7 @@ public class Container<T>
      * Get the unique name for the instance.
      */
     
-    public Uid getUidForHandle (T proxy)
+    public Uid getIdentifier (T proxy)
     {
         return _theContainer.getUidForHandle(proxy);
     }
