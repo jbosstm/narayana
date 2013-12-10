@@ -26,6 +26,7 @@ import java.security.InvalidParameterException;
 import org.jboss.stm.internal.PersistentContainer;
 import org.jboss.stm.internal.RecoverableContainer;
 
+import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 
@@ -50,26 +51,10 @@ import com.arjuna.ats.arjuna.common.Uid;
  * Or use a setter/getter pattern to provide flexibility around (i).
  */
 
-/*
-RecoverableContainer<Sample> theContainer = new RecoverableContainer<Sample>();
-Sample obj1 = theContainer.create(new SampleLockable(10));
-Sample obj2 = theContainer.create(new SampleLockable(10));
-
-// todo make it easier to create and share objects.
-
-  Make sharing of objects like this the default even for pessimistic. Just pass back the
-  same instance in that case. Also hide getUidForHandle by simply passing the obj instance.fr
-
-
-Sample obj3 = theContainer.duplicate(obj1);
-Sample obj4 = theContainer.duplicate(obj2);
-
-but for duplicate to work, we'd need to create a new instance of SampleLockable, so it needs to have a default constructor. And even then, it needs to be transactional.
-*/
-
 public class Container<T>
 {
     public enum TYPE { RECOVERABLE, PERSISTENT };
+    public enum MODEL { SHARED, EXCLUSIVE };
     
     /**
      * Create a container without a name. A name will be assigned automatically.
@@ -102,6 +87,16 @@ public class Container<T>
             _theContainer = new RecoverableContainer<T>(name);
         else
             _theContainer = new PersistentContainer<T>(name);
+    }
+    
+    public Container (final String name, final TYPE type, final MODEL model)
+    {
+        int theModel = (model == MODEL.SHARED ? ObjectModel.MULTIPLE : ObjectModel.SINGLE);
+        
+        if (type == TYPE.RECOVERABLE)
+            _theContainer = new RecoverableContainer<T>(name);  // NOTE currently ObjectModel data not exposed for RecoverableContainers
+        else
+            _theContainer = new PersistentContainer<T>(name, theModel);
     }
     
     /**
