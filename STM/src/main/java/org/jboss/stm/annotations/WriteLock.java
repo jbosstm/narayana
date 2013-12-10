@@ -23,6 +23,12 @@ package org.jboss.stm.annotations;
 
 import java.lang.annotation.*;
 
+/**
+ * Grab a write lock for this method.
+ * 
+ * @author marklittle
+ */
+
 // TODO lock priority rules
 
 @Retention(RetentionPolicy.RUNTIME)

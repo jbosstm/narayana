@@ -25,7 +25,9 @@ import java.lang.annotation.*;
 
 /**
  * Specifies that pessimistic concurrency control
- * should be used.
+ * should be used. This means that a read or write operation
+ * may block or be rejected if another user is manipulating
+ * the same object in a conflicting manner.
  * 
  * @author marklittle
  *

@@ -23,6 +23,12 @@ package org.jboss.stm.annotations;
 
 import java.lang.annotation.*;
 
+/**
+ * Grab a read lock for this method.
+ * 
+ * @author marklittle
+ */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface ReadLock

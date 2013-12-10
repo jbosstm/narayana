@@ -25,6 +25,8 @@ import java.lang.annotation.*;
 
 /**
  * Marks member variables that should not be saved/restored during a transaction.
+ * Such variables will therefore retain any state they had regardless of how a
+ * transaction terminates. Use with care!
  * 
  * @author marklittle
  */

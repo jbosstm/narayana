@@ -24,7 +24,9 @@ package org.jboss.stm.annotations;
 import java.lang.annotation.*;
 
 /**
- * Use optimistic concurrency control.
+ * Use optimistic concurrency control. This may mean
+ * that a transaction is forced to abort at the end
+ * due to conflicting updates made by other users.
  * 
  * @author marklittle
  *
