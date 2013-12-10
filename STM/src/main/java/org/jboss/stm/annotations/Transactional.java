@@ -36,6 +36,10 @@ import java.lang.annotation.*;
  * Therefore, the implementation class should not modify state unless by calling
  * its own public methods.
  * 
+ * All methods should either be invoked within a transactional context or have
+ * the Nested annotation applied, wherein the system will automatically create a
+ * new transaction when the method is invoked.
+ * 
  * @author marklittle
  *
  */
