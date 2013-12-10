@@ -28,8 +28,7 @@ import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
-import org.jboss.stm.internal.PersistentContainer;
-import org.jboss.stm.internal.RecoverableContainer;
+import org.jboss.stm.Container;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectModel;
@@ -102,12 +101,12 @@ public class EchoClient extends Verticle {
 	   */
 
 	  //Uid u = new Uid("0:ffffc0a80003:c915:529f59de:1");
-	PersistentContainer<Sample> theContainer = new PersistentContainer<Sample>(ObjectModel.MULTIPLE);
+	  Container<Sample> theContainer = new Container<Sample>("Demo", Container.TYPE.PERSISTENT, Container.MODEL.SHARED);
 
-	Sample obj1 = theContainer.enlist(new SampleLockable(10));
-	//Sample obj1 = theContainer.recreate(new SampleLockable(10), u);
+	Sample obj1 = theContainer.create(new SampleLockable(10));
+	//Sample obj1 = theContainer.clone(new SampleLockable(10), u);
 
-	System.out.println("Object name: "+theContainer.getUidForHandle(obj1));
+	System.out.println("Object name: "+theContainer.getIdentifier(obj1));
 
           //Now send some data
           for (int i = 0; i < 10; i++) {
