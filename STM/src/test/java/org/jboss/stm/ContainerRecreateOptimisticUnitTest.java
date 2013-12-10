@@ -39,7 +39,7 @@ import junit.framework.TestCase;
  * @author Mark Little
  */
 
-public class ContainerUnitTest extends TestCase
+public class ContainerRecreateOptimisticUnitTest extends TestCase
 {   
     @Transactional
     @Optimistic
@@ -178,63 +178,16 @@ public class ContainerUnitTest extends TestCase
         private Sample1 _obj1;
         private Sample1 _obj2;
     }
-   
-    public void testPessimistic ()
+    
+    public void testOptimisticRecreate ()
     {
-        Container<Sample2> theContainer = new Container<Sample2>();
-        Sample2 obj1 = theContainer.create(new Sample2Imple(10));
-        Sample2 obj2 = theContainer.clone(new Sample2Imple(), obj1);
+        Container<Sample1> theContainer = new Container<Sample1>(Container.TYPE.RECOVERABLE, Container.MODEL.EXCLUSIVE);
+        Sample1 obj1 = theContainer.create(new Sample1Imple(10));
         
         assertTrue(obj1 != null);
-        assertTrue(obj2 != null);
-        
-        AtomicAction A = new AtomicAction();
-        
-        A.begin();
-        
-        obj1.increment();
-        obj2.value();
-        
-        A.commit();
-        
-        A = new AtomicAction();
-        
-        A.begin();
-        
-        obj1.increment();       
-        obj2.increment();
-        
-        A.commit();
-        
-        assertEquals(obj1.value(), 13);
-        assertEquals(obj2.value(), 13);
-    }
-    
-    public void testOptimisticHammer ()
-    {
-        if (true)
-            return;
-        
-        Container<Sample1> theContainer = new Container<Sample1>();
-        Sample1 obj1 = theContainer.create(new Sample1Imple(10));
-        Sample1 obj2 = theContainer.create(new Sample1Imple(10));
-        Sample1 obj3 = theContainer.clone(new Sample1Imple(), obj1);
-        Sample1 obj4 = theContainer.clone(new Sample1Imple(), obj2);
-        int workers = 2;
-        Worker[] worker = new Worker[workers];
-        
-        assertTrue(obj3 != null);
-        assertTrue(obj4 != null);
         
         /*
-         * TODO cannot share state until the state is written, and it isn't written
-         * until an explicit set is called. What we want is for the state to be in the
-         * store when create (clone) returns.
-         * 
-         * So currently you need to force the saving of the object states (we use increment
-         * here for that purpose) and then force a read of the state through the clones
-         * (we use value for that purpose). Not as opaque as we'd like and we should be able
-         * to force the save and restore via the proxy classes.
+         * Do some basic checks and ensure state is in store prior to sharing.
          */
         
         AtomicAction A = new AtomicAction();
@@ -242,36 +195,34 @@ public class ContainerUnitTest extends TestCase
         A.begin();
         
         obj1.increment();
+        obj1.decrement();
+        
+        A.commit();
+        
+        assertEquals(obj1.value(), 10);
+        
+        assertTrue(theContainer.getUidForHandle(obj1).notEquals(Uid.nullUid()));
+        
+        Sample1 obj2 = theContainer.clone(new Sample1Imple(), theContainer.getUidForHandle(obj1));
+
+        assertTrue(obj2 != null);
+        
+        A = new AtomicAction();
+        
+        A.begin();
+        
         obj2.increment();
         
         A.commit();
         
-        assertEquals(obj1.value(), 11);
         assertEquals(obj2.value(), 11);
         
         A = new AtomicAction();
         
         A.begin();
         
-        assertEquals(obj3.value(), 11);
+        assertEquals(obj1.value(), obj2.value());
         
         A.commit();
-        
-        worker[0] = new Worker(obj1, obj2);
-        worker[1] = new Worker(obj3, obj4);
-       
-        for (int j = 0; j < workers; j++)
-            worker[j].start();
-        
-        try
-        {
-            for (int k = 0; k < workers; k++)
-                worker[k].join();
-        }
-        catch (final Throwable ex)
-        {
-        }
-
-        assertEquals(obj1.value()+obj2.value(), 22);
     }
 }

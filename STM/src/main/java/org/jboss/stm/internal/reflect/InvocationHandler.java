@@ -149,7 +149,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
             {
                 _txObject = null;
                 
-                return;
+                throw new RuntimeException("Could not initialise ObjectStore!");
             }
         }
         
@@ -227,6 +227,9 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
     
     public Uid get_uid ()
     {
+        if (_txObject == null)
+            throw new RuntimeException("Transactional object is null!");
+        
         return _txObject.get_uid();
     }
     
@@ -371,6 +374,12 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                 catch (final Throwable ex)
                 {
                     System.err.println("InvocationHandler could not initialise object store for optimistic concurrency control.");
+                    
+                    ex.printStackTrace();
+                    
+                    /*
+                     * Check to see if store already set!
+                     */
                     
                     return false;
                 }
