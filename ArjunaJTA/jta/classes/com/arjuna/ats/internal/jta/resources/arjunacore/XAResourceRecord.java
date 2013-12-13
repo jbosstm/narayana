@@ -50,6 +50,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -78,7 +79,7 @@ import com.arjuna.ats.jta.xa.XidImple;
  * @since JTS 1.2.4.
  */
 
-public class XAResourceRecord extends AbstractRecord
+public class XAResourceRecord extends AbstractRecord implements ExceptionDeferrer
 {
 
 	public static final int XACONNECTION = 0;
@@ -86,6 +87,11 @@ public class XAResourceRecord extends AbstractRecord
 	private static final Uid START_XARESOURCE = Uid.minUid();
 
 	private static final Uid END_XARESOURCE = Uid.maxUid();
+	
+	/**
+     * Any XAException that occurs.
+     */
+    List<Throwable> deferredExceptions;
 
 	/**
 	 * The params represent specific parameters we need to recreate the
@@ -225,6 +231,8 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (XAException e1)
 		{
+		    addDeferredThrowable(e1);
+		   
             jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
                     _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -315,6 +323,8 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (XAException e1)
 				{
+				   addDeferredThrowable(e1);
+				   
 				    if ((e1.errorCode >= XAException.XA_RBBASE)
 						&& (e1.errorCode < XAException.XA_RBEND))
 				    {
@@ -328,6 +338,8 @@ public class XAResourceRecord extends AbstractRecord
 				    	    	    _theXAResource.rollback(_tranID);
 				    	    } catch (XAException e2)
 				    	    {
+				    	       addDeferredThrowable(e2);
+				    	        
 				    	    	    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e2), e2);
 
@@ -365,6 +377,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
+					   addDeferredThrowable(e1);
+					   
                         jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -471,6 +485,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
+					    addDeferredThrowable(e1);
+					   
                         jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -651,6 +667,8 @@ public class XAResourceRecord extends AbstractRecord
                         case XAException.XAER_RMFAIL:
                         default:
 	                {
+	                   addDeferredThrowable(e1);
+	                    
                         jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 	                    
@@ -687,6 +705,8 @@ public class XAResourceRecord extends AbstractRecord
 	            }
 	            catch (XAException e1)
 	            {
+	               addDeferredThrowable(e1);
+	               
                     jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -1280,6 +1300,20 @@ public class XAResourceRecord extends AbstractRecord
 
 	private static boolean _rollbackOptimization = false;
     private static boolean _assumedComplete = false;
+
+    void addDeferredThrowable(Exception e) 
+    {
+        if (this.deferredExceptions == null)
+            this.deferredExceptions = new ArrayList<>();
+        this.deferredExceptions.add(e);
+    }
+    
+    @Override
+    public void getDeferredThrowables(List<Throwable> list)
+    {
+        if (deferredExceptions != null)
+            list.addAll(deferredExceptions);
+    }
     
 	private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
 

@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -213,9 +215,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.COMMITTING: // in case of async commit
 				break;
 			case ActionStatus.H_MIXED:
-				throw new javax.transaction.HeuristicMixedException();
+				throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 			case ActionStatus.H_HAZARD:
-				throw new javax.transaction.HeuristicMixedException();
+				throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 			case ActionStatus.H_ROLLBACK:
 			case ActionStatus.ABORTED:
 				RollbackException rollbackException = new RollbackException(
@@ -225,13 +227,27 @@ public class TransactionImple implements javax.transaction.Transaction,
 					rollbackException.initCause(_theTransaction
 							.getDeferredThrowable());
 				}
-				throw rollbackException;
+				throw addSuppressedThrowables(rollbackException);
 			default:
 				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
 			}
 		}
 		else
 			throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+	}
+	
+	/**
+	 * Add throwables that have been thrown by XAResources but have been suppressed by wrapping records to the given exception.
+	 *  
+	 * @param e an exception that will be thrown out of here
+	 * @return the given exception with suppressed exceptions added 
+	 */
+	<T extends Exception> T addSuppressedThrowables(T e) {
+        for (Throwable t : _theTransaction.getDeferredThrowables())
+        {
+            e.addSuppressed(t);
+        }
+	    return e;
 	}
 
 	public void rollback() throws java.lang.IllegalStateException,
@@ -1176,7 +1192,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
+						throw addSuppressedThrowables(new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) ));
 
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
@@ -1192,13 +1208,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.COMMITTING: // in case of async commit
 						break;
 					case ActionStatus.H_MIXED:
-						throw new javax.transaction.HeuristicMixedException();
+						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 					case ActionStatus.H_HAZARD:
-						throw new javax.transaction.HeuristicMixedException();
+						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 					case ActionStatus.H_ROLLBACK:
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
-                        RollbackException rollbackException = new RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_commitwhenaborted() );
+                        RollbackException rollbackException = addSuppressedThrowables(new RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_commitwhenaborted() ));
 
                         // Don't mess with the following flow until you've read JBTM-575 in its entirety.
 
@@ -1220,11 +1236,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 						throw rollbackException;
 					default:
-						throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
+						throw addSuppressedThrowables(new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() ));
 				}
 			}
 			else
-				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+				throw addSuppressedThrowables(new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() ));
 		}
 		finally
 		{
@@ -1617,7 +1633,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private Map _txLocalResources;
 
     private Throwable _rollbackOnlyCallerStacktrace;
-
+    
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED;
 
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE;

@@ -32,11 +32,11 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -1299,7 +1299,41 @@ public class BasicAction extends StateManager
 
         return null;
     }
-
+    
+    /**
+     * Get any Throwable that was caught during commit processing but not directly rethrown.
+     * @return a list of ThrowableS, if any
+     */
+    public List<Throwable> getDeferredThrowables() 
+    {
+        List<Throwable> deferredThrowables = new ArrayList<>();
+        
+        if (onePhaseCommitExceptionDeferrer != null)
+            onePhaseCommitExceptionDeferrer.getDeferredThrowables(deferredThrowables);
+        
+        if (failedList != null)
+        {
+            AbstractRecord current = failedList.listHead;
+            while (current != null) 
+            {
+                addDeferredThrowables(current, deferredThrowables);
+                current = failedList.peekNext(current);
+            }
+        }
+        
+        if (heuristicList != null)
+        {
+            AbstractRecord current = heuristicList.listHead;
+            while (current != null) 
+            {
+                addDeferredThrowables(current, deferredThrowables);
+                current = heuristicList.peekNext(current);
+            }
+        }
+        
+        return deferredThrowables;
+    }
+    
     @Override
     public boolean equals (java.lang.Object obj)
     {
@@ -2303,6 +2337,13 @@ public class BasicAction extends StateManager
                      * this kind of failure from a heuristic failure so that we can allow
                      * recovery to retry the commit attempt periodically.
                      */
+               
+                if (p == TwoPhaseOutcome.ONE_PHASE_ERROR) {
+                   if (recordBeingHandled instanceof ExceptionDeferrer)
+                      onePhaseCommitExceptionDeferrer = (ExceptionDeferrer) recordBeingHandled;
+                   else if (recordBeingHandled.value() instanceof ExceptionDeferrer) 
+                      onePhaseCommitExceptionDeferrer = (ExceptionDeferrer) recordBeingHandled.value();
+                }
 
                 if (p == TwoPhaseOutcome.FINISH_ERROR)
                 {
@@ -3550,6 +3591,16 @@ public class BasicAction extends StateManager
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_68();
         }
     }
+    
+    /* Adds the deferred throwables of the given record to the given list of throwables. */
+    
+    private void addDeferredThrowables(AbstractRecord record, List<Throwable> throwables) 
+    {
+        if (record instanceof ExceptionDeferrer)
+            ((ExceptionDeferrer) record).getDeferredThrowables(throwables);
+        else if (record.value() instanceof ExceptionDeferrer)
+            ((ExceptionDeferrer) record.value()).getDeferredThrowables(throwables);
+    }
 
     /* These (genuine) lists hold the abstract records */
 
@@ -3589,6 +3640,7 @@ public class BasicAction extends StateManager
 
     //    private Mutex _lock = new Mutex(); // TODO
 
+    ExceptionDeferrer onePhaseCommitExceptionDeferrer;
 }
 
 class BasicActionFinalizer
