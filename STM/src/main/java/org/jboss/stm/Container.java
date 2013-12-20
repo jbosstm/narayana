@@ -226,6 +226,11 @@ public class Container<T>
      * useful when using pessimistic concurrency control and we need one object instance per
      * thread to ensure that state is safely managed.
      * 
+     * WARNING: if the Uid is invalid, e.g., points to a state that no longer exists, then a handle
+     * will still be returned because checks for validity (other than null parameter) cannot be done
+     * until you try to use the state. At that time a lock will be refused (state cannot be activated)
+     * and a suitable warning message will be output.
+     * 
      * @param member the instance of type T that you want to be made transactional and persistent.
      * @param id the Uid of the object.
      */
