@@ -38,7 +38,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  * mandate what the interface is, since that will depend upon the business logic. The interface, or
  * the implementing class, must also use the @Transactional annotation.
  * 
- * Unless the Nested annotation is used, all method invocations on objects returned from a Container
+ * Unless either the Nested or NestedTopLevel annotation is used, all method invocations on objects returned from a Container
  * should be done within the context of an active transaction.
  * 
  * @author marklittle
