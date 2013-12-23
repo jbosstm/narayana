@@ -108,8 +108,8 @@ public class DbProps {
     }
 
     public Map<String, DbProps> getConfig(String fileName) {
-        Properties props = PropertiesFactory.getPropertiesFromFile(fileName, this.getClass().getClassLoader());// parseProperties(fileName);
-        Map<String, DbProps> dbConfigs = new HashMap<>();
+        Properties props = PropertiesFactory.getPropertiesFromFile(fileName, this.getClass().getClassLoader());
+        Map<String, DbProps> dbConfigs = new HashMap<String, DbProps>();
         String dbProp = props.getProperty(DB_PREFIXES_NAME);
 
         if (dbProp == null)

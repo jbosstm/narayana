@@ -43,7 +43,7 @@ public class TransactionServiceFactory {
     private static RecoveryManager recoveryManager;
     private static boolean initialized = false;
     private static InitialContext initialContext;
-    private static Set<String> jndiBindings = new HashSet<>();
+    private static Set<String> jndiBindings = new HashSet<String>();
     private static boolean replacedJndiProperties = false;
 
     /**
@@ -83,12 +83,23 @@ public class TransactionServiceFactory {
 
         if (startRecoveryService)
             startRecoveryService();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                TransactionServiceFactory.stop();
+            }
+        });
     }
+
 
     /**
      * Stop the transaction service. If the recovery manager was started previously then it to will be stopped.
      */
     public static synchronized void stop() {
+        if (!initialized)
+            return;
+
         if (recoveryManager != null) {
             recoveryManager.terminate();
             recoveryManager = null;
