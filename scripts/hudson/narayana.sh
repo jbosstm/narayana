@@ -80,6 +80,11 @@ function init_test_options {
     fi
 }
 
+function set_ulimit {
+    ulimit -u $1
+    ulimit -a
+}
+
 function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
@@ -321,6 +326,7 @@ function xts_tests {
 
   cd $WORKSPACE
   ran_crt=1
+  set_ulimit 2048
 
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
