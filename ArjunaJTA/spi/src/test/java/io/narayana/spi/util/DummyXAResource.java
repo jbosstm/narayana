@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class DummyXAResource implements Synchronization, XAResource, Serializable
 {
-    private static final Map<String, XAException> xaCodeMap = new HashMap<>();
+    private static final Map<String, XAException> xaCodeMap = new HashMap<String, XAException>();
 
     private ASFailureType _xaFailureType = ASFailureType.NONE;
     private ASFailureMode _xaFailureMode = ASFailureMode.NONE;
@@ -44,7 +44,7 @@ public class DummyXAResource implements Synchronization, XAResource, Serializabl
     private int _recoveryAttempts = 1;
     private XAException _xaException;
     private int txTimeout = 10;
-    private Set<Xid> _xids = new HashSet<>();
+    private Set<Xid> _xids = new HashSet<Xid>();
     private transient boolean _isPrepared = false; // transient so it doesn't get persisted in the tx store
 
     static
