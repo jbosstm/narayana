@@ -8,6 +8,22 @@
    <simpara>
       <revhistory>
           <revision>
+              <revnumber>2</revnumber>
+              <date>Monday Jan 6 2014</date>
+              <author>
+                  <firstname>Gytis</firstname>
+                  <surname>Trikleris</surname>
+                  <email>gytis@gmail.com</email>
+              </author>
+              <revdescription>
+                  <simplelist>
+                      <member>
+                          Updated for Wildfly. New WS-AT and Compensating Transactions APIs introduced.
+                      </member>
+                  </simplelist>
+              </revdescription>
+          </revision>
+          <revision>
              <revnumber>1</revnumber>
              <date>Thursday Feb 21 2013</date>
              <author>

@@ -16,13 +16,13 @@
   <section>
     <title>Transaction manager overview</title>
     <para>
-      The transaction manager is a Web service which coordinates JBossTS transactions. It is the only software component
-      in JBossTS that is designed to be run directly as a network service, rather than to support end-user code. The
+      The transaction manager is a Web service which coordinates XTS transactions. It is the only software component
+      in XTS that is designed to be run directly as a network service, rather than to support end-user code. The
       transaction manager runs as a JAXM request/response Web service.
     </para>
     <note>
       <para>
-        When starting up an application server instance that has JBossTS transaction manager deployed within it, you may
+        When starting up an application server instance that has XTS transaction manager deployed within it, you may
         see various “error” messages in the console or log. For example 16:53:38,850 ERROR [STDERR] Message Listener
         Service: started, message listener jndi name activationcoordinator". These are for information purposes only and
         are not actual errors.
@@ -49,7 +49,7 @@
   <section>
     <title>Deployment descriptors</title>
     <para>
-      In general, changing the contents of the various deployment descriptors used by JBossTS is not necessary. However,
+      In general, changing the contents of the various deployment descriptors used by XTS is not necessary. However,
       if you do need to modify them they are all included in <filename>modules/system/layers/base/org/jboss/xts/main/jbossxts-${XTS_VERSION}.jar</filename>.
     </para>
   </section>

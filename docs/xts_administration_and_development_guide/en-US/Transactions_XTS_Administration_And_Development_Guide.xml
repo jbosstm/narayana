@@ -9,13 +9,11 @@
    <xi:include href="About_This_Guide.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Introduction.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Getting_Started.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="XTS_Demo_Guide.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-   <xi:include href="Participants.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="XTS_API.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Stand_Alone_Coordination.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Participant_Crash_Recovery.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Web_Service_Transaction_Management.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-
+   <xi:include href="Quickstarts_Overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
    <!-- <index /> -->
 </book>

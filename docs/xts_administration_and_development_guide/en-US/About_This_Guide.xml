@@ -38,7 +38,7 @@
   <section>
     <title>Prerequisites</title>
     <para>
-      JBoss Transaction Service uses the Java programming language and this manual assumes that you are familiar with
+      &PRODUCT; uses the Java programming language and this manual assumes that you are familiar with
       programming in Java. Additional helpful skills are outlined in <xref linkend="prereqs-list" />.
     </para>
     <itemizedlist id="prereqs-list">
@@ -50,7 +50,7 @@
     </itemizedlist>
     <para>
       This guide presents overview information for all of the above. However, to aid in understanding the Web Services
-      component of JBoss Transaction Service, the WS-C<footnote><para><ulink
+      component of &PRODUCT;, the WS-C<footnote><para><ulink
       url="http://download.boulder.ibm.com/ibmdl/pub/software/dw/specs/ws-tx/WS-Coordination.pdf" /></para></footnote>,
       WS-Atomic Transaction<footnote><para><ulink
       url="http://download.boulder.ibm.com/ibmdl/pub/software/dw/specs/ws-tx/WS-AtomicTransaction.pdf"

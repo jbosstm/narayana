@@ -129,6 +129,12 @@
     
     <section>
       <title>WS-AT Participant Crash Recovery</title>
+      <warning>
+        <title>Warning!</title>
+        <para>
+          This part is relevant only if Raw XTS API is used. JTA integration does the recovery automatically.
+        </para>
+      </warning>
       <para>
         WS-AT participants associated with a transactional web service do not need to be involved in crash recovery if
         the Web service's host machine crashes before the participant is told to prepare. The coordinator will assume

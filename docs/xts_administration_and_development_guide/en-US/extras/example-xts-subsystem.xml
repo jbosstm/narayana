@@ -4,5 +4,6 @@
   . . .
     <subsystem xmlns="urn:jboss:domain:xts:1.0">
         <xts-environment url="http://${jboss.bind.address:127.0.0.1}:8080/ws-c11/ActivationService"/>
+        . . .
     </subsystem>
 </server>
