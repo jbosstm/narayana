@@ -25,7 +25,6 @@ import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import io.narayana.spi.internal.DbProps;
 import io.narayana.spi.util.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,8 +33,6 @@ import org.junit.Test;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.*;
-
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -66,6 +63,7 @@ public class SPIUnitTest
     @BeforeClass
     public static void setUp() throws Exception {
         JndiProvider.start();
+        JndiProvider.initBindings();
         BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class).setRecoveryBackoffPeriod(1);
         TransactionServiceFactory.start(true);
     }
@@ -91,15 +89,6 @@ public class SPIUnitTest
             fail("User transaction is still bound after stopping the TransactionServiceFactory");
         } catch (NamingException e) {
         }
-
-        // Validate that JNDI lookups fail when the TF is stopped
-        Map<String, DbProps> dbConfigs = new DbProps().getConfig(TransactionServiceFactory.DB_PROPERTIES_NAME);
-        for (DbProps props : dbConfigs.values())
-            try {
-                new InitialContext().lookup(props.getBinding());
-                fail(props.getBinding() + ": DataSource is still bound after stopping TM");
-            } catch (NamingException e) {
-            }
 
         // Validate that the TF can be restarted (without a recovery manager)
         TransactionServiceFactory.start(false);
