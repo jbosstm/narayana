@@ -19,11 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.spi.internal;
+package io.narayana.spi.util;
 
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
-import java.io.*;
 import java.util.*;
 
 public class DbProps {
@@ -37,6 +36,7 @@ public class DbProps {
     public final static String PORT = "Port";
     public final static String DATABASE_USER = "DatabaseUser";
     public final static String DATABASE_PASSWORD = "DatabasePassword";
+    public static final String DB_PROPERTIES_NAME = "db.properties";
 
     private String binding;
     private String driver;
@@ -108,11 +108,21 @@ public class DbProps {
     }
 
     public Map<String, DbProps> getConfig(String fileName) {
-        Properties props = PropertiesFactory.getPropertiesFromFile(fileName, this.getClass().getClassLoader());
+        Properties props;
         Map<String, DbProps> dbConfigs = new HashMap<String, DbProps>();
+
+        try {
+            props = PropertiesFactory.getPropertiesFromFile(fileName, this.getClass().getClassLoader());
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("missing property file"))
+                return dbConfigs;
+
+            throw e;
+        }
+
         String dbProp = props.getProperty(DB_PREFIXES_NAME);
 
-        if (dbProp == null)
+        if (dbProp == null || dbProp.length() == 0)
             return dbConfigs;
 
         for (String prefix : dbProp.split(",")) {

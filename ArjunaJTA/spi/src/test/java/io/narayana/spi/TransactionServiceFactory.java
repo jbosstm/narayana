@@ -29,8 +29,6 @@ import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.utils.JNDIManager;
-import io.narayana.spi.internal.DataSourceManagerImpl;
-import io.narayana.spi.internal.DbProps;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -39,7 +37,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class TransactionServiceFactory {
-    static final String DB_PROPERTIES_NAME = "db.properties";
     private static RecoveryManager recoveryManager;
     private static boolean initialized = false;
     private static InitialContext initialContext;
@@ -148,22 +145,6 @@ public class TransactionServiceFactory {
                 tsLogger.logger.infof("Unable to bind TM into JNDI: %s", e.getMessage());
 
             throw new InitializationException("Unable to bind TM into JNDI", e);
-        }
-
-        Map<String, DbProps> dbConfigs = new DbProps().getConfig(DB_PROPERTIES_NAME);
-        DataSourceManagerImpl dataSourceManager = new DataSourceManagerImpl();
-
-        for (DbProps props : dbConfigs.values()) {
-            String url = props.getDatabaseURL();
-
-            if (url != null && url.length() > 0)
-                dataSourceManager.registerDataSource(props.getBinding(), props.getDriver(), url,
-                        props.getDatabaseUser(), props.getDatabasePassword());
-            else
-                dataSourceManager.registerDataSource(props.getBinding(), props.getDriver(), props.getDatabaseName(),
-                        props.getHost(), props.getPort(), props.getDatabaseUser(),props.getDatabasePassword());
-
-            jndiBindings.add(props.getBinding());
         }
 
         return jndiBindings;

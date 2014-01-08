@@ -22,7 +22,7 @@
 package io.narayana.spi;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import io.narayana.spi.internal.DbProps;
+import io.narayana.spi.util.DbProps;
 import io.narayana.spi.util.*;
 import org.junit.Assert;
 
@@ -46,7 +46,7 @@ public class DbTester {
     private String fault;
 
     public DbTester(boolean clearTables) throws SQLException, InitializationException {
-        Map<String, DbProps> dbConfigs = new DbProps().getConfig(TransactionServiceFactory.DB_PROPERTIES_NAME);
+        Map<String, DbProps> dbConfigs = new DbProps().getConfig(DbProps.DB_PROPERTIES_NAME);
         connections = new HashMap<String, Connection>();
 
         for (DbProps props : dbConfigs.values())
