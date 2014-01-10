@@ -1,10 +1,10 @@
-package com.arjuna.qa.extension;
+package org.jboss.jbossts.txbridge.tests.extension;
 
 import java.util.logging.Logger;
 
-public class JBossAS7ServerKillProcessorWin extends BaseServerKillProcessor {
+public class JBossTSAS7ServerKillProcessorWin extends JBossTSBaseServerKillProcessor {
 
-	private static final Logger logger = Logger.getLogger(JBossAS7ServerKillProcessorWin.class.getName());
+	private static final Logger logger = Logger.getLogger(JBossTSAS7ServerKillProcessorWin.class.getName());
 	private static final String PS_AUX_CMD = "wmic PROCESS GET ProcessId,CommandLine,Name";
 	private static final String CHECK_JBOSS_ALIVE_CMD = PS_AUX_CMD + " | findstr jboss-module | findstr /v findstr"; //skip "findstr" from output, windows workaround
 	private static final String CHECK_FOR_DEFUNCT_JAVA_CMD = PS_AUX_CMD + " | findstr defunct | findstr /v findstr"; //skip "findstr" from output, windows workaround
