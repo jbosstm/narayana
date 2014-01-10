@@ -27,6 +27,8 @@ import org.jboss.logging.Logger;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Common methods for crash recovery test cases.
@@ -69,7 +71,7 @@ public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests {
 
         // start up the server
         String javaVmArguments = System.getProperty("server.jvm.args").trim();
-        javaVmArguments = javaVmArguments.replaceFirst("byteman-dtest.jar", "byteman-dtest.jar,script:" + rulesFile.getCanonicalPath());
+        javaVmArguments = javaVmArguments.replaceFirst("byteman-dtest.jar", Matcher.quoteReplacement("byteman-dtest.jar,script:" + rulesFile.getAbsolutePath()));
         log.trace("javaVmArguments = " + javaVmArguments);
         controller.start(CONTAINER, new Config().add("javaVmArguments", javaVmArguments).map());
     }
