@@ -36,7 +36,7 @@
 </bookinfo>
 <preface id="_preface">
 <title>Preface</title>
-<simpara>This guide covers the REST interfaces to the Narayana Transaction Manager. The actual protocol implemented by RESTAT described in this book is taken from the draft RESTAT specification <ulink url="https://github.com/jbosstm/documentation/blob/master/rest-tx/docs/RESTAT-v2-latest.pdf">https://github.com/jbosstm/documentation/blob/master/rest-tx/docs/RESTAT-v2-latest.pdf</ulink>. The specification is still evolving but has reached a stability level such that it can be used in real world environments.</simpara>
+<simpara>This guide covers the REST interfaces to the Narayana Transaction Manager. The actual protocol implemented by RESTAT described in this book is taken from the draft RESTAT specification <ulink url="https://github.com/jbosstm/documentation/blob/master/rts/docs/REST-Atomic_v2_draft_8_comments_sept_4.pdf">https://github.com/jbosstm/documentation/blob/master/rest-tx/docs/RESTAT-v2-latest.pdf</ulink>. The specification is still evolving but has reached a stability level such that it can be used in real world environments.</simpara>
 </preface>
 <chapter id="_overview">
 <title>Overview</title>
@@ -120,7 +120,7 @@ Participant: a resource that manages the state changes performed by the service 
 </section>
 <section id="_the_transaction_manager_resource">
 <title>The Transaction Manager Resource</title>
-<simpara>The transaction manager is represented by a URI (referred to as the transaction-manager URI). It enables clients to create new transaction resources and to query the list of current transactions. The actual URI depends upon how RESTAT is deployed and will be discussed later.</simpara>
+<simpara>The transaction manager is represented by a URI (referred to as the <systemitem>transaction-manager</systemitem> URI). It enables clients to create new transaction resources and to query the list of current transactions. The actual URI depends upon how RESTAT is deployed and will be discussed later.</simpara>
 </section>
 </chapter>
 <chapter id="_client_responsibilities">
@@ -128,7 +128,7 @@ Participant: a resource that manages the state changes performed by the service 
 <simpara>The RESTAT client is responsible for creating and terminating transaction resources.</simpara>
 <section id="_starting_a_transaction">
 <title>Starting a Transaction</title>
-<simpara>Performing a POST on the transaction-manager URI with header as shown below will start a new transaction with a default timeout. A successful invocation returns a 201 HTTP status code and the Location header contains the URI of the newly created transaction resource, which we refer to as transaction-coordinator in the rest of this book. At least two related URLs will also be returned, one for use by the transaction terminator (typically referred to as the client) and one used for registering durable participation in the transaction (typically referred to as the server). These URIs are referred to as the transaction-terminator and transaction-enlistment URIs, respectively. Although uniform URL structures are used in the examples, these linked URLs can be of arbitrary format.</simpara>
+<simpara>Performing a POST on the <systemitem>transaction-manager</systemitem> URI with header as shown below will start a new transaction with a default timeout. A successful invocation returns a 201 HTTP status code and the Location header contains the URI of the newly created transaction resource, which we refer to as transaction-coordinator in the rest of this book. At least two related URLs will also be returned, one for use by the transaction terminator (typically referred to as the client) and one used for registering durable participation in the transaction (typically referred to as the server). These URIs are referred to as the transaction-terminator and <systemitem>transaction-enlistment</systemitem> URIs, respectively. Although uniform URL structures are used in the examples, these linked URLs can be of arbitrary format.</simpara>
 <programlisting language="html" linenumbering="unnumbered">POST /transaction-manager HTTP/1.1
 From: foo@bar.com</programlisting>
 <simpara>The corresponding response would be:</simpara>
@@ -144,12 +144,12 @@ Content-Type: text/plain
 Content-Length: --
 
 timeout=1000</programlisting>
-<simpara>Performing a HEAD on the transaction-coordinator URI returns the same link information.</simpara>
-<simpara>Performing a DELETE on the transaction-coordinator or transaction-enlistment URIs are not allowed (and an attempt to do so will result in a 403 status code).</simpara>
+<simpara>Performing a HEAD on the <systemitem>transaction-coordinator</systemitem> URI returns the same link information.</simpara>
+<simpara>Performing a DELETE on the <systemitem>transaction-coordinator</systemitem> or <systemitem>transaction-enlistment</systemitem> URIs are not allowed (and an attempt to do so will result in a 403 status code).</simpara>
 </section>
 <section id="_obtaining_the_transaction_status">
 <title>Obtaining The Transaction Status</title>
-<simpara>Performing a GET on the transaction-coordinator URI returns the current status of the transaction:</simpara>
+<simpara>Performing a GET on the <systemitem>transaction-coordinator</systemitem> URI returns the current status of the transaction:</simpara>
 <programlisting language="html" linenumbering="unnumbered">GET /transaction-coordinator/1234 HTTP/1.1
 Accept: application/txstatus</programlisting>
 <simpara>With an example response:</simpara>
@@ -165,7 +165,10 @@ txstatus=TransactionActive</programlisting>
 </section>
 <section id="_propagating_the_context">
 <title>Propagating the Context</title>
-<simpara>When making an invocation on a resource that needs to participate in a transaction, either the transaction-coordinator URI or the transaction-enlistment URI (/transaction-coordinator/1234/participant in the previous example) needs to be transmitted to the resource. How this happens is private to the service writer but the following OPTIONAL approach is recommended:</simpara>
+<simpara>When making an invocation on a resource that needs to participate in a transaction, either the <systemitem>transaction-coordinator</systemitem> URI or the <systemitem>transaction-enlistment</systemitem> URI (/transaction-coordinator/1234/participant in the previous example) needs to be transmitted to the resource.
+<remark>Alternatively, if the client knows which endpoints the service will use to cancel or commit its work, it can 
+do the registration and skip this requirement to propagate the context).</remark>
+If the context is to be propagated then the mechanism is private to the service writer but the following OPTIONAL approach is recommended:</simpara>
 <itemizedlist>
 <listitem>
 <simpara>
@@ -181,19 +184,19 @@ The URI is passed as a Link header with the relevant service interaction.
 </section>
 <section id="_discovering_existing_transactions">
 <title>Discovering Existing Transactions</title>
-<simpara>Performing a GET on the transaction-manager URI with media type application/txlist returns a list of all transaction-coordinator URIs known to the coordinator (active and in recovery). The returned response includes a link header with rel attribute "statistics" linking to a resource that contains statistical information such as the number of transactions that have committed and aborted.</simpara>
-<simpara>Performing a GET on the transaction-manager URI with media type application/txstatusext+xml returns extended information about the transaction-manager resource such as how long it has been up and all transaction-coordinator URIs.</simpara>
+<simpara>Performing a GET on the <systemitem>transaction-manager</systemitem> URI with media type <systemitem>application/txlist</systemitem> returns a list of all <systemitem>transaction-coordinator</systemitem> URIs known to the coordinator (active and in recovery). The returned response includes a link header with <systemitem>rel</systemitem> attribute <systemitem>statistics</systemitem> linking to a resource that contains statistical information such as the number of transactions that have committed and aborted.</simpara>
+<simpara>Performing a GET on the <systemitem>transaction-manager</systemitem> URI with media type <systemitem>application/txstatusext+xml</systemitem> returns extended information about the transaction-manager resource such as how long it has been up and all <systemitem>transaction-coordinator</systemitem> URIs.</simpara>
 </section>
 <section id="_ending_the_transaction">
 <title>Ending the Transaction</title>
-<simpara>The client can PUT a document containing the desired transaction status to the transaction-terminator URI in order to control the outcome of the transaction. Upon termination, the resource and all associated resources are implicitly deleted. If the client wishes to commit the transaction it sends the following request:</simpara>
+<simpara>The client can PUT a document containing the desired transaction status to the <systemitem>transaction-terminator</systemitem> URI in order to control the outcome of the transaction. Upon termination, the resource and all associated resources are implicitly deleted. If the client wishes to commit the transaction it sends the following resource update request:</simpara>
 <programlisting language="html" linenumbering="unnumbered">PUT /transaction-coordinator/1234/terminator HTTP/1.1
 From: foo@bar.com
 Content-Type: application/txstatus
 Content-Length: --
 
 txstatus=TransactionCommitted</programlisting>
-<simpara>The response body contains the transaction outcome. The state of the transaction must be TransactionActive for this operation to succeed otherwise a 412 status code is returned.</simpara>
+<simpara>The response body contains the transaction outcome. The state of the transaction resource must be <systemitem>TransactionActive</systemitem> for this operation to succeed otherwise a 412 status code is returned.</simpara>
 <simpara>The transaction may be told to rollback with the following PUT request:</simpara>
 <programlisting language="html" linenumbering="unnumbered">PUT /transaction-coordinator/1234/terminator HTTP/1.1
 From: foo@bar.com
@@ -205,25 +208,25 @@ txstatus=TransactionRolledBack</programlisting>
 </chapter>
 <chapter id="_service_responsibilities">
 <title>Service Responsibilities</title>
-<simpara>Once a resource has the transaction or enlistment URI, it can register participation in the transaction. Each participant must be uniquely identified to the transaction coordinator in order that the protocol can guarantee consistency and atomicity in the event of failure and recovery. The participant is free to use whatever URI structure it desires for uniquely identifying itself; in the rest of this manual we shall assume it is /participant-resource and refer to it as the participant-resource URI.</simpara>
+<simpara>Once a resource has the transaction or enlistment URI, it can register participation in the transaction (or, alternatively, as mentioned earlier it is possible for the client to register the service directly with the coordinator if it knows the services cancel and commit endpoints). Each participant must be uniquely identified to the transaction coordinator in order that the protocol can guarantee consistency and atomicity in the event of failure and recovery. The participant is free to use whatever URI structure it desires for uniquely identifying itself; in the rest of this manual we shall assume it is /participant-resource and refer to it as the <systemitem>participant-resource</systemitem> URI.</simpara>
 <section id="_joining_the_transaction">
 <title>Joining the Transaction</title>
 <section id="_two_phase_aware_participants">
 <title>Two Phase Aware Participants</title>
-<simpara>A participant is registered with the transaction-coordinator using POST on the participant-enlistment URI obtained when the transaction was originally created. The request must include two link headers: one to uniquely identify the participant to the coordinator and one to provide a terminator resource (referred to as the participant-terminator URI) that the coordinator will use to terminate the participant. If the rel attributes of the link are not participant and terminator the implementation will return 400. Note, the following URIs are only examples, and an implementation is free to use whatever structure/format it likes:</simpara>
+<simpara>A participant is registered with the <systemitem>transaction-coordinator</systemitem> using POST on the <systemitem>participant-enlistment</systemitem> URI obtained when the transaction was originally created. The request must include two link headers: one to uniquely identify the participant to the coordinator and one to provide a terminator resource (referred to as the <systemitem>participant-terminator</systemitem> URI) that the coordinator will use to terminate the participant. If the <systemitem>rel</systemitem> attributes of the link are not participant and terminator the implementation will return 400. Note, the following URIs are only examples, and an implementation is free to use whatever structure/format it likes:</simpara>
 <programlisting language="html" linenumbering="unnumbered">POST /transaction-coordinator/1234/participant HTTP/1.1
 From: foo@bar.com
 Link:&lt;/participant-resource&gt;; rel=”participant”,
     &lt;/participant-resource/terminator&gt;; rel=”terminator”
 
 Content-Length: 0</programlisting>
-<simpara>Performing a HEAD on the participant-resource URI will return the terminator reference, as shown below:</simpara>
+<simpara>Performing a HEAD on the <systemitem>participant-resource</systemitem> URI will return the terminator reference, as shown below:</simpara>
 <programlisting language="html" linenumbering="unnumbered">HEAD /participant-resource HTTP/1.1
 From: foo@bar.com
 
 HTTP/1.1 200 OK
 Link:&lt;/participant-resource/terminator&gt;; rel=”terminator”</programlisting>
-<simpara>If the transaction is not TransactionActive when registration is attempted, then the implementation returns a 412 status code. If the implementation has seen this participant URI before then it returns 400. Otherwise the operation is considered a success and the implementation will return 201 and uses the Location header to give a participant specific URI that the participant may use later during prepare or for recovery purposes. The lifetime of this URI is the same as the transaction-coordinator URI. In the rest of this specification we shall refer to this as the participant-recovery URI (not to be confused with the participant-resource URI). An example response from the transaction-coordinator to a successful enlistment request is:</simpara>
+<simpara>If the transaction is not <systemitem>TransactionActive</systemitem> when registration is attempted, then the implementation returns a 412 status code. If the implementation has seen this participant URI before then it returns 400. Otherwise the operation is considered a success and the implementation will return 201 and uses the Location header to give a participant specific URI that the participant may use later during prepare or for recovery purposes. The lifetime of this URI is the same as the <systemitem>transaction-coordinator</systemitem> URI. In the rest of this specification we shall refer to this as the <systemitem>participant-recovery</systemitem> URI (not to be confused with the <systemitem>participant-resource</systemitem> URI). An example response from the <systemitem>transaction-coordinator</systemitem> to a successful enlistment request is:</simpara>
 <programlisting language="html" linenumbering="unnumbered">HTTP/1.1 201 Created
 Location: /participant-recovery/1234</programlisting>
 </section>
@@ -254,7 +257,7 @@ Link:&lt;/participant-resource/prepare&gt;; rel=”prepare”,
 </section>
 <section id="_obtaining_the_participant_status">
 <title>Obtaining the Participant Status</title>
-<simpara>Performing an HTTP GET request on the participant-resource URI must return the current status of the participant in the same way as for the transaction-coordinator URI discussed earlier. Determining the status of a participant whose URI has been removed is similar to that discussed for the transaction-coordinator URI:</simpara>
+<simpara>Performing an HTTP GET request on the <systemitem>participant-resource</systemitem> URI must return the current status of the participant in the same way as for the <systemitem>transaction-coordinator</systemitem> URI discussed earlier. Determining the status of a participant whose URI has been removed is similar to that discussed for the <systemitem>transaction-coordinator</systemitem> URI:</simpara>
 <programlisting language="html" linenumbering="unnumbered">GET /participant-resource HTTP/1.1
 Accept: application/txstatus</programlisting>
 <simpara>With an example response:</simpara>
@@ -267,11 +270,11 @@ txstatus=TransactionActive</programlisting>
 </section>
 <section id="_leaving_the_transaction">
 <title>Leaving the Transaction</title>
-<simpara>A participant can leave the transaction at any time by sending a DELETE request to the coordinator using the URI it obtain during registration (i.e., the participant-recovery URI). Alternatively, it can respond to a prepare request from the coordinator with content body containing txstatus=TransactionReadOnly (in which case the transaction-coordinator will remove it from further participation in the transaction). Otherwise it is the participants responsibility to participate in the <link linkend="2PC">transaction termination protocol</link> .</simpara>
+<simpara>A participant can leave the transaction at any time by sending a DELETE request to the coordinator using the URI it obtained during registration (i.e., the <systemitem>participant-recovery</systemitem> URI). Alternatively, it can respond to a prepare request from the coordinator with content body containing <systemitem>txstatus=TransactionReadOnly</systemitem> (in which case the transaction coordinator will remove it from further participation in the transaction). Otherwise it is the participants responsibility to participate in the <link linkend="2PC">transaction termination protocol</link> .</simpara>
 </section>
 <section id="2PC">
 <title>Preparing and Committing Work</title>
-<simpara>The coordinator drives the participant through the two-phase commit protocol by sending a PUT request to the participant terminator URI, provided to the coordinator during enlistment, with the desired transaction outcome as the content (TransactionPrepared, TransactionCommitted, TransactionRolledBack or TransactionCommittedOnePhase). For instance, here is how the prepare phase would be driven:</simpara>
+<simpara>The coordinator drives the participant through the two-phase commit protocol by sending a PUT request to the <systemitem>participant-terminator</systemitem> URI, provided to the coordinator during enlistment, with the desired transaction outcome as the content (<systemitem>TransactionPrepared</systemitem>, <systemitem>TransactionCommitted</systemitem>, <systemitem>TransactionRolledBack</systemitem> or <systemitem>TransactionCommittedOnePhase</systemitem>). For instance, here is how the prepare phase would be driven:</simpara>
 <programlisting language="html" linenumbering="unnumbered">PUT /participant-resource/terminator HTTP/1.1
 From: foo@bar.com
 Content-Type: application/txstatus
@@ -279,18 +282,18 @@ Content-Length: --
 
 txstatus=TransactionPrepared</programlisting>
 <simpara>If PUT is successful then the implementation returns 200. A subsequent GET on the URI will return the current status of the participant as described previously. It is not always necessary to enquire as to the status of the participant once the operation has been successful.</simpara>
-<simpara>If PUT fails, e.g., the participant cannot be prepared, then the service writer must return 409. Depending upon the point in the two-phase commit protocol where such a failure occurs the transaction will roll back, e.g., because we use presumed abort semantics, failures prior to the end of the prepare phase <emphasis role="strong">always</emphasis> result in a roll back. If the participant is not in the correct state for the requested operation, e.g., TransactionPrepared when it has been already been prepared, then the service writer will return 412.</simpara>
-<simpara>If the transaction coordinator receives any response other than 200 for Prepare then the transaction <emphasis role="strong">always</emphasis> rolls back.</simpara>
-<simpara>After a request to change the resource state using TransactionRolledBack, TransactionCommitted or TransactionCommittedOnePhase, any subsequent PUT request will return a 409 or 410 code.</simpara>
+<simpara>If PUT fails, e.g., the participant cannot be prepared, then the service writer must return 409. Depending upon the point in the two-phase commit protocol where such a failure occurs the transaction will roll back, e.g., because we use presumed abort semantics, failures prior to the end of the prepare phase <emphasis role="strong">always</emphasis> result in a rollback. If the participant is not in the correct state for the requested operation, e.g., <systemitem>TransactionPrepared</systemitem> when it has already been prepared, then the service writer will return 412.</simpara>
+<simpara>If the transaction coordinator receives any response other than 200 then the transaction <emphasis role="strong">always</emphasis> rolls back.</simpara>
+<simpara>After a request to change the resource state using <systemitem>TransactionRolledBack</systemitem>, <systemitem>TransactionCommitted</systemitem> or <systemitem>TransactionCommittedOnePhase</systemitem>, any subsequent PUT request will return a 409 or 410 code.</simpara>
 <simpara>The usual rules of heuristic decisions apply here (i.e., the participant cannot forget the choice it made until it is told to by the coordinator).</simpara>
-<simpara>Performing a DELETE on the participant-resource URI will cause the participant to forget any heuristic decision it made on behalf of the transaction. If the operation succeeds then 200 will be returned and the implementation will delete the resource; a subsequent PUT or GET request returns 410. Any other response means the coordinator will keep retrying.</simpara>
+<simpara>Performing a DELETE on the <systemitem>participant-resource</systemitem> URI will cause the participant to forget any heuristic decision it made on behalf of the transaction. If the operation succeeds then 200 will be returned and the implementation will delete the resource; a subsequent PUT or GET request returns 410. Any other response means the coordinator will keep retrying.</simpara>
 </section>
 <section id="_recovery">
 <title>Recovery</title>
-<simpara>In general it is assumed that failed actors in this protocol, i.e., coordinator or participants, will recover on the same URI as they had prior to the failure. HTTP provides a number of options to support temporary or permanent changes of address, including 301 (Moved Permanently) and 307 (Temporary Redirect). If that is not possible then these endpoints are expected to return a 301 status code or some other way of indicating that the participant has moved elsewhere. HTTP response codes such as 307 are also acceptable if a temporary redirection is used.</simpara>
+<simpara>In general it is assumed that failed actors in this protocol, i.e., coordinator or participants, will recover on the same URI as they had prior to the failure. HTTP provides a number of options to support temporary or permanent changes of address, including 301 (Moved Permanently) and 307 (Temporary Redirect), if the actor is unable to recover on the same URI then requests to the original endpoints should return an HTTP status code of 301 (Moved Permanently), 307 (Temporary Redirect) is also acceptable.</simpara>
 <simpara>However, sometimes it is possible that a participant may crash and recover on a different URI, e.g., the original machine is unavailable, or that for expediency it is necessary to move recovery to a different machine. In that case it may be the case that the transaction coordinator is unable to complete the transaction, even during recovery. As a result this protocol defines a way for a recovering server to update the information maintained by the coordinator on behalf of these participants.</simpara>
-<simpara>If the recovering participant uses the participant-recovery URI returned by the coordinator during enlistment then a GET on the participant-recovery URI will return the participant resource and terminator as link headers that the participant used during the original registration.</simpara>
-<simpara>Performing a PUT on the participant-recovery URI will overwrite the old participant URI with the new one supplied. This operation is equivalent to re-enlisting the participant. This will also trigger off a recovery attempt on the associated transaction using the new participant URI. For example to update location URIs, a two phase aware participant would PUT the following document:</simpara>
+<simpara>If the recovering participant uses the <systemitem>participant-recovery</systemitem> URI returned by the coordinator during enlistment then a GET on the <systemitem>participant-recovery</systemitem> URI will return the participant resource and terminator as link headers that the participant used during the original registration.</simpara>
+<simpara>Performing a PUT on the <systemitem>participant-recovery</systemitem> URI will overwrite the old participant URI with the new one supplied. This operation is equivalent to re-enlisting the participant. This will also trigger off a recovery attempt on the associated transaction using the new participant URI. For example to update location URIs, a two phase aware participant would PUT the following document:</simpara>
 <programlisting language="html" linenumbering="unnumbered">PUT /participant-recovery/1234 HTTP/1.1
 From: foo@bar.com
 Link:&lt;/new-participant-resource&gt;; rel=”participant”,
@@ -298,32 +301,32 @@ Link:&lt;/new-participant-resource&gt;; rel=”participant”,
 
 Content-Length: 0</programlisting>
 <simpara>Similarly for a two phase unaware participant.</simpara>
-<simpara>If, after performing the PUT request to the participant-recovery URI, the participant is not asked to complete (within an implementation dependent period) then the protocol requires that the participant reissue the PUT request.</simpara>
+<simpara>If, after performing the PUT request to the <systemitem>participant-recovery</systemitem> URI, the participant is not asked to complete (within an implementation dependent period) then the protocol requires that the participant re-issue the PUT request.</simpara>
 </section>
 <section id="_pre_and_post_two_phase_commit_processing">
 <title>Pre- and Post- Two-Phase Commit Processing</title>
 <simpara>Most modern transaction processing systems allow the creation of participants that do not take part in the two-phase commit protocol, but are informed before it begins and after it has completed. They are called Synchronizations, and are typically employed to flush volatile (cached) state, which may be being used to improve performance of an application, to a recoverable object or database prior to the transaction committing.</simpara>
 <simpara>This additional protocol is accomplished by supporting an additional two-phase commit protocol that encloses the protocol already discussed. This will be termed the Volatile Two Phase Commit protocol, as the participants involved in it are not required to be durable for the purposes of data consistency, whereas the other protocol will be termed the Durable Two Phase Commit protocol. The coordinator will not record any durable information on behalf of Volatile participants.</simpara>
-<simpara>In this enclosing protocol the Volatile prepare phase executes prior to the Durable prepare. The transaction-coordinator sends a PUT request to the registered volatile-participant: only if this prepare succeeds will the Durable protocol be executed. The volatile-participant has to indicate success by returning a 200 status code (any other code indicates failure). If the Durable protocol completes then this may be communicated to the Volatile participants through the commit or rollback phases.
-In this case the transaction-coordinator sends a PUT request to the registered volatile-participant with the outcome in the request body (using content type application/txstatus). However, because the coordinator does not maintain any information about these participants and the Durable protocol has completed, this is a best-effort approach only, i.e., such participants should not assume they will be informed about the transaction outcome. If that is a necessity then they should register with the Durable protocol instead.</simpara>
-<simpara>The primary difference between the Volatile and Durable protocols is that there is no recovery associated with the Volatile protocol so enlistment of volatile participants does not return a participant-recovery URI. In addition there can be no heuristic outcomes associated with the Volatile protocol. Once the Durable protocol has started no more registration in the Volatile protocol are allowed.  And finally, there is no one-phase commit optimization for the Volatile protocol.</simpara>
+<simpara>In this enclosing protocol the Volatile prepare phase executes prior to the Durable prepare. The <systemitem>transaction-coordinator</systemitem> sends a PUT request to the registered <systemitem>volatile-participant</systemitem>: only if this prepare succeeds will the Durable protocol be executed. The <systemitem>volatile-participant</systemitem> has to indicate success by returning a 200 status code (any other code indicates failure). If the Durable protocol completes then this may be communicated to the Volatile participants through the commit or rollback phases.
+In this case the <systemitem>transaction-coordinator</systemitem> sends a PUT request to the registered <systemitem>volatile-participant</systemitem> with the outcome in the request body (using content type <systemitem>application/txstatus</systemitem>). However, because the coordinator does not maintain any information about these participants and the Durable protocol has completed, this is a best-effort approach only, i.e., such participants should not assume they will be informed about the transaction outcome. If that is a necessity then they should register with the Durable protocol instead.</simpara>
+<simpara>The primary difference between the Volatile and Durable protocols is that there is no recovery associated with the Volatile protocol so enlistment of volatile participants does not return a <systemitem>participant-recovery</systemitem> URI. In addition there can be no heuristic outcomes associated with the Volatile protocol. Once the Durable protocol has started no more registration in the Volatile protocol are allowed.  And finally, there is no one-phase commit optimization for the Volatile protocol.</simpara>
 </section>
 </chapter>
 <chapter id="_container_integration">
 <title>Container Integration</title>
-<simpara>The RESTAT protocol described here is implemented as a JAX-RS service, deploys as a Servlet 3.0 application and depends on the Narayana TM as the back-end transaction engine. JAX-RS is the Java language support for building REST based applications - it is both an annotation-based API for defining resources and a run-time for mapping HTTP requests to Java methods. Thus any container supporting these two requirements (servlet 3.0 and the Narayana TM) will work.</simpara>
+<simpara>The RESTAT protocol described here is implemented as a JAX-RS service, deploys as a Servlet 3.0 application and depends on the Narayana TM as the back-end transaction engine. JAX-RS is the Java language support for building REST based applications - it is both an annotation-based API for defining resources and a run-time for mapping HTTP requests to Java methods. Thus any container supporting these two requirements (servlet 3.0 and the Narayana TM) can be used.</simpara>
 <section id="_deploying_as_a_wildfly_subsystem">
 <title>Deploying as a Wildfly Subsystem</title>
-<simpara>The RESTAT coordinator is integrated with the 8.0.0.Alpha3 release of the Wildfly application server (<ulink url="http://www.wildfly.org/download/">http://www.wildfly.org/download/</ulink>) as a subsystem (called RTS) so you do not have to explicitly deploy it. You do, however, need to start the application server using an optional server configuration:</simpara>
+<simpara>The RESTAT coordinator is integrated with the 8.0.0.Alpha3 and subsequent releases of the Wildfly application server (<ulink url="http://www.wildfly.org/download/">http://www.wildfly.org/download/</ulink>) as a subsystem (called RTS) so you do not have to explicitly deploy it. You do, however, need to start the application server using an optional server configuration:</simpara>
 <screen>    change directory to where the application server is installed
     Linux:   ./bin/standalone.sh --server-config=../../docs/examples/configs/standalone-rts.xml
     Windows: bin\standalone.bat --server-config=..\..\docs\examples\configs\standalone-rts.xml</screen>
-<simpara>For this mode of deployment the transaction-manager URI is <ulink url="http://&lt;host&gt;:&lt;port&gt;/rest-at-coordinator/tx/transaction-manager">http://&lt;host&gt;:&lt;port&gt;/rest-at-coordinator/tx/transaction-manager</ulink></simpara>
+<simpara>For this mode of deployment the <systemitem>transaction-manager</systemitem> URI is <ulink url="http://&lt;host&gt;:&lt;port&gt;/rest-at-coordinator/tx/transaction-manager">http://&lt;host&gt;:&lt;port&gt;/rest-at-coordinator/tx/transaction-manager</ulink></simpara>
 </section>
 <section id="_deploying_into_a_servlet_container">
 <title>Deploying into a Servlet Container</title>
-<simpara>For other versions of the applications server you will need to deploy the coordinator as a war archive using the standard war deployment mechanism appropriate to your particular container. The archive is contained in the bin folder of the narayana download (restat-web.war). If you are building from source the archive is located in rts/at/webservice/target/restat-web-&lt;version&gt;.war.</simpara>
-<simpara>For this mode of deployment the transaction-manager URI is <ulink url="http://&lt;host&gt;:&lt;port&gt;/rest-tx/tx/transaction-manager">http://&lt;host&gt;:&lt;port&gt;/rest-tx/tx/transaction-manager</ulink></simpara>
+<simpara>For other versions of the application server you will need to deploy the coordinator as a war archive using the standard war deployment mechanism appropriate to your particular container. The archive is contained in the bin folder of the narayana download (restat-web.war). If you are building from source the archive is located in rts/at/webservice/target/restat-web-&lt;version&gt;.war.</simpara>
+<simpara>For this mode of deployment the <systemitem>transaction-manager</systemitem> URI is <ulink url="http://&lt;host&gt;:&lt;port&gt;/rest-tx/tx/transaction-manager">http://&lt;host&gt;:&lt;port&gt;/rest-tx/tx/transaction-manager</ulink></simpara>
 </section>
 </chapter>
 <chapter id="_examples">
@@ -413,7 +416,7 @@ In order to enable bridging, service writer has to annotate either JAX-RS resour
 </chapter>
 <appendix id="_transaction_statuses">
 <title>Transaction Statuses</title>
-<simpara>Resources return the following status values in response to GET requests on the appropriate transaction-coordinator or participant-resource URI:</simpara>
+<simpara>Resources return the following status values in response to GET requests on the appropriate transaction-coordinator or <systemitem>participant-resource</systemitem> URI:</simpara>
 <variablelist>
 <varlistentry>
 <term>
