@@ -165,9 +165,9 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
             if (prop.isEmpty()) {
                 XMLParser.loadProperties("btconfig.xsd", "btconfig.xml", prop);
                 beanServerConnection = java.lang.management.ManagementFactory.getPlatformMBeanServer();
-                String managementAddress = System.getProperty("jboss.bind.address.management", "127.0.0.1");
+                String managementAddress = System.getProperty("jboss.bind.address.management", "localhost");
                 if (managementAddress.equals("0.0.0.0")) {
-                    managementAddress = "127.0.0.1";
+                    managementAddress = "localhost";
                 }
                 client = ModelControllerClient.Factory.create("remote", InetAddress.getByName(managementAddress), 9999,
                         getCallbackHandler());
