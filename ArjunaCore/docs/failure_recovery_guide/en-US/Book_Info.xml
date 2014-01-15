@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recover_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recovery_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <bookinfo id="book-ArjunaCore_Failure_Recover_Guide">
@@ -12,7 +12,7 @@
     <pubsnumber>0</pubsnumber>
     <abstract>
         <para>
-        The ArjunaCore Failure Recovery Guide contains information on how to use JBoss Transaction Service to develop
+        The ArjunaCore Failure Recovery Guide contains information on how to use &PRODUCT; to develop
         applications that use transaction technology to manage business processes.
       </para>
     </abstract>

@@ -4,10 +4,10 @@
 %BOOK_ENTITIES;
 ]>
 <bookinfo>
-   <title>JBossJTS Development Guide</title>
-   <subtitle>Developing distributed transactional applications with JBossJTS</subtitle>
-   <productname>JBossJTS</productname>
-   <productnumber>4.15.1</productnumber>
+   <title>&PRODUCT; Development Guide</title>
+   <subtitle>Developing distributed transactional applications with &PRODUCT;</subtitle>
+   <productname>&PRODUCT;</productname>
+   <productnumber>&VERSION;</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <!--

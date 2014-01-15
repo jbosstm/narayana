@@ -8,21 +8,29 @@
   <para>
     The Transaction Bridging Guide contains information on how to use &PRODUCT;.
     This guide provides information on how to integrate JTA (XA) and XTS (WS-AT) transactions using
-    the transaction bridge.
+    the transaction bridge. It provides a low level details on how the TXBridge is implemented and how to use it
+    manually.
   </para>
+  <note>
+    <title>Note</title>
+    <para>
+      Use the XTS administration and development guide for an explanation of how to use the TXBridge automatically.
+    </para>
+  </note>
   <section>
     <title>Audience</title>
     <para>
       This guide is most relevant for application developers working in environments that
-      integrate traditional JavaEE transactions usage and transactional Web Services.
+      integrate traditional JavaEE transactions usage and transactional Web Services, and need a low level control of
+      the TXBridge. Also for the developers who want to participate in the project.
     </para>
   </section>
   <section>
     <title>Prerequisites</title>
     <para>
-      JBossTS uses the Java programming language and this manual assumes that you are familiar
+      &PRODUCT; uses the Java programming language and this manual assumes that you are familiar
       with programming in Java. In addition, a familiarity with the JTA and XTS components of
-      JBossTS is assumed. You should read the relevant Programmer's Guides before tackling this
+      &PRODUCT; is assumed. You should read the relevant Programmer's Guides before tackling this
       document.
     </para>
   </section>

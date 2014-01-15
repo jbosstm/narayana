@@ -104,7 +104,7 @@
       </listitem>
     </itemizedlist>
     <para>
-      Therefore, JBoss Transaction Service provides runtime options to enable possible threading optimizations. By setting the
+      Therefore, &PRODUCT; provides runtime options to enable possible threading optimizations. By setting the
       <varname>CoordinatorEnvironmentBean.asyncBeforeSynchronization</varname>
       environment variable to <literal>YES</literal>, during the
       <methodname>beforeSynchronization</methodname> phase a separate thread
@@ -209,13 +209,13 @@
     </para>
     <note>
       <para>
-        Default timeout values for other JBoss Transaction Service components, such as JTS, may be different and you should consult the
+        Default timeout values for other &PRODUCT; components, such as JTS, may be different and you should consult the
         relevant documentation to be sure.
       </para>
     </note>
     <para>
       When a top-level transaction is created with a non-zero timeout, it is subject to being rolled back if it has not
-      completed within the specified number of seconds. JBoss Transaction Service uses a separate reaper thread which
+      completed within the specified number of seconds. &PRODUCT; uses a separate reaper thread which
       monitors all locally created transactions, and forces them to roll back if their timeouts elapse. If the
       transaction cannot be rolled back at that point, the reaper will force it into a rollback-only state so that it
       will eventually be rolled back.
@@ -238,7 +238,7 @@
     </warning>
     <para>
       If a value of <literal>0</literal> is specified for the timeout of a top-level transaction, or no timeout is
-      specified, then JBoss Transaction Service will not impose any timeout on the transaction, and the transaction will
+      specified, then &PRODUCT; will not impose any timeout on the transaction, and the transaction will
       be allowed to run indefinitely. This default timeout can be overridden by setting the
       <varname>CoordinatorEnvironmentBean.defaultTimeout</varname> property variable when using to the required timeout
       value in seconds, when using ArjunaCore, ArjunaJTA or ArjunaJTS.

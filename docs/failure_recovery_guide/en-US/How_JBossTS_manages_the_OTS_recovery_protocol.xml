@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
-  <title>How JBossTS manages the OTS Recovery Protocol</title>
+  <title>How &PRODUCT; manages the OTS Recovery Protocol</title>
   <section>
     <title>Recovery Protocol in OTS - Overview</title>
     <para>To manage recovery in case of failure, the OTS specification has defined a recovery protocol. Transaction’s participants in a doubt status
@@ -22,11 +23,11 @@
       failure occurring during the transaction.</para>
   </section>
   <section>
-    <title>RecoveryCoordinator in JBossTS</title>
+    <title>RecoveryCoordinator in &PRODUCT;</title>
     <para>On each resource registration a RecoveryCoordinator Object is expected to be created and returned to the application that invoked the
       register_resource operation. Behind each CORBA object there should be an object implementation or Servant object, in POA terms, which performs
       operations made on a RecoveryCoordinator object. Rather than to create a RecoveryCoordinator object with its associated servant on each
-      register_resource, JBossTS enhances performance by avoiding the creation of servants but it relies on a default RecoveryCoordinator object with
+      register_resource, &PRODUCT; enhances performance by avoiding the creation of servants but it relies on a default RecoveryCoordinator object with
       it’s associated default servant to manage all replay_completion invocations.</para>
     <para>In the next sections we first give an overview of the Portable Object Adapter architecture, then we describe how this architecture is used
       to provide RecoveryCoordinator creation with optimization as explained above.</para>
@@ -200,7 +201,7 @@
         reference used by
         the client. Among these information there are the IP address and the port number where resides the server and also the POA
         name. To perform
-        replay_completion invocations, the solution adopted by JBossTS is to provide one Servant, per machine, and located in the
+        replay_completion invocations, the solution adopted by &PRODUCT; is to provide one Servant, per machine, and located in the
         RecoveryManager
         process, a separate process from client or server applications. The next section explains how the indirection to a default
         Servant located on

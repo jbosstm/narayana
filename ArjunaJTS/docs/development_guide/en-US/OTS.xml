@@ -6,10 +6,10 @@
 <chapter>
   <title>Introduction to the OTS</title>
   <para>
-    Basic JBossTS programming involves using the OTS interfaces provided in the <systemitem>CosTransactions</systemitem>
+    Basic &PARENT_PRODUCT; programming involves using the OTS interfaces provided in the <systemitem>CosTransactions</systemitem>
     module, which is specified in <filename>CosTransactions.idl</filename>. This chapter is based on the <systemitem>OTS
     Specification1</systemitem>, specifically with the aspects of OTS that are valuable for developing OTS applications
-    using JBossTS. Where relevant, each section describes JBossTS implementation decisions and runtime choices available
+    using &PARENT_PRODUCT;. Where relevant, each section describes &PARENT_PRODUCT; implementation decisions and runtime choices available
     to you. These choices are also summarized at the end of this chapter. Subsequent chapters illustrate using these
     interfaces to construct transactional applications.
   </para>
@@ -18,11 +18,11 @@
     <title>Defining the OTS</title>
     <para>
       The raw <interfacename>CosTransactions</interfacename> interfaces reside in package
-      <package>org.omg.CosTransactions</package>. The JBossTS implementations of these interfaces reside in package
+      <package>org.omg.CosTransactions</package>. The &PARENT_PRODUCT; implementations of these interfaces reside in package
       <package>com.arjuna.CosTransactions</package> and its sub-packages.
     </para>
     <para>
-      You can override many run-time decisions of JBossTS Java properties specified at run-time. The property names are
+      You can override many run-time decisions of &PARENT_PRODUCT; Java properties specified at run-time. The property names are
       mentioned in the <classname>com.arjuna.ats.jts.common.Environment</classname> class.
     </para>
     <figure>
@@ -239,7 +239,7 @@
       The Transaction Service implementation allows the <classname>TransactionFactory</classname> to be a separate
       server from the application, shared by transactions clients, and which manages transactions on their
       behalf. However, the specification also allows the TransactionFactory to be implemented by an object within each
-      transactional client. This is the default implementation used by JBossTS, because it removes the need for a
+      transactional client. This is the default implementation used by &PARENT_PRODUCT;, because it removes the need for a
       separate service to be available in order for transactional applications to execute, and therefore reduces a point
       of failure.
     </para>
@@ -256,7 +256,7 @@
       </listitem>
       <listitem>
         <para>
-          Addition to the ORB’s initial references, using a JBossTS specific references file.
+          Addition to the ORB’s initial references, using a &PARENT_PRODUCT; specific references file.
         </para>
       </listitem>
       <listitem>
@@ -268,7 +268,7 @@
     <section>
       <title>OTS configuration file</title>
       <para>
-        Similar to the <methodname>resolve_initial_references</methodname>, JBossTS supports an initial reference file
+        Similar to the <methodname>resolve_initial_references</methodname>, &PARENT_PRODUCT; supports an initial reference file
         where you can store references for specific services, and use these references at runtime. The file,
         <filename>CosServices.cfg</filename>, consists of two columns, separated by a single space.
       </para>
@@ -286,7 +286,7 @@
       </itemizedlist>
       <para>
         <filename>CosServices.cfg</filename> is usually located in the <filename>etc/</filename> directory of the
-        JBossTS installation. The OTS server automatically registers itself in this file, creating it if necessary, if
+        &PARENT_PRODUCT; installation. The OTS server automatically registers itself in this file, creating it if necessary, if
         you use the configuration file mechanism. Stale information is also automatically removed. The Transaction
         Service locates <filename>CosServices.cfg</filename> at runtime, using the
         <classname>OrbPortabilityEnvironmentBean</classname> properties <varname>initialReferencesRoot</varname> and
@@ -299,7 +299,7 @@
     <section>
       <title>Name service</title>
       <para>
-        If your ORB supports a name service, and you configure JBossTS to use it, the transaction manager is
+        If your ORB supports a name service, and you configure &PARENT_PRODUCT; to use it, the transaction manager is
         automatically registered with it.
       </para>
       
@@ -308,7 +308,7 @@
     <section>
       <title>resolve_initial_references</title>
       <para>
-        JBossTS does not support <methodname>resolve_initial_references</methodname>.
+        &PARENT_PRODUCT; does not support <methodname>resolve_initial_references</methodname>.
       </para>
       
     </section>
@@ -331,13 +331,13 @@
             </row>
             <row>
               <entry>NAME_SERVICE</entry>
-              <entry><para>JBossTS tries to use a name service to locate the transaction factory. If the ORB does not
-              support the name service mechanism, JBossTS throws an exception.</para></entry>
+              <entry><para>&PARENT_PRODUCT; tries to use a name service to locate the transaction factory. If the ORB does not
+              support the name service mechanism, &PARENT_PRODUCT; throws an exception.</para></entry>
             </row>
             <row>
               <entry>BIND_CONNECT</entry>
-              <entry><para>JBossTS uses the ORB-specific bind mechanism. If the ORB does not support such a mechanism,
-              JBossTS throws an exception.</para></entry>
+              <entry><para>&PARENT_PRODUCT; uses the ORB-specific bind mechanism. If the ORB does not support such a mechanism,
+              &PARENT_PRODUCT; throws an exception.</para></entry>
             </row>
           </tbody>
         </tgroup>
@@ -352,7 +352,7 @@
   <section>
     <title>Transaction timeouts</title>
     <para>
-      As of JBossTS 4.5, transaction timeouts are unified across all transaction components and are controlled by
+      As of &PARENT_PRODUCT; 4.5, transaction timeouts are unified across all transaction components and are controlled by
       <application>ArjunaCore</application>. Refer to the <citetitle>ArjunaCore Development Guide</citetitle> for more
       information.
     </para>
@@ -506,7 +506,7 @@
         them before calling the targeted operation.
       </para>
       <para>
-        If you need implicit context propagation, ensure that JBossTS is correctly initialized before you create
+        If you need implicit context propagation, ensure that &PARENT_PRODUCT; is correctly initialized before you create
         objects. Both client and server must agree to use implicit propagation. To use implicit context propagation,
         your ORB needs to support filters or interceptors, or the <interfacename>CosTSPortability</interfacename>
         interface.
@@ -531,7 +531,7 @@
       </informaltable>
       <important>
         <para>
-          Interposition is required to use the JBossTS Advanced API.
+          Interposition is required to use the &PARENT_PRODUCT; Advanced API.
         </para>
       </important>
     </section>
@@ -585,15 +585,15 @@
     </para>
     
     <section id="control-JBossTS-specifics">
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         The transaction creator must be able to use its <interfacename>Control</interfacename>, but the OTS
-        implementation decides whether other threads can use <interfacename>Control</interfacename>. JBossTS places no
+        implementation decides whether other threads can use <interfacename>Control</interfacename>. &PARENT_PRODUCT; places no
         restrictions the users of the <interfacename>Control</interfacename>.
       </para>
       <para>
         The OTS specification does not provide a means to indicate to the transaction system that information and
-        objects associated with a given transaction can be purged from the system. In JBossTS, the
+        objects associated with a given transaction can be purged from the system. In &PARENT_PRODUCT;, the
         <interfacename>Current</interfacename> interface destroys all information about a transaction when it
         terminates. For that reason, do not use any <interfacename>Control</interfacename> references to the transaction
         after it commits or rolls back.
@@ -607,7 +607,7 @@
         Java runtime.
       </para>
       <para>
-        In JBossTS, you can propagate <interfacename>Coordinators</interfacename> and
+        In &PARENT_PRODUCT;, you can propagate <interfacename>Coordinators</interfacename> and
         <interfacename>Terminators</interfacename> between execution environments.
       </para>
     </section>
@@ -643,7 +643,7 @@
     </para>
     
     <section>
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         See <xref linkend="control-JBossTS-specifics"/> for how long <interfacename>Terminator</interfacename>
         references remain valid after a transaction terminates.
@@ -653,7 +653,7 @@
         failure occurs, and continue to commit, or rollback. To guarantee ACID properties, flush these state changes to
         the persistence store implementation before the transaction proceeds to commit. Otherwise, the application may
         assume that the transaction has committed, when the state changes may still volatile storage, and may be lost by
-        a subsequent hardware failure. By default, JBossTS makes sure that such state changes are flushed. However,
+        a subsequent hardware failure. By default, &PARENT_PRODUCT; makes sure that such state changes are flushed. However,
         these flushes can impose a significant performance penalty to the application. To prevent transaction state
         flushes, set the <varname>TRANSACTION_SYNC</varname> variable to <literal>OFF</literal>. Obviously, do this at
         your own risk.
@@ -662,7 +662,7 @@
         When a transaction commits, if only a single resource is registered, the transaction manager does not need to
         perform the two-phase protocol. A single phase commit is possible, and the outcome of the transaction is
         determined by the resource. In a distributed environment, this optimization represents a significant performance
-        improvement. As such, JBossTS defaults to performing single phase commit in this situation. Override this
+        improvement. As such, &PARENT_PRODUCT; defaults to performing single phase commit in this situation. Override this
         behavior at runtime by setting the <varname>COMMIT_ONE_PHASE</varname> property variable to
         <literal>NO</literal>.
       </para>
@@ -899,7 +899,7 @@
     </table>
 
     <section>
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         See <xref linkend="control-JBossTS-specifics" /> to control how long <interfacename>Coordinator</interfacename>
         references remain valid after a transaction terminates.
@@ -1049,9 +1049,9 @@
                 Modifies the timeout associated with top-level transactions for subsequent
                 <methodname>begin</methodname> requests, for this thread only. Subsequent transactions are subject to
                 being rolled back if they do not complete before the specified number of seconds elapses. Default
-                timeout values for transactions without explicitly-set timeouts are implementation-dependent. JBossTS
+                timeout values for transactions without explicitly-set timeouts are implementation-dependent. &PARENT_PRODUCT;
                 uses a value of <literal>0</literal>, which results in transactions never timing out. There is no
-                interface in the OTS for obtaining the current timeout associated with a thread. However, JBossTS
+                interface in the OTS for obtaining the current timeout associated with a thread. However, &PARENT_PRODUCT;
                 provides additional support for this. See <xref linkend="current-jbossts-specific" />.
               </para>
             </entry>
@@ -1117,32 +1117,32 @@
     </figure>
 
     <section id="current-jbossts-specific">
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         Ideally, you should Obtain <interfacename>Current</interfacename> by using the life-cycle service factory
-        finder. However, very few ORBs support this. JBossTS provides method <methodname>get_current</methodname> of
+        finder. However, very few ORBs support this. &PARENT_PRODUCT; provides method <methodname>get_current</methodname> of
         <interfacename>Current</interfacename> for this purpose. This class hides any ORB-specific mechanisms required
         for obtaining <interfacename>Current</interfacename>.
       </para>
       <para>
-        If no timeout value is associated with <interfacename>Current</interfacename>, JBossTS associates no timeout
+        If no timeout value is associated with <interfacename>Current</interfacename>, &PARENT_PRODUCT; associates no timeout
         with the transaction. The current OTS specification does not provide a means whereby the timeout associated with
-        transaction creation can be obtained. However, JBossTS Current supports a get_timeout method.
+        transaction creation can be obtained. However, &PARENT_PRODUCT; Current supports a get_timeout method.
       </para>
       <para>
-        By default, the JBossTS implementation of <interfacename>Current</interfacename> does not use a separate
+        By default, the &PARENT_PRODUCT; implementation of <interfacename>Current</interfacename> does not use a separate
         <classname>TransactionFactory</classname> server when creating new top-level transactions. Each transactional
         client has a <classname>TransactionFactory</classname> co-located with it. Override this by setting the
         <varname>OTS_TRANSACTION_MANAGER</varname> variable to <literal>YES</literal>.
       </para>
       <para>
-        The transaction factory is located in the <filename>bin/</filename> directory of the JBossTS distribution. Start
+        The transaction factory is located in the <filename>bin/</filename> directory of the &PARENT_PRODUCT; distribution. Start
         it by executing the OTS script. <!--What script?--> <interfacename>Current</interfacename> locates the factory
         in a manner specific to the ORB: using the name service, through
         <methodname>resolve_initial_references</methodname>, or via the <filename>CosServices.cfg</filename> file. The
         <filename>CosServices.cfg</filename> file is similar to <methodname>resolve_initial_references</methodname>, and
         is automatically updated when the transaction factory is started on a particular machine. Copy the file to each
-        JBossTS instance which needs to share the same transaction factory.
+        &PARENT_PRODUCT; instance which needs to share the same transaction factory.
       </para>
       <para>
         If you do not need subtransaction support, set the <varname>OTS_SUPPORT_SUBTRANSACTIONS</varname> property
@@ -1363,15 +1363,15 @@
     </para>
     
     <section>
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         A <classname>SubtransactionAwareResource</classname> which raises an exception to the commitment of a
         transaction may create inconsistencies within the transaction if other
         <classname>SubtransactionAwareResources</classname> think the transaction committed. To prevent this possibility
-        of inconsistency, JBossTS forces the enclosing transaction to abort if an exception is raised.
+        of inconsistency, &PARENT_PRODUCT; forces the enclosing transaction to abort if an exception is raised.
       </para>
       <para>
-        JBossTS also provides extended subtransaction aware resources to overcome this, and other problems. See Section
+        &PARENT_PRODUCT; also provides extended subtransaction aware resources to overcome this, and other problems. See Section
         for further details.
       </para>
       
@@ -1425,7 +1425,7 @@
 
     
     <section>
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
         Synchronizations must be called before the top-level transaction commit protocol starts, and after it
         completes. By default, if the transaction is instructed to roll back, the Synchronizations associated with the
@@ -1556,12 +1556,12 @@
       In a single-address space application, transaction contexts are implicitly shared between clients and objects,
       regardless of whether or not the objects support the <interfacename>TransactionalObject</interfacename>
       interface. To preserve distribution transparency, where implicit transaction propagation is supported, you can
-      direct JBossTS to always propagate transaction contexts to objects. The default is only to propagate if the object
+      direct &PARENT_PRODUCT; to always propagate transaction contexts to objects. The default is only to propagate if the object
       is a <interfacename>TransactionalObject</interfacename>. Set the <varname>OTS_ALWAYS_PROPAGATE_CONTEXT</varname>
       property variable to <literal>NO</literal> to override this behavior.
     </para>
     <para>
-      By default, JBossTS does not require objects which support the <interfacename>TransactionalObject</interfacename>
+      By default, &PARENT_PRODUCT; does not require objects which support the <interfacename>TransactionalObject</interfacename>
       interface to invoked within the scope of a transaction. The object determines whether it should be invoked within
       a transaction. If so, it must throw the <systemitem>TransactionRequired</systemitem> exception. Override this
       default by setting the <varname>OTS_NEED_TRAN_CONTEXT</varname> shell environment variable to
@@ -1604,7 +1604,7 @@
       participate in the commit protocol. Interposed coordinators form a tree structure with their parent coordinators.
     </para>
     <para>
-      To use interposition, ensure that JBossTS is correctly initialized before creating objects. Also, the client and
+      To use interposition, ensure that &PARENT_PRODUCT; is correctly initialized before creating objects. Also, the client and
       server must both use interposition. Your ORB must support filters or interceptors, or the
       <interfacename>CosTSPortability</interfacename> interface, since interposition requires the use of implicit
       transaction propagation. To use interposition, set the <varname>OTS_CONTEXT_PROP_MODE</varname> property variable
@@ -1612,7 +1612,7 @@
     </para>
     <note>
       <para>
-        Interposition is not required if you use the JBossTS advanced API.
+        Interposition is not required if you use the &PARENT_PRODUCT; advanced API.
       </para>
     </note>
   </section>
@@ -1753,9 +1753,9 @@
       </tgroup>
     </informaltable>
     <section>
-      <title>JBossTS specifics</title>
+      <title>&PARENT_PRODUCT; specifics</title>
       <para>
-        Where support from the ORB is available, JBossTS supports X/Open checked transaction behavior. However, unless
+        Where support from the ORB is available, &PARENT_PRODUCT; supports X/Open checked transaction behavior. However, unless
         the <varname>OTS_CHECKED_TRANSACTIONS</varname> property variable is set to <literal>YES</literal>, checked
         transactions are disabled. This is the default setting.
       </para>
@@ -1768,10 +1768,10 @@
         In a multi-threaded application, multiple threads may be associated with a transaction during its lifetime,
         sharing the context. In addition, if one thread terminates a transaction, other threads may still be active
         within it. In a distributed environment, it can be difficult to guarantee that all threads have finished with a
-        transaction when it terminates. By default, JBossTS issues a warning if a thread terminates a transaction when
+        transaction when it terminates. By default, &PARENT_PRODUCT; issues a warning if a thread terminates a transaction when
         other threads are still active within it, but allow the transaction termination to continue. You can choose to
         block the thread which is terminating the transaction until all other threads have disassociated themselves from
-        its context, or use other methods to solve the problem. JBossTS provides the
+        its context, or use other methods to solve the problem. &PARENT_PRODUCT; provides the
         <classname>com.arjuna.ats.arjuna.coordinator.CheckedAction</classname> class, which allows you to override the
         thread and transaction termination policy. Each transaction has an instance of this class associated with it,
         and you can implement the class on a per-transaction basis.
@@ -1830,7 +1830,7 @@
   </section>
 
   <section>
-    <title>Summary of JBossTS implementation decisions</title>
+    <title>Summary of &PARENT_PRODUCT; implementation decisions</title>
     <itemizedlist>
       <listitem>
         <para>
@@ -1855,15 +1855,15 @@
       </listitem>
       <listitem>
         <para>
-          If you try to commit a transaction when there are still active subtransactions within it, JBossTS rolls back
+          If you try to commit a transaction when there are still active subtransactions within it, &PARENT_PRODUCT; rolls back
           the parent and the subtransactions.
         </para>
       </listitem>
       <listitem>
         <para>
-          JBossTS includes full support for nested transactions. However, if a resource raises an exception to the
+          &PARENT_PRODUCT; includes full support for nested transactions. However, if a resource raises an exception to the
           commitment of a subtransaction after other resources have previously been told that the transaction committed,
-          JBossTS forces the enclosing transaction to abort. This guarantees that all resources used within the
+          &PARENT_PRODUCT; forces the enclosing transaction to abort. This guarantees that all resources used within the
           subtransaction are returned to a consistent state. You can disable support for subtransactions by setting the
           <varname>OTS_SUPPORT_SUBTRANSACTIONS</varname> variable to <literal>NO</literal>.
         </para>

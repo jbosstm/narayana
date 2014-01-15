@@ -4,11 +4,11 @@
 %BOOK_ENTITIES;
 ]>
 <bookinfo id="book-JBossJTA_Administration_Guide">
-  <title>JBossJTA Administration Guide</title>
-  <subtitle>Administration of the &PRODUCT; toolkit, which implements the JTA API in the &PRODUCT;
+  <title>&PRODUCT; Administration Guide</title>
+  <subtitle>Administration of the &PRODUCT; toolkit, which implements the JTA API in the &PARENT_PRODUCT;
     Transaction Service</subtitle>
-  <productname>JBossJTA</productname>
-  <productnumber>4.15.1</productnumber>
+  <productname>&PRODUCT;</productname>
+  <productnumber>&VERSION;</productnumber>
   <edition>1</edition>
   <pubsnumber>1</pubsnumber>
   <!-- <abstract> <para> A short overview and summary of the book&#39;s subject and purpose, traditionally no more than one paragraph long. Note: the abstract 

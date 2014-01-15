@@ -227,10 +227,10 @@
     </itemizedlist>
   </section>
   <section>
-    <title>JBossJTA Configuration options</title>
+    <title>&PRODUCT; JTA Configuration options</title>
     <para>
       The canonical reference for configuration options is the javadoc of the various EnvironmentBean classes. For
-      JBossJTA, these classes are the ones provided by ArjunaCore, as well as:
+      &PRODUCT; JTA, these classes are the ones provided by ArjunaCore, as well as:
     </para>
     <itemizedlist>
       <listitem>
@@ -246,10 +246,10 @@
     </itemizedlist>
   </section>
   <section>
-    <title>JBossJTS Options</title>
+    <title>&PRODUCT; JTS Options</title>
     <para>
       The canonical reference for configuration options is the javadoc of the various
-      <classname>EnvironmentBean</classname> classes, For ArjunaJTS these are the ones 
+      <classname>EnvironmentBean</classname> classes, For &PRODUCT; JTS these are the ones
       provided by ArjunaCore, as well as:
     </para>
     <itemizedlist>

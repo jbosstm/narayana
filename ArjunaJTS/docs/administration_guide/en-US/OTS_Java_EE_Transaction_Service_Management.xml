@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
@@ -9,8 +9,8 @@
   <section>
     <title>Starting the run-time system</title>
     <para>
-      The JBossTS run-time support consists of run-time packages and the OTS transaction manager server. By default,
-      JBossTS does not use a separate transaction manager server. Instead, transaction managers are co-located with each
+      The &PARENT_PRODUCT; run-time support consists of run-time packages and the OTS transaction manager server. By default,
+      &PARENT_PRODUCT; does not use a separate transaction manager server. Instead, transaction managers are co-located with each
       application process to improve performance and improve application fault-tolerance by reducing application
       dependency on other services.
     </para>
@@ -32,7 +32,7 @@
       </listitem>
       <listitem>
         <para>
-          Via a JBossTS specific references file.
+          Via a &PARENT_PRODUCT; specific references file.
         </para>
       </listitem>
       <listitem>
@@ -62,7 +62,7 @@
             <entry>NAME_SERVICE</entry>
             <entry>
               <para>
-                JBossTS attempts to use a name service to register the transaction factory. If this is not supported, an
+                &PARENT_PRODUCT; attempts to use a name service to register the transaction factory. If this is not supported, an
                 exception is thrown.
               </para>
             </entry>
@@ -71,7 +71,7 @@
             <entry>BIND_CONNECT</entry>
             <entry>
               <para>
-                JBossTS uses the ORB-specific bind mechanism. If this is not supported, an exception is thrown.
+                &PARENT_PRODUCT; uses the ORB-specific bind mechanism. If this is not supported, an exception is thrown.
               </para>
             </entry>
           </row>
@@ -79,7 +79,7 @@
             <entry>RESOLVE_INITIAL_REFERENCES</entry>
             <entry>
               <para>
-                JBossTS attempts to register the transaction service with the ORB's initial service references. If the
+                &PARENT_PRODUCT; attempts to register the transaction service with the ORB's initial service references. If the
                 ORB does not support this, an exception is thrown, and another option must be used.
               </para>
             </entry>
@@ -91,7 +91,7 @@
     <section>
       <title>OTS configuration file</title>
       <para>
-        Similar to the <systemitem>resolve_initial_references</systemitem>, JBossTS supports an initial reference file
+        Similar to the <systemitem>resolve_initial_references</systemitem>, &PARENT_PRODUCT; supports an initial reference file
         where references for specific services can be stored and used at runtime. The file,
         <filename>CosServices.cfg</filename>, consists of two columns: the service name (in the case of the OTS server
         TransactionService), and the IOR, separated by a single space. <filename>CosServices.cfg</filename> is located
@@ -138,7 +138,7 @@
     <section>
       <title>Name service</title>
       <para>
-        If your ORB supports a name service, and JBossTS is configured to use it, the transaction manager is registered
+        If your ORB supports a name service, and &PARENT_PRODUCT; is configured to use it, the transaction manager is registered
         with it automatically. There is no further work required.
       </para>
       <note>
@@ -188,20 +188,20 @@
   <section>
     <title>XA Specific management</title>
     <para>
-      Each XA Xid that JBossTS creates must have a unique node identifier encoded within it. JBossTS only recovers
+      Each XA Xid that &PARENT_PRODUCT; creates must have a unique node identifier encoded within it. &PARENT_PRODUCT; only recovers
       transactions and states that match a specified node identifier. Provide the node identifier with the
-      <varname>CoreEnvironmentBean.nodeIdentifier</varname> property. This value must be unique across your JBossTS
-      instances. If you do not provide a value, JBossTS generates one and reports the value via the logging
+      <varname>CoreEnvironmentBean.nodeIdentifier</varname> property. This value must be unique across your &PARENT_PRODUCT;
+      instances. If you do not provide a value, &PARENT_PRODUCT; generates one and reports the value via the logging
       infrastructure.
     </para>
     <para>
-      When running XA recovery, you need to specify which types of Xid JBossTS can recover. Use the
+      When running XA recovery, you need to specify which types of Xid &PARENT_PRODUCT; can recover. Use the
       <varname>JTAEnvironmentBean.xaRecoveryNodes</varname> property to provide one or more values, in a space-separated
       list.
     </para>
     <important>
       <para>
-      A value of ‘*’ forces JBossTS to recover, and possibly rollback, all transactions, regardless of their node
+      A value of ‘*’ forces &PARENT_PRODUCT; to recover, and possibly rollback, all transactions, regardless of their node
       identifier. Use this value with extreme caution.
       </para>
     </important>
@@ -217,7 +217,7 @@
         <term>Purely local JTA</term>
         <listitem>
           <para>
-            Only non-distributed JTA transactions can be executed. This is the only version available with the JBossJTA
+            Only non-distributed JTA transactions can be executed. This is the only version available with the &PRODUCT;
             product.
           </para>
         </listitem>
@@ -226,14 +226,14 @@
         <term>Remote, CORBA-based JTA</term>
         <listitem>
           <para>
-            Distributed JTA transactions can be executed. This version is only available with the JBossTS product and
+            Distributed JTA transactions can be executed. This version is only available with the $PARENT_PRODUCT product and
             requires a supported CORBA ORB.
           </para>
         </listitem>
       </varlistentry>
     </variablelist>
     <para>
-      Both of these implementations are fully compatible with the transactional JDBC driver provided with JBossTS.
+      Both of these implementations are fully compatible with the transactional JDBC driver provided with &PARENT_PRODUCT;.
     </para>
     <procedure>
       <title>Selecting the local JTA implementation</title>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTA_Quick_Start_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Quick Start to JTA</title>
@@ -14,7 +15,7 @@
     <para>The key Java packages (and corresponding jar files) for writing basic JTA applications are:</para>
     <itemizedlist>
       <listitem>
-        <para>com.arjuna.ats.jts: this package contains the JBossTS implementations of the JTS and JTA.</para>
+        <para>com.arjuna.ats.jts: this package contains the &PARENT_PRODUCT; implementations of the JTS and JTA.</para>
       </listitem>
       <listitem>
         <para>com.arjuna.ats.jta: this package contains local and remote JTA implementation support.</para>
@@ -23,8 +24,8 @@
         <para>com.arjuna.ats.jdbc: this package contains transactional JDBC support.</para>
       </listitem>
     </itemizedlist>
-    <para>All of these packages appear in the lib directory of the JBossTS installation, and should be added to the programmer’s CLASSPATH.</para>
-    <para>In order to fully utilize all of the facilities available within JBossTS, it will be necessary to add some additional jar files to your
+    <para>All of these packages appear in the lib directory of the &PARENT_PRODUCT; installation, and should be added to the programmer’s CLASSPATH.</para>
+    <para>In order to fully utilize all of the facilities available within &PARENT_PRODUCT;, it will be necessary to add some additional jar files to your
       classpath. See bin/setup-env.sh or bin\setup-env.bat for details.</para>
   </section>
   <section>
@@ -121,7 +122,7 @@
   </section>
   <section>
     <title>JDBC and Transactions</title>
-    <para>ArjunaJTS supports the construction of both local and distributed transactional applications which access databases using the JDBC APIs.
+    <para>&PARENT_PRODUCT; JTS supports the construction of both local and distributed transactional applications which access databases using the JDBC APIs.
       JDBC supports two-phase commit of transactions, and is similar to the XA X/Open standard. The JDBC support is found in the com.arjuna.ats.jdbc
       package.</para>
     <para>The ArjunaJTS approach to incorporating JDBC connections within transactions is to provide transactional JDBC drivers through which all

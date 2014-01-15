@@ -45,10 +45,10 @@
           it within the ORB class. This method should be
           used in preference to the raw ORB interface
           since the
-          <emphasis>JBoss Transaction Service</emphasis>
+          <emphasis>&PARENT_PRODUCT;</emphasis>
           requires a reference to the ORB. If this method is not used, setOrb must be called prior
           to using
-          <emphasis>JBoss Transaction Service</emphasis>
+          <emphasis>&PARENT_PRODUCT;</emphasis>
           .
         </para>
       </listitem>
@@ -76,7 +76,7 @@
       <listitem>
         <para>
           <literal>addAttribute</literal>
-          : this method allows the application to register classes with JBoss Transaction Service
+          : this method allows the application to register classes with &PARENT_PRODUCT;
           which will be called either before, or after the ORB
           has been initialised. See the section
           titled ORB and OA Initialisation. If the ORB has already been initialised then the
@@ -168,7 +168,7 @@
       <listitem>
         <para>
           <literal>addAttribute</literal>
-          : this method allows the application to register classes with JBoss Transaction Service
+          : this method allows the application to register classes with &PARENT_PRODUCT;
           which will be called either before or after the OA
           has been initialised. See below. If the
           OA has already been initialised then the attribute object will not be added, and false
@@ -298,7 +298,7 @@
       <title>Initialisation code</title>
       <para>
         The
-        <emphasis>JBoss Transaction Service</emphasis>
+        <emphasis>&PARENT_PRODUCT;</emphasis>
         requires specialised code to be instantiated before and
         after the ORB and the OA are
         initialised. This code can be provided at runtime through the
@@ -433,7 +433,7 @@
         <listitem>
           <para>
             <emphasis>CONFIGURATION_FILE</emphasis>
-            : as described in the Using the OTS Manual, the JBoss Transaction Service supports an
+            : as described in the Using the OTS Manual, the &PARENT_PRODUCT; supports an
             initial reference file where references for specific services and objects can be stored
             and used at runtime. The file, CosServices.cfg, consists of two columns: the service
             name (in the case of the OTS server TransactionService) and the IOR, separated by a

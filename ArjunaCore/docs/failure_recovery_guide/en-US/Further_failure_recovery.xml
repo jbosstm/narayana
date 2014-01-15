@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recover_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Failure_Recovery_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Introduction</title>
-  <para>In this chapter we shall cover information on failure recovery that is specific to TxCore, TXOJ or using JBossTS outside the scope of a
+  <para>In this chapter we shall cover information on failure recovery that is specific to TxCore, TXOJ or using &PRODUCT; outside the scope of a
     supported application server.</para>
   <section>
     <title>Embedding the Recovery Manager</title>
@@ -27,7 +28,7 @@
     </warning>
     <section>
       <title>Additional Recovery Module Classes</title>
-      <para>JBossTS provides a set of recovery modules that are responsible to manage recovery according to the nature of the participant and its
+      <para>&PRODUCT; provides a set of recovery modules that are responsible to manage recovery according to the nature of the participant and its
         position in a transactional tree. The provided classes over and above the ones covered elsewhere (that all implements the RecoveryModule
         interface) are:</para>
       <itemizedlist>
@@ -40,7 +41,7 @@
   </section>
   <section>
     <title>Understanding Recovery Modules</title>
-    <para>The failure recovery subsystem of JBossTS will ensure that results of a transaction are applied consistently to all resources affected
+    <para>The failure recovery subsystem of &PRODUCT; will ensure that results of a transaction are applied consistently to all resources affected
       by
       the
       transaction, even if any of the application processes or the machine hosting them crash or lose network connectivity. In the case of
@@ -61,8 +62,8 @@
       resources, an attempt to activate the Transactional Object (as when trying to get a lock) will fail.</para>
     <section>
       <title>The Recovery Manager</title>
-      <para>The failure recovery subsystem of JBossTS requires that the stand-alone Recovery Manager process be running for each ObjectStore
-        (typically one for each node on the network that is running JBossTS applications). The RecoveryManager file is located in the package
+      <para>The failure recovery subsystem of &PRODUCT; requires that the stand-alone Recovery Manager process be running for each ObjectStore
+        (typically one for each node on the network that is running &PRODUCT; applications). The RecoveryManager file is located in the package
         com.arjuna.ats.arjuna.recovery.RecoveryManager. To start the Recovery Manager issue the following command:</para>
       <para>
         <programlisting language="Java" role="JAVA">java com.arjuna.ats.arjuna.recovery.RecoveryManager</programlisting>
@@ -138,10 +139,10 @@
         the original process to see if they are
         still in progress</para>
       <note>
-        <para>In previous versions of JBossTS there was no contact mechanism, and the backoff period had to be long enough to avoid catching
+        <para>In previous versions of &PRODUCT; there was no contact mechanism, and the backoff period had to be long enough to avoid catching
           transactions in flight at all. From 3.0, there is no such risk.</para>
       </note>
-      <para>Two recovery modules (implementations of the com.arjuna.ats.arjuna.recovery.RecoveryModule interface) are supplied with JBossTS,
+      <para>Two recovery modules (implementations of the com.arjuna.ats.arjuna.recovery.RecoveryModule interface) are supplied with &PRODUCT;,
         supporting various aspects of transaction recovery including JDBC recovery. It is possible for advanced users to create their own recovery
         modules and register them with the Recovery Manager. The recovery modules are registered with the RecoveryManager using
         RecoveryEnvironmentBean.recoveryExtensions. These will be invoked on each pass of the periodic recovery in the sort-order of the property
@@ -176,13 +177,13 @@
         absolute
         value)</para>
       <para>The kinds of item that are scanned for expiry are:</para>
-      <para>TransactionStatusManager items: one of these is created by every application process that uses JBossTS – they contain the information
+      <para>TransactionStatusManager items: one of these is created by every application process that uses &PRODUCT; – they contain the information
         that
         allows the RecoveryManager to determine if the process that initiated the transaction is still alive, and what the transaction status
         is. The
         expiry time for these is set by the property com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime (in hours – default
         is 12, zero
-        means never expire). The expiry time should be greater than the lifetime of any single JBossTS-using process.</para>
+        means never expire). The expiry time should be greater than the lifetime of any single &PRODUCT;-using process.</para>
       <para>The Expiry Scanner properties for these are:</para>
       <example>
         <title>Recovery Environment Bean XML</title>
@@ -207,7 +208,7 @@
     <para>In order to recover from failure, we have seen that the Recovery Manager contacts recovery modules by invoking periodically the methods
       periodicWorkFirstPass and periodicWorkSecondPass. Each Recovery Module is then able to manage recovery according the type of resources that
       need
-      to be recovered. The JBoss Transaction product is shipped with a set of recovery modules (TOReceveryModule, XARecoveryModule…), but it is
+      to be recovered. The &PRODUCT; product is shipped with a set of recovery modules (TOReceveryModule, XARecoveryModule…), but it is
       possible for a user to define its own recovery module that fit his application. The following basic example illustrates the steps needed to
       build such recovery module</para>
     <section>
@@ -271,7 +272,7 @@
       </example>
       <para>Once started, the Recovery Manager will automatically load the listed Recovery modules.</para>
       <note>
-        <para>The source of the code can be retrieved under the trailmap directory of the JBossTS installation. </para>
+        <para>The source of the code can be retrieved under the trailmap directory of the &PRODUCT; installation. </para>
       </note>
     </section>
     <section>

@@ -234,7 +234,7 @@ commit_one_phase called
         <para>
           Unless a CORBA object is derived from
           <interfacename>CosTransactions::TransactionalObject</interfacename>,you do not need to propagate any
-          context. In order to preserve distribution transparency, JBossTS defaults to always propagating a
+          context. In order to preserve distribution transparency, &PARENT_PRODUCT; defaults to always propagating a
           transaction context when calling remote objects, regardless of whether they are marked as transactional
           objects. You can override this by setting the
           <varname>com.arjuna.ats.jts.alwaysPropagateContext</varname> property variable to <literal>NO</literal>.
@@ -243,15 +243,15 @@ commit_one_phase called
       <listitem>
         <para>
           If an object is derived from <interfacename>CosTransactions::TransactionalObject</interfacename>, and no
-          client context is present when an invocation is made, JBossTS transmits a null context. Subsequent
+          client context is present when an invocation is made, &PARENT_PRODUCT; transmits a null context. Subsequent
           transactions begun by the object are top-level. If a context is required, then set the
           <varname>com.arjuna.ats.jts.needTranContext</varname> property variable to <literal>YES</literal>, in which
-          case JBossTS raises the <systemitem>TransactionRequired</systemitem> exception.
+          case &PARENT_PRODUCT; raises the <systemitem>TransactionRequired</systemitem> exception.
         </para>
       </listitem>
       <listitem>
         <para>
-          JBossTS needs a persistent object store, so that it can record information about transactions in the event of
+          &PARENT_PRODUCT; needs a persistent object store, so that it can record information about transactions in the event of
           failures. If all transactions complete successfully, this object store has no entries. The default location
           for this must be set using the <varname>ObjectStoreEnvironmentBean.objectStoreDir</varname> variable in the
           properties file.
@@ -278,14 +278,14 @@ commit_one_phase called
       <listitem>
         <note>
           <para>
-            As of JBossTS 4.5, transaction timeouts are unified across all transaction components and are controlled by
+            As of &PARENT_PRODUCT; 4.5, transaction timeouts are unified across all transaction components and are controlled by
             ArjunaCore. The old JTS configuration property com.arjuna.ats.jts.defaultTimeout still remains but is
             deprecated.
           </para>
         </note>
         <para>
           if a value of <literal>0</literal> is specified for the timeout of a top-level transaction, or no timeout is
-          specified, JBossTS does not impose any timeout on the transaction. To override this default timeout, set the
+          specified, &PARENT_PRODUCT; does not impose any timeout on the transaction. To override this default timeout, set the
           <varname>CoordinatorEnvironmentBean.defaultTimeout</varname> property variable to the required timeout value
           in seconds.
         </para>

@@ -15,7 +15,7 @@
       implementations and plugging into an application.
     </para>
     <para>
-      This release of JBoss Transaction Service contains several different implementations of a basic object store. Each
+      This release of &PRODUCT; contains several different implementations of a basic object store. Each
       serves a particular purpose and is generally optimized for that purpose. Each of the implementations implements 
       the <interfacename>ObjectStoreAPI</interfacename> interface, which defines the minimum operations which must be
       provided for an object store implementation to be used by the Transaction Service. You can override the default
@@ -28,9 +28,9 @@
       <programlisting language="Java" role="JAVA"><xi:include href="extras/appendix_StateStatus.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
     </example>
     <para>
-      JBoss Transaction Service programmers do not usually need to interact with any of the object store implementations
+      &PRODUCT; programmers do not usually need to interact with any of the object store implementations
       directly, apart from possibly creating them in the first place. Even this is not necessary if the default store
-      type is used, since JBoss Transaction Service creates stores as necessary. All stores manipulate instances of the
+      type is used, since &PRODUCT; creates stores as necessary. All stores manipulate instances of the
       class <classname>ObjectState</classname>. These instances are named using a <systemitem>type</systemitem> (via the
       object's <methodname>type()</methodname> operation) and a <systemitem>Uid</systemitem>.
     </para>
@@ -82,7 +82,7 @@
           </listitem>
           <listitem>
             <para>
-              All of the stores have a common root directory that is determined when JBoss Transaction Service is
+              All of the stores have a common root directory that is determined when &PRODUCT; is
               configured. This directory name is automatically prepended to any store-specific root information.
             </para>
           </listitem>
@@ -118,7 +118,7 @@
         <para>
           Since transactional objects are concurrency-controlled through <classname>LockManager</classname>, you do not
           need to impose additional locking at the file level. The basic ShadowingStore implementation handles
-          file-level locking. Therefore, the default object store implementation for JBoss Transaction Service,
+          file-level locking. Therefore, the default object store implementation for &PRODUCT;,
           <systemitem>ShadowNoFileLockStore</systemitem>, relies upon user-level locking. This enables it to provide
           better performance than the <systemitem>ShadowingStore</systemitem> implementation.
         </para>

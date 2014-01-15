@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
-<!ENTITY PRODUCT "JBoss Transactions">
-<!ENTITY BOOKID "Failure_Recovery_Guide">
-<!ENTITY VERSION "4.15">
-<!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss.org">
-<!ENTITY APPSERVER "JBoss Application Server">
-<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->]>
+]>
 <appendix id="appe-Failure_Recovery_Guide-Revision_History">
     <title>Revision History</title>
     <simpara>
@@ -23,6 +17,20 @@
                 <revdescription>
                     <simplelist>
                         <member>Initial creation of book by publican</member>
+                    </simplelist>
+                </revdescription>
+            </revision>
+            <revision>
+                <revnumber>2</revnumber>
+                <date>Thu Jan 16 2014</date>
+                <author>
+                    <firstname>Gytis</firstname>
+                    <surname>Trikleris</surname>
+                    <email>gytis@redhat.com</email>
+                </author>
+                <revdescription>
+                    <simplelist>
+                        <member>Update to Wildfly and Narayana</member>
                     </simplelist>
                 </revdescription>
             </revision>

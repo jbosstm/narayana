@@ -4,17 +4,17 @@
 %BOOK_ENTITIES;
 ]>
 <chapter>
-  <title>JBossTS Basics</title>
+  <title>&PARENT_PRODUCT; Basics</title>
     
   <section>
     <title>Introduction</title>
     <para>
-      JBossTS is based upon the original Arjuna system developed at the University of Newcastle between 1986 and
-      1995. Arjuna predates the OTS specification and includes many features not found in the OTS. JBossTS is a superset
+      &PARENT_PRODUCT; is based upon the original Arjuna system developed at the University of Newcastle between 1986 and
+      1995. Arjuna predates the OTS specification and includes many features not found in the OTS. &PARENT_PRODUCT; is a superset
       of the OTS. Applications written using the standard OTS interfaces are portable across OTS implementations.
     </para>
     <itemizedlist>
-      <title>JBossTS features in terms of OTS specifications</title>
+      <title>&PARENT_PRODUCT; features in terms of OTS specifications</title>
       <listitem>
         <para>
           full draft 5 compliance, with support for Synchronization objects and PropagationContexts.
@@ -65,11 +65,11 @@
       </listitem>
     </itemizedlist>
     <para>
-      You can use JBossTS in three different levels, which correspond to the sections in this chapter, and are each
+      You can use &PARENT_PRODUCT; in three different levels, which correspond to the sections in this chapter, and are each
       explored in their own chapters as well.
     </para>
     <para>
-      Because of differences in ORB implementations, JBossTS uses a separate ORB Portability library which acts as an
+      Because of differences in ORB implementations, &PARENT_PRODUCT; uses a separate ORB Portability library which acts as an
       abstraction later. Many of the examples used throughout this manual use this library. Refer to the ORB Portability
       Manual for more details.
     </para>
@@ -94,7 +94,7 @@
       <para>
         The OTS implementation of nested transactions is extremely limited, and can lead to the generation of heuristic
         results. An example of such a result is when a subtransaction coordinator discovers part of the way through
-        committing that some resources cannot commit, but being unable to tell the committed resources to abort. JBossTS
+        committing that some resources cannot commit, but being unable to tell the committed resources to abort. &PARENT_PRODUCT;
         allows nested transactions to execute a full two-phase commit protocol, which removes the possibility that some
         resources will comment while others roll back.
       </para>
@@ -102,7 +102,7 @@
         When resources are registered with a transaction, you have no control over the order in which these resources
         are invoked during the commit/abort protocol. For example, if previously registered resources are replaced with
         newly registered resources, resources registered with a subtransaction are merged with the subtraction's
-        parent. JBossTS provides an additional Resource subtype which you this level of control.
+        parent. &PARENT_PRODUCT; provides an additional Resource subtype which you this level of control.
       </para>
       
     </section>
@@ -112,7 +112,7 @@
       <para>
         The OTS does not provide any <interfacename>Resource</interfacename> implementations. You are responsible for
         implementing these interfaces. The interfaces defined within the OTS specification are too low-level for most
-        application programmers. Therefore, JBossTS includes <application>Transactional Objects for Java
+        application programmers. Therefore, &PARENT_PRODUCT; includes <application>Transactional Objects for Java
         (TXOJ)</application>, which makes use of the raw Common Object Services interfaces but provides a higher-level
         API for building transactional applications and frameworks. This API automates much of the activities concerned
         with participating in an OTS transaction, freeing you to concentrate on application development, rather than
@@ -124,31 +124,31 @@
         resources may also use the persistence and concurrency services.
       </para>
       <para>
-        JBossTS exploits object-oriented techniques to provide you with a toolkit of Java classes which are inheritable
+        &PARENT_PRODUCT; exploits object-oriented techniques to provide you with a toolkit of Java classes which are inheritable
         by application classes, to obtain transactional properties. These classes form a hierarchy, illustrated in <xref
         linkend="jbossts-class-hierarchy" />.
       </para>
       <figure id="jbossts-class-hierarchy">
-        <title>JBossTS class hierarchy</title>
+        <title>&PARENT_PRODUCT; class hierarchy</title>
         <mediaobject>
           <imageobject>
             <imagedata fileref="images/jbossts-class-hierarchy.png" format="PNG"/>
           </imageobject>
           <textobject>
-            <para>JBossTS class hierarchy</para>
+            <para>&PARENT_PRODUCT; class hierarchy</para>
           </textobject>
         </mediaobject>
       </figure>
       <para>
         Your main responsibilities are specifying the scope of transactions and setting appropriate locks within
-        objects. JBossTS guarantees that transactional objects will be registered with, and be driven by, the
+        objects. &PARENT_PRODUCT; guarantees that transactional objects will be registered with, and be driven by, the
         appropriate transactions. Crash recovery mechanisms are invoked automatically in the event of failures. When
         using the provided interfaces, you do not need to create or register <classname>Resource</classname> objects or
         call services controlling persistence or recovery.  If a transaction is nested, resources are automatically
         propagated to the transaction’s parent upon commit.
       </para>
       <para>
-        The design and implementation goal of JBossTS was to provide a programming system for constructing
+        The design and implementation goal of &PARENT_PRODUCT; was to provide a programming system for constructing
         fault-tolerant distributed applications. Three system properties were considered highly important:
       </para>
       <informaltable>
@@ -179,7 +179,7 @@
               <entry>Portability</entry>
               <entry>
                 <para>
-                  You need to be able to run JBossTS on any ORB.
+                  You need to be able to run &PARENT_PRODUCT; on any ORB.
                 </para>
               </entry>
             </row>
@@ -187,7 +187,7 @@
         </tgroup>
       </informaltable>
       <para>
-        JBossTS is implemented in Java and extensively uses the type-inheritance facilities provided by the language to
+        &PARENT_PRODUCT; is implemented in Java and extensively uses the type-inheritance facilities provided by the language to
         provide user-defined objects with characteristics such as persistence and recoverability.
       </para>
     </section>
@@ -195,22 +195,22 @@
 
   
   <section>
-    <title>JBossTS and the OTS implementation</title>
+    <title>&PARENT_PRODUCT; and the OTS implementation</title>
     <para>
       The OTS specification is written with flexibility in mind, to cope with different application requirements for
-      transactions. JBossTS supports all optional parts of the OTS specification. In addition, if the specification
-      allows functionality to be implemented in a variety of different ways, JBossTS supports all possible
+      transactions. &PARENT_PRODUCT; supports all optional parts of the OTS specification. In addition, if the specification
+      allows functionality to be implemented in a variety of different ways, &PARENT_PRODUCT; supports all possible
       implementations.
     </para>
     <table>
-      <title>JBossTS implementation of OTS specifications</title>
+      <title>&PARENT_PRODUCT; implementation of OTS specifications</title>
       <tgroup cols="2">
         <colspec colwidth="220px"/>
         <colspec colwidth="220px"/>
         <thead>
           <row>
             <entry>OTS specification</entry>
-            <entry>JBossTS default implementation</entry>
+            <entry>&PARENT_PRODUCT; default implementation</entry>
           </row>
         </thead>
         <tbody>
@@ -223,7 +223,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS does not restrict the availability of the transaction context.
+                &PARENT_PRODUCT; does not restrict the availability of the transaction context.
               </para>
             </entry>
           </row>
@@ -236,7 +236,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS only initializes the transaction context if the interface supported by the target object extends
+                &PARENT_PRODUCT; only initializes the transaction context if the interface supported by the target object extends
                 the <interfacename>TransactionalObject</interfacename> interface.
               </para>
             </entry>
@@ -252,7 +252,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS does not impose restrictions on the propagation of these objects.
+                &PARENT_PRODUCT; does not impose restrictions on the propagation of these objects.
               </para>
             </entry>
           </row>
@@ -264,8 +264,8 @@
             </entry>
             <entry>
               <para>
-                JBossTS allows the termination of a transaction by any client that uses the
-                <interfacename>Terminator</interfacename> interface. In addition, JBossTS does not impose restrictions
+                &PARENT_PRODUCT; allows the termination of a transaction by any client that uses the
+                <interfacename>Terminator</interfacename> interface. In addition, &PARENT_PRODUCT; does not impose restrictions
                 when clients use the <interfacename>Current</interfacename> interface.
               </para>
             </entry>
@@ -279,7 +279,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS provides multiple ways in which the <classname>TransactionFactory</classname> can be located.
+                &PARENT_PRODUCT; provides multiple ways in which the <classname>TransactionFactory</classname> can be located.
               </para>
             </entry>
           </row>
@@ -291,7 +291,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS does not use the Event Service to report heuristic decisions.
+                &PARENT_PRODUCT; does not use the Event Service to report heuristic decisions.
               </para>
             </entry>
           </row>
@@ -303,7 +303,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS supports nested transactions.
+                &PARENT_PRODUCT; supports nested transactions.
               </para>
             </entry>
           </row>
@@ -315,7 +315,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS allows <classname>Synchronizations</classname> to be called no matter what state the transaction
+                &PARENT_PRODUCT; allows <classname>Synchronizations</classname> to be called no matter what state the transaction
                 terminates with.
               </para>
             </entry>
@@ -328,7 +328,7 @@
             </entry>
             <entry>
               <para>
-                JBossTS supports various types of interposition.
+                &PARENT_PRODUCT; supports various types of interposition.
               </para>
             </entry>
           </row>
@@ -340,7 +340,7 @@
   <section>
     <title>Thread class</title>
     <para>
-      JBossTS is fully multi-threaded and supports the OTS notion of allowing multiple threads to be active within a
+      &PARENT_PRODUCT; is fully multi-threaded and supports the OTS notion of allowing multiple threads to be active within a
       transaction, and for a thread to execute multiple transactions. A thread can only be active within a single
       transaction at a time, however. By default, if a thread is created within the scope of a transaction, the new
       thread is not associated with the transaction. If the thread needs to be associated with the transaction, use the
@@ -366,7 +366,7 @@
     <title>ORB portability issues</title>
     <para>
       Although the CORBA specification is a standard, it is written so that an ORB can be implemented in multiple
-      ways. As such, writing portable client and server code can be difficult. Because JBossTS has been ported to most
+      ways. As such, writing portable client and server code can be difficult. Because &PARENT_PRODUCT; has been ported to most
       of the widely available ORBs, it includes a series of ORB Portability classes and macros. If you write your
       application using these classes, it should be mostly portable between different ORBs. These classes are described
       in the separate ORB Portability Manual.

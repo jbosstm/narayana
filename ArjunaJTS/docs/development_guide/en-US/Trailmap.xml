@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Development_Guide.ent">
-<!ENTITY PRODUCT "JBossJTS">
-<!ENTITY BOOKID "JBossJTS_Development_Guide">
-<!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss, Inc.">
+%BOOK_ENTITIES;
 ]>
 <chapter>
     <title>Trail map</title>
     <section>
         <title>Introduction</title>
-        <para>JBoss Transaction Service (JBossTS) assures complete, accurate business
+        <para>&PARENT_PRODUCT; assures complete, accurate business
   transactions for any Java based applications, including those written for the
   Java EE and EJB frameworks.</para>
-        <para>JBossTS is a 100% Java implementation of a distributed transaction management system
+        <para>&PARENT_PRODUCT; is a 100% Java implementation of a distributed transaction management system
   based on the Sun Microsystems Java EE Java Transaction Service (JTS) standard.
   Our implementation of the JTS utilizes the Object Management Group's (OMG) Object
   Transaction Service (OTS) model for transaction interoperability as recommended
   in the Java EE and EJB standards. Although any JTS-compliant product will allow
-  Java objects to participate in transactions, one of the key features of JBossTS
-  is it's 100% Java implementation. This allows JBossTS to support fully distributed
+  Java objects to participate in transactions, one of the key features of &PARENT_PRODUCT;
+  is it's 100% Java implementation. This allows &PARENT_PRODUCT; to support fully distributed
   transactions that can be coordinated by distributed parties.
-<para>JBossTS runs can be run both as an embedded distributed service of an application
-  server (e.g. JBossAS), affording the user all the added benefits of the
+<para>&PARENT_PRODUCT; runs can be run both as an embedded distributed service of an application
+  server (e.g. &APPSERVER;), affording the user all the added benefits of the
   application server environment such as real-time load balancing, unlimited linear
   scalability and unmatched fault tolerance that allows you to deliver an always-on
   solution to your customers. It is also available as a free-standing Java Transaction
   Service.</para>
 					<para>In addition to providing full compliance with the latest version of the JTS
-specification, JBossTS leads the market in providing many advanced features such
+specification, &PARENT_PRODUCT; leads the market in providing many advanced features such
 as fully distributed transactions and ORB portability with POA support.</para>
-					<para>JBossTS is tested on HP-UX 11i, Red Hat Linux, Windows Server 2003,
+					<para>&PARENT_PRODUCT; is tested on HP-UX 11i, Red Hat Linux, Windows Server 2003,
   and Sun Solaris 10, using Sun's JDK 5. It should howerver work on any system with JDK 5 or 6.</para>
-					<para>The Java Transaction API support for JBossTS comes in two flavours:</para>
+					<para>The Java Transaction API support for &PARENT_PRODUCT; comes in two flavours:</para>
 					<itemizedlist><listitem>a purely local implementation, that does not require an ORB, but obviously
   requires all coordinated resources to reside within the same JVM. </listitem><listitem>a fully distributed implementation. </listitem></itemizedlist>
 					<para>Key features</para>
@@ -47,19 +44,19 @@ as fully distributed transactions and ORB portability with POA support.</para>
 						</listitem><listitem>transactional objects (TO) for Java </listitem><listitem>ORB independence via the ORB portability layer </listitem></itemizedlist>
 				</para>
         <para>
-                    This trail map will help you get started with running JBoss transaction service product.
+                    This trail map will help you get started with running &PARENT_PRODUCT; product.
                     It is structured as follows:</para>
         <itemizedlist>
-            <listitem>1. Installation Content: This trail describes the content installed by the JBossTS distribution </listitem>
-            <listitem>2. The Sample Application: This trail describes via a set of examples how JBossTS is used to build transactional applications</listitem>
+            <listitem>1. Installation Content: This trail describes the content installed by the &PARENT_PRODUCT; distribution </listitem>
+            <listitem>2. The Sample Application: This trail describes via a set of examples how &PARENT_PRODUCT; is used to build transactional applications</listitem>
             <listitem>3. Deploying and testing the Sample Application: This trail describes how to deploy and to test the sample application</listitem>
             <listitem>4. Making the Sample Application Persistent: This trail describes tools allowing to build a persistent application</listitem>
-            <listitem>5. Recovery from Failure: This trail describes via a simple scenario how JBossTS manages recovery from failure.</listitem>
+            <listitem>5. Recovery from Failure: This trail describes via a simple scenario how &PARENT_PRODUCT; manages recovery from failure.</listitem>
             <listitem>6. Where Next?: This trail indicates where to find additional information</listitem>
         </itemizedlist>
         <para>
 					In addition to the trails listed above, a set of trails giving more explanation on concept around
-					transaction processing and standards, and also a quick access to section explaining how to configure JBossTS
+					transaction processing and standards, and also a quick access to section explaining how to configure &PARENT_PRODUCT;
 					are listed in the section "Additional Trails".</para>
         <para><emphasis>Note:</emphasis>When running the local JTS transactions part of the trailmap, you will need to start
 the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</para>
@@ -382,7 +379,7 @@ them has a particular role. Main components are described below. </para>
       environment. For this aim various distributed transaction processing
       standards have been developed by international standards organizations.
       Among these organizations, We list three of them which are mainly
-      considered in the JBoss Transaction Service product: </para>
+      considered in the &PARENT_PRODUCT; product: </para>
 				<itemizedlist><listitem>
 							 The X/Open model and its successful XA interface
 						</listitem><listitem>
@@ -995,10 +992,10 @@ public void transfer(double amount) {
 </programlisting>
     </section>
     <section>
-        <title>Configuring the JBoss Transaction Service</title>
+        <title>Configuring the &PARENT_PRODUCT;</title>
         <para>This trail provides information on the way to configure environmental variables
-  needed to define the behaviour of transactional applications managed with JBossTS.
-  Basically, the behaviour of the JBossTS product is configurable through property
+  needed to define the behaviour of transactional applications managed with &PARENT_PRODUCT;.
+  Basically, the behaviour of the &PARENT_PRODUCT; product is configurable through property
   attributes. Although these property attributes may be specified as command line
   arguments, it is more convenient to organise and initialise them through properties
   files. </para>
@@ -1057,7 +1054,7 @@ public void transfer(double amount) {
                 </tr>
                 <tr>
                     <td>com.arjuna.ats.arjuna.common.varDir</td>
-                    <td>JBossTS needs to be able to write temporary files to a well known location
+                    <td>&PARENT_PRODUCT; needs to be able to write temporary files to a well known location
       during execution. By default this location is var. However, by setting the
       varDir property variable this can be overridden.</td>
                     <td>Directory name</td>
@@ -1066,7 +1063,7 @@ public void transfer(double amount) {
             </table>
         </section>
         <section><title>ObjectStore management</title>
-The JBossTS layer requires an object store for transaction management logs. Within
+The &PARENT_PRODUCT; layer requires an object store for transaction management logs. Within
 the transaction service installation, object store is updated regularly whenever
 transactions are created, or when Transactional Objects for Java is used. In a
 failure free environment, the only object states which should reside within the
@@ -1081,11 +1078,11 @@ the object store assuming it is an exclusive resource.
 <para> The location of the ObjectStore is specified in via the properrty com.arjuna.ats.arjuna.objectstore.objectStoreDir
   that can be passed with the java flag "-D". For convenience this property
   is defined in the properties file jbossts-properties.xml, and its value is set
-  during the JBossTS installation. At any time, the location of the ObjectStore
+  during the &PARENT_PRODUCT; installation. At any time, the location of the ObjectStore
   may be changed.</para>
 </section>
         <section><title>Configuring Output</title><para>Sometimes it is desirable, mainly in case of debugging, to have some form of
-  output during execution to trace internal actions performed. JBossTS uses the
+  output during execution to trace internal actions performed. &PARENT_PRODUCT; uses the
   logging tracing mechanism provided by the Arjuna Common Logging Framework (CLF)
   version 2.4, which provides a high level interface that hides differences that
   exist between logging APIs such Jakarta log4j, JDK 1.4 logging API or dotnet
@@ -1106,15 +1103,15 @@ the object store assuming it is an exclusive resource.
     generates the debugging.</listitem><listitem> Facility code: for instance the package or sub-module within which debugging
     is generated, e.g., the object store.</listitem></itemizedlist><para>According to these variables the Common Logging Framework defines three interfaces.
   A particular product may implement its own classes according to its own finer
-  granularity. JBossTS uses the default Debugging level and the default Visibility
-  level provided by CLF, but it defines its own Facility Code. JBossTS uses
+  granularity. &PARENT_PRODUCT; uses the default Debugging level and the default Visibility
+  level provided by CLF, but it defines its own Facility Code. &PARENT_PRODUCT; uses
   the default level assigned to its commonLoggers objects (DEBUG). However, it
   uses the finer debugging features to disable or enable debug messages. Finer
-  values used by the JBossTS are defined below:
-</para><itemizedlist><listitem>Debugging level – JBossTS uses the default values defined in the class
+  values used by the &PARENT_PRODUCT; are defined below:
+</para><itemizedlist><listitem>Debugging level – &PARENT_PRODUCT; uses the default values defined in the class
     com.arjuna.common.util.logging.CommonDebugLevel </listitem></itemizedlist><table width="83%" border="1"><tr bgcolor="#8BD5FC"><td width="33%"><emphasis>Debug Level</emphasis></td><td width="24%"><emphasis>Value</emphasis></td><td width="43%"><emphasis>Description</emphasis></td></tr><tr><td>NO_DEBUGGING</td><td>0x0000</td><td>A commonLogger object assigned with this values discard all debug requests</td></tr><tr><td>CONSTRUCTORS</td><td> 0x0001</td><td>Diagnostics from constructors</td></tr><tr><td>DESTRUCTORS</td><td>0x0002</td><td>Diagnostics from finalizers.</td></tr><tr><td>CONSTRUCT_AND_DESTRUCT</td><td>CONSTRUCTORS | DESTRUCTORS</td><td>Diagnostics from constructors and finalizers</td></tr><tr><td>FUNCTIONS</td><td>0x010</td><td>Diagnostics from functions</td></tr><tr><td>OPERATORS</td><td>0x020</td><td>Diagnostics from operators, such as equals</td></tr><tr><td>FUNCS_AND_OPS</td><td>FUNCTIONS | OPERATORS</td><td>Diagnostics from functions and operations.</td></tr><tr><td>ALL_NON_TRIVIAL</td><td>CONSTRUCT_AND_DESTRUCT | FUNCTIONS
-      | OPERATORS</td><td>Diagnostics from all non-trivial operations</td></tr><tr><td>TRIVIAL_FUNCS</td><td>0x0100</td><td>Diagnostics from trivial functions.</td></tr><tr><td>TRIVIAL_OPERATORS:</td><td>0x0200</td><td>Diagnostics from trivial operations, and operators.</td></tr><tr><td> ALL_TRIVIAL</td><td>TRIVIAL_FUNCS | TRIVIAL_OPERATORS</td><td>Diagnostics from all trivial operations</td></tr><tr><td>FULL_DEBUGGING</td><td>0xffff</td><td>Full diagnostics.</td></tr></table><itemizedlist><listitem>Visibility level – JBossTS uses the default values defined in the class
-    com.arjuna.common.util.logging.CommonVisibilityLevel </listitem></itemizedlist><table width="83%" border="1"><tr bgcolor="#8BD5FC"><td width="33%"><emphasis>Debug Level</emphasis></td><td width="24%"><emphasis>Value</emphasis></td><td width="43%"><emphasis>Description</emphasis></td></tr><tr><td>VIS_NONE</td><td>0x0000</td><td>No Diagnostic</td></tr><tr><td>VIS_PRIVATE</td><td>0x0001</td><td>only from private methods.</td></tr><tr><td>VIS_PROTECTED</td><td>0x0002</td><td>only from protected methods.</td></tr><tr><td>VIS_PUBLIC</td><td>0x0004</td><td>only from public methods.</td></tr><tr><td>VIS_PACKAGE</td><td>0x0008</td><td>only from package methods.</td></tr><tr><td>VIS_ALL</td><td>0xffff</td><td>Full Diagnostic</td></tr></table><itemizedlist><listitem>Facility Code – JBossTS uses the following values </listitem></itemizedlist><table width="83%" border="1"><tr bgcolor="#8BD5FC"><td><emphasis>Facility Code Level </emphasis></td><td><emphasis>Value</emphasis></td><td><emphasis>Description</emphasis></td></tr><tr><td>FAC_ATOMIC_ACTION</td><td>0x00000001</td><td>atomic action core module</td></tr><tr><td>FAC_BUFFER_MAN</td><td>0x00000004</td><td>state management (buffer) classes</td></tr><tr><td>FAC_ABSTRACT_REC</td><td>0x00000008</td><td>abstract records</td></tr><tr><td>FAC_OBJECT_STORE</td><td>0x00000010</td><td>object store implementations</td></tr><tr><td> FAC_STATE_MAN</td><td>0x00000020</td><td>state management and StateManager)</td></tr><tr><td>FAC_SHMEM</td><td>0x00000040 </td><td>shared memory implementation classes</td></tr><tr><td>FAC_GENERAL</td><td>0x00000080</td><td>general classes</td></tr><tr><td>FAC_CRASH_RECOVERY</td><td>0x00000800</td><td>detailed trace of crash recovery module and classes</td></tr><tr><td>FAC_THREADING</td><td>0x00002000</td><td>threading classes</td></tr><tr><td>FAC_JDBC</td><td>0x00008000</td><td>JDBC 1.0 and 2.0 support</td></tr><tr><td>FAC_RECOVERY_NORMAL</td><td>0x00040000</td><td>normal output for crash recovery manager</td></tr></table><para>To ensure appropriate output, it is necessary to set some of the finer debug
+      | OPERATORS</td><td>Diagnostics from all non-trivial operations</td></tr><tr><td>TRIVIAL_FUNCS</td><td>0x0100</td><td>Diagnostics from trivial functions.</td></tr><tr><td>TRIVIAL_OPERATORS:</td><td>0x0200</td><td>Diagnostics from trivial operations, and operators.</td></tr><tr><td> ALL_TRIVIAL</td><td>TRIVIAL_FUNCS | TRIVIAL_OPERATORS</td><td>Diagnostics from all trivial operations</td></tr><tr><td>FULL_DEBUGGING</td><td>0xffff</td><td>Full diagnostics.</td></tr></table><itemizedlist><listitem>Visibility level – &PARENT_PRODUCT; uses the default values defined in the class
+    com.arjuna.common.util.logging.CommonVisibilityLevel </listitem></itemizedlist><table width="83%" border="1"><tr bgcolor="#8BD5FC"><td width="33%"><emphasis>Debug Level</emphasis></td><td width="24%"><emphasis>Value</emphasis></td><td width="43%"><emphasis>Description</emphasis></td></tr><tr><td>VIS_NONE</td><td>0x0000</td><td>No Diagnostic</td></tr><tr><td>VIS_PRIVATE</td><td>0x0001</td><td>only from private methods.</td></tr><tr><td>VIS_PROTECTED</td><td>0x0002</td><td>only from protected methods.</td></tr><tr><td>VIS_PUBLIC</td><td>0x0004</td><td>only from public methods.</td></tr><tr><td>VIS_PACKAGE</td><td>0x0008</td><td>only from package methods.</td></tr><tr><td>VIS_ALL</td><td>0xffff</td><td>Full Diagnostic</td></tr></table><itemizedlist><listitem>Facility Code – &PARENT_PRODUCT; uses the following values </listitem></itemizedlist><table width="83%" border="1"><tr bgcolor="#8BD5FC"><td><emphasis>Facility Code Level </emphasis></td><td><emphasis>Value</emphasis></td><td><emphasis>Description</emphasis></td></tr><tr><td>FAC_ATOMIC_ACTION</td><td>0x00000001</td><td>atomic action core module</td></tr><tr><td>FAC_BUFFER_MAN</td><td>0x00000004</td><td>state management (buffer) classes</td></tr><tr><td>FAC_ABSTRACT_REC</td><td>0x00000008</td><td>abstract records</td></tr><tr><td>FAC_OBJECT_STORE</td><td>0x00000010</td><td>object store implementations</td></tr><tr><td> FAC_STATE_MAN</td><td>0x00000020</td><td>state management and StateManager)</td></tr><tr><td>FAC_SHMEM</td><td>0x00000040 </td><td>shared memory implementation classes</td></tr><tr><td>FAC_GENERAL</td><td>0x00000080</td><td>general classes</td></tr><tr><td>FAC_CRASH_RECOVERY</td><td>0x00000800</td><td>detailed trace of crash recovery module and classes</td></tr><tr><td>FAC_THREADING</td><td>0x00002000</td><td>threading classes</td></tr><tr><td>FAC_JDBC</td><td>0x00008000</td><td>JDBC 1.0 and 2.0 support</td></tr><tr><td>FAC_RECOVERY_NORMAL</td><td>0x00040000</td><td>normal output for crash recovery manager</td></tr></table><para>To ensure appropriate output, it is necessary to set some of the finer debug
   properties explicitly as follows:</para><programlisting role="JAVA" language="Java"> &lt;properties&gt;
    &lt;!-- CLF 2.4 properties --&gt;
    &lt;property
@@ -1162,7 +1159,7 @@ the object store assuming it is an exclusive resource.
             <title>Introduction</title>
             <para>Many ORBs currently in use support different versions of CORBA and/or the Java
   language mapping.<para>
-  The JBoss Transaction Service only supports the new Portable Object Adapter
+  &PARENT_PRODUCT; only supports the new Portable Object Adapter
   (POA) architecture described in the CORBA 2.3 specification as a replacement
   for the Basic Object Adapter (BOA). Unlike the BOA, which was weakly specified
   and led to a number of different (and often conflicting) implementations, the
@@ -1172,7 +1169,7 @@ the object store assuming it is an exclusive resource.
   differences between ORB implementations, notably in the area of threading. Note,
   instead of talking about the POA, this manual will consider the Object Adapter</para>
   (OA).</para>
-            <para>Because the JBoss Transaction Service must be able to run on a number of different
+            <para>Because &PARENT_PRODUCT; must be able to run on a number of different
   ORBs, we have developed an ORB portability interface which allows entire applications
   to be moved between ORBs with little or no modifications. This portability interface
   is available to the application programmer in the form of several Java classes.
@@ -1338,11 +1335,11 @@ public static void main(String[] args)
                 </tr>
             </table>
             <para>For additional details on the features provided by the ORB Portability API
-  refer to the documentation provided by the JBossTS distribution.</para>
+  refer to the documentation provided by the &PARENT_PRODUCT; distribution.</para>
         </section>
         <section>
-            <title>JBossTS Failure Recovery</title>
-            <para>The failure recovery subsystem of JBossTS will ensure that results of
+            <title>&PARENT_PRODUCT; Failure Recovery</title>
+            <para>The failure recovery subsystem of &PARENT_PRODUCT; will ensure that results of
 a transaction are applied consistently to all resources affected by the
 transaction, even if any of the application processes or the machine hosting
 them crash or lose network connectivity. In the case of machine (system)
@@ -1395,7 +1392,7 @@ activators and recovery modules, which are then dynamically loaded.
 <para>Each recovery activator, which implements the
 com.arjuna.ats.arjuna.recovery.RecoveryActivator
 interface, is used to instantiate a recovery class related to the underlying
-communication protocol. Indeed, since the version 3.0 of JBossTS, the
+communication protocol. Indeed, since the version 3.0 of &PARENT_PRODUCT;, the
 Recovery Manager is not specifically tied to an Object Request Broker or
 ORB, which is to specify a recovery instance able to manage the OTS recovery
 protocol the new interface RecoveryActivator is provided to identify specific
@@ -1491,10 +1488,10 @@ value is negative, the first scan is delayed until after the first interval
 </para>
 				<table BORDER="" WIDTH="100%"><tr ALIGN="CENTER" BGCOLOR="#66FFFF"><td width="38%"><emphasis>Name</emphasis></td><td width="34%"><emphasis>Description</emphasis></td><td width="9%"><emphasis>Possible Value</emphasis></td><td width="19%"><emphasis>Default Value</emphasis></td></tr><tr><td>com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod</td><td>Interval in seconds between initiating the periodic recovery modules</td><td>Value in seconds</td><td>120</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod</td><td>Interval in seconds between first and second pass of periodic recovery</td><td>Value in seconds</td><td>10</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.recoveryExtensionX</td><td>Indicates a periodic recovery module to use. X is the occurence number
       of the recovery module among a set of recovery modules. These modules are
-      invoked in sort-order of names</td><td>The class name of the periodic recovery module </td><td>JBossTS provides a set classes given in the RecoveryManager-properties.xml file</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.recoveryActivator_X</td><td>Indicates a recovery activator to use. X is the occurence number of the
-      recovery activator among a set of recovery activators. </td><td>The class name of the periodic recovery activator</td><td>JBossTS provide one class that manages the recovery protocol specified
+      invoked in sort-order of names</td><td>The class name of the periodic recovery module </td><td>&PARENT_PRODUCT; provides a set classes given in the RecoveryManager-properties.xml file</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.recoveryActivator_X</td><td>Indicates a recovery activator to use. X is the occurence number of the
+      recovery activator among a set of recovery activators. </td><td>The class name of the periodic recovery activator</td><td>&PARENT_PRODUCT; provide one class that manages the recovery protocol specified
       by the OTS specification </td></tr><tr><td>com.arjuna.ats.arjuna.recovery.expiryScannerXXX</td><td>Expiry scanners to use (order of invocation is random). Names must begin
-      with "com.arjuna.ats.arjuna.recovery.expiryScanner"</td><td>Class name</td><td>JBossTS provides one class given in the RecoveryManager-properties.xml file</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.expiryScanInterval</td><td>Interval, in hours, between running the expiry scanners. This can be
+      with "com.arjuna.ats.arjuna.recovery.expiryScanner"</td><td>Class name</td><td>&PARENT_PRODUCT; provides one class given in the RecoveryManager-properties.xml file</td></tr><tr><td>com.arjuna.ats.arjuna.recovery.expiryScanInterval</td><td>Interval, in hours, between running the expiry scanners. This can be
       quite long. The absolute value determines the interval - if the value is
       negative, the scan will NOT be run until after one interval has elapsed.
       If positive the first scan will be immediately
@@ -1508,20 +1505,20 @@ value is negative, the first scan is delayed until after the first interval
     <section>
         <title>Installation Content</title>
         <section><title>Verifying Installation</title>
-When installed, the binary release of JBossTS, JTS version, should have the following structure.
+When installed, the binary release of &PARENT_PRODUCT;, JTS version, should have the following structure.
 <itemizedlist><listitem>/bin: this directory contains commands
     to run the OTS transaction manager server (if required) and the Recovery Manager,
-    and scripts to configure environment variables needed to execute JBossTS.</listitem><listitem>/docs: this directory contains
+    and scripts to configure environment variables needed to execute &PARENT_PRODUCT;.</listitem><listitem>/docs: this directory contains
     documentation on the way to installing, administering and programming ArjunaCore,
-    JBossTS JTA and JBossTS JTS.</listitem><listitem>/etc: this directory contains appropriate
-    properties files that can be used to configure the behaviour of the JBoss Transaction Service.</listitem><listitem>/htdocs: this directory describes
-    all APIs defined by JBossTS
+    &PARENT_PRODUCT; JTA and &PARENT_PRODUCT; JTS.</listitem><listitem>/etc: this directory contains appropriate
+    properties files that can be used to configure the behaviour of the &PARENT_PRODUCT;.</listitem><listitem>/htdocs: this directory describes
+    all APIs defined by &PARENT_PRODUCT;
 					</listitem><listitem>/idl: this directory contains the
     CORBA idl files that may be registered with your interface repository prior
     to running any applications.
 					</listitem><listitem>/jacorb: This directory contains the jacorb distribution.
 					</listitem><listitem>/lib: this directory contains the
-    jar files that contains packages defined by the JBossTS. These jar files
+    jar files that contains packages defined by the &PARENT_PRODUCT;. These jar files
     shall be added in the CLASSPATH
 					</listitem><listitem>/services: this directory contains the
     appropriates scripts, jar and configuration files allowing to start and stop standalone Transaction Service and Recovery Manager
@@ -1530,14 +1527,14 @@ When installed, the binary release of JBossTS, JTS version, should have the foll
 </section>
         <section>
             <title>Testing your installation</title>
-            <para>To ensure that your JBossTS installation is fully operational, we will run the simple demo.</para>
+            <para>To ensure that your &PARENT_PRODUCT; installation is fully operational, we will run the simple demo.</para>
             <para>Please follow these steps before running the transactional applications</para>
             <itemizedlist>
                 <listitem>Ensure you have the Ant build system installed. Ant is a Java build tool,
     similar to make. It is available for free from http://ant.apache.org/ The
     sample application requires version 1.5.1 or later. </listitem>
                 <listitem>The PATH and CLASSPATH environment variables need to be set appropriately
-    to use JBoss Transaction Service. To make this easier, we provide a shell
+    to use &PARENT_PRODUCT;. To make this easier, we provide a shell
     script setup_env.sh (and for
     Windows a batch file setup_env.bat)
     in the directory &lt;jbossts_install_root&gt;/bin/
@@ -1549,8 +1546,8 @@ When installed, the binary release of JBossTS, JTS version, should have the foll
     the directory &lt;jbossts_install_root&gt;/trail_map/lib
 					</listitem>
                 <listitem>Add the generated jar file to the CLASSPATH environment variable.</listitem>
-                <listitem>Ensure that the jacorb is added in your CLASSPATH. Use only the patched version that ships with JBossTS.
-					<para><emphasis>Ensure that JBossTS jar files appear before jacorb jar files. </emphasis></para></listitem>
+                <listitem>Ensure that the jacorb is added in your CLASSPATH. Use only the patched version that ships with &PARENT_PRODUCT;.
+					<para><emphasis>Ensure that &PARENT_PRODUCT; jar files appear before jacorb jar files. </emphasis></para></listitem>
             </itemizedlist>
             <itemizedlist>
                 <listitem> Start the server.  src/com/arjuna/demo/simple/HelloServer.java"&gt;(HelloServer.java) (<emphasis>Note: The source code for the trailmap is fully documented and can often contain very useful tips and information that may not be reflected elsewhere in the trailmap</emphasis>)</listitem>
@@ -1581,11 +1578,11 @@ When installed, the binary release of JBossTS, JTS version, should have the foll
      Hello - called within a scope of a transaction</programlisting>
         </section>
         <section><title>Setting properties</title>
-The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various
+&PARENT_PRODUCT; has been designed to be highly configurable at runtime through the use of various
 property attributes. Although these attributes can be provided at runtime on the
 command line, it is possible (and may be more convenient) to specify them through the
-properties  file jbossts-properties.xml located under the /etc directory of the JBossTS distribution.
-				<para>More details on the way to configure the behavior of JBossTS can be found in the section on configuration.
+properties  file jbossts-properties.xml located under the /etc directory of the &PARENT_PRODUCT; distribution.
+				<para>More details on the way to configure the behavior of &PARENT_PRODUCT; can be found in the section on configuration.
 </para>
 	</section>
     </section>
@@ -1594,7 +1591,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
         <para>JDK releases from 1.2.2 onwards include a minimum ORB implementation from Sun.
   If using such a JDK in conjunction with another ORB it is necessary to tell
   the JVM which ORB to use. This happens by specifying the <emphasis>org.omg.CORBA.ORBClass
-  </emphasis>  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the JBossTS
+  </emphasis>  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the &PARENT_PRODUCT;
   it was necessary to specify these properties explicitly, either on the command
   line of in the properties file. However, it is no longer a requirement to do
   this, as the ORB Portability classes
@@ -2039,7 +2036,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					transaction processing standards have been developed
 					by international standards organizations. Among
 					these organizations, We list three of them which are
-					mainly considered in the Jboss Transaction Service
+					mainly considered in the &PARENT_PRODUCT;
 					product:
 				</para>
 				<itemizedlist><listitem>
@@ -2078,15 +2075,15 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 	</section></section>
 	</section>
     <section>
-        <title>JBossTS Overview</title>
+        <title>&PARENT_PRODUCT; Overview</title>
         <para>
-					JBoss Transaction Service (JBossTS) assures
+					&PARENT_PRODUCT; assures
 					complete, accurate business transactions for any
 					Java based applications, including those written for
 					the Java EE and EJB frameworks.
 				</para>
         <para>
-					JBossTS is a 100% Java implementation of a
+					&PARENT_PRODUCT; is a 100% Java implementation of a
 					distributed transaction management system based on
 					the Sun Microsystems Java EE Java Transaction Service
 					(JTS) standard. Our implementation of the JTS
@@ -2095,15 +2092,15 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					interoperability as recommended in the Java EE and EJB
 					standards. Although any JTS-compliant product will
 					allow Java objects to participate in transactions,
-					one of the key features of JBossTS is it's 100% Java
-					implementation. This allows JBossTS to support fully
+					one of the key features of &PARENT_PRODUCT; is it's 100% Java
+					implementation. This allows &PARENT_PRODUCT; to support fully
 					distributed transactions that can be coordinated by
 					distributed parties.
         </para>
         <para>
-						JBossTS runs can be run both as an embedded
+						&PARENT_PRODUCT; runs can be run both as an embedded
 						distributed service of an application server
-						(e.g. JBossAS), affording the user all the
+						(e.g. &APPSERVER;), affording the user all the
 						added benefits of the application server
 						environment such as real-time load balancing,
 						unlimited linear scalability and unmatched fault
@@ -2114,18 +2111,18 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					</para>
         <para>
 						In addition to providing full compliance with
-						the latest version of the JTS specification, JBossTS
+						the latest version of the JTS specification, &PARENT_PRODUCT;
 						leads the market in providing many advanced
 						features such as fully distributed transactions
 						and ORB portability with POA support.
 					</para>
         <para>
-						JBossTS works on a number of operating systems including
+						&PARENT_PRODUCT; works on a number of operating systems including
                         Red Hat linux, Sun Solaris and Microsoft Windows XP.
                         It requires a Java 5 or later environment.
 					</para>
         <para>
-						The Java Transaction API support for JBossTS comes
+						The Java Transaction API support for &PARENT_PRODUCT; comes
 						in two flavours:
 					</para>
         <itemizedlist>
@@ -2237,7 +2234,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
         <section>
             <title>Deploying and Testing The Banking Application</title>
             <para>
-					Assuming that the JBoss Transactioning product has
+					Assuming that the &PARENT_PRODUCT; product has
 					been installed, this trail provides a set of
 					examples that show how to build transactional
 					applications. Two types of transactional
@@ -2259,8 +2256,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					</listitem>
                 <listitem>
 						The PATH and CLASSPATH environment variables
-						need to be set appropriately to use JBoss
-						Transaction Service. To make this easier, we
+						need to be set appropriately to use &PARENT_PRODUCT;. To make this easier, we
 						provide a shell script setup_env.sh (and for
 						Windows a batch file setup_env.bat) in the
 						directory
@@ -2296,7 +2292,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					</listitem>
             </itemizedlist>
             <section><title>Local transaction with JTA</title>
-					To configure JBossTS for such transaction, edit the
+					To configure &PARENT_PRODUCT; for such transaction, edit the
 					jbossts-properties.xml file and set the following
 					properties to the appropriate values:
 
@@ -2312,7 +2308,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 					</programlisting>
 					</section>
             <section><title>Distributed transaction with JTA</title>
-					While for a distributed transactions case, JBossTS need
+					While for a distributed transactions case, &PARENT_PRODUCT; need
 					to be configured as follow:
 					<programlisting role="JAVA" language="Java">
 		&lt;property
@@ -2340,7 +2336,7 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
 				</title>
                 <para>
 					To illustrate the programming interfaces
-					possibilities enabled by JBossTS, the banking
+					possibilities enabled by &PARENT_PRODUCT;, the banking
 					application is provided in several versions: a
 					version that uses the JTA API and a second that uses
 					JTS/OTS interfaces.
@@ -2363,11 +2359,11 @@ properties  file jbossts-properties.xml located under the /etc directory of the 
                 <section>
                     <title>Running The Banking application with JTA</title>
                     <section>
-                        <title>Configuring JBossTS</title>
+                        <title>Configuring &PARENT_PRODUCT;</title>
                         <para>Program Applications that create transactions using te JTA interface may invoke as well local services as remote
 services. When a remote invocation need to be performed, the current transactional context need to be propagated
-to the remote service in order to involve it to the transaction in progress. JBoss Transaction Service allows the
-possibility to provide such feature using the facilities provided by JTS and ORB. More precisely JBossTS need to be configured
+to the remote service in order to involve it to the transaction in progress.&PARENT_PRODUCT; allows the
+possibility to provide such feature using the facilities provided by JTS and ORB. More precisely &PARENT_PRODUCT; need to be configured
 to determine in which type of transaction, local or distributed, the JTA interface is used.
 </para>
                     </section>
@@ -2463,7 +2459,7 @@ ERROR - javax.transaction.RollbackException
                         <title>Building The Banking Application with JTA</title>
                         <para>From an architectural point of view of JTA, the bank client is considered as
  an application program able to manage transactions via the javax.transaction.UserTransaction interface. The following portion of code illustrates how a JTA transaction is
- started and terminated when the client asks to transfer money from one account  to another. This also describes what are JBossTS packages that need to be used
+ started and terminated when the client asks to transfer money from one account  to another. This also describes what are &PARENT_PRODUCT; packages that need to be used
   in order to obtain appropriate objects instances (such UserTransaction).</para>
                         <para>Note: The code below is a simplified view of the BankClient.java program. Only the transfer operation is illustrated; other operations manage transactions in the same way.
  (see for details the src/com/arjuna/demo/jta/localbank/BankClient.java)</para>
@@ -2498,7 +2494,7 @@ public class BankClient
 
      try
       {
-       //the following instruction asks a specific JBossTS
+       //the following instruction asks a specific &PARENT_PRODUCT;
        //class to obtain a UserTransaction instance
        <emphasis>javax.transaction.UserTransaction userTran =
                      com.arjuna.ats.jta.UserTransaction.userTransaction()</emphasis>;
@@ -2703,8 +2699,8 @@ public class AccountResource <emphasis>implements XAResource</emphasis>
             <section>
                 <title>Running The Banking application with JTS</title>
                 <para>The JTS version of the Banking application means that the Object Request Broker
-  will be used. The JBossTS distribution is provided to work with the bundled JacORB version</para>
-                <para>To describe the possibilities provided by JBossTS to build a transactional
+  will be used. The &PARENT_PRODUCT; distribution is provided to work with the bundled JacORB version</para>
+                <para>To describe the possibilities provided by &PARENT_PRODUCT; to build a transactional
   application according to the programming models defined by the OTS specification,
   the Banking Application is programmed in different ways. </para>
                 <itemizedlist>
@@ -2726,7 +2722,7 @@ public class AccountResource <emphasis>implements XAResource</emphasis>
                 <section>
                     <title>Running The Banking application with JTS</title>
                     <para>The JTS version of the Banking application means that the Object Request Broker
-  will be used. The JBossTS distribution is provided to work with the bundled JacORB version</para>
+  will be used. The &PARENT_PRODUCT; distribution is provided to work with the bundled JacORB version</para>
                     <para><emphasis>Note</emphasis>: Ensure that the jacorb jar files are added in your CLASSPATH</para>
                     <para>To launch the JTS version of the Banking application,
   execute the following java program</para>
@@ -2819,7 +2815,7 @@ minor code: 50001  completed: No
                     </blockquote>
                     <section>
                         <title>Using a stand-alone Transaction Server</title>
-                        <para>By default JBossTS does not use a separate transaction manager server: transaction
+                        <para>By default &PARENT_PRODUCT; does not use a separate transaction manager server: transaction
   managers are co-located with each application process to improve performance
   and improve application fault-tolerance. When running applications which require
   a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager
@@ -2834,7 +2830,7 @@ minor code: 50001  completed: No
                     <section>
                         <title>Running The Banking application with JTS</title>
                         <para>The JTS version of the Banking application means that the Object Request Broker
-  will be used. The JBossTS distribution is provided to work with the bundled JacORB version</para>
+  will be used. The &PARENT_PRODUCT; distribution is provided to work with the bundled JacORB version</para>
                         <para><emphasis>Note</emphasis>: Ensure that the jacorb jar files are added in your CLASSPATH</para>
                         <itemizedlist>
                             <listitem>In a separate window launch the Recovery Manager, as follow.</listitem>
@@ -2953,7 +2949,7 @@ minor code: 50001  completed: No
                     </section>
                     <section>
                         <title>Using a stand-alone Transaction Server</title>
-                        <para>By default JBossTS does not use a separate transaction manager server: transaction
+                        <para>By default &PARENT_PRODUCT; does not use a separate transaction manager server: transaction
   managers are co-located with each application process to improve performance
   and improve application fault-tolerance. When running applications which require
   a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager
@@ -2968,7 +2964,7 @@ minor code: 50001  completed: No
                     <section>
                         <title>Running the example on several machines</title>
                         <para>
-				It is possible to run the JBoss Transaction Service and recovery manager processes on a different machine and have clients access these
+				It is possible to run the &PARENT_PRODUCT; Transaction Service and recovery manager processes on a different machine and have clients access these
 				centralized services in a hub-and-spoke style architecture.</para>
                         <para>
 				All that must be done is to provide the clients with enough information to contact the transaction service (such as the ORB's NameService).
@@ -3048,7 +3044,7 @@ minor code: 50001  completed: No
   done in the indirect mode. </para>
                         <para> The following portion of code illustrates how a JTS transaction is started
   and terminated when the client asks to transfer money from one account to another.
-  This also describes what are JBossTS packages that need to be used in order
+  This also describes what are &PARENT_PRODUCT; packages that need to be used in order
   to obtain appropriate objects instances (such Current).</para>
                         <para>Note: The code below is a simplified view of the BankClient.java program. Only
   the transfer operation is illustrated; other operations manage transactions
@@ -3087,7 +3083,7 @@ import com.arjuna.ats.internal.jts.ORBManager;</emphasis>
 
      try
       {
-       //the following instruction asks a specific JBossTS class to obtain a Current instance
+       //the following instruction asks a specific &PARENT_PRODUCT; class to obtain a Current instance
        <emphasis>Current current = OTSManager.get_current(); </emphasis>
        System.out.println("Beginning a User transaction to get balance");
        <emphasis>current.begin()</emphasis>;
@@ -3116,7 +3112,7 @@ import com.arjuna.ats.internal.jts.ORBManager;</emphasis>
      myORB.initORB(args, null); //Initialise the ORB
      myOA.initOA(); //Initialise the POA
 
-     // The ORBManager is a class provided by JBossTS to facilitate the association
+     // The ORBManager is a class provided by &PARENT_PRODUCT; to facilitate the association
      // of the ORB/POA with the transaction service
      ORBManager.setORB(myORB);
      ORBManager.setPOA(myOA);
@@ -3354,7 +3350,7 @@ module arjuna {
    </programlisting>
                         <para>The following portion of code illustrates how a JTS transaction is started
   and terminated when the client asks to transfer money from one account to another.
-  This also describes what are JBossTS packages that need to be used in order
+  This also describes what are &PARENT_PRODUCT; packages that need to be used in order
   to obtain appropriate objects instances (such Current).</para>
                         <para>Note: The code below is a simplified view of the BankClient.java program. Only
   the transfer operation is illustrated; other operations manage transactions
@@ -3376,7 +3372,7 @@ public class BankClient
      try
       {
        //the following instruction asks a specific
-       //JBossTS class to obtain a Current instance
+       //&PARENT_PRODUCT; class to obtain a Current instance
        <emphasis>Current current = OTSManager.get_current(); </emphasis>
        System.out.println("Beginning a User transaction to get balance");
        <emphasis>current.begin()</emphasis>;
@@ -3669,7 +3665,7 @@ module arjuna {
    };</programlisting>
                         <para>The following portion of code illustrates how a JTS transaction is started
   and terminated when the client asks to transfer money from one account to another.
-  This also describes what are JBossTS packages that need to be used in order
+  This also describes what are &PARENT_PRODUCT; packages that need to be used in order
   to obtain appropriate standard JTS API objects instances (such Current).</para>
                         <para>Note: The code below is a simplified view of the BankClient.java program. Only
   the transfer operation is illustrated; other operations manage transactions
@@ -3694,7 +3690,7 @@ public class BankClient
      try
       {
        //the following instruction asks a
-       // specific JBossTS class
+       // specific &PARENT_PRODUCT; class
        // to obtain a Current instance
        <emphasis>Current current = OTSManager.get_current(); </emphasis>
        System.out.println("Beginning a User
@@ -3960,7 +3956,7 @@ public class AccountResource <emphasis>
   done in the indirect mode. </para>
                         <para> The following portion of code illustrates how a JTS transaction is started
   and terminated when the client asks to transfer money from one account to another.
-  This also describes what are JBossTS packages that need to be used in order
+  This also describes what are &PARENT_PRODUCT; packages that need to be used in order
   to obtain appropriate objects instances (such Current).</para>
                         <para>Note: The code below is a simplified view of the BankClient.java program. Only
   the transfer operation is illustrated; other operations manage transactions
@@ -4002,7 +3998,7 @@ public class BankClient
      try
       {
        //the following instruction asks a specific
-       // JBossTS class to obtain a Current instance
+       // &PARENT_PRODUCT; class to obtain a Current instance
        <emphasis>Current current = OTSManager.get_current(); </emphasis>
        System.out.println("Beginning a User
                      transaction to get balance");
@@ -4240,7 +4236,7 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA
 				</para>
         <itemizedlist>
             <listitem>
-						Using the JBoss Transactional Object For Java
+						Using the &PARENT_PRODUCT; Object For Java
 						(TXOJ) mechanisms
 						<itemizedlist><listitem>
 									Overview of the Transactional Object
@@ -4255,7 +4251,7 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA
 						application as a relational database.
 						<itemizedlist><listitem>
 									Developing applications with JDBC
-									and JBossTS
+									and &PARENT_PRODUCT;
 								</listitem><listitem>
 									The banking application as a
 									relational database accessed with
@@ -4477,7 +4473,7 @@ public class AccountResource extends org.omg.CosTransactions.ResourcePOA
                 <title>Distributed Configuration </title>
                 <para>The banking application with Transactional Object for Java (TXOJ) is configured
   to use JTS interfaces as the API to create the transaction, then an ORB to deploy
-  it. The JBossTS distribution is provided to work with the bundled JacORB version</para>
+  it. The &PARENT_PRODUCT; distribution is provided to work with the bundled JacORB version</para>
                 <para><emphasis>Note</emphasis>: Ensure that the jacorb jar files are added in your CLASSPATH</para>
             </section>
             <section>
@@ -4942,14 +4938,14 @@ file.close();
             </section>
         </section>
         <section>
-            <title>Developing applications with JDBC and JBossTS JTS</title>
-            <para>JBossTS JTS supports the construction of both local and distributed transactional
+            <title>Developing applications with JDBC and &PARENT_PRODUCT; JTS</title>
+            <para>&PARENT_PRODUCT; JTS supports the construction of both local and distributed transactional
   applications which access databases using the JDBC APIs. JDBC supports
   two-phase commit of transactions, and is similar to the XA X/Open standard.
   The JDBC support is found in the com.arjuna.ats.jdbc package.</para>
             <section>
                 <title>Transactional Driver</title>
-                <para>The JBossTS JTS approach to incorporating JDBC connections within transactions
+                <para>The &PARENT_PRODUCT; JTS approach to incorporating JDBC connections within transactions
   is to provide transactional JDBC drivers through which all interactions occur.
   These drivers intercept all invocations and ensure that they are registered
   with, and driven by, appropriate transactions. There is a single type of transactional
@@ -4990,13 +4986,13 @@ DriverManager.registerDriver(arjunaJDBC2Driver);</programlisting>
                 <programlisting role="JAVA" language="Java">Connection con = DriverManager.getConnection(url, username, password);</programlisting>
                 <para>From its version 2.0, the JDBC API has introduced a new way to obtain instances
   of the Connection class. This is the case of the interfaces DataSource and XADataSource
-  that creates transactional connections. When using a JDBC 2.0 driver, JBossTS
+  that creates transactional connections. When using a JDBC 2.0 driver, &PARENT_PRODUCT;
   will use the appropriate DataSource whenever a connection to the database is
   made. It will then obtain XAResources and register them with the transaction
   via the JTA interfaces. It is these XAResources which the transaction service
   will use when the transaction terminates in order to drive the database to either
   commit or rollback the changes made via the JDBC connection.</para>
-                <para> There are two ways in which the JBossTS JDBC 2.0 support can obtain XADataSources.
+                <para> There are two ways in which the &PARENT_PRODUCT; JDBC 2.0 support can obtain XADataSources.
   These will be explained in the following sections. Note, for simplicity we shall
   assume that the JDBC 2.0 driver is instantiated directly by the application.</para>
                 <itemizedlist>
@@ -5032,12 +5028,12 @@ Connection connection = arjunaJDBC2Driver.
                         <para> Many JDBC implementations provide proprietary implementations of XADataSources
       that provide non-standard extensions to the specification. In order to allow
       the application to remain isolated from the actual JDBC 2.0 implementation
-      it is using and yet continue to be able to use these extensions, JBossTS
+      it is using and yet continue to be able to use these extensions, &PARENT_PRODUCT;
       hides the details of these proprietary implementations using dynamic class
       instantiation. In addition, the use of JNDI is not required when using this
       mechanism because the actual implementation of the XADataSource will be
       directly instantiated, albeit in a manner which will not tie an application
-      or driver to a specific implementation. JBossTS therefore has several classes
+      or driver to a specific implementation. &PARENT_PRODUCT; therefore has several classes
       which are for specific JDBC implementations, and these can be selected
       at runtime by the application setting the dynamicClass property appropriately:
     </para>
@@ -5101,18 +5097,18 @@ Connection connection = arjunaJDBC2Driver.connect("jdbc:arjuna:
             <section>
                 <title>Using the Connection</title>
                 <para>Once the connection has been established (for example, using the java.sql.DriverManager.getConnection
-  method), all operations on the connection will be monitored by JBossTS. Once
+  method), all operations on the connection will be monitored by &PARENT_PRODUCT;. Once
   created, the driver and any connection can be used in the same way as any other
   JDBC driver or connection.</para>
-                <para> JBossTS connections can be used within multiple different transactions simultaneously,
+                <para> &PARENT_PRODUCT; connections can be used within multiple different transactions simultaneously,
   i.e., different threads, with different notions of the current transaction,
-  may use the same JDBC connection. JBossTS does connection pooling for each
+  may use the same JDBC connection. &PARENT_PRODUCT; does connection pooling for each
   transaction within the JDBC connection. So, although multiple threads may use
   the same instance of the JDBC connection, internally this may be using a different
   connection instance per transaction. With the exception of close, all operations
   performed on the connection at the application level will only be performed
   on this transaction-specific connection.</para>
-                <para> JBossTS will automatically register the JDBC driver connection with the transaction
+                <para> &PARENT_PRODUCT; will automatically register the JDBC driver connection with the transaction
   via an appropriate resource . When the transaction terminates, this resource
   will be responsible for either committing or rolling back any changes made to
   the underlying database via appropriate calls on the JDBC driver.</para>
@@ -5120,7 +5116,7 @@ Connection connection = arjunaJDBC2Driver.connect("jdbc:arjuna:
             <section>
                 <title>Further reading</title>
                 <para>More details on the way to manage applications using the JDBC API can be found
-  in the JBossTS Programming Guide.</para>
+  in the &PARENT_PRODUCT; Programming Guide.</para>
             </section>
             <section>
                 <title>The banking application as a relational database accessed with JDBC</title>
@@ -5290,7 +5286,7 @@ If an xa error is returned you can use the following property property <emphasis
             <section>
                 <title>Note</title>
                 <para>Although, this version of the banking application creates JTA local transactions,
-  the way to manipulate JDBC API and the associated JBossTS mechanisms in the
+  the way to manipulate JDBC API and the associated &PARENT_PRODUCT; mechanisms in the
   case of distributed transactions is the same.</para>
             </section>
         </section>
@@ -5305,14 +5301,14 @@ If an xa error is returned you can use the following property property <emphasis
 				be able to return to a previous state in case of failure or to ensure that changes committed by a
 				transaction are properly stored.</para>
             <para>
-				JBossTS ensures that results of a transaction are applied consistently to all resources involved in
-				a transaction, even in the presence of failure. To recover from failure, JBossTS relies on its Recovery
+				&PARENT_PRODUCT; ensures that results of a transaction are applied consistently to all resources involved in
+				a transaction, even in the presence of failure. To recover from failure, &PARENT_PRODUCT; relies on its Recovery
 				Manager.</para>
             <para>
 				Basically, the Recovery Manager is a daemon process that invokes a set of well known Recovery Modules
 				periodically in two steps; a first to determine transactions in doubt state and a second step to continue
 				the completion of those transactions found in the first step. Since different type of resources may be
-				involved in a transaction, different type of Recovery Modules may exist. JBossTS provides several type of
+				involved in a transaction, different type of Recovery Modules may exist. &PARENT_PRODUCT; provides several type of
 				modules that manage resources according to their position in the transaction tree (root, subordinate, leaf)
 				or the nature of the data itself, transactional object for java or XAResource as seen in
 				the previous trail. </para>
@@ -5325,7 +5321,7 @@ If an xa error is returned you can use the following property property <emphasis
             <title>Running the Recovery Manager</title>
             <para>
                 <emphasis>This section provides only brief information on running the recovery manager from provided scripts.
-				For complete information on the recovery manager (including how to configure it), see the JBoss TS recovery information.</emphasis>
+				For complete information on the recovery manager (including how to configure it), see the &PARENT_PRODUCT; recovery information.</emphasis>
             </para>
             <section>
                 <title>Windows</title>
@@ -5362,11 +5358,11 @@ If an xa error is returned you can use the following property property <emphasis
         <section>
             <title>The Recovery Process and XAResources</title>
             <para>
-				The JBossTS recovery manager provides support for recovering XAResources whether or not they are Serializable. XAResources that <emphasis>do</emphasis>
+				The &PARENT_PRODUCT; recovery manager provides support for recovering XAResources whether or not they are Serializable. XAResources that <emphasis>do</emphasis>
 				implement the Serializable interface are handled without requiring additional programmer defined classes. For those XAResources that need
 				to recover but which cannot implement Serializable, it is possible to provide a small class which is used to help recover them.</para>
             <para>
-				This example shows the JBossTS recovery manager recovering a Serializable XAResource and a non-Serializable XAResource.</para>
+				This example shows the &PARENT_PRODUCT; recovery manager recovering a Serializable XAResource and a non-Serializable XAResource.</para>
             <section><title>The demo's components</title>
 				The application consists of four classes. Each class is well documented and it is recommended that the provided code is inspected to gain
 				useful insight into some of the nuances of the recovery process.
@@ -5375,34 +5371,34 @@ If an xa error is returned you can use the following property property <emphasis
 				the user to specify a number of options: [-waitForRecovery] [-useExternalRecoveryManager]</listitem><listitem>Programmer-defined support of the Serializable XAResource is only required in the XAResource implementation class
 				src/com/arjuna/demo/recovery/xaresource/ExampleXAResource.java"&gt;ExampleXAResource.java</listitem><listitem>Programmer-defined support of the non-Serializable XAResource is required both in the XAResource implementation class
 				src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResource.java"&gt;NonSerializableExampleXAResource,
-				and in a class that implements a helper for the JBossTS recovery process
+				and in a class that implements a helper for the &PARENT_PRODUCT; recovery process
 				src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResourceRecovery.java"&gt;NonSerializableExampleXAResourceRecovery.java</listitem></itemizedlist>
 </section>
             <section>
                 <title>XAResourceRecovery registration</title>
                 <para>
-         			When recovering from failures, JBossTS requires the ability to reconnect to the resource managers
+         			When recovering from failures, &PARENT_PRODUCT; requires the ability to reconnect to the resource managers
  			        that were in use prior to the failures in order to resolve any outstanding transactions.
 			        In order to recreate those connections for non-Serializable XAResources it is necessary to
-				provide implementations of the following JBossTS interface com.arjuna.ats.jta.recovery.XAResourceRecovery.</para>
+				provide implementations of the following &PARENT_PRODUCT; interface com.arjuna.ats.jta.recovery.XAResourceRecovery.</para>
                 <para>
 			        To inform the recovery system about each of the XAResourceRecovery instances, it is
 			        necessary to specify their class names through property variables in the jbossts-properties.xml file.
 				Any property variable which starts with the name XAResourceRecovery will be assumed to represent
 				one of these instances, and its value should be the class name.</para>
                 <para>
-			        When running XA transaction recovery it is necessary to tell JBossTS which types of
-			        Xid it can recover. Each Xid that JBossTS creates has a unique node
-			        identifier encoded within it and JBossTS will only recover transactions
+			        When running XA transaction recovery it is necessary to tell &PARENT_PRODUCT; which types of
+			        Xid it can recover. Each Xid that &PARENT_PRODUCT; creates has a unique node
+			        identifier encoded within it and &PARENT_PRODUCT; will only recover transactions
 			        and states that match a specified node identifier. The node identifier to
-			        use should be provided to JBossTS via a property that starts with the
+			        use should be provided to &PARENT_PRODUCT; via a property that starts with the
 			        name com.arjuna.ats.jta.xaRecoveryNode (multiple values may
-			        be provided). A value of * will force JBossTS to recover (and possibly
+			        be provided). A value of * will force &PARENT_PRODUCT; to recover (and possibly
 			        rollback) all transactions irrespective of their node identifier and should be
 			        used with caution.</para>
                 <para>
 				The recovery module for the non-Serializable XAResource must be deployed in order to provide support to recover the non-Serializable XAResource.
-				If this step was missed out the Serializable XAResource would recover OK but JBossTS would have no knowledge of the non-Serializable XAResource
+				If this step was missed out the Serializable XAResource would recover OK but &PARENT_PRODUCT; would have no knowledge of the non-Serializable XAResource
 				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the jbossts-properties.xml.</para>
                 <para>
 				Under the element &lt;properties depends="jts" name="jta"&gt;, add:</para>
@@ -5427,10 +5423,10 @@ If an xa error is returned you can use the following property property <emphasis
                 <section>
                     <title>Specify the transaction manager type to use</title>
                     <para>
-				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the JBoss Transaction Service
+				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default &PARENT_PRODUCT;
 				is configured to use a JTS transaction manager, in order to configure it to use a JTA transaction manager a change must again be made
 				to the jbossts-properties.xml. <emphasis>See "Testing JTA" for more information on how to configure
-				the JBossTS transaction manager to use JTA rather than JTS.</emphasis></para>
+				the &PARENT_PRODUCT; transaction manager to use JTA rather than JTS.</emphasis></para>
                     <para>
                         <emphasis>If you do change the transaction manager type remember to reconfigure the recovery manager as follows:</emphasis>
                     </para>
@@ -5463,7 +5459,7 @@ If an xa error is returned you can use the following property property <emphasis
 				information about this resource.</para>
                 </section>
                 <section><title>The Recovery Process and AbstractRecords</title><para><emphasis>WARNING: Implementing a RecoveryModule and AbstractRecord is a very advanced feature of the transaction service. It should only
-				be performed by users familiar with the all the concepts used in the JBoss Transactions product. Please see the ArjunaCore guide for more
+				be performed by users familiar with the all the concepts used in the &PARENT_PRODUCT; product. Please see the ArjunaCore guide for more
 				information about RecoveryModules and AbstractRecords.</emphasis></para><para>
 				The following sample gives an overview how the Recovery Manager invokes a module to recover from failure.
 				This basic sample does not aim to present a complete process to recover from failure, but mainly to illustrate
@@ -5488,7 +5484,7 @@ If an xa error is returned you can use the following property property <emphasis
 				</listitem><listitem>A Recovery Module (src/com/arjuna/demo/recoverymodule/SimpleRecoveryModule.java"&gt;SimpleRecoveryModule.java) that consists to read the content of the file used to store the status of the participant,
 				to determine that status and print a message indicating if a recovery action is needed or not.
 				</listitem></itemizedlist>
-				Using the provided JBossTS Recovery Modules ensures that resources are correctly recovered. This sample illustrates
+				Using the provided &PARENT_PRODUCT; Recovery Modules ensures that resources are correctly recovered. This sample illustrates
 				how to define and register its own module. It's the responsibility of the module to re-create the appropriate
 				objects using information retrieved from a log.
 

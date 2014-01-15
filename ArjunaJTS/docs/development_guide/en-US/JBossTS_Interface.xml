@@ -4,9 +4,9 @@
 %BOOK_ENTITIES;
 ]>
 <chapter>
-  <title>JBossTS interfaces for extending the OTS</title>
+  <title>&PARENT_PRODUCT; interfaces for extending the OTS</title>
   <para>
-    This chapter contains a description of the use of the JBossTS classes you can use to extend the OTS
+    This chapter contains a description of the use of the &PARENT_PRODUCT; classes you can use to extend the OTS
     interfaces. These advanced interfaces are all written on top of the basic OTS engine described previously, and
     applications which use them run on other OTS implementations, only without the added functionality.
   </para>
@@ -28,7 +28,7 @@
       <listitem>
         <para>
           Allow nested transactions to use a two-phase commit protocol. These Resources can also be ordered within
-          JBossTS, enabling you to control the order in which <classname>Resource</classname>s are called during the
+          &PARENT_PRODUCT;, enabling you to control the order in which <classname>Resource</classname>s are called during the
           commit or abort protocol.
         </para>
       </listitem>
@@ -37,8 +37,8 @@
       <term>Implicit context propagation between client and server</term>
       <listitem>
         <para>
-          Where available, JBossTS uses implicit context propagation between client and server. Otherwise, JBossTS
-          provides an explicit interposition class, which simplifies the work involved in interposition. The JBossTS
+          Where available, &PARENT_PRODUCT; uses implicit context propagation between client and server. Otherwise, &PARENT_PRODUCT;
+          provides an explicit interposition class, which simplifies the work involved in interposition. The &PARENT_PRODUCT;
           API, <firstterm>Transactional Objects for Java (TXOJ)</firstterm>, requires either explicit or implicit
           interposition. This is even true in a stand-alone mode when using a separate transaction manager. TXOJ is
           fully described in the <citetitle>ArjunaCore Development Guide</citetitle>.
@@ -69,7 +69,7 @@
       <systemitem>commit</systemitem> or <systemitem>abort</systemitem> phase enforces the outcome.
     </para>
     <para>
-      JBossTS supports the strict OTS implementation of subtransactions for those resources derived from
+      &PARENT_PRODUCT; supports the strict OTS implementation of subtransactions for those resources derived from
       <interfacename>CosTransactions::SubtransactionAwareResource</interfacename>. However, if a resource is derived
       from <interfacename>ArjunaOTS::ArjunaSubtranAwareResource</interfacename>, it is driven by a two-phase commit
       protocol whenever a nested transaction commits.
@@ -84,7 +84,7 @@
       called, and the resource behaves as though it were being driven by a top-level transaction, making any state
       changes provisional upon the second phase of the protocol. Any changes to persistent state must still be
       provisional upon the second phase of the top-level transaction, as well. Based on the votes of all registered
-      resources, JBossTS then calls either <methodname>commit_subtransaction</methodname> or
+      resources, &PARENT_PRODUCT; then calls either <methodname>commit_subtransaction</methodname> or
       <methodname>rollback_subtransaction</methodname>.
     </para>
     <note>
@@ -104,7 +104,7 @@
       <firstterm>intentions list</firstterm>. At termination time, the transaction uses the intentions list to drive
       each resource appropriately, to commit or abort. However, you have no control over the order in which resources
       are called, or whether previously-registered resources should be replaced with newly registered resources. The
-      JBossTS interface <interfacename>ArjunaOTS::OTSAbstractRecord</interfacename> gives you this level of control.
+      &PARENT_PRODUCT; interface <interfacename>ArjunaOTS::OTSAbstractRecord</interfacename> gives you this level of control.
     </para>
     
     <example>
@@ -158,7 +158,7 @@
             <entry>saveRecord</entry>
             <entry>
               <para>
-                returning <literal>TRUE</literal> from this method causes JBossTS to try to save sufficient information
+                returning <literal>TRUE</literal> from this method causes &PARENT_PRODUCT; to try to save sufficient information
                 about the record to persistent state during commit, so that crash recovery mechanisms can replay the
                 transaction termination in the event of a failure. If <literal>FALSE</literal> is returned, no
                 information is saved.
@@ -212,7 +212,7 @@
       </tgroup>
     </informaltable>
     <para>
-      When inserting a new record into the transaction’s intentions list, JBossTS uses the following algorithm:
+      When inserting a new record into the transaction’s intentions list, &PARENT_PRODUCT; uses the following algorithm:
     </para>
     <orderedlist>
       <listitem>
@@ -245,7 +245,7 @@
       emphasis on easing application development. For example, if an instance of
       <interfacename>AtomicTransaction</interfacename> goes out of scope before it is terminates, the transaction
       automatically rolls back. <interfacename>CosTransactions::Current</interfacename> cannot provide this
-      functionality. When building applications using JBossTS, use <interfacename>AtomicTransaction</interfacename> for
+      functionality. When building applications using &PARENT_PRODUCT;, use <interfacename>AtomicTransaction</interfacename> for
       the added benefits it provides. It is located in the <package>com.arjuna.ats.jts.extensions.ArjunaOTS</package>
       package.
     </para>
@@ -320,11 +320,11 @@
   <section>
     <title>Context propagation issues</title>
     <para>
-      When using TXOJ in a distributed manner, JBossTS requires you to use interposition between client and object. This
+      When using TXOJ in a distributed manner, &PARENT_PRODUCT; requires you to use interposition between client and object. This
       requirement also exists if the application is local, but the transaction manager is remote. In the case of
       implicit context propagation, where the application object is derived from
       <interfacename>CosTransactions::TransactionalObject</interfacename>, you do not need to do anything
-      further. JBossTS automatically provides interposition. However, where implicit propagation is not supported by the
+      further. &PARENT_PRODUCT; automatically provides interposition. However, where implicit propagation is not supported by the
       ORB, or your application does not use it, you must take additional action to enable interposition.
     </para>
     <para>
@@ -368,7 +368,7 @@
       When the application returns, or when it finishes with the interposed hierarchy, the program should call
       <methodname>unregisterTransaction</methodname> to disassociate the thread of control from the hierarchy. This
       occurs automatically when the <classname>ExplicitInterposition</classname> object is garbage collected. However,
-      since this may be after the transaction terminates, JBossTS assumes the thread is still associated with the
+      since this may be after the transaction terminates, &PARENT_PRODUCT; assumes the thread is still associated with the
       transaction and issues a warning about trying to terminate a transaction while threads are still active within it.
     </para>
   </section>

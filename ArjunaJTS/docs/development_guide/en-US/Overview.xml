@@ -28,7 +28,7 @@
       </para>
     </formalpara>
     <para>
-      This ability to roll back an operation if any part of it fails is what JBoss Transactions is all about. This guide
+      This ability to roll back an operation if any part of it fails is what &PARENT_PRODUCT; is all about. This guide
       assists you in writing transactional applications to protect your data.
     </para>
     <para>
@@ -231,7 +231,7 @@
           <para>
             A collection of services that support functions for using and implementing objects. Such services are
             necessary for the construction of any distributed application. The Object Transaction Service (OTS) is the
-            most relevant to JBossJTS.
+            most relevant to &PRODUCT;.
           </para>
         </listitem>
       </varlistentry>
@@ -256,7 +256,7 @@
     </para>
     <note>
       <para>
-        The OTS specification allows, but does not require, nested transactions. JBossTS is a fully compliant version of
+        The OTS specification allows, but does not require, nested transactions. &PARENT_PRODUCT; is a fully compliant version of
         the OTS version 1.1 draft 5, and support nested transactions.
       </para>
     </note>

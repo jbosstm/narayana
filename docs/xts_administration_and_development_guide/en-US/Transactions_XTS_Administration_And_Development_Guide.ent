@@ -3,4 +3,4 @@
 <!ENTITY BOOKID "XTS_Development_Guide">
 <!ENTITY YEAR "2014">
 <!ENTITY HOLDER "JBoss.org">
-<!ENTITY APPSERVER "Wildfly Application Server">
+<!ENTITY APPSERVER "WildFly Application Server">

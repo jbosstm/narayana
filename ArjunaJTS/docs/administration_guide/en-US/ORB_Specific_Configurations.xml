@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-<!ENTITY % BOOK_ENTITIES SYSTEM "ArjunaCore_Administration_Guide.ent">
+<!ENTITY % BOOK_ENTITIES SYSTEM "JBossJTS_Administration_Guide.ent">
 %BOOK_ENTITIES;
 ]>
 <chapter>
@@ -20,7 +20,7 @@
       </listitem>
       <listitem>
         <para>
-          The home directory of the user running the JBoss Transaction Service.  The home directory is retrieved using
+          The home directory of the user running the &PARENT_PRODUCT; Service.  The home directory is retrieved using
           <methodname>System.getProperty( “user.home” );</methodname>
         </para>
       </listitem>
@@ -65,15 +65,15 @@
     <important>
       <para>
         JacORB includes its own implementation of the classes defined in the <filename>CosTransactions.idl</filename>
-        file. Unfortunately these are incompatible with the version shipped with JBossTS. Therefore, the JBossTS jar
-        files absolutely must appear in the CLASSPATH before any JacORB jars.
+        file. Unfortunately these are incompatible with the version shipped with &PARENT_PRODUCT;. Therefore, the
+        &PARENT_PRODUCT; jar files absolutely must appear in the CLASSPATH before any JacORB jars.
       </para>
     </important>
     <para>
       When running the recovery manager, it should always uses the same well-known port for each machine on which it
       runs. Do not use the <varname>OAPort</varname> property provided by JacORB unless the recovery manager has its own
       <filename>jacorb.properties</filename> file or the property is provided on the command line when starting the
-      recovery manager. If the recovery manager and other components of JBossTS share the same
+      recovery manager. If the recovery manager and other components of &PARENT_PRODUCT; share the same
       <filename>jacorb.properties</filename> file, use the <varname>JTSEnvironmentBean.recoveryManagerPort</varname> and
       <varname>JTSEnvironmentBean.recoveryManagerAddress</varname> properties.
     </para>

@@ -9,9 +9,9 @@
    <section>
      <title>Prerequisities</title>
      <para>
-       JBossJTS is the implementation of the JTS API provided for use with JBoss Transaction Manager. For more details
+       &PRODUCT; is the implementation of the JTS API provided for use with &PARENT_PRODUCT;. For more details
        about the Transaction Manager, refer to the ArjunaCore Installation and Administration Guide, which is also
-       available from the JBoss Transactions website, <ulink url="http://www.jboss.org/jbosstm" />.
+       available from the &PARENT_PRODUCT; website, <ulink url="&PRODUCT_WEBSITE;" />.
      </para>
      
    </section>

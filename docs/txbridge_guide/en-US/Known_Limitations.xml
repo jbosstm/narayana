@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Known Limitations</title>
@@ -48,7 +49,7 @@
         the correct recovery of any external transaction manager used in that role. The transaction
         bridge does not currently provide dedicated tooling for the manual resolution of orphaned
         subordinates, instead relying on the general purpose objectstore maintenance tooling
-        provided by JbossTS.</para>
+        provided by &PRODUCT;.</para>
     </listitem>
     <listitem>
       <para>Note that crash recovery will not behave correctly for outbound bridged transactions if

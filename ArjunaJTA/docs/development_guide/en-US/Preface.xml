@@ -9,9 +9,9 @@
   <section>
     <title>Prerequisites</title>
     <para>
-      ArjunaTA works in conjunction with ArjunaCore. In addition to the documentation here, consult the ArjunaCore
-      documentation, which ships as part of ArjunaCore and is also available on the JBoss Transaction Service website
-      at <ulink url="http://www.jboss.org/jbosstm" />.
+      &PRODUCT; works in conjunction with ArjunaCore. In addition to the documentation here, consult the ArjunaCore
+      documentation, which ships as part of ArjunaCore and is also available on the &PARENT_PRODUCT; website
+      at <ulink url="&PRODUCT_WEBSITE;" />.
     </para>
   </section>
 

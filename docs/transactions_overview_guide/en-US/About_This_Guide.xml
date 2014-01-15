@@ -6,7 +6,7 @@
 <chapter>
   <title>About This Guide</title>
   <para>
-    The Transaction Fundamentals describes what transactions are, why ACID transactions are good in most cases but extended transactions are necessary in other areas, and other useful information to best use JBossTS.
+    The Transaction Fundamentals describes what transactions are, why ACID transactions are good in most cases but extended transactions are necessary in other areas, and other useful information to best use &PRODUCT;.
   </para>
   <section>
     <title>Audience</title>

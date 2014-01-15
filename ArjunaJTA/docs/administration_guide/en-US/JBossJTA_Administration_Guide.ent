@@ -1,4 +1,7 @@
-<!ENTITY PRODUCT "JBossJTA">
+<!ENTITY PARENT_PRODUCT "Narayana">
+<!ENTITY PRODUCT "Narayana JTA">
+<!ENTITY PRODUCT_WEBSITE "http://www.narayana.io">
+<!ENTITY VERSION "5.0.0.Final">
 <!ENTITY BOOKID "JBossJTA_Administration_Guide">
-<!ENTITY YEAR "2011">
+<!ENTITY YEAR "2014">
 <!ENTITY HOLDER "JBoss.org">

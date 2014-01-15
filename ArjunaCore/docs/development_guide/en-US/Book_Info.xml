@@ -12,7 +12,7 @@
   <pubsnumber>0</pubsnumber>
   <abstract>
     <para>
-      This guide is most relevant to engineers who are responsible for administering JBoss Transactions
+      This guide is most relevant to engineers who are responsible for administering &PRODUCT;
       installations. Although this guide is specifically intended for service developers, it will be useful to anyone
       who would like to gain an understanding of transactions and how they function.
     </para>

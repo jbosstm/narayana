@@ -6,7 +6,7 @@
 <chapter>
   <title>Failure Recovery</title>
   <para>
-    The failure recovery subsystem of JBossTS ensure that results of a transaction are applied
+    The failure recovery subsystem of &PARENT_PRODUCT; ensure that results of a transaction are applied
     consistently to all
     resources affected by the transaction, even if any of the application
     processes or the hardware hosting them crash
@@ -44,7 +44,7 @@
     <para>
       Although some ORB-specific configuration is necessary to configure the ORB sub-system, the
       basic settings are ORB-independent.
-      The configuration which applies to JBossTS is in the
+      The configuration which applies to &PARENT_PRODUCT; is in the
       <filename>RecoveryManager-properties.xml</filename>
       file and
       the
@@ -111,7 +111,7 @@
             <systemitem>JTA_ResourceRecord</systemitem>
             to be written in the ObjectStore. The record contains the
             information needed to link the
-            transaction to information known by the rest of JBossTS in the database.
+            transaction to information known by the rest of &PARENT_PRODUCT; in the database.
           </para>
         </listitem>
         <listitem>
@@ -166,7 +166,7 @@
         <classname>RecoveryManager</classname>
         with the appropriate information for it to interrogate all the
         <classname>XADataSources</classname>
-        accessed by any JBossTS application. The access to each
+        accessed by any &PARENT_PRODUCT; application. The access to each
         <classname>XADataSource</classname>
         is handled by a class that implements the
         <interfacename>com.arjuna.ats.jta.recovery.XAResourceRecovery</interfacename>
@@ -491,7 +491,7 @@ XAConnectionRecoveryEmpay=com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;
               <entry>Contact items</entry>
               <entry>
                 <para>
-                  One contact item is created by every application process that uses JBossTS. They
+                  One contact item is created by every application process that uses &PARENT_PRODUCT;. They
                   contain the
                   information that the
                   <classname>RecoveryManager</classname>

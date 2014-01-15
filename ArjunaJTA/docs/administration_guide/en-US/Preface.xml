@@ -9,9 +9,9 @@
    <section>
      <title>Prerequisites</title>
      <para>
-       &PRODUCT; works in conjunction with &PRODUCT;. In addition to the documentation here, consult the &PRODUCT;
-       documentation, which ships as part of &PRODUCT; and is also available on the JBoss Transaction Service website
-       at <ulink url="http://www.jboss.org/jbosstm" />.
+       &PRODUCT; works in conjunction with &PARENT_PRODUCT;. In addition to the documentation here, consult the &PARENT_PRODUCT;
+       documentation, which ships as part of &PARENT_PRODUCT; and is also available on the &PARENT_PRODUCT; website
+       at <ulink url="&PRODUCT_WEBSITE;" />.
      </para>
    </section>
 

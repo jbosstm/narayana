@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
     <title>Configuration Options</title>
     <section>
         <title>Recovery Protocol in OTS - Overview</title>
-        <para>JBossTS is highly configurable. For full details of the configuration mechanism used, see the Programmer's Guide.</para>
+        <para>&PRODUCT; is highly configurable. For full details of the configuration mechanism used, see the Programmer's Guide.</para>
         <para>The following table shows the configuration features, with default values shown in italics. More details about each option can be found in the relevant sections of this document.</para>
         <note>
             <para>You need to prefix each property in this table with the string com.arjuna.ats.arjuna.recovery. The

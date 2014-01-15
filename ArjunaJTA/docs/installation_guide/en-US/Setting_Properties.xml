@@ -44,7 +44,7 @@
   <note>
     <para>
       Unlike earlier releases, there is no longer one properties file name per module. This properties file name key is
-      now global for all JBoss Transaction Service components in the JVM.
+      now global for all &PARENT_PRODUCT; components in the JVM.
     </para>
   </note>
 </chapter>

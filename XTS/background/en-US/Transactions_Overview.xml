@@ -263,7 +263,7 @@
     <title>Two Phase Commit</title>
 
     <para>
-      The classical two-phase commit approach is the bedrock of JBoss Transaction Service, and more generally of Web
+      The classical two-phase commit approach is the bedrock of &PRODUCT;, and more generally of Web
       Services transactions. Two-phase commit provides coordination of parties that are involved in a transaction. The
       general flow of a two-phase commit transaction is described in <xref linkend="two-phase-commit-overview" />.
     </para>

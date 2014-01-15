@@ -1,4 +1,5 @@
-<!ENTITY PRODUCT "Documentation">
+<!ENTITY PRODUCT "Narayana">
 <!ENTITY BOOKID "ArjunaCore_Development_Guide">
-<!ENTITY YEAR "2011">
+<!ENTITY YEAR "2014">
 <!ENTITY HOLDER "jboss.org">
+<!ENTITY APPSERVER "WildFly Application Server">

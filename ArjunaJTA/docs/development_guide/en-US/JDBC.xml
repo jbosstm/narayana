@@ -11,12 +11,12 @@
     <para>
       &PRODUCT; supports construction of both local and distributed transactional applications which access databases
       using the JDBC APIs. JDBC supports two-phase commit of transactions, and is similar to the XA X/Open
-      standard. JBossTS provides JDBC support in package <package>com.arjuna.ats.jdbc</package>. A list of the tested
-      drivers is available from the JBossTS website.<!-- Put this in an appendix? Link directly to it? -->
+      standard. &PARENT_PRODUCT; provides JDBC support in package <package>com.arjuna.ats.jdbc</package>. A list of the tested
+      drivers is available from the &PARENT_PRODUCT; website.<!-- Put this in an appendix? Link directly to it? -->
     </para>
     <para>
       Only use the transactional JDBC support provided in package <package>com.arjuna.ats.jdbc</package> when you are
-      using JBossTS outside of an application server, such as JBoss Application Server, or another container. Otherwise,
+      using &PARENT_PRODUCT; outside of an application server, such as &APPSERVER;, or another container. Otherwise,
       use the JDBC support provided by your application server or container.
     </para>
     <section>

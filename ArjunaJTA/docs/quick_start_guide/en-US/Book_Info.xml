@@ -4,9 +4,9 @@
 %BOOK_ENTITIES;
 ]>
 <bookinfo id="book-JBossJTA_Quick_Start_Guide">
-  <title>JBossJTA Quick Start Guide</title>
-  <productname>JBossJTA</productname>
-  <productnumber>4.15.1</productnumber>
+  <title>&PRODUCT; Quick Start Guide</title>
+  <productname>&PRODUCT;</productname>
+  <productnumber>&VERSION;</productnumber>
   <edition>1</edition>
   <pubsnumber>1</pubsnumber>
   <corpauthor>

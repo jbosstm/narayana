@@ -4,10 +4,10 @@
 %BOOK_ENTITIES;
 ]>
 <bookinfo id="book-JBossJTA_Installation_Guide">
-   <title>JBossJTA Installation Guide</title>
-   <subtitle>Stand-alone Installation Guide for JBossJTA</subtitle>
-   <productname>JBossJTA</productname>
-   <productnumber>4.15.1</productnumber>
+   <title>&PRODUCT; Installation Guide</title>
+   <subtitle>Stand-alone Installation Guide for &PRODUCT;</subtitle>
+   <productname>&PRODUCT;</productname>
+   <productnumber>&VERSION;</productnumber>
    <edition>1</edition>
    <pubsnumber>1</pubsnumber>
    <!--

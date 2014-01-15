@@ -25,7 +25,7 @@
   <indexterm><primary>WSDL</primary><secondary>Web Services Description Language</secondary></indexterm>
 
   <para>
-    The <firstterm>XML Transaction Service (XTS)</firstterm> component of JBoss Transaction Service supports the
+    The <firstterm>XML Transaction Service (XTS)</firstterm> component of &PRODUCT; supports the
     coordination of private and public Web Services in a business transaction. Therefore, to understand XTS, you must be
     familiar with Web Services, and also understand something about transactions. This chapter introduces XTS and
     provides a brief overview of the technologies that form the Web Services standard. Additionally, this chapter
@@ -35,7 +35,7 @@
     documentation.
   </para>
   <para>
-    JBoss Transaction Service provides the XTS component as a transaction solution for Web Services. Using XTS, business
+    &PRODUCT; provides the XTS component as a transaction solution for Web Services. Using XTS, business
     partners can coordinate complex business transactions in a controlled and reliable manner. The XTS API supports a
     transactional coordination model based on the <firstterm>WS-Coordination</firstterm>, <firstterm>WS-Atomic
     Transaction</firstterm>, and <firstterm>WS-Business Activity</firstterm> specifications.
@@ -47,7 +47,7 @@
     (WS-T) transaction protocols that utilize this framework.</para></listitem>
   </itemizedlist>
   <para>
-    JBoss Transaction Service implements versions 1.1, and 1.2 of these three specifications. Version
+    &PRODUCT; implements versions 1.1, and 1.2 of these three specifications. Version
     specifications are available from <ulink url="http://www.oasis-open.org/specs/" />.
   </para>
   <note>
@@ -151,7 +151,7 @@
       published via JaxWS, without developer intervention. The only requirement
       is that transactional client applications and transactional web services
       must reside within a domain capable of hosting JaxWS endpoints, such as an
-      application server. JBoss Application Server can provide this functionality.
+      application server. &APPSERVER; can provide this functionality.
     </para>
   </section>
 

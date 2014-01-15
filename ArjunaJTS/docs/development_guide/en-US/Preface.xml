@@ -9,7 +9,7 @@
    <section>
      <title>Audience</title>
      <para>
-       This guide is specifically intended for service developers using JBoss Transactions. It is also contains useful
+       This guide is specifically intended for service developers using &PARENT_PRODUCT;. It is also contains useful
        information about how transactional applications work in general.
      </para>
      

@@ -6,7 +6,7 @@
 <appendix>
   <title>IDL definitions</title>
   <para>
-    Because of differences between ORBs, and errors in certain ORBs, the idl available with JBossTS may differ from that
+    Because of differences between ORBs, and errors in certain ORBs, the idl available with &PARENT_PRODUCT; may differ from that
     shown below. You should always inspect the idl files prior to implementation to determine what, if any, differences
     exist.
   </para>

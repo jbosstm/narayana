@@ -21,7 +21,7 @@
       </para>
     </note>
     <para>
-      You need to do this configuration manually, because some applications may be using JBossTS in a purely local
+      You need to do this configuration manually, because some applications may be using &PARENT_PRODUCT; in a purely local
       manner, or may need to differentiate between transactions managed by JTS and JTA.
     </para>
     <procedure>

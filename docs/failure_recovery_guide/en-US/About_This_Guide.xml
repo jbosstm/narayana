@@ -6,19 +6,18 @@
 <chapter>
   <title>About This Guide</title>
   <para>
-    The Failure Recovery Guide contains information on how to use JBossTS.
+    The Failure Recovery Guide contains information on how to use &PRODUCT;.
   </para>
   <section>
     <title>Audience</title>
     <para>
-      This guide is most relevant to engineers who are responsible for administering JBoss
-      Transactions installations.
+      This guide is most relevant to engineers who are responsible for administering &PRODUCT; installations.
     </para>
   </section>
   <section>
     <title>Prerequisites</title>
     <para>
-      You should have installed JBossTS.
+      You should have installed &PRODUCT;.
     </para>
   </section>
 </chapter>

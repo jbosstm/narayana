@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Transaction Bridge Architecture</title>
@@ -28,7 +29,7 @@
       being local to the container in which it operates, whilst the Web Service protocol provides
       for
       transaction context propagation between servers. This is an accurate representation of the
-      situation that exists where the local JTA version of JBossTS is being used alongside JBossTS
+      situation that exists where the local JTA version of &PRODUCT; is being used alongside &PRODUCT;
       XTS
       in an application server. However, it is an oversimplification of the situation where the
       JTS
@@ -115,7 +116,7 @@
           transaction bridge deployed.</para>
       </listitem>
       <listitem>
-        <para>The call arrives at a web service container, which must have JBossTS JTA or JTS, XTS
+        <para>The call arrives at a web service container, which must have &PRODUCT; JTA or JTS, XTS
           and the transaction bridge deployed. The JAX-WS handler chain for the web service should
           have both the XTS WS-AT transaction header processor and the inbound bridge handler
           registered, such that they are invoked in that order.</para>
@@ -172,7 +173,7 @@
     <orderedlist>
       <listitem>
         <para>A client starts a JTA transaction and invokes a remote transactional Web Service in
-          the scope of that transaction. The client must have JBossTS JTA (or JTS) and XTS deployed,
+          the scope of that transaction. The client must have &PRODUCT; JTA (or JTS) and XTS deployed,
           as well as the transaction bridge. The coordinator used for the JTA transaction is the
           root coordinator. The server hosting the target web service needs a WS-AT transaction
           implementation but not a JTA or the transaction bridge.</para>
@@ -230,7 +231,7 @@
       DurableParticipants (outbound). In general the former will be from XA datasources or messaging
       systems, whilst the latter will be custom implementations. In either case it is important to
       ensure recovery is correctly configured for the resource manager(s) before using them in
-      production, via the bridge or otherwise. The JBossTS documentation set details crash recovery
+      production, via the bridge or otherwise. The &PRODUCT; documentation set details crash recovery
       configuration, as does the application server administration guide. For resource manager
       specific information e.g. Oracle db permissions settings for recovery connections, please
       consult the vendor's documentation.</para>
@@ -238,7 +239,7 @@
       hosts. Resolving the transaction may require more than one crash recovery cycle, due to
       ordering constrains on the events taking place during recovery. If a transaction fails to
       recover after all servers have been restored to service for more than two recovery cycles
-      duration, the JBossTS objectstore browser and server logs may be useful for diagnosing the
+      duration, the &PRODUCT; objectstore browser and server logs may be useful for diagnosing the
       issue. Where a transaction involves multiple bridges the number of recovery cycles required to
       resolve it may further increase. For systems requiring maximum availability it is therefore
       not recommended to span a transaction through more than one bridge.</para>

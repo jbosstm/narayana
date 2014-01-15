@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Failure_Recovery_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Architecture of the Recovery Manager</title>
@@ -253,17 +254,17 @@
         the same Object Store and in which case should not conflict with
         each other, e.g., roll back transactions that they do not
         understand. Therefore, when running recovery it is necessary to
-        tell JBossTS which types of transactions it can recover and
+        tell &PRODUCT; which types of transactions it can recover and
         which transaction identifiers it should ignore.</para>
-      <para>When necessary each transaction identifier that JBossTS
+      <para>When necessary each transaction identifier that &PRODUCT;
         creates may have a unique node identifier encoded within it and
-        JBossTS will only recover transactions and states that match a
-        specified node identifier. The node identifier for each JBossTS
+        &PRODUCT; will only recover transactions and states that match a
+        specified node identifier. The node identifier for each &PRODUCT;
         instance should be set via the
         com.arjuna.ats.arjuna.nodeIdentifier property. This value must
-        be unique across JBossTS instances. The contents of this should
+        be unique across &PRODUCT; instances. The contents of this should
         be alphanumeric and not exceed 10 bytes in length. If you do not
-        provide a value, then JBossTS will fabricate one and report the
+        provide a value, then &PRODUCT; will fabricate one and report the
         value via the logging infrastructure.</para>
       <para>How this value is used will depend upon the type of
         resources being recovered and will be discussed within the
@@ -285,7 +286,7 @@
           configured in JTA mode).
         </listitem>
         <listitem>
-          Changing versions of JBossTS or the application server on the new node
+          Changing versions of &PRODUCT; or the application server on the new node
           is not supported.
         </listitem>
         <listitem>
@@ -348,8 +349,8 @@
       <programlisting role="JAVA" language="Java"><xi:include href="extras/recoveryModuleInterface.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /> </programlisting>
     </example>
     <section>
-      <title>JBossTS Recovery Module Classes</title>
-      <para>JBossTS provides a set of recovery modules that are
+      <title>&PRODUCT; Recovery Module Classes</title>
+      <para>&PRODUCT; provides a set of recovery modules that are
         responsible to manage recovery according to the nature of the
         participant and its position in a transactional tree. The
         provided classes (that all implements the RecoveryModule
@@ -402,14 +403,14 @@
       ask each resource manager to return the transactions that are
       currently in a prepared or heuristically completed state.</para>
     <note>
-      <para>When running XA recovery it is necessary to tell JBossTS
-        which types of Xid it can recover. Each Xid that JBossTS creates
-        has a unique node identifier encoded within it and JBossTS will
+      <para>When running XA recovery it is necessary to tell &PRODUCT;
+        which types of Xid it can recover. Each Xid that &PRODUCT; creates
+        has a unique node identifier encoded within it and &PRODUCT; will
         only recover transactions and states that match a specified node
         identifier. The node identifier to use should be provided to
-        JBossTS via the property JTAEnvironmentBean.xaRecoveryNodes;
+        &PRODUCT; via the property JTAEnvironmentBean.xaRecoveryNodes;
         multiple values may be provided in a list. A value of ‘*’ will
-        force JBossTS to recover (and possibly rollback) all
+        force &PRODUCT; to recover (and possibly rollback) all
         transactions irrespective of their node identifier and should be
         used with caution. The contents of
         com.arjuna.ats.jta.xaRecoveryNode should be alphanumeric and
@@ -443,7 +444,7 @@
       com.arjuna.ats.internal.jta.recovery.jts, handles recovery of XA
       resources (databases etc.) used in JTA.</para>
     <note>
-      <para>JBossTS supports two JTA implementations: a purely local
+      <para>&PRODUCT; supports two JTA implementations: a purely local
         version (no distributed transactions) and a version layered on
         the JTS. Recovery for the former is straightforward. In the
         following discussion we shall implicitly consider on the JTS
@@ -455,7 +456,7 @@
       far enough for a JTA Resource Record to be written in the
       ObjectStore.</para>
     <para>A JTA Resource record contains the information needed to link
-      the transaction, as known to the rest of JBossTS, to the database.
+      the transaction, as known to the rest of &PRODUCT;, to the database.
       Resource-initiated recovery is necessary for branches where a
       failure occurred after the database had made a persistent record
       of the transaction, but before the JTA ResourceRecord was
@@ -476,7 +477,7 @@
     <para>Resource-initiated recovery has to be specifically configured,
       by supplying the Recovery Manager with the appropriate information
       for it to interrogate all the databases (XADataSources) that have
-      been accessed by any JBossTS application. The access to each
+      been accessed by any &PRODUCT; application. The access to each
       XADataSource is handled by a class that implements the
       com.arjuna.ats.jta.recovery.XAResourceRecovery interface, as
       illustrated in Figure 4. Instances of classes that implements the
@@ -574,7 +575,7 @@
   </section>
   <section>
     <title>Recovering XAConnections</title>
-    <para>When recovering from failures, JBossTS requires the ability to
+    <para>When recovering from failures, &PRODUCT; requires the ability to
       reconnect to databases that were in use prior to the failures in
       order to resolve any outstanding transactions. Most connection
       information will be saved by the transaction service during its
@@ -584,12 +585,12 @@
       occurs before such information can be saved, but after the
       database connection is used). In order to recreate those
       connections it is necessary to provide implementations of the
-      following JBossTS interface
+      following &PRODUCT; interface
       com.arjuna.ats.jta.recovery.XAResourceRecovery, one for each
       database that may be used by an application.</para>
     <note>
       <para>if using the transactional JDBC driver provided with
-        JBossTS, then no additional work is necessary in order to ensure
+        &PRODUCT;, then no additional work is necessary in order to ensure
         that recovery occurs.</para>
     </note>
     <para>To inform the recovery system about each of the
@@ -669,7 +670,7 @@
     <para>The iterator based approach used by XAResourceRecovery leads
       to a requirement for implementations to manage state, which makes
       them more complex than necessary.</para>
-    <para>As an alternative, starting with JBossTS 4.4, users may
+    <para>As an alternative, starting with &PRODUCT; 4.4, users may
       provide an implementation of the public interface
     </para>
     <example>
@@ -682,13 +683,13 @@
       only one XAResource in the array, as the recover() call on it can
       return multiple Xids.</para>
     <para>Unlike XAResourceRecovery instances, which are configured via
-      the xml properties file and instantiated by JBossTS, instances of
+      the xml properties file and instantiated by &PRODUCT;, instances of
       XAResourceRecoveryHelper and constructed by the application code
-      and registered with JBossTS by calling</para>
+      and registered with &PRODUCT; by calling</para>
     <para>
       <programlisting language="Java" role="JAVA">XARecoveryModule.addXAResourceRecoveryHelper(...)</programlisting>
     </para>
-    <para>The initialize method is not called by JBossTS in the current
+    <para>The initialize method is not called by &PRODUCT; in the current
       implementation, but is provided to allow for the addition of
       further configuration options in later releases.</para>
     <para>XAResourceRecoveryHelper instances may be deregistered, after
@@ -709,13 +710,13 @@
     <title>Shipped XAResourceRecovery implementations</title>
     <para>Recovery of XA datasources can sometimes be implementation
       dependant, requiring developers to provide their own
-      XAResourceRecovery instances. However, JBossTS ships with several
+      XAResourceRecovery instances. However, &PRODUCT; ships with several
       out-of-the-box implementations that may be useful.</para>
     <note>
       <para>These XAResourceRecovery instances are primarily intended
-        for when running JBossTS outside of a container such as JBossAS,
+        for when running &PRODUCT; outside of a container such as &APPSERVER;,
         since they rely upon XADataSources as the primary handle to
-        drive recovery. If you are not running JBossTS stand-alone then
+        drive recovery. If you are not running &PRODUCT; stand-alone then
         you should consult the relevant integration documentation to
         ensure that the right recovery modules are being used.</para>
     </note>
@@ -754,7 +755,7 @@
       initialise operation. In the case of BasicXARecovery and
       JDBCXARecovery this should be the location of a property file
       and
-      is specified in the JBossTS configuration file. For example:
+      is specified in the &PRODUCT; configuration file. For example:
     </para>
     <para>
       <programlisting>com.arjuna.ats.jta.recovery.XAResourceRecoveryJDBC=com.arjuna.ats.internal.jdbc.recovery.JDBCXAResourceRecovery;thePropertyFile</programlisting>
@@ -818,7 +819,7 @@
       AtomicActions that are assumed to have completed. For instance, if
       a failure occurs after a participant has been told to commit but
       before the transaction system can update the log, then upon
-      recovery JBossTS recovery will attempt to replay the commit
+      recovery &PRODUCT; recovery will attempt to replay the commit
       request, which will obviously fail, thus preventing the log from
       being removed. This is also used when logs cannot be recovered
       automatically for other reasons, such as being corrupt or zero
@@ -826,7 +827,7 @@
       appended with /Expired.</para>
     <note>
       <para>AtomicActionExpiryScanner is disabled by default. To enable
-        it simply add it to the JBossTS properties file. You do not need
+        it simply add it to the &PRODUCT; properties file. You do not need
         to enable it in order to cope with (move) corrupt logs.</para>
     </note>
   </section>
@@ -854,7 +855,7 @@
   <section>
     <title>TransactionStatusManager</title>
     <para>This object acts as an interface for the Recovery Manager to
-      obtain the status of transactions from running JBossTS application
+      obtain the status of transactions from running &PRODUCT; application
       processes. One TransactionStatusManager is created per application
       process by the class com.arjuna.ats.arjuna.coordinator.TxControl.
       Currently a tcp connection is used for communication between the

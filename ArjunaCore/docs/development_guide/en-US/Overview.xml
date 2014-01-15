@@ -22,9 +22,9 @@
   <note>
     <title>Stand-Alone Transaction Manager</title>
     <para>
-      Although JBoss Transaction Service can be embedded in various containers, such as JBoss Application Server, it
-      remains a stand-alone transaction manager as well. There are no dependencies between the core JBoss Transaction
-      Service and any container implementations.
+      Although &PRODUCT; can be embedded in various containers, such as &APPSERVER;, it
+      remains a stand-alone transaction manager as well. There are no dependencies between the core &PRODUCT; and any
+      container implementations.
     </para>
   </note>
   

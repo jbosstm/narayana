@@ -5,8 +5,8 @@
 ]>
 <bookinfo id="book-Transactions_Overview_Guide">
    <title>Transactions Overview Guide</title>
-   <productname>JBoss Transactions</productname>
-   <productnumber>4.15.1</productnumber>
+   <productname>&PRODUCT;</productname>
+   <productnumber>&VERSION;</productnumber>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>

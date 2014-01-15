@@ -6,7 +6,7 @@
 <chapter>
     <title>Troubleshooting</title>
     <para>
-        This chapter covers issues that you may hit when developing applications with JBoss Transactions.
+        This chapter covers issues that you may hit when developing applications with &PRODUCT;.
     </para>
     <section>
         <title>WS-BA Participant-Completion Race Condition</title>

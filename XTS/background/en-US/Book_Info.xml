@@ -6,12 +6,12 @@
 <bookinfo id="book-Transactions_XTS_BAckground_Guide">
    <title>Transactions: XTS Background Guide</title>
    <subtitle>Background for using the XTS Module of &PRODUCT; to provide Web Services Transactions</subtitle>
-   <productname>JBoss Transactions</productname>
+   <productname>&PRODUCT;</productname>
    <edition>0</edition>
    <pubsnumber>0</pubsnumber>
    <abstract>
       <para>
-        The "XTS Background Guide" contains background information, which is important to understand, before you can use JBoss Transaction Service to develop service-based
+        The "XTS Background Guide" contains background information, which is important to understand, before you can use &PRODUCT; to develop service-based
         applications, that use transaction technology to manage business processes.
       </para>
    </abstract>

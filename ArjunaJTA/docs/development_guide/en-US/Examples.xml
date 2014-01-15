@@ -12,7 +12,7 @@
     <example>
       <title>JDBC example</title>
       <para>
-        This simplified example assumes that you are using the transactional JDBC driver provided with JBossTS. For
+        This simplified example assumes that you are using the transactional JDBC driver provided with &PARENT_PRODUCT;. For
         details about how to configure and use this driver see the previous Chapter.<!-- Link? -->
       </para>
       <programlisting language="Java" role="JAVA"><xi:include href="extras/jdbc_example.java" xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>

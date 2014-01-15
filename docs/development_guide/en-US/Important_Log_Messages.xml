@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Development_Guide.ent">
-<!ENTITY PRODUCT "JBoss Transactions">
-<!ENTITY BOOKID "Development_Guide">
-<!ENTITY VERSION "4.16">
-<!ENTITY YEAR "2011">
-<!ENTITY HOLDER "JBoss.org">
-<!ENTITY APPSERVER "JBoss Application Server">
-<!-- <!ENTITY APPSERVER "Enterprise Application Platform Server"> -->]>
+%BOOK_ENTITIES;
+]>
 <chapter>
     <title>Important Log Messages</title>
     <para>The transaction manager can generate a lot of logging information when configured to log in trace level.

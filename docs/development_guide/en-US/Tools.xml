@@ -22,7 +22,7 @@
       <section>
         <title>Browse and Manage Transactions Using an Application Server</title>
         <para>
-            The JBoss EAP and WildFly application servers provide a command-line based Management CLI which supports the ability to browse and manipulate transaction records.
+            The &APPSERVER; provides a command-line based Management CLI which supports the ability to browse and manipulate transaction records.
             This functionality is provided by the interaction between the Transaction Manager (TM) and the Management API of the application server.
             To start the CLI on a non-windows based OS type the following command in application server install directory:
         </para>
@@ -43,7 +43,7 @@
       				This command refreshes the Log Store for server groups which use the profile <literal>default</literal> in a managed domain.
                     For a standalone server, remove the <literal>profile=default</literal> from the command.
       			</para>
-      			<screen>/profile=default/subsystem=transactions/log-store=log-store/:probe</screen>
+      			<screen>/subsystem=transactions/log-store=log-store/:probe</screen>
       		</example>
       		<example>
       			<title>View All Prepared Transactions</title>
@@ -51,7 +51,7 @@
       				To view all prepared transactions, first refresh the log store (see <xref linkend="refresh_log_store"/>), then run the following command,
                     which functions similarly to a filesystem <command>ls</command> command.
       			</para>
-      			<screen>ls /profile=default/subsystem=transactions/log-store=log-store/transactions</screen>
+      			<screen>ls /subsystem=transactions/log-store=log-store/transactions</screen>
       			<para>
       				Each transaction is shown, along with its unique identifier. Individual operations can be run against an individual transaction
                     (see <xref linkend="manage_transaction"/>).
@@ -66,7 +66,7 @@
       						To view information about a transaction, such as its JNDI name, EIS product name and version, or its status, use the
                             <code>:read-resource</code> CLI command.
       					</para>
-      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:read-resource</screen>
+      					<screen>/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:read-resource</screen>
       				</listitem>
       			</varlistentry>
       			<varlistentry>
@@ -76,7 +76,7 @@
       						Each transaction log contains a child element called <code>participants</code>. Use the <code>read-resource</code> CLI command on this element
                             to see the participants of the transaction. Participants are identified by their JNDI names.
       					</para>
-      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>java\:\/JmsXA</replaceable>:read-resource</screen>
+      					<screen>/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>java\:\/JmsXA</replaceable>:read-resource</screen>
       					<para>
       						The result may look similar to this:
       					</para>
@@ -107,7 +107,7 @@
       					<para>
       						Each transaction log supports a <code>:delete</code> operation, to delete the transaction log representing the transaction.
       					</para>
-      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:delete</screen>
+      					<screen>/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>:delete</screen>
       				<warning>
       					<para>
       					  If failures occur, transaction logs may remain in the object store until crash recovery facilities have resolved the transactions they represent.
@@ -150,7 +150,7 @@
       						If a transaction needs recovery, you can use the <code>:refresh</code> CLI command to be sure it still requires recovery, before attempting the
                             recovery.
       					</para>
-      					<screen>/profile=default/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:refresh</screen>
+      					<screen>/subsystem=transactions/log-store=log-store/transactions=0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9:refresh</screen>
       				</listitem>
       			</varlistentry>
       		</variablelist>
@@ -283,7 +283,7 @@ java -Dcom.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironm
     <section>
       <title>Embedded Console</title>
       <para>
-        Transaction management is integrated into the JBoss EAP and WildFly application servers.
+        Transaction management is integrated into the &APPSERVER;.
       </para>
     </section>
     <section>
@@ -333,8 +333,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
   <section>
     <title>View Transaction Statistics using an Application Server</title>
       <para>
-        If you are using the Transaction Manager (TM) inside the JBoss EAP or
-      	WildFly application servers and if the TM statistics are enabled, then
+        If you are using the Transaction Manager (TM) inside the &APPSERVER; and if the TM statistics are enabled, then
       	you can view statistics about the TM and transaction subsystem using
       	tools provide by the application server.
       </para>
@@ -371,7 +370,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-transactions,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-transactions,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -384,7 +383,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-committed-transactions,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-committed-transactions,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -397,7 +396,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-aborted-transactions,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-aborted-transactions,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -410,7 +409,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-timed-out-transactions,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-timed-out-transactions,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -423,7 +422,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-heuristics,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-heuristics,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -436,7 +435,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-inflight-transactions,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-inflight-transactions,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -449,7 +448,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-application-rollbacks,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-application-rollbacks,include-defaults=true)</screen>
       						</entry>
       					</row>
       					<row>
@@ -462,7 +461,7 @@ jconsole -J-Djava.class.path="$CLASSPATH" -pluginpath $INSTALL_ROOT/lib/narayana
       							</para>
       						</entry>
       						<entry>
-      							<screen>/host=<replaceable>master</replaceable>/server=<replaceable>server-one</replaceable>/subsystem=transactions/:read-attribute(name=number-of-resource-rollbacks,include-defaults=true)</screen>
+      							<screen>/subsystem=transactions/:read-attribute(name=number-of-resource-rollbacks,include-defaults=true)</screen>
       						</entry>
       					</row>
       				</tbody>

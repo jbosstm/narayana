@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 <!ENTITY % BOOK_ENTITIES SYSTEM "Transaction_Bridging_Guide.ent">
+%BOOK_ENTITIES;
 ]>
 <chapter>
   <title>Introduction</title>
@@ -20,9 +21,9 @@
     <para>In distributed applications, the JTA implementation may provide propagation of transaction
       context and transaction control calls between containers (JVMs) using either a propriety
       transport or JTS, the Java mapping of the CORBA OTS standard on an RMI/IIOP transport. In
-      JBossTS, both local and distributed (JTS) implementations of the JTA are available.</para>
+      &PRODUCT;, both local and distributed (JTS) implementations of the JTA are available.</para>
     <para>In Web Services applications, ACID transaction management and interoperable context
-      propagation is provided for by the WS-AT standard. JBossTS XTS provides an implementation of
+      propagation is provided for by the WS-AT standard. &PRODUCT; XTS provides an implementation of
       both the 1.0 and 1.2 versions of this standard. Bridging is provided only on the more recent
       version. At the time of writing the standard covers only the web services API and protocol,
       not the Java API through which the protocol may be driven. Therefore, XTS provides a custom
@@ -37,7 +38,7 @@
   <section>
     <title>Transaction Bridging</title>
     <para>We use the term Transaction Bridging to describe the process of linking the JavaEE and Web
-      Services transaction domains. The transaction bridge component (txbridge) of JBossTS provides
+      Services transaction domains. The transaction bridge component (txbridge) of &PRODUCT; provides
       bi-directional linkage, such that either type of transaction may encompass business logic
       designed for use with the other type.</para>
     <para>The technique used by the bridge is a combination of interposition and protocol mapping.
@@ -58,7 +59,7 @@
       <title>Transaction interposition in a distributed JTA environment</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="images/interposition.gif" format="GIF" />
+          <imagedata fileref="images/interposition.png" format="PNG" />
         </imageobject>
       </mediaobject>
     </figure>
