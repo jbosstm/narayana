@@ -22,7 +22,6 @@ import static org.jboss.narayana.blacktie.administration.Authentication.getCallb
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.List;
@@ -169,8 +168,7 @@ public class BlacktieStompAdministrationService extends MDBBlacktieService imple
                 if (managementAddress.equals("0.0.0.0")) {
                     managementAddress = "localhost";
                 }
-                client = ModelControllerClient.Factory.create("remote", InetAddress.getByName(managementAddress), 9999,
-                        getCallbackHandler());
+                client = ModelControllerClient.Factory.create("remote", managementAddress, 9999, getCallbackHandler(), null, 20 * 1000);
             }
         }
     }
