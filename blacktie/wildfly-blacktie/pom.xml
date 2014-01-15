@@ -26,16 +26,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+
+ 
     <parent>
-        <groupId>org.wildfly</groupId>
-        <artifactId>wildfly-parent</artifactId>
-        <version>8.0.0.Final-SNAPSHOT</version>
+        <groupId>org.jboss.narayana.blacktie</groupId>
+        <artifactId>blacktie-all</artifactId>
+        <version>5.0.0.CR3-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
+
 
     <artifactId>wildfly-blacktie-parent</artifactId>
     <name>WildFly: Blacktie Subsystem Parent</name>
 	<packaging>pom</packaging>
-	<version>8.0.0.Final-SNAPSHOT</version>
 
 	<modules>
 		<module>subsystem</module>

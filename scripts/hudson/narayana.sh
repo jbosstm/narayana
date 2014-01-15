@@ -269,7 +269,7 @@ function blacktie {
   rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   cp -rp ${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_MASTER_VERSION} -d $PWD/blacktie
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${WILDFLY_MASTER_VERSION}-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.0.0.CR3-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
   ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss

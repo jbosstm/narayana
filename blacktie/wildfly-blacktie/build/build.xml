@@ -184,7 +184,7 @@
           -->
 
         <module-def name="org.wildfly.extension.blacktie">
-            <maven-resource group="org.wildfly" artifact="wildfly-blacktie"/>
+            <maven-resource group="org.jboss.narayana.blacktie" artifact="wildfly-blacktie"/>
         </module-def>
 
     </target>
