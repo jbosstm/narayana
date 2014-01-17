@@ -50,6 +50,12 @@ public class ServiceRegistry
      */
     public static ServiceRegistry getRegistry()
     {
+        // Check if the caller has a permission to use this method
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            securityManager.checkPermission(new RuntimePermission("ServiceRegistry.getRegistry"));
+        }
+
         return REGISTRY ;
     }
 
