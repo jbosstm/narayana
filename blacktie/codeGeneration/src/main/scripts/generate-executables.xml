@@ -149,7 +149,7 @@
         <property name="outtype" value="executable"/>
 		<delete file="server.c" />
 		<delete file="log4cxx.properties" />
-		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.CR3-SNAPSHOT.jar" dest=".">
+		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.Final.jar" dest=".">
 			<patternset>
 				<include name="server.c" />
 				<include name="log4cxx.properties" />
@@ -186,7 +186,7 @@
         <property name="outtype" value="executable"/>
 		<fail unless="client.includes" />
 		<delete file="log4cxx.properties" />
-		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.CR3-SNAPSHOT.jar" dest=".">
+		<unzip src="${env.BLACKTIE_HOME}/lib/java/blacktie-codeGeneration-5.0.0.Final.jar" dest=".">
 			<patternset>
 				<include name="log4cxx.properties" />
 			</patternset>
