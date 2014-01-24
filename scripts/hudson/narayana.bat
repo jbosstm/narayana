@@ -4,6 +4,13 @@ call:comment_on_pull "Started testing this pull request with BLACKTIE profile on
 
 call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 
+echo "Cloning HornetQ"
+git clone https://github.com/hornetq/hornetq.git
+if %ERRORLEVEL% NEQ 0 exit -1
+
+echo "Building HornetQ"
+call build.bat -f hornetq/pom.xml clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - HornetQ Building Failed %BUILD_URL%" & exit -1)
+
 echo "Cloning AS"
 rmdir /S /Q jboss-as
 git clone https://github.com/jbosstm/jboss-as.git
@@ -12,6 +19,14 @@ cd jboss-as
 git remote add upstream https://github.com/wildfly/wildfly.git
 git pull --rebase --ff-only -s recursive -Xtheirs upstream master
 if %ERRORLEVEL% NEQ 0 exit -1
+
+echo "Pick HornetQ commit"
+git remote add hornetq https://github.com/hornetq/wildfly.git
+git pull hornetq
+git cherry-pick 218ac9936f659af87813f823aecf37efb1a2e11e
+if %ERRORLEVEL% NEQ 0 exit -1
+git log -n 2
+
 echo "Building AS"
 set MAVEN_OPTS="-Xmx768M"
 call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - AS Failed %BUILD_URL%" & exit -1)
