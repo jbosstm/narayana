@@ -78,7 +78,7 @@ call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_
 
 rem LOOP TESTS QUEUE
 echo "Loop test_stored_message_schedule"
-call build.bat -f blacktie\queue\pom.xml test
+call build.bat -f blacktie\queue\pom.xml test "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build & exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
