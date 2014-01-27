@@ -185,6 +185,14 @@ void TestExternManageDestination::test_stored_message_priority() {
 	btlogger((char*) "test_stored_message_priority passed");
 }
 
+void TestExternManageDestination::test_loop_stored_message_schedule() {
+	for (int i = 0; i < 1000; i++) {
+		test_stored_message_schedule();
+		tearDown();
+		setUp();
+	}
+}
+
 void TestExternManageDestination::test_stored_message_schedule() {
         btlogger((char*) "test_stored_message_schedule");
         // send messages with differing scheduled delivery times - the qservice should receive them in order

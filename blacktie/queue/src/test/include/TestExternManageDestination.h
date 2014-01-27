@@ -26,25 +26,26 @@
 class TestExternManageDestination : public BaseServerTest {
 	CPPUNIT_TEST_SUITE( TestExternManageDestination);
 #ifndef SunOS
+	/*
 	CPPUNIT_TEST( test_stored_messages);
 	CPPUNIT_TEST( test_stored_message_priority);
-#ifdef WIN32
-	//Disable test_stored_messsage_schedule on windows due to JBTM-2065
-#else
-    CPPUNIT_TEST( test_stored_message_schedule);
-#endif
+        CPPUNIT_TEST( test_stored_message_schedule);
 
 	CPPUNIT_TEST( test_btenqueue_with_txn_abort);
 	CPPUNIT_TEST( test_btenqueue_with_txn_commit);
 	CPPUNIT_TEST( test_btdequeue_with_txn_abort);
 	CPPUNIT_TEST( test_btdequeue_with_txn_commit);
 	CPPUNIT_TEST( test_btenqueue_with_tptypes);
+	*/
+
+    CPPUNIT_TEST( test_loop_stored_message_schedule);
 #endif
 	CPPUNIT_TEST_SUITE_END();
 public:
 	void test_stored_messages();
 	void test_stored_message_priority();
 	void test_stored_message_schedule();
+	void test_loop_stored_message_schedule();
 	void test_btenqueue_with_txn_abort();
 	void test_btenqueue_with_txn_commit();
 	void test_btdequeue_with_txn_abort();
