@@ -5,7 +5,9 @@ call:comment_on_pull "Started testing this pull request with BLACKTIE profile on
 call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 
 echo "Cloning HornetQ"
-git clone https://github.com/hornetq/hornetq.git
+rmdir /S /Q hornetq
+git clone https://github.com/clebertsuconic/hornetq.git
+git checkout jts-test
 if %ERRORLEVEL% NEQ 0 exit -1
 
 echo "Building HornetQ"
@@ -70,7 +72,11 @@ echo "Started server"
 @ping 127.0.0.1 -n 20 -w 1000 > nul
 
 rem BUILD BLACKTIE
-call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build & exit -1)
+call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" "-DskipTests"|| (call:fail_build & exit -1)
+
+rem LOOP TESTS QUEUE
+echo "Loop test_stored_message_schedule"
+call build.bat -f blacktie\queue\pom.xml test
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
