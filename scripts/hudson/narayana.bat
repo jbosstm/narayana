@@ -7,8 +7,10 @@ call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE pr
 echo "Cloning HornetQ"
 rmdir /S /Q hornetq
 git clone https://github.com/clebertsuconic/hornetq.git
-git checkout jts-test
 if %ERRORLEVEL% NEQ 0 exit -1
+cd hornetq
+git checkout jts-test
+cd ..\
 
 echo "Building HornetQ"
 call build.bat -f hornetq/pom.xml clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - HornetQ Building Failed %BUILD_URL%" & exit -1)
