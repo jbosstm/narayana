@@ -16,7 +16,7 @@ public class WarDeployment {
 		archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
 		final String ManifestMF = "Manifest-Version: 1.0\n"
-			+ "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
+			+ "Dependencies: org.jboss.modules,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
 		archive.setManifest(new StringAsset(ManifestMF));
 
 		return archive;
