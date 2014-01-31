@@ -50,7 +50,7 @@ public class BaseCrashTest
         WebArchive archive = ShrinkWrap.
                 createFromZipFile(WebArchive.class, new File(xtstestWar));
         final String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.modules,deployment.arquillian-service,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
+                + "Dependencies: org.jboss.modules,org.jboss.msc,org.jboss.jts,org.jboss.xts\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;
