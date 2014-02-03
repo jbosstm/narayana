@@ -6,3 +6,4 @@ target
 .idea
 jboss-as
 *.swp
+*~
