@@ -29,7 +29,7 @@
 	<parent>
 		<groupId>org.jboss.narayana.blacktie</groupId>
 		<artifactId>wildfly-blacktie-parent</artifactId>
-		<version>6.0.0.Alpha1-SNAPSHOT</version>
+		<version>5.1.0.Alpha1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
 	</parent>
 
