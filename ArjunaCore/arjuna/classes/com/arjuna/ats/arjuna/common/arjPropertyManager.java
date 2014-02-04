@@ -43,53 +43,16 @@ public class arjPropertyManager
 {
     public static CoreEnvironmentBean getCoreEnvironmentBean()
     {
-        try
-        {
-            return BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class);
-        }
-        catch (final java.lang.RuntimeException ex)
-        {
-            /*
-             * See JBTM-1227
-             * 
-             * Once the XML parsing is updated, then this should no longer
-             * be necessary.
-             */
-            
-            if (Utility.isAndroid())
-                return new CoreEnvironmentBean();  // todo android
-            else
-                throw ex;
-        }
+        return BeanPopulator.getDefaultInstance(CoreEnvironmentBean.class);
     }
 
     public static CoordinatorEnvironmentBean getCoordinatorEnvironmentBean()
     {
-        try
-        {
-            return BeanPopulator.getDefaultInstance(CoordinatorEnvironmentBean.class);
-        }
-        catch (final java.lang.RuntimeException ex)
-        {
-            if (Utility.isAndroid())
-                return new CoordinatorEnvironmentBean();  // todo android
-            else
-                throw new RuntimeException(ex);
-        }
+        return BeanPopulator.getDefaultInstance(CoordinatorEnvironmentBean.class);
     }
 
     public static ObjectStoreEnvironmentBean getObjectStoreEnvironmentBean()
     {
-        try
-        {
-            return BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
-        }
-        catch (final java.lang.RuntimeException ex)
-        {
-            if (Utility.isAndroid())
-                return new ObjectStoreEnvironmentBean();  // todo android
-            else
-                throw new RuntimeException(ex);
-        }
+        return BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
     }
 }

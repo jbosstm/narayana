@@ -31,16 +31,6 @@ public class recoveryPropertyManager
 {
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        try
-        {
-            return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class);
-        }
-        catch (final java.lang.RuntimeException ex)  // todo android
-        {
-            if (Utility.isAndroid())
-                return new RecoveryEnvironmentBean();
-            else
-                throw ex;
-        }
+        return BeanPopulator.getDefaultInstance(RecoveryEnvironmentBean.class);
     }
 }

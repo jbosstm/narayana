@@ -635,18 +635,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
         {
             synchronized (this) {
                 if(checkedActionFactory == null && checkedActionFactoryClassName != null) {
-                    try
-                    {
-                        CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName, null);
-                        checkedActionFactory = instance;
-                    }
-                    catch (final java.lang.RuntimeException ex) // todo android
-                    {
-                        if (Utility.isAndroid())
-                            checkedActionFactory = new CheckedActionFactoryImple();
-                        else
-                            throw ex;
-                    }
+                    CheckedActionFactory instance = ClassloadingUtility.loadAndInstantiateClass(CheckedActionFactory.class, checkedActionFactoryClassName, null);
+                    checkedActionFactory = instance;
                 }
             }
         }

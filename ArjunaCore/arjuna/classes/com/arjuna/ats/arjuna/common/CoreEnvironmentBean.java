@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.arjuna.common;
 
-import com.arjuna.ats.internal.arjuna.utils.AndroidProcessId;
-
 import java.io.File;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -231,17 +229,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
         {
             synchronized(this) {
                 if(processImplementation == null && processImplementationClassName != null) {
-                    try
-                    {
-                        processImplementation = ClassloadingUtility.loadAndInstantiateClass(Process.class, processImplementationClassName, null);
-                    }
-                    catch (final java.lang.NoClassDefFoundError ex)
-                    {
-                        if (Utility.isAndroid())  // todo android
-                            return new AndroidProcessId();
-                        else
-                            throw ex;
-                    }
+                    processImplementation = ClassloadingUtility.loadAndInstantiateClass(Process.class, processImplementationClassName, null);
                 }
             }
         }
