@@ -395,16 +395,27 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                 try
                 {
                     _storeManager = new StoreManager(null, new TwoPhaseVolatileStore(new ObjectStoreEnvironmentBean()), null);
+                }              
+                catch (final IllegalStateException ex)
+                {
+                    // means store already initialised so check to see if compatible
+                    
+                    if (StoreManager.getParticipantStore().getClass().equals(TwoPhaseVolatileStore.class))
+                    {
+                        // do nothing, as we are ok
+                    }
+                    else
+                    {
+                        ex.printStackTrace();
+                        
+                        return false;
+                    }
                 }
                 catch (final Throwable ex)
                 {
                     System.err.println("InvocationHandler could not initialise object store for optimistic concurrency control.");
                     
                     ex.printStackTrace();
-                    
-                    /*
-                     * Check to see if store already set!
-                     */
                     
                     return false;
                 }
