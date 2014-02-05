@@ -22,8 +22,6 @@
 
 package org.jboss.stm;
 
-import java.util.Random;
-
 import org.jboss.stm.annotations.Optimistic;
 import org.jboss.stm.annotations.Transactional;
 
