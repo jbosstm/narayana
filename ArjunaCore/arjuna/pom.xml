@@ -104,11 +104,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-      <version>${version.jfree}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
@@ -399,6 +394,11 @@
         <version>${version.orson}</version>
         <scope>system</scope>
         <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+      </dependency>
+        <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>${version.jfree}</version>
       </dependency>
     </dependencies>
     <build>

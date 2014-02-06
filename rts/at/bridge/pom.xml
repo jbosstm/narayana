@@ -134,6 +134,19 @@
             <version>${version.org.codehaus.jettison}</version>
             <scope>test</scope>
         </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman</artifactId>
+      <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-submit</artifactId>
+      <version>${version.org.jboss.byteman}</version>
+      <scope>test</scope>
+    </dependency>
+
     </dependencies>
 
     <build>
