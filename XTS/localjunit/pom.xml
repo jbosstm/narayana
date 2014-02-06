@@ -227,6 +227,33 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>codeCoverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${version.org.jacoco}</version>
+                        <!-- Disable all XTS code coverage since they run under arquillian control.
+						     The current Jacoco config needs updating to include arquillian controlled tests
+                          -->
+                        <executions>
+                            <execution>
+                                <id>pre-unit-test</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>true</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
     <modules>
         <module>unit</module>

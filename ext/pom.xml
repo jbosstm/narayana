@@ -24,6 +24,7 @@
     <packaging>pom</packaging>
     <name>Narayana: ext</name>
     <description>Narayana: Ext All</description>
+
     <profiles>
         <profile>
             <id>codeCoverage</id>
@@ -34,16 +35,19 @@
                         <artifactId>maven-install-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-patched-emma</id>
+                                <!-- install shaded jacoco ant jar (for use by the QA suite)
+                                     NB the shaded jar is not available via maven
+								-->
+                                <id>copy-jacoco</id>
                                 <phase>validate</phase>
                                 <goals>
                                     <goal>install-file</goal>
                                 </goals>
                                 <configuration>
-                                    <file>${basedir}/emma.jar</file>
-                                    <groupId>emma</groupId>
-                                    <artifactId>emma</artifactId>
-                                    <version>${version.emma}</version>
+                                    <file>${basedir}/jacocoant.jar</file>
+                                    <groupId>org.jacoco</groupId>
+                                    <artifactId>jacoco-ant</artifactId>
+                                    <version>${version.org.jacoco}</version>
                                     <packaging>jar</packaging>
                                 </configuration>
                             </execution>

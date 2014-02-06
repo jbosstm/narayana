@@ -276,40 +276,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>codeCoverage</id>
-      <build>
-        <plugins>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes combine.children="append">
-                  <include>emma:emma</include>
-                </includes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
-        </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>emma</groupId>
-          <artifactId>emma</artifactId>
-          <version>${version.emma}</version>
-        </dependency>
-      </dependencies>
-    </profile>
      <profile>
           <id>community</id>
           <build>

@@ -106,7 +106,6 @@
                   <include>org.jboss.narayana.xts:ws-t11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:wstx11:jar:api:${project.version}</include>
                   <include>org.jboss.narayana.xts:bridge:jar:api:${project.version}</include>
-                  <include>emma:emma</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -123,7 +122,6 @@
               <artifactSet>
                 <includes>
                   <include>org.jboss.narayana.xts</include>
-                  <include>emma:emma</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -230,16 +228,6 @@
     </dependency>
   </dependencies>
   <profiles>
-    <profile>
-      <id>codeCoverage</id>
-      <dependencies>
-        <dependency>
-          <groupId>emma</groupId>
-          <artifactId>emma</artifactId>
-          <version>${version.emma}</version>
-        </dependency>
-      </dependencies>
-    </profile>
     <profile>
         <id>release</id>
         <build>
