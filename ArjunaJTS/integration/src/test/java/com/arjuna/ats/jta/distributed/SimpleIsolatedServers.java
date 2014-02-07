@@ -861,7 +861,7 @@ public class SimpleIsolatedServers {
 		XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", migratedXid);
 		originalTransaction.enlistResource(proxyXAResource);
 		originalServer.removeRootTransaction(currentXid);
-		Thread.currentThread().sleep((subordinateTimeout + 1) * 1000);
+		Thread.currentThread().sleep((subordinateTimeout + 2) * 1000);
 		try {
 			transactionManager.commit();
 			fail("Did not rollback");
