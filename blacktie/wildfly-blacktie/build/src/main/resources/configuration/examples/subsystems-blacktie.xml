@@ -3,7 +3,6 @@
 <config>
    <subsystems>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/logging.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/configadmin.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/datasources.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/deployment-scanner.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/ee.xml</subsystem>
