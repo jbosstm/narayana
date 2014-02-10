@@ -165,7 +165,7 @@ public class XID implements Serializable
         }
         stringBuilder.append(", ");
         for (int i = 0; i < bqual_length; i++) {
-            stringBuilder.append(gtrid_length+data[i]);
+            stringBuilder.append(data[gtrid_length+i]);
         }
 
         stringBuilder.append(" >");
