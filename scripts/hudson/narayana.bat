@@ -50,7 +50,7 @@ set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION%
 
 rem START JBOSS
 rem set JAVA_OPTS="%JAVA_OPTS% -Xmx1024m -XX:MaxPermSize=512m"
-start /B %JBOSS_HOME%\bin\standalone.bat -c standalone-blacktie.xml -Djboss.bind.address=%JBOSSAS_IP_ADDR% -Djboss.bind.address.unsecure=%JBOSSAS_IP_ADDR%
+start /B %JBOSS_HOME%\bin\standalone.bat -c standalone-blacktie.xml -Djboss.bind.address=%JBOSSAS_IP_ADDR% -Djboss.bind.address.unsecure=%JBOSSAS_IP_ADDR% -Djboss.bind.address.management=%JBOSSAS_IP_ADDR%
 echo "Started server"
 @ping 127.0.0.1 -n 20 -w 1000 > nul
 
