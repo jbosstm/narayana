@@ -18,6 +18,7 @@
 
 #include "apr.h"
 #include "apr_strings.h"
+#include "apr_signal.h"
 #include "ThreadLocalStorage.h"
 #include "txx.h"
 #include "HybridSocketEndpointQueue.h"
@@ -305,6 +306,10 @@ bool HybridSocketEndpointQueue::_send(const char* replyto, long rval, long rcode
 		LOG4CXX_DEBUG(logger, (char*)"send on " << addr << ":" << addr_local->port << " with " << 
 				len << " bytes and buffer: " << buf);
 
+		#if APR_HAVE_SIGACTION
+                    apr_sigfunc_t* old = apr_signal(SIGPIPE, SIG_IGN);
+		#endif
+
 		if(rc == APR_SUCCESS) {
 			len = sizeof(sendlen);
 			rc = apr_socket_send(socket, (char*)&sendlen, &len);
@@ -319,6 +324,10 @@ bool HybridSocketEndpointQueue::_send(const char* replyto, long rval, long rcode
 			len = msglen;
 			rc = apr_socket_send(socket, data, &len);
 		}
+
+		#if APR_HAVE_SIGACTION
+		    apr_signal(SIGPIPE, old);
+		#endif
 
 		if(data != NULL) delete[] data;
 
