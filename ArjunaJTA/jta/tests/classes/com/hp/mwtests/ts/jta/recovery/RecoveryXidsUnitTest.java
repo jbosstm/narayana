@@ -74,7 +74,7 @@ public class RecoveryXidsUnitTest
         assertEquals(0, trans.length);
 
         try {
-            Thread.sleep(10010);
+            Thread.sleep(20010);
         } catch(InterruptedException e) {}
 
 
