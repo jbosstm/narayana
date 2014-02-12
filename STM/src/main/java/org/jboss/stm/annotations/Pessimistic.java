@@ -29,6 +29,9 @@ import java.lang.annotation.*;
  * may block or be rejected if another user is manipulating
  * the same object in a conflicting manner.
  * 
+ * If no other annotation appears to override this, then
+ * pessimistic is the default for a transactional object.
+ * 
  * @author marklittle
  *
  */

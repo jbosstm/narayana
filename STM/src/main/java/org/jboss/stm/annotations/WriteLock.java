@@ -26,6 +26,10 @@ import java.lang.annotation.*;
 /**
  * Grab a write lock for this method.
  * 
+ * If no other annotation appears to override this, then
+ * all transactional object methods will be assumed to modify
+ * the state, i.e., WriteLock is the default value.
+ * 
  * @author marklittle
  */
 

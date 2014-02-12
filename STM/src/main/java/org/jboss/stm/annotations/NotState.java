@@ -28,6 +28,9 @@ import java.lang.annotation.*;
  * Such variables will therefore retain any state they had regardless of how a
  * transaction terminates. Use with care!
  * 
+ * By default, all member variables (non-static, non-volatile) will be
+ * saved.
+ * 
  * @author marklittle
  */
     
