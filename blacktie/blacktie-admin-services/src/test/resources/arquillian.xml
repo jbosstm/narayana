@@ -20,6 +20,9 @@
 
 	<!-- Example configuration for a remote JBoss AS 7 instance -->
 	<container qualifier="jboss" default="true">
+        <configuration>
+            <property name="managementAddress">${jbossas.ip.addr}</property>
+        </configuration>
 	</container>
 
 </arquillian>
