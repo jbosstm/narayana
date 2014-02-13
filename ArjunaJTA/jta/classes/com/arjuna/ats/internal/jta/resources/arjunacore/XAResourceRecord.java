@@ -43,6 +43,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.internal.jta.resources.ExceptionDeferrer;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
@@ -57,6 +58,7 @@ import com.arjuna.ats.jta.xa.XidImple;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.NotSerializableException;
@@ -78,7 +80,7 @@ import org.jboss.tm.LastResource;
  * @since JTS 1.2.4.
  */
 
-public class XAResourceRecord extends AbstractRecord
+public class XAResourceRecord extends AbstractRecord implements ExceptionDeferrer
 {
 
 	public static final int XACONNECTION = 0;
@@ -86,6 +88,11 @@ public class XAResourceRecord extends AbstractRecord
 	private static final Uid START_XARESOURCE = Uid.minUid();
 
 	private static final Uid END_XARESOURCE = Uid.maxUid();
+	
+	/**
+     * Any XAException that occurs.
+     */
+    List<Throwable> deferredExceptions;
 
 	/**
 	 * The params represent specific parameters we need to recreate the
@@ -222,6 +229,8 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (XAException e1)
 		{
+		    addDeferredThrowable(e1);
+		   
             jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
                     _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -312,6 +321,8 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (XAException e1)
 				{
+				   addDeferredThrowable(e1);
+				   
 				    if ((e1.errorCode >= XAException.XA_RBBASE)
 						&& (e1.errorCode < XAException.XA_RBEND))
 				    {
@@ -325,6 +336,8 @@ public class XAResourceRecord extends AbstractRecord
 				    	    	    _theXAResource.rollback(_tranID);
 				    	    } catch (XAException e2)
 				    	    {
+				    	       addDeferredThrowable(e2);
+				    	        
 				    	    	    jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e2), e2);
 
@@ -362,6 +375,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
+					   addDeferredThrowable(e1);
+					   
                         jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -468,6 +483,8 @@ public class XAResourceRecord extends AbstractRecord
 					}
 					else
 					{
+					   addDeferredThrowable(e1);
+					   
                         jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -616,7 +633,7 @@ public class XAResourceRecord extends AbstractRecord
 	                 * Since this is 1PC we can call forget: the outcome of the
 	                 * transaction is the outcome of the participant.
 	                 */
-
+	               
 	                switch (e1.errorCode)
 	                {
 	                case XAException.XA_HEURHAZ:
@@ -648,6 +665,8 @@ public class XAResourceRecord extends AbstractRecord
                         case XAException.XAER_RMFAIL:
                         default:
 	                {
+	                    addDeferredThrowable(e1);
+	                    
                         jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 	                    
@@ -684,6 +703,8 @@ public class XAResourceRecord extends AbstractRecord
 	            }
 	            catch (XAException e1)
 	            {
+	               addDeferredThrowable(e1);
+	               
                     jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
@@ -1284,5 +1305,17 @@ public class XAResourceRecord extends AbstractRecord
     private static final boolean _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
 
     private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
+
+    void addDeferredThrowable(Exception e) {
+       if (this.deferredExceptions == null)
+          this.deferredExceptions = new ArrayList<>();
+       this.deferredExceptions.add(e);
+    }
+    
+    @Override
+    public List<Throwable> getDeferredThrowables()
+    {
+       return this.deferredExceptions;
+    }
     
 }
