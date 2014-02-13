@@ -2336,12 +2336,6 @@ public class BasicAction extends StateManager
         {
             if ((p == TwoPhaseOutcome.FINISH_ERROR) || (p == TwoPhaseOutcome.ONE_PHASE_ERROR))
             {
-            	
-            	if (recordBeingHandled.value() instanceof ExceptionDeferrer) 
-            	{
-            		this._deferredThrowable = ((ExceptionDeferrer) recordBeingHandled.value()).getDeferredThrowable();
-            	}
-            	
                 /*
                      * If ONE_PHASE_ERROR then the resource has rolled back. Otherwise we
                      * don't know and will ask recovery to keep trying. We differentiate
@@ -3612,16 +3606,6 @@ public class BasicAction extends StateManager
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_68();
         }
     }
-    
-	/**
-	 * Get any Throwable that was caught during commit processing but not directly rethrown.
-	 * @return the Throwable, if any
-	 */
-	public Throwable getDeferredThrowable() {
-		return _deferredThrowable;
-	}
-	
-	protected Throwable _deferredThrowable;
 
     /* These (genuine) lists hold the abstract records */
 
