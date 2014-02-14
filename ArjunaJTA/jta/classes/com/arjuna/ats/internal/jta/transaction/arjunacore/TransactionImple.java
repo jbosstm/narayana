@@ -1197,7 +1197,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) );
+						throw addSuppressedThrowables(new javax.transaction.RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive(_theTransaction.get_uid()) ));
 
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
@@ -1213,13 +1213,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.COMMITTING: // in case of async commit
 						break;
 					case ActionStatus.H_MIXED:
-						throw new javax.transaction.HeuristicMixedException();
+						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 					case ActionStatus.H_HAZARD:
-						throw new javax.transaction.HeuristicMixedException();
+						throw addSuppressedThrowables(new javax.transaction.HeuristicMixedException());
 					case ActionStatus.H_ROLLBACK:
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
-                        RollbackException rollbackException = new RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_commitwhenaborted() );
+                        RollbackException rollbackException = addSuppressedThrowables(new RollbackException( jtaLogger.i18NLogger.get_transaction_arjunacore_commitwhenaborted() ));
 
                         // Don't mess with the following flow until you've read JBTM-575 in its entirety.
 
@@ -1241,11 +1241,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 						throw rollbackException;
 					default:
-						throw new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() );
+						throw addSuppressedThrowables(new InvalidTerminationStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_invalidstate() ));
 				}
 			}
 			else
-				throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
+				throw addSuppressedThrowables(new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() ));
 		}
 		finally
 		{
