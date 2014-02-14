@@ -236,6 +236,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throw new IllegalStateException( jtaLogger.i18NLogger.get_transaction_arjunacore_inactive() );
 	}
 	
+	/**
+	 * Add throwables that have been thrown by XAResources but have been suppressed by wrapping records to the given exception.
+	 *  
+	 * @param e an exception that will be thrown out of here
+	 * @return the given exception with suppressed exceptions added 
+	 */
 	<T extends Exception> T addSuppressedThrowables(T e) {
 	   if (_exceptionDeferrers != null)
 	      for (ExceptionDeferrer exceptionDeferrer : _exceptionDeferrers)

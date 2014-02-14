@@ -483,7 +483,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 					}
 					else
 					{
-					   addDeferredThrowable(e1);
+					    addDeferredThrowable(e1);
 					   
                         jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
@@ -633,7 +633,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                 * Since this is 1PC we can call forget: the outcome of the
 	                 * transaction is the outcome of the participant.
 	                 */
-	               
+
 	                switch (e1.errorCode)
 	                {
 	                case XAException.XA_HEURHAZ:
@@ -665,7 +665,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
                         case XAException.XAER_RMFAIL:
                         default:
 	                {
-	                    addDeferredThrowable(e1);
+	                   addDeferredThrowable(e1);
 	                    
                         jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(_tranID),
                                 _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
