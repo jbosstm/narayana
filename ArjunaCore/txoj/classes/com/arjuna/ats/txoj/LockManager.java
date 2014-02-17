@@ -109,7 +109,7 @@ public class LockManager extends StateManager
     public static final int waitTotalTimeout = -100;
 
     /**
-     * Cleanup. Note we grab the semaphore before destroying the the lock store
+     * Cleanup. Note we grab the semaphore before destroying the lock store
      * to ensure the store is deleted cleanly.
      */
 

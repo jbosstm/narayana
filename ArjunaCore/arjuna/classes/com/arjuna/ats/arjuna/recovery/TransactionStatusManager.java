@@ -100,7 +100,7 @@ public class TransactionStatusManager
     * and closes down the listener thread.
 
     * this will never work as a finalizer because the listener thread is always running and keeping this
-    * instance from being garbage collected. we need a proper shutdonw method which closes the
+    * instance from being garbage collected. we need a proper shutdown method which closes the
     * listener socket causing the thread to shut down
     *
    // TODO consider adding a shutdown operation (signature change)
