@@ -184,6 +184,9 @@
     <copy todir="tmp-docs-dir-docs/guides/txbridge_guide">
       <fileset dir="${workdir}/${tag}-docs/docs/txbridge_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
+    <copy todir="tmp-docs-dir-docs/guides/blacktie_guide">
+      <fileset dir="${workdir}/${tag}-docs/blacktie/docs/target/docbook/publish/en-US/html_single"/>
+    </copy>
     <antcall target="remote-copy">
         <param name="from" value="tmp-docs-dir-docs"/>
         <param name="to" value="${docs.dir}/${tag}"/>
