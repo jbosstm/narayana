@@ -23,14 +23,10 @@ if [ "$?" -ne "1" ]; then
   # This is required for the upgrade of g++ https://issues.jboss.org/browse/JBTM-1787
   if [ -f /etc/fedora-release ]
   then
-    grep "Fedora release 18" /etc/fedora-release > /dev/null
-  	if [ "$?" -eq "0" ]; then
-  		BPA="-Dbpa=fc18x64"
-    fi
-    grep "Fedora release 19" /etc/fedora-release > /dev/null
-  	if [ "$?" -eq "0" ]; then
-  		BPA="-Dbpa=fc18x64"
-    fi
+	uname -a | grep x86_64 >> /dev/null
+	if [ "$?" -ne "1" ]; then
+	    BPA="-Dbpa=fc18x64"
+	fi
   fi
 fi
 
