@@ -54,6 +54,7 @@
         <configuration>
           <useManifestOnlyJar>false</useManifestOnlyJar>
           <excludes>
+            <exclude>**/integration/*IntegrationTest.java</exclude>
             <!-- exclude tests which were run above using byteman scripts -->
             <exclude>**/recovery/CrashRecovery.java</exclude>
             <!-- exclude tests which we don't want to run -->
@@ -172,6 +173,50 @@
       <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+		<groupId>postgresql</groupId>
+		<artifactId>postgresql</artifactId>
+		<version>${version.postgresql}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>${version.mysql}</version>
+		<scope>test</scope>
+	</dependency>
+    <dependency>
+       	<groupId>jboss</groupId>
+		<artifactId>jnpserver</artifactId>
+		<version>4.2.2.GA</version>
+		<scope>test</scope>
+    </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <version>${version.org.jboss.arquillian.core}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version.javax.enterprise}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.org.jboss.arquillian.core}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${version.javax.annotation}</version>
+            <scope>provided</scope>
+        </dependency>
+
   </dependencies>
   <profiles>
       <profile>
@@ -192,5 +237,156 @@
               </plugins>
           </build>
       </profile>
+        <profile>
+            <id>arq</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>${jboss-as.version}</version>
+                    <scope>test</scope>
+                </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-transaction-spi</artifactId>
+            <version>${version.org.jboss.jboss-transaction-spi}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-spi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${version.org.jboss.logging.jboss-logging}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.interceptor</groupId>
+            <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.interceptor}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.transaction}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jumpmind.symmetric.jdbc</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.2-1002-jdbc4</version>
+            <scope>test</scope>
+        </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${version.com.h2database}</version>
+      <scope>test</scope>
+    </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <version>${version.org.jboss.arquillian.core}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version.javax.enterprise}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.org.jboss.arquillian.core}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${version.javax.annotation}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.ejb}</version>
+            <scope>provided</scope>
+        </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration combine.self="override">
+                            <skip>false</skip>
+                            <includes>
+                                <!--<include>**/integration/*.java</include>
+								-->
+                                <include>**/integration/*IntegrationTest.java</include>
+                            </includes>
+                            <systemPropertyVariables combine.children="append">
+                                <!--
+                                    Used in arquillian.xml
+                                -->
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}</server.jvm.args>
+                                <node.address>127.0.0.1</node.address>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+	<profile>
+		<id>commitMarkableResourcePerf</id>
+		<dependencies>
+			<dependency>
+				<groupId>com.ibm</groupId>
+				<artifactId>db2jcc</artifactId>
+				<version>${version.com.ibm}</version>
+				<scope>system</scope>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/DB2_v9.7/db2jcc.jar</systemPath>
+			</dependency>
+			<dependency>
+				<groupId>com.microsoft.sqlserver</groupId>
+				<artifactId>sqljdbc4</artifactId>
+				<version>${version.com.microsoft.sqlserver}</version>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar</systemPath>
+				<scope>system</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.sybase.jdbcx</groupId>
+				<artifactId>jconn4</artifactId>
+				<version>jConnect-7_0</version>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/jConnect-6_0/classes/jconn3.jar</systemPath>
+				<scope>system</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc</artifactId>
+				<version>${version.com.oracle}</version>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/oracle_10_2_0_4/ojdbc14.jar</systemPath>
+				<scope>system</scope>
+			</dependency>
+		</dependencies>
+	</profile>
   </profiles>
 </project>

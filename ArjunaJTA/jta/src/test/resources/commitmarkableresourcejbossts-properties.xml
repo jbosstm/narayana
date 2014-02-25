@@ -1,0 +1,15 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+	<entry key="JTAEnvironmentBean.xaRecoveryNodes">1</entry>
+	<entry key="JTAEnvironmentBean.commitMarkableResourceJNDINames">
+        commitmarkableresource
+    </entry>
+    <!-- CommitMarkableResourceRecoveryModule needs to be first so that we can prevent activation -->
+	<entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
+        com.arjuna.ats.internal.jta.recovery.arjunacore.CommitMarkableResourceRecordRecoveryModule
+        com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+        com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+    </entry>
+    <entry key="RecoveryEnvironmentBean.recoveryBackoffPeriod">1</entry>
+</properties>
