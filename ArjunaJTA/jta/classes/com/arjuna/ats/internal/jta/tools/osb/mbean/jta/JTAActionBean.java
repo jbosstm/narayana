@@ -20,6 +20,8 @@ public class JTAActionBean extends ActionBean {
     protected LogRecordWrapper createParticipant(AbstractRecord rec, ParticipantStatus listType) {
         if (rec instanceof com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord)
             return new com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean(this, rec, listType);
+        else if (rec instanceof com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord)
+            return new com.arjuna.ats.internal.jta.tools.osb.mbean.jta.CommitMarkableResourceRecordBean(this, rec, listType);
         else
             return super.createParticipant(rec, listType);
     }

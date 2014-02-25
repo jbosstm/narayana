@@ -34,7 +34,22 @@ package com.arjuna.ats.internal.jta;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+
+class CommitMarkableResourceRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return CommitMarkableResourceRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.COMMITMARKABLERESOURCE;
+    }
+}
 
 class XAResourceRecordMap implements RecordTypeMap
 {
@@ -64,7 +79,8 @@ public class Implementations
 	    /*
 	     * Now add various abstract records which crash recovery needs.
 	     */
-	    
+
+	    RecordTypeManager.manager().add(new CommitMarkableResourceRecordMap());
 	    RecordTypeManager.manager().add(new XAResourceRecordMap());
 	    
 	    _added = true;
