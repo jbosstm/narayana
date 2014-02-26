@@ -5,4 +5,4 @@ target
 *.iml
 .idea
 jboss-as
-
+*~
