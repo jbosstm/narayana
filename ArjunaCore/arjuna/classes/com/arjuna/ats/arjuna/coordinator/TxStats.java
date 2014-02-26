@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 /**
@@ -49,11 +50,17 @@ public class TxStats implements TxStatsMBean
 {
     private static TxStats _instance = new TxStats();
 
+    private static CoordinatorEnvironmentBean _environmentBean;
+
     private TxStats() {
     }
 
     public static boolean enabled() {
-        return arjPropertyManager.getCoordinatorEnvironmentBean().isEnableStatistics();
+      //not thread safe but not sure we require thread safety as long as eventually all threads stop setting the bean
+      if(_environmentBean==null){
+        _environmentBean=arjPropertyManager.getCoordinatorEnvironmentBean();
+      }
+        return _environmentBean.isEnableStatistics();
     }
 
     public static TxStats getInstance() {
