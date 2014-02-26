@@ -441,7 +441,7 @@
     <version.com.oracle>10.2.0.4</version.com.oracle>
     <version.com.ibm>9.7</version.com.ibm>
     <version.postgresql>9.0-801.jdbc4</version.postgresql>
-    <version.mysql>5.1.21</version.mysql>
+    <version.mysql>5.1.28</version.mysql>
     <version.com.microsoft.sqlserver>mssql2005_sqljdbc_2.0</version.com.microsoft.sqlserver>
     <version.sun.jdk>jdk</version.sun.jdk>
     <version.asm>3.3.1</version.asm>

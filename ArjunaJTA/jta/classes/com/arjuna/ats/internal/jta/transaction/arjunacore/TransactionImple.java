@@ -36,14 +36,19 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+
+import org.jboss.tm.ConnectableResource;
+import org.jboss.tm.XAResourceWrapper;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -52,7 +57,9 @@ import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
@@ -60,6 +67,7 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrapping
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
@@ -69,6 +77,7 @@ import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XAModifier;
 import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /*
  * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it to
@@ -764,19 +773,28 @@ public class TransactionImple implements javax.transaction.Transaction,
      */
     private AbstractRecord createRecord(XAResource xaRes, Object[] params, Xid xid)
     {
-        final AbstractRecord record;
         if ((xaRes instanceof LastResourceCommitOptimisation)
                 || ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
                 .isInstance(xaRes)))
         {
-            record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params));
+            if (xaRes instanceof ConnectableResource) {
+            	String jndiName = ((XAResourceWrapper)xaRes).getJndiName();
+            	if (commitMarkableResourceJNDINames.contains(jndiName)) {
+            		try {
+						return new CommitMarkableResourceRecord(this, ((ConnectableResource)xaRes), xid, _theTransaction);
+					} catch (IllegalStateException | RollbackException
+							| SystemException e) {
+						tsLogger.logger.warn("Could not register synchronization for CommitMarkableResourceRecord", e);
+						return null;
+					}
+            	}
+            }
+            return new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params));
         }
         else
         {
-            record = new XAResourceRecord(this, xaRes, xid, params);
+            return new XAResourceRecord(this, xaRes, xid, params);
         }
-
-        return record;
     }
 
     /*
@@ -1615,5 +1633,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
+	
+	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
+			.getDefaultInstance(JTAEnvironmentBean.class)
+			.getCommitMarkableResourceJNDINames();
 
 }

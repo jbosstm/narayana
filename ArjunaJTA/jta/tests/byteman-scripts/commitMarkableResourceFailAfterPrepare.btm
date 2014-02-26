@@ -1,0 +1,21 @@
+RULE Fail first phase2Commit
+CLASS  com.arjuna.ats.arjuna.coordinator.BasicAction
+METHOD doCommit
+AT ENTRY
+BIND NOTHING
+IF readCounter("phase2commit") == 0
+	DO debug("Called"),
+	incrementCounter("phase2commit");
+	com.arjuna.ats.arjuna.coordinator.ActionManager.manager().remove($this.get_uid());
+   	throw new Error();
+ENDRULE
+
+RULE Return not inflight
+CLASS  com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+METHOD isTransactionInMidFlight
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO
+	RETURN false
+ENDRULE
