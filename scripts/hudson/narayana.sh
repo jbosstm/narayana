@@ -63,7 +63,7 @@ function init_test_options {
         [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
         [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
-        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # RTS tests
+        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
