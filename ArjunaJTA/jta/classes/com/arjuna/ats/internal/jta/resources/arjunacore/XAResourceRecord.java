@@ -653,7 +653,7 @@ public class XAResourceRecord extends AbstractRecord
 	                    
 	                    removeConnection();
 	                    
-                            return TwoPhaseOutcome.FINISH_ERROR;
+                            return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                }
 	                }
 	            }
