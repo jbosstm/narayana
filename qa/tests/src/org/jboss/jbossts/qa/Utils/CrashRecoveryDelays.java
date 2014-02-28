@@ -152,7 +152,8 @@ public class CrashRecoveryDelays
     }
 
     public static void awaitReplayCompletionCR02() throws InterruptedException {
-        awaitReplayCompletion(5); // was 60
+        awaitRecovery(1, 1);
+        //awaitReplayCompletion(5); // was 60
     }
 
     public static void awaitReplayCompletionCR02(int scaleFactor) throws InterruptedException {
@@ -160,7 +161,8 @@ public class CrashRecoveryDelays
     }
 
     public static void awaitReplayCompletionCR05() throws InterruptedException {
-        awaitReplayCompletion(10); // was 60
+        awaitRecovery(1, 1);
+        //awaitReplayCompletion(10); // was 60
     }
 
     public static void awaitReplayCompletionCR05(int scaleFactor) throws InterruptedException {
