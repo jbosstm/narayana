@@ -83,4 +83,21 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>codeCoverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- Skip because all surefire tests are skipped -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

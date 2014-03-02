@@ -35,12 +35,24 @@
   Paths are relative to the JVM's working dir - don't expect to be able to execute this from anywhere but 'qa'.
 
 -->
-<project name="QA Tests for JBossTS" default="junit" basedir=".">
+<project name="QA Tests for JBossTS" default="junit" basedir="."
+         xmlns:jacoco="antlib:org.jacoco.ant">
   <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
           <pathelement location="ant-contrib-1.0b3.jar"/>
       </classpath>
   </taskdef>
+
+  <!-- code coverage settings -->
+  <property name="code.coverage" value="false"/>
+  <property name="output.dir" location="testoutput" />
+  <property name="output.report.dir" location="${output.dir}/site/jacoco" />
+  <property name="output.exec.file" location="${output.dir}/jacoco-qa.exec" />
+
+  <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+      <classpath path="../ext/jacocoant.jar" />
+  </taskdef>
+
   <!-- set this property to the location of a JBossTS core build -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="5.0.2.Final-SNAPSHOT"/>
@@ -350,6 +362,32 @@
   </target>
   <!-- ##################################### -->
   <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
+  <path id="junit.classpath">
+    <!--
+      This is the classpath for the test framework, not the test components e.g. clients/servers.
+      Those are configured via TaskImpl.properties instead.
+
+      The test groups (org.jboss.jbossts.qa.junit.testgroup.TestGroup_XXXX classes) contains the
+      test methods, which link against the test classes, which in turn link against JBossTS.
+      Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
+      On the up side, you get better diagnostic messages and code management/navigation in IDEs.
+    -->
+    <pathelement location="ext/junit.jar"/>
+    <fileset dir="tests/build">
+      <include name="jbossts-*-qa.jar"/>
+    </fileset>
+    <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
+      <exclude name="narayana-jts-idlj.jar"/>
+      <exclude name="narayana-jts-jacorb.jar"/>
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
+      <include name="*.jar"/>
+      <include name="*.zip"/>
+    </fileset>
+    <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
+  </path>
+
   <macrodef name="junit-tests">
     <attribute name="tests"/>
     <attribute name="methods" default=""/>
@@ -466,73 +504,65 @@
       <echo message="Running junit test group @{tests} from basedir=${basedir}"/>
       <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
             the working dir is the same as the location of this script. -->
-      <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
-        <classpath>
-          <!--
-                This is the classpath for the test framework, not the test components e.g. clients/servers.
-                Those are configured via TaskImpl.properties instead.
-
-                The test groups (org.jboss.jbossts.qa.junit.testgroup.TestGroup_XXXX classes) contains the
-                test methods, which link against the test classes, which in turn link against JBossTS.
-                Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
-                On the up side, you get better diagnostic messages and code management/navigation in IDEs.
-                -->
-          <pathelement location="ext/junit.jar"/>
-          <fileset dir="tests/build">
-            <include name="jbossts-*-qa.jar"/>
-          </fileset>
-          <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
-            <exclude name="narayana-jts-idlj.jar"/>
-            <exclude name="narayana-jts-jacorb.jar"/>
-            <include name="*.jar"/>
-          </fileset>
-          <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
-            <include name="*.jar"/>
-            <include name="*.zip"/>
-          </fileset>
-          <!-- Commented out as this is just running the same tests again?
-        <fileset dir="../ArjunaJTS/jts/build/lib">
-          <include name="jts_tests.jar"/>
-        </fileset> 
-        -->
-          <pathelement location="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/etc"/>
-        </classpath>
-        <formatter type="plain"/>
-        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
-        <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
-        <sysproperty key="names" value=".*"/>
-        <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
-        <!--<jvmarg value="-Xdebug"/>-->
-        <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
-      </junit>
+      <if>
+        <equals arg1="${code.coverage}" arg2="true" />
+		  <then>
+            <jacoco:coverage destfile="${output.exec.file}" append="true" >
+              <!-- NB cannot call junit as a macrodef because the jacoco:coverage does not support it - so duplicate it -->
+              <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
+                <classpath refid="junit.classpath"/>
+                <formatter type="plain"/>
+                <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
+                <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
+                <sysproperty key="names" value=".*"/>
+                <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+              </junit>
+            </jacoco:coverage>
+		  </then>
+		  <else>
+            <junit printsummary="yes" haltonfailure="no" fork="true" dir="${basedir}" showoutput="false" failureproperty="failed-tests">
+              <classpath refid="junit.classpath"/>
+              <formatter type="plain"/>
+              <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
+              <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
+              <sysproperty key="names" value=".*"/>
+              <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+              <!--<jvmarg value="-Xdebug"/>-->
+              <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
+            </junit>
+		  </else>
+      </if>
     </sequential>
   </macrodef>
-  <!-- directory that contains emma.jar and emma_ant.jar: -->
-  <path id="emma.lib">
-    <pathelement location="../ext/emma.jar"/>
-    <pathelement location="ext/emma_ant.jar"/>
-  </path>
-  <taskdef resource="emma_ant.properties" classpathref="emma.lib"/>
-  <target name="emmareport">
-    <emma enabled="true">
-      <report>
-        <fileset dir="..">
-          <include name="**/*.em"/>
-        </fileset>
-        <fileset dir="..">
-          <include name="**/*coverage.ec"/>
-        </fileset>
-        <sourcepath>
-          <dirset dir="..">
-            <include name="**/classes"/>
-            <include name="**/java"/>
-          </dirset>
-        </sourcepath>
-        <html outfile="testoutput/emma/coverage.html"/>
-      </report>
-    </emma>
+
+  <target name="jacoco-report">
+    <jacoco:report>
+
+      <!-- Specify the collected execution data from the QA test run -->
+      <executiondata>
+        <file file="${output.exec.file}" />
+      </executiondata>
+
+      <structure name="Narayana QA Report">
+        <classfiles>
+          <fileset dir=".." >
+		    <exclude name="**/idlj/**"/>
+          </fileset>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="..">
+            <include name="**/*.java"/>
+          </fileset>
+        </sourcefiles>
+      </structure>
+
+      <!-- produce multiple report formats. -->
+      <html destdir="${output.report.dir}" />
+      <csv destfile="${output.report.dir}/report.csv" />
+      <xml destfile="${output.report.dir}/report.xml" />
+    </jacoco:report>
   </target>
-	
+
   <!--
 
     unused groups, pending cleanup and wiring:

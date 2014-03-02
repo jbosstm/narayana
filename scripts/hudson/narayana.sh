@@ -407,10 +407,12 @@ function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
   unset orb
+  codeCoverage=false;
 
   # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
+    [ $i = "-PcodeCoverage" ] && codeCoverage=true
   done
 
   # check to see if we were called with orb=idlj as one of the arguments
@@ -465,23 +467,28 @@ function qa_tests_once {
         ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
+          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
-        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest;
+        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
         ok=$?
       fi
     else
-      ant -f run-tests.xml $target $QA_PROFILE
+      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage
       ok=$?
     fi
 
     if [ -f TEST-failures.txt ]; then
       echo "Test Failures:"
       cat TEST-failures.txt 
+    fi
+
+    if [ $codeCoverage = true ]; then
+      echo "generating test coverage report"
+      ant -f run-tests.xml jacoco-report
     fi
 
     # archive the jtsremote test output (use a name related to the orb that was used for the tests)
@@ -496,7 +503,7 @@ function qa_tests {
   ok1=0;
   ok2=0;
   if [ $SUN_ORB = 1 ]; then
-    qa_tests_once "$@" "orb=idlj" "$@" # run qa against the Sun orb
+    qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
     ok2=$?
   fi
   if [ $JAC_ORB = 1 ]; then
@@ -509,6 +516,8 @@ function qa_tests {
 
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
+
+
 
 check_if_pull_closed
 

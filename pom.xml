@@ -460,6 +460,7 @@
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.apache.maven.plugins.maven-antrun-plugin>1.7</version.org.apache.maven.plugins.maven-antrun-plugin>
+    <version.org.jacoco>0.6.3.201306030806</version.org.jacoco>
   </properties>
   <modules>
     <module>ext</module>
@@ -509,119 +510,118 @@
           </plugins>
       </build>
     </profile>
-        <profile>
-            <id>codeCoverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-jar-plugin</artifactId>
+      <profile>
+          <id>codeCoverage</id>
+          <build>
+          <plugins>
+          <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${version.org.jacoco}</version>
+              <executions>
+                  <!--
+                     Prepares the property pointing to the JaCoCo runtime agent which
+                     is passed as VM argument when Maven the Surefire plugin is executed.
+                 -->
+                  <execution>
+                      <id>pre-unit-test</id>
+                      <goals>
+                          <goal>prepare-agent</goal>
+                      </goals>
                       <configuration>
-                        <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
+                          <!-- Sets the path to the file which contains the execution data. -->
+                          <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                          <!--
+                             Sets the name of the property containing the settings
+                             for JaCoCo runtime agent.
+                         -->
+                          <propertyName>surefireArgLine</propertyName>
                       </configuration>
-                    </plugin>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-surefire-plugin</artifactId>
+                  </execution>
+                  <!--
+                     Ensures that the code coverage report for unit tests is created after
+                     unit tests have been run.
+                 -->
+                  <execution>
+                      <id>post-unit-test</id>
+                      <phase>test</phase>
+                      <goals>
+                          <goal>report</goal>
+                      </goals>
                       <configuration>
-                        <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
-                        <additionalClasspathElements>
-                          <additionalClasspathElement>${emma.jar.location}/emma.jar</additionalClasspathElement>
-                        </additionalClasspathElements>
+                          <!-- Sets the path to the file which contains the execution data. -->
+                          <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                          <!-- Sets the output directory for the code coverage report. -->
+                          <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
                       </configuration>
-                    </plugin>
-                    <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-antrun-plugin</artifactId>
-                      <executions>
-                        <execution>
-                          <id>instrument</id>
-                          <phase>process-classes</phase>
-                          <configuration>
-                            <target>
-                                  <java classname="emma">
-                                    <arg value="instr"/>
-                                    <arg value="-ix"/>
-                                    <arg value="-com.arjuna.ArjunaOTS.*,-org.omg.CORBA.*,-org.omg.CosTransactions.*,-org.omg.XA.*,-*.logging.*,-org.jboss.jbossts.xts.servicetests.*,-com.jboss.transaction.wstf.test.*,-com.jboss.transaction.txinterop.test.*"/>
-                                    <arg value="-instrpath"/>
-                                    <arg value="${project.build.directory}/classes/"/>
-                                    <arg value="-outfile"/>
-                                    <arg value="${project.build.directory}/coverage.em"/>
-                                    <arg value="-outdir"/>
-                                    <arg value="${project.build.directory}/generated-classes/emma/"/>
-                                    <arg value="-merge"/>
-                                    <arg value="y"/>
-                                    <arg value="-outmode"/>
-                                    <arg value="fullcopy"/>
-                                    <classpath>
-                                      <pathelement path="${emma.jar.location}/emma.jar"/> 
-                                    </classpath>
-                                  </java>
-                            </target>
-                          </configuration>
-                          <goals>
-                            <goal>run</goal>
-                          </goals>
-                        </execution>
-                        <execution>
-                          <id>create-report</id>
-                          <phase>install</phase>
-                          <configuration>
-                            <target>
-                              <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
-                              <if>
-                                <available file="${project.build.directory}/test-classes/coverage.ec"/>
-                                <then>
-                                  <java classname="emma">
-                                    <arg value="report"/>
-                                    <arg value="-r"/>
-                                    <arg value="html"/>
-                                    <arg value="-in"/>
-                                    <arg value="${project.build.directory}/coverage.em"/>
-                                    <arg value="-in"/>
-                                    <arg value="${project.build.directory}/test-classes/coverage.ec"/>
-                                    <arg value="-Dreport.html.out.file=${project.build.directory}/coverage.html"/>
-                                    <arg value="-Dreport.metrics=method:70,block:70,line:80,class:100"/>
-                                    <classpath>
-                                      <pathelement path="${emma.jar.location}/emma.jar"/> 
-                                    </classpath>
-                                  </java>
-                                </then>
-                              </if>
-                            </target>
-                          </configuration>
-                          <goals>
-                            <goal>run</goal>
-                          </goals>
-                        </execution>
-                      </executions>
-                      <dependencies>
-                        <dependency>
-                            <groupId>ant-contrib</groupId>
-                            <artifactId>ant-contrib</artifactId>
-                            <version>1.0b3</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-nodeps</artifactId>
-                            <version>1.8.1</version>
-                        </dependency>
-                      </dependencies>
-                    </plugin>
-                  </plugins>
-                </build>
-                <properties>
-                  <maven.compiler.argument.target>1.6</maven.compiler.argument.target>
-                  <maven.compiler.argument.source>1.6</maven.compiler.argument.source>
-                  <version.emma>2.0.12224-adinn</version.emma>
-                </properties>
-              </profile>
+                  </execution>
+                  <execution>
+                      <id>check</id>
+                      <phase>test</phase>
+                      <goals>
+                          <goal>check</goal>
+                      </goals>
+                      <configuration>
+                          <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                          <rules>
+                              <rule>
+                                <element>BUNDLE</element>
+                                <excludes>
+                                  <exclude>*Test</exclude>
+                                </excludes>
+                                <limits>
+                                  <limit>
+                                    <counter>INSTRUCTION</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.0</minimum>
+                                  </limit>
+								  <!--
+                                  <limit>
+                                    <counter>CLASS</counter>
+                                    <value>MISSEDCOUNT</value>
+                                    <maximum>0</maximum>
+                                  </limit>
+								  -->
+                                </limits>
+                              </rule>
+							  <!--
+                              <rule>
+                                <element>CLASS</element>
+                                <excludes>
+                                  <exclude>*Test</exclude>
+                                </excludes>
+                                <limits>
+                                  <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.20</minimum>
+                                  </limit>
+                                </limits>
+                              </rule>
+							  -->
+                          </rules>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                  <!-- Sets the VM argument line used when unit tests are run. -->
+                  <argLine>${surefireArgLine}</argLine>
+                  <systemProperties>
+                      <property>
+                          <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+                          <value>jbossts-properties.xml</value>
+                      </property>
+                  </systemProperties>
+              </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>community</id>
       <properties>
