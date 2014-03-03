@@ -23,7 +23,9 @@
 package com.arjuna.ats.jta.cdi.transactional;
 
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
+
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -35,6 +37,7 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
@@ -164,7 +167,7 @@ public class TransactionalInterceptorBase implements Serializable {
         if (transactionManager == null) {
             try {
                 InitialContext initialContext = new InitialContext();
-                transactionManager = (TransactionManager) initialContext.lookup("java:jboss/TransactionManager");
+                transactionManager = (TransactionManager) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
             } catch (NamingException e) {
                 throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tm(), e);
             }
