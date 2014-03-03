@@ -20,6 +20,7 @@
  */
 package com.arjuna.common.util;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,6 +28,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import com.arjuna.common.logging.commonLogger;
 
 /**
  * Utility class providing access to build time and runtime configuration reporting functions.
@@ -129,8 +131,10 @@ public class ConfigurationInfo
                 buildId = attributes.getValue(name);
             }
 
+        } catch(FileNotFoundException exception) {
+            commonLogger.i18NLogger.warn_could_not_find_manifest(pathToManifest, exception);
         } catch(Exception exception) {
-            exception.printStackTrace();
+            commonLogger.i18NLogger.warn_could_not_find_manifest(pathToManifest, exception);
         } finally {
             if(is!= null) {
                 try {
