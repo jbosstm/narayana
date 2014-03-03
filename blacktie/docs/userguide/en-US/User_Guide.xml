@@ -11,7 +11,7 @@
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Buffers.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Services.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Configuration.xml"/>
-    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Running.xml"/>
+	<!--<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Running.xml"/>-->
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Administration.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Revision_History.xml"/>
     <!-- <index /> -->

@@ -10,7 +10,7 @@
 		<xref linkend="sec-administration-operations"></xref>
 		are exposed through a both a JMX
 		MBean and a Java XATMI service
-		deployed into JBoss AS, configured the
+		deployed into WildFly, configured the
 		same btconfig.xml of the domain
 		it is administering
 	</para>
@@ -84,7 +84,7 @@
 					<para>Discover running servers</para>
 					<para>To achieve this, the administration routings lists all the
 						queues locally for the appearance of the string ADMIN</para>
-					<para>Note servers connected to other JBoss AS instances will not
+					<para>Note servers connected to other WildFly instances will not
 						be discoverable</para>
 				</listitem>
 				<listitem>
@@ -215,7 +215,7 @@
 			<title>Viewing Transaction Statistics</title>
 
 			<para>In a typical BlackTie installation the transaction service will
-				be running in the JBoss Application server where you installed the
+				be running in the WildFly Application server where you installed the
 				stomp connect service. In such a setup basic transaction management
 				information is exposed by the native transaction service running in
 				the AS. For example to enable statistics open the JBossTS property
@@ -225,7 +225,7 @@
 			<itemizedlist>
 				<listitem>
 					<para>
-						$JBOSS_HOME/server/&lt;server&gt;/conf/jbossts-properties.xml
+						$JBOSS_HOME/standalone/configuration/standalone.xml
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -244,7 +244,7 @@
 				<programlisting language="XML" role="XML">jboss.management.local:J2EEServer=Local,j2eeType=JTAResource,name=TransactionManager</programlisting>
 			</para>
 
-			<para>If you are using the web based JBossAS jmx console then look
+			<para>If you are using the web based WildFly jmx console then look
 				for the name</para>
 
 			<para>
