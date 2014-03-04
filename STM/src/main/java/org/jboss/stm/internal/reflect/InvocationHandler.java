@@ -398,9 +398,11 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                 }              
                 catch (final IllegalStateException ex)
                 {
+                    _storeManager = null;
+                    
                     // means store already initialised so check to see if compatible
                     
-                    if (StoreManager.getParticipantStore().getClass().equals(TwoPhaseVolatileStore.class))
+                    if (StoreManager.setupStore(null, ObjectModel.SINGLE).getClass().equals(TwoPhaseVolatileStore.class))
                     {
                         // do nothing, as we are ok
                     }
