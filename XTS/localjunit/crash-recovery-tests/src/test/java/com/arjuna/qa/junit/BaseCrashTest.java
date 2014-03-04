@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -164,6 +165,7 @@ public class BaseCrashTest
         File objectStore = new File(dir);
         boolean ischeck = checkTxObjectStore(objectStore);
         if(!ischeck) {
+            archiveObjectStore(jbossHome, testName);
             StringBuffer buffer = exploreDirectory(objectStore, 0);
             System.out.println(buffer);
         }
@@ -314,4 +316,24 @@ public class BaseCrashTest
         }
         return result;
     }
+
+    private void archiveObjectStore(final String jbossHome, final String testName) {
+        final String source = jbossHome + "/standalone/data/tx-object-store";
+        String target = "target/";
+
+        if (testName != null) {
+            target += testName + "_tx-object-store.zip";
+        } else {
+            target += new Date().getTime() + "_tx-object-store.zip";
+        }
+
+        final ZipArchiver zipArchiver = new ZipArchiver();
+
+        try {
+            zipArchiver.createArchive(source, target);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
