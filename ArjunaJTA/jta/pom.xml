@@ -388,5 +388,31 @@
 			</dependency>
 		</dependencies>
 	</profile>
+    <profile>
+        <id>codeCoverage</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                      <excludes>
+                        <exclude>**/commitmarkable/**</exclude>
+                        <!-- byteman and Jacoco seem to be interfering with each other -->
+                        <exclude>**/recovery/CrashRecovery.java</exclude>
+                        <exclude>**/recovery/CrashRecovery2.java</exclude>
+                      </excludes>
+
+                      <systemProperties>
+                        <property>
+                          <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
+                          <value>h2jbossts-properties.xml</value>
+                        </property>
+                      </systemProperties>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
   </profiles>
 </project>

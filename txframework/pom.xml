@@ -212,14 +212,6 @@
               </plugin>
             </plugins>
           </build>
-          <dependencies>
-            <dependency>
-              <groupId>emma</groupId>
-              <artifactId>emma</artifactId>
-              <version>${version.emma}</version>
-              <scope>test</scope>
-            </dependency>
-          </dependencies>
         </profile>
         <profile>
             <id>arq</id>

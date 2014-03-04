@@ -1,17 +1,6 @@
 Narayana
 ========
 
-NOTE: PATCHED EMMA JAR
-----------------------
-This build uses a patch of the EMMA Jar, the source code for the patch is available from:
-
-	https://svn.jboss.org/repos/labs/labs/jbosstm/workspace/emma
-
-If you are building the "codeCoverage" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
-
-	-Demma.jar.location=/full/path/to/checkout/location/ext/
-
-
 Requirements
 ------------
 To build Narayana you should have installed:
