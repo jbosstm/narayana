@@ -122,4 +122,13 @@ public class TestGroup_jtsremote  extends TestGroupBase
 
         server1.terminate();
     }
+
+    @Test public void JTSRemote_PerfTest() {
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 480);
+        server1.start("$(1)");
+
+        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)");
+
+        server1.terminate();
+    }
 }
