@@ -23,6 +23,7 @@
 package com.arjuna.ats.jta.cdi;
 
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -33,8 +34,8 @@ import javax.enterprise.inject.spi.PassivationCapable;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.*;
-import java.lang.annotation.Annotation;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,7 +141,7 @@ public class TransactionContext implements Context {
         if (transactionManager == null) {
             try {
                 InitialContext initialContext = new InitialContext();
-                transactionManager = (TransactionManager) initialContext.lookup("java:jboss/TransactionManager");
+                transactionManager = (TransactionManager) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
             } catch (NamingException e) {
                 throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tm(), e);
             }
@@ -155,7 +156,7 @@ public class TransactionContext implements Context {
         if (transactionSynchronizationRegistry == null) {
             try {
                 InitialContext initialContext = new InitialContext();
-                transactionSynchronizationRegistry = (TransactionSynchronizationRegistry) initialContext.lookup("java:jboss/TransactionSynchronizationRegistry");
+                transactionSynchronizationRegistry = (TransactionSynchronizationRegistry) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext());
             } catch (NamingException e) {
                 throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tsr(), e);
             }
