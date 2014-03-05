@@ -343,11 +343,19 @@ public class LockManager extends StateManager
             txojLogger.logger.trace("LockManager::setlock(" + toSet + ", " + retry + ", "
                     + sleepTime + ")");
         }
-
-        if (!lockMutex())
-            return LockResult.REFUSED;
         
         int returnStatus = LockResult.REFUSED;
+        
+        // JBTM-2098, we need to have the action locked in case a simultaneous abort 
+        // is issued which would try to lock the mutex before we can call modified
+        Object toLock = BasicAction.Current();
+        if (toLock == null) {
+        	toLock = new Object();
+        }
+        
+        synchronized (toLock) {
+        if (!lockMutex())
+            return LockResult.REFUSED;
         
         try
         {
@@ -523,6 +531,7 @@ public class LockManager extends StateManager
         finally
         {
             unlockMutex();
+        }
         }
         
         return returnStatus;
