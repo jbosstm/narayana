@@ -257,7 +257,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 				@Override
 				public void afterCompletion(int status) {
-					if (status == Status.STATUS_COMMITTED) {
+					if (!onePhase && status == Status.STATUS_COMMITTED) {
 						commitMarkableResourceRecoveryModule
 								.notifyOfCompletedBranch(
 										commitMarkableJndiName, xid);
