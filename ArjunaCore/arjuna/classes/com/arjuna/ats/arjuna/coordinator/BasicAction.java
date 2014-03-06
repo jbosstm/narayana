@@ -1313,7 +1313,7 @@ public class BasicAction extends StateManager
             while (current != null) 
             {
                 addDeferredThrowables(current, deferredThrowables);
-                current = failedList.getNext(current);
+                current = failedList.peekNext(current);
             }
         }
         
@@ -1323,7 +1323,7 @@ public class BasicAction extends StateManager
             while (current != null) 
             {
                 addDeferredThrowables(current, deferredThrowables);
-                current = heuristicList.getNext(current);
+                current = heuristicList.peekNext(current);
             }
         }
         
