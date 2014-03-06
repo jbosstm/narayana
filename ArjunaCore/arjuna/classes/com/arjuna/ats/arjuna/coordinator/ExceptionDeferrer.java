@@ -1,4 +1,4 @@
-package com.arjuna.ats.internal.jta.resources;
+package com.arjuna.ats.arjuna.coordinator;
 
 import java.util.List;
 
@@ -11,6 +11,10 @@ import java.util.List;
 public interface ExceptionDeferrer
 {
 
-   List<Throwable> getDeferredThrowables();
+   /**
+    * Adds all supressed throwables of this ExceptionDeferrer to the given list in order of appearance.
+    * @param list 
+    */
+   void getDeferredThrowables(List<Throwable> list);
 
 }
