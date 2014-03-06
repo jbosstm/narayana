@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jta.resources.arjunacore;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -43,7 +44,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.internal.jta.resources.ExceptionDeferrer;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
@@ -1306,16 +1306,18 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
     private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
 
-    void addDeferredThrowable(Exception e) {
-       if (this.deferredExceptions == null)
-          this.deferredExceptions = new ArrayList<>();
-       this.deferredExceptions.add(e);
+    void addDeferredThrowable(Exception e) 
+    {
+        if (this.deferredExceptions == null)
+            this.deferredExceptions = new ArrayList<>();
+        this.deferredExceptions.add(e);
     }
     
     @Override
-    public List<Throwable> getDeferredThrowables()
+    public void getDeferredThrowables(List<Throwable> list)
     {
-       return this.deferredExceptions;
+        if (deferredExceptions != null)
+            list.addAll(deferredExceptions);
     }
     
 }

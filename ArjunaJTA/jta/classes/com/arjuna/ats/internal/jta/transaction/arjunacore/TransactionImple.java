@@ -56,11 +56,11 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
-import com.arjuna.ats.internal.jta.resources.ExceptionDeferrer;
 import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
@@ -243,12 +243,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * @return the given exception with suppressed exceptions added 
 	 */
 	<T extends Exception> T addSuppressedThrowables(T e) {
-	   if (_exceptionDeferrers != null)
-	      for (ExceptionDeferrer exceptionDeferrer : _exceptionDeferrers)
-	         if (exceptionDeferrer.getDeferredThrowables() != null)
-	            for (Throwable throwable : exceptionDeferrer.getDeferredThrowables()) 
-	               e.addSuppressed(throwable);
-	   return e;
+        for (Throwable t : _theTransaction.getDeferredThrowables())
+        {
+            e.addSuppressed(t);
+        }
+	    return e;
 	}
 
 	public void rollback() throws java.lang.IllegalStateException,
@@ -790,10 +789,6 @@ public class TransactionImple implements javax.transaction.Transaction,
      */
     private AbstractRecord createRecord(XAResource xaRes, Object[] params, Xid xid)
     {
-        
-        if (_exceptionDeferrers == null)
-           _exceptionDeferrers = new ArrayList<>();
-           
         if ((xaRes instanceof LastResourceCommitOptimisation)
                 || ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
                 .isInstance(xaRes)))
@@ -810,16 +805,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 					}
             	}
             }
-            XAOnePhaseResource resource = new XAOnePhaseResource(xaRes, xid, params);
-            LastResourceRecord record = new LastResourceRecord(resource);
-            _exceptionDeferrers.add(resource);
-            return record;
+            return new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params));
         }
         else
         {
-            XAResourceRecord xaResourceRecord = new XAResourceRecord(this, xaRes, xid, params);
-            _exceptionDeferrers.add(xaResourceRecord);
-            return xaResourceRecord;
+            return new XAResourceRecord(this, xaRes, xid, params);
         }
     }
 
@@ -1639,8 +1629,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     private Throwable _rollbackOnlyCallerStacktrace;
     
-    private List<ExceptionDeferrer> _exceptionDeferrers;
-
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean()
             .isXaTransactionTimeoutEnabled();
 
