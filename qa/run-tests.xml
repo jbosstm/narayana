@@ -547,6 +547,16 @@
         <classfiles>
           <fileset dir=".." >
 		    <exclude name="**/idlj/**"/>
+            <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
+            <exclude name="**/XTS/localjunit/unit/**"/>
+            <exclude name="**/blacktie/blacktie-admin-services/**"/>
+            <exclude name="**/blacktie/blacktie/**"/>
+            <exclude name="**/blacktie/integration-tests/**"/>
+            <exclude name="**/blacktie/wildfly*/**"/>
+            <exclude name="**/jboss-as/**"/>
+            <exclude name="**/narayana-full/**"/>
+            <exclude name="**/qa/**"/>
+            <exclude name="**/tools/**"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">
