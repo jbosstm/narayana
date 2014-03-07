@@ -81,6 +81,35 @@ public class ExceptionDeferrerTest {
    }
    
    @Test
+   public void testCheckDeferredHeuristicRollbackFirstResourceFails() throws Exception
+   {
+       ThreadActionData.purgeActions();
+       TxControl.setXANodeName("test");
+       TransactionImple tx = new TransactionImple(500);
+
+       try
+       {
+          tx.enlistResource(new FailureXAResource(FailLocation.commit, FailType.nota));
+          tx.enlistResource(new TestResource());
+       }
+       catch (final RollbackException ex)
+       {
+          fail();
+       }
+       
+       try
+       {
+           tx.commit();
+           
+           fail(); 
+       }
+       catch (final HeuristicMixedException ex)
+       {
+          assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+       }
+   }
+   
+   @Test
    public void testCheckDeferredHeuristicRollbackSecondResourceFails() throws Exception
    {
        ThreadActionData.purgeActions();
