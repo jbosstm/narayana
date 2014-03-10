@@ -17,7 +17,18 @@
     <packaging>jar</packaging>
     <name>JBossTS: XTS byteman_support</name>
     <description>Reusable Byteman rules for xts</description>
-    
+    <build>
+      <plugins>
+        <plugin>
+          <inherited>false</inherited>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.jboss.byteman</groupId>
