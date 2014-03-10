@@ -2,3 +2,7 @@ dbdrivers
 dist
 idl-compiler.*
 build
+TEST-*
+ext/netty-all.jar
+testoutput/
+transaction.log

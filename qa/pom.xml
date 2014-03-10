@@ -7,18 +7,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>narayana-all</artifactId>
-      <version>5.0.2.Final-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.jbossts</groupId>
     <artifactId>jbossts-build</artifactId>
     <packaging>jar</packaging>
     <version>unknown</version>
     <name>Narayana: qa</name>
+    
+    <properties>
+        <version.netty>4.0.15.Final</version.netty>
+    </properties>
 
     <repositories>
         <repository>
@@ -38,6 +36,7 @@
         <plugins>
             <plugin>
                 <!-- run as: mvn dependency:copy-dependencies (narayana project had to be built) -->
+                <!-- or run as: ant get.maven.libs -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
 
@@ -57,9 +56,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-            <version>${version.org.jboss.netty}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${version.netty}</version>
         </dependency>
 
     </dependencies>
