@@ -1,10 +1,9 @@
 TransactionalVert.x
 ===================
 
-Example of STM and Vert.x integration
+Start by adding the contents of lib and etc directories to your classpath
 
-This is a WIP and packaging is likely to change. But for now, here's a sample of how you could use
-the Narayana STM implementation within Vert.x
+Don't forget to install and set up Vert.x!
 
 It's based on the already shipping Echo example in Vert.x. However, in this case rather than just
 sending a stream of numbers between client and server, we maintain the existing number within a
@@ -24,3 +23,5 @@ see warnings from the system that the state could not be read or written. But co
 
 If you want to see how this might work then just go with the example state in the ObjectStore
 shipped as part of this example and uncomment the lines.
+=======
+Next go into each example directory and see the corresponding readme.
