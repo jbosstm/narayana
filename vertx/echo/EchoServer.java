@@ -1,5 +1,3 @@
-package echoSTM;
-
 /*
  * Copyright 2011 the original author or authors.
  *
