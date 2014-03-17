@@ -34,11 +34,12 @@ package com.arjuna.ats.internal.arjuna.objectstore.jdbc;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreAPI;
@@ -58,231 +59,206 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
  */
 
 public class JDBCStore implements ObjectStoreAPI {
-	protected JDBCImple_driver _theImple;
-	private static final String DEFAULT_TABLE_NAME = "JBossTSTxTable";
-	protected String tableName;
-	protected final ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean;
-	private String _storeName;
+    protected JDBCImple_driver _theImple;
+    private static final String DEFAULT_TABLE_NAME = "JBossTSTxTable";
+    protected String tableName;
+    protected final ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean;
+    private String _storeName;
+    private static Map<String, JDBCImple_driver> imples = new HashMap<String, JDBCImple_driver>();
+    private static Map<String, String> storeNames = new HashMap<String, String>();
 
-	@Override
-	public void start() {
-	}
+    @Override
+    public void start() {
+    }
 
-	@Override
-	public void stop() {
-	}
+    @Override
+    public void stop() {
+    }
 
-	/**
-	 * Does this store need to do the full write_uncommitted/commit protocol?
-	 * 
-	 * @return <code>true</code> if full commit is needed, <code>false</code>
-	 *         otherwise.
-	 */
+    /**
+     * Does this store need to do the full write_uncommitted/commit protocol?
+     * 
+     * @return <code>true</code> if full commit is needed, <code>false</code>
+     *         otherwise.
+     */
 
-	public boolean fullCommitNeeded() {
-		return true;
-	}
+    public boolean fullCommitNeeded() {
+        return true;
+    }
 
-	/**
-	 * Some object store implementations may be running with automatic sync
-	 * disabled. Calling this method will ensure that any states are flushed to
-	 * disk.
-	 */
+    /**
+     * Some object store implementations may be running with automatic sync
+     * disabled. Calling this method will ensure that any states are flushed to
+     * disk.
+     */
 
-	public void sync() throws java.io.SyncFailedException, ObjectStoreException {
-	}
+    public void sync() throws java.io.SyncFailedException, ObjectStoreException {
+    }
 
-	/**
-	 * Is the current state of the object the same as that provided as the last
-	 * parameter?
-	 * 
-	 * @param u
-	 *            The object to work on.
-	 * @param tn
-	 *            The type of the object.
-	 * @param st
-	 *            The expected type of the object.
-	 * 
-	 * @return <code>true</code> if the current state is as expected,
-	 *         <code>false</code> otherwise.
-	 */
+    /**
+     * Is the current state of the object the same as that provided as the last
+     * parameter?
+     * 
+     * @param u
+     *            The object to work on.
+     * @param tn
+     *            The type of the object.
+     * @param st
+     *            The expected type of the object.
+     * 
+     * @return <code>true</code> if the current state is as expected,
+     *         <code>false</code> otherwise.
+     */
 
-	public boolean isType(Uid u, String tn, int st) throws ObjectStoreException {
-		return (currentState(u, tn) == st);
-	}
+    public boolean isType(Uid u, String tn, int st) throws ObjectStoreException {
+        return (currentState(u, tn) == st);
+    }
 
-	public String getStoreName() {
-		return _storeName;
-	}
+    public String getStoreName() {
+        return _storeName;
+    }
 
-	public boolean allObjUids(String s, InputObjectState buff)
-			throws ObjectStoreException {
-		return allObjUids(s, buff, StateStatus.OS_UNKNOWN);
-	}
+    public boolean allObjUids(String s, InputObjectState buff) throws ObjectStoreException {
+        return allObjUids(s, buff, StateStatus.OS_UNKNOWN);
+    }
 
-	public boolean commit_state(Uid objUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.commit_state(objUid, tName);
-	}
+    public boolean commit_state(Uid objUid, String tName) throws ObjectStoreException {
+        return _theImple.commit_state(objUid, tName);
+    }
 
-	public boolean hide_state(Uid objUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.hide_state(objUid, tName);
-	}
+    public boolean hide_state(Uid objUid, String tName) throws ObjectStoreException {
+        return _theImple.hide_state(objUid, tName);
+    }
 
-	public boolean reveal_state(Uid objUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.reveal_state(objUid, tName);
-	}
+    public boolean reveal_state(Uid objUid, String tName) throws ObjectStoreException {
+        return _theImple.reveal_state(objUid, tName);
+    }
 
-	public int currentState(Uid objUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.currentState(objUid, tName);
-	}
+    public int currentState(Uid objUid, String tName) throws ObjectStoreException {
+        return _theImple.currentState(objUid, tName);
+    }
 
-	public InputObjectState read_committed(Uid storeUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.read_state(storeUid, tName, StateStatus.OS_COMMITTED);
-	}
+    public InputObjectState read_committed(Uid storeUid, String tName) throws ObjectStoreException {
+        return _theImple.read_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    }
 
-	public InputObjectState read_uncommitted(Uid storeUid, String tName)
-			throws ObjectStoreException {
-		return _theImple
-				.read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
-	}
+    public InputObjectState read_uncommitted(Uid storeUid, String tName) throws ObjectStoreException {
+        return _theImple.read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    }
 
-	public boolean remove_committed(Uid storeUid, String tName)
-			throws ObjectStoreException {
-		return _theImple
-				.remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
-	}
+    public boolean remove_committed(Uid storeUid, String tName) throws ObjectStoreException {
+        return _theImple.remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
+    }
 
-	public boolean remove_uncommitted(Uid storeUid, String tName)
-			throws ObjectStoreException {
-		return _theImple.remove_state(storeUid, tName,
-				StateStatus.OS_UNCOMMITTED);
-	}
+    public boolean remove_uncommitted(Uid storeUid, String tName) throws ObjectStoreException {
+        return _theImple.remove_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
+    }
 
-	public boolean write_committed(Uid storeUid, String tName,
-			OutputObjectState state) throws ObjectStoreException {
-		return _theImple.write_state(storeUid, tName, state,
-				StateStatus.OS_COMMITTED);
-	}
+    public boolean write_committed(Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException {
+        return _theImple.write_state(storeUid, tName, state, StateStatus.OS_COMMITTED);
+    }
 
-	public boolean write_uncommitted(Uid storeUid, String tName,
-			OutputObjectState state) throws ObjectStoreException {
-		return _theImple.write_state(storeUid, tName, state,
-				StateStatus.OS_UNCOMMITTED);
-	}
+    public boolean write_uncommitted(Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException {
+        return _theImple.write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
+    }
 
-	public boolean allObjUids(String tName, InputObjectState state, int match)
-			throws ObjectStoreException {
-		return _theImple.allObjUids(tName, state, match);
-	}
+    public boolean allObjUids(String tName, InputObjectState state, int match) throws ObjectStoreException {
+        return _theImple.allObjUids(tName, state, match);
+    }
 
-	public boolean allTypes(InputObjectState foundTypes)
-			throws ObjectStoreException {
-		return _theImple.allTypes(foundTypes);
-	}
+    public boolean allTypes(InputObjectState foundTypes) throws ObjectStoreException {
+        return _theImple.allTypes(foundTypes);
+    }
 
-	public synchronized void packInto(OutputBuffer buff) throws IOException {
-		buff.packString(tableName);
-	}
+    public synchronized void packInto(OutputBuffer buff) throws IOException {
+        buff.packString(tableName);
+    }
 
-	public synchronized void unpackFrom(InputBuffer buff) throws IOException {
-		this.tableName = buff.unpackString();
-	}
+    public synchronized void unpackFrom(InputBuffer buff) throws IOException {
+        this.tableName = buff.unpackString();
+    }
 
-	/**
-	 * Create a new JDBCStore
-	 * 
-	 * @param jdbcStoreEnvironmentBean The environment bean containing the configuration
-	 * @throws ObjectStoreException In case the store environment bean was not correctly configured
-     * @throws {@link FatalError} In case the configured store cannot be connected to
-	 */
-	public JDBCStore(ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)
-			throws ObjectStoreException {
-		this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
-		String connectionDetails = jdbcStoreEnvironmentBean.getJdbcAccess();
-		if (connectionDetails == null) {
-			throw new ObjectStoreException(
-					tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
-		}
+    /**
+     * Create a new JDBCStore
+     * 
+     * @param jdbcStoreEnvironmentBean
+     *            The environment bean containing the configuration
+     * @throws ObjectStoreException
+     *             In case the store environment bean was not correctly
+     *             configured
+     * @throws {@link FatalError} In case the configured store cannot be
+     *         connected to
+     */
+    public JDBCStore(ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean) throws ObjectStoreException {
+        this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
+        String connectionDetails = jdbcStoreEnvironmentBean.getJdbcAccess();
+        if (connectionDetails == null) {
+            throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
+        }
+        String impleTableName = DEFAULT_TABLE_NAME;
+        final String tablePrefix = jdbcStoreEnvironmentBean.getTablePrefix();
+        if ((tablePrefix != null) && (tablePrefix.length() > 0)) {
+            impleTableName = tablePrefix + impleTableName;
+        }
+        tableName = impleTableName;
 
-		try {
-			StringTokenizer stringTokenizer = new StringTokenizer(
-					connectionDetails, ";");
-			JDBCAccess jdbcAccess = (JDBCAccess) Class.forName(
-					stringTokenizer.nextToken()).newInstance();
-			jdbcAccess.initialise(stringTokenizer);
+        _theImple = imples.get(connectionDetails);
+        _storeName = storeNames.get(connectionDetails);
+        if (_theImple == null) {
+            try {
+                StringTokenizer stringTokenizer = new StringTokenizer(connectionDetails, ";");
+                JDBCAccess jdbcAccess = (JDBCAccess) Class.forName(stringTokenizer.nextToken()).newInstance();
+                jdbcAccess.initialise(stringTokenizer);
 
-			String impleTableName = getDefaultTableName();
-			final String tablePrefix = jdbcStoreEnvironmentBean
-					.getTablePrefix();
-			if ((tablePrefix != null) && (tablePrefix.length() > 0)) {
-				impleTableName = tablePrefix + impleTableName;
-			}
-			tableName = impleTableName;
-			_storeName = jdbcAccess.getClass().getName() + ":" + tableName;
+                _storeName = jdbcAccess.getClass().getName() + ":" + tableName;
 
-			final com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver jdbcImple;
-			Connection connection = jdbcAccess.getConnection();
-			String name;
-			int major;
-			int minor;
-			try {
-				DatabaseMetaData md = connection.getMetaData();
-				name = md.getDriverName();
-				major = md.getDriverMajorVersion();
-				minor = md.getDriverMinorVersion();
-			} finally {
-				connection.close();
-			}
+                Connection connection = jdbcAccess.getConnection();
+                String name;
+                int major;
+                int minor;
+                try {
+                    DatabaseMetaData md = connection.getMetaData();
+                    name = md.getDriverName();
+                    major = md.getDriverMajorVersion();
+                    minor = md.getDriverMinorVersion();
+                } finally {
+                    connection.close();
+                }
 
-			/*
-			 * Check for spaces in the name - our implementation classes are
-			 * always just the first part of such names.
-			 */
+                /*
+                 * Check for spaces in the name - our implementation classes are
+                 * always just the first part of such names.
+                 */
 
-			int index = name.indexOf(' ');
+                int index = name.indexOf(' ');
 
-			if (index != -1)
-				name = name.substring(0, index);
+                if (index != -1)
+                    name = name.substring(0, index);
 
-			name = name.replaceAll("-", "_");
+                name = name.replaceAll("-", "_");
 
-			name = name.toLowerCase();
+                name = name.toLowerCase();
 
-			final String packagePrefix = getClass().getName().substring(0,
-					getClass().getName().lastIndexOf('.'))
-					+ ".drivers.";
-			Class jdbcImpleClass = null;
-			try {
-				jdbcImpleClass = Class.forName(packagePrefix + name + "_"
-						+ major + "_" + minor + "_driver");
-			} catch (final ClassNotFoundException cnfe) {
-				try {
-					jdbcImpleClass = Class.forName(packagePrefix + name + "_"
-							+ major + "_driver");
-				} catch (final ClassNotFoundException cnfe2) {
-					jdbcImpleClass = Class.forName(packagePrefix + name
-							+ "_driver");
-				}
-			}
-			jdbcImple = (com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver) jdbcImpleClass
-					.newInstance();
+                final String packagePrefix = JDBCStore.class.getName().substring(0, JDBCStore.class.getName().lastIndexOf('.')) + ".drivers.";
+                Class jdbcImpleClass = null;
+                try {
+                    jdbcImpleClass = Class.forName(packagePrefix + name + "_" + major + "_" + minor + "_driver");
+                } catch (final ClassNotFoundException cnfe) {
+                    try {
+                        jdbcImpleClass = Class.forName(packagePrefix + name + "_" + major + "_driver");
+                    } catch (final ClassNotFoundException cnfe2) {
+                        jdbcImpleClass = Class.forName(packagePrefix + name + "_driver");
+                    }
+                }
+                _theImple = (com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver) jdbcImpleClass.newInstance();
 
-			jdbcImple.initialise(jdbcAccess, impleTableName,
-					jdbcStoreEnvironmentBean);
-			_theImple = jdbcImple;
-		} catch (Exception e) {
-			tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(_storeName, e);
-			throw new ObjectStoreException(e);
-		}
-	}
-
-	protected String getDefaultTableName() {
-		return DEFAULT_TABLE_NAME;
-	}
-
+                _theImple.initialise(jdbcAccess, tableName, jdbcStoreEnvironmentBean);
+                imples.put(connectionDetails, _theImple);
+                storeNames.put(connectionDetails, _storeName);
+            } catch (Exception e) {
+                tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(_storeName, e);
+                throw new ObjectStoreException(e);
+            }
+        }
+    }
 }
