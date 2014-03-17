@@ -64,6 +64,8 @@ public class ORBRunner extends Thread
         catch (Exception ex)
         {
         }
+
+        //JavaIdlRCServiceInit.orbRunnerCompleted();
     }
 
 }

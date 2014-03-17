@@ -379,6 +379,7 @@
     <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
       <exclude name="narayana-jts-idlj.jar"/>
       <exclude name="narayana-jts-jacorb.jar"/>
+      <exclude name="narayana-jts-ibmorb.jar"/>
       <include name="*.jar"/>
     </fileset>
     <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
@@ -546,7 +547,7 @@
       <structure name="Narayana QA Report">
         <classfiles>
           <fileset dir=".." >
-		    <exclude name="**/idlj/**"/>
+		    <exclude name="**/Idlj/**"/>
             <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
             <exclude name="**/XTS/localjunit/unit/**"/>
             <exclude name="**/blacktie/blacktie-admin-services/**"/>

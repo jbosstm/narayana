@@ -45,7 +45,7 @@
   </modules>
   <profiles>
       <profile>
-          <id>jts-jacorb</id>
+          <id>jts-jacorb-module</id>
           <activation>
               <property>
                   <name>!jacorb-disabled</name>
@@ -56,11 +56,10 @@
           </modules>
       </profile>
       <profile>
-        <id>jts-idlj</id>
+        <id>jts-idlj-module</id>
         <activation>
             <property>
               <name>idlj-enabled</name>
-              <value>true</value>
             </property>
         </activation>
         <modules>
@@ -68,7 +67,7 @@
         </modules>
       </profile>
       <profile>
-          <id>release</id>
+          <id>release-module</id>
           <build>
               <plugins>
                 <plugin>
@@ -84,6 +83,17 @@
                 </plugin>
               </plugins>
           </build>
+      </profile>
+      <profile>
+        <id>jts-ibmorb-module</id>
+        <activation>
+            <property>
+              <name>ibmorb-enabled</name>
+            </property>
+        </activation>
+        <modules>
+            <module>narayana-jts-ibmorb</module>
+        </modules>
       </profile>
   </profiles>
 </project>

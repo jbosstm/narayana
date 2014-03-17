@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2012, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss.narayana.jts</groupId>
+    <artifactId>narayana-idl</artifactId>
+    <version>5.0.2.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>ibmorb-idl</artifactId>
+  <name>Narayana: ArjunaJTS idl ibmorb</name>
+  <description>Narayana: ArjunaJTS idl ibmorb</description>
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+          <executions>
+           <execution>
+             <!-- generate a test jar containing test CORBA stubs for use by the jts tests -->
+             <goals>
+               <goal>test-jar</goal>
+             </goals>
+           </execution>
+         </executions>
+      </plugin>
+
+      <plugin>
+	     <artifactId>maven-antrun-plugin</artifactId>
+         <version>1.7</version>
+   <executions>  
+     <execution>  
+       <id>generate-sources</id>
+       <phase>generate-sources</phase>
+       <goals>
+         <goal>run</goal>
+       </goals>
+       <configuration>  
+         <tasks name="Generate idl stubs">  
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+
+		     <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="XA"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="ArjunaOTS"/>
+             <arg value="com.arjuna"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg/CosTransactions.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="XA"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="ArjunaOTS"/>
+             <arg value="com.arjuna"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg/XA.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="XA"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="ArjunaOTS"/>
+             <arg value="com.arjuna"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/main/idl/arjuna/ArjunaOTS.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+        </tasks>  
+       </configuration>  
+     </execution>  
+     <execution>
+       <id>generate-test-sources</id>
+       <phase>generate-test-sources</phase>
+       <goals>
+         <goal>run</goal>
+       </goals>
+       <configuration>
+         <tasks name="Generate test idl stubs">  
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/test/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-test-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="TestModule"/>
+             <arg value="com.hp.mwtests.ts.jts"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="orbtests"/>
+             <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/test/idl/orbtests.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/test/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-test-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="TestModule"/>
+             <arg value="com.hp.mwtests.ts.jts"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="orbtests"/>
+             <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/test/idl/test.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+
+           <java classname="com.ibm.idl.toJavaPortable.Compile">
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/test/idl"/>
+             <arg value="-td"/>
+             <arg value="${project.build.directory}/generated-test-sources/idl"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="TestModule"/>
+             <arg value="com.hp.mwtests.ts.jts"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="CosTransactions"/>
+             <arg value="org.omg"/>
+             <arg value="-pkgPrefix"/>
+             <arg value="orbtests"/>
+             <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+             <arg value="-fallTIE"/>
+             <arg value="-i"/>
+             <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+             <arg value="-i"/>
+             <arg value="${env.JAVA_HOME}/lib"/>
+             <arg value="-d"/>
+             <arg value="ORB_OTS_SUPPORT=1"/>
+             <arg value="-d"/>
+             <arg value="ORB_CURRENT_SUPPORT=1"/>
+             <arg value="-fallTIE"/>
+             <arg value="${project.build.directory}/../../src/test/idl/TestModule.idl"/>
+             <classpath>
+               <pathelement location="${env.JAVA_HOME}/lib/ibmorbtools.jar"/>
+               <pathelement location="${env.JAVA_HOME}/jre/lib/ibmorb.jar"/>
+             </classpath>
+           </java>
+        </tasks>
+       </configuration>
+          </execution>
+   </executions>  
+ </plugin>
+
+      <plugin> 
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>build-helper-maven-plugin</artifactId> 
+          <executions> 
+            <execution> 
+              <id>add-source</id> 
+              <phase>generate-sources</phase> 
+              <goals> 
+                <goal>add-source</goal> 
+              </goals> 
+              <configuration> 
+                <sources> 
+                  <source> 
+                    ${project.build.directory}/generated-sources/idl
+                  </source> 
+                </sources> 
+              </configuration> 
+            </execution> 
+            <execution> 
+              <id>add-test-source</id> 
+              <phase>generate-test-sources</phase> 
+              <goals> 
+                <goal>add-test-source</goal> 
+              </goals> 
+              <configuration> 
+                <sources> 
+                  <source> 
+                    ${project.build.directory}/generated-test-sources/idl
+                  </source> 
+                </sources> 
+              </configuration> 
+            </execution> 
+          </executions> 
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

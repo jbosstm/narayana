@@ -27,6 +27,7 @@
     <!-- This module builds two jars each holding different sets of IDL stubs (JacORB or Sun orb) -->
     <classesDirectoryWithJacorb>${project.build.directory}/jts-jacorb</classesDirectoryWithJacorb>
     <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
+    <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
   </properties>
 
   <build>
@@ -197,6 +198,7 @@
                 <configuration>
                   <excludes>
                     <exclude>**/javaidl/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
                   </excludes>
                 </configuration>
               </execution>
@@ -207,7 +209,8 @@
                 </goals>
                 <configuration>
                   <testExcludes>
-                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                    <exclude>**/javaidl/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
                   </testExcludes>
                 </configuration>
               </execution>
@@ -226,7 +229,6 @@
                 <configuration>
                   <skip>false</skip>
                   <excludes>
-                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>
                     <exclude>**/resources/**</exclude>
@@ -241,6 +243,8 @@
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
                 </configuration>
               </execution>
@@ -255,7 +259,6 @@
       <activation>
         <property>
           <name>idlj-enabled</name>
-          <value>true</value>
         </property>
       </activation>
 
@@ -287,6 +290,7 @@
                 <configuration>
                   <excludes>
                     <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
                   </excludes>
                 </configuration>
               </execution>
@@ -297,10 +301,11 @@
                 </goals>
                 <configuration>
                   <testExcludes>
-                    <exclude>**/JacORBGenericRecoveryCreatorSuccessUnitTest.java</exclude>
-                    <exclude>**/JacORBGenericRecoveryCreatorFailureUnitTest.java</exclude>
-                    <exclude>**/JacORBRecoveryUnitTest.java</exclude>
+				    <!-- TODO make sure all supported ORBs have "RecoveryCreator" tests -->
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORB*.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
                   </testExcludes>
                 </configuration>
               </execution>
@@ -320,10 +325,6 @@
                   <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
-                    <exclude>**/JacORBGenericRecoveryCreatorSuccessUnitTest.java</exclude>
-                    <exclude>**/JacORBGenericRecoveryCreatorFailureUnitTest.java</exclude>
-                    <exclude>**/JacORBRecoveryUnitTest.java</exclude>
-                    <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/common/**</exclude>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>
@@ -335,16 +336,125 @@
                     <exclude>**/GridTest.java</exclude>
                     <exclude>**/remote/**</exclude>
                     <exclude>**/DefaultTimeout.java</exclude>
+                    <exclude>**/JacORB*.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
                   </excludes>
                   <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
                   <systemPropertyVariables combine.children="append">
                     <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
                     <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
                     <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jts-ibmorb</id>
+      <activation>
+        <property>
+          <name>ibmorb-enabled</name>
+        </property>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>ibmorb-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>ibmorb-idl</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>ibmorb-compile</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/javaidl/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>ibmorb-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <testExcludes>
+                    <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/javaidl/**</exclude>
+                    <exclude>**/JacORB*/**</exclude>
+                  </testExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-ibmorb</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <systemProperties combine.children="append" />
+                  <excludes>
+                    <exclude>**/common/**</exclude>
+                    <exclude>**/exceptions/**</exclude>
+                    <exclude>**/orbspecific/resources/**</exclude>
+                    <exclude>**/resources/**</exclude>
+                    <exclude>**/utils/ResourceTrace.java</exclude>
+                    <exclude>**/utils/Util.java</exclude>
+                    <exclude>**/TransactionTest2.java</exclude>
+                    <exclude>**/CheckedTransactions.java</exclude>
+                    <exclude>**/GridTest.java</exclude>
+                    <exclude>**/remote/**</exclude>
+                    <exclude>**/DefaultTimeout.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/javaidl/**</exclude>
+                    <exclude>**/JacORB*/**</exclude>
+                  </excludes>
+                  <reportsDirectory>${project.build.directory}/ibmorb-surefire-reports</reportsDirectory>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.orb.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.oa.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbDataClassName>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

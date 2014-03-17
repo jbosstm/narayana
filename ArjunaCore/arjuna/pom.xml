@@ -42,6 +42,18 @@
       </testResource>
     </testResources>
     <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <!-- exclude everything by default then the not-ibmorb and ibmorb profiles can
+                 selectively include/exclude specific tests -->
+            <excludes>
+              <exclude>**/*.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+
       <plugin>
         <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -59,29 +71,6 @@
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>false</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useManifestOnlyJar>false</useManifestOnlyJar>
-          <excludes>
-            <exclude>**/resources/**</exclude>
-            <exclude>**/DummyCheckedAction.java</exclude>
-            <exclude>**/MyAccess.java</exclude>
-            <exclude>**/Worker.java</exclude>
-            <exclude>**/BasicCrashRecord.java</exclude>
-            <exclude>**/DummyRecoveryModule.java</exclude>
-            <exclude>**/CrashAbstractRecord*.java</exclude>
-            <exclude>**/RecoveryTransaction.java</exclude>
-            <exclude>**/UserDefFirst0Setup.java</exclude>
-            <exclude>**/CachedTest.java</exclude>
-            <!-- LogStressTest2 takes too long - needs moving to /qa -->
-            <exclude>**/LogStressTest2.java</exclude>
-            <!-- auxilairy code used by reaper test classes -->
-            <exclude>**/reaper/ReaperTestCaseControl.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
@@ -167,6 +156,42 @@
   </dependencies>
 
   <profiles>
+    <profile>
+	  <!-- always run this test configuraton unless the ibmorb profile is active -->
+      <id>not-ibmorb</id>
+      <activation>
+        <property>
+          <name>!ibmorb-enabled</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <useManifestOnlyJar>false</useManifestOnlyJar>
+              <excludes>
+                <exclude>**/resources/**</exclude>
+                <exclude>**/DummyCheckedAction.java</exclude>
+                <exclude>**/MyAccess.java</exclude>
+                <exclude>**/Worker.java</exclude>
+                <exclude>**/BasicCrashRecord.java</exclude>
+                <exclude>**/DummyRecoveryModule.java</exclude>
+                <exclude>**/CrashAbstractRecord*.java</exclude>
+                <exclude>**/RecoveryTransaction.java</exclude>
+                <exclude>**/UserDefFirst0Setup.java</exclude>
+                <exclude>**/CachedTest.java</exclude>
+                <!-- LogStressTest2 takes too long - needs moving to /qa -->
+                <exclude>**/LogStressTest2.java</exclude>
+                <!-- auxilairy code used by reaper test classes -->
+                <exclude>**/reaper/ReaperTestCaseControl.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>linux-windows</id>
       <activation>
@@ -443,6 +468,52 @@
             </plugins>
         </build>
     </profile>
-
+    <profile>
+      <id>ibmorb</id>
+      <activation>
+        <property>
+          <name>ibmorb-enabled</name>
+        </property>
+      </activation>
+     <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>surefire-ibmorb</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+			        <!--
+			        BMUnit uses a special, /optional/ capability of the JVM to load the
+			        Byteman agent into a running JVM (the agent is the bit of Byteman which
+			        injects rules into bytecode) but the IBM jdk does not support the option.
+			        It is possible to load the agent from the java command line but BMUNit
+			        chooses to load the agent on demand. The fix is use the latter stragegy
+			        when running with the IBM jdk. TODO
+			        -->
+                    <exclude>**/RecoveryManagerStartStopTest.java</exclude>
+                    <exclude>**/ReaperTestCase3.java</exclude>
+                    <exclude>**/ReaperTestCase2.java</exclude>
+                    <exclude>**/ReaperTestCase.java</exclude>
+                    <exclude>**/ReaperMonitorTest.java</exclude>
+                    <exclude>**/LogStoreTest2.java</exclude>
+                    <exclude>**/LogStoreRecoveryTest.java</exclude>
+                    <exclude>**/LogStoreRecoveryTest.java</exclude>
+                    <!-- stress tests don't belong in unit tests -->
+                    <exclude>**/LogStressTest*.java</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

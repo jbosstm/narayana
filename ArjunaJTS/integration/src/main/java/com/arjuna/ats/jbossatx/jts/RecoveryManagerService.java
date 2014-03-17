@@ -20,11 +20,15 @@
  */
 package com.arjuna.ats.jbossatx.jts;
 
+import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.orbportability.ORBInfo;
+import com.arjuna.orbportability.ORBType;
+
+import java.lang.reflect.Method;
 
 /**
  * JBoss Transaction Recovery Service.
@@ -38,7 +42,12 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
     {
         jbossatxLogger.i18NLogger.info_jts_RecoveryManagerService_init();
 
-        JacOrbRCServiceInit.waitForRunningORBRunner();
+        if (ORBType.JACORB == ORBInfo.getOrbEnumValue()) {
+            // Make sure the orb is ready: TODO improve on this
+            Class c = ClassloadingUtility.loadClass("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit");
+            Method m = c.getDeclaredMethod("waitForRunningORBRunner", null);
+            m.invoke(null, null);
+        }
 
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
         ORB orb = ORB.getInstance("jboss-atx");

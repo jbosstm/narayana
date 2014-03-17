@@ -29,7 +29,7 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jts.recovery;
+package com.hp.mwtests.ts.jts.recovery.jacorb;
 
 import org.junit.After;
 import org.junit.Test;
@@ -47,7 +47,7 @@ import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecovery
 import com.hp.mwtests.ts.jts.orbspecific.resources.DemoResource;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
-public class JacORBGenericRecoveryCreatorFailureUnitTest extends TestBase
+public class JacORBGenericRecoveryCreatorSuccessUnitTest extends TestBase
 {    
     public void beforeSetupClass()
     {
@@ -64,8 +64,8 @@ public class JacORBGenericRecoveryCreatorFailureUnitTest extends TestBase
     }
     
     @Test
-    public void testFail () throws Exception
-    {       
+    public void testSuccess () throws Exception
+    {
         JacOrbRCServiceInit init = new JacOrbRCServiceInit();
         JacOrbRecoveryInit rinit = new JacOrbRecoveryInit();
         
@@ -80,8 +80,18 @@ public class JacORBGenericRecoveryCreatorFailureUnitTest extends TestBase
         assertTrue(generic != null);
         
         DemoResource demo = new DemoResource();
+        ArjunaTransactionImple tx = new ArjunaTransactionImple(null);
+        Object[] params = new Object[1];
         
-        assertTrue(generic.create(demo.getResource(), null) == null);
+        params[0] = tx;
+        
+        RecoveryCoordinator rc = generic.create(demo.getResource(), params);
+        
+        assertTrue(rc != null);
+        
+        generic.destroy(rc);
+        
+        generic.destroyAll(params);
         
         JacOrbRCServiceInit.shutdownRCService();
     }

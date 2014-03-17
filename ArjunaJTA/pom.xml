@@ -38,9 +38,9 @@
   </build>
   <modules>
     <module>jta</module>
-    <module>spi</module>
     <module>cdi</module>
     <module>jdbc</module>
+    <module>spi</module>
     <module>narayana-jta</module>
   </modules>
   <profiles>

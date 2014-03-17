@@ -29,7 +29,7 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jts.orbspecific.recovery;
+package com.hp.mwtests.ts.jts.orbspecific.recovery.jacorb;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

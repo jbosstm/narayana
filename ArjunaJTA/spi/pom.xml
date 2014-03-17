@@ -87,19 +87,17 @@
                </exclusion>
             </exclusions>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>jta</artifactId>
             <version>${project.version}</version>
         </dependency>
-        -->
         <dependency>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>narayana-jts-jacorb</artifactId>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>jdbc</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.spec.javax.interceptor</groupId>
             <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
