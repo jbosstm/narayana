@@ -227,6 +227,12 @@
 			<destName>default-jts-jbossts-properties.xml</destName>
 		</file>
 		<file>
+			<source>../ArjunaJTS/narayana-jts-ibmorb/src/main/resources/jbossts-ibmorb-properties.xml</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>etc</outputDirectory>
+			<destName>default-jts-jbossts-properties.xml</destName>
+		</file>
+		<file>
 			<source>../XTS/third_party_licenses.txt</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>lib/ext</outputDirectory>

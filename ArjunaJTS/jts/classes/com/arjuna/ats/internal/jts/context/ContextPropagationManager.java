@@ -82,6 +82,14 @@ public class ContextPropagationManager
 			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl");
 	    }
 	    break;
+	case ORBType.IBMORB:
+	    {
+		if (interposition)
+			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.interposition.InterpositionORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.interposition.InterpositionORBInitializerImpl");
+		else
+			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.context.ContextORBInitializerImpl");
+	    }
+	    break;
 	default:
 	    {
             jtsLogger.i18NLogger.warn_context_orbnotsupported("ContextPropagationManager", ORBInfo.getInfo());

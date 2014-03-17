@@ -414,5 +414,32 @@
             </plugins>
         </build>
     </profile>
+    <profile>
+      <id>jts-ibmorb</id>
+      <activation>
+        <property>
+          <name>ibmorb-enabled</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <useManifestOnlyJar>false</useManifestOnlyJar>
+              <excludes>
+                <exclude>**/integration/*IntegrationTest.java</exclude>
+                <!-- temporarily disable BMUnitRunner tests due to issue with the IBM java agent -->
+                <exclude>**/TestCommitMarkableResource*</exclude>
+                <exclude>**/CrashRecovery*</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
   </profiles>
 </project>

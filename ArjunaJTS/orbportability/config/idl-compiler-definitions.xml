@@ -21,7 +21,7 @@
 -->
 <idl-compiler-definitions>
 
-    <orb name="JacORB">
+    <orb name="jacorb">
 
 	<in-parameters>
 	    <param name="destdir" required="false"/>
@@ -49,7 +49,7 @@
 
     </orb>
 
-    <orb name="JavaIDL">
+    <orb name="idlj">
 
 	<in-parameters>
 	    <param name="destdir" required="false"/>
@@ -61,6 +61,37 @@
 	</in-parameters>
 
 	<idl-executable>idlj</idl-executable>
+
+	<out-parameters>
+	    <param>-td</param>
+	    <param>${destdir}</param>
+	    <param>-fallTIE</param>
+	    <param foreach="include">
+		<sub-param>-i</sub-param>
+		<sub-param>${include}</sub-param>
+	    </param>
+	    <param foreach="mapping">
+		<sub-param>-pkgPrefix</sub-param>
+		<sub-param>${mapping-name}</sub-param>
+		<sub-param>${mapping-value}</sub-param>
+	    </param>
+	    <param>${filename}</param>
+	</out-parameters>
+
+    </orb>
+
+    <orb name="ibmorb">
+
+	<in-parameters>
+	    <param name="destdir" required="false"/>
+	    <param name="include" required="false" delimiter=";"/>
+	    <param name="package" required="false"/>
+	    <param name="mapping" required="false" delimiter=";"/>
+	    <param name="filename" required="true"/>
+	    <param name="classpath" required="true" delimiter=";" classpath="true"/>
+	</in-parameters>
+
+	<idl-executable>java -cp ${classpath} com.ibm.idl.toJavaPortable.Compile</idl-executable>
 
 	<out-parameters>
 	    <param>-td</param>
