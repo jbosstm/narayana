@@ -7,7 +7,17 @@ public class ServerExtension implements LoadableExtension {
 
 	@Override
 	public void register(ExtensionBuilder builder) {
-		builder.service(ServerKillProcessor.class, JBossAS7ServerKillProcessor.class);
+		if (isWindows()) {
+			builder.service(ServerKillProcessor.class, JBossAS7ServerKillProcessorWin.class);
+		} else {
+			builder.service(ServerKillProcessor.class, JBossAS7ServerKillProcessor.class);
+		}
 	}
+	
+	public static boolean isWindows() {
+        String osName = System.getProperty("os.name");
+
+        return osName != null  && ((osName.indexOf("Windows") > -1) || (osName.indexOf("windows") > -1));
+    }
 
 }
