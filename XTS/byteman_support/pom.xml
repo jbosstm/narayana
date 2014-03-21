@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.jboss.jbossts.xts</groupId>
         <artifactId>xts-all</artifactId>
-        <version>4.17.17.Final-SNAPSHOT</version>
+        <version>4.17.19.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,18 @@
     <packaging>jar</packaging>
     <name>JBossTS: XTS byteman_support</name>
     <description>Reusable Byteman rules for xts</description>
-    
+    <build>
+      <plugins>
+        <plugin>
+          <inherited>false</inherited>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.jboss.byteman</groupId>

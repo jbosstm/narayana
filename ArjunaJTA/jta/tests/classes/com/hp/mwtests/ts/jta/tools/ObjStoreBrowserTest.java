@@ -22,6 +22,7 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.CommitMarkableResourceRecordBean;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
@@ -61,6 +62,11 @@ public class ObjStoreBrowserTest {
 	@Test
 	public void testXAResourceRecordBean() throws Exception {
 		com.arjuna.common.tests.simple.EnvironmentBeanTest.testBeanByReflection(new XAResourceRecordBean(new UidWrapper(Uid.nullUid())));
+	}
+
+	@Test
+	public void testCommitMarkableResourceRecordBean() throws Exception {
+		com.arjuna.common.tests.simple.EnvironmentBeanTest.testBeanByReflection(new CommitMarkableResourceRecordBean(new UidWrapper(Uid.nullUid())));
 	}
 
 	@Test

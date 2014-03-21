@@ -63,6 +63,7 @@ function init_test_options {
         [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
         [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
@@ -171,6 +172,14 @@ function xts_as_tests {
   cd ${WORKSPACE}/jboss-as
   ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
+  cd ${WORKSPACE}
+}
+
+function jta_as_tests {
+  echo "#-1. JTA AS Integration Test"
+  cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
+  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test
+  [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
 
@@ -336,6 +345,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
+[ $JTA_AS_TESTS = 1 ] && jta_as_tests
 [ $TXF_TESTS = 1 ] && txframework_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"

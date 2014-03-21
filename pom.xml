@@ -15,7 +15,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.jbossts</groupId>
   <artifactId>narayana-all</artifactId>
-  <version>4.17.17.Final-SNAPSHOT</version>
+  <version>4.17.19.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
   <name>${project.artifactId}</name>
@@ -380,6 +380,7 @@
     <version.org.jboss.resteasy>2.3.1.GA</version.org.jboss.resteasy>
     <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
+    <version.org.jboss.spec.javax.interceptor>1.0.0.Final</version.org.jboss.spec.javax.interceptor>
     <version.org.jboss.spec.javax.transaction>1.0.1.Final</version.org.jboss.spec.javax.transaction>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
     <version.org.jboss.spec.javax.servlet>1.0.1.Final</version.org.jboss.spec.javax.servlet>
@@ -387,6 +388,7 @@
     <version.org.jacorb.jacorb>2.3.1.jbossorg-1</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb-idl-compiler>2.2.3</version.org.jacorb.jacorb-idl-compiler>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
+    <version.javax.annotation>1.2</version.javax.annotation>
     <version.commons-transaction>1.2</version.commons-transaction>
     <version.javax.transaction>1.1</version.javax.transaction>
     <version.javax.enterprise>1.0-SP4</version.javax.enterprise>
@@ -407,7 +409,7 @@
     <version.com.oracle>10.2.0.4</version.com.oracle>
     <version.com.ibm>9.7</version.com.ibm>
     <version.postgresql>9.0-801.jdbc4</version.postgresql>
-    <version.mysql>5.1.21</version.mysql>
+    <version.mysql>5.1.28</version.mysql>
     <version.com.microsoft.sqlserver>mssql2005_sqljdbc_2.0</version.com.microsoft.sqlserver>
     <version.sun.jdk>jdk</version.sun.jdk>
     <version.asm>3.1</version.asm>
@@ -416,6 +418,7 @@
     <version.junit>4.10</version.junit> 
     <version.org.jboss.byteman>2.1.2</version.org.jboss.byteman>
     <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.jboss-transaction-spi>7.1.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>   
   </properties>
   <profiles>
