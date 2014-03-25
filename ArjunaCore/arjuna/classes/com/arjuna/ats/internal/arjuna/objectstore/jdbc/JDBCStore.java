@@ -192,6 +192,8 @@ public class JDBCStore implements ObjectStoreAPI {
     public JDBCStore(ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean) throws ObjectStoreException {
         this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
         String connectionDetails = jdbcStoreEnvironmentBean.getJdbcAccess();
+        String key;
+
         if (connectionDetails == null) {
             throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_JDBCStore_5());
         }
@@ -201,9 +203,10 @@ public class JDBCStore implements ObjectStoreAPI {
             impleTableName = tablePrefix + impleTableName;
         }
         tableName = impleTableName;
+        key = connectionDetails + tableName;
 
-        _theImple = imples.get(connectionDetails);
-        _storeName = storeNames.get(connectionDetails);
+        _theImple = imples.get(key);
+        _storeName = storeNames.get(key);
         if (_theImple == null) {
             try {
                 StringTokenizer stringTokenizer = new StringTokenizer(connectionDetails, ";");
@@ -253,8 +256,8 @@ public class JDBCStore implements ObjectStoreAPI {
                 _theImple = (com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver) jdbcImpleClass.newInstance();
 
                 _theImple.initialise(jdbcAccess, tableName, jdbcStoreEnvironmentBean);
-                imples.put(connectionDetails, _theImple);
-                storeNames.put(connectionDetails, _storeName);
+                imples.put(key, _theImple);
+                storeNames.put(key, _storeName);
             } catch (Exception e) {
                 tsLogger.i18NLogger.fatal_objectstore_JDBCStore_2(_storeName, e);
                 throw new ObjectStoreException(e);
