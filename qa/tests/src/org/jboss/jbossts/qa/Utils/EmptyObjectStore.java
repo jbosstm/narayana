@@ -33,6 +33,7 @@ package org.jboss.jbossts.qa.Utils;
 
 import java.io.File;
 
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -65,13 +66,25 @@ public class EmptyObjectStore
 				orbClass.start(args);
 			}
 
-			if (arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType() != null &&
-					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().contains("JDBCStore"))
-			{
-				arjPropertyManager.getObjectStoreEnvironmentBean().setDropTable(true);
-				// Will recreate the object store tables
-				StoreManager.getParticipantStore();
-			}
+            ObjectStoreEnvironmentBean storeEnvBean = BeanPopulator.getNamedInstance(
+                ObjectStoreEnvironmentBean.class, "default");
+
+            if (storeEnvBean.getObjectStoreType() != null && storeEnvBean.getObjectStoreType().contains("JDBCStore"))
+            {
+                // ensure that all relevant JDBC store tables are cleared
+                BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "stateStore").
+                    setDropTable(true);
+                BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").
+                    setDropTable(true);
+
+                storeEnvBean.setDropTable(true);
+
+                // the first get on a store initializes it (which, for a JDBC store, includes table reinitialization)
+                StoreManager.getParticipantStore();
+                StoreManager.getRecoveryStore();
+                StoreManager.getCommunicationStore();
+                StoreManager.getTxOJStore();
+            }
 			else
 			{
 				String objectStoreDirName = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
