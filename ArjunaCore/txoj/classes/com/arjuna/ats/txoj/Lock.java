@@ -157,10 +157,6 @@ public class Lock extends StateManager
         }
 
         super.terminate();
-
-        owners = null;
-
-        super.finalize();
     }
 
     /*
