@@ -68,19 +68,6 @@ public class RecoverableObject extends LockManager
         }
     }
 
-    public void finalize ()
-    {
-        super.terminate();
-
-        try
-        {
-            super.finalize();
-        }
-        catch (Throwable e)
-        {
-        }
-    }
-
     public boolean set (int value)
     {
         AtomicAction A = new AtomicAction();

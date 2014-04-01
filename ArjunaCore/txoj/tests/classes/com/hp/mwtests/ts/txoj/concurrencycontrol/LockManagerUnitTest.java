@@ -49,9 +49,7 @@ public class LockManagerUnitTest
     public void test () throws Throwable
     {
         AtomicObject obj = new AtomicObject();
-        
-        obj.finalize();
-        
+
         obj = new AtomicObject();
         
         assertTrue(obj.releaselock(new Uid()));
