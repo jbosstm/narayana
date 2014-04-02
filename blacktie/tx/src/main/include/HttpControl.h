@@ -37,7 +37,7 @@ public:
 	bool get_xid(XID& xid);
 
 	const char* txnUrl() {return _txnUrl;}
-	const char* enlistUrl() {return _enlistUrl;}
+	const char* enlistUrl();
 
 protected:
     void suspend();

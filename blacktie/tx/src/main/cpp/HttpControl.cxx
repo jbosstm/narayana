@@ -255,6 +255,14 @@ int HttpControl::http_to_tx_status(const char *content) {
 	return stat;
 }
 
+const char* HttpControl::enlistUrl() {
+	if (_enlistUrl == NULL) {
+	    headRequest();
+	}
+
+	return _enlistUrl;
+}
+
 int HttpControl::do_end(bool commit, bool reportHeuristics)
 {
 	return do_end(commit ? 0 : 1);
