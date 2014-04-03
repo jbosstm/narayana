@@ -86,10 +86,10 @@
     <binding name="XTSServiceTestPort_SOAPBinding" type="tns:XTSServiceTestPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="serve">
-            <input message="tns:Commands">
+            <input>
                 <soap:body use="literal"/>
             </input>
-            <output message="tns:Commands">
+            <output>
                 <soap:body use="literal"/>
             </output>
         </operation>

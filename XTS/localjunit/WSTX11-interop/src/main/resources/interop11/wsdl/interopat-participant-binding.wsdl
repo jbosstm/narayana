@@ -34,91 +34,91 @@
       <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="CompletionCommit">
         <soap:operation soapAction="http://fabrikam123.com/CompletionCommit"/>
-        <input message="tns:CompletionCommit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="CompletionRollback">
         <soap:operation soapAction="http://fabrikam123.com/CompletionRollback"/>
-        <input message="tns:CompletionRollback">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Commit">
         <soap:operation soapAction="http://fabrikam123.com/Commit"/>
-        <input message="tns:Commit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Rollback">
         <soap:operation soapAction="http://fabrikam123.com/Rollback"/>
-        <input message="tns:Rollback">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Phase2Rollback">
         <soap:operation soapAction="http://fabrikam123.com/Phase2Rollback"/>
-        <input message="tns:Phase2Rollback">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Readonly">
         <soap:operation soapAction="http://fabrikam123.com/Readonly"/>
-        <input message="tns:Readonly">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="VolatileAndDurable">
         <soap:operation soapAction="http://fabrikam123.com/VolatileAndDurable"/>
-        <input message="tns:VolatileAndDurable">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="EarlyReadonly">
         <soap:operation soapAction="http://fabrikam123.com/EarlyReadonly"/>
-        <input message="tns:EarlyReadonly">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="EarlyAborted">
         <soap:operation soapAction="http://fabrikam123.com/EarlyAborted"/>
-        <input message="tns:EarlyAborted">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="ReplayCommit">
         <soap:operation soapAction="http://fabrikam123.com/ReplayCommit"/>
-        <input message="tns:ReplayCommit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="RetryPreparedCommit">
         <soap:operation soapAction="http://fabrikam123.com/RetryPreparedCommit"/>
-        <input message="tns:RetryPreparedCommit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="RetryPreparedAbort">
         <soap:operation soapAction="http://fabrikam123.com/RetryPreparedAbort"/>
-        <input message="tns:RetryPreparedAbort">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="RetryCommit">
         <soap:operation soapAction="http://fabrikam123.com/RetryCommit"/>
-        <input message="tns:RetryCommit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="PreparedAfterTimeout">
         <soap:operation soapAction="http://fabrikam123.com/PreparedAfterTimeout"/>
-        <input message="tns:PreparedAfterTimeout">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="LostCommitted">
         <soap:operation soapAction="http://fabrikam123.com/LostCommitted"/>
-        <input message="tns:LostCommitted">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>

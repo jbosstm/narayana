@@ -34,7 +34,7 @@
       <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="Response">
         <soap:operation soapAction="http://fabrikam123.com/wsba/Response"/>
-        <input message="tns:Response">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
