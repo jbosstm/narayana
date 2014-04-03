@@ -127,7 +127,7 @@ char *HttpTxManager::enlist(XAWrapper* resource, TxControl *tx, const char * xid
 	if (guard(_isOpen) != TX_OK)
 		return NULL;
 
-	char *recUrl;
+	char *recUrl = NULL;
 	HttpControl *httpTx = dynamic_cast<HttpControl*>(tx);
 	const char *enlistUrl = httpTx->enlistUrl();	
 
@@ -163,7 +163,9 @@ char *HttpTxManager::enlist(XAWrapper* resource, TxControl *tx, const char * xid
 		_wc.dispose(&ri);
 
 		LOG4CXX_DEBUG(httptxlogger, "Enlisted with header: " << hdr);
-	}
+	} else {
+		LOG4CXX_WARN(httptxlogger, "Missing enlistment url for transaction " << httpTx->txnUrl());
+    }
 
 	if (recUrl != NULL) {
 		LOG4CXX_DEBUG(httptxlogger, "Enlisted branch " << resource->get_name() << " rec url: "
