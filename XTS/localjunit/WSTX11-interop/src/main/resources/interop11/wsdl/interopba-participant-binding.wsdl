@@ -34,73 +34,73 @@
       <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="Cancel">
         <soap:operation soapAction="http://fabrikam123.com/wsba/Cancel"/>
-        <input message="tns:Cancel">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Exit">
         <soap:operation soapAction="http://fabrikam123.com/wsba/Exit"/>
-        <input message="tns:Exit">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Fail">
         <soap:operation soapAction="http://fabrikam123.com/wsba/Fail"/>
-        <input message="tns:Fail">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="CannotComplete">
         <soap:operation soapAction="http://fabrikam123.com/wsba/CannotComplete"/>
-        <input message="tns:CannotComplete">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="ParticipantCompleteClose">
         <soap:operation soapAction="http://fabrikam123.com/wsba/ParticipantCompleteClose"/>
-        <input message="tns:ParticipantCompleteClose">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="CoordinatorCompleteClose">
         <soap:operation soapAction="http://fabrikam123.com/wsba/CoordinatorCompleteClose"/>
-        <input message="tns:CoordinatorCompleteClose">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="UnsolicitedComplete">
         <soap:operation soapAction="http://fabrikam123.com/wsba/UnsolicitedComplete"/>
-        <input message="tns:UnsolicitedComplete">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="Compensate">
         <soap:operation soapAction="http://fabrikam123.com/wsba/Compensate"/>
-        <input message="tns:Compensate">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="CompensationFail">
         <soap:operation soapAction="http://fabrikam123.com/wsba/CompensationFail"/>
-        <input message="tns:CompensationFail">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="ParticipantCancelCompletedRace">
         <soap:operation soapAction="http://fabrikam123.com/wsba/ParticipantCancelCompletedRace"/>
-        <input message="tns:ParticipantCancelCompletedRace">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="MessageLossAndRecovery">
         <soap:operation soapAction="http://fabrikam123.com/wsba/MessageLossAndRecovery"/>
-        <input message="tns:MessageLossAndRecovery">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
       <operation name="MixedOutcome">
         <soap:operation soapAction="http://fabrikam123.com/wsba/MixedOutcome"/>
-        <input message="tns:MixedOutcome">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>

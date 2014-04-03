@@ -37,7 +37,7 @@
     <binding name="SoapFault_SOAPBinding" type="tns:SoapFaultPortType">
       <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="SoapFault">
-        <input message="tns:SoapFault">
+        <input>
           <soap:body use="literal"/>
         </input>
       </operation>
