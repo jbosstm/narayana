@@ -145,9 +145,8 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.jboss.as.plugins</groupId>
-						<artifactId>jboss-as-maven-plugin</artifactId>
-						<version>7.3.Final</version>
+						<groupId>org.wildfly.plugins</groupId>
+						<artifactId>wildfly-maven-plugin</artifactId>
 						<configuration>
 							<hostname>${jbossas.ip.addr}</hostname>
 						</configuration>
