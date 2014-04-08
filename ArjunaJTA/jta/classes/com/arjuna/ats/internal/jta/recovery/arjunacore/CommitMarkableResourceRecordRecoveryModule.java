@@ -75,9 +75,9 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 public class CommitMarkableResourceRecordRecoveryModule implements
 		RecoveryModule {
 	// 'type' within the Object Store for AtomicActions.
-	private static final String ATOMIC_ACTION_TYPE = new AtomicAction().type();
-	private static final String CONNECTABLE_ATOMIC_ACTION_TYPE = ATOMIC_ACTION_TYPE
-			+ "Connectable";
+	private static final String ATOMIC_ACTION_TYPE = RecoverConnectableAtomicAction.ATOMIC_ACTION_TYPE;
+	private static final String CONNECTABLE_ATOMIC_ACTION_TYPE =
+	    RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE;
 
 	private InitialContext context;
 

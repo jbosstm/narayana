@@ -34,6 +34,8 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRe
 import com.arjuna.ats.jta.xa.XidImple;
 
 public class RecoverConnectableAtomicAction extends AtomicAction {
+	public static final String ATOMIC_ACTION_TYPE = new AtomicAction().type();
+	public static final String CONNECTABLE_ATOMIC_ACTION_TYPE = ATOMIC_ACTION_TYPE + "Connectable";
 
 	private String jndiName;
 	private String recoveringAs;
