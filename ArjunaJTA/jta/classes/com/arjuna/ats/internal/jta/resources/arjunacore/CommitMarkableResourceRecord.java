@@ -34,9 +34,11 @@ import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import org.jboss.tm.ConnectableResource;
 import org.jboss.tm.XAResourceWrapper;
 
@@ -376,15 +378,18 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			tsLogger.logger.trace("CommitMarkableResourceRecord.topLevelPrepare for " + this + ", record id=" + order());
 		}
 
-		try {
+        try {
+            PreparedStatement prepareStatement = null;
+
 			preparedConnection = (Connection) connectableResource
 					.getConnection();
 
-			PreparedStatement prepareStatement = preparedConnection
+            try {
+			    prepareStatement = preparedConnection
 					.prepareStatement("insert into "
 							+ tableName
 							+ " (xid, transactionManagerID, actionuid) values (?,?,?)");
-			try {
+
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos);
 				XID toSave = ((XidImple) xid).getXID();
@@ -400,10 +405,13 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 				if (prepareStatement.executeUpdate() != 1) {
 					tsLogger.logger.warn("Update was not successful");
+                    removeConnection();
+
 					return TwoPhaseOutcome.PREPARE_NOTOK;
 				}
 			} finally {
-				prepareStatement.close();
+                if (prepareStatement != null)
+				    prepareStatement.close();
 			}
 
 			return TwoPhaseOutcome.PREPARE_OK;
@@ -433,19 +441,16 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				hasCompleted = true;
 				committed = false;
 				return TwoPhaseOutcome.FINISH_OK;
+			} catch (XAException e) {
+				XAResourceErrorHandler handler = new XAResourceErrorHandler(e, (XAResource) connectableResource, xid);
+				return handler.handleCMRRollbackError();
 			} catch (Throwable e) {
-				tsLogger.logger.error("Could not rollback the 1PC resource", e);
+					jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(xid),
+						connectableResource.toString(), "-", e);
 				return TwoPhaseOutcome.FINISH_ERROR;
 			}
 		} finally {
-			try {
-				if (preparedConnection != null) {
-					preparedConnection.close();
-				}
-			} catch (Throwable e) {
-				tsLogger.logger.warn("Could not close the preparedConnection",
-						e);
-			}
+			removeConnection();
 		}
 	}
 
@@ -477,22 +482,19 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				hasCompleted = true;
 				committed = true;
 				return TwoPhaseOutcome.FINISH_OK;
+			} catch (XAException e) {
+				XAResourceErrorHandler handler = new XAResourceErrorHandler(e, (XAResource) connectableResource, xid);
+
+				int res = handler.handleCMRCommitError(onePhase);
+				committed = handler.isCommitted();
+				return res;
 			} catch (Throwable e) {
-				tsLogger.logger.error(
-						"Could not commit the preparedConnection", e);
+				jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(xid),
+					connectableResource.toString(), "-", e);
 				return TwoPhaseOutcome.FINISH_ERROR;
 			} finally {
 				if (!isPerformImmediateCleanupOfBranches) {
-					try {
-						if (preparedConnection != null) {
-							if (preparedConnection != null) {
-								preparedConnection.close();
-							}
-						}
-					} catch (Throwable e) {
-						tsLogger.logger.warn(
-								"Could not close the preparedConnection", e);
-					}
+					removeConnection();
 				}
 			}
 		} else {
@@ -501,6 +503,17 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				return TwoPhaseOutcome.FINISH_OK;
 			} else {
 				return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
+			}
+		}
+	}
+
+	private final void removeConnection() {
+		if (preparedConnection != null) {
+			try {
+				preparedConnection.close();
+				preparedConnection = null;
+			} catch (SQLException e) {
+				tsLogger.logger.warn("Could not close the preparedConnection", e);
 			}
 		}
 	}

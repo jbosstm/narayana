@@ -23,15 +23,19 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
+
+import java.io.IOException;
 
 /**
  * An XAResourceOrphanFilter which vetos rollback for xids owned by top level JTA transactions.
@@ -57,14 +61,27 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
         return Vote.ABSTAIN;
     }
 
+    private boolean containsCommitMarkableResourceRecord(Uid u) {
+        try {
+            RecoverConnectableAtomicAction rcaa = new RecoverConnectableAtomicAction(
+                RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE, u);
+
+            return (rcaa.containsIncompleteCommitMarkableResourceRecord());
+        } catch (ObjectStoreException e) {
+        } catch (IOException e) {
+        }
+
+        return false;
+    }
+
     /**
-	 * Is there a log file for this transaction?
-	 *
-	 * @param xid the transaction to check.
-	 *
-	 * @return <code>boolean</code>true if there is a log file,
-	 *         <code>false</code> if there isn't.
-	 */
+     * Is there a log file for this transaction?
+     *
+     * @param xid the transaction to check.
+     *
+     * @return <code>boolean</code>true if there is a log file,
+     *         <code>false</code> if there isn't.
+     */
     private boolean transactionLog(Xid xid)
     {
         RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
@@ -87,7 +104,8 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
                     jtaLogger.logger.debug("Looking for " + u + " and " + transactionType);
                 }
 
-                if (recoveryStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
+                if (containsCommitMarkableResourceRecord(u) ||
+                        recoveryStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
                 {
                     if (jtaLogger.logger.isDebugEnabled()) {
                         jtaLogger.logger.debug("Found record for " + theXid);
