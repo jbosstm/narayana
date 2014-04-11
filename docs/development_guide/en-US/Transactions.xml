@@ -617,6 +617,9 @@
                 supplied in the parameter. This
                 method is executed without a transaction context.
               </para>
+              <para>
+                NOTE: If a JTA XAResource throws a RuntimeException, this method will not be called as the transaction has not and cannot complete. Please see JBTM-2148 for more details.
+              </para>
             </entry>
           </row>
         </tbody>
