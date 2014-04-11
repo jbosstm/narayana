@@ -103,6 +103,17 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		return outcome;
 	}
 
+	/**
+	 * If this method is called and a transaction is not in a status of RUNNING,
+	 * ABORT_ONLY or COMMITTING then do not call afterCompletion.
+	 * 
+	 * A scenario where this may occur is if during the completion of a previous
+	 * transaction, a runtime exception is thrown from one of the AbstractRecords 
+	 * methods.
+	 * 
+	 * RuntimeExceptions are not part of the contract of the API and as such all we
+	 * can do is leave the transaction alone.
+	 */
 	public int cancel ()
 	{
 		if (TxStats.enabled())

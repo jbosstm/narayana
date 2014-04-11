@@ -372,7 +372,11 @@ public class TransactionReaper
             try {
                 if (e._control.running()) {
 
-                    // try to cancel the transaction
+                    // try to cancel the transaction, note that if the
+                	// transaction previously failed to abort due to a 
+                	// runtimeexception being raised by the AbstractRecord
+                	// implementation then the transaction will effectively
+                	// remain untouched and afterCompletion will not be called.
 
                     if (e._control.cancel() == ActionStatus.ABORTED) {
                         cancelled = true;
