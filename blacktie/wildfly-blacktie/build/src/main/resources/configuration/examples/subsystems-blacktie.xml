@@ -25,7 +25,6 @@
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/resource-adapters.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/sar.xml</subsystem>
       <subsystem supplement="standalone">../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/security.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/threads.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/transactions.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/undertow.xml</subsystem>
       <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/webservices.xml</subsystem>
