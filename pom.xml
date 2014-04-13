@@ -460,6 +460,7 @@
     <version.org.jacoco>0.6.3.201306030806</version.org.jacoco>
   </properties>
   <modules>
+    <module>tools</module>
     <module>ext</module>
     <module>common</module>
     <module>ArjunaCore</module>

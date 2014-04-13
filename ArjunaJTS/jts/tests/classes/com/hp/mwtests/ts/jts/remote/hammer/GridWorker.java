@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2013 Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.hp.mwtests.ts.jts.remote.hammer;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -6,8 +27,8 @@ import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.ts.jts.TestModule.grid;
 import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;
-import com.hp.mwtests.ts.jts.utils.Result;
-import com.hp.mwtests.ts.jts.utils.Worker;
+import io.narayana.perf.Result;
+import io.narayana.perf.Worker;
 import org.omg.CosTransactions.NoTransaction;
 
 class GridWorker implements Worker {
@@ -39,15 +60,17 @@ class GridWorker implements Worker {
     }
 
     @Override
-    public void doWork(Result opts) {
+    public Object doWork(Object context, int niters, Result opts) {
         boolean running = false;
         try {
-            current.begin();
-            running = true;
-            gridVar.set(2, 4, newValue, current.get_control());
-            current.commit(false);
-            running = false;
-            opts.setInfo("grid[2,4] should be " + initialValue);
+            for (int i = 0; i < niters; i++) {
+                current.begin();
+                running = true;
+                gridVar.set(2, 4, newValue, current.get_control());
+                current.commit(false);
+                running = false;
+                opts.setInfo("grid[2,4] should be " + initialValue);
+            }
         } catch (Exception sysEx) {
             sysEx.printStackTrace(System.err);
             opts.setInfo("work exception " + sysEx.getMessage());
@@ -66,6 +89,8 @@ class GridWorker implements Worker {
                 }
             }
         }
+
+        return null;
     }
 
     @Override

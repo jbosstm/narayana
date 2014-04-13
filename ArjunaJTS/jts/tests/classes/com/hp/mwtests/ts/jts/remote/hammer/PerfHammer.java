@@ -32,22 +32,9 @@
 package com.hp.mwtests.ts.jts.remote.hammer;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
-import com.arjuna.orbportability.Services;
-import com.hp.mwtests.ts.jts.TestModule.grid;
-import com.hp.mwtests.ts.jts.TestModule.gridHelper;
-import com.hp.mwtests.ts.jts.resources.TestUtility;
-import com.hp.mwtests.ts.jts.utils.PerformanceTester;
-import com.hp.mwtests.ts.jts.utils.Result;
-import com.hp.mwtests.ts.jts.utils.Worker;
-import org.omg.CosTransactions.*;
-
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.arjuna.orbportability.*;
+import io.narayana.perf.PerformanceTester;
+import io.narayana.perf.Result;
 
 public class PerfHammer
 {
@@ -66,11 +53,14 @@ public class PerfHammer
 
         PerformanceTester tester = new PerformanceTester(10, 10);
         GridWorker worker = new GridWorker(myORB, gridReference);
-        Result opts = new Result(false, 10, 100, 1, false, true, 0, false, true, true, "Unknown");
+        Result opts = new Result(10, 100);
 
         try {
-            tester.measureThroughput(new PrintWriter(System.out), worker, opts);
-            System.out.printf("Test performance: %s%n", opts.toString());
+            tester.measureThroughput(worker, opts);
+
+            System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
+                    ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
+                    opts.getErrorCount(), opts.getTotalMillis());
         } finally {
             tester.fini();
         }
