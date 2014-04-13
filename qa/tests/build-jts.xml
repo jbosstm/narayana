@@ -101,6 +101,10 @@
 			<equals arg1="${org.jboss.jbossts.qa.orb.name.short}" arg2="jacorb"/>
 		</condition>
 
+		<copy todir="${org.jboss.jbossts.qa.build.classes}">
+			<fileset dir="${org.jboss.jbossts.qa.src}/${astest.dir}/resources"/>
+			<fileset dir="../../tools/target/classes"/>
+		</copy>
 	</target>
 
 	<target name="org.jboss.jbossts.qa.clean">
