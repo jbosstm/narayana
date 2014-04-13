@@ -19,17 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.hp.mwtests.ts.jts.utils;
+package io.narayana.perf;
 
 /**
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
+ *
+ * Interface for running a batch of work
  */
-public interface Worker {
+public interface Worker<T> {
     /**
-     * Perform a single unit of work
-     * @param opts The test configuration
+     * Perform a single unit of work. @see PerformanceTester begins a number of threads and each thread
+     * then invokes the doWork method in parallel until there is no more remaining work.
+     *
+     * @param context a thread specific instance that may have been returned by a previous invocation of the doWork
+     *                method by this thread. This may be useful if the worker needs to save thread specific data
+     * @param niters the number of work iterations to perform in this batch
+     * @param opts config parameters for the work that triggered this call
+     * @return A thread specific instance that will be passed to subsequent calls to the doWork method by the thread
      */
-    void doWork(Result opts);
+    T doWork(T context, int niters, Result<T> opts);
 
     /**
      * notify the worker that the test is starting
