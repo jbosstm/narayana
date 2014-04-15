@@ -401,7 +401,7 @@
     <jvm.args.other>-server</jvm.args.other>
     
     <!-- External dependencies versions -->
-    <jboss-as.version>8.1.0.CR1</jboss-as.version>
+    <jboss-as.version>8.1.0.Final-SNAPSHOT</jboss-as.version>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.jandex>1.1.0.Final</version.org.jboss.jandex>
     <version.rhino.js>1.7R2</version.rhino.js>
