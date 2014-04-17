@@ -32,7 +32,7 @@ cd ..\
 set NOPAUSE=true
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
-FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
 tasklist
 taskkill /F /IM mspdbsrv.exe
 taskkill /F /IM testsuite.exe
@@ -58,7 +58,7 @@ rem BUILD BLACKTIE
 call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build & exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
-tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
 echo "Finished build"
 
 call:comment_on_pull "BLACKTIE profile tests passed on Windows - Job complete %BUILD_URL%"
@@ -71,7 +71,7 @@ goto:eof
 
 :fail_build
   call:comment_on_pull "Build failed %BUILD_URL%"
-  tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9999.*LISTENING"`) DO taskkill /F /PID %%i
+  tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
   exit -1
 goto:eof
 
