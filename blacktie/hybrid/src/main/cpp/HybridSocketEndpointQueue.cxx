@@ -50,11 +50,15 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	LOG4CXX_DEBUG(logger, (char*) "Creating socket endpoint queue with " << addr << ":" << port);
 	shutdown = false;
 	_connected = false;
-	this->pool = pool;
+	apr_status_t rc = apr_pool_create(&this->pool, pool);
+	if(rc != APR_SUCCESS) {
+		LOG4CXX_WARN(logger, (char*)" can not create pool returning " << rc);
+		throw std::exception();
+	}
 	this->addr = strdup(addr);
 	this->port = port;
 	this->socket = NULL;
-	apr_pollset_create(&this->pollset, 1, pool, 0);
+	apr_pollset_create(&this->pollset, 1, this->pool, 0);
 	this->ctx = &this->queue_ctx;
 	ctx->sock = NULL;
 	ctx->sid = id;
@@ -63,9 +67,9 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	LOG4CXX_TRACE(logger, (char*) "create id is " << id);
 	this->session = session;
 	this->messagesAvailableCallback = messagesAvailableCallback;
-	apr_thread_mutex_create(&ctx->mutex, APR_THREAD_MUTEX_UNNESTED, pool);
-	apr_thread_mutex_create(&ctx->socket_close_mutex, APR_THREAD_MUTEX_UNNESTED, pool);
-	apr_thread_cond_create(&ctx->cond, pool);
+	apr_thread_mutex_create(&ctx->mutex, APR_THREAD_MUTEX_UNNESTED, this->pool);
+	apr_thread_mutex_create(&ctx->socket_close_mutex, APR_THREAD_MUTEX_UNNESTED, this->pool);
+	apr_thread_cond_create(&ctx->cond, this->pool);
 }
 
 HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* session, apr_pool_t* pool, client_ctx_t* ctx,
@@ -73,7 +77,11 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	LOG4CXX_DEBUG(logger, (char*) "Creating socket endpoint queue with client_ctx_t");
 	shutdown = false;
 	_connected = true;
-	this->pool = pool;
+	apr_status_t rc = apr_pool_create(&this->pool, pool);
+	if(rc != APR_SUCCESS) {
+		LOG4CXX_WARN(logger, (char*)" can not create pool returning " << rc);
+		throw std::exception();
+	}
 	this->ctx = ctx;
 	this->socket = ctx->sock;
 	this->addr = NULL;
@@ -114,6 +122,8 @@ HybridSocketEndpointQueue::~HybridSocketEndpointQueue() {
 		apr_thread_cond_broadcast(ctx->cond);
 	}
 	apr_thread_mutex_unlock(ctx->mutex);
+	LOG4CXX_DEBUG(logger, (char*) "destroy the pool " << this->pool);
+	apr_pool_destroy(this->pool);
 	LOG4CXX_DEBUG(logger, (char*) "destroyed: " << this);
 }
 
@@ -201,7 +211,7 @@ bool HybridSocketEndpointQueue::isShutdown() {
 }
 
 MESSAGE HybridSocketEndpointQueue::receive(long time) {
-	MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, -1, -1, -1, -1, NULL, NULL,
+	MESSAGE message = { NULL, -1, 0, NULL, NULL, NULL, -1, 0, 0, 0, 0, 0L, NULL, NULL,
 		false, NULL, NULL, false };
 	apr_status_t rv;
 

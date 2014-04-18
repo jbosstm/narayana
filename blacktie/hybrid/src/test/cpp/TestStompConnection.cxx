@@ -210,3 +210,5 @@ void TestStompConnection::test() {
 	btlogger("Iterated");
 	serverConnection->destroyDestination(destination);
 }
+
+CPPUNIT_TEST_SUITE_REGISTRATION( TestStompConnection);

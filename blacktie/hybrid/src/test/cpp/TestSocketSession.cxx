@@ -23,7 +23,9 @@
 #include "apr.h"
 #include <stdlib.h>
 
-extern void messagesAvailableCallback(int bar, bool remove);
+void messagesAvailableCallbackSocket(int bar, bool remove) {
+
+}
 
 static void* APR_THREAD_FUNC run_server(apr_thread_t *thd, void *data) {
 	SocketServer* server = (SocketServer*)data;
@@ -45,7 +47,7 @@ void TestSocketSession::setUp() {
 	btlogger("TestSocketSession::setUp");
 	apr_status_t rv;
 	apr_pool_create(&mp, NULL);
-	server = new SocketServer(port, mp, messagesAvailableCallback);
+	server = new SocketServer(port, mp, messagesAvailableCallbackSocket);
 	apr_threadattr_create(&thd_attr, mp);
 	rv = apr_thread_create(&thead, thd_attr, run_server, (void*)server, mp);
 	BT_ASSERT(rv == APR_SUCCESS);
@@ -67,8 +69,8 @@ void TestSocketSession::test_queue() {
 	apr_status_t rv;
 	client_ctx_t* ctx = server->register_client(1, NULL);
 	HybridSocketSessionImpl* session = new HybridSocketSessionImpl(mp);
-	HybridSocketEndpointQueue* client_queue = new HybridSocketEndpointQueue(session, mp, ctx, messagesAvailableCallback);
-	HybridSocketEndpointQueue* svc_queue = new HybridSocketEndpointQueue(session, mp, 1, "localhost", port, messagesAvailableCallback);
+	HybridSocketEndpointQueue* client_queue = new HybridSocketEndpointQueue(session, mp, ctx, messagesAvailableCallbackSocket);
+	HybridSocketEndpointQueue* svc_queue = new HybridSocketEndpointQueue(session, mp, 1, "localhost", port, messagesAvailableCallbackSocket);
 	BT_ASSERT(svc_queue->connect());
 	apr_thread_t     *queue_thead;
 	rv = apr_thread_create(&queue_thead, thd_attr, run_queue, (void*)svc_queue, mp);
@@ -141,3 +143,5 @@ void TestSocketSession::test_queue() {
 	delete client_queue;
 	delete session;
 }
+
+CPPUNIT_TEST_SUITE_REGISTRATION( TestSocketSession);
