@@ -78,13 +78,13 @@ public class BAParticipantCompletionTest {
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
 
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+        ////BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @AfterClass()
     public static void removeBytemanScript() {
 
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+        ////BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @Before

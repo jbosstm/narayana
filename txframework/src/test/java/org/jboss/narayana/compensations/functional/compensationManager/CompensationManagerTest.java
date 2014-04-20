@@ -22,30 +22,18 @@
 
 package org.jboss.narayana.compensations.functional.compensationManager;
 
-import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler2;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import javax.inject.Inject;
@@ -55,43 +43,17 @@ import javax.inject.Inject;
  * @author paul.robinson@redhat.com 22/03/2013
  */
 @RunWith(Arquillian.class)
-public class CompensationManagerTest {
+public abstract class CompensationManagerTest {
 
     @Inject
     CompensationManagerService compensationManagerService;
-
-    UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
-
-    @Deployment
-    public static JavaArchive createTestArchive() {
-
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addPackages(true, "org.jboss.narayana.compensations.functional")
-                .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        return archive;
-    }
-
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
 
 
     @After
     public void tearDown() {
 
         try {
-            uba.close();
+            BAControllerFactory.getInstance().cancelBusinessActivity();
         } catch (Exception e) {
             // do nothing
         }
@@ -102,10 +64,8 @@ public class CompensationManagerTest {
 
         DummyCompensationHandler1.reset();
         DummyConfirmationHandler1.reset();
-        DummyTransactionLoggedHandler1.reset();
         DummyCompensationHandler2.reset();
         DummyConfirmationHandler2.reset();
-        DummyTransactionLoggedHandler2.reset();
     }
 
 
@@ -121,7 +81,6 @@ public class CompensationManagerTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler1.getCalled());
     }
 
 
@@ -139,11 +98,9 @@ public class CompensationManagerTest {
 
         Assert.assertEquals(true, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler2.getCalled());
     }
 
 
@@ -159,7 +116,6 @@ public class CompensationManagerTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler1.getCalled());
     }
 
 
@@ -177,11 +133,9 @@ public class CompensationManagerTest {
 
         Assert.assertEquals(true, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -193,11 +147,9 @@ public class CompensationManagerTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler2.getCalled());
     }
 
 }

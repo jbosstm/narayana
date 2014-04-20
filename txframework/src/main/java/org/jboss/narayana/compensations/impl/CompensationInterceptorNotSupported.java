@@ -21,15 +21,11 @@
  */
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import org.jboss.narayana.compensations.api.Compensatable;
-import org.jboss.narayana.compensations.api.CompensationManager;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
 import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -45,10 +41,11 @@ public class CompensationInterceptorNotSupported extends CompensationInterceptor
 
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
-        if (BusinessActivityManagerFactory.businessActivityManager().currentTransaction() == null) {
+        BAControler baControler =  BAControllerFactory.getInstance();
+        if (!baControler.isBARunning()) {
             return invokeInNoTx(ic);
         } else {
-            final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().suspend();
+            final Object txContext = baControler.suspend();
             final CompensationManagerState compensationManagerState = CompensationManagerImpl.suspend();
             final Map txDataMap = TXDataMapImpl.getState();
             TXDataMapImpl.suspend();
@@ -56,7 +53,7 @@ public class CompensationInterceptorNotSupported extends CompensationInterceptor
             try {
                 return invokeInNoTx(ic);
             } finally {
-                BusinessActivityManagerFactory.businessActivityManager().resume(txContext);
+                baControler.resume(txContext);
                 CompensationManagerImpl.resume(compensationManagerState);
                 TXDataMapImpl.resume(txDataMap);
             }

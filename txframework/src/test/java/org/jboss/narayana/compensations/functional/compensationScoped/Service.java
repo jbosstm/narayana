@@ -26,11 +26,7 @@ import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxConfirm;
 import org.jboss.narayana.compensations.api.TxLogged;
-import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
-import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
-import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
-import org.jboss.narayana.txframework.api.management.TXDataMap;
 
 import javax.inject.Inject;
 

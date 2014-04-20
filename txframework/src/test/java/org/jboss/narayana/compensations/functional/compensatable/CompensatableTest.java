@@ -21,13 +21,6 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.UnknownTransactionException;
-import com.arjuna.wst.WrongStateException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
@@ -40,21 +33,13 @@ import org.jboss.narayana.compensations.functional.common.DummyCompensationHandl
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler2;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.CompensationManagerState;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -62,8 +47,7 @@ import java.util.HashMap;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-@RunWith(Arquillian.class)
-public class CompensatableTest {
+public abstract class CompensatableTest {
 
     @Inject
     CompensatableBean testTransactionalBean;
@@ -71,41 +55,19 @@ public class CompensatableTest {
     @Inject
     StereotypeBean stereotypeBean;
 
-    @Deployment
-    public static WebArchive createTestArchive() {
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addPackage("org.jboss.narayana.compensations.functional.common")
-                .addPackage("org.jboss.narayana.compensations.functional.compensatable")
-                .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        return archive;
-    }
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
 
     @Before
     public void before() {
         DummyCompensationHandler1.reset();
         DummyConfirmationHandler1.reset();
-        DummyTransactionLoggedHandler1.reset();
         DummyCompensationHandler2.reset();
         DummyConfirmationHandler2.reset();
-        DummyTransactionLoggedHandler2.reset();
     }
 
     @After
     public void after() {
         try {
-            UserBusinessActivityFactory.userBusinessActivity().cancel();
+            BAControllerFactory.getInstance().cancelBusinessActivity();
         } catch (Throwable t) {
 
         }
@@ -121,8 +83,6 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
     }
 
     @Test
@@ -133,7 +93,7 @@ public class CompensatableTest {
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
 
-        final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+        final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
         testTransactionalBean.invokeWithDefault();
         Utills.assertSameTransaction(txContext);
@@ -144,8 +104,6 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
     }
 
     @Test
@@ -158,8 +116,6 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
     }
 
     @Test
@@ -170,7 +126,7 @@ public class CompensatableTest {
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
 
-        final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+        final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
         testTransactionalBean.invokeWithRequiresNew(txContext);
 
@@ -180,8 +136,6 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
     }
 
     @Test
@@ -208,7 +162,7 @@ public class CompensatableTest {
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
 
-        final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+        final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
         testTransactionalBean.invokeWithMandatory(txContext);
 
@@ -218,8 +172,6 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
     }
 
     @Test
@@ -237,7 +189,7 @@ public class CompensatableTest {
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
 
-        final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+        final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
         testTransactionalBean.invokeWithSupports(txContext);
 
@@ -335,12 +287,9 @@ public class CompensatableTest {
 
         Assert.assertTrue(DummyCompensationHandler1.getCalled());
         Assert.assertFalse(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertFalse(DummyConfirmationHandler2.getCalled());
-        Assert.assertFalse(DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -368,12 +317,9 @@ public class CompensatableTest {
 
         Assert.assertTrue(DummyCompensationHandler1.getCalled());
         Assert.assertFalse(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertFalse(DummyConfirmationHandler2.getCalled());
-        Assert.assertFalse(DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -393,13 +339,9 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertTrue(DummyConfirmationHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getSuccess());
     }
 
     @Test
@@ -423,13 +365,9 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertTrue(DummyConfirmationHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getSuccess());
     }
 
     @Test
@@ -449,14 +387,10 @@ public class CompensatableTest {
 
         Assert.assertTrue(DummyCompensationHandler1.getCalled());
         Assert.assertFalse(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         // Different than RuntimeException because cancelOn exceptions are handled by CompensationInterceptorBase
         Assert.assertTrue(DummyCompensationHandler2.getCalled());
         Assert.assertFalse(DummyConfirmationHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getSuccess());
     }
 
     @Test
@@ -476,13 +410,10 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         // Second participant was compensated because RuntimeException was handled by the participant handler first.
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertFalse(DummyConfirmationHandler2.getCalled());
-        Assert.assertFalse(DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -502,13 +433,9 @@ public class CompensatableTest {
 
         Assert.assertFalse(DummyCompensationHandler1.getCalled());
         Assert.assertTrue(DummyConfirmationHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler1.getSuccess());
 
         Assert.assertFalse(DummyCompensationHandler2.getCalled());
         Assert.assertTrue(DummyConfirmationHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getCalled());
-        Assert.assertTrue(DummyTransactionLoggedHandler2.getSuccess());
     }
 
     @Test(expected = TestException.class)
@@ -516,32 +443,29 @@ public class CompensatableTest {
         stereotypeBean.doSomething();
     }
 
-    private void beginBusinessActivity() throws WrongStateException, SystemException {
-        UserBusinessActivityFactory.userBusinessActivity().begin();
+    private void beginBusinessActivity() throws Exception {
+        BAControllerFactory.getInstance().beginBusinessActivity();
         CompensationManagerImpl.resume(new CompensationManagerState());
-        TXDataMapImpl.resume(new HashMap());
     }
 
-    private void closeBusinessActivity() throws WrongStateException, UnknownTransactionException, TransactionRolledBackException, SystemException {
-        UserBusinessActivityFactory.userBusinessActivity().close();
+    private void closeBusinessActivity() throws Exception {
+        BAControllerFactory.getInstance().closeBusinessActivity();
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
-    private void completeBusinessActivity() throws WrongStateException, UnknownTransactionException, SystemException {
+    private void completeBusinessActivity() throws Exception {
         if (!CompensationManagerImpl.isCompensateOnly()) {
             try {
-                UserBusinessActivityFactory.userBusinessActivity().close();
-            } catch (TransactionRolledBackException e) {
+                BAControllerFactory.getInstance().closeBusinessActivity();
+            } catch (Exception e) {
                 throw new TransactionCompensatedException("Failed to close transaction", e);
             }
         } else {
-            UserBusinessActivityFactory.userBusinessActivity().cancel();
+            BAControllerFactory.getInstance().cancelBusinessActivity();
             throw new TransactionCompensatedException("Transaction was marked as 'compensate only'");
         }
 
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
 }

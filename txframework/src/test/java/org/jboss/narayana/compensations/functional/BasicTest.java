@@ -22,9 +22,6 @@
 
 package org.jboss.narayana.compensations.functional;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
@@ -33,31 +30,22 @@ import org.jboss.narayana.compensations.functional.common.DummyCompensationHandl
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler3;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler2;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler3;
 import org.jboss.narayana.compensations.functional.common.MultiService;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
 import org.jboss.narayana.compensations.functional.common.SingleService;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.AfterClass;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
-@RunWith(Arquillian.class)
-public class BasicTest {
+
+public abstract class BasicTest {
 
 
     @Inject
@@ -66,42 +54,25 @@ public class BasicTest {
     @Inject
     MultiService multiService;
 
-    @Deployment
-    public static JavaArchive createTestArchive() {
-
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addPackages(true, "org.jboss.narayana.compensations.functional")
-                .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        return archive;
-    }
-
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
 
     @Before
     public void resetParticipants() {
 
         DummyCompensationHandler1.reset();
         DummyConfirmationHandler1.reset();
-        DummyTransactionLoggedHandler1.reset();
         DummyCompensationHandler2.reset();
         DummyConfirmationHandler2.reset();
-        DummyTransactionLoggedHandler2.reset();
         DummyCompensationHandler3.reset();
         DummyConfirmationHandler3.reset();
-        DummyTransactionLoggedHandler3.reset();
+    }
+
+    @After
+    public void after() {
+        try {
+            BAControllerFactory.getInstance().cancelBusinessActivity();
+        } catch (Throwable t) {
+
+        }
     }
 
 
@@ -114,7 +85,6 @@ public class BasicTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
     }
 
     @Test
@@ -126,11 +96,9 @@ public class BasicTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -147,11 +115,9 @@ public class BasicTest {
 
         Assert.assertEquals(true, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(true, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler2.getCalled());
     }
 
     @Test
@@ -163,15 +129,12 @@ public class BasicTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler2.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler3.getCalled());
         Assert.assertEquals(true, DummyConfirmationHandler3.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler3.getCalled());
     }
 
     @Test
@@ -188,15 +151,12 @@ public class BasicTest {
 
         Assert.assertEquals(true, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler1.getCalled());
 
         Assert.assertEquals(false, DummyCompensationHandler2.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler2.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler2.getCalled());
 
         Assert.assertEquals(true, DummyCompensationHandler3.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler3.getCalled());
-        Assert.assertEquals(true, DummyTransactionLoggedHandler3.getCalled());
     }
 
 
@@ -212,6 +172,5 @@ public class BasicTest {
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
-        Assert.assertEquals(false, DummyTransactionLoggedHandler1.getCalled());
     }
 }

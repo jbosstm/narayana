@@ -22,10 +22,8 @@
 
 package org.jboss.narayana.compensations.functional.common;
 
-import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.txframework.api.exception.TransactionDataUnavailableException;
-import org.jboss.narayana.txframework.api.management.TXDataMap;
 
 import javax.inject.Inject;
 
@@ -36,9 +34,10 @@ public class DataConfirmationHandler implements ConfirmationHandler {
 
     private static Boolean dataAvailable = false;
     private static Boolean dataNotNull = false;
+    public static String expectedDataValue = null;
 
     @Inject
-    TXDataMap<String, String> data;
+    DummyData data;
 
     @Override
     public void confirm() {
@@ -46,7 +45,7 @@ public class DataConfirmationHandler implements ConfirmationHandler {
         if (data != null) {
             dataNotNull = true;
             try {
-                if (data.get("key") != null && data.get("key").equals("value")) {
+                if (data.getValue() != null && data.getValue().equals(expectedDataValue)) {
                     dataAvailable = true;
                 }
             } catch (TransactionDataUnavailableException e) {
@@ -64,6 +63,7 @@ public class DataConfirmationHandler implements ConfirmationHandler {
 
         dataAvailable = false;
         dataNotNull = false;
+        expectedDataValue = null;
     }
 
     public static Boolean getDataNotNull() {

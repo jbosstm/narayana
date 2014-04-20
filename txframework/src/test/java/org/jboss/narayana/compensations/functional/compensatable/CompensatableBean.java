@@ -21,7 +21,6 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import com.arjuna.mw.wst.TxContext;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
 import org.jboss.narayana.compensations.api.TxCompensate;
@@ -38,6 +37,8 @@ import javax.inject.Inject;
  */
 @Compensatable(CompensationTransactionType.NEVER)
 public class CompensatableBean {
+
+    public static boolean isDistributed = false;
 
     @Inject
     SingleService singleService;
@@ -96,7 +97,7 @@ public class CompensatableBean {
     @TxCompensate(DummyCompensationHandler1.class)
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
-    public void invokeWithRequiresNew(final TxContext oldTransaction) throws Exception {
+    public void invokeWithRequiresNew(final Object oldTransaction) throws Exception {
         Utills.assertTransactionActive(true);
         Utills.assertDifferentTransaction(oldTransaction);
     }
@@ -105,7 +106,7 @@ public class CompensatableBean {
     @TxCompensate(DummyCompensationHandler1.class)
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
-    public void invokeWithMandatory(final TxContext expectedTransaction) throws Exception {
+    public void invokeWithMandatory(final Object expectedTransaction) throws Exception {
         Utills.assertTransactionActive(true);
         Utills.assertSameTransaction(expectedTransaction);
     }
@@ -120,7 +121,7 @@ public class CompensatableBean {
     @TxCompensate(DummyCompensationHandler1.class)
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
-    public void invokeWithSupports(final TxContext expectedTransaction) throws Exception {
+    public void invokeWithSupports(final Object expectedTransaction) throws Exception {
         Utills.assertTransactionActive(true);
         Utills.assertSameTransaction(expectedTransaction);
     }

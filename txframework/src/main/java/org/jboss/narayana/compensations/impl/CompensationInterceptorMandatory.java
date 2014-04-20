@@ -21,15 +21,12 @@
  */
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
 import org.jboss.narayana.compensations.api.Compensatable;
-import org.jboss.narayana.compensations.api.CompensationManager;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
 import org.jboss.narayana.compensations.api.TransactionRequiredException;
 import org.jboss.narayana.compensations.api.TransactionalException;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -44,7 +41,8 @@ public class CompensationInterceptorMandatory extends CompensationInterceptorBas
 
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
-        if (BusinessActivityManagerFactory.businessActivityManager().currentTransaction() == null) {
+        BAControler baControler =  BAControllerFactory.getInstance();
+        if (!baControler.isBARunning()) {
             throw new TransactionalException("Transaction is required for invocation", new TransactionRequiredException());
         }
 

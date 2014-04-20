@@ -78,4 +78,14 @@ public @interface Compensatable {
      */
     @Nonbinding
     Class[] dontCancelOn() default {};
+
+
+    /**
+     * The distributed element states whether a distributed or local transaction should be begun,
+     * under circumstances where this annotation causes a new transaction to begin.
+     * @return Class[] of Exceptions
+     */
+    @Nonbinding
+    boolean distributed() default false;
+
 }
