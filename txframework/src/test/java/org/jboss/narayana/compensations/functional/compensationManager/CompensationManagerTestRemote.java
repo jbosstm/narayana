@@ -20,21 +20,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.compensations.functional.dataMap;
+package org.jboss.narayana.compensations.functional.compensationManager;
 
-import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
-import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
-import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
-import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.narayana.compensations.api.TransactionCompensatedException;
+import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
+import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
+import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
+import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
+import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -51,12 +51,8 @@ import javax.inject.Inject;
  * @author paul.robinson@redhat.com 22/03/2013
  */
 @RunWith(Arquillian.class)
-public class DataMapTest {
+public class CompensationManagerTestRemote extends CompensationManagerTest {
 
-    @Inject
-    Service service;
-
-    UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
 
     @Deployment
     public static JavaArchive createTestArchive() {
@@ -81,62 +77,5 @@ public class DataMapTest {
 
         BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
-
-
-    @After
-    public void tearDown() {
-
-        try {
-            uba.close();
-        } catch (Exception e) {
-            // do nothing
-        }
-    }
-
-
-    @Before
-    public void resetParticipants() {
-
-        DataConfirmationHandler.reset();
-        DataCompensationHandler.reset();
-        DataTxLoggedHandler.reset();
-    }
-
-
-    @Test
-    public void testSimple() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
-
-        service.doWork();
-        Assert.assertEquals(true, DataConfirmationHandler.getDataNotNull());
-        Assert.assertEquals(true, DataConfirmationHandler.getDataAvailable());
-
-        Assert.assertEquals(false, DataCompensationHandler.getDataNotNull());
-        Assert.assertEquals(false, DataCompensationHandler.getDataAvailable());
-
-        Assert.assertEquals(true, DataTxLoggedHandler.getDataNotNull());
-        Assert.assertEquals(true, DataTxLoggedHandler.getDataAvailable());
-    }
-
-    @Test
-    public void testCompensate() throws Exception {
-
-        ParticipantCompletionCoordinatorRules.setParticipantCount(3);
-
-        uba.begin();
-        service.doWork();
-        uba.cancel();
-
-        Assert.assertEquals(false, DataConfirmationHandler.getDataNotNull());
-        Assert.assertEquals(false, DataConfirmationHandler.getDataAvailable());
-
-        Assert.assertEquals(true, DataCompensationHandler.getDataNotNull());
-        Assert.assertEquals(true, DataCompensationHandler.getDataAvailable());
-
-        Assert.assertEquals(true, DataTxLoggedHandler.getDataNotNull());
-        Assert.assertEquals(true, DataTxLoggedHandler.getDataAvailable());
-    }
-
 
 }

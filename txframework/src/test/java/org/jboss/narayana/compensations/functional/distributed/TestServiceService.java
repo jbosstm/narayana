@@ -29,10 +29,7 @@ import org.jboss.narayana.compensations.api.TxLogged;
 import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
 import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
 import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
-import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;
-import org.jboss.narayana.txframework.api.management.TXDataMap;
+import org.jboss.narayana.compensations.functional.common.DummyData;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,7 +48,7 @@ import javax.jws.soap.SOAPBinding;
 public class TestServiceService implements TestService {
 
     @Inject
-    TXDataMap<String, String> state;
+    DummyData state;
 
     @Compensatable
     @TxConfirm(DataConfirmationHandler.class)
@@ -59,7 +56,10 @@ public class TestServiceService implements TestService {
     @TxCompensate(DataCompensationHandler.class)
     public void saveData(Boolean throwRuntimeException) {
 
-        state.put("key", "value");
+        state.setValue("value");
+        DataConfirmationHandler.expectedDataValue="value";
+        DataCompensationHandler.expectedDataValue="value";
+        DataTxLoggedHandler.expectedDataValue="value";
 
         if (throwRuntimeException) {
             throw new RuntimeException("Test instructed the service to throw a RuntimeException");
@@ -74,7 +74,10 @@ public class TestServiceService implements TestService {
     @CancelOnFailure
     public void saveDataCancelOnFailure(Boolean throwRuntimeException) {
 
-        state.put("key", "value");
+        state.setValue("value");
+        DataConfirmationHandler.expectedDataValue="value";
+        DataCompensationHandler.expectedDataValue="value";
+        DataTxLoggedHandler.expectedDataValue="value";
 
         if (throwRuntimeException) {
             throw new RuntimeException("Test instructed the service to throw a RuntimeException");

@@ -339,6 +339,8 @@ function txframework_tests {
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
   ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
+  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF-distributed "$@" test
+  [ $? = 0 ] || fatal "TxFramework build failed"
 }
 
 function xts_tests {

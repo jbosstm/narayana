@@ -22,7 +22,6 @@
 
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
@@ -39,7 +38,7 @@ import java.util.Map;
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
-public class Participant implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
+public class ParticipantImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
 
     private Class<? extends CompensationHandler> compensationHandler;
     private Class<? extends ConfirmationHandler> confirmationHandler;
@@ -47,11 +46,11 @@ public class Participant implements BusinessAgreementWithParticipantCompletionPa
 
     private BeanManager beanManager;
     private ClassLoader applicationClassloader;
-    private TxContext currentTX;
+    private Object currentTX;
 
     private Map txDataMapState;
 
-    public Participant(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, TxContext currentTX) {
+    public ParticipantImpl(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, Object currentTX) {
 
         this.compensationHandler = compensationHandlerClass;
         this.confirmationHandler = confirmationHandlerClass;

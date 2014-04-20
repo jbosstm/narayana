@@ -22,10 +22,14 @@
 
 package org.jboss.narayana.compensations.functional.common;
 
+import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
+import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxLogged;
 import org.jboss.narayana.compensations.api.TxConfirm;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 
 import javax.inject.Inject;
 

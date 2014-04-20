@@ -23,10 +23,6 @@
 package org.jboss.narayana.compensations.impl;
 
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
-import com.arjuna.wst.SystemException;
 import org.jboss.narayana.compensations.api.CompensationScoped;
 import org.jboss.narayana.compensations.api.CompensationTransactionRuntimeException;
 
@@ -41,9 +37,9 @@ import java.util.Map;
 
 public class CompensationContext implements Context {
 
-    private static final Map<TxContext, Map<String, Object>> beanStorePerTransaction = new HashMap<TxContext, Map<String, Object>>();
+    private static final Map<Object, Map<String, Object>> beanStorePerTransaction = new HashMap<Object, Map<String, Object>>();
 
-    private static ThreadLocal<TxContext> txContextToExtend = new ThreadLocal<TxContext>();
+    private static ThreadLocal<Object> txContextToExtend = new ThreadLocal<Object>();
 
     @Override
     public Class<? extends Annotation> getScope() {
@@ -84,10 +80,9 @@ public class CompensationContext implements Context {
 
         try {
 
-            TxContext currentTX = txContextToExtend.get();
+            Object currentTX = txContextToExtend.get();
             if (currentTX == null) {
-                BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
-                currentTX = bam.currentTransaction();
+                currentTX = BAControllerFactory.getInstance().getCurrentTransaction();
             }
 
             if (beanStorePerTransaction.get(currentTX) == null) {
@@ -95,7 +90,7 @@ public class CompensationContext implements Context {
             }
             return beanStorePerTransaction.get(currentTX);
 
-        } catch (SystemException e) {
+        } catch (Exception e) {
             throw new CompensationTransactionRuntimeException("Error looking up Transaction", e);
         }
     }
@@ -107,15 +102,14 @@ public class CompensationContext implements Context {
         }
 
         try {
-            BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
-            TxContext currentTX = bam.currentTransaction();
+            Object currentTX = BAControllerFactory.getInstance().getCurrentTransaction();
             return currentTX != null;
-        } catch (SystemException e) {
+        } catch (Exception e) {
             throw new CompensationTransactionRuntimeException("Error looking up Transaction", e);
         }
     }
 
-    public static void setTxContextToExtend(TxContext currentTX) {
+    public static void setTxContextToExtend(Object currentTX) {
 
         txContextToExtend.set(currentTX);
     }
@@ -125,7 +119,8 @@ public class CompensationContext implements Context {
      *
      * @param currentTX the Transaction Context associated with this context.
      */
-    public static void close(TxContext currentTX) {
+    public static void close(Object currentTX) {
+        txContextToExtend.set(null);
         beanStorePerTransaction.remove(currentTX);
     }
 }

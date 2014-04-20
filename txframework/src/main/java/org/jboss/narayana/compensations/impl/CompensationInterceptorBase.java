@@ -21,20 +21,12 @@
  */
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.UnknownTransactionException;
-import com.arjuna.wst.WrongStateException;
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationManager;
-import org.jboss.narayana.compensations.api.TransactionCompensatedException;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -48,7 +40,15 @@ public class CompensationInterceptorBase {
     javax.enterprise.inject.spi.BeanManager beanManager;
 
     protected Object invokeInOurTx(InvocationContext ic) throws Exception {
-        beginBusinessActivity();
+
+        BAControler baControler;
+        Compensatable compensatable = getCompensatable(ic);
+        if (compensatable.distributed()) {
+            baControler =  BAControllerFactory.getRemoteInstance();
+        } else {
+            baControler =  BAControllerFactory.getLocalInstance();
+        }
+        baControler.beginBusinessActivity();
 
         Object result = null;
         boolean isException = false;
@@ -59,7 +59,7 @@ public class CompensationInterceptorBase {
             isException = true;
             handleException(ic, e, true);
         } finally {
-            completeBusinessActivity(isException);
+            baControler.completeBusinessActivity(isException);
         }
 
         return result;
@@ -81,38 +81,7 @@ public class CompensationInterceptorBase {
         return ic.proceed();
     }
 
-    private void beginBusinessActivity() throws WrongStateException, SystemException {
-        UserBusinessActivityFactory.userBusinessActivity().begin();
-        CompensationManagerImpl.resume(new CompensationManagerState());
-        TXDataMapImpl.resume(new HashMap());
-    }
 
-    private void closeBusinessActivity() throws WrongStateException, UnknownTransactionException, TransactionRolledBackException, SystemException {
-        UserBusinessActivityFactory.userBusinessActivity().close();
-        CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
-    }
-
-    private void cancelBusinessActivity() throws WrongStateException, UnknownTransactionException, SystemException {
-        UserBusinessActivityFactory.userBusinessActivity().cancel();
-        CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
-    }
-
-    private void completeBusinessActivity(final boolean isException) throws WrongStateException, UnknownTransactionException, SystemException {
-        if (CompensationManagerImpl.isCompensateOnly() && !isException) {
-            cancelBusinessActivity();
-            throw new TransactionCompensatedException("Transaction was marked as 'compensate only'");
-        } else if (CompensationManagerImpl.isCompensateOnly()) {
-            cancelBusinessActivity();
-        } else {
-            try {
-                closeBusinessActivity();
-            } catch (TransactionRolledBackException e) {
-                throw new TransactionCompensatedException("Failed to close transaction", e);
-            }
-        }
-    }
 
     private void handleException(final InvocationContext ic, final Exception exception, final boolean started) throws Exception {
         final Compensatable compensatable = getCompensatable(ic);

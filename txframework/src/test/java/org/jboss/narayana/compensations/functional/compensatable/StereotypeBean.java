@@ -21,8 +21,7 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -32,7 +31,7 @@ public class StereotypeBean {
 
     public void doSomething() throws TestException {
         try {
-            final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+            final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
             if (txContext == null) {
                 throw new RuntimeException("No transaction is active");

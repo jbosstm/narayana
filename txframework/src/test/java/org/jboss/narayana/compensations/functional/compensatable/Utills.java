@@ -21,9 +21,7 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
-import com.arjuna.wst.SystemException;
+import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.junit.Assert;
 
 /**
@@ -32,7 +30,7 @@ import org.junit.Assert;
 public class Utills {
 
     public static void assertTransactionActive(final boolean expectActive) throws Exception {
-        final TxContext txContext = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+        final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 
         if (expectActive) {
             if (txContext == null) {
@@ -45,14 +43,26 @@ public class Utills {
         }
     }
 
-    public static void assertSameTransaction(final TxContext txContext) throws SystemException {
-        Assert.assertTrue("Expected transaction to be the same, but it wasn't",
-                txContext == BusinessActivityManagerFactory.businessActivityManager().currentTransaction());
+    public static void assertSameTransaction(final Object txContext) throws Exception {
+        Object currentTx = BAControllerFactory.getInstance().getCurrentTransaction();
+        if (txContext == null && currentTx == null)  {
+            return;
+        }
+
+        if (txContext == null || currentTx == null) {
+            Assert.fail();
+        }
+        Assert.assertTrue("Expected transaction to be the same, but it wasn't. '" + txContext + "' != '" + currentTx + "'" ,
+                txContext.equals(currentTx));
     }
 
-    public static void assertDifferentTransaction(final TxContext txContext) throws SystemException {
-        Assert.assertTrue("Expected transaction to be different, but it wasn't",
-                txContext != BusinessActivityManagerFactory.businessActivityManager().currentTransaction());
+    public static void assertDifferentTransaction(final Object txContext) throws Exception {
+        Object currentTx = BAControllerFactory.getInstance().getCurrentTransaction();
+        if (txContext == null || currentTx == null) {
+            return;
+        }
+        Assert.assertTrue("Expected transaction to be different, but it wasn't. '" + txContext + "' == '" + currentTx + "'",
+                !txContext.equals(currentTx));
     }
 
 }

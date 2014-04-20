@@ -22,30 +22,13 @@
 
 package org.jboss.narayana.compensations.functional.compensationScoped;
 
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
-import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.functional.common.DataCompensationHandler;
-import org.jboss.narayana.compensations.functional.common.DataConfirmationHandler;
-import org.jboss.narayana.compensations.functional.common.DataTxLoggedHandler;
+import org.jboss.narayana.compensations.impl.BAControler;
 import org.jboss.narayana.compensations.functional.common.DummyData;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.enterprise.context.ContextNotActiveException;
 import javax.inject.Inject;
@@ -54,8 +37,7 @@ import javax.inject.Inject;
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
-@RunWith(Arquillian.class)
-public class CompensationScopedTest {
+public abstract class CompensationScopedTest {
 
     @Inject
     Service service;
@@ -63,56 +45,30 @@ public class CompensationScopedTest {
     @Inject
     DummyData dummyData;
 
-    UserBusinessActivity uba = UserBusinessActivityFactory.userBusinessActivity();
-    BusinessActivityManager bam = BusinessActivityManagerFactory.businessActivityManager();
+    abstract BAControler getBAControler();
 
+    @After
+    public void tearDown() {
 
-    @Deployment
-    public static JavaArchive createTestArchive() {
-
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addPackages(true, "org.jboss.narayana.compensations.functional")
-                .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-
-        return archive;
+        try {
+            getBAControler().cancelBusinessActivity();
+        } catch (Exception e) {
+        }
     }
-
-
-    @BeforeClass()
-    public static void submitBytemanScript() throws Exception {
-
-        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
-    @AfterClass()
-    public static void removeBytemanScript() {
-
-        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-    }
-
 
     @Before
     public void resetParticipants() {
 
-        DataConfirmationHandler.reset();
-        DataCompensationHandler.reset();
-        DataTxLoggedHandler.reset();
-
         MyCompensationHandler.dataAvailable = false;
         MyConfirmationHandler.dataAvailable = false;
-        MyTransactionLoggedHandler.dataAvailable = false;
     }
 
     @Test
     public void testSimple() throws Exception {
 
-        uba.begin();
-
+        getBAControler().beginBusinessActivity();
         dummyData.setValue("1");
-        Assert.assertEquals("1", dummyData.getValue());
-
-        uba.close();
+        getBAControler().closeBusinessActivity();
     }
 
     @Test
@@ -126,10 +82,8 @@ public class CompensationScopedTest {
 
         assertContextUnavailable();
 
-        uba.begin();
-        dummyData.setValue("1");
-        Assert.assertEquals("1", dummyData.getValue());
-        uba.close();
+        getBAControler().beginBusinessActivity();
+        getBAControler().closeBusinessActivity();
 
         assertContextUnavailable();
     }
@@ -139,29 +93,29 @@ public class CompensationScopedTest {
 
         assertContextUnavailable();
 
-        uba.begin();
+        getBAControler().beginBusinessActivity();
         dummyData.setValue("1");
         Assert.assertEquals("1", dummyData.getValue());
-        TxContext txContext1 = bam.suspend();
+        Object txContext1 = getBAControler().suspend();
 
         assertContextUnavailable();
 
-        uba.begin();
+        getBAControler().beginBusinessActivity();
         dummyData.setValue("2");
         Assert.assertEquals("2", dummyData.getValue());
-        TxContext txContext2 = bam.suspend();
+        Object txContext2 = getBAControler().suspend();
 
         assertContextUnavailable();
 
-        bam.resume(txContext1);
+        getBAControler().resume(txContext1);
         Assert.assertEquals("1", dummyData.getValue());
-        uba.close();
+        getBAControler().closeBusinessActivity();
 
         assertContextUnavailable();
 
-        bam.resume(txContext2);
+        getBAControler().resume(txContext2);
         Assert.assertEquals("2", dummyData.getValue());
-        uba.close();
+        getBAControler().closeBusinessActivity();
 
         assertContextUnavailable();
     }
@@ -184,15 +138,13 @@ public class CompensationScopedTest {
 
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
-        MyTransactionLoggedHandler.expectedData = "blah";
 
-        uba.begin();
+        getBAControler().beginBusinessActivity();
         service.doWork("blah");
-        uba.cancel();
+        getBAControler().cancelBusinessActivity();
 
         Assert.assertEquals(true, MyCompensationHandler.dataAvailable);
         Assert.assertEquals(false, MyConfirmationHandler.dataAvailable);
-        Assert.assertEquals(true, MyTransactionLoggedHandler.dataAvailable);
     }
 
 
@@ -203,15 +155,13 @@ public class CompensationScopedTest {
 
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
-        MyTransactionLoggedHandler.expectedData = "blah";
 
-        uba.begin();
+        getBAControler().beginBusinessActivity();
         service.doWork("blah");
-        uba.close();
+        getBAControler().closeBusinessActivity();
 
         Assert.assertEquals(false, MyCompensationHandler.dataAvailable);
         Assert.assertEquals(true, MyConfirmationHandler.dataAvailable);
-        Assert.assertEquals(true, MyTransactionLoggedHandler.dataAvailable);
     }
 
 }

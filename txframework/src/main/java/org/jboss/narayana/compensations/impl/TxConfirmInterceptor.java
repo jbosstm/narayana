@@ -22,11 +22,6 @@
 
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.UnknownTransactionException;
-import com.arjuna.wst.WrongStateException;
-import com.arjuna.wst11.BAParticipantManager;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.api.TxConfirm;
@@ -37,7 +32,6 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
@@ -54,15 +48,16 @@ public class TxConfirmInterceptor extends ParticipantInterceptor {
     }
 
     @Override
-    protected BAParticipantManager enlistParticipant(BusinessActivityManager bam, Method method) throws WrongStateException, UnknownTransactionException, SystemException {
+    protected ParticipantManager enlistParticipant(Method method) throws Exception {
 
-        if (bam.currentTransaction() == null) {
+        BAControler baControler = BAControllerFactory.getInstance();
+
+        if (!baControler.isBARunning()) {
             throw new NoTransactionException("Methods annotated with '" + TxConfirm.class.getName() + "' must be invoked in the context of a compensation based transaction");
         }
 
         Class<? extends ConfirmationHandler> confirmationHandler = getConfirmationHandler(method);
-        Participant compensationParticipant = new Participant(null, confirmationHandler, null, bam.currentTransaction());
-        return bam.enlistForBusinessAgreementWithParticipantCompletion(compensationParticipant, String.valueOf(UUID.randomUUID()));
+        return baControler.enlist(null, confirmationHandler, null);
     }
 
     private Class<? extends ConfirmationHandler> getConfirmationHandler(Method method) {
