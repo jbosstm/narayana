@@ -195,6 +195,10 @@ function build_as {
   git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
+  WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" pom.xml |  sed -e "s/\s\+<version>\(.*\?\)<\/version>/\1/"`
+  echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
+  [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || fatal "Need to upgrade the jboss-as.version in the narayana pom.xml to ${WILDFLY_VRESION_FROM_JBOSS_AS}"
+
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
@@ -534,7 +538,10 @@ init_test_options
 # export WSTX_MODULES="WSAS,WSCF,WSTX,WS-C,WS-T,xtstest,crash-recovery-tests"
 
 [ -z "${WORKSPACE}" ] && fatal "UNSET WORKSPACE"
-[ -z "${WILDFLY_MASTER_VERSION}" ] && fatal "UNSET WILDFLY_MASTER_VERSION"
+#[ -z "${WILDFLY_MASTER_VERSION}" ] && fatal "UNSET WILDFLY_MASTER_VERSION"
+# INFER WILDFLY_MASTER_VERSION from pom.xml
+WILDFLY_MASTER_VERSION=`grep 'jboss-as.version' pom.xml | sed -e 's/\s\+<jboss-as.version>\(.*\?\)<\/jboss-as.version>/\1/'`
+echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
 
 # FOR DEBUGGING SUBSEQUENT ISSUES
 free -m
