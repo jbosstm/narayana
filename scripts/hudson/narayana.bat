@@ -1,4 +1,6 @@
 if not defined WORKSPACE (call:fail_build & exit -1)
+for /f "usebackq delims=<,> tokens=3" %%i in (`findstr "jboss-as.version" pom.xml`) do @set WILDFLY_MASTER_VERSION=%%i
+echo "Set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION%"
 
 call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
 
@@ -12,6 +14,9 @@ cd jboss-as
 git remote add upstream https://github.com/wildfly/wildfly.git
 git pull --rebase --ff-only -s recursive -Xtheirs upstream master
 if %ERRORLEVEL% NEQ 0 exit -1
+for /f "usebackq delims=<,> tokens=3" %%i in (`gawk "/wildfly-parent/ {getline;print;}" pom.xml`) do @set WILDFLY_VERSION_FROM_JBOSS_AS=%%i
+echo "AS version is %WILDFLY_VERSION_FROM_JBOSS_AS%"
+if not "%WILDFLY_MASTER_VERSION%" == "%WILDFLY_VERSION_FROM_JBOSS_AS%" (call:comment_on_pull "Need to upgrade the jboss-as.version in the narayana pom.xml to %WILDFLY_VRESION_FROM_JBOSS_AS% - Check AS Version Failed %BUILD_URL%" & exit -1)
 echo "Building AS"
 set MAVEN_OPTS="-Xmx768M"
 call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - AS Failed %BUILD_URL%" & exit -1)
