@@ -42,13 +42,11 @@ public class RecoverConnectableAtomicAction extends AtomicAction {
 	private Xid xid;
 	private boolean hasCompleted;
 
-	public RecoverConnectableAtomicAction(String type, Uid rcvUid)
+	public RecoverConnectableAtomicAction(String type, Uid rcvUid, InputObjectState os)
 			throws ObjectStoreException, IOException {
 		super(rcvUid);
 		this.recoveringAs = type;
-
-		InputObjectState os = StoreManager.getParticipantStore()
-				.read_committed(objectUid, type());
+		
 		// Unpack BasicAction::save_state preamble
 		Header hdr = new Header();
 		unpackHeader(os, hdr);
