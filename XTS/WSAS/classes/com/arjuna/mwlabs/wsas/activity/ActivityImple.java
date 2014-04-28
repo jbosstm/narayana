@@ -482,22 +482,20 @@ public class ActivityImple
 
 	public boolean equals (Object obj)
 	{
-		if (obj != null)
-		{
-			if (obj != this)
-			{
-				if (obj instanceof ActivityImple)
-				{
-					if (((ActivityImple) obj).getGlobalId().equals(getGlobalId()))
-						return true;
-				}
-				else
-					return true;
-			}
-		}
 
-		return false;
-	}
+        if (obj == null)
+            return false;
+
+        if (obj == this)
+            return true;
+
+        if (obj instanceof ActivityImple) {
+            if (((ActivityImple) obj).getGlobalId().equals(getGlobalId()))
+                return true;
+        }
+
+        return false;
+    }
 
 	/**
 	 * Return the activity hierarchy that this activity is within. The zeroth
