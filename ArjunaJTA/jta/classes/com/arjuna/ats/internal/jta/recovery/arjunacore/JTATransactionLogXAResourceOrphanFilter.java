@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
@@ -63,10 +64,13 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
 
     private boolean containsCommitMarkableResourceRecord(Uid u) {
         try {
-            RecoverConnectableAtomicAction rcaa = new RecoverConnectableAtomicAction(
-                RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE, u);
+            InputObjectState state = StoreManager.getRecoveryStore().read_committed(
+                    u, RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE);
+            if (state != null) {
+                RecoverConnectableAtomicAction rcaa = new RecoverConnectableAtomicAction(RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE, u, state);
 
-            return (rcaa.containsIncompleteCommitMarkableResourceRecord());
+                return (rcaa.containsIncompleteCommitMarkableResourceRecord());
+            }
         } catch (ObjectStoreException e) {
         } catch (IOException e) {
         }
