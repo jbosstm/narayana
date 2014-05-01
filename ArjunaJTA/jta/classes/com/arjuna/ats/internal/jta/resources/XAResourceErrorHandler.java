@@ -119,7 +119,7 @@ public class XAResourceErrorHandler
     public int handleCMRCommitError(boolean onePhase) {
 //TODO        addDeferredThrowable(e1);
 
-        jtaLogger.i18NLogger.warn_resources_arjunacore_opcerror(XAHelper.xidToString(xid),
+        jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(xid),
                 xaResource.toString(), XAHelper.printXAErrorCode(e), e);
 
         if (onePhase) {
