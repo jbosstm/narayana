@@ -124,8 +124,8 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_PerfTest() {
-        String threadCount = "40"; //"10";
-        String numberOfCalls = "100000"; //"100000";
+        String threadCount = "20"; //"10";
+        String numberOfCalls = "10000"; //"100000";
         Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 960);
         server1.start("$(1)");
 
