@@ -409,8 +409,8 @@ public class ShadowingStore extends FileSystemStore
                     {
                         closeAndUnlock(fd, ifile, null);
 
-                        throw new ObjectStoreException(
-                                "ShadowingStore::read_state error: " + e, e);
+                        tsLogger.logger.info("ObjectStore record was deleted during restoration, users should not deleted records manually: " + fd.getAbsolutePath(), e);
+                        return null;
                     }
 
                     /* now try to read the actual image out of the store */
