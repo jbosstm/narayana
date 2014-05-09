@@ -709,6 +709,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                 */
 
 	                boolean commit = true;
+	                XAException endRBOnly = null;
 
 	                try
 	                {
@@ -745,7 +746,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                         * Has been marked as rollback-only. We still
 	                         * need to call rollback.
 	                         */
-
+	                    	endRBOnly = e1;
 	                        commit = false;
 	                        break;
 	                    case XAException.XAER_RMERR:
@@ -760,7 +761,12 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    }
 	                }
 
-	                _theXAResource.commit(_tranID, true);
+	                if (commit)
+	                    _theXAResource.commit(_tranID, true);
+	                else {
+	                    _theXAResource.rollback(_tranID);
+	                    throw endRBOnly;
+	                }
 	            }
 	            catch (XAException e1)
 	            {
