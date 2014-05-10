@@ -111,3 +111,11 @@ org.jboss.stm.LockException: Thread[vert.x-eventloop-thread-4,5,main] could not 
 	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:353)
 	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:101)
 	at java.lang.Thread.run(Thread.java:722)
+
+The multiple verticle instances are likely to interfere with each other as they try to read or write to the
+same object. The transaction system will always ensure consistency and in the case of a conflict or error such as
+those mentioned above, the transaction will be rolled back. A retry attempt will eventually succeed. Our example does
+not do retries as it is simply meant as informative.
+
+Note, several of these warning messages could be info/debug and we are considering changes. See https://issues.jboss.org/browse/JBTM-2168
+for further details.
