@@ -43,7 +43,7 @@ public class ClientVerticle extends Verticle {
 
     container.deployVerticle("SampleVerticle1.java");
 
-    //container.deployVerticle("SampleVerticle2.java", 4);
+    // container.deployVerticle("SampleVerticle2.java", 4);
 
     System.out.println("Object name: "+theContainer.getIdentifier(obj1));
 
