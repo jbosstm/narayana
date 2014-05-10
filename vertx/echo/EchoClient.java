@@ -100,15 +100,13 @@ public class EchoClient extends Verticle {
 
 	  // Modify this line if sharing state and uncomment.
 	  // Uid u = new Uid("0:ffffc0a80003:c915:529f59de:1");
-	  Uid u = new Uid("0:ffffc0a8000f:e84e:5325d6d2:0");
 
 	  Container<Sample> theContainer = new Container<Sample>("Demo", Container.TYPE.PERSISTENT, Container.MODEL.SHARED);
 
 	  // Modify this line if sharing state and uncomment.
-	  Sample obj1 = theContainer.clone(new SampleLockable(10), u);
+	  // Sample obj1 = theContainer.clone(new SampleLockable(10), u);
 
-	  // Comment it out if you are going to share state.
-	  // Sample obj1 = theContainer.create(new SampleLockable(10));
+	  Sample obj1 = theContainer.create(new SampleLockable(10));
 
 	System.out.println("Object name: "+theContainer.getIdentifier(obj1));
 
