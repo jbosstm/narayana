@@ -29,7 +29,7 @@ import org.jboss.stm.Container;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.ObjectModel;
 
-public class EchoClient extends Verticle {
+public class ClientVerticle extends Verticle {
     public static String LEADER = "LEADER_SLOT";
 
   public void start() {
@@ -41,22 +41,64 @@ public class EchoClient extends Verticle {
 
     map.put(LEADER, theContainer.getIdentifier(obj1).toString());
 
-    System.err.println("**shared object "+theContainer.getIdentifier(obj1).toString());
+    container.deployVerticle("SampleVerticle1.java");
 
-    container.deployVerticle("EchoServer.java");
+    //container.deployVerticle("SampleVerticle2.java", 4);
 
     System.out.println("Object name: "+theContainer.getIdentifier(obj1));
 
     //Now send some data
     for (int i = 0; i < 10; i++) {
 	AtomicAction A = new AtomicAction();
+	boolean shouldCommit = true;
 
 	A.begin();
-	obj1.increment();
 
-	System.out.println("State value is: "+obj1.value());
+	try
+	{
+	    obj1.increment();
 
-	A.commit();
+	    System.out.println("State value is: "+obj1.value());
+	}
+	catch (final Throwable ex)
+	{
+	    ex.printStackTrace();
+
+	    shouldCommit = false;
+	}
+
+	if (shouldCommit)
+	    A.commit();
+	else
+	    A.abort();
+    }
+
+    AtomicAction B = new AtomicAction();
+    int value = -1;
+    boolean doCommit = true;
+
+    B.begin();
+
+    try
+    {
+	value = obj1.value();
+    }
+    catch (final Throwable ex)
+    {
+	doCommit = false;
+    }
+
+    if (doCommit)
+    {
+	B.commit();
+	
+	System.out.println("ClientVerticle initialised state: "+value);
+    }
+    else
+    {
+	B.abort();
+
+	System.out.println("ClientVerticle could not initialise state.");
     }
   }
 }
