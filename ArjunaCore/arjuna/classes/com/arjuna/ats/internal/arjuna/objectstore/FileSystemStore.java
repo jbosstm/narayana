@@ -364,13 +364,13 @@ public abstract class FileSystemStore extends ObjectStore
             tsLogger.logger.trace("FileSystemStore.openAndLock(" + fname + ", " + FileLock.modeString(lmode) + ", " + create + ")");
         }
 
+        File fd = null;       
+
         /*
-         * Consider re-introducting the FdCache concept from original Arjuna
+         * Consider re-introducing the FdCache concept from original Arjuna
          * to save time on checking if exists etc.
          */
-
-        File fd = null;
-
+        
         if (fd == null)
         {
             fd = new File(fname);
