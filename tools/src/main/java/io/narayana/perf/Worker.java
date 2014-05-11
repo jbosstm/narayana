@@ -28,17 +28,28 @@ package io.narayana.perf;
  */
 public interface Worker<T> {
     /**
-     * Perform a single unit of work. @see PerformanceTester begins a number of threads and each thread
-     * then invokes the doWork method in parallel until there is no more remaining work.
+     * Perform a single unit of work. @see Measurement starts a number of threads and each thread
+     * then invokes the doWork method in parallel until there is no more work remaining.
      *
      * @param context a thread specific instance that may have been returned by a previous invocation of the doWork
      *                method by this thread. This may be useful if the worker needs to save thread specific data
-     * @param niters the number of work iterations to perform in this batch
-     * @param opts config parameters for the work that triggered this call
+     * @param batchSize the number of work iterations to perform in this batch
+     * @param config config parameters for the work that triggered this call
+     *
      * @return A thread specific instance that will be passed to subsequent calls to the doWork method by the thread
      */
-    T doWork(T context, int niters, Result<T> opts);
+    T doWork(T context, int batchSize, Measurement<T> config);
 
+    /**
+     * Old interface
+     * @deprecated use {@link Worker#doWork(Object, int, Measurement)} instead
+     * @param context {@see Worker.doWork}
+     * @param batchSize {@see Worker.doWork}
+     * @param config {@see Worker.doWork}
+     * @return {@see Worker.doWork}
+     */
+    @Deprecated
+    T doWork(T context, int batchSize, Result<T> config);
     /**
      * notify the worker that the test is starting
      */

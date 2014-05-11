@@ -46,6 +46,22 @@ public class FactorialWorker implements Worker<BigInteger> {
         return partialFac;
     }
 
+
+    @Override
+    public BigInteger doWork(BigInteger partialFac, int niters, Measurement<BigInteger> opts) {
+        int from = facBase.getAndAdd(niters);
+        int to = from + niters;
+
+        if (partialFac == null)
+            partialFac = BigInteger.ONE;
+
+        for (long i = from + 1; i <= to; i++)
+            partialFac = partialFac.multiply(BigInteger.valueOf(i));
+
+        workTimeMillis = System.currentTimeMillis();
+
+        return partialFac;    }
+
     @Override
     public void init() {
         initTimemillis = System.currentTimeMillis();

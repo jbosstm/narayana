@@ -36,6 +36,7 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.RootOA;
+import io.narayana.perf.Measurement;
 import io.narayana.perf.PerformanceTester;
 import io.narayana.perf.Result;
 
@@ -44,8 +45,10 @@ public class PerfHammer
     public static void main(String[] args) throws Exception
     {
         String gridReference = args[0];
-        int threadCount = args.length > 1 ? Integer.parseInt(args[1]) : 10;
-        int numberOfCalls = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
+        int numberOfCalls = args.length > 1 ? Integer.parseInt(args[1]) : 10000;
+        int threadCount = args.length > 2 ? Integer.parseInt(args[2]) : 20;
+        int batchSize = args.length > 3 ? Integer.parseInt(args[3]) : 20;
+
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
@@ -56,19 +59,14 @@ public class PerfHammer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        PerformanceTester tester = new PerformanceTester();
         GridWorker worker = new GridWorker(myORB, gridReference);
-        Result opts = new Result(threadCount, numberOfCalls);
+        Measurement measurement = new Measurement(worker, numberOfCalls, threadCount, batchSize);
 
-        try {
-            tester.measureThroughput(worker, opts);
+        measurement.measure();
 
-            System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
-                    ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
-                    opts.getErrorCount(), opts.getTotalMillis());
-        } finally {
-            tester.fini();
-        }
+        System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
+                          ORBInfo.getOrbName(), measurement.getThroughput(), measurement.getNumberOfCalls(), measurement.getThreadCount(),
+                          measurement.getErrorCount(), measurement.getTotalMillis());
 
         System.out.println("Passed");
     }

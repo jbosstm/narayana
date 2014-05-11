@@ -28,10 +28,14 @@ import java.util.*;
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
  *
  * Config data for running a work load (@see PerformanceTester and @see Worker)
+ *
+ * @deprecated use {@link Measurement} instead.
  */
+@Deprecated
 public class Result<T> implements Serializable {
     int threadCount = 1;
     int numberOfCalls;
+    int batchSize;
     int errorCount;
     long totalMillis;
     int one; // time in msecs to do one call
@@ -135,4 +139,11 @@ public class Result<T> implements Serializable {
         return info;
     }
 
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
 }

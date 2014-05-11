@@ -27,6 +27,7 @@ import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.ts.jts.TestModule.grid;
 import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;
+import io.narayana.perf.Measurement;
 import io.narayana.perf.Result;
 import io.narayana.perf.Worker;
 import org.omg.CosTransactions.NoTransaction;
@@ -60,7 +61,7 @@ class GridWorker implements Worker {
     }
 
     @Override
-    public Object doWork(Object context, int niters, Result opts) {
+    public Object doWork(Object context, int niters, Measurement opts) {
         boolean running = false;
         try {
             for (int i = 0; i < niters; i++) {
@@ -74,11 +75,11 @@ class GridWorker implements Worker {
         } catch (Exception sysEx) {
             sysEx.printStackTrace(System.err);
             opts.setInfo("work exception " + sysEx.getMessage());
-            opts.incrementErrorCount();
+            opts.incrementErrorCount(1);
             TestUtility.fail(sysEx.toString());
         } finally {
             if (running) {
-                opts.incrementErrorCount();
+                opts.incrementErrorCount(1);
                 opts.setInfo("work exception txn should have finished");
                 TestUtility.fail("work exception txn should have finished");
 
@@ -90,6 +91,11 @@ class GridWorker implements Worker {
             }
         }
 
+        return null;
+    }
+
+    @Override
+    public Object doWork(Object context, int batchSize, Result config) {
         return null;
     }
 

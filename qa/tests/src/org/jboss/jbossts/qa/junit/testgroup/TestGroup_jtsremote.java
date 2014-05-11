@@ -124,12 +124,14 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_PerfTest() {
-        String threadCount = "20"; //"10";
         String numberOfCalls = "10000"; //"100000";
+        String threadCount = "20"; //"10";
+        String batchSize = "20"; //"10";
+
         Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 960);
         server1.start("$(1)");
 
-        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)", threadCount, numberOfCalls);
+        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)", numberOfCalls, threadCount, batchSize);
 
         server1.terminate();
     }
