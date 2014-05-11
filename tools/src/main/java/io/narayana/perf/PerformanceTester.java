@@ -30,7 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
  *
  * Workload runner for measuring the maximum throughput of an instance of @see Worker
+ *
+ * @deprecated use {@link io.narayana.perf.Measurement#measure()} instead.
  */
+@Deprecated
 public class PerformanceTester<T> {
     private static int DEF_WORK_BATCH_SZ = 32;
     private static int DEF_THREAD_POOL_SZ = 100;
@@ -104,7 +107,7 @@ public class PerformanceTester<T> {
 
         worker.init();
 
-        for (int i = 0; i < opts.getThreadCount(); i++)
+        for (int i = 0; i < opts.getThreadCount(); i++) {
             tasks.add(executor.submit(new Callable<Result<T>>() {
                 public Result<T> call() throws Exception {
                     Result<T> res = new Result<T>(opts);
@@ -129,12 +132,17 @@ public class PerformanceTester<T> {
                     return res;
                 };
             }));
-
-        long start = System.nanoTime();
+        }
 
         try {
+            long start = System.nanoTime();
+
             cyclicBarrier.await(); // wait for each thread to arrive at the barrier
             cyclicBarrier.await(); // wait for each thread to finish
+
+            long end = System.nanoTime();
+
+            opts.setTotalMillis((end - start) / 1000000L);
 
             worker.fini();
         } catch (InterruptedException e) {
@@ -143,10 +151,8 @@ public class PerformanceTester<T> {
             throw new RuntimeException(e);
         }
 
-        long end = System.nanoTime();
-
-        opts.setTotalMillis(0L);
         opts.setErrorCount(0);
+        opts.setBatchSize(BATCH_SIZE);
 
         for (Future<Result<T>> t : tasks) {
             try {
@@ -161,8 +167,6 @@ public class PerformanceTester<T> {
                 opts.setErrorCount(opts.getErrorCount() + BATCH_SIZE);
             }
         }
-
-        opts.setTotalMillis((end - start) / 1000000L);
 
         return opts;
     }
