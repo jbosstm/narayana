@@ -44,8 +44,9 @@ public class PerfHammer
     public static void main(String[] args) throws Exception
     {
         String gridReference = args[0];
-        int threadCount = args.length > 1 ? Integer.parseInt(args[1]) : 10;
-        int numberOfCalls = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
+        int numberOfCalls = args.length > 1 ? Integer.parseInt(args[1]) : 10;
+        int threadCount = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
+        int batchSize = args.length > 3 ? Integer.parseInt(args[3]) : 100;
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
@@ -56,7 +57,7 @@ public class PerfHammer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        PerformanceTester tester = new PerformanceTester();
+        PerformanceTester tester = new PerformanceTester(threadCount, batchSize);
         GridWorker worker = new GridWorker(myORB, gridReference);
         Result opts = new Result(threadCount, numberOfCalls);
 
