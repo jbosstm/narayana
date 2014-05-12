@@ -44,9 +44,13 @@ public class PerfHammer
     public static void main(String[] args) throws Exception
     {
         String gridReference = args[0];
-        int numberOfCalls = args.length > 1 ? Integer.parseInt(args[1]) : 10;
-        int threadCount = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
-        int batchSize = args.length > 3 ? Integer.parseInt(args[3]) : 100;
+        int defaultNumberOfCalls = args.length > 1 ? Integer.parseInt(args[1]) : 10;
+        int defaultThreadCount = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
+        int defaultBatchSize = args.length > 3 ? Integer.parseInt(args[3]) : 100;
+
+        int numberOfCalls = Integer.getInteger("testgroup.jtsremote.perftest.numberOfCalls", defaultNumberOfCalls);
+        int threadCount = Integer.getInteger("testgroup.jtsremote.perftest.numberOfThreads", defaultThreadCount);
+        int batchSize = Integer.getInteger("testgroup.jtsremote.perftest.batchSize", defaultBatchSize);
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
