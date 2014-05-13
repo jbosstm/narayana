@@ -53,7 +53,6 @@ public class InvocationHandlerUnitTest extends TestCase
         public void notTransactionalWork ();
     }
 
-    @Transactional
     public class SampleLockable implements Sample
     {
         public void myWork ()

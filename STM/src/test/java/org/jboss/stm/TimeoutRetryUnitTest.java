@@ -54,7 +54,6 @@ public class TimeoutRetryUnitTest extends TestCase
        public int value ();
     }
     
-    @Transactional
     public class SampleLockable implements Sample
     {
         public SampleLockable (int init)

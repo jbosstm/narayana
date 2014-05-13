@@ -53,8 +53,6 @@ public class OptimisticHammerUnitTest extends TestCase
        public int value ();
     }
     
-    @Transactional
-    @Optimistic
     public class SampleLockable implements Sample
     {
         public SampleLockable (int init)
