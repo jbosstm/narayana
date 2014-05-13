@@ -416,6 +416,22 @@ cat << 'EOF' > $WORKSPACE/qa/dist/${NARAYANA_VERSION}/etc/log4j.xml
 EOF
 }
 
+function add_qa_xargs {
+  NXT=$(grep "NEXT_COMMAND_LINE_ARG=" TaskImpl.properties)
+  [ $? = 0 ] || return 1
+
+  let i=$(echo $NXT | sed 's/^.*[^0-9]\([0-9]*\).*$/\1/')
+
+  XARGS=
+  IFS=' ' read -ra ADDR <<< "$1"
+  for j in "${ADDR[@]}"; do
+    XARGS="${XARGS}\nCOMMAND_LINE_$i=$j"
+    let i=i+1
+  done
+
+  sed -i "s/NEXT_COMMAND_LINE_ARG=.*$/${XARGS}/" TaskImpl.properties
+}
+
 function qa_tests_once {
   echo "QA Test Suite $@"
   cd $WORKSPACE/qa
@@ -444,6 +460,10 @@ function qa_tests_once {
 
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
+
+  if [[ x"$EXTRA_QA_SYSTEM_PROPERTIES" != "x" ]]; then
+    add_qa_xargs "$EXTRA_QA_SYSTEM_PROPERTIES"
+  fi
 
   # delete lines containing jacorb
   [ $orbtype != "jacorb" ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
