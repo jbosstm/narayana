@@ -55,7 +55,7 @@ public class LockConflictManager
     }
 
     /**
-     * Wait for the specified timeout and retry. We may either sleep the thread,
+     * Wait for the specified timeout (in milliseconds) and retry. We may either sleep the thread,
      * or block it on a mutex. Returns the time taken to wait.
      */
 
