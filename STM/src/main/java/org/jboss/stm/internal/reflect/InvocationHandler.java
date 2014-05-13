@@ -113,7 +113,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
          * Do we need to use the optimistic LockManager instance?
          */
         
-        Class<?> c = obj.getClass().getSuperclass();
+        Class<?> c = obj.getClass();
         
         while (c != null)
         {
@@ -198,7 +198,9 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
          * is called?
          */       
         
-        c = obj.getClass().getSuperclass();
+        c = obj.getClass();
+        
+        // yeah ok, should use isAnnotationPresent ...
         
         while (c != null)
         {
