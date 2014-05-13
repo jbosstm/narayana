@@ -135,11 +135,11 @@ public class OptimisticHammerUnitTest extends TestCase
 
     public void testRecoverableHammer ()
     {
-        RecoverableContainer<Sample> theContainer = new RecoverableContainer<Sample>();
-        Sample obj1 = theContainer.enlist(new SampleLockable(10));
-        Sample obj2 = theContainer.enlist(new SampleLockable(10));       
-        Sample obj3 = theContainer.enlist(new SampleLockable(0), theContainer.getUidForHandle(obj1));
-        Sample obj4 = theContainer.enlist(new SampleLockable(0), theContainer.getUidForHandle(obj1));
+        Container<Sample> theContainer = new Container<Sample>();
+        Sample obj1 = theContainer.create(new SampleLockable(10));
+        Sample obj2 = theContainer.create(new SampleLockable(10));       
+        Sample obj3 = theContainer.clone(new SampleLockable(0), obj1);
+        Sample obj4 = theContainer.clone(new SampleLockable(0), obj1);
         int workers = 2;
         Worker[] worker = new Worker[workers];
         
