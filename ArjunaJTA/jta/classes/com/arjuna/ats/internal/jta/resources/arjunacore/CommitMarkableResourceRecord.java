@@ -39,6 +39,7 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.jboss.tm.ConnectableResource;
 import org.jboss.tm.XAResourceWrapper;
 
@@ -184,7 +185,9 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 		}
 
 		if (isPerformImmediateCleanupOfBranches) {
-			tx.registerSynchronization(new Synchronization() {
+			// a session synch may enlist a CMR in a transaction so this sycnh must be correctly ordered 
+			new TransactionSynchronizationRegistryImple()
+					.registerInterposedSynchronization(new Synchronization() {
 
 				@Override
 				public void beforeCompletion() {
@@ -259,7 +262,9 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				}
 			});
 		} else if (isNotifyRecoveryModuleOfCompletedBranches) {
-			tx.registerSynchronization(new Synchronization() {
+			// a session synch may enlist a CMR in a transaction so this sycnh must be correctly ordered 
+			new TransactionSynchronizationRegistryImple()
+					.registerInterposedSynchronization(new Synchronization() {
 
 				@Override
 				public void beforeCompletion() {
@@ -378,14 +383,14 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			tsLogger.logger.trace("CommitMarkableResourceRecord.topLevelPrepare for " + this + ", record id=" + order());
 		}
 
-        try {
-            PreparedStatement prepareStatement = null;
+		try {
+			PreparedStatement prepareStatement = null;
 
 			preparedConnection = (Connection) connectableResource
 					.getConnection();
 
-            try {
-			    prepareStatement = preparedConnection
+			try {
+				prepareStatement = preparedConnection
 					.prepareStatement("insert into "
 							+ tableName
 							+ " (xid, transactionManagerID, actionuid) values (?,?,?)");
@@ -405,13 +410,13 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 				if (prepareStatement.executeUpdate() != 1) {
 					tsLogger.logger.warn("Update was not successful");
-                    removeConnection();
+					removeConnection();
 
 					return TwoPhaseOutcome.PREPARE_NOTOK;
 				}
 			} finally {
-                if (prepareStatement != null)
-				    prepareStatement.close();
+				if (prepareStatement != null)
+					prepareStatement.close();
 			}
 
 			return TwoPhaseOutcome.PREPARE_OK;
