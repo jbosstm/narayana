@@ -26,10 +26,11 @@ import java.lang.annotation.*;
 /**
  * State that will be written to the log (or restored).
  * 
+ * By default, all member variables (non-static, non-volatile) will be
+ * saved.
+ * 
  * @author marklittle
  */
-
-//default to saving all state?
         
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
