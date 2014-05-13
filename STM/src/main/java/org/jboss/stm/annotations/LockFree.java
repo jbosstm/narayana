@@ -24,16 +24,14 @@ package org.jboss.stm.annotations;
 import java.lang.annotation.*;
 
 /**
- * Use optimistic concurrency control. This may mean
- * that a transaction is forced to abort at the end
- * due to conflicting updates made by other users.
+ * No locks will be obtained on this method, though
+ * any transaction context will still be on the thread.
  * 
  * @author marklittle
- *
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface Optimistic
+@Target({ ElementType.METHOD })
+public @interface LockFree
 {
 }
