@@ -229,7 +229,7 @@ public class Container<T>
     
     /**
      * Given an identified for an existing object, create another handle. This is particularly
-     * useful when using pessimistic concurrency control and we need one object instance per
+     * useful when using optimistic concurrency control and we need one object instance per
      * thread to ensure that state is safely managed.
      * 
      * WARNING: if the Uid is invalid, e.g., points to a state that no longer exists, then a handle
