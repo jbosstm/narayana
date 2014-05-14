@@ -32,6 +32,12 @@ import java.lang.annotation.*;
  * @author marklittle
  */
         
+/*
+ * This annotation is not needed since only things annotated with the NotState annotation
+ * are ignored and everything else will be saved. Maybe we need a class-level annotation
+ * that basically says "all member state must have an annotation to indicate State or NotState"?
+ */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface State
