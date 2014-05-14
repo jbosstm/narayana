@@ -24,6 +24,7 @@ package org.jboss.stm;
 import java.lang.reflect.Proxy;
 import java.util.WeakHashMap;
 
+import org.jboss.stm.BasicContainerUnitTest.TestObject;
 import org.jboss.stm.internal.RecoverableContainer;
 import org.jboss.stm.internal.reflect.InvocationHandler;
 
@@ -51,7 +52,7 @@ import org.jboss.stm.internal.reflect.InvocationHandler;
  */
 
 public class TestContainer<T> extends RecoverableContainer<T>
-{
+{    
     /**
      * Given an object we create a new transactional instance of it and return that
      * for future use. All accesses on the returned object will be managed according to

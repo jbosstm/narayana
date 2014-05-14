@@ -424,6 +424,17 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
         }
     }
     
+    /**
+     * It might be useful to get the Container for the object at some points.
+     * 
+     * @return the container reference.
+     */
+    
+    protected final RecoverableContainer<T> getContainer ()
+    {
+        return _container;
+    }
+    
     private static boolean initialiseStore ()
     {
         synchronized (InvocationHandler.class)

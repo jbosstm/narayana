@@ -128,6 +128,28 @@ public class BasicContainerUnitTest extends TestCase
         assertTrue(success);
     }
     
+    public void testInvalidModel ()
+    {
+        boolean success = true;
+        
+        try
+        {
+            Container<TestObject> theContainer = new Container<TestObject>("Foobar", Container.TYPE.RECOVERABLE, Container.MODEL.SHARED);
+        
+            success = false;
+        }
+        catch (final RuntimeException ex)
+        {
+            success = true;
+        }
+        catch (final Throwable ex)
+        {
+            success = false;
+        }
+        
+        assertTrue(success);
+    }
+    
     @SuppressWarnings(value={"unused"})
     public void testValidEnlist ()
     {

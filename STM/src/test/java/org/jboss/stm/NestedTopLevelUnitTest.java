@@ -26,25 +26,11 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import org.jboss.stm.annotations.NestedTopLevel;
-import org.jboss.stm.annotations.RestoreState;
-import org.jboss.stm.annotations.SaveState;
-import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.WriteLock;
-import org.jboss.stm.internal.RecoverableContainer;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.txoj.Lock;
-import com.arjuna.ats.txoj.LockManager;
-import com.arjuna.ats.txoj.LockMode;
-import com.arjuna.ats.txoj.LockResult;
 
 import junit.framework.TestCase;
 
@@ -83,7 +69,7 @@ public class NestedTopLevelUnitTest extends TestCase
     
     public void test () throws Exception
     {
-        Counter dt2 = new RecoverableContainer<Counter>().enlist(new CounterImple());
+        Counter dt2 = new Container<Counter>().create(new CounterImple());
         AtomicAction A = new AtomicAction();
         
         A.begin();
