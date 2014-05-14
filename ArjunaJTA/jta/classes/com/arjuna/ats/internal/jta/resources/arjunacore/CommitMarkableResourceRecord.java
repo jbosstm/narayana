@@ -39,6 +39,7 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.jboss.tm.ConnectableResource;
 import org.jboss.tm.XAResourceWrapper;
 
@@ -184,97 +185,101 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 		}
 
 		if (isPerformImmediateCleanupOfBranches) {
-			tx.registerSynchronization(new Synchronization() {
+			// a session synch may enlist a CMR in a transaction so this sycnh must be correctly ordered 
+			new TransactionSynchronizationRegistryImple()
+					.registerInterposedSynchronization(new Synchronization() {
 
-				@Override
-				public void beforeCompletion() {
+                        @Override
+                        public void beforeCompletion() {
 
-				}
+                        }
 
-				@Override
-				public void afterCompletion(int status) {
-					if (!onePhase && status == Status.STATUS_COMMITTED) {
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (!onePhase && status == Status.STATUS_COMMITTED) {
 
-						Connection connection = null;
-						try {
-							connection = ((Connection) connectableResource
-									.getConnection());
-							connection.setAutoCommit(false);
-							String sql = "DELETE from "
-									+ CommitMarkableResourceRecord.this.tableName
-									+ " where xid in (?)";
-							PreparedStatement prepareStatement = connection
-									.prepareStatement(sql);
-							try {
+                                Connection connection = null;
+                                try {
+                                    connection = ((Connection) connectableResource
+                                            .getConnection());
+                                    connection.setAutoCommit(false);
+                                    String sql = "DELETE from "
+                                            + CommitMarkableResourceRecord.this.tableName
+                                            + " where xid in (?)";
+                                    PreparedStatement prepareStatement = connection
+                                            .prepareStatement(sql);
+                                    try {
 
-								XID toSave = ((XidImple) xid).getXID();
-								ByteArrayOutputStream baos = new ByteArrayOutputStream();
-								DataOutputStream dos = new DataOutputStream(
-										baos);
-								dos.writeInt(toSave.formatID);
-								dos.writeInt(toSave.gtrid_length);
-								dos.writeInt(toSave.bqual_length);
-								dos.writeInt(toSave.data.length);
-								dos.write(toSave.data);
-								dos.flush();
+                                        XID toSave = ((XidImple) xid).getXID();
+                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                        DataOutputStream dos = new DataOutputStream(
+                                                baos);
+                                        dos.writeInt(toSave.formatID);
+                                        dos.writeInt(toSave.gtrid_length);
+                                        dos.writeInt(toSave.bqual_length);
+                                        dos.writeInt(toSave.data.length);
+                                        dos.write(toSave.data);
+                                        dos.flush();
 
-								prepareStatement.setBytes(1, baos.toByteArray());
+                                        prepareStatement.setBytes(1, baos.toByteArray());
 
-								if (prepareStatement.executeUpdate() != 1) {
-									tsLogger.logger
-											.error("Update was not successfull");
-									connection.rollback();
-								} else {
-									connection.commit();
-								}
-							} catch (IOException e) {
-								tsLogger.logger
-										.warn("Could not generate prepareStatement paramaters",
-												e);
-							} finally {
-								try {
-									prepareStatement.close();
-								} catch (SQLException e) {
-									tsLogger.logger
-											.warn("Could not close the prepared statement",
-													e);
-								}
-							}
-						} catch (Throwable e1) {
-							tsLogger.logger
-									.warn("Could not delete CommitMarkableResourceRecord entry, will rely on RecoveryModule",
-											e1);
-						} finally {
-							if (connection != null) {
-								try {
-									connection.close();
-								} catch (SQLException e) {
-									tsLogger.logger
-											.warn("Could not close the preparedConnection",
-													e);
-								}
-							}
-						}
-					}
-				}
-			});
+                                        if (prepareStatement.executeUpdate() != 1) {
+                                            tsLogger.logger
+                                                    .error("Update was not successfull");
+                                            connection.rollback();
+                                        } else {
+                                            connection.commit();
+                                        }
+                                    } catch (IOException e) {
+                                        tsLogger.logger
+                                                .warn("Could not generate prepareStatement paramaters",
+                                                        e);
+                                    } finally {
+                                        try {
+                                            prepareStatement.close();
+                                        } catch (SQLException e) {
+                                            tsLogger.logger
+                                                    .warn("Could not close the prepared statement",
+                                                            e);
+                                        }
+                                    }
+                                } catch (Throwable e1) {
+                                    tsLogger.logger
+                                            .warn("Could not delete CommitMarkableResourceRecord entry, will rely on RecoveryModule",
+                                                    e1);
+                                } finally {
+                                    if (connection != null) {
+                                        try {
+                                            connection.close();
+                                        } catch (SQLException e) {
+                                            tsLogger.logger
+                                                    .warn("Could not close the preparedConnection",
+                                                            e);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
 		} else if (isNotifyRecoveryModuleOfCompletedBranches) {
-			tx.registerSynchronization(new Synchronization() {
+			// a session synch may enlist a CMR in a transaction so this sycnh must be correctly ordered 
+			new TransactionSynchronizationRegistryImple()
+					.registerInterposedSynchronization(new Synchronization() {
 
-				@Override
-				public void beforeCompletion() {
+                        @Override
+                        public void beforeCompletion() {
 
-				}
+                        }
 
-				@Override
-				public void afterCompletion(int status) {
-					if (!onePhase && status == Status.STATUS_COMMITTED) {
-						commitMarkableResourceRecoveryModule
-								.notifyOfCompletedBranch(
-										commitMarkableJndiName, xid);
-					}
-				}
-			});
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (!onePhase && status == Status.STATUS_COMMITTED) {
+                                commitMarkableResourceRecoveryModule
+                                        .notifyOfCompletedBranch(
+                                                commitMarkableJndiName, xid);
+                            }
+                        }
+                    });
 		}
 	}
 
