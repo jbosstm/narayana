@@ -29,17 +29,6 @@
   <description>Utility methods to make it easy to conform to the RESTAT specification</description>
 
   <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Maven Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
     <!-- Jersey -->
     <repository>
       <id>maven2-repository.dev.java.net</id>
@@ -112,6 +101,12 @@
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>1.5.4</version>
     </dependency>
   </dependencies>
   <build>

@@ -20,12 +20,12 @@
  */
 package org.jboss.jbossts.star.test;
 
-import junit.framework.Assert;
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.*;
 import org.jboss.jbossts.star.util.media.txstatusext.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Assert;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
