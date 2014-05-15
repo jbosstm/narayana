@@ -53,6 +53,10 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
@@ -69,7 +73,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.grizzly.http.SelectorThread;
-import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
+//import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 public class BaseTest {
     protected final static Logger log = Logger.getLogger(BaseTest.class);
@@ -77,8 +81,15 @@ public class BaseTest {
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_RESTEASY = false;
 
+    private static HttpServer grizzlyServer;
+    protected static final String USE_SPDY_PROP = "rts.usespdy";
+    protected static final String USE_SSL_PROP = "rts.usessl";
+    protected static final boolean USE_SPDY = Boolean.getBoolean(USE_SPDY_PROP);
+    protected static final boolean USE_SSL = Boolean.getBoolean(USE_SSL_PROP) || USE_SPDY;
+    protected static String SCHEME = USE_SSL ? "https" : "http";
+
     protected static final int PORT = 58081;
-    protected static final String SURL = "http://localhost:" + PORT + '/';
+    protected static String SURL = SCHEME + "://localhost:" + PORT + '/';
     protected static final String PSEGMENT = "txresource";
     protected static final String NO_RESPONSE_SEGMENT = "no-response";
     protected static final String PURL = SURL + PSEGMENT;
@@ -118,13 +129,30 @@ public class BaseTest {
     }
 
     protected static void startJersey(String packages) throws Exception {
-        final URI baseUri= UriBuilder.fromUri(SURL).build();
         final Map<String, String> initParams = new HashMap<String, String>();
 
         initParams.put("com.sun.jersey.config.property.packages", packages);
+        initParams.put(ServerProperties.PROVIDER_PACKAGES, packages);
+//        initParams.put(ServerProperties.PROVIDER_PACKAGES, Coordinator.class.getPackage().getName());
 
         try {
-            threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
+            if (USE_SSL) {
+                URI baseUri= UriBuilder.fromUri(SURL).build();
+                String trustStoreFile = System.getProperty("javax.net.ssl.trustStore");
+                String trustStorePswd = System.getProperty("javax.net.ssl.trustStorePassword");
+
+                if (trustStoreFile == null || trustStorePswd == null)
+                    throw new IllegalArgumentException("Please set SSL javax.net.ssl.trustStore and javax.net.ssl.trustStorePassword to use SPDY suppport");
+                grizzlyServer = SpdyEnabledHttpServer.create(baseUri, initParams, trustStoreFile, trustStorePswd, 50, USE_SPDY);
+            } else {
+               URI baseUri= UriBuilder.fromUri(SURL).build();
+//                threadSelector = GrizzlyWebContainerFactory.create(baseUri, initParams);
+
+                final ResourceConfig resourceConfig = new ResourceConfig();//Coordinator.class);
+                resourceConfig.packages("org.jboss.jbossts.star.service", "org.jboss.jbossts.star.provider", "org.jboss.jbossts.star.test");
+                grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(baseUri, resourceConfig);
+
+            }
         } catch (IOException e) {
             log.infof(e, "Error starting Grizzly");
         }
@@ -208,6 +236,8 @@ public class BaseTest {
         if (threadSelector != null) {
             threadSelector.stopEndpoint();
             threadSelector = null;
+        } else if (grizzlyServer != null) {
+            grizzlyServer.shutdownNow();
         }
     }
 

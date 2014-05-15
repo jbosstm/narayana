@@ -31,6 +31,7 @@
   <properties>
     <version.artifactId>5.0.2.Final-SNAPSHOT</version.artifactId>
     <artifactId.name>restat-web</artifactId.name>
+    <version.override.org.jboss.spec.javax.servlet>1.0.0.Final</version.override.org.jboss.spec.javax.servlet>
   </properties>
   <dependencies>
     <dependency>
@@ -87,10 +88,11 @@
       <version>${version.org.jboss.resteasy}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${version.javax.servlet}</version>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <version>${version.override.org.jboss.spec.javax.servlet}</version>
       <scope>test</scope>
     </dependency>
 
