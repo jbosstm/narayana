@@ -136,6 +136,9 @@
     </exec>
     <delete dir="tmp-docs-dir-docs"/>
     <mkdir dir="tmp-docs-dir-docs"/>
+    <copy todir="tmp-docs-dir-docs/guides/stm_guide">
+      <fileset dir="${workdir}/${tag}-docs/STM/target/docbook/publish/en-US/html_single"/>
+    </copy>
     <copy todir="tmp-docs-dir-docs/guides/narayana-jts-orbportability_guide">
       <fileset dir="${workdir}/${tag}-docs/ArjunaJTS/docs/orbportability_guide/target/docbook/publish/en-US/html_single"/>
     </copy>
