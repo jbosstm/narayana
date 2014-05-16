@@ -20,7 +20,7 @@ public class EJBExceptionMapper implements ExceptionMapper<EJBException> {
     public Response toResponse(EJBException exception) {
         if (exception instanceof EJBTransactionRequiredException) {
             return Response.status(412).entity(TRANSACTIONA_REQUIRED_MESSAGE).build();
-        } else if (exception.getMessage().contains("JBAS014163")) {
+        } else if (exception.getMessage().contains("WFLYEJB0063")) {
             return Response.status(412).entity(INVALID_TRANSACTIONA_MESSAGE).build();
         }
 
