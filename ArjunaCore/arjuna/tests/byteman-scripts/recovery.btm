@@ -12,7 +12,7 @@
 
 RULE periodic recovery set up listener for rendezvous
 CLASS com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery
-METHOD <init>
+METHOD <init>(boolean, boolean, boolean)
 AT CALL  Listener.start
 BIND pr : PeriodicRecovery = $0
 IF isRendezvous("PR listener run", 2)
