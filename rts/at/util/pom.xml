@@ -102,12 +102,6 @@
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>1.5.4</version>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

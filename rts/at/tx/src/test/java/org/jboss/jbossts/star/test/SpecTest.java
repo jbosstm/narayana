@@ -525,9 +525,9 @@ public class SpecTest extends BaseTest {
         // on some CI machines the GET request is delayed until the outstanding coordinator termination call completes
         // (it worked on all machines prior to the Grizzly upgrade) so, for now, test for both TX_PREPARED or TX_COMMITTED
         // TODO try a server other than Grizzly
-//        Assert.assertEquals(TxStatusMediaType.TX_PREPARED, content);
-        Assert.assertTrue("status should have been prepared or committed",
-                content.equals(TxStatusMediaType.TX_PREPARED) || content.equals(TxStatusMediaType.TX_COMMITTED));
+        Assert.assertEquals(TxStatusMediaType.TX_PREPARED, content);
+//        Assert.assertTrue("status should have been prepared or committed",
+//                content.equals(TxStatusMediaType.TX_PREPARED) || content.equals(TxStatusMediaType.TX_COMMITTED));
     }
 
     @Test

@@ -30,6 +30,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 public class CoordinatorTest extends BaseTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -243,5 +248,30 @@ public class CoordinatorTest extends BaseTest {
         Thread.sleep(2000);
         
         Assert.assertEquals(txnCount, txn.txCount());
+    }
+
+    @Test
+    public void testClientAPI() throws Exception {
+        Client client = ClientBuilder.newClient();
+
+        WebTarget resource = client.target(TXN_MGR_URL);
+        Response response = resource.request(MediaType.APPLICATION_FORM_URLENCODED).post(Entity.entity(new Form(), MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
+        int status = response.getStatus();
+
+        Assert.assertEquals(HttpURLConnection.HTTP_CREATED, status);
+
+        response.close();
+
+        Invocation inv = resource.request(MediaType.APPLICATION_FORM_URLENCODED).buildPost(Entity.entity(new Form(), MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+        response = inv.invoke();
+
+        response.close();
+
+        String r1 = resource.request("application/txlist").get(String.class);
+        Assert.assertTrue("response should have contained 2 transaction urls",r1.length() != 0);
+
+        String r2 = resource.request().get(String.class);
+        Assert.assertTrue("xml response should have contained 2 transaction urls",r2.length() != 0);
     }
 }
