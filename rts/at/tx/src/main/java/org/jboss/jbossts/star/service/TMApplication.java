@@ -46,10 +46,11 @@ public class TMApplication extends Application
     HashSet<Object> singletons = new HashSet<Object>();
     Set<Class<?>> classes = new HashSet<Class<?>> ();
 
-    public TMApplication()
+    public TMApplication(Class<?> ... extraClasses)
     {
         Collections.addAll(classes, resourceClasses);
         Collections.addAll(classes, mappers);
+        Collections.addAll(classes, extraClasses);
 
 //        singletons.addAll(Arrays.asList(resources));
         try

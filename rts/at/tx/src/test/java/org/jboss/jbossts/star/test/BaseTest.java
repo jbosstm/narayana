@@ -23,6 +23,7 @@ package org.jboss.jbossts.star.test;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -41,10 +43,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -53,6 +52,8 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
+import com.squareup.okhttp.OkHttpClient;
+import io.undertow.Undertow;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -63,9 +64,11 @@ import org.jboss.jbossts.star.provider.NotFoundMapper;
 import org.jboss.jbossts.star.provider.TMUnavailableMapper;
 import org.jboss.jbossts.star.provider.TransactionStatusMapper;
 import org.jboss.jbossts.star.service.Coordinator;
+import org.jboss.jbossts.star.service.TMApplication;
 import org.jboss.jbossts.star.util.*;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
+import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.spi.Registry;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.AfterClass;
@@ -80,7 +83,7 @@ public class BaseTest {
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_RESTEASY = false;
-
+    protected static boolean USE_UNDERTOW = true;
     private static HttpServer grizzlyServer;
     protected static final String USE_SPDY_PROP = "rts.usespdy";
     protected static final String USE_SSL_PROP = "rts.usessl";
@@ -97,9 +100,21 @@ public class BaseTest {
     protected static String TXN_MGR_URL = SURL + "tx/transaction-manager";
     private static TJWSEmbeddedJaxrsServer server = null;
     private static SelectorThread threadSelector = null;
+    private static UndertowJaxrsServer undertow;
 
     protected static void setTxnMgrUrl(String txnMgrUrl) {
         TXN_MGR_URL = txnMgrUrl;
+    }
+
+    protected static void startUndertow(Class<?> ... classes) throws Exception
+    {
+        undertow = new UndertowJaxrsServer();
+
+        undertow.start(Undertow.builder().addHttpListener(PORT, "localhost"));
+
+        undertow.deploy(new TMApplication(classes));//, SURL + "tx/");
+
+        System.out.printf("server is ready:");
     }
 
     protected static void startRestEasy(Class<?> ... classes) throws Exception
@@ -161,10 +176,38 @@ public class BaseTest {
     public static void startContainer(String txnMgrUrl, String packages, Class<?> ... classes) throws Exception {
         TxSupport.setTxnMgrUrl(txnMgrUrl);
 
+        if (USE_SPDY)
+            TxSupport.setHttpConnectionCreator(new SpdyConnection());
+
         if (USE_RESTEASY)
             startRestEasy(classes);
+        else if (USE_UNDERTOW)
+            startUndertow(TransactionalResource.class);
         else
             startJersey(packages);
+    }
+
+    private static class SpdyConnection implements HttpConnectionCreator {
+        private OkHttpClient spdyClient;
+
+        SpdyConnection() {
+
+            spdyClient = new OkHttpClient();
+
+            try {
+                //sslContext = getSSLContext();
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, null, null);
+                spdyClient.setSslSocketFactory(sslContext.getSocketFactory());
+            } catch (Exception e) {
+                throw new AssertionError(); // The system has no TLS. Just give up.
+            }
+        }
+
+        @Override
+        public HttpURLConnection open(URL url) throws IOException {
+            return spdyClient.open(url);
+        }
     }
 
     public static void startContainer(String txnMgrUrl) throws Exception {
@@ -228,6 +271,11 @@ public class BaseTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
+        if (undertow !=null) {
+            undertow.stop();
+            undertow = null;
+        }
+
         if (server != null) {
             server.stop();
             server = null;

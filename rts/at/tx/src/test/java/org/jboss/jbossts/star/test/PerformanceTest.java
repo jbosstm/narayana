@@ -49,7 +49,7 @@ public class PerformanceTest extends BaseTest {
 
         try {
             tester.measureThroughput(new RTSWorker(), opts);
-            String info = USE_SPDY ? "spdy: " : USE_SSL ? "ssl:  " : "none: ";
+            String info = USE_SPDY ? "SPDY: " : USE_SSL ? "SSL:  " : USE_UNDERTOW ? "UTOW: " : "none: ";
 
             System.out.printf("%s Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                     info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),

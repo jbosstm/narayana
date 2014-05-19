@@ -31,6 +31,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
+
+    <resteasy.version>3.0.8.Final</resteasy.version>
+    <undertow.io.version>1.0.1.Final</undertow.io.version>
+
     <!-- ssl debug: -Djavax.net.debug=ssl:handshake  http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Debug
      -->
     <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
@@ -198,6 +202,50 @@
         <scope>test</scope>
     </dependency>
     <!-- end grizzly with spdy -->
+
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>1.5.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- undertow with RestEasy -->
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>${resteasy.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client</artifactId>
+        <version>${resteasy.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>async-http-servlet-3.0</artifactId>
+        <version>${resteasy.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-undertow</artifactId>
+        <version>${resteasy.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-servlet</artifactId>
+        <version>${undertow.io.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-core</artifactId>
+        <version>${undertow.io.version}</version>
+        <scope>test</scope>
+        </dependency>
+    <!-- end undertow with RestEasy -->
   </dependencies>
   <build>
     <plugins>
