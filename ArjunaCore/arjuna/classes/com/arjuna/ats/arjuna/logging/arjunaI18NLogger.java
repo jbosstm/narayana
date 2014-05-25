@@ -1123,10 +1123,26 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_objectstore_ShadowingStore_5(String arg0);
 
+	/*
+	 * NOTE re-used old message id and signature in case we ever need to resurrect the above warning.
+	 */
+	
+	@Message(id = 12280, value = "ShadowingStore::read_state() - openAndLock failed for {0}", format = MESSAGE_FORMAT)
+        @LogMessage(level = WARN)
+        public void warn_objectstore_ShadowingStore_5(String arg0);
+	
 //	@Message(id = 12281, value = "ShadowingStore.read_state - store invalid!", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
 //	public void warn_objectstore_ShadowingStore_6();
 
+	/*
+         * NOTE re-used old message id and signature in case we ever need to resurrect the above warning.
+         */
+        
+        @Message(id = 12281, value = "ShadowingStore::read_state() - no type name given for object state {0}", format = MESSAGE_FORMAT)
+        @LogMessage(level = WARN)
+        public void warn_objectstore_ShadowingStore_6(String arg0);
+        
 	@Message(id = 12282, value = "ShadowingStore::read_state() failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_objectstore_ShadowingStore_7();

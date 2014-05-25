@@ -389,6 +389,13 @@ public class ShadowingStore extends FileSystemStore
                 if (((state == StateStatus.OS_COMMITTED) && (ft != StateType.OS_ORIGINAL))
                         || ((state == StateStatus.OS_UNCOMMITTED) && (ft != StateType.OS_SHADOW)))
                 {
+                    /*
+                     * Print out a warning/info if the state has changed to help explain the null
+                     * value that is returned.
+                     */
+                    
+                    tsLogger.logger.info("Object state "+objUid+" for type "+tName+" has changed on disk from what was expected.");
+                    
                     return null;
                 }
 
@@ -410,6 +417,7 @@ public class ShadowingStore extends FileSystemStore
                         closeAndUnlock(fd, ifile, null);
 
                         tsLogger.logger.info("ObjectStore record was deleted during restoration, users should not deleted records manually: " + fd.getAbsolutePath(), e);
+                        
                         return null;
                     }
 
@@ -439,6 +447,14 @@ public class ShadowingStore extends FileSystemStore
                         tsLogger.i18NLogger.warn_objectstore_ShadowingStore_8(fname);
                     }
                 }
+                else
+                {
+                    tsLogger.i18NLogger.warn_objectstore_ShadowingStore_5(fname);
+                }
+            }
+            else
+            {
+                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_6(objUid.stringForm());
             }
         }
         else
