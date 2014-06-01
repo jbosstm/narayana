@@ -30,14 +30,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
  *
  * Workload runner for measuring the maximum throughput of an instance of @see Worker
+ * @deprecated replaced by {@link Result#measure(WorkerLifecycle, WorkerWorkload)}}
  */
+@Deprecated
 public class PerformanceTester<T> {
     private static int DEF_WORK_BATCH_SZ = 32;
     private static int DEF_THREAD_POOL_SZ = 100;
 
     private int BATCH_SIZE;
-    private int POOL_SIZE;
-    private ExecutorService executor;
+    private int THREAD_POOL_SIZE;
+//    private ExecutorService executor;
 
     public PerformanceTester() {
         this(DEF_THREAD_POOL_SZ, DEF_WORK_BATCH_SZ);
@@ -49,17 +51,17 @@ public class PerformanceTester<T> {
      * @param batchSize the size of each batch of work to pass to @see Worker tasks
      */
     public PerformanceTester(int maxThreads, int batchSize) {
-        POOL_SIZE = maxThreads > 0 ? maxThreads : DEF_THREAD_POOL_SZ; // must be >=  jacorb.poa.thread_pool_max
+        THREAD_POOL_SIZE = maxThreads > 0 ? maxThreads : DEF_THREAD_POOL_SZ; // must be >=  jacorb.poa.thread_pool_max
         BATCH_SIZE = batchSize > 0 ? batchSize : DEF_WORK_BATCH_SZ;
 
-        executor = Executors.newFixedThreadPool(POOL_SIZE);
+//        executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     }
 
     /**
      * shutdown the executor
      */
     public void fini() {
-        executor.shutdownNow();
+//        executor.shutdownNow();
     }
 
     /**
@@ -70,39 +72,45 @@ public class PerformanceTester<T> {
      * @return
      */
     public Result<T> measureThroughput(Worker<T> worker, Result<T> config) {
-        return doWork(worker, config);
+        return measureThroughput(worker, worker, config.getNumberOfCalls(), config.getThreadCount(), BATCH_SIZE, 0);
     }
 
-    private Result<T> doWork(final Worker<T> worker, final Result<T> opts)  {
-        int threadCount = opts.getThreadCount();
-        int callCount = opts.getNumberOfCalls();
+    public Result<T> measureThroughput(WorkerWorkload<T> workload, int callCount, int threadCount, int batchSize) {
+        return measureThroughput(null, workload, callCount, threadCount, batchSize, 0);
+    }
 
-        if (threadCount > POOL_SIZE) {
-            System.err.println("Updating thread count (request size exceeds thread pool size)");
-            threadCount = POOL_SIZE;
-            opts.setThreadCount(POOL_SIZE);
-        }
+    public Result<T> measureThroughput(WorkerLifecycle<T> lifecycle, WorkerWorkload<T> workload, int callCount, int threadCount, int batchSize) {
+        return measureThroughput(lifecycle, workload, callCount, threadCount, batchSize, 0);
+    }
 
-        if (callCount < BATCH_SIZE) {
-            System.err.println("Updating call count (request size less than batch size)");
-            callCount = BATCH_SIZE;
-            opts.setNumberOfCalls(callCount);
-        }
+    public Result<T> measureThroughput(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload,
+                                       int callCount, int threadCount, final int batchSize, int warmUpCallCount) {
 
-        int batchCount =  callCount/BATCH_SIZE;
+        final Result<T> opts = new Result<>(threadCount, callCount, batchSize, THREAD_POOL_SIZE);
 
-        if (batchCount < threadCount) {
-            System.err.println("Reducing thread count (request number greater than the number of batches)");
-            threadCount = batchCount;
-            opts.setThreadCount(threadCount);
-        }
+        if (workload == null)
+            throw new IllegalArgumentException("workload must not be null");
 
-        final AtomicInteger count = new AtomicInteger(callCount/BATCH_SIZE);
+        if (lifecycle != null)
+            lifecycle.init();
 
-        Collection<Future<Result<T>>> tasks = new ArrayList<Future<Result<T>>>();
-        final CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount + 1); // workers + self
+        if (warmUpCallCount > 0)
+            doWork(workload, new Result<T>(threadCount, warmUpCallCount, batchSize, THREAD_POOL_SIZE));
 
-        worker.init();
+        Result<T> res = doWork(workload, opts);
+
+        if (lifecycle != null)
+            lifecycle.fini();
+
+        return res;
+    }
+
+    private Result<T> doWork(final WorkerWorkload<T> workload, final Result<T> opts) {
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        final AtomicInteger count = new AtomicInteger(opts.getNumberOfBatches());
+
+        final Collection<Future<Result<T>>> tasks = new ArrayList<Future<Result<T>>>();
+        final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getThreadCount() + 1); // workers + self
 
         for (int i = 0; i < opts.getThreadCount(); i++)
             tasks.add(executor.submit(new Callable<Result<T>>() {
@@ -115,15 +123,29 @@ public class PerformanceTester<T> {
 
                     // all threads are ready - this thread gets more work in batch size chunks until there isn't anymore
                     while(count.decrementAndGet() >= 0) {
-                        res.setNumberOfCalls(BATCH_SIZE);
-                        // ask the worker to do BATCH_SIZE units or work
-                        res.setContext(worker.doWork(res.getContext(), BATCH_SIZE, res));
+                        res.setNumberOfCalls(opts.getBatchSize());
+                        // ask the worker to do batchSize units or work
+                        res.setContext(workload.doWork(res.getContext(), opts.getBatchSize(), res));
                         errorCount += res.getErrorCount();
+
+                        if (res.isCancelled()) {
+                            for (Future<Result<T>> task : tasks) {
+                                if (!task.equals(this))
+                                    task.cancel(res.isMayInterruptIfRunning());
+                            }
+
+                            opts.setContext(res.getContext());
+
+                            break;
+                        }
                     }
 
                     cyclicBarrier.await();
 
                     res.setTotalMillis((System.nanoTime() - start) / 1000000L);
+                    if (res.getTotalMillis() < 0)
+                        res.setTotalMillis(-res.getTotalMillis());
+
                     res.setErrorCount(errorCount);
 
                     return res;
@@ -136,16 +158,19 @@ public class PerformanceTester<T> {
             cyclicBarrier.await(); // wait for each thread to arrive at the barrier
             cyclicBarrier.await(); // wait for each thread to finish
 
-            worker.fini();
+            long tot = System.nanoTime() - start;
+
+            if (tot < 0) // nanoTime is reckoned from an arbitrary origin which may be in the future
+                tot = -tot;
+
+            opts.setTotalMillis(tot / 1000000L);
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (BrokenBarrierException e) {
-            throw new RuntimeException(e);
+            opts.setCancelled(true);
         }
 
-        long end = System.nanoTime();
-
-        opts.setTotalMillis(0L);
         opts.setErrorCount(0);
 
         for (Future<Result<T>> t : tasks) {
@@ -157,12 +182,14 @@ public class PerformanceTester<T> {
                     opts.addContext(context);
 
                 opts.setErrorCount(opts.getErrorCount() + outcome.getErrorCount());
+            } catch (CancellationException e) {
+                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
             } catch (Exception e) {
-                opts.setErrorCount(opts.getErrorCount() + BATCH_SIZE);
+                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
             }
         }
 
-        opts.setTotalMillis((end - start) / 1000000L);
+        executor.shutdownNow();
 
         return opts;
     }

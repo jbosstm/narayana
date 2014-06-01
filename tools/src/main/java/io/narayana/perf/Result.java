@@ -23,15 +23,20 @@ package io.narayana.perf;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
  *
- * Config data for running a work load (@see PerformanceTester and @see Worker)
+ * Config and result data for running a work load (@link{Result#measure})
  */
 public class Result<T> implements Serializable {
-    int threadCount = 1;
     int numberOfCalls;
+    int threadCount = 1;
+    int batchSize = 1;
+    int numberOfBatches;
+
     int errorCount;
     long totalMillis;
     int one; // time in msecs to do one call
@@ -41,12 +46,42 @@ public class Result<T> implements Serializable {
     private final Set<T> contexts = new HashSet<T>();
 
     private String info;
+    private boolean cancelled;
+    private boolean mayInterruptIfRunning;
 
     public Result(int threadCount, int numberOfCalls) {
-        this.threadCount = threadCount;
+        this(threadCount, numberOfCalls, 10);
+    }
+
+    public Result(int threadCount, int numberOfCalls, int batchSize) {
+        this(threadCount, numberOfCalls, batchSize, threadCount);
+    }
+
+    Result(int threadCount, int numberOfCalls, int batchSize, int maxThreads) {
         this.numberOfCalls = numberOfCalls;
+        this.threadCount = threadCount;
+        this.batchSize = batchSize;
+
         this.totalMillis = this.throughput = 0;
         this.errorCount = 0;
+
+        if (threadCount > maxThreads) {
+            System.err.println("Updating thread count (request size exceeds thread pool size)");
+            this.threadCount = maxThreads;
+        }
+
+        if (numberOfCalls < batchSize) {
+            System.err.println("Updating call count (request size less than batch size)");
+            this.numberOfCalls = batchSize;
+        }
+
+        numberOfBatches = this.numberOfCalls/batchSize;
+
+        if (numberOfBatches < this.threadCount) {
+            System.err.printf("Too few batches - reducing thread count (%d %d %d)%n",
+                    this.threadCount, numberOfBatches, this.numberOfCalls);
+            this.threadCount = numberOfBatches;
+        }
     }
 
     public void setContext(T value) {
@@ -89,6 +124,14 @@ public class Result<T> implements Serializable {
         this.numberOfCalls = numberOfCalls;
     }
 
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public int getNumberOfBatches() {
+        return numberOfBatches;
+    }
+
     public long getTotalMillis() {
         return totalMillis;
     }
@@ -121,9 +164,15 @@ public class Result<T> implements Serializable {
         this.errorCount += 1;
     }
 
+    public void incrementErrorCount(int delta) {
+        this.errorCount += delta;
+    }
+
     public String toString() {
-            return String.format("%11d %6d %9d %11d%n",
-                getThroughput(), getNumberOfCalls(), getErrorCount(), threadCount);
+        return String.format("%d calls / second (%d calls in %d ms using %d threads. %d errors)",
+                getThroughput(), getNumberOfCalls(),
+                getTotalMillis(), getThreadCount(),
+                getErrorCount());
     }
 
     public void setInfo(String info) {
@@ -135,4 +184,146 @@ public class Result<T> implements Serializable {
         return info;
     }
 
+    /**
+     * Cancel the measurement.
+     *
+     * A worker may cancel a measurement by invoking this method on the Measurement object it was
+     * passed in its @see Worker#doWork(T, int, Measurement) method
+     * @param mayInterruptIfRunning if false then any running calls to @see Worker#doWork will be allowed to finish
+     *                              before the the measurement is cancelled.
+     */
+    public void cancel(boolean mayInterruptIfRunning) {
+        this.cancelled = true;
+        this.mayInterruptIfRunning = mayInterruptIfRunning;
+    }
+
+    void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public boolean isMayInterruptIfRunning() {
+        return mayInterruptIfRunning;
+    }
+
+
+
+    public Result<T> measure(WorkerWorkload<T> workload) {
+        return measure(null, workload);
+    }
+
+    public Result<T> measure(WorkerLifecycle<T> lifecycle, WorkerWorkload<T> workload) {
+        return measure(lifecycle, workload, 0);
+    }
+
+    public Result<T> measure(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload, int warmUpCallCount) {
+
+        if (workload == null)
+            throw new IllegalArgumentException("workload must not be null");
+
+        if (lifecycle != null)
+            lifecycle.init();
+
+        if (warmUpCallCount > 0)
+            doWork(workload, new Result<T>(threadCount, warmUpCallCount, batchSize, threadCount));
+
+        Result<T> res = doWork(workload, this);
+
+        if (lifecycle != null)
+            lifecycle.fini();
+
+        return res;
+    }
+
+    private Result<T> doWork(final WorkerWorkload<T> workload, final Result<T> opts) {
+        ExecutorService executor = Executors.newFixedThreadPool(opts.getThreadCount());
+        final AtomicInteger count = new AtomicInteger(opts.getNumberOfBatches());
+
+        final Collection<Future<Result<T>>> tasks = new ArrayList<Future<Result<T>>>();
+        final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getThreadCount() + 1); // workers + self
+
+        for (int i = 0; i < opts.getThreadCount(); i++)
+            tasks.add(executor.submit(new Callable<Result<T>>() {
+                public Result<T> call() throws Exception {
+                    Result<T> res = new Result<T>(opts);
+                    int errorCount = 0;
+
+                    cyclicBarrier.await();
+                    long start = System.nanoTime();
+
+                    // all threads are ready - this thread gets more work in batch size chunks until there isn't anymore
+                    while(count.decrementAndGet() >= 0) {
+                        res.setNumberOfCalls(opts.getBatchSize());
+                        // ask the worker to do batchSize units or work
+                        res.setContext(workload.doWork(res.getContext(), opts.getBatchSize(), res));
+                        errorCount += res.getErrorCount();
+
+                        if (res.isCancelled()) {
+                            for (Future<Result<T>> task : tasks) {
+                                if (!task.equals(this))
+                                    task.cancel(res.isMayInterruptIfRunning());
+                            }
+
+                            opts.setContext(res.getContext());
+
+                            break;
+                        }
+                    }
+
+                    cyclicBarrier.await();
+
+                    res.setTotalMillis((System.nanoTime() - start) / 1000000L);
+                    if (res.getTotalMillis() < 0)
+                        res.setTotalMillis(-res.getTotalMillis());
+
+                    res.setErrorCount(errorCount);
+
+                    return res;
+                };
+            }));
+
+        long start = System.nanoTime();
+
+        try {
+            cyclicBarrier.await(); // wait for each thread to arrive at the barrier
+            cyclicBarrier.await(); // wait for each thread to finish
+
+            long tot = System.nanoTime() - start;
+
+            if (tot < 0) // nanoTime is reckoned from an arbitrary origin which may be in the future
+                tot = -tot;
+
+            opts.setTotalMillis(tot / 1000000L);
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (BrokenBarrierException e) {
+            opts.setCancelled(true);
+        }
+
+        opts.setErrorCount(0);
+
+        for (Future<Result<T>> t : tasks) {
+            try {
+                Result<T> outcome = t.get();
+                T context = outcome.getContext();
+
+                if (context != null)
+                    opts.addContext(context);
+
+                opts.setErrorCount(opts.getErrorCount() + outcome.getErrorCount());
+            } catch (CancellationException e) {
+                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
+            } catch (Exception e) {
+                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
+            }
+        }
+
+        executor.shutdownNow();
+
+        return opts;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013 Red Hat, Inc., and individual contributors
+ * Copyright 2014 Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,9 +22,19 @@
 package io.narayana.perf;
 
 /**
- * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
+ * Test lifecycle notifications
  *
- * Interface for running a batch of work and for receiving test lifecycle notifications
+ * @param <T> caller specific context data
  */
-public interface Worker<T> extends WorkerLifecycle, WorkerWorkload<T> {
+public interface WorkerLifecycle<T> {
+
+    /**
+     * notify the worker that the test is starting (@link{io.narayana.perf.Result#measure})
+     */
+    void init();
+
+    /**
+     * notify the worker that the test has finished
+     */
+    void fini();
 }

@@ -61,19 +61,12 @@ public class PerfHammer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        PerformanceTester tester = new PerformanceTester(threadCount, batchSize);
         GridWorker worker = new GridWorker(myORB, gridReference);
-        Result opts = new Result(threadCount, numberOfCalls);
+        Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
 
-        try {
-            tester.measureThroughput(worker, opts);
-
-            System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
-                    ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
-                    opts.getErrorCount(), opts.getTotalMillis());
-        } finally {
-            tester.fini();
-        }
+        System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
+                ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
+                opts.getErrorCount(), opts.getTotalMillis());
 
         System.out.println("Passed");
     }

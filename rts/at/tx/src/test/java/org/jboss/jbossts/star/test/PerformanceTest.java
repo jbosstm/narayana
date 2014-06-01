@@ -21,9 +21,8 @@
  */
 package org.jboss.jbossts.star.test;
 
-import io.narayana.perf.PerformanceTester;
 import io.narayana.perf.Result;
-import io.narayana.perf.Worker;
+import io.narayana.perf.WorkerWorkload;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -44,24 +43,18 @@ public class PerformanceTest extends BaseTest {
         int threadCount = Integer.getInteger("threadCount", 10);
         int batchSize = Integer.getInteger("batchSize", 50);
 
-        PerformanceTester<String> tester = new PerformanceTester<String>(threadCount, batchSize);
-        Result<String> opts = new Result<String>(threadCount, callCount);
+        Result<String> opts = new Result<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
 
-        try {
-            tester.measureThroughput(new RTSWorker(), opts);
-            String info = USE_SPDY ? "SPDY: " : USE_SSL ? "SSL:  " : USE_UNDERTOW ? "UTOW: " : "none: ";
+        String info = USE_SPDY ? "SPDY: " : USE_SSL ? "SSL:  " : USE_UNDERTOW ? "UTOW: " : "none: ";
 
-            System.out.printf("%s Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
-                    info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
-                    opts.getErrorCount(), opts.getTotalMillis());
+        System.out.printf("%s Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
+                info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
+                opts.getErrorCount(), opts.getTotalMillis());
 
-            Assert.assertEquals(0, opts.getErrorCount());
-        } finally {
-            tester.fini();
-        }
+        Assert.assertEquals(0, opts.getErrorCount());
     }
 
-    private class RTSWorker implements Worker<String> {
+    private class RTSWorker implements WorkerWorkload<String> {
         private String run2PC(String context, TxSupport txn) throws Exception {
 
             String pUrl = PURL;
@@ -132,14 +125,6 @@ public class PerformanceTest extends BaseTest {
             }
 
             return context;
-        }
-
-        @Override
-        public void init() {
-        }
-
-        @Override
-        public void fini() {
         }
     }
 }

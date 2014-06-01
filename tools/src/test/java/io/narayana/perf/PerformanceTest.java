@@ -21,11 +21,15 @@
  */
 package io.narayana.perf;
 
+import junit.framework.Assert;
 import org.junit.Test;
 
 import java.math.BigInteger;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class PerformanceTest {
@@ -39,31 +43,35 @@ public class PerformanceTest {
         return serialFac;
     }
 
+    /**
+     * Calculate a factorial (recall n! = n(n-1)(n-2)...1) in two ways: firstly serially and secondly in parallel
+     * (dividing up the computation between a number of threads). Check that the two computations are consistent.
+     */
     @Test
     public void testPerformanceTester() {
-        PerformanceTester<BigInteger> tester = new PerformanceTester<BigInteger>(10, 10);
+        PerformanceTester<BigInteger> tester = new PerformanceTester<BigInteger>();
         FactorialWorker worker = new FactorialWorker();
 
+        int numberOfCalls = 100000;
         int threadCount = 10;
-        int numberOfCalls = 10000;
-        // 1000000!: (total time: 78635 ms versus 1629870 ms) so dont make numberOfCalls to big
+        int batchSize = 10;
 
-        Result<BigInteger> opts = new Result<BigInteger>(threadCount, numberOfCalls);
+        // 1000000!: (total time: 78635 ms versus 1629870 ms) so don't make numberOfCalls to big
 
         try {
-            Result<BigInteger> res = tester.measureThroughput(worker, opts);
-            Set<BigInteger> subFactorials = res.getContexts();
+            Result<BigInteger> measurement = tester.measureThroughput(worker, worker, numberOfCalls, threadCount, batchSize);
+            Set<BigInteger> subFactorials = measurement.getContexts();
             BigInteger fac = BigInteger.ONE;
 
             for (BigInteger bigInteger : subFactorials)
                 fac = fac.multiply(bigInteger);
 
             long start = System.nanoTime();
-            BigInteger serialFac = factorial(opts.getNumberOfCalls());
+            BigInteger serialFac = factorial(numberOfCalls);
             long millis = (System.nanoTime() - start) / 1000000L;
 
-            System.out.printf("Test performance for %d!: %d calls / second (total time: %d ms versus %d ms)%n",
-                    opts.getNumberOfCalls(), opts.getThroughput(), opts.getTotalMillis(), millis);
+            System.out.printf("TestPerformance for %d!: %d calls / second (total time: %d ms versus %d ms)%n",
+                    measurement.getNumberOfCalls(), measurement.getThroughput(), measurement.getTotalMillis(), millis);
 
             assertTrue("Factorials not equal", serialFac.equals(fac));
 
@@ -78,4 +86,188 @@ public class PerformanceTest {
             tester.fini();
         }
     }
+
+    /**
+     * Calculate a factorial (recall n! = n(n-1)(n-2)...1) in two ways: firstly serially and secondly in parallel
+     * (dividing up the computation between a number of threads). Check that the two computations are consistent.
+     */
+    @Test
+    public void testPerformanceTester2() {
+        PerformanceTester<BigInteger> tester = new PerformanceTester<BigInteger>();
+        FactorialWorker worker = new FactorialWorker();
+
+        int numberOfCalls = 100000;
+        int threadCount = 10;
+        int batchSize = 10;
+
+        // 1000000!: (total time: 78635 ms versus 1629870 ms) so don't make numberOfCalls to big
+
+        try {
+            Result<BigInteger> measurement = new Result<BigInteger>(threadCount, numberOfCalls, batchSize).measure(worker, worker);
+            Set<BigInteger> subFactorials = measurement.getContexts();
+            BigInteger fac = BigInteger.ONE;
+
+            for (BigInteger bigInteger : subFactorials)
+                fac = fac.multiply(bigInteger);
+
+            long start = System.nanoTime();
+            BigInteger serialFac = factorial(numberOfCalls);
+            long millis = (System.nanoTime() - start) / 1000000L;
+
+            System.out.printf("TestPerformance2 for %d!: %d calls / second (total time: %d ms versus %d ms)%n",
+                    measurement.getNumberOfCalls(), measurement.getThroughput(), measurement.getTotalMillis(), millis);
+
+            assertTrue("Factorials not equal", serialFac.equals(fac));
+
+            assertTrue("init method not called", worker.getInitTimemillis() != -1);
+            assertTrue("doWork method not called", worker.getWorkTimeMillis() != -1);
+            assertTrue("fini method not called", worker.getFiniTimeMillis() != -1);
+
+            assertTrue("init method called after work method", worker.getInitTimemillis() <= worker.getWorkTimeMillis());
+            assertTrue("work method called after fini method", worker.getWorkTimeMillis() <= worker.getFiniTimeMillis());
+        } finally {
+            tester.fini();
+        }
+    }
+
+    /**
+     * Test that a worker thread is able to cancel an active running test
+     */
+    @Test
+    public void testAbortMeasurement() {
+        int numberOfCalls = 1000;
+        int threadCount = 10;
+        int batchSize = 1;
+        PerformanceTester tester = new PerformanceTester();
+        WorkerWorkload<String> abortWorker = new WorkerWorkload<String>() {
+            private AtomicInteger callCount = new AtomicInteger(0);
+
+            @Override
+            public String doWork(String context, int niters, Result<String> opts) {
+                int sleep = callCount.incrementAndGet();
+
+                if (sleep == 5) {
+                    opts.cancel(true);
+                    context = "cancelled";
+                } else if (sleep > 10) {
+                    sleep = 10;
+                }
+
+                try {
+                    Thread.sleep(sleep * 10);
+                } catch (InterruptedException e) {
+                }
+
+                return context;
+            }
+        };
+
+        Result measurement = tester.measureThroughput(abortWorker, numberOfCalls, threadCount, batchSize);
+
+        assertTrue("Test should have been aborted", measurement.isCancelled());
+        assertEquals("Abort context should have been \"cancelled\"", "cancelled", measurement.getContext());
+        assertNotSame("There should have been some workload errors", 0, measurement.getErrorCount());
+
+        System.out.printf("testAbortMeasurement: %s%n", measurement);
+    };
+
+    /**
+     * Test that a worker thread is able to cancel an active running test
+     */
+    @Test
+    public void testAbortMeasurement2() {
+        int numberOfCalls = 1000;
+        int threadCount = 10;
+        int batchSize = 1;
+        WorkerWorkload<String> abortWorker = new WorkerWorkload<String>() {
+            private AtomicInteger callCount = new AtomicInteger(0);
+
+            @Override
+            public String doWork(String context, int niters, Result<String> opts) {
+                int sleep = callCount.incrementAndGet();
+
+                if (sleep == 5) {
+                    opts.cancel(true);
+                    context = "cancelled";
+                } else if (sleep > 10) {
+                    sleep = 10;
+                }
+
+                try {
+                    Thread.sleep(sleep * 10);
+                } catch (InterruptedException e) {
+                }
+
+                return context;
+            }
+        };
+
+        Result<String> measurement = new Result<>(threadCount, numberOfCalls, batchSize);
+
+        measurement = measurement.measure(abortWorker);
+
+        assertTrue("Test should have been aborted", measurement.isCancelled());
+        assertEquals("Abort context should have been \"cancelled\"", "cancelled", measurement.getContext());
+        assertNotSame("There should have been some workload errors", 0, measurement.getErrorCount());
+
+        System.out.printf("testAbortMeasurement2: %s%n", measurement);
+    };
+
+    /**
+     * Ensure it is possible to run a single workload
+     */
+    @Test
+    public void testSingleCall() {
+        Worker<String> worker = new Worker<String>() {
+            @Override
+            public String doWork(String context, int niters, Result<String> opts) {
+                assertEquals("Wrong batch size", 1, niters);
+                return context;
+            }
+
+            @Override
+            public void init() {}
+
+            @Override
+            public void fini() {}
+        };
+
+        Result<String> config = new Result<>(1, 1, 1);
+
+        assertEquals("Wrong batch size", 1, config.getBatchSize());
+
+        System.out.printf("testSingleCall!: %s%n", config);
+    }
+
+    /**
+     * Sanity check
+     */
+    @Test
+    public void perfTest() {
+        int numberOfCalls = 10000;
+        int threadCount = 10;
+        int batchSize = 100;
+
+        WorkerWorkload<Object> worker = new WorkerWorkload<Object>() {
+            @Override
+            public Object doWork(Object context, int batchSize, Result<Object> config) {
+                for (int i = 0; i < batchSize; i++) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        config.incrementErrorCount(1);
+                    }
+                }
+                return null;
+            }
+        };
+
+        Result measurement = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
+
+        // Each iteration sleeps for 1 ms so the total time <= no of iterations divided by the number of threads
+        assertTrue("Test ran too quickly", measurement.getTotalMillis() >= numberOfCalls / threadCount);
+
+        System.out.printf("perfTest!: %s%n", measurement);
+    }
+
 }
