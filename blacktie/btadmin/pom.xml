@@ -16,13 +16,13 @@
 	<parent>
 		<groupId>org.jboss.narayana.blacktie</groupId>
 		<artifactId>blacktie-java</artifactId>
-		<version>5.0.2.Final</version>
+		<version>5.0.3.Final-SNAPSHOT</version>
 		<relativePath>../common/java/pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.narayana.blacktie</groupId>
 	<artifactId>btadmin</artifactId>
-	<version>5.0.2.Final</version>
+	<version>5.0.3.Final-SNAPSHOT</version>
 	<name>BlackTie Admin CLI Tool</name>
 	<description>A command line interface to issue administration command from</description>
 	<packaging>jar</packaging>
@@ -171,7 +171,7 @@
 											blacktie-cpp-plugin
 										</artifactId>
 										<versionRange>
-											[5.0.2.Final,)
+											[5.0.3.Final-SNAPSHOT,)
 										</versionRange>
 										<goals>
 											<goal>generate-exe</goal>
