@@ -36,7 +36,7 @@ function init_test_options {
         FINDBUGS=findbugs,
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION =~ "!XTS" ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
@@ -70,7 +70,7 @@ function init_test_options {
         [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
         [ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
         [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
-        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # RTS tests
+        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
@@ -247,7 +247,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test
+  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
