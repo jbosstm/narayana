@@ -1,0 +1,1 @@
+arjuna-properties-file: jbossts-properties.xml

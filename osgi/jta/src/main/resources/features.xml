@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="narayana-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+
+    <feature name='${project.artifactId}' version='${project.version}'>
+    	<bundle>mvn:org.jboss.narayana.osgi/narayana-osgi-jta/${project.version}</bundle>
+    </feature>
+
+</features>

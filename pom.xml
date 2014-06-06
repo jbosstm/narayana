@@ -472,6 +472,7 @@
     <module>txbridge</module>
     <module>STM</module>
     <module>txframework</module>
+    <module>osgi</module>
   </modules>
   <profiles>
     <profile>

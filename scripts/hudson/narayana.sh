@@ -64,6 +64,7 @@ function init_test_options {
         [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
         [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
         [ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
+        [ $OSGI_TESTS ] || OSGI_TESTS=1 # OSGI tests
         [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
         [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
@@ -226,6 +227,13 @@ function init_jboss_home {
   echo "JBOSS_HOME=$JBOSS_HOME"
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml ${JBOSS_HOME}/standalone/configuration
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-rts.xml ${JBOSS_HOME}/standalone/configuration
+}
+
+function osgi_tests {
+  echo "#-1. OSGI Test"
+  cd ${WORKSPACE}
+  ./build.sh -f osgi/jta/pom.xml -Parq-karaf-embedded clean test
+  [ $? = 0 ] || fatal "OSGI Test failed"
 }
 
 function xts_as_tests {
@@ -607,6 +615,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $BLACKTIE = 1 ] && blacktie "$@"
+[ $OSGI_TESTS = 1 ] && osgi_tests"$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests
