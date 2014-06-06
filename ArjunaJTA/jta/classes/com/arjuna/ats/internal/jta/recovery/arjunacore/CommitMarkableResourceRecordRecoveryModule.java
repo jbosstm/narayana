@@ -110,6 +110,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	private Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
 			.getCommitMarkableResourceTableNameMap();
 	private Map<String, List<Xid>> completedBranches = new HashMap<String, List<Xid>>();
+    private boolean inFirstPass;
 	private static String defaultTableName = jtaEnvironmentBean
 			.getDefaultCommitMarkableTableName();
 
@@ -156,7 +157,11 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	}
 
 	@Override
-	public void periodicWorkFirstPass() {
+	public synchronized void periodicWorkFirstPass() {
+        if (inFirstPass) {
+            return;
+        }
+	    inFirstPass = true;
 		// TODO - this is one shot only due to a
 		// remove in the function, if this delete fails only normal
 		// recovery is possible
@@ -399,9 +404,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
     							} else {
     								// Update the completed outcome for the 1PC
     								// resource
-    								rcaa.updateCommitMarkableResourceRecord(wasCommitted(
-    										commitMarkableResourceJndiName,
-    										rcaa.getXid()));
+                                    rcaa.updateCommitMarkableResourceRecord(committedXidsToJndiNames.get(rcaa.getXid()) != null);
     							}
     						}
 	                    }
@@ -417,10 +420,11 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 					"Could not lookup datasource, AS is shutting down: "
 							+ e.getMessage(), e);
 		}
+        inFirstPass = false;
 	}
 
 	@Override
-	public void periodicWorkSecondPass() {
+	public synchronized void periodicWorkSecondPass() {
 		/**
 		 * This is the list of AtomicActions that were prepared but not
 		 * completed.
@@ -481,12 +485,15 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	 * @param xid
 	 * @return
 	 */
-	public boolean wasCommitted(String jndiName, Xid xid)
+	public synchronized boolean wasCommitted(String jndiName, Xid xid)
 			throws ObjectStoreException {
-		if (!queriedResourceManagers.contains(jndiName)) {
-			throw new ObjectStoreException(jndiName + " was not online");
+		if (!queriedResourceManagers.contains(jndiName) || committedXidsToJndiNames.get(xid) == null) {
+		    periodicWorkFirstPass();
 		}
-		String committed = committedXidsToJndiNames.get(xid);
+		if (!queriedResourceManagers.contains(jndiName)) {
+            throw new ObjectStoreException(jndiName + " was not online");
+        }
+        String committed = committedXidsToJndiNames.get(xid);
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger.trace("wasCommitted" + xid + " " + committed);
 		}
