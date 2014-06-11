@@ -682,6 +682,8 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 					} catch (SQLException e) {
 						tsLogger.logger.warn("Could not handle the connection",
 								e);
+						// the connection is unavailable so try again later
+						break;
 					} finally {
 						if (connection != null) {
 							try {
