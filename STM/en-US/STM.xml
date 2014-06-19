@@ -55,7 +55,7 @@ public interface Atomic
     <para>And class:</para>
     <programlisting>public class ExampleInteger implements Atomic
 {   
-   @WriteLock
+   @ReadLock
    public int get () throws Exception
    {
        return state;
@@ -67,7 +67,7 @@ public interface Atomic
        state = value;
    }
 
-   @ReadLock
+   @WriteLock
    public void incr (int value) throws Exception
    {
        state += value;
