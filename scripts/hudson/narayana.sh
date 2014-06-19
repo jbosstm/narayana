@@ -201,8 +201,8 @@ function build_as {
   echo "This is the JBoss-AS commit"
   echo $(git rev-parse upstream/master)
 
-  git pull --rebase --ff-only upstream master
-  [ $? = 0 ] || fatal "git rebase failed"
+  #git pull --rebase --ff-only upstream master
+  #[ $? = 0 ] || fatal "git rebase failed"
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
