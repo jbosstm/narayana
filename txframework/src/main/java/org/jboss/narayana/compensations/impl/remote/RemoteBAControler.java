@@ -17,7 +17,6 @@ import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.CompensationManagerState;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -32,7 +31,6 @@ public class RemoteBAControler implements BAControler {
 
         UserBusinessActivityFactory.userBusinessActivity().begin();
         CompensationManagerImpl.resume(new CompensationManagerState());
-        TXDataMapImpl.resume(new HashMap());
     }
 
     @Override
@@ -40,7 +38,6 @@ public class RemoteBAControler implements BAControler {
 
         UserBusinessActivityFactory.userBusinessActivity().close();
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
     @Override
@@ -48,7 +45,6 @@ public class RemoteBAControler implements BAControler {
 
         UserBusinessActivityFactory.userBusinessActivity().cancel();
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
     @Override

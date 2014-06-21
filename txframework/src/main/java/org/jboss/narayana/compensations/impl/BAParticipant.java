@@ -22,18 +22,6 @@
 
 package org.jboss.narayana.compensations.impl;
 
-import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.FaultedException;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.WrongStateException;
-import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.narayana.compensations.impl.BeanManagerUtil;
-import org.jboss.narayana.compensations.impl.CompensationContext;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
-
-import javax.enterprise.inject.spi.BeanManager;
-import java.util.Map;
-
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */

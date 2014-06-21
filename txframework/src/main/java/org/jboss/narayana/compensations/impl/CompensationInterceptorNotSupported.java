@@ -23,7 +23,6 @@ package org.jboss.narayana.compensations.impl;
 
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
@@ -47,15 +46,12 @@ public class CompensationInterceptorNotSupported extends CompensationInterceptor
         } else {
             final Object txContext = baControler.suspend();
             final CompensationManagerState compensationManagerState = CompensationManagerImpl.suspend();
-            final Map txDataMap = TXDataMapImpl.getState();
-            TXDataMapImpl.suspend();
 
             try {
                 return invokeInNoTx(ic);
             } finally {
                 baControler.resume(txContext);
                 CompensationManagerImpl.resume(compensationManagerState);
-                TXDataMapImpl.resume(txDataMap);
             }
         }
     }

@@ -22,8 +22,6 @@
 
 package org.jboss.narayana.compensations.impl;
 
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
-
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
@@ -38,15 +36,7 @@ public abstract class ParticipantInterceptor {
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
 
-
-        boolean initilisedDataMap = false;
-        if (!TXDataMapImpl.isActive()) {
-            TXDataMapImpl.resume(new HashMap());
-            initilisedDataMap = true;
-        }
-
         ParticipantManager participantManager = enlistParticipant(ic.getMethod());
-
 
         Object result;
         try {
@@ -62,10 +52,6 @@ public abstract class ParticipantInterceptor {
         } catch (Exception e) {
             participantManager.completed();
             throw e;
-        } finally {
-            if (initilisedDataMap) {
-                TXDataMapImpl.suspend();
-            }
         }
 
         return result;

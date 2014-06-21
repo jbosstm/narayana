@@ -14,7 +14,6 @@ import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.CompensationManagerState;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,7 +28,6 @@ public class LocalBAControler implements BAControler {
 
         CoordinatorManagerFactory.coordinatorManager().begin("Sagas11HLS");
         CompensationManagerImpl.resume(new CompensationManagerState());
-        TXDataMapImpl.resume(new HashMap());
     }
 
     @Override
@@ -37,7 +35,6 @@ public class LocalBAControler implements BAControler {
 
         CoordinatorManagerFactory.coordinatorManager().close();
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
     @Override
@@ -45,7 +42,6 @@ public class LocalBAControler implements BAControler {
 
         CoordinatorManagerFactory.coordinatorManager().cancel();
         CompensationManagerImpl.suspend();
-        TXDataMapImpl.suspend();
     }
 
     @Override

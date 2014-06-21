@@ -30,7 +30,6 @@ import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
 
 import javax.enterprise.inject.spi.BeanManager;
 import java.util.Map;
@@ -48,8 +47,6 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
     private ClassLoader applicationClassloader;
     private Object currentTX;
 
-    private Map txDataMapState;
-
     public ParticipantImpl(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, Object currentTX) {
 
         this.compensationHandler = compensationHandlerClass;
@@ -58,7 +55,6 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
         this.currentTX = currentTX;
 
         beanManager = BeanManagerUtil.getBeanManager();
-        txDataMapState = TXDataMapImpl.getState();
         applicationClassloader = Thread.currentThread().getContextClassLoader();
     }
 
@@ -78,10 +74,8 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
             ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(applicationClassloader);
 
-            TXDataMapImpl.resume(txDataMapState);
             TransactionLoggedHandler handler = instantiate(transactionLoggedHandler);
             handler.transactionLogged(confirmed);
-            TXDataMapImpl.suspend();
 
             Thread.currentThread().setContextClassLoader(origClassLoader);
         }
@@ -96,10 +90,8 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
             Thread.currentThread().setContextClassLoader(applicationClassloader);
             CompensationContext.setTxContextToExtend(currentTX);
 
-            TXDataMapImpl.resume(txDataMapState);
             ConfirmationHandler handler = instantiate(confirmationHandler);
             handler.confirm();
-            TXDataMapImpl.suspend();
 
             CompensationContext.close(currentTX);
             Thread.currentThread().setContextClassLoader(origClassLoader);
@@ -120,12 +112,10 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
                 ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(applicationClassloader);
                 CompensationContext.setTxContextToExtend(currentTX);
-                TXDataMapImpl.resume(txDataMapState);
 
                 CompensationHandler handler = instantiate(compensationHandler);
                 handler.compensate();
 
-                TXDataMapImpl.suspend();
                 CompensationContext.close(currentTX);
                 Thread.currentThread().setContextClassLoader(origClassLoader);
             }

@@ -23,7 +23,6 @@
 package org.jboss.narayana.compensations.functional.common;
 
 import org.jboss.narayana.compensations.api.CompensationHandler;
-import org.jboss.narayana.txframework.api.exception.TransactionDataUnavailableException;
 
 import javax.inject.Inject;
 
@@ -44,12 +43,8 @@ public class DataCompensationHandler implements CompensationHandler {
 
         if (data != null) {
             dataNotNull = true;
-            try {
-                if (data.getValue() != null && data.getValue().equals(expectedDataValue)) {
-                    dataAvailable = true;
-                }
-            } catch (TransactionDataUnavailableException e) {
-                //unavailable
+            if (data.getValue() != null && data.getValue().equals(expectedDataValue)) {
+                dataAvailable = true;
             }
         }
     }
