@@ -40,6 +40,7 @@ public class CompensatableTestRemote extends CompensatableTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.compensations.cdi.common")
                 .addPackage("org.jboss.narayana.compensations.cdi.compensatable")
@@ -51,11 +52,13 @@ public class CompensatableTestRemote extends CompensatableTest {
 
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
+
         BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @AfterClass()
     public static void removeBytemanScript() {
+
         BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 

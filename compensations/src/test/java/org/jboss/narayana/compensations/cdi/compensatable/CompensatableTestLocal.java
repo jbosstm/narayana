@@ -39,13 +39,13 @@ public class CompensatableTestLocal extends CompensatableTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.compensations.cdi.common")
                 .addPackage("org.jboss.narayana.compensations.cdi.compensatable")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
 
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));

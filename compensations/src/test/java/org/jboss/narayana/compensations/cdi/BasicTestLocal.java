@@ -19,13 +19,13 @@ public class BasicTestLocal extends BasicTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage(BasicTestLocal.class.getPackage())
                 .addPackage(DummyCompensationHandler1.class.getPackage())
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
 
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));

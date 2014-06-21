@@ -44,9 +44,9 @@ public class CompensationInterceptorBase {
         BAControler baControler;
         Compensatable compensatable = getCompensatable(ic);
         if (compensatable.distributed()) {
-            baControler =  BAControllerFactory.getRemoteInstance();
+            baControler = BAControllerFactory.getRemoteInstance();
         } else {
-            baControler =  BAControllerFactory.getLocalInstance();
+            baControler = BAControllerFactory.getLocalInstance();
         }
         baControler.beginBusinessActivity();
 
@@ -66,6 +66,7 @@ public class CompensationInterceptorBase {
     }
 
     protected Object invokeInCallerTx(InvocationContext ic) throws Exception {
+
         Object result = null;
 
         try {
@@ -78,12 +79,13 @@ public class CompensationInterceptorBase {
     }
 
     protected Object invokeInNoTx(InvocationContext ic) throws Exception {
+
         return ic.proceed();
     }
 
 
-
     private void handleException(final InvocationContext ic, final Exception exception, final boolean started) throws Exception {
+
         final Compensatable compensatable = getCompensatable(ic);
 
         if (isDontCancelOn(compensatable, exception)) {
@@ -98,6 +100,7 @@ public class CompensationInterceptorBase {
     }
 
     private boolean isDontCancelOn(final Compensatable compensatable, final Exception exception) {
+
         for (Class dontCancelOnClass : compensatable.dontCancelOn()) {
             if (dontCancelOnClass.isAssignableFrom(exception.getClass())) {
                 return true;
@@ -108,6 +111,7 @@ public class CompensationInterceptorBase {
     }
 
     private boolean isCancelOn(final Compensatable compensatable, final Exception exception) {
+
         for (Class cancelOnClass : compensatable.cancelOn()) {
             if (cancelOnClass.isAssignableFrom(exception.getClass())) {
                 return true;
@@ -118,6 +122,7 @@ public class CompensationInterceptorBase {
     }
 
     private Compensatable getCompensatable(InvocationContext ic) {
+
         Compensatable compensatable = ic.getMethod().getAnnotation(Compensatable.class);
         if (compensatable != null) {
             return compensatable;

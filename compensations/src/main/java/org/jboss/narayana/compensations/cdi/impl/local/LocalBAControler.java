@@ -5,15 +5,14 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CoordinatorCancelledException;
 import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
-
-import org.jboss.narayana.compensations.cdi.impl.BAControler;
-import org.jboss.narayana.compensations.cdi.impl.CompensationManagerImpl;
-import org.jboss.narayana.compensations.cdi.impl.ParticipantManager;
 import org.jboss.narayana.compensations.cdi.api.CompensationHandler;
 import org.jboss.narayana.compensations.cdi.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.cdi.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.cdi.api.TransactionLoggedHandler;
+import org.jboss.narayana.compensations.cdi.impl.BAControler;
+import org.jboss.narayana.compensations.cdi.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.cdi.impl.CompensationManagerState;
+import org.jboss.narayana.compensations.cdi.impl.ParticipantManager;
 
 import java.util.UUID;
 

@@ -30,11 +30,11 @@ import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
 import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.wst.FaultedException;
-import org.jboss.narayana.compensations.cdi.impl.ParticipantImpl;
-import org.jboss.narayana.compensations.cdi.impl.BAParticipant;
 import org.jboss.narayana.compensations.cdi.api.CompensationHandler;
 import org.jboss.narayana.compensations.cdi.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.cdi.api.TransactionLoggedHandler;
+import org.jboss.narayana.compensations.cdi.impl.BAParticipant;
+import org.jboss.narayana.compensations.cdi.impl.ParticipantImpl;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
@@ -56,6 +56,7 @@ public class LocalParticipant implements BAParticipant, Participant {
 
     @Override
     public void confirmCompleted(boolean confirmed) {
+
         participant.confirmCompleted(confirmed);
     }
 

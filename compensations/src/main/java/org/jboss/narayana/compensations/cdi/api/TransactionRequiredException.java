@@ -27,10 +27,12 @@ package org.jboss.narayana.compensations.cdi.api;
 public class TransactionRequiredException extends Exception {
 
     public TransactionRequiredException() {
+
         super();
     }
 
     public TransactionRequiredException(String message) {
+
         super(message);
     }
 

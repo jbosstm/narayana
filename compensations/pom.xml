@@ -45,12 +45,12 @@
     <build>
         <plugins>
             <plugin>
-              <inherited>false</inherited>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-deploy-plugin</artifactId>
-              <configuration>
-                <skip>false</skip>
-              </configuration>
+                <inherited>false</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -199,19 +199,19 @@
 
     <profiles>
         <profile>
-          <id>codeCoverage</id>
-          <build>
-            <plugins>            
-              <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                  <excludes>
-                    <exclude>**/DataManagementTest.java</exclude>
-                  </excludes>
-                </configuration>
-              </plugin>
-            </plugins>
-          </build>
+            <id>codeCoverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/DataManagementTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>arq</id>
@@ -238,12 +238,14 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
+                                    ${jvm.args.debug}
+                                </server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                              <include>**/*TestLocal.java</include>
+                                <include>**/*TestLocal.java</include>
                             </includes>
                         </configuration>
                     </plugin>
@@ -275,12 +277,14 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
+                                    ${jvm.args.debug}
+                                </server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                              <include>**/*TestRemote.java</include>
+                                <include>**/*TestRemote.java</include>
                             </includes>
                         </configuration>
                     </plugin>
@@ -313,12 +317,14 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
+                                    ${ipv6.server.jvm.args} ${jvm.args.debug}
+                                </server.jvm.args>
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                              <include>**/*TestLocal.java</include>
+                                <include>**/*TestLocal.java</include>
                             </includes>
                         </configuration>
                     </plugin>
@@ -351,12 +357,14 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}</server.jvm.args>
+                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
+                                    ${ipv6.server.jvm.args} ${jvm.args.debug}
+                                </server.jvm.args>
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                              <include>**/*TestRemote.java</include>
+                                <include>**/*TestRemote.java</include>
                             </includes>
                         </configuration>
                     </plugin>

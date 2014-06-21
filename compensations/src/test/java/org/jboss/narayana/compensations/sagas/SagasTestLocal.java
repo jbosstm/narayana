@@ -55,11 +55,13 @@ public class SagasTestLocal {
 
     @Before
     public void initSagas() {
+
         ProtocolRegistry.sharedManager().initialise();
     }
 
     @Test
     public void completeTest() throws Exception {
+
         CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
 
         cm.begin("Sagas11HLS");
@@ -73,6 +75,7 @@ public class SagasTestLocal {
 
     @Test
     public void cancelTest() throws Exception {
+
         CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
 
         cm.begin("Sagas11HLS");
@@ -86,6 +89,7 @@ public class SagasTestLocal {
 
     @Test(expected = CoordinatorCancelledException.class)
     public void cannotComplete() throws Exception {
+
         CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
 
         cm.begin("Sagas11HLS");

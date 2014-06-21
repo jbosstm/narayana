@@ -26,8 +26,8 @@
         http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <engine>
-            <property name="deploymentExportPath">target/</property>
-        </engine>
+        <property name="deploymentExportPath">target/</property>
+    </engine>
 
     <container qualifier="jboss" default="true">
         <configuration>

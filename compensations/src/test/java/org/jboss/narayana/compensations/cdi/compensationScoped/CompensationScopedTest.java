@@ -23,8 +23,8 @@
 package org.jboss.narayana.compensations.cdi.compensationScoped;
 
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.cdi.impl.BAControler;
 import org.jboss.narayana.compensations.cdi.common.DummyData;
+import org.jboss.narayana.compensations.cdi.impl.BAControler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -19,21 +19,25 @@ public class LocalParticipantManager implements ParticipantManager {
 
     @Override
     public void exit() throws Exception {
+
         CoordinatorManagerFactory.coordinatorManager().delistParticipant(participantId);
     }
 
     @Override
     public void completed() throws Exception {
+
         CoordinatorManagerFactory.coordinatorManager().participantCompleted(participantId);
     }
 
     @Override
     public void cannotComplete() throws Exception {
+
         CoordinatorManagerFactory.coordinatorManager().participantCannotComplete(participantId);
     }
 
     @Override
     public void fail(QName exceptionIdentifier) throws Exception {
+
         CoordinatorManagerFactory.coordinatorManager().participantFaulted(participantId);
     }
 }

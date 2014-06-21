@@ -44,13 +44,13 @@ public class CompensationScopedTestLocal extends CompensationScopedTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.compensations.cdi.common")
                 .addPackage("org.jboss.narayana.compensations.cdi.compensationScoped")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
 
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));

@@ -18,28 +18,28 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class BasicTestRemote extends BasicTest {
 
-        @Deployment
-        public static JavaArchive createTestArchive() {
+    @Deployment
+    public static JavaArchive createTestArchive() {
 
-            JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                    .addPackage(BasicTestLocal.class.getPackage())
-                    .addPackage(DummyCompensationHandler1.class.getPackage())
-                    .addClass(ParticipantCompletionCoordinatorRules.class)
-                    .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+                .addPackage(BasicTestLocal.class.getPackage())
+                .addPackage(DummyCompensationHandler1.class.getPackage())
+                .addClass(ParticipantCompletionCoordinatorRules.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-            return archive;
-        }
+        return archive;
+    }
 
 
-        @BeforeClass()
-        public static void submitBytemanScript() throws Exception {
+    @BeforeClass()
+    public static void submitBytemanScript() throws Exception {
 
-            BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-        }
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
 
-        @AfterClass()
-        public static void removeBytemanScript() {
+    @AfterClass()
+    public static void removeBytemanScript() {
 
-            BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-        }
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
 }

@@ -57,9 +57,9 @@ public class TestServiceService implements TestService {
     public void saveData(Boolean throwRuntimeException) {
 
         state.setValue("value");
-        DataConfirmationHandler.expectedDataValue="value";
-        DataCompensationHandler.expectedDataValue="value";
-        DataTxLoggedHandler.expectedDataValue="value";
+        DataConfirmationHandler.expectedDataValue = "value";
+        DataCompensationHandler.expectedDataValue = "value";
+        DataTxLoggedHandler.expectedDataValue = "value";
 
         if (throwRuntimeException) {
             throw new RuntimeException("Test instructed the service to throw a RuntimeException");
@@ -75,9 +75,9 @@ public class TestServiceService implements TestService {
     public void saveDataCancelOnFailure(Boolean throwRuntimeException) {
 
         state.setValue("value");
-        DataConfirmationHandler.expectedDataValue="value";
-        DataCompensationHandler.expectedDataValue="value";
-        DataTxLoggedHandler.expectedDataValue="value";
+        DataConfirmationHandler.expectedDataValue = "value";
+        DataCompensationHandler.expectedDataValue = "value";
+        DataTxLoggedHandler.expectedDataValue = "value";
 
         if (throwRuntimeException) {
             throw new RuntimeException("Test instructed the service to throw a RuntimeException");

@@ -9,14 +9,14 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
-import org.jboss.narayana.compensations.cdi.impl.BAControler;
-import org.jboss.narayana.compensations.cdi.impl.CompensationManagerImpl;
-import org.jboss.narayana.compensations.cdi.impl.ParticipantManager;
 import org.jboss.narayana.compensations.cdi.api.CompensationHandler;
 import org.jboss.narayana.compensations.cdi.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.cdi.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.cdi.api.TransactionLoggedHandler;
+import org.jboss.narayana.compensations.cdi.impl.BAControler;
+import org.jboss.narayana.compensations.cdi.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.cdi.impl.CompensationManagerState;
+import org.jboss.narayana.compensations.cdi.impl.ParticipantManager;
 
 import java.util.UUID;
 

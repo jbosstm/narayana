@@ -54,6 +54,7 @@ public abstract class CompensatableTest {
 
     @Before
     public void before() {
+
         DummyCompensationHandler1.reset();
         DummyConfirmationHandler1.reset();
         DummyCompensationHandler2.reset();
@@ -62,6 +63,7 @@ public abstract class CompensatableTest {
 
     @After
     public void after() {
+
         try {
             BAControllerFactory.getInstance().cancelBusinessActivity();
         } catch (Throwable t) {
@@ -71,6 +73,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultNoExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -83,6 +86,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -104,6 +108,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testRequiresNewNoExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -116,6 +121,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testRequiresNewExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -136,6 +142,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testMandatoryNoExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -152,6 +159,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testMandatoryExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -172,6 +180,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testSupportsNoExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         testTransactionalBean.invokeWithSupports();
         Utills.assertTransactionActive(false);
@@ -179,6 +188,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testSupportsExistingTX() throws Exception {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -196,6 +206,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testNotSupportedNoExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         testTransactionalBean.invokeWithNotSupported();
         Utills.assertTransactionActive(false);
@@ -203,6 +214,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testNotSupportedExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
@@ -216,6 +228,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testNeverNoExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         testTransactionalBean.invokeWithNever();
         Utills.assertTransactionActive(false);
@@ -223,6 +236,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testNeverExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
@@ -242,6 +256,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testClassLevelDefaultNeverNoExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         testTransactionalBean.invokeWithCLassLevelDefault();
         Utills.assertTransactionActive(false);
@@ -249,6 +264,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testClassLevelDefaultNeverExistingTX() throws Exception {
+
         Utills.assertTransactionActive(false);
         beginBusinessActivity();
         Utills.assertTransactionActive(true);
@@ -268,6 +284,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultThrowRuntimeExceptionNoExistingTX() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -290,6 +307,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultThrowRuntimeExceptionExistingTX() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -320,6 +338,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultThrowExceptionNoExistingTX() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         Utills.assertTransactionActive(false);
@@ -342,6 +361,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultThrowExceptionExistingTX() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         Utills.assertTransactionActive(false);
@@ -368,6 +388,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultWithCancelOn() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         Utills.assertTransactionActive(false);
@@ -391,6 +412,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultWithDontCancelOn() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(3);
 
         Utills.assertTransactionActive(false);
@@ -414,6 +436,7 @@ public abstract class CompensatableTest {
 
     @Test
     public void testDefaultWithDoAndDontRollbackOn() throws Throwable {
+
         ParticipantCompletionCoordinatorRules.setParticipantCount(6);
 
         Utills.assertTransactionActive(false);
@@ -436,20 +459,24 @@ public abstract class CompensatableTest {
 
     @Test(expected = TestException.class)
     public void testStereotype() throws TestException {
+
         stereotypeBean.doSomething();
     }
 
     private void beginBusinessActivity() throws Exception {
+
         BAControllerFactory.getInstance().beginBusinessActivity();
         CompensationManagerImpl.resume(new CompensationManagerState());
     }
 
     private void closeBusinessActivity() throws Exception {
+
         BAControllerFactory.getInstance().closeBusinessActivity();
         CompensationManagerImpl.suspend();
     }
 
     private void completeBusinessActivity() throws Exception {
+
         if (!CompensationManagerImpl.isCompensateOnly()) {
             try {
                 BAControllerFactory.getInstance().closeBusinessActivity();

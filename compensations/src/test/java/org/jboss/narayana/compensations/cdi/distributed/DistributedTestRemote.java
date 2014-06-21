@@ -30,8 +30,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.cdi.common.URLUtils;
 import org.jboss.narayana.compensations.cdi.common.DummyCompensationHandler1;
+import org.jboss.narayana.compensations.cdi.common.URLUtils;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -56,6 +56,7 @@ public class DistributedTestRemote {
 
     @Deployment()
     public static JavaArchive createTestArchive() {
+
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(true, DistributedTestRemote.class.getPackage())
                 .addPackage(DummyCompensationHandler1.class.getPackage())
@@ -103,7 +104,6 @@ public class DistributedTestRemote {
         Assert.assertEquals(false, client.wasCompensationHandlerInvoked());
 
     }
-
 
 
     @Test

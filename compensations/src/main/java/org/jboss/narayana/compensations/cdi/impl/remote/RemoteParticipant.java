@@ -27,11 +27,11 @@ import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.narayana.compensations.cdi.impl.ParticipantImpl;
-import org.jboss.narayana.compensations.cdi.impl.BAParticipant;
 import org.jboss.narayana.compensations.cdi.api.CompensationHandler;
 import org.jboss.narayana.compensations.cdi.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.cdi.api.TransactionLoggedHandler;
+import org.jboss.narayana.compensations.cdi.impl.BAParticipant;
+import org.jboss.narayana.compensations.cdi.impl.ParticipantImpl;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013

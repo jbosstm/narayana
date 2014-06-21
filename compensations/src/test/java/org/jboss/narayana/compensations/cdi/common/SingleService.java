@@ -24,8 +24,8 @@ package org.jboss.narayana.compensations.cdi.common;
 
 import org.jboss.narayana.compensations.cdi.api.Compensatable;
 import org.jboss.narayana.compensations.cdi.api.TxCompensate;
-import org.jboss.narayana.compensations.cdi.api.TxLogged;
 import org.jboss.narayana.compensations.cdi.api.TxConfirm;
+import org.jboss.narayana.compensations.cdi.api.TxLogged;
 
 import javax.inject.Inject;
 
