@@ -47,13 +47,6 @@ public class CompensatableTestLocal extends CompensatableTest {
                 .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
-
-        archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
-
-        final String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.narayana.compensations,org.jboss.xts\n";
-        archive.setManifest(new StringAsset(ManifestMF));
-
         return archive;
     }
 
