@@ -54,7 +54,7 @@ public class CompensationManagerTestLocal extends CompensationManagerTest {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         final String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.narayana.txframework,org.jboss.xts\n";
+                + "Dependencies: org.jboss.narayana.compensations,org.jboss.xts\n";
         archive.setManifest(new StringAsset(ManifestMF));
 
         return archive;

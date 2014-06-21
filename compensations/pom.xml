@@ -22,12 +22,12 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <groupId>org.jboss.narayana.txframework</groupId>
+    <groupId>org.jboss.narayana.compensations</groupId>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>txframework</artifactId>
+    <artifactId>compensations</artifactId>
     <packaging>jar</packaging>
-    <name>Narayana: txframework</name>
-    <description>Narayana: txframework</description>
+    <name>Narayana: Compensating Transactions APIs</name>
+    <description>Narayana: APIs for using Compensating Transactions</description>
 
     <parent>
         <groupId>org.jboss.narayana</groupId>

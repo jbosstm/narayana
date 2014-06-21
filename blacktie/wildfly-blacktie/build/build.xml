@@ -1113,8 +1113,8 @@
             <maven-resource group="org.jboss.narayana" artifact="jbosstxbridge"/>
         </module-def>
 
-        <module-def name="org.jboss.narayana.txframework">
-            <maven-resource group="org.jboss.narayana.txframework" artifact="txframework"/>
+        <module-def name="org.jboss.narayana.compensations">
+            <maven-resource group="org.jboss.narayana.compensations" artifact="compensations"/>
             <maven-resource group="org.jboss.narayana.rts" artifact="restat-util"/>
         </module-def>
 
