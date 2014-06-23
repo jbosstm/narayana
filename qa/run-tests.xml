@@ -547,7 +547,7 @@
       <structure name="Narayana QA Report">
         <classfiles>
           <fileset dir=".." >
-		    <exclude name="**/Idlj/**"/>
+            <exclude name="**/idlj/**"/>
             <exclude name="**/ArjunaJTS/narayana-jts-idlj/**"/>
             <exclude name="**/XTS/localjunit/unit/**"/>
             <exclude name="**/blacktie/blacktie-admin-services/**"/>
