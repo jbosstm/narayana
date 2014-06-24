@@ -43,15 +43,24 @@ import com.arjuna.common.util.propertyservice.PropertiesFactory;
 public class BeanPopulator
 {
     private static final ConcurrentMap<String, Object> beanInstances = new ConcurrentHashMap<String, Object>();
-    private static final String DEFAULT_NAME = "default";
 
     public static <T> T getDefaultInstance(Class<T> beanClass) throws RuntimeException {
-        return getNamedInstance(beanClass, DEFAULT_NAME, null);
+        T instance = (T) beanInstances.get(beanClass.getName());
+
+        if (instance != null)
+           return instance;
+
+        return getNamedInstance(beanClass, null, null);
     }
 
     @Deprecated
     public static <T> T getDefaultInstance(Class<T> beanClass, Properties properties) throws RuntimeException {
-        return getNamedInstance(beanClass, DEFAULT_NAME, properties);
+       T instance = (T) beanInstances.get(beanClass.getName());
+
+        if (instance != null)
+           return instance;
+
+        return getNamedInstance(beanClass, null, properties);
     }
 
     public static <T> T getNamedInstance(Class<T> beanClass, String name) throws RuntimeException {
@@ -59,11 +68,12 @@ public class BeanPopulator
     }
 
     private static <T> T getNamedInstance(Class<T> beanClass, String name, Properties properties) throws RuntimeException {
+        StringBuilder sb = new StringBuilder().append(beanClass.getName());
 
-        if(name == null) {
-            name = DEFAULT_NAME;
-        }
-        String key = beanClass.getName()+":"+name;
+        if (name != null)
+           sb.append(":").append(name);
+
+        String key = sb.toString();
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
@@ -90,7 +100,7 @@ public class BeanPopulator
      * @Deprecated Only used in tests
      */
     public static void configureFromProperties(Object bean, Properties properties) throws Exception {
-        configureFromProperties(bean, DEFAULT_NAME, properties);
+        configureFromProperties(bean, null, properties);
     }
 
     /**
@@ -316,13 +326,9 @@ public class BeanPopulator
         String propertyFileKey;
         String valueFromProperties = null;
 
-        if(instanceName == null) {
-            instanceName = DEFAULT_NAME;
-        }
-
         if(valueFromProperties == null) {
 
-            if(DEFAULT_NAME.equals(instanceName)) {
+            if(instanceName == null) {
                 propertyFileKey = bean.getClass().getName()+"."+field.getName();
                 valueFromProperties = properties.getProperty(propertyFileKey);
             }
@@ -335,7 +341,7 @@ public class BeanPopulator
 
         if(valueFromProperties == null) {
 
-            if(DEFAULT_NAME.equals(instanceName)) {
+            if(instanceName == null) {
                 propertyFileKey = bean.getClass().getSimpleName()+"."+field.getName();
                 valueFromProperties = properties.getProperty(propertyFileKey);
             }
