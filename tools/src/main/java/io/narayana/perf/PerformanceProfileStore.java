@@ -27,111 +27,99 @@
 // UK.
 //
 
-package org.jboss.jbossts.qa.Utils;
+package io.narayana.perf;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Properties;
 
-// TODO use  tools/src/main/java/io/narayana/perf/PerformanceProfileStore instead
 public class PerformanceProfileStore
 {
-    public static final String DEFAULT_VARIANCE_PROPERTY_NAME = "io.narayana.perf.PerformanceVariance";
-    public static Float DEFAULT_VARIANCE = 1.1F; // percentage variance that can be tolerated
-    public static String PERFDATAFILENAME = "PerformanceProfileStore.last";
+    public final static String DEFAULT_VARIANCE_PROPERTY_NAME = "io.narayana.perf.PerformanceVariance";
+    public final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
 
-    private final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
-    private final static String baseDir = System.getProperty(BASE_DIRECTORY_PROPERTY);
-    private static PerformanceProfileStore metrics;
+
+    public final static Float DEFAULT_VARIANCE = 1.1F; // percentage variance that can be tolerated
+    public final static String PERFDATAFILENAME = "PerformanceProfileStore.last";
+
+    private final static String BASE_DIR = System.getProperty(BASE_DIRECTORY_PROPERTY);
+    private final static boolean PERSIST_DATA = (BASE_DIR != null); //Boolean.parseBoolean(System.getProperty(ENABLE_CHECKS_PROPNAME));
+
+    private final static PerformanceProfileStore metrics = new PerformanceProfileStore();
 
     private Properties data;
     private File dataFile;
     private float variance;
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    private Calendar cal = Calendar.getInstance();
 
     private static float getMinVariance() {
         return Float.parseFloat(System.getProperty(DEFAULT_VARIANCE_PROPERTY_NAME, DEFAULT_VARIANCE.toString()));
     }
 
-    public PerformanceProfileStore() throws IOException {
+    public PerformanceProfileStore() {
         this(getMinVariance());
     }
 
-    public PerformanceProfileStore(float variance) throws IOException {
-        if (baseDir == null)
-            throw new RuntimeException(BASE_DIRECTORY_PROPERTY + " property not set - cannot find performance test profiles!");
-
+    public PerformanceProfileStore(float variance) {
         this.variance = variance;
         data = new Properties();
-        dataFile = new File(baseDir + File.separator + PERFDATAFILENAME);
 
-        if (!dataFile.exists()) {
-            dataFile.createNewFile();
+        if (PERSIST_DATA) {
+            if (BASE_DIR == null)
+                throw new RuntimeException(BASE_DIRECTORY_PROPERTY + " property not set - cannot find performance test profiles!");
+
+            dataFile = new File(BASE_DIR + File.separator + PERFDATAFILENAME);
+
+            try {
+                if (!dataFile.exists())
+                    dataFile.createNewFile();
+
+                InputStream is = new FileInputStream(dataFile);
+
+                data.load(is);
+                is.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot load previous performance profile", e);
+            }
         }
-
-        InputStream is = new FileInputStream(dataFile);
-
-        data.load(is);
-        is.close();
     }
 
     float getMetric(String name, float defaultValue) {
         return Float.parseFloat(data.getProperty(name, Float.toString(defaultValue)));
     }
 
-    float getMetric(String name) {
-        return getMetric(name, (float) 0.0);
+    public boolean updateMetric(String metricName, Float metricValue) {
+        return updateMetric(metricName, metricValue, false);
     }
 
-    public boolean updateMetric(String metricName, Float metricValue) throws IOException {
-         return updateMetric(metricName, metricValue, false);
-    }
-
-    public boolean updateMetric(String metricName, Float metricValue, boolean largerIsBetter) throws IOException {
+    public boolean updateMetric(String metricName, Float metricValue, boolean largerIsBetter) {
         Float canonicalValue =  getMetric(metricName, metricValue);
 
         boolean better = isBetter(metricValue, canonicalValue, largerIsBetter);
 
         if (!data.containsKey(metricName) || better) {
             data.put(metricName, Float.toString(metricValue));
-            data.store(new FileOutputStream(dataFile), dateFormat.format(cal.getTime()).toString() +
-                ": Performance profile (time in milli-seconds)");
+            if (PERSIST_DATA) {
+                try {
+                    data.store(new FileOutputStream(dataFile), "Performance profile (time in milli-seconds)");
+                } catch (IOException e) {
+                    throw new RuntimeException("Cannot store performance data", e);
+                }
+            }
         }
 
         return isWithinTolerance(metricValue, canonicalValue, variance, largerIsBetter);
     }
 
-    public static PerformanceProfileStore getMetrics() throws IOException {
-        if (metrics == null)
-            metrics = new PerformanceProfileStore();
-
-        return metrics;
-    }
-
-    public static boolean checkPerformance(String performanceName, float operationDuration) {
+    public static boolean checkPerformance(String performanceName, float operationDuration) throws IOException {
         return checkPerformance(performanceName, operationDuration, false);
     }
 
-	public static boolean checkPerformance(String performanceName, float operationDuration, boolean largerIsBetter)
-	{
-		try {
-          return getMetrics().updateMetric(performanceName, operationDuration, largerIsBetter);
-		} catch (Exception e)
-		{
-			System.err.println("checkPerformance: " + e);
-			e.printStackTrace(System.err);
-
-            return false;
-		}
-	}
+    public static boolean checkPerformance(String performanceName, float operationDuration, boolean largerIsBetter)
+            throws IOException {
+        return metrics.updateMetric(performanceName, operationDuration, largerIsBetter);
+    }
 
     boolean isWithinTolerance(Float metricValue, Float canonicalValue, Float variance, boolean largerIsBetter) {
         Float headRoom = Math.abs(canonicalValue * (variance - 1));
-
         boolean within;
 
         if (largerIsBetter)

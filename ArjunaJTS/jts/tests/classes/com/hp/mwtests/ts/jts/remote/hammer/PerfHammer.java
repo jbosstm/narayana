@@ -36,6 +36,7 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.RootOA;
+import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Result;
 
 public class PerfHammer
@@ -62,12 +63,13 @@ public class PerfHammer
 
         GridWorker worker = new GridWorker(myORB, gridReference);
         Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
+        boolean correct = PerformanceProfileStore.checkPerformance("JTSRemote_PerfTest_PerfHammer", opts.getThroughput(), true);
 
         System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
                 opts.getErrorCount(), opts.getTotalMillis());
 
-        System.out.println("Passed");
+        System.out.printf("%s%n", (correct ? "Passed" : "Failed"));
     }
 }
 

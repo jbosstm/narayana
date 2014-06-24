@@ -50,7 +50,7 @@ public class TestGroup_perfprofile01_i extends TestGroupBase
 			super.tearDown();
 		}
 	}
-
+ 
 	@Test public void PerfProfile01_I_AIT01_ImplicitObject_NoTran_NoTranNullOper()
 	{
 		setTestName("AIT01_ImplicitObject_NoTran_NoTranNullOper");
@@ -326,4 +326,16 @@ public class TestGroup_perfprofile01_i extends TestGroupBase
 		server1.terminate();
 	}
 
+    @Test public void PerfProfile01_JTSRemote_PerfTest() {
+        String numberOfCalls = System.getProperty("testgroup.jtsremote.perftest.numberOfCalls", "10000");
+        String threadCount = System.getProperty("testgroup.jtsremote.perftest.numberOfThreads", "20");
+        String batchSize = System.getProperty("testgroup.jtsremote.perftest.batchSize", "100");
+
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 960);
+        server1.start("$(1)");
+
+        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)", numberOfCalls, threadCount, batchSize);
+
+        server1.terminate();
+    }
 }

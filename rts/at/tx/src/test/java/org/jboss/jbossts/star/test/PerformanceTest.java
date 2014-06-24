@@ -21,12 +21,15 @@
  */
 package org.jboss.jbossts.star.test;
 
+import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Result;
 import io.narayana.perf.WorkerWorkload;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class PerformanceTest extends BaseTest {
     private boolean doRealWork = false;
@@ -52,6 +55,10 @@ public class PerformanceTest extends BaseTest {
                 opts.getErrorCount(), opts.getTotalMillis());
 
         Assert.assertEquals(0, opts.getErrorCount());
+
+        boolean correct = PerformanceProfileStore.checkPerformance(
+                "org.jboss.jbossts.star.test.throughput", opts.getThroughput(), true);
+        Assert.assertTrue("performance regression", correct);
     }
 
     private class RTSWorker implements WorkerWorkload<String> {

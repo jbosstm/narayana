@@ -46,6 +46,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import io.narayana.perf.PerformanceProfileStore;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +62,8 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
+
+import org.junit.Assert;
 
 public class PerformanceTestCommitMarkableResource extends
 		TestCommitMarkableResourceBase {
@@ -261,7 +264,7 @@ public class PerformanceTestCommitMarkableResource extends
 		Utils.createTables(pooledConnection.getConnection());
 		pooledConnection.close();
 
-		doTest(new Handler(dataSource, recoveryDataSource));
+		doTest(new Handler(dataSource, recoveryDataSource), "testCommitMarkableResource");
 	}
 
 	// @org.junit.Ignore
@@ -366,10 +369,10 @@ public class PerformanceTestCommitMarkableResource extends
 
 		Utils.createTables(dataSource);
 
-		doTest(new Handler(dataSource));
+		doTest(new Handler(dataSource), "testXAResource");
 	}
 
-	public void doTest(final Handler xaHandler) throws Exception {
+	public void doTest(final Handler xaHandler, String testName) throws Exception {
 
 		// Test code
 		Thread[] threads = new Thread[threadCount];
@@ -476,14 +479,18 @@ public class PerformanceTestCommitMarkableResource extends
 		long additionalCleanuptime = xaHandler.postRunCleanup();
 
 		long timeInMillis = (endTime - startTime) + additionalCleanuptime;
+        long throughput = Math.round((totalExecuted.intValue() / (timeInMillis / 1000d)));
+
 		System.out.println("  Total time millis: " + timeInMillis);
 		System.out.println("  Average transaction time: " + timeInMillis
 				/ totalExecuted.intValue());
-		System.out
-				.println("  Transactions per second: "
-						+ Math.round((totalExecuted.intValue() / (timeInMillis / 1000d))));
+		System.out.println("  Transactions per second: " + throughput);
 
 		xaHandler.checkFooSize();
+
+        boolean correct = PerformanceProfileStore.checkPerformance(testName, throughput, true);
+
+        Assert.assertTrue("performance regression", correct);
 	}
 
 	private class Handler {
