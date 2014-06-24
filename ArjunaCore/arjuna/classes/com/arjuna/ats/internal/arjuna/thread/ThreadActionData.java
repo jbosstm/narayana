@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.internal.arjuna.thread;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
+import java.util.Deque;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
@@ -54,11 +54,11 @@ public class ThreadActionData
 	public static BasicAction currentAction ()
 	{
 		ThreadActionData.setup();
-		Stack txs = (Stack) _threadList.get();
+		Deque<BasicAction> txs = _threadList.get();
 
 		if (txs != null && !txs.isEmpty())
 		{
-			return (BasicAction) txs.peek();
+			return txs.peekFirst();
 		}
 
 		return null;
@@ -77,12 +77,11 @@ public class ThreadActionData
 
 	public static void pushAction (BasicAction a, boolean register)
 	{
-		Thread t = Thread.currentThread();
-		Stack txs = (Stack) _threadList.get();
+		Deque<BasicAction> txs = _threadList.get();
 
 		if (txs == null)
 		{
-			txs = new Stack();
+			txs = new ArrayDeque<BasicAction>();
 			txs.push(a);
 
 			_threadList.set(txs);
@@ -91,7 +90,7 @@ public class ThreadActionData
 			txs.push(a);
 
 		if (register)
-			a.addChildThread(t);
+                    a.addChildThread(Thread.currentThread());
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class ThreadActionData
 			 * First get the hierarchy from the bottom up.
 			 */
 
-			java.util.Stack s = new java.util.Stack();
+			Deque<BasicAction> s = new ArrayDeque<BasicAction>();
 			BasicAction nextLevel = act.parent();
 
 			s.push(act);
@@ -126,9 +125,9 @@ public class ThreadActionData
 
 			try
 			{
-				while (!s.empty())
+				while (!s.isEmpty())
 				{
-					pushAction((BasicAction) s.pop());
+					pushAction(s.pop());
 				}
 			}
 			catch (Exception ex)
@@ -137,19 +136,19 @@ public class ThreadActionData
 		}
 	}
 
-	public static BasicAction popAction () throws EmptyStackException
+	public static BasicAction popAction () throws NoSuchElementException
 	{
 		return popAction(ThreadUtil.getThreadId(), true);
 	}
 
 	public static BasicAction popAction (boolean unregister)
-			throws EmptyStackException
+			throws NoSuchElementException
 	{
 		return popAction(ThreadUtil.getThreadId(), unregister);
 	}
 
 	public static BasicAction popAction (String threadId)
-			throws EmptyStackException
+			throws NoSuchElementException
 	{
 		return popAction(threadId, true);
 	}
@@ -160,15 +159,15 @@ public class ThreadActionData
 	 */
 
 	public static BasicAction popAction (String threadId, boolean unregister)
-			throws EmptyStackException
+			throws NoSuchElementException
 	{
-		Stack txs = (Stack) _threadList.get();
+		Deque<BasicAction> txs = _threadList.get();
 
 		if (txs != null)
 		{
-			BasicAction a = (BasicAction) txs.pop();
+			BasicAction a = txs.pop();
 
-			if ((a != null) && (unregister))
+			if (a != null && unregister)
 			{
 				a.removeChildThread(threadId);
 			}
@@ -199,16 +198,16 @@ public class ThreadActionData
 	public static void purgeAction (BasicAction act, Thread t, boolean unregister)
 			throws NoSuchElementException
 	{
-		if ((act != null) && (unregister))
+		if (act != null && unregister)
         {
 			act.removeChildThread(ThreadUtil.getThreadId(t));
         }
 
-		Stack txs = (Stack) _threadList.get();
+		Deque<BasicAction> txs = _threadList.get();
 
 		if (txs != null)
 		{
-			txs.removeElement(act);
+			txs.remove(act);
 
 			if (txs.size() == 0)
 			{
@@ -229,7 +228,7 @@ public class ThreadActionData
 
 	public static void purgeActions (Thread t, boolean unregister)
 	{
-		Stack txs = (Stack) _threadList.get();
+		Deque<BasicAction> txs = _threadList.get();
 
 		_threadList.set(null);
 
@@ -237,9 +236,9 @@ public class ThreadActionData
 		{
 			if (unregister)
 			{
-				while (!txs.empty())
+				while (!txs.isEmpty())
 				{
-					BasicAction act = (BasicAction) txs.pop();
+					BasicAction act = txs.pop();
 
 					if (act != null)
                     {
@@ -286,15 +285,15 @@ public class ThreadActionData
 	{
 		for (int i = 0; i < _threadSetups.size(); i++)
 		{
-			ThreadSetup s = (ThreadSetup) _threadSetups.get(i);
+			ThreadSetup s = _threadSetups.get(i);
 
 			if (s != null)
 				s.setup();
 		}
 	}
 
-	private static ThreadLocal _threadList = new ThreadLocal();
+	private static ThreadLocal<Deque<BasicAction>> _threadList = new ThreadLocal<Deque<BasicAction>>();
 
-	private static ArrayList _threadSetups = new ArrayList();
+	private static ArrayList<ThreadSetup> _threadSetups = new ArrayList<ThreadSetup>();
 
 }
