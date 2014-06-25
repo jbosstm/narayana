@@ -33,7 +33,7 @@ package com.hp.mwtests.ts.jts.orbspecific.local.checked;
 
 import static org.junit.Assert.fail;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
@@ -48,7 +48,7 @@ import com.arjuna.orbportability.RootOA;
 
 class MyCheckedAction extends CheckedAction
 {
-    public synchronized void check (boolean isCommit, Uid actUid, Hashtable list)
+    public synchronized void check (boolean isCommit, Uid actUid, Map list)
     {
         // don't do anything so that no warning message is printed!
     }
