@@ -326,7 +326,8 @@ public class TestGroup_perfprofile01_i extends TestGroupBase
 		server1.terminate();
 	}
 
-    @Test public void PerfProfile01_JTSRemote_PerfTest() {
+    // disable and use the jts remote equivalent
+    Test public void PerfProfile01_JTSRemote_PerfTest() {
         String numberOfCalls = System.getProperty("testgroup.jtsremote.perftest.numberOfCalls", "10000");
         String threadCount = System.getProperty("testgroup.jtsremote.perftest.numberOfThreads", "20");
         String batchSize = System.getProperty("testgroup.jtsremote.perftest.batchSize", "100");
