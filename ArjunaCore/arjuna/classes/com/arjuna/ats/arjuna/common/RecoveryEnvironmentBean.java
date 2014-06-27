@@ -68,6 +68,8 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")
     private volatile boolean timeoutSocket = false;
 
+    private volatile boolean hA = false;
+
     /**
      * Returns the interval between recovery scans, in seconds.
      *
@@ -580,5 +582,13 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setTimeoutSocket(boolean timeoutSocket)
     {
         this.timeoutSocket = timeoutSocket;
+    }
+
+    public boolean isHA() {
+        return hA;
+    }
+
+    public void setHA(boolean hA) {
+        this.hA = hA;
     }
 }

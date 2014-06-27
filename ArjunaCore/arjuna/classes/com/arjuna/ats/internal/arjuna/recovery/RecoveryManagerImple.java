@@ -51,16 +51,17 @@ public class RecoveryManagerImple
     private PeriodicRecovery _periodicRecovery = null;
 
     private RecActivatorLoader _recActivatorLoader = null;
-
     /**
      * Does the work of setting up crash recovery.
      *
      * @param threaded
      *            if <code>true</code> then the manager will start a separate
      *            thread to run recovery periodically.
+     * @param suspend
+     *            if <code>true</code> then start the periodic recovery in suspended mode
      */
 
-    public RecoveryManagerImple (boolean threaded)
+    public RecoveryManagerImple (boolean threaded, boolean startSuspended)
     {
         // by default we do not use a socket based listener,
 	// but it can be turned on if not required.
@@ -110,7 +111,7 @@ public class RecoveryManagerImple
         // start the periodic recovery thread
         // (don't start this until just about to go on to the other stuff)
 
-        _periodicRecovery = new PeriodicRecovery(threaded, useListener);
+        _periodicRecovery = new PeriodicRecovery(threaded, useListener, startSuspended);
 
         try
         {
@@ -129,6 +130,18 @@ public class RecoveryManagerImple
         catch (IOException ex) {
             tsLogger.i18NLogger.warn_recovery_RecoveryManagerImple_2(ex);
         }
+    }
+
+    /**
+     * Does the work of setting up crash recovery.
+     *
+     * @param threaded
+     *            if <code>true</code> then the manager will start a separate
+     *            thread to run recovery periodically.
+     */
+    public RecoveryManagerImple (boolean threaded)
+    {
+        this(threaded, false);
     }
 
     public final void scan ()

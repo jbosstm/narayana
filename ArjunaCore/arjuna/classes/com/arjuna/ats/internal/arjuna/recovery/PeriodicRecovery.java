@@ -109,8 +109,9 @@ public class PeriodicRecovery extends Thread
      *
      * @param threaded
      * @param useListener  if true, start a socket based listener.
+     * @param startSuspended if true, start the recovery thread in suspended mode
      */
-    public PeriodicRecovery (boolean threaded, boolean useListener)
+    public PeriodicRecovery (boolean threaded, boolean useListener, boolean startSuspended)
     {
         super("Periodic Recovery");
         
@@ -137,6 +138,9 @@ public class PeriodicRecovery extends Thread
             }
         }
 
+        if (startSuspended)
+            setMode(Mode.SUSPENDED);
+
         if (threaded)
         {
             if (tsLogger.logger.isDebugEnabled()) {
@@ -152,6 +156,14 @@ public class PeriodicRecovery extends Thread
             }
             _listener.start();
         }
+    }
+
+    /**
+      * @param threaded
+      * @param useListener  if true, start a socket based listener.
+      */
+    public PeriodicRecovery (boolean threaded, boolean useListener) {
+        this(threaded, useListener, false);
     }
 
     /**
