@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.3.Final-SNAPSHOT/lib/ext/jboss-logging-processor.jar"/>
+	<classpathentry kind="lib" path="dist/narayana-full-5.0.3.Final-SNAPSHOT/lib/ext/jboss-logging.jar"/>
 	<classpathentry excluding="org/jboss/jbossts/qa/astests/taskdefs/ASTestConfig.java|org/jboss/jbossts/qa/astests/taskdefs/ServerTask.java|org/jboss/jbossts/qa/astests/taskdefs/ASClientTask.java|org/jboss/jbossts/qa/astests/taskdefs/ClientAction.java|org/jboss/jbossts/qa/astests/ASCrashRecovery01/|org/jboss/jbossts/qa/astests/crash/" kind="src" path="tests/src"/>
 	<classpathentry kind="src" path="tests/build/idl"/>
 	<classpathentry kind="lib" path="ext/ant.jar"/>

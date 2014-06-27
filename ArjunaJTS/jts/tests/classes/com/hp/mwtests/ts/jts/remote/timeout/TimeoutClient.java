@@ -31,10 +31,13 @@
 
 package com.hp.mwtests.ts.jts.remote.timeout;
 
+import java.util.Date;
+
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.Control;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
@@ -48,6 +51,9 @@ import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 public class TimeoutClient
 {
+	static int timeout = 8;
+	static int mfactor = arjPropertyManager.getCoreEnvironmentBean().getTimeoutFactor();
+	
     public static void main(String[] args) throws Exception
     {
         ORB myORB = null;
@@ -71,12 +77,14 @@ public class TimeoutClient
 
             SetGet SetGetVar = null;
 
-            System.out.println("Setting transaction timeout to 2 seconds.");
+            System.out.println("Setting transaction timeout to " + timeout*mfactor + " seconds.");
 
-            current.set_timeout(2);
+            current.set_timeout(timeout*mfactor);
 
             current.begin();
             current.begin();
+            
+            long startTime = System.currentTimeMillis();
 
             try
             {
@@ -108,9 +116,15 @@ public class TimeoutClient
 
             try
             {
-                System.out.println("Now sleeping for 5 seconds.");
+            	long timeNow = System.currentTimeMillis();
+            	long setTime = (timeNow - startTime);
+            	long timeoutTime = (timeout * 1000 *mfactor);
+            	long sleepTime =  timeoutTime - setTime; 
+            	if (sleepTime > 0) {
+            		System.out.println("Now sleeping for " + sleepTime*mfactor + " milliseconds.");
 
-                Thread.sleep(5000);
+            		Thread.sleep(sleepTime*mfactor);
+            	}
             }
             catch (Exception e)
             {
