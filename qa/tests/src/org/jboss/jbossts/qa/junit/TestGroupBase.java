@@ -63,7 +63,7 @@ public class TestGroupBase
         emptyObjectStore.perform();
 
         if(isRecoveryManagerNeeded) {
-            recoveryManager = createTask("server0", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 480);
+            recoveryManager = createTask("server0", com.arjuna.ats.arjuna.recovery.RecoveryManager.class, Task.TaskType.EXPECT_READY, 960);
 		    recoveryManager.start("-test");
         }
     }
