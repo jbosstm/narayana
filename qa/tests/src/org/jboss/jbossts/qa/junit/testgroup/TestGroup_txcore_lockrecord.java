@@ -84,7 +84,9 @@ public class TestGroup_txcore_lockrecord extends TestGroupBase
 
 	@Test public void LockRecord_Test012()
 	{
-        startAndWaitForClient(org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client003.class, "$(CALLS)", "10");
+        Task client = createTask("client0", org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client003.class, Task.TaskType.EXPECT_PASS_FAIL, 960);
+		client.start("$(CALLS)", "10");
+		client.waitFor();
 	}
 
 
@@ -101,12 +103,16 @@ public class TestGroup_txcore_lockrecord extends TestGroupBase
 
 	@Test public void LockRecord_Test015()
 	{
-        startAndWaitForClient(org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client004.class, "100", "5");
+        Task client = createTask("client0", org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client004.class, Task.TaskType.EXPECT_PASS_FAIL, 960);
+		client.start("$(CALLS)", "5");
+		client.waitFor();
 	}
 
 	@Test public void LockRecord_Test016()
 	{
-        startAndWaitForClient(org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client004.class, "$(CALLS)", "10");
+        Task client = createTask("client0", org.jboss.jbossts.qa.ArjunaCore.LockManager.client.Client004.class, Task.TaskType.EXPECT_PASS_FAIL, 960);
+		client.start("$(CALLS)", "10");
+		client.waitFor();
 	}
 
 
