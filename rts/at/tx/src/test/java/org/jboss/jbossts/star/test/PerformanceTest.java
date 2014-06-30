@@ -48,16 +48,16 @@ public class PerformanceTest extends BaseTest {
 
         Result<String> opts = new Result<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
 
-        String info = USE_SPDY ? "SPDY: " : USE_SSL ? "SSL:  " : USE_UNDERTOW ? "UTOW: " : "none: ";
+        String info = USE_SPDY ? "SPDY" : USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
 
-        System.out.printf("%s Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
+        System.out.printf("%s:  Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
                 opts.getErrorCount(), opts.getTotalMillis());
 
         Assert.assertEquals(0, opts.getErrorCount());
 
         boolean correct = PerformanceProfileStore.checkPerformance(
-                "org.jboss.jbossts.star.test.throughput", opts.getThroughput(), true);
+                getClass().getName() + "_measureThroughput_" + info, opts.getThroughput(), true);
         Assert.assertTrue("performance regression", correct);
     }
 

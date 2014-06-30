@@ -41,16 +41,52 @@ import io.narayana.perf.Result;
 
 public class PerfHammer
 {
+    public static final String PERF_HAMMER_CALL_CNT_PROP = "testgroup.jtsremote.perftest.numberOfCalls";
+    public static final String PERF_HAMMER_THR_CNT_PROP = "testgroup.jtsremote.perftest.numberOfThreads";
+    public static final String PERF_HAMMER_BATCH_SIZE_PROP = "testgroup.jtsremote.perftest.batchSize";
+    public static final String PERF_HAMMER_VARIANCE_PROP = "testgroup.jtsremote.perftest.variance";
+
+    private static final int DEFAULT_CALL_CNT = 1000;
+    private static final int DEFAULT_THR_CNT = 10;
+    private static final int DEFAULT_BATCH_SIZE = 100;
+    private static final float DEFAULT_VARIANCE = PerformanceProfileStore.getVariance();
+
+    private static Integer getDefaultCallCnt() {
+        return PerformanceProfileStore.isFailOnRegression() ?
+                DEFAULT_CALL_CNT * 30 : DEFAULT_CALL_CNT;
+    }
+
+    private static Integer getDefaultThreadCount() {
+        return PerformanceProfileStore.isFailOnRegression() ?
+                DEFAULT_THR_CNT * 5 : DEFAULT_THR_CNT;
+    }
+
+    public static Integer getCallCount() {
+        return Integer.getInteger(PERF_HAMMER_CALL_CNT_PROP, getDefaultCallCnt());
+    }
+
+    public static Integer getThreadCount() {
+        return Integer.getInteger(PERF_HAMMER_THR_CNT_PROP, getDefaultThreadCount());
+    }
+
+    public static Integer getBatchSize() {
+        return Integer.getInteger(PERF_HAMMER_BATCH_SIZE_PROP, DEFAULT_BATCH_SIZE);
+    }
+
+    public static float getVariance() {
+        String varianceFromProperty =  System.getProperty(PERF_HAMMER_VARIANCE_PROP);
+
+        return varianceFromProperty == null ? DEFAULT_VARIANCE : Float.parseFloat(varianceFromProperty);
+    }
+
     public static void main(String[] args) throws Exception
     {
         String gridReference = args[0];
-        int defaultNumberOfCalls = args.length > 1 ? Integer.parseInt(args[1]) : 10;
-        int defaultThreadCount = args.length > 2 ? Integer.parseInt(args[2]) : 100000;
-        int defaultBatchSize = args.length > 3 ? Integer.parseInt(args[3]) : 100;
 
-        int numberOfCalls = Integer.getInteger("testgroup.jtsremote.perftest.numberOfCalls", defaultNumberOfCalls);
-        int threadCount = Integer.getInteger("testgroup.jtsremote.perftest.numberOfThreads", defaultThreadCount);
-        int batchSize = Integer.getInteger("testgroup.jtsremote.perftest.batchSize", defaultBatchSize);
+        int numberOfCalls =  getCallCount();
+        int threadCount =  getThreadCount();
+        int batchSize = getBatchSize();
+        float variance =  getVariance();
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
@@ -63,7 +99,8 @@ public class PerfHammer
 
         GridWorker worker = new GridWorker(myORB, gridReference);
         Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
-        boolean correct = PerformanceProfileStore.checkPerformance("JTSRemote_PerfTest_PerfHammer", opts.getThroughput(), true);
+
+        boolean correct = PerformanceProfileStore.checkPerformance("JTSRemote_PerfTest_PerfHammer_" + myORB.orb().getClass().getName(), variance, opts.getThroughput(), true);
 
         System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),

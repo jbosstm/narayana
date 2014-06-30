@@ -127,16 +127,12 @@ public class TestGroup_jtsremote  extends TestGroupBase
         server1.terminate();
     }
 
+    // TODO move this test into perfprofile01_
     @Test public void JTSRemote_PerfTest() {
-        String numberOfCalls = System.getProperty("testgroup.jtsremote.perftest.numberOfCalls", "10000");
-        String threadCount = System.getProperty("testgroup.jtsremote.perftest.numberOfThreads", "20");
-        String batchSize = System.getProperty("testgroup.jtsremote.perftest.batchSize", "100");
-
-
         Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 960);
         server1.start("$(1)");
 
-        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)", numberOfCalls, threadCount, batchSize);
+        startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)");
 
         server1.terminate();
     }
