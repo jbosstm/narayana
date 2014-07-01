@@ -126,7 +126,7 @@ public class PerformanceProfileStore
             }
         }
 
-        return isWithinTolerance(metricValue, canonicalValue, variance, largerIsBetter);
+        return isWithinTolerance(metricName, metricValue, canonicalValue, variance, largerIsBetter);
     }
 
     public static boolean checkPerformance(String performanceName, float operationDuration) throws IOException {
@@ -147,7 +147,7 @@ public class PerformanceProfileStore
         return metrics.updateMetric(variance, performanceName, operationDuration, largerIsBetter);
     }
 
-    boolean isWithinTolerance(Float metricValue, Float canonicalValue, Float variance, boolean largerIsBetter) {
+    boolean isWithinTolerance(String metricName, Float metricValue, Float canonicalValue, Float variance, boolean largerIsBetter) {
         Float headRoom = Math.abs(canonicalValue * (variance - 1));
         boolean within;
 
@@ -158,8 +158,8 @@ public class PerformanceProfileStore
 
         boolean ok =  within || !failOnRegression;
 
-        System.out.printf("actual %f versus best %f: _variance %f: head room: %f biggerBetter=%b within=%b (persist=%b failOnRegression=%b res=%b)%n",
-                metricValue, canonicalValue, variance, headRoom, largerIsBetter, within, PERSIST_DATA, failOnRegression, ok);
+        System.out.printf("%s: actual %f versus best %f: _variance %f: head room: %f biggerBetter=%b within=%b (persist=%b failOnRegression=%b res=%b)%n",
+                metricName, metricValue, canonicalValue, variance, headRoom, largerIsBetter, within, PERSIST_DATA, failOnRegression, ok);
 
         return ok;
     }

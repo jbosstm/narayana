@@ -42,13 +42,19 @@ public class PerformanceTest extends BaseTest {
     // 2PC commit
     @Test
     public void measureThroughput() throws Exception {
-        int callCount = Integer.getInteger("callCount", 1000);
-        int threadCount = Integer.getInteger("threadCount", 10);
-        int batchSize = Integer.getInteger("batchSize", 50);
+        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
+        int defaultCallCount =  failOnRegression ? 150000 : 1000;
+        int defaultThreadCount = failOnRegression ? 50 : 10;
+        int defaultBatchSize = failOnRegression ? 100 : 50;
+
+        int callCount = Integer.getInteger("callCount", defaultCallCount);
+        int threadCount = Integer.getInteger("threadCount", defaultThreadCount);
+        int batchSize = Integer.getInteger("batchSize", defaultBatchSize);
 
         Result<String> opts = new Result<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
 
         String info = USE_SPDY ? "SPDY" : USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
+        String metricName = getClass().getName() + "_measureThroughput_" + info;
 
         System.out.printf("%s:  Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
@@ -56,9 +62,8 @@ public class PerformanceTest extends BaseTest {
 
         Assert.assertEquals(0, opts.getErrorCount());
 
-        boolean correct = PerformanceProfileStore.checkPerformance(
-                getClass().getName() + "_measureThroughput_" + info, opts.getThroughput(), true);
-        Assert.assertTrue("performance regression", correct);
+        boolean correct = PerformanceProfileStore.checkPerformance(metricName, opts.getThroughput(), true);
+        Assert.assertTrue(metricName + ": performance regression", correct);
     }
 
     private class RTSWorker implements WorkerWorkload<String> {

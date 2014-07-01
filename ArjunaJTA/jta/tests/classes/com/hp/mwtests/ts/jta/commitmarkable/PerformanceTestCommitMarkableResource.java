@@ -481,6 +481,7 @@ public class PerformanceTestCommitMarkableResource extends
 		long timeInMillis = (endTime - startTime) + additionalCleanuptime;
         long throughput = Math.round((totalExecuted.intValue() / (timeInMillis / 1000d)));
 
+        System.out.println("  Total transactions: " + totalExecuted.intValue());
 		System.out.println("  Total time millis: " + timeInMillis);
 		System.out.println("  Average transaction time: " + timeInMillis
 				/ totalExecuted.intValue());
@@ -490,7 +491,7 @@ public class PerformanceTestCommitMarkableResource extends
 
         boolean correct = PerformanceProfileStore.checkPerformance(getClass().getName() + testName, throughput, true);
 
-        Assert.assertTrue("performance regression", correct);
+        Assert.assertTrue(getClass().getName() + testName + ": performance regression", correct);
 	}
 
 	private class Handler {
