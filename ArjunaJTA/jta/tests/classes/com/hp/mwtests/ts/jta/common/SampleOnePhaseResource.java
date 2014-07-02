@@ -35,6 +35,13 @@ public class SampleOnePhaseResource extends TestResource
     
     public SampleOnePhaseResource (ErrorType type)
     {
+        this(type, true);
+    }
+    
+    public SampleOnePhaseResource (ErrorType type, boolean print)
+    {
+        super(false, print);
+        
         _heuristic = type;
     }
     
@@ -50,7 +57,8 @@ public class SampleOnePhaseResource extends TestResource
     
     public void commit (Xid id, boolean onePhase) throws XAException
     {
-        System.out.println("XA_COMMIT[" + id + "]");
+        if (_doPrint)
+            System.out.println("XA_COMMIT[" + id + "]");
         
         _onePhase = onePhase;
         
@@ -90,9 +98,10 @@ public class SampleOnePhaseResource extends TestResource
     
     public void forget (Xid xid) throws XAException
     {
+        if (_doPrint)
             System.out.println("XA_FORGET[" + xid + "]");
             
-            _forgot = true;
+        _forgot = true;
     }
 
     private boolean _onePhase = false;
