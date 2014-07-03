@@ -22,12 +22,12 @@ package com.arjuna.ats.jdbc.logging;
 
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
-import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;
+import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
-import org.jboss.logging.Cause;
-import org.jboss.logging.LogMessage;
-import org.jboss.logging.Message;
-import org.jboss.logging.MessageLogger;
+import org.jboss.logging.annotations.Cause;
+import org.jboss.logging.annotations.LogMessage;
+import org.jboss.logging.annotations.Message;
+import org.jboss.logging.annotations.MessageLogger;
 
 /**
  * i18n log messages for the jdbc module.

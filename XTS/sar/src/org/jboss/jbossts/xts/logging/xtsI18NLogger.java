@@ -20,9 +20,9 @@
  */
 package org.jboss.jbossts.xts.logging;
 
-import org.jboss.logging.*;
+import org.jboss.logging.annotations.*;
 import static org.jboss.logging.Logger.Level.*;
-import static org.jboss.logging.Message.Format.*;
+import static org.jboss.logging.annotations.Message.Format.*;
 
 /**
  * i18n log messages for the xts service module.
