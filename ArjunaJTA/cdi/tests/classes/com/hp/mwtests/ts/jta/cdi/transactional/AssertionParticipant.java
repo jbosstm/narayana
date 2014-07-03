@@ -1,6 +1,6 @@
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;

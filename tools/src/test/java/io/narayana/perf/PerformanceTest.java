@@ -21,13 +21,14 @@
  */
 package io.narayana.perf;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertNotSame;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 

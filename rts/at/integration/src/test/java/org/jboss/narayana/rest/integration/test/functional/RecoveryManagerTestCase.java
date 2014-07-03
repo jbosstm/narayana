@@ -1,7 +1,7 @@
 package org.jboss.narayana.rest.integration.test.functional;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
