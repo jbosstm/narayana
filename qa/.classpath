@@ -38,7 +38,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jts"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/localjunit-crash-recovery-tests"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/localjunit-unit-tests"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/mod-stm"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/narayana-jta"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/narayana-jts-idlj"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/narayana-jts-integration"/>
