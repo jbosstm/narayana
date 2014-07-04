@@ -41,52 +41,24 @@ import io.narayana.perf.Result;
 
 public class PerfHammer
 {
-    public static final String PERF_HAMMER_CALL_CNT_PROP = "testgroup.jtsremote.perftest.numberOfCalls";
-    public static final String PERF_HAMMER_THR_CNT_PROP = "testgroup.jtsremote.perftest.numberOfThreads";
-    public static final String PERF_HAMMER_BATCH_SIZE_PROP = "testgroup.jtsremote.perftest.batchSize";
-    public static final String PERF_HAMMER_VARIANCE_PROP = "testgroup.jtsremote.perftest.variance";
+    private static int getArg(String[] args, int index, int defaultValue) {
+        try {
+            if (index >= 0 && index < args.length)
+                return Integer.parseInt(args[index]);
+        } catch (NumberFormatException e) {
+            throw new NullPointerException(new PerfHammer().getClass().getName() + "test arguments in the PerformanceProfileStore invalid: " + e.getMessage());
+        }
 
-    private static final int DEFAULT_CALL_CNT = 1000;
-    private static final int DEFAULT_THR_CNT = 10;
-    private static final int DEFAULT_BATCH_SIZE = 100;
-    private static final float DEFAULT_VARIANCE = PerformanceProfileStore.getVariance();
+        return defaultValue;
 
-    private static Integer getDefaultCallCnt() {
-        return PerformanceProfileStore.isFailOnRegression() ?
-                DEFAULT_CALL_CNT * 30 : DEFAULT_CALL_CNT;
-    }
-
-    private static Integer getDefaultThreadCount() {
-        return PerformanceProfileStore.isFailOnRegression() ?
-                DEFAULT_THR_CNT * 5 : DEFAULT_THR_CNT;
-    }
-
-    public static Integer getCallCount() {
-        return Integer.getInteger(PERF_HAMMER_CALL_CNT_PROP, getDefaultCallCnt());
-    }
-
-    public static Integer getThreadCount() {
-        return Integer.getInteger(PERF_HAMMER_THR_CNT_PROP, getDefaultThreadCount());
-    }
-
-    public static Integer getBatchSize() {
-        return Integer.getInteger(PERF_HAMMER_BATCH_SIZE_PROP, DEFAULT_BATCH_SIZE);
-    }
-
-    public static float getVariance() {
-        String varianceFromProperty =  System.getProperty(PERF_HAMMER_VARIANCE_PROP);
-
-        return varianceFromProperty == null ? DEFAULT_VARIANCE : Float.parseFloat(varianceFromProperty);
     }
 
     public static void main(String[] args) throws Exception
     {
         String gridReference = args[0];
-
-        int numberOfCalls =  getCallCount();
-        int threadCount =  getThreadCount();
-        int batchSize = getBatchSize();
-        float variance =  getVariance();
+        int numberOfCalls = 1000;
+        int threadCount = 10;
+        int batchSize = 100;
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
@@ -97,10 +69,22 @@ public class PerfHammer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
+        String metricName = "JTSRemote_PerfTest_PerfHammer_" + myORB.orb().getClass().getName();
+        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
+
+        if (failOnRegression) {
+            String[] xargs = PerformanceProfileStore.getTestArgs(metricName);
+
+            numberOfCalls = getArg(xargs, 0, numberOfCalls);
+            threadCount = getArg(xargs, 1, threadCount);
+            batchSize = getArg(xargs, 2, batchSize);
+        }
+
         GridWorker worker = new GridWorker(myORB, gridReference);
         Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
 
-        boolean correct = PerformanceProfileStore.checkPerformance("JTSRemote_PerfTest_PerfHammer_" + myORB.orb().getClass().getName(), variance, opts.getThroughput(), true);
+        boolean correct = PerformanceProfileStore.checkPerformance(
+                metricName, PerformanceProfileStore.getVariance(metricName), opts.getThroughput(), true);
 
         System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),

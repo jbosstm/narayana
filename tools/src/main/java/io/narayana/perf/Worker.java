@@ -26,5 +26,5 @@ package io.narayana.perf;
  *
  * Interface for running a batch of work and for receiving test lifecycle notifications
  */
-public interface Worker<T> extends WorkerLifecycle, WorkerWorkload<T> {
+public interface Worker<T> extends WorkerLifecycle<T>, WorkerWorkload<T> {
 }

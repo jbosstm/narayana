@@ -30,11 +30,10 @@
 package io.narayana.perf;
 
 import java.io.*;
-import java.util.Properties;
+import java.util.*;
 
 public class PerformanceProfileStore
 {
-    public final static String DEFAULT_VARIANCE_PROPERTY_NAME = "io.narayana.perf.PerformanceVariance";
     public final static String BASE_DIRECTORY_PROPERTY = "performanceprofilestore.dir";
 
     public static final String FAIL_ON_PERF_REGRESSION_PROP = "io.narayana.perf.failonregression";
@@ -43,59 +42,81 @@ public class PerformanceProfileStore
 
     public final static Float DEFAULT_VARIANCE = 1.1F; // percentage _variance that can be tolerated
     public final static String PERFDATAFILENAME = "PerformanceProfileStore.last";
+    public final static String PERFVARIANCEFILENAME = "PerformanceProfileStore.variance";
+    public final static String PERFARGSFILENAME = "PerformanceProfileStore.args";
+    public final static String PROPFILE_COMMENT =
+        "Performance profile. Format is testName=value where value is the metric (throughput or duration)";
 
     private final static String BASE_DIR = System.getProperty(BASE_DIRECTORY_PROPERTY);
-    private final static boolean PERSIST_DATA = (BASE_DIR != null); // if false then disable regression checks
     private static boolean failOnRegression = isFailOnRegression();
 
     private final static PerformanceProfileStore metrics = new PerformanceProfileStore();
 
     private Properties data;
+    private Properties variances;
+    private Properties testArgs;
     private File dataFile;
     private float _variance;
 
-    private static float getMinVariance() {
-        return Float.parseFloat(System.getProperty(DEFAULT_VARIANCE_PROPERTY_NAME, DEFAULT_VARIANCE.toString()));
-    }
-
     public static boolean isFailOnRegression() {
         return System.getProperty(FAIL_ON_PERF_REGRESSION_PROP) == null ?  DEFAULT_FAIL_ON_REGRESSION :
-            Boolean.getBoolean(FAIL_ON_PERF_REGRESSION_PROP);
+                Boolean.getBoolean(FAIL_ON_PERF_REGRESSION_PROP);
     }
 
     public static float getVariance() {
         return metrics._variance;
     }
 
-    public PerformanceProfileStore() {
-        this(getMinVariance());
+    public static float getVariance(String metricName) {
+        if (!metrics.variances.containsKey(metricName))
+            return metrics._variance;
+
+        return Float.parseFloat(metrics.variances.getProperty(metricName));
     }
 
-    public PerformanceProfileStore(float variance) {
-        this._variance = variance;
-        data = new Properties();
+    private Properties loadProperties(String fileName) throws IOException {
+        File file = new File(fileName);
+        Properties p = new Properties();
 
-        if (PERSIST_DATA) {
-            if (BASE_DIR == null)
-                throw new RuntimeException(BASE_DIRECTORY_PROPERTY + " property not set - cannot find performance test profiles!");
+        if (!file.exists())
+            file.createNewFile();
 
-            dataFile = new File(BASE_DIR + File.separator + PERFDATAFILENAME);
+        InputStream is = new FileInputStream(file);
+
+        p.load(is);
+        is.close();
+
+        return p;
+    }
+
+    public PerformanceProfileStore() {
+        if (!failOnRegression)
+            System.out.printf("PerformanceProfileStore: Regression checks are disabled%n");
+
+        if (BASE_DIR == null) {
+            System.out.printf(
+                    "PerformanceProfileStore: Regression checks are disabled - performance test profile property %s not set%n",
+                    BASE_DIRECTORY_PROPERTY);
+
+            data =  new Properties();
+            variances =  new Properties();
+            testArgs =  new Properties();
+            _variance = DEFAULT_VARIANCE;
+        } else {
 
             try {
-                if (!dataFile.exists())
-                    dataFile.createNewFile();
+                String dataFileName = BASE_DIR + File.separator + PERFDATAFILENAME;
 
-                InputStream is = new FileInputStream(dataFile);
+                data = loadProperties(dataFileName);
+                variances = loadProperties(BASE_DIR + File.separator + PERFVARIANCEFILENAME);
+                testArgs = loadProperties(BASE_DIR + File.separator + PERFARGSFILENAME);
 
-                data.load(is);
-                is.close();
+                _variance = Float.parseFloat(variances.getProperty("default", DEFAULT_VARIANCE.toString()));
+                dataFile = new File(dataFileName);
             } catch (IOException e) {
                 throw new RuntimeException("Cannot load previous performance profile", e);
             }
         }
-
-        if (!failOnRegression)
-            System.out.printf("PerformanceProfileStore: Regression checks are disabled%n");
     }
 
     float getMetric(String name, float defaultValue) {
@@ -107,7 +128,7 @@ public class PerformanceProfileStore
     }
 
     public boolean updateMetric(String metricName, Float metricValue, boolean largerIsBetter) {
-        return updateMetric(_variance, metricName, metricValue, largerIsBetter);
+        return updateMetric(getVariance(metricName), metricName, metricValue, largerIsBetter);
     }
 
     public boolean updateMetric(float variance, String metricName, Float metricValue, boolean largerIsBetter) {
@@ -117,9 +138,10 @@ public class PerformanceProfileStore
 
         if (!data.containsKey(metricName) || better) {
             data.put(metricName, Float.toString(metricValue));
-            if (PERSIST_DATA) {
+
+            if ((BASE_DIR != null)) {
                 try {
-                    data.store(new FileOutputStream(dataFile), "Performance profile (time in milli-seconds)");
+                    data.store(new FileOutputStream(dataFile), PROPFILE_COMMENT);
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot store performance data", e);
                 }
@@ -138,18 +160,22 @@ public class PerformanceProfileStore
         return metrics.updateMetric(performanceName, operationDuration, largerIsBetter);
     }
 
-    public static boolean checkPerformance(String performanceName, float variance, float operationDuration) throws IOException {
+    public static boolean checkPerformance(String performanceName, float variance, float operationDuration)
+        throws IOException {
         return checkPerformance(performanceName, variance, operationDuration, false);
     }
 
-    public static boolean checkPerformance(String performanceName, float variance, float operationDuration, boolean largerIsBetter)
+    public static boolean checkPerformance(String performanceName, float variance, float operationDuration,
+        boolean largerIsBetter)
             throws IOException {
         return metrics.updateMetric(variance, performanceName, operationDuration, largerIsBetter);
     }
 
-    boolean isWithinTolerance(String metricName, Float metricValue, Float canonicalValue, Float variance, boolean largerIsBetter) {
+    boolean isWithinTolerance(String metricName, Float metricValue, Float canonicalValue, Float variance,
+        boolean largerIsBetter) {
         Float headRoom = Math.abs(canonicalValue * (variance - 1));
         boolean within;
+        Float difference = (metricValue - canonicalValue) / canonicalValue * 100;
 
         if (largerIsBetter)
             within = (metricValue >= canonicalValue - headRoom);
@@ -158,8 +184,9 @@ public class PerformanceProfileStore
 
         boolean ok =  within || !failOnRegression;
 
-        System.out.printf("%s: actual %f versus best %f: _variance %f: head room: %f biggerBetter=%b within=%b (persist=%b failOnRegression=%b res=%b)%n",
-                metricName, metricValue, canonicalValue, variance, headRoom, largerIsBetter, within, PERSIST_DATA, failOnRegression, ok);
+        System.out.printf("%s %s: %f%% performance %s (%f versus %f) (variance=%f headroom=%f)%n",
+                metricName, ok ? "Passed" : "Failed", difference,
+                within ? "difference" : "regression", metricValue, canonicalValue, variance, headRoom);
 
         return ok;
     }
@@ -169,5 +196,14 @@ public class PerformanceProfileStore
             return (metricValue > canonicalValue);
         else
             return (metricValue < canonicalValue);
+    }
+
+    public static String[] getTestArgs(String metricName) {
+        String[] args = metrics.testArgs.getProperty(metricName, "").split(",");
+        List<String> list = new ArrayList<>(Arrays.asList(args));
+
+        list.removeAll(Collections.singleton(""));
+
+        return list.toArray(new String[list.size()]);
     }
 }

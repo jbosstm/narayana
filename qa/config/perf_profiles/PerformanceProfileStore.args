@@ -1,0 +1,4 @@
+#Performance profile test arguments. Format is testName="comma separated list of arguments" (@link{io.narayana.perf.PerformanceProfileStore#getTestArgs)
+org.jboss.jbossts.star.test.PerformanceTest_measureThroughput_UTOW=15000,50,100
+JTSRemote_PerfTest_PerfHammer_org.jacorb.orb.ORB=3000,50,100
+JTSRemote_PerfTest_PerfHammer_com.sun.corba.se.internal.Interceptors.PIORB=3000,50,100

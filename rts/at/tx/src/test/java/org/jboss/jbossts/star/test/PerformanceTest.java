@@ -39,22 +39,38 @@ public class PerformanceTest extends BaseTest {
         startContainer(TXN_MGR_URL);
     }
 
+    private int getArg(String[] args, int index, int defaultValue) {
+        try {
+            if (index >= 0 && index < args.length)
+                return Integer.parseInt(args[index]);
+        } catch (NumberFormatException e) {
+            Assert.fail(getClass().getName() + "test arguments in the PerformanceProfileStore invalid: " + e.getMessage());
+        }
+
+        return defaultValue;
+
+    }
+
     // 2PC commit
     @Test
     public void measureThroughput() throws Exception {
-        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
-        int defaultCallCount =  failOnRegression ? 150000 : 1000;
-        int defaultThreadCount = failOnRegression ? 50 : 10;
-        int defaultBatchSize = failOnRegression ? 100 : 50;
-
-        int callCount = Integer.getInteger("callCount", defaultCallCount);
-        int threadCount = Integer.getInteger("threadCount", defaultThreadCount);
-        int batchSize = Integer.getInteger("batchSize", defaultBatchSize);
-
-        Result<String> opts = new Result<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
-
         String info = USE_SPDY ? "SPDY" : USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
         String metricName = getClass().getName() + "_measureThroughput_" + info;
+        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
+
+        int callCount = 1000;
+        int threadCount = 10;
+        int batchSize = 50;
+
+        if (failOnRegression) {
+            String[] args = PerformanceProfileStore.getTestArgs(metricName);
+
+            callCount = getArg(args, 0, callCount);
+            threadCount = getArg(args, 1, threadCount);
+            batchSize = getArg(args, 2, batchSize);
+        }
+
+        Result<String> opts = new Result<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
 
         System.out.printf("%s:  Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
