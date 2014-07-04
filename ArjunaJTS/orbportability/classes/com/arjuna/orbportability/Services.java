@@ -556,6 +556,7 @@ public final String[] listInitialServices () throws IOException, SystemException
 		}
 	    }
 	    while (line != null);
+	    input.close();
 	}
 
 	String[] completeServices = null;

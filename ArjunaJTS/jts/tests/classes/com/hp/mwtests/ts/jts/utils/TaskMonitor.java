@@ -139,6 +139,7 @@ public enum TaskMonitor {
                         createThreadDump(job.getName(), cmd);
             }
 
+            scanner.close();
             process.destroy();
         } catch (IOException e) {
             System.out.printf("ERROR CREATING THREAD DUMPS: %s\n", e.getMessage());

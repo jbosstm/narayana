@@ -82,6 +82,7 @@ public class XARRTestResource implements XAResource {
                 return bqual;
             }
         });
+        fis.close();
     }
 
     public Xid[] recover(int flag) throws XAException {

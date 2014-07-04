@@ -105,6 +105,8 @@ public class FileLockingUnitTest
         DataOutputStream ofile = new DataOutputStream(new FileOutputStream(theFile));
 
         ofile.writeInt(0);
+        
+        ofile.close();
 
         /*
        * Now create the threads.
