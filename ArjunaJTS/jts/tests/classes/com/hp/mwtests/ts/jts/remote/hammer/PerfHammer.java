@@ -75,16 +75,15 @@ public class PerfHammer
         if (failOnRegression) {
             String[] xargs = PerformanceProfileStore.getTestArgs(metricName);
 
-            numberOfCalls = getArg(xargs, 0, numberOfCalls);
-            threadCount = getArg(xargs, 1, threadCount);
-            batchSize = getArg(xargs, 2, batchSize);
+            numberOfCalls = getArg(xargs, 1, numberOfCalls);
+            threadCount = getArg(xargs, 2, threadCount);
+            batchSize = getArg(xargs, 3, batchSize);
         }
 
         GridWorker worker = new GridWorker(myORB, gridReference);
         Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
 
-        boolean correct = PerformanceProfileStore.checkPerformance(
-                metricName, PerformanceProfileStore.getVariance(metricName), opts.getThroughput(), true);
+        boolean correct = PerformanceProfileStore.checkPerformance(metricName, opts.getThroughput(), true);
 
         System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
                 ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),

@@ -1,5 +1,11 @@
 #2014/07/01 11:57:48: Performance profile variance (figures define the allowed variance of a test before declaring a regression)
 #Tue Jul 01 11:57:48 BST 2014
 default=1.1
-com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_oracle=1.65
-com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_db2=1.65
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_oracle=1.25
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_db2=1.25
+com.hp.mwtests.ts.arjuna.performance.Performance1_test1=1.25
+com.hp.mwtests.ts.arjuna.performance.Performance2_test1=1.25
+com.hp.mwtests.ts.arjuna.performance.Performance3_test1=1.25
+com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance1_test1=1.25
+com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance2_test1=1.25
+

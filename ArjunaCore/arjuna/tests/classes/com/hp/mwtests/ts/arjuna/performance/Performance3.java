@@ -31,6 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.WorkerWorkload;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
@@ -41,23 +45,35 @@ public class Performance3
     @Test
     public void test()
     {
-        long stime = System.currentTimeMillis();
+        int warmUpCount = 10;
+        int numberOfTransactions = 1000000;
+        int threadCount =  1;
+        int batchSize = 100;
 
-        for (int i = 0; i < 1000; i++) {
-            TwoPhaseCoordinator tx = new TwoPhaseCoordinator();
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, getClass().getName() + "_test1", true, numberOfTransactions, threadCount, batchSize, warmUpCount);
 
-            tx.start();
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-            tx.addSynchronization(new SyncRecord());
-
-            tx.end(true);
-        }
-
-        long ftime = System.currentTimeMillis();
-        double elapsedTime = (ftime - stime) / 1000.0;
-        double tps = 1000.0 / elapsedTime;
-
-        System.err.println("TPS: " + tps);
+        System.out.printf("%s%n", measurement.getInfo());
+        System.err.println("TPS: " + measurement.getThroughput());
     }
 
+    WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> config) {
+            for (int i = 0; i < batchSize; i++) {
+                TwoPhaseCoordinator tx = new TwoPhaseCoordinator();
+
+                tx.start();
+
+                tx.addSynchronization(new SyncRecord());
+
+                tx.end(true);
+            }
+
+            return context;
+        }
+    };
 }

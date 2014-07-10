@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Config and result data for running a work load (@link{Result#measure})
  */
 public class Result<T> implements Serializable {
+    boolean regression;
     int numberOfCalls;
     int threadCount = 1;
     int batchSize = 1;
@@ -48,27 +49,24 @@ public class Result<T> implements Serializable {
     private String info;
     private boolean cancelled;
     private boolean mayInterruptIfRunning;
+    private long maxTestTime = 0; // TODO terminate measurement if test takes longer than this value
 
     public Result(int threadCount, int numberOfCalls) {
         this(threadCount, numberOfCalls, 10);
     }
 
     public Result(int threadCount, int numberOfCalls, int batchSize) {
-        this(threadCount, numberOfCalls, batchSize, threadCount);
+        this(0L, threadCount, numberOfCalls, batchSize);
     }
 
-    Result(int threadCount, int numberOfCalls, int batchSize, int maxThreads) {
+    Result(long maxTestTime, int threadCount, int numberOfCalls, int batchSize) {
+        this.maxTestTime = maxTestTime;
         this.numberOfCalls = numberOfCalls;
         this.threadCount = threadCount;
         this.batchSize = batchSize;
 
         this.totalMillis = this.throughput = 0;
         this.errorCount = 0;
-
-        if (threadCount > maxThreads) {
-            System.err.println("Updating thread count (request size exceeds thread pool size)");
-            this.threadCount = maxThreads;
-        }
 
         if (numberOfCalls < batchSize) {
             System.err.println("Updating call count (request size less than batch size)");
@@ -83,6 +81,15 @@ public class Result<T> implements Serializable {
             this.threadCount = numberOfBatches;
         }
     }
+
+    public boolean isRegression() {
+        return regression;
+    }
+
+    public void setRegression(boolean regression) {
+        this.regression = regression;
+    }
+
 
     public void setContext(T value) {
         context = value;
@@ -228,7 +235,7 @@ public class Result<T> implements Serializable {
             lifecycle.init();
 
         if (warmUpCallCount > 0)
-            doWork(workload, new Result<T>(threadCount, warmUpCallCount, batchSize, threadCount));
+            doWork(workload, new Result<T>(threadCount, warmUpCallCount, batchSize));
 
         Result<T> res = doWork(workload, this);
 

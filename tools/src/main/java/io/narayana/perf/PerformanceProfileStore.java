@@ -144,15 +144,15 @@ public class PerformanceProfileStore
         return Float.parseFloat(data.getProperty(name, Float.toString(defaultValue)));
     }
 
-    public boolean updateMetric(String metricName, Float metricValue) {
-        return updateMetric(_variance, metricName, metricValue, false);
+    boolean updateMetric(StringBuilder info, String metricName, Float metricValue) {
+        return updateMetric(info, _variance, metricName, metricValue, false);
     }
 
-    public boolean updateMetric(String metricName, Float metricValue, boolean largerIsBetter) {
-        return updateMetric(getVariance(metricName), metricName, metricValue, largerIsBetter);
+    boolean updateMetric(StringBuilder info, String metricName, Float metricValue, boolean largerIsBetter) {
+        return updateMetric(info, getVariance(metricName), metricName, metricValue, largerIsBetter);
     }
 
-    public boolean updateMetric(float variance, String metricName, Float metricValue, boolean largerIsBetter) {
+    boolean updateMetric(StringBuilder info, float variance, String metricName, Float metricValue, boolean largerIsBetter) {
         Float canonicalValue =  resetMetrics ? metricValue : getMetric(metricName, metricValue);
 
         boolean better = isBetter(metricValue, canonicalValue, largerIsBetter);
@@ -169,29 +169,29 @@ public class PerformanceProfileStore
             }
         }
 
-        return isWithinTolerance(metricName, metricValue, canonicalValue, variance, largerIsBetter);
+        return isWithinTolerance(info, metricName, metricValue, canonicalValue, variance, largerIsBetter);
     }
 
-    public static boolean checkPerformance(String performanceName, float metricValue) throws IOException {
-        return checkPerformance(performanceName, metricValue, false);
+    public static boolean checkPerformance(String metricName, float metricValue) {
+        return checkPerformance(metricName, metricValue, false);
     }
 
-    public static boolean checkPerformance(String performanceName, float metricValue, boolean largerIsBetter)
-            throws IOException {
-        return metrics.updateMetric(performanceName, metricValue, largerIsBetter);
+    public static boolean checkPerformance(String metricName, float metricValue, boolean largerIsBetter) {
+        //return checkPerformance(metricName, getVariance(metricName), metricValue, largerIsBetter);
+        return metrics.updateMetric(null, getVariance(metricName), metricName, metricValue, largerIsBetter);
     }
 
-    public static boolean checkPerformance(String performanceName, float variance, float metricValue)
-            throws IOException {
-        return checkPerformance(performanceName, variance, metricValue, false);
+    public static boolean checkPerformance(StringBuilder info, String metricName, float metricValue, boolean largerIsBetter) {
+        //return checkPerformance(metricName, getVariance(metricName), metricValue, largerIsBetter);
+        return metrics.updateMetric(info, getVariance(metricName), metricName, metricValue, largerIsBetter);
     }
 
-    public static boolean checkPerformance(String performanceName, float variance, float metricValue,
-                                           boolean largerIsBetter) throws IOException {
-        return metrics.updateMetric(variance, performanceName, metricValue, largerIsBetter);
-    }
 
-    boolean isWithinTolerance(String metricName, Float metricValue, Float canonicalValue, Float variance,
+/*    public static boolean checkPerformance(String metricName, float variance, float metricValue, boolean largerIsBetter) {
+        return metrics.updateMetric(variance, metricName, metricValue, largerIsBetter);
+    }*/
+
+    boolean isWithinTolerance(StringBuilder info, String metricName, Float metricValue, Float canonicalValue, Float variance,
                               boolean largerIsBetter) {
         Float headRoom = Math.abs(canonicalValue * (variance - 1));
         boolean within;
@@ -204,9 +204,14 @@ public class PerformanceProfileStore
 
         boolean ok =  within || !failOnRegression;
 
-        System.out.printf("%s %s: %f%% performance %s (%f versus %f) (variance=%f headroom=%f)%n",
+        String s = String.format("%s %s: %f%% performance %s (%f versus %f) (variance=%f headroom=%f)",
                 metricName, ok ? "Passed" : "Failed", difference,
                 within ? "difference" : "regression", metricValue, canonicalValue, variance, headRoom);
+
+        if (info != null)
+            info.append(s);
+        else
+            System.out.printf("%s%n", s);
 
         return ok;
     }
@@ -217,9 +222,90 @@ public class PerformanceProfileStore
         else
             return (metricValue < canonicalValue);
     }
+    /**
+     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     *
+     * @param workload the actual workload being measured
+     * @param metricName the name of the test used as a key into performance data {@link PerformanceProfileStore#PERFDATAFILENAME}
+     * @param useConfigArgs if true read test arguments from a file ({@link PerformanceProfileStore#getTestArgs(String)}
+     * @param warmUpCount Number of iterations of the workload to run before starting the measurement
+     * @param numberOfCalls Number of workload iterations (workload is called in batchSize batches until numberOfCalls is reached)
+     * @param threadCount Number of threads used to complete the workload
+     * @param batchSize The workload is responsible for running batchSize iterations on each call
+     * @param <T> caller specific context data
+     * @return the result of the measurement
+     */
+    public static <T> Result<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
+                                                boolean useConfigArgs, int warmUpCount,
+                                                int numberOfCalls, int threadCount, int batchSize) {
+        return regressionCheck(null, workload, metricName, useConfigArgs, 0L, warmUpCount, numberOfCalls, threadCount, batchSize);
+
+    }
+
+    /**
+     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     *
+     * @param workload the actual workload being measured
+     * @param metricName the name of the test used as a key into performance data {@link PerformanceProfileStore#PERFDATAFILENAME}
+     * @param useConfigArgs if true read test arguments from a file ({@link PerformanceProfileStore#getTestArgs(String)}
+     * @param maxTestTime Abort the measurement if this time (in msecs) is exceeded TODO
+     * @param warmUpCount Number of iterations of the workload to run before starting the measurement
+     * @param numberOfCalls Number of workload iterations (workload is called in batchSize batches until numberOfCalls is reached)
+     * @param threadCount Number of threads used to complete the workload
+     * @param batchSize The workload is responsible for running batchSize iterations on each call
+     * @param <T> caller specific context data
+     * @return the result of the measurement
+     */
+    public static <T> Result<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
+                                                boolean useConfigArgs, long maxTestTime, int warmUpCount,
+                                                int numberOfCalls, int threadCount, int batchSize) {
+        return regressionCheck(null, workload, metricName, useConfigArgs, maxTestTime, warmUpCount, numberOfCalls, threadCount, batchSize);
+
+    }
+
+    /**
+     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     *
+     * @param lifecycle lifecycle calls during the measurement
+     * @param workload the actual workload being measured
+     * @param metricName the name of the test used as a key into performance data {@link PerformanceProfileStore#PERFDATAFILENAME}
+     * @param useConfigArgs if true read test arguments from a file ({@link PerformanceProfileStore#getTestArgs(String)}
+     * @param maxTestTime Abort the measurement if this time (in msecs) is exceeded TODO
+     * @param warmUpCount Number of iterations of the workload to run before starting the measurement
+     * @param numberOfCalls Number of workload iterations (workload is called in batchSize batches until numberOfCalls is reached)
+     * @param threadCount Number of threads used to complete the workload
+     * @param batchSize The workload is responsible for running batchSize iterations on each call
+     * @param <T> caller specific context data
+     * @return the result of the measurement
+     */
+    public static <T> Result<T> regressionCheck(WorkerLifecycle lifecycle, WorkerWorkload<T> workload, String metricName,
+                                                boolean useConfigArgs, long maxTestTime, int warmUpCount,
+                                                int numberOfCalls, int threadCount, int batchSize) {
+        if (useConfigArgs) {
+            String[] xargs = getTestArgs(metricName);
+
+            maxTestTime = getArg(metricName, xargs, 0, maxTestTime, Long.class);
+            warmUpCount = getArg(metricName, xargs, 1, warmUpCount, Integer.class);
+            numberOfCalls = getArg(metricName, xargs, 2, numberOfCalls, Integer.class);
+            threadCount = getArg(metricName, xargs, 3, threadCount, Integer.class);
+            batchSize = getArg(metricName, xargs, 4, batchSize, Integer.class);
+        }
+
+        Result<T> opts = new Result<T>(maxTestTime, threadCount, numberOfCalls, batchSize).measure(lifecycle, workload, warmUpCount);
+        StringBuilder sb = new StringBuilder();
+
+        opts.setRegression(!PerformanceProfileStore.checkPerformance(sb, metricName, opts.getThroughput(), true));
+        sb.append(String.format(" %d iterations using %d threads with a batch size of %d (error count: %d, tot millis: %d throughput: %d)",
+                opts.getNumberOfCalls(), opts.getThreadCount(), opts.getBatchSize(),
+                opts.getErrorCount(), opts.getTotalMillis(), opts.getThroughput()));
+        opts.setInfo(sb.toString());
+
+        return opts;
+    }
 
     /**
      * Convert a String to another type
+     *
      * @param metricName the name of the test to use if there was a data format error
      * @param args arguments returned from a prior call to {@link PerformanceProfileStore#getTestArgs(String)}
      * @param index index into the args array to the value to be converted
@@ -242,6 +328,7 @@ public class PerformanceProfileStore
 
     /**
      * Lookup any configured test arguments {@link PerformanceProfileStore#PERFARGSFILENAME}
+     *
      * @param metricName the name of the test
      * @return any test arguments or an empty array if there are none
      */

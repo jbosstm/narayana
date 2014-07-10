@@ -153,6 +153,12 @@
       <version>${version.org.apache.tomcat}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>test-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>

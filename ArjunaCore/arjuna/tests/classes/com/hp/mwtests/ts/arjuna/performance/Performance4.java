@@ -31,8 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import java.util.Calendar;
-
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.WorkerWorkload;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -40,110 +42,55 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
-class Worker4 extends Thread
-{
-
-    public Worker4(int iters)
-    {
-        _iters = iters;
-    }
-
-    public void run()
-    {
-        for (int i = 0; i < _iters; i++) {
-            try {
-                AtomicAction A = new AtomicAction();
-
-                A.begin();
-
-                A.add(new BasicRecord());
-                A.add(new BasicRecord());
-                
-                A.commit();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        Performance4.doSignal();
-    }
-
-    private int _iters;
-
-}
-
-
 public class Performance4
 {
-    public static void main (String[] args)
-    {
-        Performance4 obj = new Performance4();
-        
-        obj.setWorkSize(1000);
-        
-        obj.test();
-    }
-    
-    public void setWorkSize (int size)
-    {
-        _sizeOfWork = size;
-    }
-    
     @Test
     public void test()
     {
         int threads = 10;
-        int work = _sizeOfWork;
+        int work = 100;
+        int warmUpCount = 0;
+        int numberOfTransactions = threads * work;
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(TwoPhaseVolatileStore.class.getName());
-        
-        number = threads;
 
-        int numberOfTransactions = threads * work;
-        long stime = Calendar.getInstance().getTime().getTime();
-        Worker4[] workers = new Worker4[threads];
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, getClass().getName() + "_test1", true, warmUpCount, numberOfTransactions, threads, work);
 
-        for (int i = 0; i < threads; i++) {
-            workers[i] = new Worker4(work);
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-            workers[i].start();
-        }
+        System.out.printf("%s%n", measurement.getInfo());
 
-        Performance4.doWait();
-
-        long ftime = Calendar.getInstance().getTime().getTime();
-        long timeTaken = ftime - stime;
-
-        System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
+        System.out.println("time for " + numberOfTransactions + " write transactions is " + measurement.getTotalMillis());
         System.out.println("number of transactions: " + numberOfTransactions);
-        System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
+        System.out.println("throughput: " + (float) (numberOfTransactions / (measurement.getTotalMillis() / 1000.0)));
     }
 
-    public static void doWait()
-    {
-        try {
-            synchronized (sync) {
-                if (number > 0)
-                    sync.wait();
+    WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> config) {
+            for (int i = 0; i < batchSize; i++) {
+                try {
+                    AtomicAction A = new AtomicAction();
+
+                    A.begin();
+
+                    A.add(new BasicRecord());
+                    A.add(new BasicRecord());
+
+                    A.commit();
+                }
+                catch (Exception e) {
+                    if (config.getErrorCount() == 0)
+                        e.printStackTrace();
+
+                    config.incrementErrorCount();
+                }
             }
-        }
-        catch (Exception e) {
-        }
-    }
 
-    public static void doSignal()
-    {
-        synchronized (sync) {
-            if (--number == 0)
-                sync.notify();
+            return context;
         }
-    }
-
-    int _sizeOfWork = 100;
-    
-    private static Object sync = new Object();
-    private static int number = 0;
-
+    };
 }
