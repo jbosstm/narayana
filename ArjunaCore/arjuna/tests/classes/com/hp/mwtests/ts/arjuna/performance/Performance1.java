@@ -31,33 +31,46 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import java.util.Calendar;
-
-import org.junit.Test;
-
 import com.arjuna.ats.arjuna.AtomicAction;
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.WorkerWorkload;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class Performance1
 {
     @Test
-    public void test()
-    {
-        int numberOfTransactions = 1000;
-        long stime = Calendar.getInstance().getTime().getTime();
+    public void test() {
+        int warmUpCount = 10;
+        int numberOfTransactions = 1000000;
+        int threadCount =  1;
+        int batchSize = 100;
 
-        for (int i = 0; i < numberOfTransactions; i++) {
-            AtomicAction A = new AtomicAction();
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, getClass().getName() + "_test1", true, numberOfTransactions, threadCount, batchSize, warmUpCount);
 
-            A.begin();
-            A.abort();
-        }
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-        long ftime = Calendar.getInstance().getTime().getTime();
-        long timeTaken = ftime - stime;
+        System.out.printf("%s%n", measurement.getInfo());
 
-        System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
+        System.out.println("time for " + numberOfTransactions + " write transactions is " + measurement.getTotalMillis());
         System.out.println("number of transactions: " + numberOfTransactions);
-        System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
+        System.out.println("throughput: " + measurement.getThroughput());
     }
 
+    WorkerWorkload <Void> worker = new WorkerWorkload<Void>() {
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> config) {
+            for (int i = 0; i < batchSize; i++) {
+                AtomicAction A = new AtomicAction();
+
+                A.begin();
+                A.abort();
+            }
+
+            return context;
+        }
+    };
 }

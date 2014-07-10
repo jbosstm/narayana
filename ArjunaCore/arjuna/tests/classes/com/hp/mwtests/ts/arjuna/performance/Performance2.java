@@ -31,100 +31,64 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
-import java.util.Calendar;
-
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.WorkerWorkload;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
-class Worker extends Thread
-{
-
-    public Worker(int iters)
-    {
-        _iters = iters;
-    }
-
-    public void run()
-    {
-        for (int i = 0; i < _iters; i++) {
-            try {
-                AtomicAction A = new AtomicAction();
-
-                A.begin();
-
-                A.add(new BasicRecord());
-
-                A.commit();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        Performance2.doSignal();
-    }
-
-    private int _iters;
-
-}
-
-
 public class Performance2
 {
     @Test
     public void test()
     {
+        int numberOfTransactions = 1000;
         int threads = 10;
         int work = 100;
+        int warmUpCount = 0;
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
 
-        number = threads;
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, getClass().getName() + "_test1", true, warmUpCount, numberOfTransactions, threads, work);
 
-        int numberOfTransactions = threads * work;
-        long stime = Calendar.getInstance().getTime().getTime();
-        Worker[] workers = new Worker[threads];
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-        for (int i = 0; i < threads; i++) {
-            workers[i] = new Worker(work);
+        System.out.printf("%s%n", measurement.getInfo());
 
-            workers[i].start();
-        }
 
-        Performance2.doWait();
-
-        long ftime = Calendar.getInstance().getTime().getTime();
-        long timeTaken = ftime - stime;
-
-        System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
+        System.out.println("time for " + numberOfTransactions + " write transactions is " + measurement.getTotalMillis());
         System.out.println("number of transactions: " + numberOfTransactions);
-        System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
+        System.out.println("throughput: " + (float) measurement.getThroughput());
     }
 
-    public static void doWait()
-    {
-        try {
-            synchronized (sync) {
-                if (number > 0)
-                    sync.wait();
+    WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> config) {
+            for (int i = 0; i < batchSize; i++) {
+                try {
+                    AtomicAction A = new AtomicAction();
+
+                    A.begin();
+
+                    A.add(new BasicRecord());
+
+                    A.commit();
+                }
+                catch (Exception e) {
+                    if (config.getErrorCount() == 0)
+                        e.printStackTrace();
+
+                    config.incrementErrorCount();
+                }
             }
-        }
-        catch (Exception e) {
-        }
-    }
 
-    public static void doSignal()
-    {
-        synchronized (sync) {
-            if (--number == 0)
-                sync.notify();
+            return context;
         }
-    }
-
-    private static Object sync = new Object();
-    private static int number = 0;
-
+    };
 }

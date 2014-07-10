@@ -38,6 +38,10 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.Calendar;
 
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.Worker;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -46,79 +50,32 @@ import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource.ErrorType;
 
 
-class Worker5 extends Thread
-{
-
-    public Worker5(int iters)
-    {
-        _iters = iters;
-    }
-
-    public void run()
-    {
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-
-        for (int i = 0; i < _iters; i++)
-        {
-            try 
-            {
-                tm.begin();
-
-                tm.getTransaction().enlistResource(new SampleOnePhaseResource(ErrorType.none, false));
-
-                tm.commit();
-            }
-            catch (Exception e) 
-            {
-                e.printStackTrace();
-            }
-        }
-
-        OnePhasePerformanceDefaultUnitTest.doSignal();
-    }
-
-    private int _iters;
-
-}
-
 public class OnePhasePerformanceDefaultUnitTest
 {   
     public static void main (String[] args)
     {
         OnePhasePerformanceDefaultUnitTest obj = new OnePhasePerformanceDefaultUnitTest();
 
-        obj.setWorkSize(1000);
-
         obj.test();
-    }
-
-    public void setWorkSize (int size)
-    {
-        _sizeOfWork = size;
     }
 
     @Test
     public void test()
     {
-        int threads = 10;
-        int work = _sizeOfWork;
-        
-        number = threads;
+        int maxTestTime = 0;
+        int warmUpCount = 0;
+        int numberOfThreads = 10;
+        int batchSize = 1000;
+        int numberOfTransactions = numberOfThreads * batchSize;
 
-        int numberOfTransactions = threads * work;
-        long stime = Calendar.getInstance().getTime().getTime();
-        Worker5[] workers = new Worker5[threads];
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfTransactions, numberOfThreads, batchSize);
 
-        for (int i = 0; i < threads; i++) {
-            workers[i] = new Worker5(work);
+        System.out.printf("%s%n", measurement.getInfo());
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-            workers[i].start();
-        }
-
-        OnePhasePerformanceDefaultUnitTest.doWait();
-
-        long ftime = Calendar.getInstance().getTime().getTime();
-        long timeTaken = ftime - stime;
+        long timeTaken = measurement.getTotalMillis();
 
         System.out.println("ObjectStore used: "+arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
         System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
@@ -126,28 +83,40 @@ public class OnePhasePerformanceDefaultUnitTest
         System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
     }
 
-    public static void doWait()
-    {
-        try {
-            synchronized (sync) {
-                if (number > 0)
-                    sync.wait();
+    Worker<Void> worker = new Worker<Void>() {
+        javax.transaction.TransactionManager tm;
+
+        @Override
+        public void init() {
+            tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        }
+
+        @Override
+        public void fini() {
+        }
+
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> measurement) {
+            for (int i = 0; i < batchSize; i++)
+            {
+                try
+                {
+                    tm.begin();
+
+                    tm.getTransaction().enlistResource(new SampleOnePhaseResource(ErrorType.none, false));
+
+                    tm.commit();
+                }
+                catch (Exception e)
+                {
+                    if (measurement.getErrorCount() == 0)
+                        e.printStackTrace();
+
+                    measurement.incrementErrorCount();
+                }
             }
-        }
-        catch (Exception e) {
-        }
-    }
 
-    public static void doSignal()
-    {
-        synchronized (sync) {
-            if (--number == 0)
-                sync.notify();
+            return context;
         }
-    }
-
-    int _sizeOfWork = 1000;
-
-    private static Object sync = new Object();
-    private static int number = 0;
+    };
 }

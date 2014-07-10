@@ -31,13 +31,10 @@
 
 package com.arjuna.ats.jta.xa.performance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.Calendar;
-
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.Worker;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -46,82 +43,33 @@ import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource.ErrorType;
 
 
-class Worker6 extends Thread
-{
-
-    public Worker6(int iters)
-    {
-        _iters = iters;
-    }
-
-    public void run()
-    {
-        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-
-        for (int i = 0; i < _iters; i++)
-        {
-            try 
-            {
-                tm.begin();
-
-                tm.getTransaction().enlistResource(new SampleOnePhaseResource(ErrorType.none, false));
-
-                tm.commit();
-            }
-            catch (Exception e) 
-            {
-                e.printStackTrace();
-            }
-        }
-
-        OnePhase2PCPerformanceVolatileUnitTest.doSignal();
-    }
-
-    private int _iters;
-
-}
-
 public class OnePhase2PCPerformanceVolatileUnitTest
-{   
+{
     public static void main (String[] args)
     {
         OnePhase2PCPerformanceVolatileUnitTest obj = new OnePhase2PCPerformanceVolatileUnitTest();
 
-        obj.setWorkSize(1000);
-
         obj.test();
     }
 
-    public void setWorkSize (int size)
-    {
-        _sizeOfWork = size;
-    }
 
     @Test
     public void test()
     {
-        int threads = 10;
-        int work = _sizeOfWork;
+        int maxTestTime = 0;
+        int warmUpCount = 0;
+        int numberOfThreads = 10;
+        int batchSize = 1000;
+        int numberOfTransactions = numberOfThreads * batchSize;
 
-        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(TwoPhaseVolatileStore.class.getName());
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfTransactions, numberOfThreads, batchSize);
 
-        number = threads;
+        System.out.printf("%s%n", measurement.getInfo());
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-        int numberOfTransactions = threads * work;
-        long stime = Calendar.getInstance().getTime().getTime();
-        Worker6[] workers = new Worker6[threads];
-
-        for (int i = 0; i < threads; i++) {
-            workers[i] = new Worker6(work);
-
-            workers[i].start();
-        }
-
-        OnePhase2PCPerformanceVolatileUnitTest.doWait();
-
-        long ftime = Calendar.getInstance().getTime().getTime();
-        long timeTaken = ftime - stime;
+        long timeTaken = measurement.getTotalMillis();
 
         System.out.println("ObjectStore used: "+arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
         System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
@@ -129,28 +77,43 @@ public class OnePhase2PCPerformanceVolatileUnitTest
         System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
     }
 
-    public static void doWait()
-    {
-        try {
-            synchronized (sync) {
-                if (number > 0)
-                    sync.wait();
+    Worker<Void> worker = new Worker<Void>() {
+        javax.transaction.TransactionManager tm;
+
+        @Override
+        public void init() {
+            arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
+            arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(TwoPhaseVolatileStore.class.getName());
+
+            tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        }
+
+        @Override
+        public void fini() {
+        }
+
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> measurement) {
+            for (int i = 0; i < batchSize; i++)
+            {
+                try
+                {
+                    tm.begin();
+
+                    tm.getTransaction().enlistResource(new SampleOnePhaseResource(ErrorType.none, false));
+
+                    tm.commit();
+                }
+                catch (Exception e)
+                {
+                    if (measurement.getErrorCount() == 0)
+                        e.printStackTrace();
+
+                    measurement.incrementErrorCount();
+                }
             }
-        }
-        catch (Exception e) {
-        }
-    }
 
-    public static void doSignal()
-    {
-        synchronized (sync) {
-            if (--number == 0)
-                sync.notify();
+            return context;
         }
-    }
-
-    int _sizeOfWork = 1000;
-
-    private static Object sync = new Object();
-    private static int number = 0;
+    };
 }

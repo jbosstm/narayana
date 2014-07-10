@@ -31,90 +31,71 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
-import static org.junit.Assert.fail;
-
-import java.util.Date;
-
+import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Result;
+import io.narayana.perf.Worker;
+import io.narayana.perf.WorkerLifecycle;
+import org.junit.Assert;
 import org.junit.Test;
 import org.omg.CosTransactions.Control;
 
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
 
 public class Performance3
 {
     @Test
     public void test()
     {
-        ORB myORB = null;
-        RootOA myOA = null;
+        int maxTestTime = 0;
+        int numberOfCalls = 1000;
+        int warmUpCount = 10;
+        int numberOfThreads = 1;
+        int batchSize = numberOfCalls;
 
-        try
-        {
-            myORB = ORB.getInstance("test");
+        Result measurement = PerformanceProfileStore.regressionCheck(
+                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfCalls, numberOfThreads, batchSize);
 
-            myOA = OA.getRootOA(myORB);
+        Assert.assertEquals(0, measurement.getErrorCount());
+        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
 
-            myORB.initORB(new String[] {}, null);
-            myOA.initOA();
-
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
-
-            double iters = 1000.0;
-            boolean doCommit = true;
-
-            ArjunaTransactionImple tx = null;
-
-            // Run ten interations first.
-
-            for (int i = 0; i < 10; i++)
-            {
-                tx = new ArjunaTransactionImple((Control) null, (ArjunaTransactionImple) null);
-
-                if (doCommit)
-                    tx.commit(true);
-                else
-                    tx.rollback();
-            }
-
-            // Record the start time.
-
-            Date startTime = new Date();
-
-            // Run 1000 interations.
-
-            for (int i = 0; i < iters; i++)
-            {
-                tx = new ArjunaTransactionImple((Control) null, (ArjunaTransactionImple) null);
-
-                if (doCommit)
-                    tx.commit(true);
-                else
-                    tx.rollback();
-            }
-
-            // Record the end time.
-
-            Date endTime = new Date();
-            double txnTime = (float)((endTime.getTime()-startTime.getTime())/iters);
-            double txnPSec = 1000.0/txnTime;
-
-            System.out.println("Average time for empty transaction = "+txnTime);
-            System.out.println("Transactions per second = "+txnPSec);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            fail();
-        }
-
-        myOA.destroy();
-        myORB.shutdown();
+        System.out.printf("%s%n", measurement.getInfo());
+        System.out.println("Average time for empty transaction = " + measurement.getTotalMillis() / (float) numberOfCalls);
+        System.out.printf("Transactions per second = %d%n", measurement.getThroughput());
     }
 
+    Worker<Void> worker = new Worker<Void>() {
+        WorkerLifecycle<Void> lifecycle = new PerformanceWorkerLifecycle<>();
+        boolean doCommit = true;
+
+        @Override
+        public void init() {
+            lifecycle.init();
+        }
+
+        @Override
+        public void fini() {
+            lifecycle.fini();
+        }
+        @Override
+        public Void doWork(Void context, int batchSize, Result<Void> measurement) {
+            for (int i = 0; i < batchSize; i++) {
+                ArjunaTransactionImple tx = new ArjunaTransactionImple((Control) null, (ArjunaTransactionImple) null);
+
+                try{
+                    if (doCommit)
+                        tx.commit(true);
+                    else
+                        tx.rollback();
+                } catch (org.omg.CORBA.UserException e) {
+                    if (measurement.getErrorCount() == 0)
+                        e.printStackTrace();
+
+                    measurement.incrementErrorCount();
+                }
+            }
+
+            return context;
+        }
+    };
 }
 
