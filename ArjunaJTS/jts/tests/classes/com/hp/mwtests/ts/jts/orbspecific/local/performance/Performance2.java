@@ -33,21 +33,16 @@ package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
 import static org.junit.Assert.fail;
 
+import io.narayana.perf.Measurement;
 import io.narayana.perf.PerformanceProfileStore;
-import io.narayana.perf.Result;
 import io.narayana.perf.Worker;
 import io.narayana.perf.WorkerLifecycle;
 import org.junit.Assert;
 import org.junit.Test;
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosTransactions.Control;
 
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.RootOA;
 
 public class Performance2
 {
@@ -60,7 +55,7 @@ public class Performance2
         int numberOfThreads = 1;
         int batchSize = numberOfCalls;
 
-        Result measurement = PerformanceProfileStore.regressionCheck(
+        Measurement measurement = PerformanceProfileStore.regressionCheck(
                 worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfCalls, numberOfThreads, batchSize);
 
         Assert.assertEquals(0, measurement.getErrorCount());
@@ -88,7 +83,7 @@ public class Performance2
         }
 
         @Override
-        public Void doWork(Void context, int batchSize, Result<Void> measurement) {
+        public Void doWork(Void context, int batchSize, Measurement<Void> measurement) {
             for (int i = 0; i < batchSize; i++) {
                 Control control = factory.create(0);
 

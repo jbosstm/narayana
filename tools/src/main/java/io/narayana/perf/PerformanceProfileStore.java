@@ -223,7 +223,7 @@ public class PerformanceProfileStore
             return (metricValue < canonicalValue);
     }
     /**
-     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     * Measure the performance of a workload. The returned {@link Measurement} object contains the results of the measurement.
      *
      * @param workload the actual workload being measured
      * @param metricName the name of the test used as a key into performance data {@link PerformanceProfileStore#PERFDATAFILENAME}
@@ -235,7 +235,7 @@ public class PerformanceProfileStore
      * @param <T> caller specific context data
      * @return the result of the measurement
      */
-    public static <T> Result<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
+    public static <T> Measurement<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
                                                 boolean useConfigArgs, int warmUpCount,
                                                 int numberOfCalls, int threadCount, int batchSize) {
         return regressionCheck(null, workload, metricName, useConfigArgs, 0L, warmUpCount, numberOfCalls, threadCount, batchSize);
@@ -243,7 +243,7 @@ public class PerformanceProfileStore
     }
 
     /**
-     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     * Measure the performance of a workload. The returned {@link Measurement} object contains the results of the measurement.
      *
      * @param workload the actual workload being measured
      * @param metricName the name of the test used as a key into performance data {@link PerformanceProfileStore#PERFDATAFILENAME}
@@ -256,7 +256,7 @@ public class PerformanceProfileStore
      * @param <T> caller specific context data
      * @return the result of the measurement
      */
-    public static <T> Result<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
+    public static <T> Measurement<T> regressionCheck(WorkerWorkload<T> workload, String metricName,
                                                 boolean useConfigArgs, long maxTestTime, int warmUpCount,
                                                 int numberOfCalls, int threadCount, int batchSize) {
         return regressionCheck(null, workload, metricName, useConfigArgs, maxTestTime, warmUpCount, numberOfCalls, threadCount, batchSize);
@@ -264,7 +264,7 @@ public class PerformanceProfileStore
     }
 
     /**
-     * Measure the performance of a workload. The returned {@link Result} object contains the results of the measurement.
+     * Measure the performance of a workload. The returned {@link Measurement} object contains the results of the measurement.
      *
      * @param lifecycle lifecycle calls during the measurement
      * @param workload the actual workload being measured
@@ -278,7 +278,7 @@ public class PerformanceProfileStore
      * @param <T> caller specific context data
      * @return the result of the measurement
      */
-    public static <T> Result<T> regressionCheck(WorkerLifecycle lifecycle, WorkerWorkload<T> workload, String metricName,
+    public static <T> Measurement<T> regressionCheck(WorkerLifecycle lifecycle, WorkerWorkload<T> workload, String metricName,
                                                 boolean useConfigArgs, long maxTestTime, int warmUpCount,
                                                 int numberOfCalls, int threadCount, int batchSize) {
         if (useConfigArgs) {
@@ -291,13 +291,13 @@ public class PerformanceProfileStore
             batchSize = getArg(metricName, xargs, 4, batchSize, Integer.class);
         }
 
-        Result<T> opts = new Result<T>(maxTestTime, threadCount, numberOfCalls, batchSize).measure(lifecycle, workload, warmUpCount);
+        Measurement<T> opts = new Measurement<T>(maxTestTime, threadCount, numberOfCalls, batchSize).measure(lifecycle, workload, warmUpCount);
         StringBuilder sb = new StringBuilder();
 
         opts.setRegression(!PerformanceProfileStore.checkPerformance(sb, metricName, opts.getThroughput(), true));
-        sb.append(String.format(" %d iterations using %d threads with a batch size of %d (error count: %d, tot millis: %d throughput: %d)",
+        sb.append(String.format(" %d iterations using %d threads with a batch size of %d (warmup: %d error count: %d, tot millis: %d throughput: %d)",
                 opts.getNumberOfCalls(), opts.getThreadCount(), opts.getBatchSize(),
-                opts.getErrorCount(), opts.getTotalMillis(), opts.getThroughput()));
+                opts.getWarmUpCallCount(), opts.getErrorCount(), opts.getTotalMillis(), opts.getThroughput()));
         opts.setInfo(sb.toString());
 
         return opts;

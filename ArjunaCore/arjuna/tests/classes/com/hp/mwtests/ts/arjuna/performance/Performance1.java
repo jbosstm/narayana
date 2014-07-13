@@ -32,8 +32,8 @@
 package com.hp.mwtests.ts.arjuna.performance;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import io.narayana.perf.Measurement;
 import io.narayana.perf.PerformanceProfileStore;
-import io.narayana.perf.Result;
 import io.narayana.perf.WorkerWorkload;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class Performance1
         int threadCount =  1;
         int batchSize = 100;
 
-        Result measurement = PerformanceProfileStore.regressionCheck(
+        Measurement measurement = PerformanceProfileStore.regressionCheck(
                 worker, getClass().getName() + "_test1", true, numberOfTransactions, threadCount, batchSize, warmUpCount);
 
         Assert.assertEquals(0, measurement.getErrorCount());
@@ -62,7 +62,7 @@ public class Performance1
 
     WorkerWorkload <Void> worker = new WorkerWorkload<Void>() {
         @Override
-        public Void doWork(Void context, int batchSize, Result<Void> config) {
+        public Void doWork(Void context, int batchSize, Measurement<Void> config) {
             for (int i = 0; i < batchSize; i++) {
                 AtomicAction A = new AtomicAction();
 

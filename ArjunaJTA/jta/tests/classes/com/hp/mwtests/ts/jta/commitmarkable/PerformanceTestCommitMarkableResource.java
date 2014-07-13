@@ -375,8 +375,8 @@ public class PerformanceTestCommitMarkableResource extends
 	public void doTest(final Handler xaHandler, String testName) throws Exception {
         String fullTestName = getClass().getName() + testName;
         final String[] args = PerformanceProfileStore.getTestArgs(fullTestName);
-        final int numberOfCalls = PerformanceProfileStore.getArg(fullTestName, args, 1, iterationCount, Integer.class);
-        final int numberOfThreads = PerformanceProfileStore.getArg(fullTestName, args, 2, threadCount, Integer.class);
+        final int numberOfCalls = PerformanceProfileStore.getArg(fullTestName, args, 2, iterationCount, Integer.class);
+        final int numberOfThreads = PerformanceProfileStore.getArg(fullTestName, args, 3, threadCount, Integer.class);
 
 		// Test code
 		Thread[] threads = new Thread[numberOfThreads];
@@ -493,9 +493,12 @@ public class PerformanceTestCommitMarkableResource extends
 
 		xaHandler.checkFooSize(numberOfCalls, numberOfThreads);
 
-        boolean correct = PerformanceProfileStore.checkPerformance(fullTestName, throughput, true);
+        StringBuilder sb = new StringBuilder();
+        boolean correct = PerformanceProfileStore.checkPerformance(sb, fullTestName, throughput, true);
+        sb.append(String.format(" %d iterations using %d threads (tot millis: %d throughput: %d)",
+                numberOfCalls, numberOfThreads, timeInMillis, throughput));
 
-        Assert.assertTrue(fullTestName + ": performance regression", correct);
+        Assert.assertTrue(sb.toString(), correct);
 	}
 
 	private class Handler {

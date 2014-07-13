@@ -22,13 +22,13 @@
 package io.narayana.perf;
 
 /**
- * Interface for running a workload (@link{io.narayana.perf.Result#measure})
+ * Interface for running a workload (@link{io.narayana.perf.Measurement#measure})
  *
  * @param <T> caller specific context data
  */
 public interface WorkerWorkload<T> {
     /**
-     * Perform a batch of work units. @see Result#measure begins a number of threads and each thread
+     * Perform a batch of work units. @see Measurement#measure begins a number of threads and each thread
      * then invokes the doWork method in parallel until there is no more remaining work.
      *
      * @param context a thread specific instance that may have been returned by a previous invocation of the doWork
@@ -39,5 +39,5 @@ public interface WorkerWorkload<T> {
      *
      * @return A thread specific instance that will be passed to subsequent calls to the doWork method by the thread
      */
-    T doWork(T context, int batchSize, Result<T> measurement);
+    T doWork(T context, int batchSize, Measurement<T> measurement);
 }

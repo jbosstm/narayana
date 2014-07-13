@@ -35,17 +35,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.util.Calendar;
-
+import io.narayana.perf.Measurement;
 import io.narayana.perf.PerformanceProfileStore;
-import io.narayana.perf.Result;
 import io.narayana.perf.Worker;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource;
 import com.hp.mwtests.ts.jta.common.SampleOnePhaseResource.ErrorType;
 
@@ -68,7 +64,7 @@ public class OnePhasePerformanceDefaultUnitTest
         int batchSize = 1000;
         int numberOfTransactions = numberOfThreads * batchSize;
 
-        Result measurement = PerformanceProfileStore.regressionCheck(
+        Measurement measurement = PerformanceProfileStore.regressionCheck(
                 worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfTransactions, numberOfThreads, batchSize);
 
         System.out.printf("%s%n", measurement.getInfo());
@@ -96,7 +92,7 @@ public class OnePhasePerformanceDefaultUnitTest
         }
 
         @Override
-        public Void doWork(Void context, int batchSize, Result<Void> measurement) {
+        public Void doWork(Void context, int batchSize, Measurement<Void> measurement) {
             for (int i = 0; i < batchSize; i++)
             {
                 try
