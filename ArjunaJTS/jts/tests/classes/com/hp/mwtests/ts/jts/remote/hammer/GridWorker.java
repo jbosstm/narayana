@@ -27,7 +27,7 @@ import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.ts.jts.TestModule.grid;
 import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 import com.hp.mwtests.ts.jts.resources.TestUtility;
-import io.narayana.perf.Result;
+import io.narayana.perf.Measurement;
 import io.narayana.perf.Worker;
 import org.omg.CosTransactions.NoTransaction;
 
@@ -60,7 +60,7 @@ class GridWorker implements Worker {
     }
 
     @Override
-    public Object doWork(Object context, int niters, Result opts) {
+    public Object doWork(Object context, int niters, Measurement opts) {
         boolean running = false;
         try {
             for (int i = 0; i < niters; i++) {

@@ -29,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author <a href="mailto:mmusgrov@redhat.com">M Musgrove</a>
  *
- * Config and result data for running a work load (@link{Result#measure})
+ * Config and result data for running a work load (@link{Measurement#measure})
  */
-public class Result<T> implements Serializable {
+public class Measurement<T> implements Serializable {
     boolean regression;
     int numberOfCalls;
     int threadCount = 1;
@@ -49,17 +49,18 @@ public class Result<T> implements Serializable {
     private String info;
     private boolean cancelled;
     private boolean mayInterruptIfRunning;
-    private long maxTestTime = 0; // TODO terminate measurement if test takes longer than this value
+    private long maxTestTime = 0; // terminate measurement if test takes longer than this value
+    private int warmUpCallCount = 0;
 
-    public Result(int threadCount, int numberOfCalls) {
+    public Measurement(int threadCount, int numberOfCalls) {
         this(threadCount, numberOfCalls, 10);
     }
 
-    public Result(int threadCount, int numberOfCalls, int batchSize) {
+    public Measurement(int threadCount, int numberOfCalls, int batchSize) {
         this(0L, threadCount, numberOfCalls, batchSize);
     }
 
-    Result(long maxTestTime, int threadCount, int numberOfCalls, int batchSize) {
+    public Measurement(long maxTestTime, int threadCount, int numberOfCalls, int batchSize) {
         this.maxTestTime = maxTestTime;
         this.numberOfCalls = numberOfCalls;
         this.threadCount = threadCount;
@@ -107,7 +108,7 @@ public class Result<T> implements Serializable {
         contexts.add(t);
     }
 
-    public Result(Result result) {
+    public Measurement(Measurement result) {
         this(result.threadCount, result.numberOfCalls);
 
         this.totalMillis = result.totalMillis;
@@ -216,18 +217,39 @@ public class Result<T> implements Serializable {
         return mayInterruptIfRunning;
     }
 
+    /**
+     * @return max test time in milliseconds
+     */
+    public long getMaxTestTime() {
+        return maxTestTime;
+    }
 
+    public void setMaxTestTime(long maxTestTime) {
+        this.maxTestTime = maxTestTime;
+    }
 
-    public Result<T> measure(WorkerWorkload<T> workload) {
+    public int getWarmUpCallCount() {
+        return warmUpCallCount;
+    }
+
+    /**
+     *
+     * @return true if the measurement took longer than the maximum test time {@link io.narayana.perf.Measurement#getMaxTestTime()}
+     */
+    public boolean isTimedOut() {
+        return isCancelled() || getTotalMillis() > maxTestTime;
+    }
+
+    public Measurement<T> measure(WorkerWorkload<T> workload) {
         return measure(null, workload);
     }
 
-    public Result<T> measure(WorkerLifecycle<T> lifecycle, WorkerWorkload<T> workload) {
+    public Measurement<T> measure(WorkerLifecycle<T> lifecycle, WorkerWorkload<T> workload) {
         return measure(lifecycle, workload, 0);
     }
 
-    public Result<T> measure(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload, int warmUpCallCount) {
-
+    public Measurement<T> measure(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload, int warmUpCallCount) {
+        this.warmUpCallCount = warmUpCallCount;
         if (workload == null)
             throw new IllegalArgumentException("workload must not be null");
 
@@ -235,9 +257,9 @@ public class Result<T> implements Serializable {
             lifecycle.init();
 
         if (warmUpCallCount > 0)
-            doWork(workload, new Result<T>(threadCount, warmUpCallCount, batchSize));
+            doWork(workload, new Measurement<T>(maxTestTime, threadCount, warmUpCallCount, batchSize));
 
-        Result<T> res = doWork(workload, this);
+        Measurement<T> res = doWork(workload, this);
 
         if (lifecycle != null)
             lifecycle.fini();
@@ -245,17 +267,17 @@ public class Result<T> implements Serializable {
         return res;
     }
 
-    private Result<T> doWork(final WorkerWorkload<T> workload, final Result<T> opts) {
+    private Measurement<T> doWork(final WorkerWorkload<T> workload, final Measurement<T> opts) {
         ExecutorService executor = Executors.newFixedThreadPool(opts.getThreadCount());
         final AtomicInteger count = new AtomicInteger(opts.getNumberOfBatches());
 
-        final Collection<Future<Result<T>>> tasks = new ArrayList<Future<Result<T>>>();
+        final Collection<Future<Measurement<T>>> tasks = new ArrayList<Future<Measurement<T>>>();
         final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getThreadCount() + 1); // workers + self
 
         for (int i = 0; i < opts.getThreadCount(); i++)
-            tasks.add(executor.submit(new Callable<Result<T>>() {
-                public Result<T> call() throws Exception {
-                    Result<T> res = new Result<T>(opts);
+            tasks.add(executor.submit(new Callable<Measurement<T>>() {
+                public Measurement<T> call() throws Exception {
+                    Measurement<T> res = new Measurement<T>(opts);
                     int errorCount = 0;
 
                     cyclicBarrier.await();
@@ -269,7 +291,7 @@ public class Result<T> implements Serializable {
                         errorCount += res.getErrorCount();
 
                         if (res.isCancelled()) {
-                            for (Future<Result<T>> task : tasks) {
+                            for (Future<Measurement<T>> task : tasks) {
                                 if (!task.equals(this))
                                     task.cancel(res.isMayInterruptIfRunning());
                             }
@@ -292,11 +314,18 @@ public class Result<T> implements Serializable {
                 };
             }));
 
+        opts.setErrorCount(0);
+
         long start = System.nanoTime();
 
         try {
             cyclicBarrier.await(); // wait for each thread to arrive at the barrier
-            cyclicBarrier.await(); // wait for each thread to finish
+
+            // wait for each thread to finish
+            if (opts.getMaxTestTime() > 0)
+                cyclicBarrier.await(opts.getMaxTestTime(), TimeUnit.MILLISECONDS);
+            else
+                cyclicBarrier.await();
 
             long tot = System.nanoTime() - start;
 
@@ -306,26 +335,35 @@ public class Result<T> implements Serializable {
             opts.setTotalMillis(tot / 1000000L);
 
         } catch (InterruptedException e) {
+            opts.incrementErrorCount(); // ? exactly how many errors were there?
             throw new RuntimeException(e);
         } catch (BrokenBarrierException e) {
+            opts.incrementErrorCount(); // ? exactly how many errors were there?
+            opts.setCancelled(true);
+        } catch (TimeoutException e) {
+            opts.incrementErrorCount(); // ? exactly how many errors were there?
             opts.setCancelled(true);
         }
 
-        opts.setErrorCount(0);
-
-        for (Future<Result<T>> t : tasks) {
+        for (Future<Measurement<T>> t : tasks) {
             try {
-                Result<T> outcome = t.get();
+                Measurement<T> outcome = t.get();
                 T context = outcome.getContext();
 
                 if (context != null)
                     opts.addContext(context);
 
-                opts.setErrorCount(opts.getErrorCount() + outcome.getErrorCount());
+                opts.incrementErrorCount(outcome.getErrorCount());
             } catch (CancellationException e) {
-                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
+                opts.incrementErrorCount(opts.getBatchSize());
+                opts.setCancelled(true);
+            } catch (ExecutionException e) { // should be a BrokenBarrierException due to a timeout
+                System.out.printf("ExecutionException exception: %s%n", e.getMessage());
+                opts.incrementErrorCount(opts.getBatchSize());
+                opts.setCancelled(true);
             } catch (Exception e) {
-                opts.setErrorCount(opts.getErrorCount() + opts.getBatchSize());
+                System.err.printf("Performance test exception: %s%n", e.getMessage());
+                opts.incrementErrorCount(opts.getBatchSize());
             }
         }
 

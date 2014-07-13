@@ -31,7 +31,7 @@ public class FactorialWorker implements Worker<BigInteger> {
     private long finiTimeMillis = -1;
 
     @Override
-    public BigInteger doWork(BigInteger partialFac, int niters, Result<BigInteger> config) {
+    public BigInteger doWork(BigInteger partialFac, int niters, Measurement<BigInteger> config) {
         int from = facBase.getAndAdd(niters);
         int to = from + niters;
 

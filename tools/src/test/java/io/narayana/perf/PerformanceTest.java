@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotSame;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 public class PerformanceTest {
     private BigInteger factorial(int num) {
@@ -57,7 +59,7 @@ public class PerformanceTest {
 
         // 1000000!: (total time: 78635 ms versus 1629870 ms) so don't make numberOfCalls to big
 
-        Result<BigInteger> measurement = new Result<BigInteger>(threadCount, numberOfCalls, batchSize).measure(worker, worker);
+        Measurement<BigInteger> measurement = new Measurement<BigInteger>(threadCount, numberOfCalls, batchSize).measure(worker, worker);
         Set<BigInteger> subFactorials = measurement.getContexts();
         BigInteger fac = BigInteger.ONE;
 
@@ -93,7 +95,7 @@ public class PerformanceTest {
             private AtomicInteger callCount = new AtomicInteger(0);
 
             @Override
-            public String doWork(String context, int niters, Result<String> opts) {
+            public String doWork(String context, int niters, Measurement<String> opts) {
                 int sleep = callCount.incrementAndGet();
 
                 if (sleep == 5) {
@@ -112,7 +114,7 @@ public class PerformanceTest {
             }
         };
 
-        Result<String> measurement = new Result<>(threadCount, numberOfCalls, batchSize);
+        Measurement<String> measurement = new Measurement<>(threadCount, numberOfCalls, batchSize);
 
         measurement = measurement.measure(abortWorker);
 
@@ -130,13 +132,13 @@ public class PerformanceTest {
     public void testSingleCall() {
         WorkerWorkload<String> worker = new WorkerWorkload<String>() {
             @Override
-            public String doWork(String context, int niters, Result<String> opts) {
+            public String doWork(String context, int niters, Measurement<String> opts) {
                 assertEquals("Wrong batch size", 1, niters);
                 return context;
             }
         };
 
-        Result<String> config = new Result<>(1, 1, 1);
+        Measurement<String> config = new Measurement<>(1, 1, 1);
 
         config.measure(worker);
 
@@ -145,6 +147,47 @@ public class PerformanceTest {
         System.out.printf("testSingleCall!: %s%n", config);
     }
 
+    /**
+     * Test that a test will be aborted after a fixed timeout
+     */
+    @Test
+    public void testTimeout() {
+        final int sleepPeriod = 1;
+
+        int nCalls = 200;
+        int nThreads = 2;
+        int batchSize = 100;
+
+        int totSleepTime =  sleepPeriod * nCalls;
+
+        int maxTestTime = totSleepTime / nThreads / 2; // set max test time to half the work time
+
+        WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+            @Override
+            public Void doWork(Void context, int niters, Measurement<Void> opts) {
+                for (int i = 0; i < niters; i++) {
+                    try {
+                        Thread.sleep(sleepPeriod);
+                    } catch (InterruptedException e) {
+                        System.out.printf("%s", e.getMessage());
+                    }
+                }
+
+                return context;
+            }
+        };
+
+        Measurement<Void> measurement = new Measurement<>(maxTestTime, nThreads, nCalls, batchSize);
+
+        measurement.measure(worker);
+
+        assertTrue(String.format("Test should have timed out after %dms (actual test time was %dms)",
+                maxTestTime, measurement.getTotalMillis()), measurement.isTimedOut());
+        assertNotEquals("There should have been errors due to test time limit being breached",
+                measurement.getErrorCount(), 0);
+
+        System.out.printf("testTimeout: %s%n", measurement);
+    }
     /**
      * Sanity check
      */
@@ -156,7 +199,7 @@ public class PerformanceTest {
 
         WorkerWorkload<Object> worker = new WorkerWorkload<Object>() {
             @Override
-            public Object doWork(Object context, int batchSize, Result<Object> config) {
+            public Object doWork(Object context, int batchSize, Measurement<Object> config) {
                 for (int i = 0; i < batchSize; i++) {
                     try {
                         Thread.sleep(1);
@@ -168,7 +211,7 @@ public class PerformanceTest {
             }
         };
 
-        Result measurement = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
+        Measurement measurement = new Measurement(threadCount, numberOfCalls, batchSize).measure(worker);
 
         // Each iteration sleeps for 1 ms so the total time <= no of iterations divided by the number of threads
         assertTrue("Test ran too quickly", measurement.getTotalMillis() >= numberOfCalls / threadCount);

@@ -37,7 +37,8 @@ import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.RootOA;
 import io.narayana.perf.PerformanceProfileStore;
-import io.narayana.perf.Result;
+import io.narayana.perf.Measurement;
+import org.junit.Assert;
 
 public class PerfHammer
 {
@@ -69,27 +70,21 @@ public class PerfHammer
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
 
-        String metricName = "JTSRemote_PerfTest_PerfHammer_" + myORB.orb().getClass().getName();
-        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
+        String metricName = "JTSRemote_PerfTest_PerfHammer_" + System.getProperty("org.omg.CORBA.ORBClass",
+                myORB.orb().getClass().getName());
 
-        if (failOnRegression) {
-            String[] xargs = PerformanceProfileStore.getTestArgs(metricName);
-
-            numberOfCalls = getArg(xargs, 1, numberOfCalls);
-            threadCount = getArg(xargs, 2, threadCount);
-            batchSize = getArg(xargs, 3, batchSize);
-        }
+        System.out.printf("%s: %d iterations using %d threads with a batch size of %d%n",
+                metricName, numberOfCalls, threadCount, batchSize);
 
         GridWorker worker = new GridWorker(myORB, gridReference);
-        Result opts = new Result(threadCount, numberOfCalls, batchSize).measure(worker);
 
-        boolean correct = PerformanceProfileStore.checkPerformance(metricName, opts.getThroughput(), true);
+        Measurement measurement = PerformanceProfileStore.regressionCheck(
+                worker, metricName, true, 0, numberOfCalls, threadCount, batchSize);
 
-        System.out.printf("Test performance (for orb type %s): %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
-                ORBInfo.getOrbName(), opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
-                opts.getErrorCount(), opts.getTotalMillis());
+        System.out.printf("%s%n", measurement.getInfo());
 
-        System.out.printf("%s%n", (correct ? "Passed" : "Failed"));
+        System.out.printf("%s%n%s%n", measurement.getInfo(),
+                (measurement.isRegression() || measurement.getErrorCount() != 0 ? "Failed" : "Passed"));
     }
 }
 

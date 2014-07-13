@@ -31,8 +31,8 @@
 
 package com.hp.mwtests.ts.arjuna.performance;
 
+import io.narayana.perf.Measurement;
 import io.narayana.perf.PerformanceProfileStore;
-import io.narayana.perf.Result;
 import io.narayana.perf.WorkerWorkload;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class Performance2
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
 
-        Result measurement = PerformanceProfileStore.regressionCheck(
+        Measurement measurement = PerformanceProfileStore.regressionCheck(
                 worker, getClass().getName() + "_test1", true, warmUpCount, numberOfTransactions, threads, work);
 
         Assert.assertEquals(0, measurement.getErrorCount());
@@ -69,7 +69,7 @@ public class Performance2
 
     WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
         @Override
-        public Void doWork(Void context, int batchSize, Result<Void> config) {
+        public Void doWork(Void context, int batchSize, Measurement<Void> config) {
             for (int i = 0; i < batchSize; i++) {
                 try {
                     AtomicAction A = new AtomicAction();
