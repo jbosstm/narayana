@@ -8,4 +8,8 @@ com.hp.mwtests.ts.arjuna.performance.Performance2_test1=1.25
 com.hp.mwtests.ts.arjuna.performance.Performance3_test1=1.25
 com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance1_test1=1.25
 com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance2_test1=1.25
+io.narayana.perf.product.ProductComparison_Bitronix=1.25
+io.narayana.perf.product.ProductComparison_Narayana=1.25
+io.narayana.perf.product.ProductComparison_Jotm=1.25
+io.narayana.perf.product.ProductComparison_Atomkos=1.25
 
