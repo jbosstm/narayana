@@ -140,6 +140,13 @@ public class PerformanceProfileStore
         }
     }
 
+    public static Float getMetric(String metricName) {
+        if (metrics.data.containsKey(metricName))
+            return Float.parseFloat(metrics.data.getProperty(metricName, null));
+
+        return null;
+    }
+
     float getMetric(String name, float defaultValue) {
         return Float.parseFloat(data.getProperty(name, Float.toString(defaultValue)));
     }
@@ -344,5 +351,24 @@ public class PerformanceProfileStore
         list.removeAll(Collections.singleton(""));
 
         return list.toArray(new String[list.size()]);
+    }
+
+    /**
+     * get metrics matching a particular pattern
+     * @param pattern the regex used as the pattern
+     * @return a map of matching metric names to the current value of the metric
+     */
+    public static Map<String, Float> getMatchingMetrics(String pattern) {
+        Map<String, Float> matches = new HashMap<>();
+        Enumeration e = metrics.data.propertyNames();
+
+        while (e.hasMoreElements()) {
+            String key = (String) e.nextElement();
+
+            if (key.matches(pattern))
+                matches.put(key, Float.valueOf(metrics.data.getProperty(key))); // data must contain numbers
+        }
+
+        return matches;
     }
 }
