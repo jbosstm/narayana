@@ -7,23 +7,33 @@ io.narayana.perf.product.ProductComparison_Jotm=100000,10,1000000,50,100
 io.narayana.perf.product.ProductComparison_Atomikos=100000,10,10000,50,100
 
 org.jboss.jbossts.star.test.PerformanceTest_measureThroughput_UTOW=600000,10,15000,50,100
+#org.jboss.jbossts.star.test.PerformanceTest_measureThroughput_UTOW=600000,10,300000,100,100
 JTSRemote_PerfTest_PerfHammer_com.sun.corba.se.internal.Interceptors.PIORB=900000,10,300000,80,100
 # less threads and iterations (80+ threads exhausts the jacorb thread pool no matter what jacorb.poa.thread_pool_max is set to)
 JTSRemote_PerfTest_PerfHammer_org.jacorb.orb.ORB.args=1200000,10,200000,50,100
-org.jboss.jbossts.star.test.PerformanceTest_measureThroughput_UTOW=600000,10,300000,100,100
-com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_h2=600000,10,2000,40,25
-com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_h2=600000,10,2000,40,25
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_h2=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_h2=600000,0,2000,50,40
+
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_oracle=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_oracle=600000,10,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_db2=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_db2=600000,10,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_mysql=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_mysql=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testXAResource_postgres=600000,0,2000,50,40
+com.hp.mwtests.ts.jta.commitmarkable.PerformanceTestCommitMarkableResource_testCommitMarkableResource_postgres=600000,0,2000,50,40
 
 com.hp.mwtests.ts.arjuna.performance.Performance1_test1=100000,10,50000000,100,100
-com.hp.mwtests.ts.arjuna.performance.Performance2_test1=100000,10,100000,100,100
+com.hp.mwtests.ts.arjuna.performance.Performance2_test1=100000,10,10000,100,100
 com.hp.mwtests.ts.arjuna.performance.Performance3_test1=100000,10,1000000,100,100
 com.hp.mwtests.ts.arjuna.performance.Performance4_test1=100000,10,1000000,100,100
 com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance1_test1=100000,10,100000,100,100
 com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance2_test1=100000,10,100000,100,100
 com.hp.mwtests.ts.jts.orbspecific.local.performance.Performance3_test1=100000,10,100000,100,100
 
-com.arjuna.ats.jta.xa.performance.OnePhase2PCPerformanceDefaultUnitTest=100000,10,30000,50,1000
-com.arjuna.ats.jta.xa.performance.OnePhase2PCPerformanceVolatileUnitTest=100000,10,2000000,100,1000
-com.arjuna.ats.jta.xa.performance.OnePhasePerformanceDefaultUnitTest=100000,10,2000000,100,1000
-com.arjuna.ats.jta.xa.performance.OnePhasePerformanceVolatileUnitTest=100000,10,2000000,100,1000
+#com.arjuna.ats.jta.xa.performance.OnePhase2PCPerformanceDefaultUnitTest_test1=100000,10,30000,50,100
+com.arjuna.ats.jta.xa.performance.OnePhase2PCPerformanceDefaultUnitTest_test1=100000,10,3000,50,100
+com.arjuna.ats.jta.xa.performance.OnePhase2PCPerformanceVolatileUnitTest_test1=100000,10,2000000,100,100
+com.arjuna.ats.jta.xa.performance.OnePhasePerformanceDefaultUnitTest_test1=100000,10,2000000,100,100
+com.arjuna.ats.jta.xa.performance.OnePhasePerformanceVolatileUnitTest_test1=100000,10,2000000,100,100
 

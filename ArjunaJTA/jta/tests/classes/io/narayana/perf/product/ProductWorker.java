@@ -27,11 +27,11 @@ import io.narayana.perf.WorkerWorkload;
 
 import javax.transaction.UserTransaction;
 
-public class ProductWorkload<Void> implements WorkerWorkload<Void>, WorkerLifecycle<Void> {
+public class ProductWorker<Void> implements WorkerWorkload<Void>, WorkerLifecycle<Void> {
 
     ProductInterface prod;
 
-    public ProductWorkload(ProductInterface prod) {
+    public ProductWorker(ProductInterface prod) {
         this.prod = prod;
     }
 
@@ -46,7 +46,7 @@ public class ProductWorkload<Void> implements WorkerWorkload<Void>, WorkerLifecy
 
             }
             catch (Exception e) {
-                if (config.getErrorCount() == 0)
+                if (config.getNumberOfErrors() == 0)
                     e.printStackTrace();
 
                 config.incrementErrorCount();

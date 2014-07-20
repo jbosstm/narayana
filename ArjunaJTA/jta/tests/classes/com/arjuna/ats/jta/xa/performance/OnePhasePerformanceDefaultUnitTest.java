@@ -31,12 +31,7 @@
 
 package com.arjuna.ats.jta.xa.performance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import io.narayana.perf.Measurement;
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Worker;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,18 +53,19 @@ public class OnePhasePerformanceDefaultUnitTest
     @Test
     public void test()
     {
-        int maxTestTime = 0;
         int warmUpCount = 0;
         int numberOfThreads = 10;
         int batchSize = 1000;
         int numberOfTransactions = numberOfThreads * batchSize;
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfTransactions, numberOfThreads, batchSize);
+        Measurement measurement = new Measurement.Builder(getClass().getName() + "_test1")
+                .maxTestTime(0L).numberOfCalls(numberOfTransactions)
+                .numberOfThreads(numberOfThreads).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
 
         System.out.printf("%s%n", measurement.getInfo());
-        Assert.assertEquals(0, measurement.getErrorCount());
-        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
         long timeTaken = measurement.getTotalMillis();
 
@@ -105,7 +101,7 @@ public class OnePhasePerformanceDefaultUnitTest
                 }
                 catch (Exception e)
                 {
-                    if (measurement.getErrorCount() == 0)
+                    if (measurement.getNumberOfErrors() == 0)
                         e.printStackTrace();
 
                     measurement.incrementErrorCount();

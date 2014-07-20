@@ -21,7 +21,6 @@
  */
 package org.jboss.jbossts.star.test;
 
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Measurement;
 import io.narayana.perf.WorkerWorkload;
 import org.jboss.jbossts.star.util.TxSupport;
@@ -37,47 +36,24 @@ public class PerformanceTest extends BaseTest {
         startContainer(TXN_MGR_URL);
     }
 
-    private int getArg(String[] args, int index, int defaultValue) {
-        try {
-            if (index >= 0 && index < args.length)
-                return Integer.parseInt(args[index]);
-        } catch (NumberFormatException e) {
-            Assert.fail(getClass().getName() + "test arguments in the PerformanceProfileStore invalid: " + e.getMessage());
-        }
-
-        return defaultValue;
-
-    }
-
     // 2PC commit
     @Test
     public void measureThroughput() throws Exception {
         String info = USE_SPDY ? "SPDY" : USE_SSL ? "SSL" : USE_UNDERTOW ? "UTOW" : "none";
         String metricName = getClass().getName() + "_measureThroughput_" + info;
-        boolean failOnRegression = PerformanceProfileStore.isFailOnRegression();
 
         int callCount = 1000;
+        int warmUpCount = 10;
         int threadCount = 10;
         int batchSize = 50;
 
-        if (failOnRegression) {
-            String[] args = PerformanceProfileStore.getTestArgs(metricName);
+        Measurement measurement = new Measurement.Builder(metricName)
+                .maxTestTime(0L).numberOfCalls(callCount)
+                .numberOfThreads(threadCount).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(new RTSWorker());
 
-            callCount = getArg(args, 0, callCount);
-            threadCount = getArg(args, 1, threadCount);
-            batchSize = getArg(args, 2, batchSize);
-        }
-
-        Measurement<String> opts = new Measurement<String>(threadCount, callCount, batchSize).measure(new RTSWorker());
-
-        System.out.printf("%s:  Test performance: %d calls/sec (%d invocations using %d threads with %d errors. Total time %d ms)%n",
-                info, opts.getThroughput(), opts.getNumberOfCalls(), opts.getThreadCount(),
-                opts.getErrorCount(), opts.getTotalMillis());
-
-        Assert.assertEquals(0, opts.getErrorCount());
-
-        boolean correct = PerformanceProfileStore.checkPerformance(metricName, opts.getThroughput(), true);
-        Assert.assertTrue(metricName + ": performance regression", correct);
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
     }
 
     private class RTSWorker implements WorkerWorkload<String> {
@@ -116,20 +92,6 @@ public class PerformanceTest extends BaseTest {
         }
 
         private void runEmptyTxn(TxSupport txn) throws Exception {
-/*            List<TxSupport> txns = new ArrayList<TxSupport> ();
-
-            for (int i = 0; i < 100; i++) {
-                TxSupport tx = new TxSupport();
-                tx.startTx();
-                txns.add(tx);
-            }
-
-            Thread.sleep(240000);
-            for (TxSupport tx : txns) {
-                tx.commitTx();
-            }
-            txns.clear();*/
-
             txn.startTx();
             txn.commitTx();
         }

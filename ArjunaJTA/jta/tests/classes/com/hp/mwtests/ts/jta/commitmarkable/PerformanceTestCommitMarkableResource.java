@@ -46,7 +46,8 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
-import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.Measurement;
+import io.narayana.perf.Worker;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,23 +68,118 @@ import org.junit.Assert;
 
 public class PerformanceTestCommitMarkableResource extends
 		TestCommitMarkableResourceBase {
-	private int threadCount = 20;
-	private int iterationCount = 500;
-	private int waiting;
-	private boolean go;
+
 	private final Object waitLock = new Object();
 	private AtomicInteger totalExecuted = new AtomicInteger();
 
 	private String dbType = System.getProperty("dbType", "h2");
 
-	@Before
-	public void setUp() {
-		synchronized (waitLock) {
-			waiting = 0;
-		}
-		synchronized (this) {
-			go = false;
-		}
+	public void doTest(final Handler xaHandler, String testName) throws Exception {
+        String fullTestName = getClass().getName() + testName;
+
+        Worker<Void> worker = new Worker<Void> () {
+            javax.transaction.TransactionManager tm = null;
+            @Override
+            public void init() {
+                tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+            }
+
+            @Override
+            public void fini() {
+					try {
+						xaHandler.finishWork();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+//					totalExecuted.addAndGet(success);
+            }
+
+            @Override
+            public Void doWork(Void context, int batchSize, Measurement<Void> measurement) {
+                for (int i =0; i < batchSize; i++) {
+                    try {
+                        tm.begin();
+                        tm.getTransaction().enlistResource(new DummyXAResource());
+
+                        xaHandler.enlistResource(tm.getTransaction());
+
+                        tm.commit();
+                        // System.out.println("done");
+                        totalExecuted.incrementAndGet();
+                    } catch (SQLException e) {
+                        measurement.incrementErrorCount();
+
+                        if (measurement.getNumberOfErrors() == 1) {
+                            System.err.println("boom");
+                            e.printStackTrace();
+                            if (e.getCause() != null) {
+                                e.getCause().printStackTrace();
+                            }
+                            SQLException nextException = e.getNextException();
+                            while (nextException != null) {
+                                nextException.printStackTrace();
+                                nextException = nextException
+                                        .getNextException();
+                            }
+                            Throwable[] suppressed = e.getSuppressed();
+                            for (int j = 0; j < suppressed.length; j++) {
+                                suppressed[j].printStackTrace();
+                            }
+                            try {
+                                tm.rollback();
+                            } catch (IllegalStateException | SecurityException
+                                    | SystemException e1) {
+                                e1.printStackTrace();
+                                fail("Problem with transaction");
+                            }
+                        }
+                    } catch (NotSupportedException | SystemException
+                            | IllegalStateException | RollbackException
+                            | SecurityException | HeuristicMixedException
+                            | HeuristicRollbackException e) {
+                        measurement.incrementErrorCount();
+
+                        e.printStackTrace();
+                        fail("Problem with transaction");
+                    }
+                }
+
+                return context;
+            }
+        };
+
+        int warmUpCount = 0; // TODO if non zero then make sure the db is reset after the warm up loop
+        int batchSize = 50;
+        int threadCount = 20;
+
+        Measurement measurement = new Measurement.Builder(fullTestName)
+                .maxTestTime(0L).numberOfCalls(batchSize * threadCount)
+                .numberOfThreads(threadCount).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
+
+        System.out.printf("%s%n", measurement.getInfo());
+
+
+		System.out.println(new Date() + "  Number of transactions: "+ totalExecuted.intValue());
+
+		long additionalCleanuptime = xaHandler.postRunCleanup(
+                measurement.getNumberOfCalls(), measurement.getNumberOfThreads());
+
+		long timeInMillis = measurement.getTotalMillis() + additionalCleanuptime;
+        long throughput = Math.round((totalExecuted.intValue() / (timeInMillis / 1000d)));
+
+        System.out.println("  Total transactions: " + totalExecuted.intValue());
+		System.out.println("  Total time millis: " + timeInMillis);
+		System.out.println("  Average transaction time: " + timeInMillis / totalExecuted.intValue());
+		System.out.println("  Transactions per second: " + throughput);
+
+		xaHandler.checkFooSize(measurement.getBatchSize(), measurement.getNumberOfThreads());
+
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
+
 	}
 
 	private void checkSize(String string, Statement statement, int expected)
@@ -372,135 +468,6 @@ public class PerformanceTestCommitMarkableResource extends
 		doTest(new Handler(dataSource), "_testXAResource_" + dbType);
 	}
 
-	public void doTest(final Handler xaHandler, String testName) throws Exception {
-        String fullTestName = getClass().getName() + testName;
-        final String[] args = PerformanceProfileStore.getTestArgs(fullTestName);
-        final int numberOfCalls = PerformanceProfileStore.getArg(fullTestName, args, 2, iterationCount, Integer.class);
-        final int numberOfThreads = PerformanceProfileStore.getArg(fullTestName, args, 3, threadCount, Integer.class);
-
-		// Test code
-		Thread[] threads = new Thread[numberOfThreads];
-		for (int i = 0; i < threads.length; i++) {
-			threads[i] = new Thread(new Runnable() {
-
-				public void run() {
-					synchronized (waitLock) {
-						waiting++;
-						waitLock.notify();
-					}
-					synchronized (PerformanceTestCommitMarkableResource.this) {
-						while (!go) {
-							try {
-								PerformanceTestCommitMarkableResource.this
-										.wait();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-								return;
-							}
-						}
-					}
-
-					int success = 0;
-					for (int i = 0; i < numberOfCalls; i++) {
-						javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
-								.transactionManager();
-						try {
-							tm.begin();
-							tm.getTransaction().enlistResource(
-									new DummyXAResource());
-
-							xaHandler.enlistResource(tm.getTransaction());
-
-							tm.commit();
-							// System.out.println("done");
-							success++;
-						} catch (SQLException e) {
-							System.err.println("boom");
-							e.printStackTrace();
-							if (e.getCause() != null) {
-								e.getCause().printStackTrace();
-							}
-							SQLException nextException = e.getNextException();
-							while (nextException != null) {
-								nextException.printStackTrace();
-								nextException = nextException
-										.getNextException();
-							}
-							Throwable[] suppressed = e.getSuppressed();
-							for (int j = 0; j < suppressed.length; j++) {
-								suppressed[j].printStackTrace();
-							}
-							try {
-								tm.rollback();
-							} catch (IllegalStateException | SecurityException
-									| SystemException e1) {
-								e1.printStackTrace();
-								fail("Problem with transaction");
-							}
-						} catch (NotSupportedException | SystemException
-								| IllegalStateException | RollbackException
-								| SecurityException | HeuristicMixedException
-								| HeuristicRollbackException e) {
-							e.printStackTrace();
-							fail("Problem with transaction");
-						}
-					}
-
-					try {
-						xaHandler.finishWork();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					totalExecuted.addAndGet(success);
-				}
-			});
-			threads[i].start();
-		}
-
-		synchronized (waitLock) {
-			while (waiting < threads.length) {
-				waitLock.wait();
-			}
-		}
-		long startTime = -1;
-		synchronized (PerformanceTestCommitMarkableResource.this) {
-			go = true;
-			PerformanceTestCommitMarkableResource.this.notifyAll();
-			startTime = System.currentTimeMillis();
-		}
-
-		for (int i = 0; i < threads.length; i++) {
-			threads[i].join();
-		}
-
-		long endTime = System.currentTimeMillis();
-
-		System.out.println(new Date() + "  Number of transactions: "
-				+ totalExecuted.intValue());
-
-		long additionalCleanuptime = xaHandler.postRunCleanup(numberOfCalls, numberOfThreads);
-
-		long timeInMillis = (endTime - startTime) + additionalCleanuptime;
-        long throughput = Math.round((totalExecuted.intValue() / (timeInMillis / 1000d)));
-
-        System.out.println("  Total transactions: " + totalExecuted.intValue());
-		System.out.println("  Total time millis: " + timeInMillis);
-		System.out.println("  Average transaction time: " + timeInMillis
-				/ totalExecuted.intValue());
-		System.out.println("  Transactions per second: " + throughput);
-
-		xaHandler.checkFooSize(numberOfCalls, numberOfThreads);
-
-        StringBuilder sb = new StringBuilder();
-        boolean correct = PerformanceProfileStore.checkPerformance(sb, fullTestName, throughput, true);
-        sb.append(String.format(" %d iterations using %d threads (tot millis: %d throughput: %d)",
-                numberOfCalls, numberOfThreads, timeInMillis, throughput));
-
-        Assert.assertTrue(sb.toString(), correct);
-	}
-
 	private class Handler {
 
 		private ThreadLocal<XAConnection> xaConnection = new ThreadLocal<XAConnection>();
@@ -593,7 +560,7 @@ public class PerformanceTestCommitMarkableResource extends
 					int expectedReapableRecords = BeanPopulator
 							.getDefaultInstance(JTAEnvironmentBean.class)
 							.isPerformImmediateCleanupOfCommitMarkableResourceBranches() ? 0
-							: numberOfThreads * numberOfCalls;
+							: numberOfCalls;
 					checkSize("xids", statement, expectedReapableRecords);
 					if (expectedReapableRecords > 0) {
 						// The recovery module has to perform lookups
@@ -630,7 +597,7 @@ public class PerformanceTestCommitMarkableResource extends
 			return 0;
 		}
 
-		public void checkFooSize(int numberOfCalls, int numberOfThreads) throws SQLException {
+		public void checkFooSize(int batchSize, int numberOfThreads) throws SQLException {
 			Connection connection = null;
 			XAConnection xaConnection = null;
 			PooledConnection pooledConnection = null;
@@ -645,7 +612,7 @@ public class PerformanceTestCommitMarkableResource extends
 				tableToCheck = Utils.getXAFooTableName();
 			}
 			Statement statement = connection.createStatement();
-			checkSize(tableToCheck, statement, numberOfThreads * numberOfCalls);
+			checkSize(tableToCheck, statement, numberOfThreads * batchSize);
 			statement.close();
 			connection.close();
 			if (xaConnection != null) {

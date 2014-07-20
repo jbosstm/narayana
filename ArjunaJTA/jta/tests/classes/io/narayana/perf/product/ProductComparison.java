@@ -21,7 +21,7 @@
  */
 package io.narayana.perf.product;
 
-import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.RegressionChecker;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,6 +29,7 @@ import org.junit.Test;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,21 +38,21 @@ import static org.junit.Assert.assertEquals;
 public class ProductComparison extends Product {
     final private static String outerClassName =  ProductComparison.class.getName();
 
-    private static Map<String, Float> oldMetrics;
+    private static Map<String, Double> oldMetrics;
     final static private String narayanaMetricName = outerClassName + METHOD_SEP + "Narayana";
 
     static String getMetricPrefix() {
         return outerClassName + METHOD_SEP;
     }
 
-    private static Map<String, Float> getVariances(Map<String, Float> metrics, Float targetMetric) {
-        Map<String, Float> variances = new HashMap<>();
+    private static Map<String, Double> getVariances(Map<String, Double> metrics, Double targetMetric) {
+        Map<String, Double> variances = new HashMap<>();
 
         if (targetMetric == null)
             return variances;
 
-        for (Map.Entry<String, Float> entry : metrics.entrySet()) {
-            Float difference = (entry.getValue() - targetMetric) / targetMetric * 100;
+        for (Map.Entry<String, Double> entry : metrics.entrySet()) {
+            Double difference = (entry.getValue() - targetMetric) / targetMetric * 100;
 
             variances.put(entry.getKey(), difference);
         }
@@ -60,31 +61,31 @@ public class ProductComparison extends Product {
     }
 
     @BeforeClass
-    public static void beforeClass() {
-        oldMetrics = PerformanceProfileStore.getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
+    public static void beforeClass() throws IOException {
+        oldMetrics = new RegressionChecker().getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
     }
 
     @AfterClass
-    public static void afterClass() {
-        Map<String, Float> newMetrics = PerformanceProfileStore.getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
+    public static void afterClass() throws IOException {
+        Map<String, Double> newMetrics = new RegressionChecker().getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
 
-        Map<String, Float> oldVariances = getVariances(oldMetrics, oldMetrics.get(narayanaMetricName));
-        Map<String, Float> newVariances = getVariances(newMetrics, (float) getThroughput(narayanaMetricName));
+        Map<String, Double> oldVariances = getVariances(oldMetrics, oldMetrics.get(narayanaMetricName));
+        Map<String, Double> newVariances = getVariances(newMetrics, getThroughput(narayanaMetricName));
 
         Map<String, String> failures = new HashMap<>(); // metric name -> reason for failure
-        Float variance = 1.1F;
+        double variance = 1.1;
 
         StringBuilder sb = new StringBuilder("Performance Regressions:%n");
 
-        for (Map.Entry<String, Float> entry : oldVariances.entrySet()) {
+        for (Map.Entry<String, Double> entry : oldVariances.entrySet()) {
             String metricName = entry.getKey();
 
             if (!metricName.equals(narayanaMetricName) && newVariances.containsKey(metricName)) {
-                Float oldVariance = entry.getValue(); // the previous value
-                Float newVariance = newVariances.get(metricName);
+                Double oldVariance = entry.getValue(); // the previous value
+                Double newVariance = newVariances.get(metricName);
 
-                Float headRoom = Math.abs(oldVariance * (variance - 1)); // the leeway either side of the prev value
-                Float difference = (oldVariance - newVariance) / newVariance * 100;
+                Double headRoom = Math.abs(oldVariance * (variance - 1)); // the leeway either side of the prev value
+                Double difference = (oldVariance - newVariance) / newVariance * 100;
 
                 boolean withinTolerance = (newVariance >= oldVariance - headRoom);
 
@@ -99,28 +100,6 @@ public class ProductComparison extends Product {
         }
 
         assertEquals(sb.toString(), 0, failures.size());
-
-/*        for (Map.Entry<String, Float> entry : newMetrics.entrySet()) {
-            String metricName = entry.getKey();
-
-            if (!oldMetrics.containsKey(metricName))
-                continue; // there is no previous value to use for regression checks
-
-            Float canonicalValue = oldMetrics.get(metricName); // the previous (best) value
-            Float headRoom = Math.abs(oldMetrics.get(metricName) * (variance - 1)); // the leeway either side of the best value
-            Float difference = (entry.getValue() - canonicalValue) / canonicalValue * 100;
-            boolean withinTolerance = (entry.getValue() >= canonicalValue - headRoom);
-
-            if (!withinTolerance) {
-                String s = String.format("%s: %f%% performance %s (%f versus %f) (variance=%f headroom=%f)%n",
-                    metricName, difference,  "regression", entry.getValue(), canonicalValue, variance, headRoom);
-
-                failures.put(metricName, s);
-                sb.append(s);
-            }
-
-            assertEquals(sb.toString(), 0, failures.size());
-        }*/
     }
 
     @Test

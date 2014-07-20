@@ -31,10 +31,7 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
-import static org.junit.Assert.fail;
-
 import io.narayana.perf.Measurement;
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Worker;
 import io.narayana.perf.WorkerLifecycle;
 import org.junit.Assert;
@@ -49,21 +46,22 @@ public class Performance2
     @Test
     public void test()
     {
-        int maxTestTime = 0;
         int numberOfCalls = 1000;
         int warmUpCount = 10;
         int numberOfThreads = 1;
         int batchSize = numberOfCalls;
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfCalls, numberOfThreads, batchSize);
+        Measurement measurement = new Measurement.Builder(getClass().getName() + "_test1")
+                .maxTestTime(0L).numberOfCalls(numberOfCalls)
+                .numberOfThreads(numberOfThreads).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
 
-        Assert.assertEquals(0, measurement.getErrorCount());
-        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
         System.out.printf("%s%n", measurement.getInfo());
         System.out.println("Average time for empty transaction = " + measurement.getTotalMillis() / (float) numberOfCalls);
-        System.out.printf("Transactions per second = %d%n", measurement.getThroughput());
+        System.out.printf("Transactions per second = %f%n", measurement.getThroughput());
     }
 
     Worker<Void> worker = new Worker<Void>() {
@@ -93,7 +91,7 @@ public class Performance2
                     else
                         control.get_terminator().rollback();
                 } catch (org.omg.CORBA.UserException e) {
-                    if (measurement.getErrorCount() == 0)
+                    if (measurement.getNumberOfErrors() == 0)
                         e.printStackTrace();
 
                     measurement.incrementErrorCount();

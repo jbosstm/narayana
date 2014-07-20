@@ -21,18 +21,18 @@
  */
 package io.narayana.perf;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertNotSame;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class PerformanceTest {
     private BigInteger factorial(int num) {
@@ -70,7 +70,7 @@ public class PerformanceTest {
         BigInteger serialFac = factorial(numberOfCalls);
         long millis = (System.nanoTime() - start) / 1000000L;
 
-        System.out.printf("TestPerformance for %d!: %d calls / second (total time: %d ms versus %d ms)%n",
+        System.out.printf("TestPerformance for %d!: %f calls / second (total time: %d ms versus %d ms)%n",
                 measurement.getNumberOfCalls(), measurement.getThroughput(), measurement.getTotalMillis(), millis);
 
         assertTrue("Factorials not equal", serialFac.equals(fac));
@@ -116,11 +116,11 @@ public class PerformanceTest {
 
         Measurement<String> measurement = new Measurement<>(threadCount, numberOfCalls, batchSize);
 
-        measurement = measurement.measure(abortWorker);
+        measurement.measure(abortWorker);
 
         assertTrue("Test should have been aborted", measurement.isCancelled());
         assertEquals("Abort context should have been \"cancelled\"", "cancelled", measurement.getContext());
-        assertNotSame("There should have been some workload errors", 0, measurement.getErrorCount());
+        assertNotSame("There should have been some workload errors", 0, measurement.getNumberOfErrors());
 
         System.out.printf("testAbortMeasurement2: %s%n", measurement);
     };
@@ -130,15 +130,15 @@ public class PerformanceTest {
      */
     @Test
     public void testSingleCall() {
-        WorkerWorkload<String> worker = new WorkerWorkload<String>() {
+        WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
             @Override
-            public String doWork(String context, int niters, Measurement<String> opts) {
+            public Void doWork(Void context, int niters, Measurement<Void> opts) {
                 assertEquals("Wrong batch size", 1, niters);
                 return context;
             }
         };
 
-        Measurement<String> config = new Measurement<>(1, 1, 1);
+        Measurement<Void> config = new Measurement<>(1, 1, 1);
 
         config.measure(worker);
 
@@ -177,17 +177,24 @@ public class PerformanceTest {
             }
         };
 
-        Measurement<Void> measurement = new Measurement<>(maxTestTime, nThreads, nCalls, batchSize);
+        Measurement.Builder builder = new Measurement.Builder("testTimeout").
+                numberOfCalls(nCalls).
+                numberOfThreads(nThreads).
+                batchSize(batchSize).
+                maxTestTime(maxTestTime);
+
+        Measurement measurement =  builder.build();
 
         measurement.measure(worker);
 
         assertTrue(String.format("Test should have timed out after %dms (actual test time was %dms)",
                 maxTestTime, measurement.getTotalMillis()), measurement.isTimedOut());
         assertNotEquals("There should have been errors due to test time limit being breached",
-                measurement.getErrorCount(), 0);
+                measurement.getNumberOfErrors(), 0);
 
         System.out.printf("testTimeout: %s%n", measurement);
     }
+
     /**
      * Sanity check
      */
@@ -197,12 +204,42 @@ public class PerformanceTest {
         int threadCount = 10;
         int batchSize = 100;
 
-        WorkerWorkload<Object> worker = new WorkerWorkload<Object>() {
+        WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
             @Override
-            public Object doWork(Object context, int batchSize, Measurement<Object> config) {
+            public Void doWork(Void context, int batchSize, Measurement<Void> config) {
                 for (int i = 0; i < batchSize; i++) {
                     try {
                         Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        config.incrementErrorCount(1);
+                    }
+                }
+
+                return context;
+            }
+        };
+
+        Measurement<Void> measurement = new Measurement<Void>(threadCount, numberOfCalls, batchSize).measure(worker);
+
+        // Each iteration sleeps for 1 ms so the total time <= no of iterations divided by the number of threads
+        assertTrue("Test ran too quickly", measurement.getTotalMillis() >= numberOfCalls / threadCount);
+
+        System.out.printf("perfTest!: %s%n", measurement);
+    }
+
+    @Test
+    public void regressionTest() throws IOException {
+        int numberOfCalls = 10000;
+        int threadCount = 10;
+        int batchSize = 100;
+        final AtomicInteger millis = new AtomicInteger(1);
+
+        WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+            @Override
+            public Void doWork(Void context, int batchSize, Measurement<Void> config) {
+                for (int i = 0; i < batchSize; i++) {
+                    try {
+                        Thread.sleep(millis.get());
                     } catch (InterruptedException e) {
                         config.incrementErrorCount(1);
                     }
@@ -211,11 +248,88 @@ public class PerformanceTest {
             }
         };
 
-        Measurement measurement = new Measurement(threadCount, numberOfCalls, batchSize).measure(worker);
+        try {
+            // the test should take about 10000/10 msecs. Do an initial run and remember the value
+            RegressionChecker config = new RegressionChecker("perf.args", "perf.last", "perf.var");
+            String testName = getClass().getName() + "_regressionTest";
+            config.setResetMetrics(true);
 
-        // Each iteration sleeps for 1 ms so the total time <= no of iterations divided by the number of threads
-        assertTrue("Test ran too quickly", measurement.getTotalMillis() >= numberOfCalls / threadCount);
+            Measurement.Builder builder = new Measurement.Builder(testName)
+                    .numberOfCalls(numberOfCalls)
+                    .numberOfThreads(threadCount)
+                    .batchSize(batchSize)
+                    .config(config);
 
-        System.out.printf("perfTest!: %s%n", measurement);
+            Measurement measurement = builder.build();
+
+            measurement.measure(worker);
+            assertFalse("There should not have been a perf regression", measurement.isRegression());
+
+            config.setResetMetrics(false);
+            builder.config(config);
+            measurement = builder.build();
+            millis.incrementAndGet();
+            measurement.measure(worker);
+            assertTrue("There should have been a perf regression", measurement.isRegression());
+
+            System.out.printf("perfTest!: %s%n", measurement);
+
+            // now do the same test but with a large variance
+            PrintWriter out = new PrintWriter(new File("perf.var"));
+
+            out.write(String.format("%s=10.0%n", testName).toString()); // anything within a 1000% variance should pass
+            out.close();
+            // configure the measurement to use the new variance file:
+            RegressionChecker checker = new RegressionChecker("perf.args", "perf.last", "perf.var");
+            measurement = builder.config(checker).build();
+            measurement.measure(worker);
+            assertFalse("There should not have been a perf regression with a large variance", measurement.isRegression());
+        } finally {
+            new File("perf.args").delete();
+            new File("perf.last").delete();
+            new File("perf.var").delete();
+        }
+    }
+
+    @Test
+    public void readPerfArgsTest() throws IOException {
+        String testName = getClass().getName() + "_readPerfArgsTest";
+
+        File argsFile = new File("perf.args");
+        long mt = 100000;
+        int wc = 10;
+        int nc = 1000000;
+        int nt = 50;
+        int bs = 100;
+
+        try {
+            // write the test arguments to a file
+            PrintWriter out = new PrintWriter(argsFile);
+
+            out.write(String.format("%s=%d,%d,%d,%d,%d%n", testName, mt, wc, nc, nt, bs).toString());
+            out.close();
+
+            // create a measurement object that will use the file based args to override the defaults
+            Measurement<Void> measurement = new Measurement.Builder(testName)
+                    .config(new RegressionChecker("perf.args", "perf.last", "perf.var"))
+                    .build();
+
+            measurement.measure(new WorkerWorkload<Void>() {
+                @Override
+                public Void doWork(Void context, int batchSize, Measurement measurement) {
+                    return null;
+                }
+            });
+
+            assertEquals("Wrong getMaxTestTime", mt, measurement.getMaxTestTime());
+            assertEquals("Wrong getNumberOfWarmupCalls", wc, measurement.getNumberOfWarmupCalls());
+            assertEquals("Wrong getNumberOfCalls", nc, measurement.getNumberOfCalls());
+            assertEquals("Wrong getNumberOfThreads", nt, measurement.getNumberOfThreads());
+            assertEquals("Wrong getBatchSize", bs, measurement.getBatchSize());
+        } finally {
+            new File("perf.args").delete();
+            new File("perf.last").delete();
+            new File("perf.var").delete();
+        }
     }
 }

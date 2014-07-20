@@ -21,6 +21,7 @@
  */
 package io.narayana.perf;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.*;
@@ -32,65 +33,71 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Config and result data for running a work load (@link{Measurement#measure})
  */
 public class Measurement<T> implements Serializable {
-    boolean regression;
-    int numberOfCalls;
-    int threadCount = 1;
-    int batchSize = 1;
-    int numberOfBatches;
+    String name;
 
-    int errorCount;
-    long totalMillis;
-    int one; // time in msecs to do one call
-    int throughput; // calls per second
-    private T context;
-
-    private final Set<T> contexts = new HashSet<T>();
-
+    int numberOfCalls; // the total number of iterations used in this measurement
+    int numberOfThreads = 1; // the number of threads used to complete the measurement
+    int batchSize = 1; // iterations are executed in batches
+    private long maxTestTime = 0; // terminate measurement if test takes longer than this value
+    private int numberOfWarmupCalls = 0; //number of iterations before starting the measurement
     private String info;
+
+    RegressionChecker config; // holds file based measurment data
+
+    private T context;
+    private final Set<T> contexts = new HashSet<T>();
+    int numberOfErrors = 0;
+    long totalMillis = 0L;
+    int one = 0; // time in msecs to do one call
+    double throughput = 0; // calls per second
+
     private boolean cancelled;
     private boolean mayInterruptIfRunning;
-    private long maxTestTime = 0; // terminate measurement if test takes longer than this value
-    private int warmUpCallCount = 0;
+    int numberOfBatches = 0;
+    boolean regression;
+    boolean failOnRegression;
 
-    public Measurement(int threadCount, int numberOfCalls) {
-        this(threadCount, numberOfCalls, 10);
+    public Measurement(int numberOfThreads, int numberOfCalls) {
+        this(numberOfThreads, numberOfCalls, 10);
     }
 
-    public Measurement(int threadCount, int numberOfCalls, int batchSize) {
-        this(0L, threadCount, numberOfCalls, batchSize);
+    public Measurement(int numberOfThreads, int numberOfCalls, int batchSize) {
+        this(0L, numberOfThreads, numberOfCalls, batchSize);
     }
 
-    public Measurement(long maxTestTime, int threadCount, int numberOfCalls, int batchSize) {
-        this.maxTestTime = maxTestTime;
-        this.numberOfCalls = numberOfCalls;
-        this.threadCount = threadCount;
-        this.batchSize = batchSize;
+    public Measurement(long maxTestTime, int numberOfThreads, int numberOfCalls, int batchSize) {
+        this(new Builder("").
+             maxTestTime(maxTestTime).numberOfThreads(numberOfThreads).numberOfCalls(numberOfCalls).batchSize(batchSize).construct());
+    }
 
-        this.totalMillis = this.throughput = 0;
-        this.errorCount = 0;
-
-        if (numberOfCalls < batchSize) {
-            System.err.println("Updating call count (request size less than batch size)");
-            this.numberOfCalls = batchSize;
-        }
-
-        numberOfBatches = this.numberOfCalls/batchSize;
-
-        if (numberOfBatches < this.threadCount) {
-            System.err.printf("Too few batches - reducing thread count (%d %d %d)%n",
-                    this.threadCount, numberOfBatches, this.numberOfCalls);
-            this.threadCount = numberOfBatches;
-        }
+    private Measurement(Builder builder) {
+        name = builder.name;
+        numberOfCalls = builder.numberOfCalls;
+        numberOfThreads = builder.numberOfThreads;
+        batchSize = builder.batchSize;
+        maxTestTime = builder.maxTestTime;
+        numberOfWarmupCalls = builder.numberOfWarmupCalls;
+        numberOfBatches = builder.numberOfBatches;
+        config = builder.config;
+        info = builder.info;
+        failOnRegression = config == null ? false : config.isFailOnRegression();
     }
 
     public boolean isRegression() {
         return regression;
     }
 
+    public boolean isFailOnRegression() {
+        return failOnRegression;
+    }
+
+    public boolean shouldFail() {
+        return isFailOnRegression() && isRegression();
+    }
+
     public void setRegression(boolean regression) {
         this.regression = regression;
     }
-
 
     public void setContext(T value) {
         context = value;
@@ -109,26 +116,22 @@ public class Measurement<T> implements Serializable {
     }
 
     public Measurement(Measurement result) {
-        this(result.threadCount, result.numberOfCalls);
+        this(result.numberOfThreads, result.numberOfCalls);
 
         this.totalMillis = result.totalMillis;
         this.throughput = result.throughput;
-        this.errorCount = 0;
+        this.numberOfErrors = 0;
     }
 
-    public int getThreadCount() {
-        return threadCount;
-    }
-
-    public void setThreadCount(int threadCount) {
-        this.threadCount = threadCount;
+    public int getNumberOfThreads() {
+        return numberOfThreads;
     }
 
     public int getNumberOfCalls() {
         return numberOfCalls;
     }
 
-    public void setNumberOfCalls(int numberOfCalls) {
+    void setNumberOfCalls(int numberOfCalls) {
         this.numberOfCalls = numberOfCalls;
     }
 
@@ -136,7 +139,7 @@ public class Measurement<T> implements Serializable {
         return batchSize;
     }
 
-    public int getNumberOfBatches() {
+    int getNumberOfBatches() {
         return numberOfBatches;
     }
 
@@ -152,35 +155,35 @@ public class Measurement<T> implements Serializable {
         this.totalMillis = totalMillis;
         if (totalMillis != 0) {
             this.one = totalMillis > 0 ? (int) (totalMillis / numberOfCalls) : 0;
-            this.throughput = (int) ((1000 * numberOfCalls) / totalMillis);
+            this.throughput =  (1000.0 * numberOfCalls) / totalMillis;
         }
     }
 
-    public int getThroughput() {
+    public double getThroughput() {
         return throughput;
     }
 
-    public int getErrorCount() {
-        return errorCount;
+    public int getNumberOfErrors() {
+        return numberOfErrors;
     }
 
-    public void setErrorCount(int errorCount) {
-        this.errorCount = errorCount;
+    public void setNumberOfErrors(int numberOfErrors) {
+        this.numberOfErrors = numberOfErrors;
     }
 
     public void incrementErrorCount() {
-        this.errorCount += 1;
+        this.numberOfErrors += 1;
     }
 
     public void incrementErrorCount(int delta) {
-        this.errorCount += delta;
+        this.numberOfErrors += delta;
     }
 
     public String toString() {
-        return String.format("%d calls / second (%d calls in %d ms using %d threads. %d errors)",
+        return String.format("%f calls / second (%d calls in %d ms using %d threads. %d errors)",
                 getThroughput(), getNumberOfCalls(),
-                getTotalMillis(), getThreadCount(),
-                getErrorCount());
+                getTotalMillis(), getNumberOfThreads(),
+                getNumberOfErrors());
     }
 
     public void setInfo(String info) {
@@ -205,6 +208,21 @@ public class Measurement<T> implements Serializable {
         this.mayInterruptIfRunning = mayInterruptIfRunning;
     }
 
+    /**
+     * Cancel the measurement.
+     *
+     * A worker may cancel a measurement by invoking this method on the Measurement object it was
+     * passed in its @see Worker#doWork(T, int, Measurement) method
+     * @param reason the reason for the cancelation
+     * @param mayInterruptIfRunning if false then any running calls to @see Worker#doWork will be allowed to finish
+     *                              before the the measurement is cancelled.
+     */
+    public void cancel(String reason, boolean mayInterruptIfRunning) {
+        this.setInfo(reason);
+        this.cancelled = true;
+        this.mayInterruptIfRunning = mayInterruptIfRunning;
+    }
+
     void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
@@ -224,12 +242,8 @@ public class Measurement<T> implements Serializable {
         return maxTestTime;
     }
 
-    public void setMaxTestTime(long maxTestTime) {
-        this.maxTestTime = maxTestTime;
-    }
-
-    public int getWarmUpCallCount() {
-        return warmUpCallCount;
+    public int getNumberOfWarmupCalls() {
+        return numberOfWarmupCalls;
     }
 
     /**
@@ -244,37 +258,36 @@ public class Measurement<T> implements Serializable {
         return measure(null, workload);
     }
 
-    public Measurement<T> measure(WorkerLifecycle<T> lifecycle, WorkerWorkload<T> workload) {
-        return measure(lifecycle, workload, 0);
-    }
-
-    public Measurement<T> measure(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload, int warmUpCallCount) {
-        this.warmUpCallCount = warmUpCallCount;
+    public Measurement<T> measure(final WorkerLifecycle<T> lifecycle, final WorkerWorkload<T> workload) {
         if (workload == null)
             throw new IllegalArgumentException("workload must not be null");
 
         if (lifecycle != null)
             lifecycle.init();
 
-        if (warmUpCallCount > 0)
-            doWork(workload, new Measurement<T>(maxTestTime, threadCount, warmUpCallCount, batchSize));
+        if (numberOfWarmupCalls > 0) {
+            System.out.printf("Test Warm Up: %s: (%d calls using %d threads)%n", name, numberOfWarmupCalls, numberOfThreads);
+            doWork(workload, new Measurement<T>(maxTestTime, numberOfThreads, numberOfWarmupCalls, batchSize));
+        }
 
-        Measurement<T> res = doWork(workload, this);
+        System.out.printf("Test Run: %s (%d calls using %d threads)%n", name, numberOfCalls, numberOfThreads);
+
+        doWork(workload, this);
 
         if (lifecycle != null)
             lifecycle.fini();
 
-        return res;
+        return this;
     }
 
     private Measurement<T> doWork(final WorkerWorkload<T> workload, final Measurement<T> opts) {
-        ExecutorService executor = Executors.newFixedThreadPool(opts.getThreadCount());
+        ExecutorService executor = Executors.newFixedThreadPool(opts.getNumberOfThreads());
         final AtomicInteger count = new AtomicInteger(opts.getNumberOfBatches());
 
         final Collection<Future<Measurement<T>>> tasks = new ArrayList<Future<Measurement<T>>>();
-        final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getThreadCount() + 1); // workers + self
+        final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getNumberOfThreads() + 1); // workers + self
 
-        for (int i = 0; i < opts.getThreadCount(); i++)
+        for (int i = 0; i < opts.getNumberOfThreads(); i++)
             tasks.add(executor.submit(new Callable<Measurement<T>>() {
                 public Measurement<T> call() throws Exception {
                     Measurement<T> res = new Measurement<T>(opts);
@@ -288,7 +301,7 @@ public class Measurement<T> implements Serializable {
                         res.setNumberOfCalls(opts.getBatchSize());
                         // ask the worker to do batchSize units or work
                         res.setContext(workload.doWork(res.getContext(), opts.getBatchSize(), res));
-                        errorCount += res.getErrorCount();
+                        errorCount += res.getNumberOfErrors();
 
                         if (res.isCancelled()) {
                             for (Future<Measurement<T>> task : tasks) {
@@ -308,13 +321,13 @@ public class Measurement<T> implements Serializable {
                     if (res.getTotalMillis() < 0)
                         res.setTotalMillis(-res.getTotalMillis());
 
-                    res.setErrorCount(errorCount);
+                    res.setNumberOfErrors(errorCount);
 
                     return res;
                 };
             }));
 
-        opts.setErrorCount(0);
+        opts.setNumberOfErrors(0);
 
         long start = System.nanoTime();
 
@@ -353,7 +366,7 @@ public class Measurement<T> implements Serializable {
                 if (context != null)
                     opts.addContext(context);
 
-                opts.incrementErrorCount(outcome.getErrorCount());
+                opts.incrementErrorCount(outcome.getNumberOfErrors());
             } catch (CancellationException e) {
                 opts.incrementErrorCount(opts.getBatchSize());
                 opts.setCancelled(true);
@@ -369,6 +382,119 @@ public class Measurement<T> implements Serializable {
 
         executor.shutdownNow();
 
+        StringBuilder sb = new StringBuilder();
+        if (config != null)
+            opts.setRegression(!config.updateMetric(sb, name, getThroughput(), true));
+
+        opts.setInfo(sb.toString());
+
         return opts;
+    }
+
+    public static final class Builder<T> {
+        private String name;
+        private int numberOfCalls = 10;
+        private int numberOfThreads = 1;
+        private int batchSize = 1;
+        private long maxTestTime = 0L;
+        private int numberOfWarmupCalls = 0;
+        private int numberOfBatches;
+        private String info;
+        RegressionChecker config;
+
+        public Builder(String name) {
+            name(name);
+        }
+
+        public Builder name(String name) {
+            if (name == null)
+                throw new IllegalArgumentException("name must be null");
+            this.name = name;
+            return this;
+        }
+
+        public Builder numberOfCalls(int numberOfCalls) {
+            this.numberOfCalls = numberOfCalls;
+            return this;
+        }
+
+        public Builder numberOfThreads(int numberOfThreads) {
+            this.numberOfThreads = numberOfThreads;
+            return this;
+        }
+
+        public Builder batchSize(int batchSize) {
+            this.batchSize = batchSize;
+            return this;
+        }
+
+        public Builder maxTestTime(long maxTestTime) {
+            this.maxTestTime = maxTestTime;
+            return this;
+        }
+
+        public Builder numberOfWarmupCalls(int numberOfWarmupCalls) {
+            this.numberOfWarmupCalls = numberOfWarmupCalls;
+            return this;
+        }
+
+        public Builder info(String info) {
+            this.info = info;
+            return this;
+        }
+
+        public Builder config() throws IOException {
+            return config(new RegressionChecker());
+        }
+
+        public Builder config(RegressionChecker config) {
+            this.config = config;
+            return this;
+        }
+
+        private Builder construct() {
+            if (config == null && RegressionChecker.isRegressionCheckEnabled()) {
+                try {
+                    config = new RegressionChecker();
+                } catch (IOException e) {
+                }
+            }
+
+            if (config != null) {
+                String[] xargs = config.getTestArgs(name);
+
+                maxTestTime = config.getArg(name, xargs, 0, maxTestTime, Long.class);
+                numberOfWarmupCalls = config.getArg(name, xargs, 1, numberOfWarmupCalls, Integer.class);
+                numberOfCalls = config.getArg(name, xargs, 2, numberOfCalls, Integer.class);
+                numberOfThreads = config.getArg(name, xargs, 3, numberOfThreads, Integer.class);
+                batchSize = config.getArg(name, xargs, 4, batchSize, Integer.class);
+            }
+
+            if (batchSize <= 0) {
+                System.err.printf("Invalid batch size (%d) setting to 1%n", batchSize);
+                batchSize = 1;
+            }
+
+            if (numberOfCalls < batchSize) {
+                System.err.println("Updating call count (request size less than batch size)");
+                numberOfCalls = batchSize;
+            }
+
+            numberOfBatches = numberOfCalls / batchSize;
+
+            if (numberOfBatches < numberOfThreads) {
+                System.err.printf("Too few batches - reducing thread count (%d %d %d)%n",
+                        numberOfThreads, numberOfBatches, numberOfCalls);
+                numberOfThreads = numberOfBatches;
+            }
+
+            return this;
+        }
+
+        public <T> Measurement<T> build() {
+            construct();
+
+            return new Measurement<>(this);
+        }
     }
 }

@@ -32,7 +32,6 @@
 package com.hp.mwtests.ts.arjuna.performance;
 
 import io.narayana.perf.Measurement;
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.WorkerWorkload;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,11 +49,13 @@ public class Performance3
         int threadCount =  1;
         int batchSize = 100;
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, getClass().getName() + "_test1", true, numberOfTransactions, threadCount, batchSize, warmUpCount);
+        Measurement measurement = new Measurement.Builder(getClass().getName() + "_test1")
+                .maxTestTime(0L).numberOfCalls(numberOfTransactions)
+                .numberOfThreads(threadCount).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker);
 
-        Assert.assertEquals(0, measurement.getErrorCount());
-        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
         System.out.printf("%s%n", measurement.getInfo());
         System.err.println("TPS: " + measurement.getThroughput());

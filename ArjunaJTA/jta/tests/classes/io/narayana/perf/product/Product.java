@@ -22,10 +22,8 @@
 package io.narayana.perf.product;
 
 import io.narayana.perf.Measurement;
-import io.narayana.perf.PerformanceProfileStore;
 import org.junit.Assert;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +35,7 @@ public abstract class Product {
         return measurements.get(name);
     }
 
-    protected static Integer getThroughput(String name) {
+    protected static Double getThroughput(String name) {
         Measurement measurement = measurements.get(name);
 
         return measurement == null ? null : measurement.getThroughput();
@@ -48,17 +46,18 @@ public abstract class Product {
         int batchSize = 100;
         int warmUpCount = 10;
         int numberOfTransactions = threads * batchSize;
-        long maxTestTime = 0;
-        boolean readTestArgsFromFile = true;
 
-        ProductWorkload worker = new ProductWorkload(prod);
+        ProductWorker worker = new ProductWorker(prod);
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, worker, prod.getNameOfMetric(), readTestArgsFromFile, maxTestTime, warmUpCount, numberOfTransactions, threads, batchSize);
+        Measurement measurement = new Measurement.Builder(prod.getNameOfMetric())
+                .maxTestTime(0L).numberOfCalls(numberOfTransactions)
+                .numberOfThreads(threads).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
+
         measurements.put(prod.getNameOfMetric(), measurement);
 
-        Assert.assertEquals(0, measurement.getErrorCount());
-        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
         System.out.printf("%s%n", measurement.getInfo());
     }

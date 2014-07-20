@@ -21,7 +21,7 @@
  */
 package io.narayana.perf.product;
 
-import io.narayana.perf.PerformanceProfileStore;
+import io.narayana.perf.RegressionChecker;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,6 +29,7 @@ import org.junit.Test;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 
 public class NarayanaComparison extends Product {
     final static String outerClassName =  ProductComparison.class.getName();
-    private static Map<String, Float> productMetrics;
+    private static Map<String, Double> productMetrics;
     final static String nameOfMetric = outerClassName + METHOD_SEP + "Narayana";
 
     @Test
@@ -71,26 +72,26 @@ public class NarayanaComparison extends Product {
     }
 
     @BeforeClass
-    public static void beforeClass() {
-        productMetrics = PerformanceProfileStore.getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
+    public static void beforeClass() throws IOException {
+        productMetrics = new RegressionChecker().getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
     }
 
     @AfterClass
-    public static void afterClass() {
-        Map<String, Float> newMetrics = PerformanceProfileStore.getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
+    public static void afterClass() throws IOException {
+        Map<String, Double> newMetrics = new RegressionChecker().getMatchingMetrics(ProductComparison.getMetricPrefix() + ".*");
         Map<String, String> failures = new HashMap<>(); // metric name -> reason for failure
-        Float variance = 1.1F;
+        Double variance = 1.1;
         StringBuilder sb = new StringBuilder("Performance Regressions:%n");
 
-        for (Map.Entry<String, Float> entry : newMetrics.entrySet()) {
+        for (Map.Entry<String, Double> entry : newMetrics.entrySet()) {
             String metricName = entry.getKey();
 
             if (!productMetrics.containsKey(metricName))
                 continue; // there is no previous value to use for regression checks
 
-            Float canonicalValue = productMetrics.get(metricName); // the previous (best) value
-            Float headRoom = Math.abs(productMetrics.get(metricName) * (variance - 1)); // the leeway either side of the best value
-            Float difference = (entry.getValue() - canonicalValue) / canonicalValue * 100;
+            Double canonicalValue = productMetrics.get(metricName); // the previous (best) value
+            Double headRoom = Math.abs(productMetrics.get(metricName) * (variance - 1)); // the leeway either side of the best value
+            Double difference = (entry.getValue() - canonicalValue) / canonicalValue * 100;
             boolean withinTolerance = (entry.getValue() >= canonicalValue - headRoom);
 
             if (!withinTolerance) {

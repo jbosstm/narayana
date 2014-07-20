@@ -34,11 +34,8 @@ package com.hp.mwtests.ts.jts.remote.hammer;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.RootOA;
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Measurement;
-import org.junit.Assert;
 
 public class PerfHammer
 {
@@ -60,6 +57,7 @@ public class PerfHammer
         int numberOfCalls = 1000;
         int threadCount = 10;
         int batchSize = 100;
+        int warmUpCount = 0;
 
         ORB myORB = ORB.getInstance("test");
         RootOA myOA = OA.getRootOA(myORB);
@@ -78,13 +76,15 @@ public class PerfHammer
 
         GridWorker worker = new GridWorker(myORB, gridReference);
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, metricName, true, 0, numberOfCalls, threadCount, batchSize);
+        Measurement measurement = new Measurement.Builder(metricName)
+                .maxTestTime(0L).numberOfCalls(numberOfCalls)
+                .numberOfThreads(threadCount).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
 
         System.out.printf("%s%n", measurement.getInfo());
 
         System.out.printf("%s%n%s%n", measurement.getInfo(),
-                (measurement.isRegression() || measurement.getErrorCount() != 0 ? "Failed" : "Passed"));
+                (measurement.shouldFail() || measurement.getNumberOfErrors() != 0 ? "Failed" : "Passed"));
     }
 }
 

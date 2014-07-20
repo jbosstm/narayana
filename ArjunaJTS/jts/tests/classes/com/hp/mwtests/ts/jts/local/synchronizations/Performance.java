@@ -34,7 +34,6 @@ package com.hp.mwtests.ts.jts.local.synchronizations;
 import static org.junit.Assert.fail;
 
 import io.narayana.perf.Measurement;
-import io.narayana.perf.PerformanceProfileStore;
 import io.narayana.perf.Worker;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,16 +60,17 @@ public class Performance
         int numberOfThreads = 1;
         int batchSize = numberOfCalls;
 
-        Measurement measurement = PerformanceProfileStore.regressionCheck(
-                worker, worker, getClass().getName() + "_test1", true, maxTestTime, warmUpCount, numberOfCalls, numberOfThreads, batchSize);
+        Measurement measurement = new Measurement.Builder(getClass().getName() + "_test1")
+                .maxTestTime(0L).numberOfCalls(numberOfCalls)
+                .numberOfThreads(numberOfThreads).batchSize(batchSize)
+                .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
 
-        Assert.assertEquals(0, measurement.getErrorCount());
-        Assert.assertFalse(measurement.getInfo(), measurement.isRegression());
+        Assert.assertEquals(0, measurement.getNumberOfErrors());
+        Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
         System.out.printf("%s%n", measurement.getInfo());
         System.out.println("Average time for empty transaction = " + measurement.getTotalMillis() / (float) numberOfCalls);
-        System.out.printf("TPS: %d%n", measurement.getThroughput());
-
+        System.out.printf("TPS: %f%n", measurement.getThroughput());
     }
 
     Worker<Void> worker = new Worker<Void>() {
@@ -126,13 +126,13 @@ public class Performance
                     current.commit(true);
 
                 } catch (UserException e) {
-                    if (measurement.getErrorCount() == 0)
+                    if (measurement.getNumberOfErrors() == 0)
                         e.printStackTrace();
 
                     measurement.incrementErrorCount();
                     fail("Caught UserException: "+e);
                 } catch (SystemException e) {
-                    if (measurement.getErrorCount() == 0)
+                    if (measurement.getNumberOfErrors() == 0)
                         e.printStackTrace();
 
                     measurement.incrementErrorCount();
