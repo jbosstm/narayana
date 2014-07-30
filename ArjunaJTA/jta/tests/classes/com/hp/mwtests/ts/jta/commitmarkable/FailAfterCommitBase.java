@@ -29,12 +29,15 @@ import java.util.Vector;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.jboss.byteman.rule.exception.ExecuteException;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.CommitMarkableResourceRecordRecoveryModule;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 
 public class FailAfterCommitBase extends TestCommitMarkableResourceBase {
 
@@ -60,7 +63,18 @@ public class FailAfterCommitBase extends TestCommitMarkableResourceBase {
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					commitMarkableResourceRecoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;
-				}
+				} else if (m instanceof XARecoveryModule) {
+                    XARecoveryModule  xarm = (XARecoveryModule) m;
+                    xarm.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+                        public boolean initialise(String p) throws Exception {
+                            return true;
+                        }
+
+                        public XAResource[] getXAResources() throws Exception {
+                            return new XAResource[] {xaResource};
+                        }
+                    });
+                }
 			}
 		}
 		// final Object o = new Object();
@@ -123,6 +137,7 @@ public class FailAfterCommitBase extends TestCommitMarkableResourceBase {
 		// it
 		assertTrue(commitMarkableResourceRecoveryModule.wasCommitted(
 				"commitmarkableresource", committed));
+		manager.scan();
 		commitMarkableResourceRecoveryModule.periodicWorkFirstPass();
 		commitMarkableResourceRecoveryModule.periodicWorkSecondPass();
 

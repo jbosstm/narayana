@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.Header;
@@ -84,6 +85,9 @@ public class RecoverConnectableAtomicAction extends AtomicAction {
 		CommitMarkableResourceRecord peekFront = (CommitMarkableResourceRecord) preparedList
 				.peekFront();
 		peekFront.updateOutcome(committed);
+		if (tsLogger.logger.isTraceEnabled()) {
+		    tsLogger.logger.trace("Moving " + get_uid() + " to an AAR so it won't get processed this time");
+		}
 		deactivate();
 	}
 }

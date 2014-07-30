@@ -19,14 +19,17 @@
  */
 package com.hp.mwtests.ts.jta.commitmarkable;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-public class SimpleXAResource2 implements XAResource, Serializable {
+public class SimpleXAResource2 implements XAResource {
 
+    private List<Xid> xids = new ArrayList<Xid>();
+    
 	private static boolean rollbackCalled;
 	private static boolean commitCalled;
 	private static boolean errorOnNextRollback;
@@ -36,6 +39,7 @@ public class SimpleXAResource2 implements XAResource, Serializable {
 
 	@Override
 	public void commit(Xid xid, boolean onePhase) throws XAException {
+        xids.remove(xid);
 		commitCalled = true;
 	}
 
@@ -59,12 +63,13 @@ public class SimpleXAResource2 implements XAResource, Serializable {
 
 	@Override
 	public int prepare(Xid xid) throws XAException {
+        xids.add(xid);
 		return 0;
 	}
 
 	@Override
 	public Xid[] recover(int flag) throws XAException {
-		return null;
+        return xids.toArray(new Xid[]{});
 	}
 
 	@Override
@@ -73,6 +78,7 @@ public class SimpleXAResource2 implements XAResource, Serializable {
 			errorOnNextRollback = false;
 			throw new Error();
 		}
+        xids.remove(xid);
 		rollbackCalled = true;
 	}
 
