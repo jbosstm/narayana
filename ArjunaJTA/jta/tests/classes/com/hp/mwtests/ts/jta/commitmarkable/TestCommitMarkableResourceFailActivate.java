@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.h2.jdbcx.JdbcDataSource;
@@ -40,6 +41,8 @@ import org.junit.runner.RunWith;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.CommitMarkableResourceRecordRecoveryModule;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 
 @RunWith(BMUnitRunner.class)
 public class TestCommitMarkableResourceFailActivate extends
@@ -74,7 +77,18 @@ public class TestCommitMarkableResourceFailActivate extends
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					recoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;
-				}
+				} else if (m instanceof XARecoveryModule) {
+                    XARecoveryModule  xarm = (XARecoveryModule) m;
+                    xarm.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+                        public boolean initialise(String p) throws Exception {
+                            return true;
+                        }
+
+                        public XAResource[] getXAResources() throws Exception {
+                            return new XAResource[] {xaResource};
+                        }
+                    });
+                }
 			}
 		}
 		// final Object o = new Object();
@@ -139,6 +153,7 @@ public class TestCommitMarkableResourceFailActivate extends
 				committed));
 
 		// Run the scan to clear the content
+		manager.scan();
 		manager.scan();
 
 		assertTrue(xaResource.wasCommitted());
