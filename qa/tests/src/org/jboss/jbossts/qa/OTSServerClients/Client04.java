@@ -62,6 +62,7 @@ import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.ORBServices;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.TransactionFactory;
 import org.omg.CosTransactions.TransactionFactoryHelper;
@@ -94,27 +95,8 @@ public class Client04
 				control.get_terminator().commit(true);
 				correct = false;
 			}
-			catch (INVALID_TRANSACTION invalidTransaction)
+			catch (TRANSACTION_ROLLEDBACK exception) 
 			{
-				correct = true;
-			}
-			catch (BAD_OPERATION badOperation)
-			{
-				correct = true;
-			}
-			catch (org.omg.CORBA.OBJECT_NOT_EXIST object_not_exist_exception)
-			{
-				// This test creates a transaction with timeout period of 4 seconds then
-				// sleeps for 8 seconds.
-				// When the timeout goes off at the transaction service, the transaction is
-				// rolled back and destroyed.
-				// The subsequent call to commit on the transaction results in an
-				// org.omg.CORBA.OBJECT_NOT_EXIST exception being thrown.
-				// The JTS specification appears to be quite vague in this area, however our
-				// implementation is compliant with this vagueness.
-				// Hence, For the purposes of this test, org.omg.CORBA.OBJECT_NOT_EXIST being thrown
-				// does not indicate a failure - BD 20/06/01
-
 				correct = true;
 			}
 			catch (Exception exception)

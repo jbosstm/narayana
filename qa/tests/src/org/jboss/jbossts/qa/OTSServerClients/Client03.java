@@ -88,7 +88,7 @@ public class Client03
 
 			Thread.sleep(8000);
 
-			correct = correct && (control.get_coordinator().get_status() == Status.StatusRolledBack);
+			correct = correct && (control.get_coordinator().get_status() == Status.StatusMarkedRollback);
 
 			if (correct)
 			{
@@ -98,6 +98,8 @@ public class Client03
 			{
 				System.out.println("Failed");
 			}
+			
+			control.get_terminator().rollback();
 		}
 		catch (org.omg.CORBA.OBJECT_NOT_EXIST object_not_exist_exception)
 		{

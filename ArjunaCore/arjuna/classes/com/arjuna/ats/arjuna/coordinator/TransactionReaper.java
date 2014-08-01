@@ -378,7 +378,7 @@ public class TransactionReaper
                 	// implementation then the transaction will effectively
                 	// remain untouched and afterCompletion will not be called.
 
-                    if (e._control.cancel() == ActionStatus.ABORTED) {
+                    if (e._control.preventCommit()) {
                         cancelled = true;
 
                         if (TxStats.enabled()) {

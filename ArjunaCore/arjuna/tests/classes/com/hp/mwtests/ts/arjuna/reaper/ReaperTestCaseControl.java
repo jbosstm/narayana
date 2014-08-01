@@ -101,39 +101,38 @@ public class ReaperTestCaseControl
 
         public boolean preventCommit()
         {
-            setRollbackTried();
+			if (getCancelTried()) {
+				setRollbackTried();
 
-            if (rendezvousInInterrupt) {
-                triggerRendezvous(uid);
-                triggerRendezvous(uid);
-            }
+				if (rendezvousInInterrupt) {
+					triggerRendezvous(uid);
+					triggerRendezvous(uid);
+				}
 
-            clearRunning();
-            return doRollback;
+				clearRunning();
+				return doRollback;
+			} else {
+				setCancelTried();
+
+				// track the worker trying to do the cancel so we can
+				// detect if it becomes a zombie
+
+				setCancelThread(Thread.currentThread());
+
+				if (rendezvousInCancel) {
+					triggerRendezvous(uid);
+					triggerRendezvous(uid);
+				}
+				if (doCancel) {
+					clearRunning();
+				}
+				return doCancel;
+			}
         }
 
         public int cancel()
         {
-            boolean interrupted = false;
-
-            setCancelTried();
-
-            // track the worker trying to do the cancel so we can
-            // detect if it becomes a zombie
-
-            setCancelThread(Thread.currentThread());
-
-            if (rendezvousInCancel) {
-                triggerRendezvous(uid);
-                triggerRendezvous(uid);
-            }
-
-            if (doCancel) {
-                clearRunning();
-                return ActionStatus.ABORTED;
-            } else {
-                return ActionStatus.RUNNING;
-            }
+        	throw new RuntimeException("Not expected");
         }
 
         public Uid get_uid()
