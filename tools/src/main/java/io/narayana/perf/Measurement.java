@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Measurement<T> implements Serializable {
     String name;
 
+    int numberOfMeasurements = 1; // if > 1 then an average of each run is taken (after removing outliers)
     int numberOfCalls; // the total number of iterations used in this measurement
     int numberOfThreads = 1; // the number of threads used to complete the measurement
     int batchSize = 1; // iterations are executed in batches
@@ -70,8 +71,13 @@ public class Measurement<T> implements Serializable {
              maxTestTime(maxTestTime).numberOfThreads(numberOfThreads).numberOfCalls(numberOfCalls).batchSize(batchSize).construct());
     }
 
+    public Measurement(Measurement result) {
+        this(result.maxTestTime, result.numberOfThreads, result.numberOfCalls, result.batchSize);
+    }
+
     private Measurement(Builder builder) {
         name = builder.name;
+        numberOfMeasurements = builder.numberOfMeasurements;
         numberOfCalls = builder.numberOfCalls;
         numberOfThreads = builder.numberOfThreads;
         batchSize = builder.batchSize;
@@ -115,12 +121,8 @@ public class Measurement<T> implements Serializable {
         contexts.add(t);
     }
 
-    public Measurement(Measurement result) {
-        this(result.numberOfThreads, result.numberOfCalls);
-
-        this.totalMillis = result.totalMillis;
-        this.throughput = result.throughput;
-        this.numberOfErrors = 0;
+    public int getNumberOfMeasurements() {
+        return numberOfMeasurements;
     }
 
     public int getNumberOfThreads() {
@@ -267,15 +269,45 @@ public class Measurement<T> implements Serializable {
 
         if (numberOfWarmupCalls > 0) {
             System.out.printf("Test Warm Up: %s: (%d calls using %d threads)%n", name, numberOfWarmupCalls, numberOfThreads);
-            doWork(workload, new Measurement<T>(maxTestTime, numberOfThreads, numberOfWarmupCalls, batchSize));
+            doWork(workload, new Measurement<T>(maxTestTime, numberOfThreads, numberOfWarmupCalls, 1));
         }
 
         System.out.printf("Test Run: %s (%d calls using %d threads)%n", name, numberOfCalls, numberOfThreads);
 
-        doWork(workload, this);
+        if (numberOfMeasurements == 1) {
+            doWork(workload, this);
+        } else if (config == null) {
+            for (int i = 0; i < numberOfMeasurements; i++)
+                doWork(workload, this);
+        } else {
+            boolean wasFailOnRegression = config.isFailOnRegression();
+            List<Double> metrics = new ArrayList<Double>();
+
+            if (wasFailOnRegression) {
+                config.setFailOnRegression(false);
+                this.failOnRegression = false;
+            }
+
+            for (int i = 0; i < numberOfMeasurements; i++) {
+                doWork(workload, this);
+                metrics.add(getThroughput());
+            }
+
+            config.setFailOnRegression(wasFailOnRegression);
+            this.failOnRegression = wasFailOnRegression;
+
+            throughput = Averager.getAverage(metrics);
+        }
 
         if (lifecycle != null)
             lifecycle.fini();
+
+        StringBuilder sb = new StringBuilder();
+
+        if (config != null)
+            setRegression(!config.updateMetric(sb, name, getThroughput(), true));
+
+        setInfo(sb.toString());
 
         return this;
     }
@@ -287,10 +319,13 @@ public class Measurement<T> implements Serializable {
         final Collection<Future<Measurement<T>>> tasks = new ArrayList<Future<Measurement<T>>>();
         final CyclicBarrier cyclicBarrier = new CyclicBarrier(opts.getNumberOfThreads() + 1); // workers + self
 
+        totalMillis = 0;
+
         for (int i = 0; i < opts.getNumberOfThreads(); i++)
             tasks.add(executor.submit(new Callable<Measurement<T>>() {
                 public Measurement<T> call() throws Exception {
-                    Measurement<T> res = new Measurement<T>(opts);
+                    Measurement<T> res =  new Measurement<>(
+                            opts.getMaxTestTime(), opts.getNumberOfThreads(), opts.getNumberOfCalls(), opts.getBatchSize());
                     int errorCount = 0;
 
                     cyclicBarrier.await();
@@ -382,12 +417,6 @@ public class Measurement<T> implements Serializable {
 
         executor.shutdownNow();
 
-        StringBuilder sb = new StringBuilder();
-        if (config != null)
-            opts.setRegression(!config.updateMetric(sb, name, getThroughput(), true));
-
-        opts.setInfo(sb.toString());
-
         return opts;
     }
 
@@ -399,6 +428,7 @@ public class Measurement<T> implements Serializable {
         private long maxTestTime = 0L;
         private int numberOfWarmupCalls = 0;
         private int numberOfBatches;
+        private int numberOfMeasurements = 1;
         private String info;
         RegressionChecker config;
 
@@ -410,6 +440,17 @@ public class Measurement<T> implements Serializable {
             if (name == null)
                 throw new IllegalArgumentException("name must be null");
             this.name = name;
+            return this;
+        }
+
+        /**
+         * The number of times to run the measurement.
+         * If greater than one then outliers are discounted and an average is taken of the remaining runs.
+         * @param numberOfMeasurements number of measurements
+         * @return the builder
+         */
+        public Builder numberOfMeasurements(int numberOfMeasurements) {
+            this.numberOfMeasurements = numberOfMeasurements;
             return this;
         }
 
@@ -463,11 +504,12 @@ public class Measurement<T> implements Serializable {
             if (config != null) {
                 String[] xargs = config.getTestArgs(name);
 
-                maxTestTime = config.getArg(name, xargs, 0, maxTestTime, Long.class);
-                numberOfWarmupCalls = config.getArg(name, xargs, 1, numberOfWarmupCalls, Integer.class);
-                numberOfCalls = config.getArg(name, xargs, 2, numberOfCalls, Integer.class);
-                numberOfThreads = config.getArg(name, xargs, 3, numberOfThreads, Integer.class);
-                batchSize = config.getArg(name, xargs, 4, batchSize, Integer.class);
+                numberOfMeasurements = config.getArg(name, xargs, 0, numberOfMeasurements, Integer.class);
+                maxTestTime = config.getArg(name, xargs, 1, maxTestTime, Long.class);
+                numberOfWarmupCalls = config.getArg(name, xargs, 2, numberOfWarmupCalls, Integer.class);
+                numberOfCalls = config.getArg(name, xargs, 3, numberOfCalls, Integer.class);
+                numberOfThreads = config.getArg(name, xargs, 4, numberOfThreads, Integer.class);
+                batchSize = config.getArg(name, xargs, 5, batchSize, Integer.class);
             }
 
             if (batchSize <= 0) {

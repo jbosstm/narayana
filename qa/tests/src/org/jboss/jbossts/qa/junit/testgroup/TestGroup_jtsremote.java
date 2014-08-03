@@ -133,7 +133,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
         String metricName = "JTSRemote_PerfTest_PerfHammer_" + System.getProperty("org.omg.CORBA.ORBClass", "");
         String[] xargs = PerformanceProfileStore.getTestArgs(metricName);
             // ignore xargs[0] which specifies the max test time
-        int maxTime = PerformanceProfileStore.getArg(metricName, xargs, 0, 960000, Integer.class);
+        int maxTime = PerformanceProfileStore.getArg(metricName, xargs, 1, 960000, Integer.class);
 
         Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, maxTime / 1000);
         server1.start("$(1)");

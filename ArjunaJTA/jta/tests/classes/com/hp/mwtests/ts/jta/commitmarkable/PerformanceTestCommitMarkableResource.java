@@ -175,7 +175,7 @@ public class PerformanceTestCommitMarkableResource extends
 		System.out.println("  Average transaction time: " + timeInMillis / totalExecuted.intValue());
 		System.out.println("  Transactions per second: " + throughput);
 
-		xaHandler.checkFooSize(measurement.getBatchSize(), measurement.getNumberOfThreads());
+		xaHandler.checkFooSize(measurement.getNumberOfMeasurements(), measurement.getBatchSize(), measurement.getNumberOfThreads());
 
         Assert.assertEquals(0, measurement.getNumberOfErrors());
         Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
@@ -597,7 +597,7 @@ public class PerformanceTestCommitMarkableResource extends
 			return 0;
 		}
 
-		public void checkFooSize(int batchSize, int numberOfThreads) throws SQLException {
+		public void checkFooSize(int numberOfRuns, int batchSize, int numberOfThreads) throws SQLException {
 			Connection connection = null;
 			XAConnection xaConnection = null;
 			PooledConnection pooledConnection = null;
@@ -612,7 +612,7 @@ public class PerformanceTestCommitMarkableResource extends
 				tableToCheck = Utils.getXAFooTableName();
 			}
 			Statement statement = connection.createStatement();
-			checkSize(tableToCheck, statement, numberOfThreads * batchSize);
+			checkSize(tableToCheck, statement, numberOfRuns * numberOfThreads * batchSize);
 			statement.close();
 			connection.close();
 			if (xaConnection != null) {

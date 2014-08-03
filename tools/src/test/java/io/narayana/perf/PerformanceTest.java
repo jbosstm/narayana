@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -296,6 +299,7 @@ public class PerformanceTest {
         String testName = getClass().getName() + "_readPerfArgsTest";
 
         File argsFile = new File("perf.args");
+        int rc = 1;
         long mt = 100000;
         int wc = 10;
         int nc = 1000000;
@@ -306,7 +310,7 @@ public class PerformanceTest {
             // write the test arguments to a file
             PrintWriter out = new PrintWriter(argsFile);
 
-            out.write(String.format("%s=%d,%d,%d,%d,%d%n", testName, mt, wc, nc, nt, bs).toString());
+            out.write(String.format("%s=%d,%d,%d,%d,%d,%d%n", testName, rc, mt, wc, nc, nt, bs).toString());
             out.close();
 
             // create a measurement object that will use the file based args to override the defaults
@@ -330,6 +334,30 @@ public class PerformanceTest {
             new File("perf.args").delete();
             new File("perf.last").delete();
             new File("perf.var").delete();
+        }
+    }
+
+    @Test
+    public void testAverager() {
+        Double[][] tests = {
+           { 2.0, 5.0, 6.0, 9.0, 12.0, 26.0 },
+        };
+
+        for (Double[] vals : tests) {
+            List<Double> values = new ArrayList<>(Arrays.asList(vals));
+
+            double median = Averager.getMedian(values, 0, values.size() - 1);
+            double q1 = Averager.getQ1(values);
+            double q3 = Averager.getQ3(values);
+
+            int size = values.size();
+
+            Averager.removeOutliers(values);
+
+            assertEquals("wrong first quartile", 5.000000, q1, 0.1);
+            assertEquals("wrong third quartile", 12.000000, q3, 0.1);
+            assertEquals("wrong median", 7.5, median, 0.1);
+            assertEquals("Outlier in data was not detected", size - 1, values.size());
         }
     }
 }

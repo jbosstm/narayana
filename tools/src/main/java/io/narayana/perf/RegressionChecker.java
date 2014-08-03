@@ -70,6 +70,11 @@ public class RegressionChecker {
         return System.getProperty(propName) == null ?  false : Boolean.getBoolean(propName);
     }
 
+    /**
+     * If isFailOnRegression is false then new metrics will not
+     * be persisted to the metrics store
+     * @return  whether or not to mark regressions as failures
+     */
     public boolean isFailOnRegression() {
         return failOnRegression;
     }
@@ -212,7 +217,7 @@ public class RegressionChecker {
         if (!testHistory.containsKey(metricName) || better || resetMetrics) {
             testHistory.put(metricName, Double.toString(metricValue));
 
-            if ((testHistoryFileName != null)) {
+            if (failOnRegression && testHistoryFileName != null) {
                 try {
                     testHistory.store(new FileOutputStream(testHistoryFileName), PROPFILE_COMMENT);
                 } catch (IOException e) {
