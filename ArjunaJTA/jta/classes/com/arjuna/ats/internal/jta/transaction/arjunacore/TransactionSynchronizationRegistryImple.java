@@ -130,7 +130,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
     public void registerInterposedSynchronization(Synchronization synchronization)
     {
         if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("TransactionSynchronizationRegistryImple.registerInterposedSynchronization");
+            jtaLogger.logger.trace("TransactionSynchronizationRegistryImple.registerInterposedSynchronization - Class: " + synchronization.getClass() + " HashCode: " + synchronization.hashCode() + " toString: " + synchronization);
         }
 
         TransactionImple transactionImple = getTransactionImple();

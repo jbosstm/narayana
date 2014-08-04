@@ -448,7 +448,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
         if (jtaxLogger.logger.isTraceEnabled()) {
-            jtaxLogger.logger.trace("TransactionImple.registerSynchronization");
+            jtaxLogger.logger.trace("TransactionImple.registerSynchronization - Class: " + sync.getClass() + " HashCode: " + sync.hashCode() + " toString: " + sync);
         }
 
 		if (sync == null)

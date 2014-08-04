@@ -68,7 +68,7 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
     public boolean beforeCompletion ()
     {
 	if (jtaLogger.logger.isTraceEnabled()) {
-        jtaLogger.logger.trace("SynchronizationImple.beforeCompletion");
+        jtaLogger.logger.trace("SynchronizationImple.beforeCompletion - Class: " + _theSynch.getClass() + " HashCode: " + _theSynch.hashCode() + " toString: " + _theSynch);
     }
 
 	if (_theSynch != null)
@@ -84,7 +84,7 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
     public boolean afterCompletion (int status)
     {
         if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("SynchronizationImple.afterCompletion");
+            jtaLogger.logger.trace("SynchronizationImple.afterCompletion - Class: " + _theSynch.getClass() + " HashCode: " + _theSynch.hashCode() + " toString: " + _theSynch);
         }
 
         if (_theSynch != null)

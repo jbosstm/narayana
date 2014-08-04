@@ -72,7 +72,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     public void before_completion () throws org.omg.CORBA.SystemException
     {
 	if (jtaxLogger.logger.isTraceEnabled()) {
-        jtaxLogger.logger.trace("SynchronizationImple.before_completion");
+        jtaxLogger.logger.trace("SynchronizationImple.before_completion - Class: " + _theSynch.getClass() + " HashCode: " + _theSynch.hashCode() + " toString: " + _theSynch);
     }
 
 	if (_theSynch != null)
@@ -93,7 +93,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     public void after_completion (org.omg.CosTransactions.Status status) throws org.omg.CORBA.SystemException
     {
 	if (jtaxLogger.logger.isTraceEnabled()) {
-        jtaxLogger.logger.trace("SynchronizationImple.after_completion");
+        jtaxLogger.logger.trace("SynchronizationImple.after_completion - Class: " + _theSynch.getClass() + " HashCode: " + _theSynch.hashCode() + " toString: " + _theSynch);
     }
 
 	if (_theSynch != null)
