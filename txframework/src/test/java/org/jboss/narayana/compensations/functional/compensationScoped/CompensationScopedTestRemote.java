@@ -33,12 +33,14 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
+@Ignore // TODO ignored because of JBTM-2218
 @RunWith(Arquillian.class)
 public class CompensationScopedTestRemote extends CompensationScopedTest {
 
