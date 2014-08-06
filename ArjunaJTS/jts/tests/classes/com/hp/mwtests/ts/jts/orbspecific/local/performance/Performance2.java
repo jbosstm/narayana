@@ -100,6 +100,10 @@ public class Performance2
 
             return context;
         }
+
+        @Override
+        public void finishWork(Measurement<Void> measurement) {
+        }
     };
 }
 

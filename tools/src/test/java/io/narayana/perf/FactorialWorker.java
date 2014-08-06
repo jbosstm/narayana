@@ -47,6 +47,10 @@ public class FactorialWorker implements Worker<BigInteger> {
     }
 
     @Override
+    public void finishWork(Measurement<BigInteger> measurement) {
+    }
+
+    @Override
     public void init() {
         initTimemillis = System.currentTimeMillis();
     }

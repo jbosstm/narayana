@@ -37,120 +37,123 @@ import javax.transaction.xa.Xid;
 
 public class Utils {
 	public static void createTables(Connection connection) throws SQLException {
-		String driverName = connection.getMetaData().getDriverName();
-		int index = driverName.indexOf(' ');
-		if (index != -1)
-			driverName = driverName.substring(0, index);
-		driverName = driverName.replaceAll("-", "_");
-		driverName = driverName.toLowerCase();
+        try {
+            String driverName = connection.getMetaData().getDriverName();
+            int index = driverName.indexOf(' ');
+            if (index != -1)
+                driverName = driverName.substring(0, index);
+            driverName = driverName.replaceAll("-", "_");
+            driverName = driverName.toLowerCase();
 
-		Statement statement = connection.createStatement();
-		if (driverName.equals("jconnect")) {
-			try {
-				statement.execute("drop table xids");
-			} catch (SQLException e) {
-				if (e.getErrorCode() != 3701) {
-					throw e;
-				}
-			}
-			statement
-					.execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
-			try {
-				statement.execute("drop table foo");
-			} catch (SQLException e) {
-				if (e.getErrorCode() != 3701) {
-					throw e;
-				}
-			}
-		} else if (driverName.equals("oracle")) {
-			try {
-				statement.execute("drop table xids");
-				statement.execute("drop index index_xid on xids");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("42000")
-						&& ex.getErrorCode() != 942) {
-					throw ex;
-				}
-			}
-			statement
-					.execute("create table xids (xid RAW(144), transactionManagerID varchar(64), actionuid RAW(28))");
+            Statement statement = connection.createStatement();
+            if (driverName.equals("jconnect")) {
+                try {
+                    statement.execute("drop table xids");
+                } catch (SQLException e) {
+                    if (e.getErrorCode() != 3701) {
+                        throw e;
+                    }
+                }
+                statement
+                        .execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
+                try {
+                    statement.execute("drop table foo");
+                } catch (SQLException e) {
+                    if (e.getErrorCode() != 3701) {
+                        throw e;
+                    }
+                }
+            } else if (driverName.equals("oracle")) {
+                try {
+                    statement.execute("drop table xids");
+                    statement.execute("drop index index_xid on xids");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("42000")
+                            && ex.getErrorCode() != 942) {
+                        throw ex;
+                    }
+                }
+                statement
+                        .execute("create table xids (xid RAW(144), transactionManagerID varchar(64), actionuid RAW(28))");
 
-			statement.execute("create unique index index_xid on xids (xid)");
-			try {
-				statement.execute("drop table foo");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("42000")
-						&& ex.getErrorCode() != 942) {
-					throw ex;
-				}
-			}
-		} else if (driverName.equals("ibm")) {
-			try {
-				statement.execute("drop table xids");
-				statement.execute("drop index index_xid");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("42704")
-						&& ex.getErrorCode() != -204) {
-					throw ex;
-				}
-			}
-			statement
-					.execute("create table xids (xid VARCHAR(255), transactionManagerID varchar(64), actionuid VARCHAR(255))");
+                statement.execute("create unique index index_xid on xids (xid)");
+                try {
+                    statement.execute("drop table foo");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("42000")
+                            && ex.getErrorCode() != 942) {
+                        throw ex;
+                    }
+                }
+            } else if (driverName.equals("ibm")) {
+                try {
+                    statement.execute("drop table xids");
+                    statement.execute("drop index index_xid");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("42704")
+                            && ex.getErrorCode() != -204) {
+                        throw ex;
+                    }
+                }
+                statement
+                        .execute("create table xids (xid VARCHAR(255), transactionManagerID varchar(64), actionuid VARCHAR(255))");
 
-			statement.execute("create unique index index_xid on xids (xid)");
-			try {
-				statement.execute("drop table foo");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("42704")
-						&& ex.getErrorCode() != -204) {
-					throw ex;
-				}
-			}
-		} else if (driverName.equals("microsoft")) {
-			try {
-				statement.execute("drop table xids");
-				statement.execute("drop index index_xid on xids");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("S0005")
-						&& ex.getErrorCode() != 3701) {
-					throw ex;
-				}
-			}
-			statement
-					.execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
+                statement.execute("create unique index index_xid on xids (xid)");
+                try {
+                    statement.execute("drop table foo");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("42704")
+                            && ex.getErrorCode() != -204) {
+                        throw ex;
+                    }
+                }
+            } else if (driverName.equals("microsoft")) {
+                try {
+                    statement.execute("drop table xids");
+                    statement.execute("drop index index_xid on xids");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("S0005")
+                            && ex.getErrorCode() != 3701) {
+                        throw ex;
+                    }
+                }
+                statement
+                        .execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
 
-			statement.execute("create unique index index_xid on xids (xid)");
-			try {
-				statement.execute("drop table foo");
-			} catch (SQLException ex) {
-				if (!ex.getSQLState().equals("S0005")
-						&& ex.getErrorCode() != 3701) {
-					throw ex;
-				}
-			}
-		} else {
-			statement.execute("drop table if exists xids");
-			if (driverName.equals("postgresql")) {
-				statement.execute("drop index if exists index_xid");
-				statement
-						.execute("create table xids (xid bytea, transactionManagerID varchar(64), actionuid bytea)");
-				statement
-						.execute("create unique index index_xid on xids (xid)");
-			} else {
-				statement
-						.execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
-				if (driverName.equals("h2")) {
-					statement.execute("drop index if exists index_xid");
-					statement
-							.execute("create unique index index_xid on xids (xid)");
+                statement.execute("create unique index index_xid on xids (xid)");
+                try {
+                    statement.execute("drop table foo");
+                } catch (SQLException ex) {
+                    if (!ex.getSQLState().equals("S0005")
+                            && ex.getErrorCode() != 3701) {
+                        throw ex;
+                    }
+                }
+            } else {
+                statement.execute("drop table if exists xids");
+                if (driverName.equals("postgresql")) {
+                    statement.execute("drop index if exists index_xid");
+                    statement
+                            .execute("create table xids (xid bytea, transactionManagerID varchar(64), actionuid bytea)");
+                    statement
+                            .execute("create unique index index_xid on xids (xid)");
+                } else {
+                    statement
+                            .execute("create table xids (xid varbinary(144), transactionManagerID varchar(64), actionuid varbinary(28))");
+                    if (driverName.equals("h2")) {
+                        statement.execute("drop index if exists index_xid");
+                        statement
+                                .execute("create unique index index_xid on xids (xid)");
 
-				}
-			}
-			statement.execute("drop table if exists foo");
-		}
-		statement.execute("create table foo (bar int)");
-		statement.close();
-		connection.close();
+                    }
+                }
+                statement.execute("drop table if exists foo");
+            }
+            statement.execute("create table foo (bar int)");
+            statement.close();
+        } finally {
+            connection.close();
+        }
 	}
 
 	public static void createTables(XADataSource xaDataSource) {

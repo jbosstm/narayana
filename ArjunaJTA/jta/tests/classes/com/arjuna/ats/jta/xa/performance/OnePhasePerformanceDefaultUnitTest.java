@@ -110,5 +110,9 @@ public class OnePhasePerformanceDefaultUnitTest
 
             return context;
         }
+
+        @Override
+        public void finishWork(Measurement<Void> measurement) {
+        }
     };
 }

@@ -274,9 +274,7 @@ public class Measurement<T> implements Serializable {
 
         System.out.printf("Test Run: %s (%d calls using %d threads)%n", name, numberOfCalls, numberOfThreads);
 
-        if (numberOfMeasurements == 1) {
-            doWork(workload, this);
-        } else if (config == null) {
+        if (config == null) {
             for (int i = 0; i < numberOfMeasurements; i++)
                 doWork(workload, this);
         } else {
@@ -328,35 +326,39 @@ public class Measurement<T> implements Serializable {
                             opts.getMaxTestTime(), opts.getNumberOfThreads(), opts.getNumberOfCalls(), opts.getBatchSize());
                     int errorCount = 0;
 
-                    cyclicBarrier.await();
-                    long start = System.nanoTime();
+                    try {
+                        cyclicBarrier.await();
+                        long start = System.nanoTime();
 
-                    // all threads are ready - this thread gets more work in batch size chunks until there isn't anymore
-                    while(count.decrementAndGet() >= 0) {
-                        res.setNumberOfCalls(opts.getBatchSize());
-                        // ask the worker to do batchSize units or work
-                        res.setContext(workload.doWork(res.getContext(), opts.getBatchSize(), res));
-                        errorCount += res.getNumberOfErrors();
+                        // all threads are ready - this thread gets more work in batch size chunks until there isn't anymore
+                        while(count.decrementAndGet() >= 0) {
+                            res.setNumberOfCalls(opts.getBatchSize());
+                            // ask the worker to do batchSize units or work
+                            res.setContext(workload.doWork(res.getContext(), opts.getBatchSize(), res));
+                            errorCount += res.getNumberOfErrors();
 
-                        if (res.isCancelled()) {
-                            for (Future<Measurement<T>> task : tasks) {
-                                if (!task.equals(this))
-                                    task.cancel(res.isMayInterruptIfRunning());
+                            if (res.isCancelled()) {
+                                for (Future<Measurement<T>> task : tasks) {
+                                    if (!task.equals(this))
+                                        task.cancel(res.isMayInterruptIfRunning());
+                                }
+
+                                opts.setContext(res.getContext());
+
+                                break;
                             }
-
-                            opts.setContext(res.getContext());
-
-                            break;
                         }
+
+                        cyclicBarrier.await();
+
+                        res.setTotalMillis((System.nanoTime() - start) / 1000000L);
+                        if (res.getTotalMillis() < 0)
+                            res.setTotalMillis(-res.getTotalMillis());
+
+                        res.setNumberOfErrors(errorCount);
+                    } finally {
+                        workload.finishWork(res);
                     }
-
-                    cyclicBarrier.await();
-
-                    res.setTotalMillis((System.nanoTime() - start) / 1000000L);
-                    if (res.getTotalMillis() < 0)
-                        res.setTotalMillis(-res.getTotalMillis());
-
-                    res.setNumberOfErrors(errorCount);
 
                     return res;
                 };

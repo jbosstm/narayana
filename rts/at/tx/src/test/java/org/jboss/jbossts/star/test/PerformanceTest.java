@@ -114,5 +114,9 @@ public class PerformanceTest extends BaseTest {
 
             return context;
         }
+
+        @Override
+        public void finishWork(Measurement<String> measurement) {
+        }
     }
 }

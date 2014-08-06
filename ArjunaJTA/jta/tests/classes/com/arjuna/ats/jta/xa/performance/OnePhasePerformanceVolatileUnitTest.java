@@ -112,6 +112,10 @@ public class OnePhasePerformanceVolatileUnitTest
 
             return context;
         }
+
+        @Override
+        public void finishWork(Measurement<Void> measurement) {
+        }
     };
 
 }

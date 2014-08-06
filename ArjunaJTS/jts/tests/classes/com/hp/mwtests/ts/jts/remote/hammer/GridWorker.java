@@ -94,6 +94,10 @@ class GridWorker implements Worker {
     }
 
     @Override
+    public void finishWork(Measurement measurement) {
+    }
+
+    @Override
     public void init() {
         try {
             current.begin();

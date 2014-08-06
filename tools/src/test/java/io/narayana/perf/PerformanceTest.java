@@ -115,6 +115,10 @@ public class PerformanceTest {
 
                 return context;
             }
+
+            @Override
+            public void finishWork(Measurement<String> measurement) {
+            }
         };
 
         Measurement<String> measurement = new Measurement<>(threadCount, numberOfCalls, batchSize);
@@ -138,6 +142,9 @@ public class PerformanceTest {
             public Void doWork(Void context, int niters, Measurement<Void> opts) {
                 assertEquals("Wrong batch size", 1, niters);
                 return context;
+            }
+            @Override
+            public void finishWork(Measurement<Void> measurement) {
             }
         };
 
@@ -177,6 +184,9 @@ public class PerformanceTest {
                 }
 
                 return context;
+            }
+            @Override
+            public void finishWork(Measurement<Void> measurement) {
             }
         };
 
@@ -220,6 +230,10 @@ public class PerformanceTest {
 
                 return context;
             }
+
+            @Override
+            public void finishWork(Measurement<Void> measurement) {
+            }
         };
 
         Measurement<Void> measurement = new Measurement<Void>(threadCount, numberOfCalls, batchSize).measure(worker);
@@ -248,6 +262,10 @@ public class PerformanceTest {
                     }
                 }
                 return null;
+            }
+
+            @Override
+            public void finishWork(Measurement<Void> measurement) {
             }
         };
 
@@ -322,6 +340,9 @@ public class PerformanceTest {
                 @Override
                 public Void doWork(Void context, int batchSize, Measurement measurement) {
                     return null;
+                }
+                @Override
+                public void finishWork(Measurement<Void> measurement) {
                 }
             });
 
