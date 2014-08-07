@@ -126,7 +126,7 @@ public class TestGroupBase
     protected void startAndWaitForClient(Class clazz, String... args) {
         String name = "client_"+clientCount;
         clientCount+=1;
-        Task client = createTask(name, clazz, Task.TaskType.EXPECT_PASS_FAIL, 480);
+        Task client = createTask(name, clazz, Task.TaskType.EXPECT_PASS_FAIL, getTimeout(480));
 		client.start(args);
 		client.waitFor();
     }
@@ -134,7 +134,7 @@ public class TestGroupBase
     protected void startAndWaitForClientWithFixedStoreDir(Class clazz, String... args) {
         String name = "client_"+clientCount;
         clientCount+=1;
-        Task client = createTask(name, clazz, Task.TaskType.EXPECT_PASS_FAIL, 480, "client");
+        Task client = createTask(name, clazz, Task.TaskType.EXPECT_PASS_FAIL, getTimeout(480), "client");
 		client.start(args);
 		client.waitFor();
     }
@@ -205,5 +205,9 @@ public class TestGroupBase
 
     protected boolean isUsingExecutionWrapper() {
         return usingExecutionWrapper;
+    }
+
+    protected int getTimeout(int defaultTimeout) {
+        return Integer.getInteger("test.timeout", defaultTimeout);
     }
 }

@@ -269,7 +269,7 @@ public class Measurement<T> implements Serializable {
 
         if (numberOfWarmupCalls > 0) {
             System.out.printf("Test Warm Up: %s: (%d calls using %d threads)%n", name, numberOfWarmupCalls, numberOfThreads);
-            doWork(workload, new Measurement<T>(maxTestTime, numberOfThreads, numberOfWarmupCalls, 1));
+            doWork(workload, new Measurement<T>(maxTestTime, 1, numberOfWarmupCalls, 1));
         }
 
         System.out.printf("Test Run: %s (%d calls using %d threads)%n", name, numberOfCalls, numberOfThreads);

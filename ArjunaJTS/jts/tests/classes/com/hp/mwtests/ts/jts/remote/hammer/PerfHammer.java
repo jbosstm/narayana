@@ -71,15 +71,15 @@ public class PerfHammer
         String metricName = "JTSRemote_PerfTest_PerfHammer_" + System.getProperty("org.omg.CORBA.ORBClass",
                 myORB.orb().getClass().getName());
 
-        System.out.printf("%s: %d iterations using %d threads with a batch size of %d%n",
-                metricName, numberOfCalls, threadCount, batchSize);
-
         GridWorker worker = new GridWorker(myORB, gridReference);
 
         Measurement measurement = new Measurement.Builder(metricName)
                 .maxTestTime(0L).numberOfCalls(numberOfCalls)
                 .numberOfThreads(threadCount).batchSize(batchSize)
                 .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
+
+        System.out.printf("%s: %d iterations using %d threads with a batch size of %d%n",
+                metricName, numberOfCalls, threadCount, batchSize);
 
         System.out.printf("%s%n", measurement.getInfo());
 

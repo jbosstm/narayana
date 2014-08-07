@@ -24,6 +24,7 @@ import org.jboss.jbossts.qa.Utils.PerformanceProfileStore;
 import org.jboss.jbossts.qa.junit.Task;
 import org.jboss.jbossts.qa.junit.TestGroupBase;
 import org.junit.Test;
+import io.narayana.perf.RegressionChecker;
 
 /**
  * QA tests for JTS module.
@@ -35,12 +36,12 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_DistributedHammerTest1() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 960);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(960));
         server1.start("$(1)");
-        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 960);
+        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(960));
         server2.start("$(2)");
 
-        Task client = createTask("client1", com.hp.mwtests.ts.jts.remote.hammer.DistributedHammer1.class, Task.TaskType.EXPECT_PASS_FAIL, 960);
+        Task client = createTask("client1", com.hp.mwtests.ts.jts.remote.hammer.DistributedHammer1.class, Task.TaskType.EXPECT_PASS_FAIL, getTimeout(960));
 		client.start("$(1)", "$(2)");
 		client.waitFor();
 
@@ -49,12 +50,12 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_DistributedHammerTest2() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 960);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(960));
         server1.start("$(1)");
-        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 960);
+        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(960));
         server2.start("$(2)");
 
-        Task client = createTask("client1", com.hp.mwtests.ts.jts.remote.hammer.DistributedHammer2.class, Task.TaskType.EXPECT_PASS_FAIL, 960);
+        Task client = createTask("client1", com.hp.mwtests.ts.jts.remote.hammer.DistributedHammer2.class, Task.TaskType.EXPECT_PASS_FAIL, getTimeout(960));
 		client.start("$(1)", "$(2)");
 		client.waitFor();
 
@@ -63,9 +64,9 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_DistributedHammerTest3() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
-        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server2 = createTask("server2", com.hp.mwtests.ts.jts.remote.servers.HammerServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server2.start("$(2)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.DistributedHammer3.class, "$(1)", "$(2)");
@@ -75,7 +76,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_ExplicitPropagationTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.ExplicitStackServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.ExplicitStackServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.arjuna.ExplicitArjunaClient.class, "$(1)");
@@ -84,7 +85,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_ImplicitPropagationTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.StackServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.StackServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.arjuna.ImplicitArjunaClient.class, "$(1)");
@@ -93,7 +94,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_ImplicitGridTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.ImplGridServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.ImplGridServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.implicit.ImplicitClient.class, "$(1)");
@@ -102,7 +103,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_CurrentTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.current.CurrentTest.class, "$(1)");
@@ -111,7 +112,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_ExplicitInterpositionTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.SetGetServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.SetGetServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.explicitinterposition.ExplicitInterClient.class, "$(1)");
@@ -120,7 +121,7 @@ public class TestGroup_jtsremote  extends TestGroupBase
     }
 
     @Test public void JTSRemote_TimeoutTest() {
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.SetGetServer.class, Task.TaskType.EXPECT_READY, 480);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.SetGetServer.class, Task.TaskType.EXPECT_READY, getTimeout(480));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.timeout.TimeoutClient.class, "$(1)");
@@ -128,14 +129,8 @@ public class TestGroup_jtsremote  extends TestGroupBase
         server1.terminate();
     }
 
-    // TODO move this test into perfprofile01_
     @Test public void JTSRemote_PerfTest() {
-        String metricName = "JTSRemote_PerfTest_PerfHammer_" + System.getProperty("org.omg.CORBA.ORBClass", "");
-        String[] xargs = PerformanceProfileStore.getTestArgs(metricName);
-            // ignore xargs[0] which specifies the max test time
-        int maxTime = PerformanceProfileStore.getArg(metricName, xargs, 1, 960000, Integer.class);
-
-        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, maxTime / 1000);
+        Task server1 = createTask("server1", com.hp.mwtests.ts.jts.remote.servers.GridServer.class, Task.TaskType.EXPECT_READY, getTimeout(960));
         server1.start("$(1)");
 
         startAndWaitForClient(com.hp.mwtests.ts.jts.remote.hammer.PerfHammer.class, "$(1)");

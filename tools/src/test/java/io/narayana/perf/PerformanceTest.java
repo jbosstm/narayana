@@ -346,11 +346,25 @@ public class PerformanceTest {
                 }
             });
 
+            // assert that the configured file based params were used
+            assertEquals("Wrong getNumberOfMeasurements", rc, measurement.getNumberOfMeasurements());
             assertEquals("Wrong getMaxTestTime", mt, measurement.getMaxTestTime());
             assertEquals("Wrong getNumberOfWarmupCalls", wc, measurement.getNumberOfWarmupCalls());
             assertEquals("Wrong getNumberOfCalls", nc, measurement.getNumberOfCalls());
             assertEquals("Wrong getNumberOfThreads", nt, measurement.getNumberOfThreads());
             assertEquals("Wrong getBatchSize", bs, measurement.getBatchSize());
+
+            // assert that the checker also returns the correct configured file based params
+            RegressionChecker checker = new RegressionChecker("perf.args", "perf.last", "perf.var");
+            String[] args = checker.getTestArgs(testName);
+            long mtt = checker.getArg(testName, args, 1, 0L, Long.class);
+
+            assertEquals("Wrong getNumberOfMeasurements", rc, Integer.parseInt(args[0]));
+            assertEquals("Wrong getMaxTestTime", mt, mtt);
+            assertEquals("Wrong getNumberOfWarmupCalls", wc, Integer.parseInt(args[2]));
+            assertEquals("Wrong getNumberOfCalls", nc, Integer.parseInt(args[3]));
+            assertEquals("Wrong getNumberOfThreads", nt, Integer.parseInt(args[4]));
+            assertEquals("Wrong getBatchSize", bs, Integer.parseInt(args[5]));
         } finally {
             new File("perf.args").delete();
             new File("perf.last").delete();

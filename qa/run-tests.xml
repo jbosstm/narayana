@@ -216,9 +216,10 @@
 
   <property name="test.name" value="otsserver"/>
   <property name="test.methods" value=""/>
+  <property name="test.timeout" value=""/>
   <target name="onetest">
     <echo message="Running a single test group ${test.name}"/>
-    <junit-tests tests="${test.name}" methods="${test.methods}"/>
+    <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}"/>
     <fail if="failed-tests" message="${test.name} - some tests failed"/>
   </target>
 
@@ -395,6 +396,7 @@
     <!-- pass in param to override this. By default, the TaskImpl.properties are not modified -->
     <!--<property name="additional.elements="org.jboss.jbossts.qa.junit.ExecutionWrapper"/>-->
     <attribute name="additional.elements" default=""/>
+    <attribute name="test.timeout" default=""/>
 
     <sequential>
       <condition property="m">
@@ -517,6 +519,7 @@
                 <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
                 <sysproperty key="names" value=".*"/>
                 <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+                <sysproperty key="test.timeout" value="@{test.timeout}"/>
               </junit>
             </jacoco:coverage>
 		  </then>
@@ -528,6 +531,7 @@
               <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
               <sysproperty key="names" value=".*"/>
               <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+              <sysproperty key="test.timeout" value="@{test.timeout}"/>
               <!--<jvmarg value="-Xdebug"/>-->
               <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
             </junit>
