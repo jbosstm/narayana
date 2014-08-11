@@ -31,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
@@ -394,5 +396,34 @@ public class PerformanceTest {
             assertEquals("wrong median", 7.5, median, 0.1);
             assertEquals("Outlier in data was not detected", size - 1, values.size());
         }
+    }
+
+    /**
+     * Test that if a worker throws an exception that the test is canceled
+     */
+    @Test
+    public void testCancelOnException() {
+        WorkerWorkload<Void> worker = new WorkerWorkload<Void>() {
+            AtomicBoolean cancelled = new AtomicBoolean(false);
+
+            @Override
+            public Void doWork(Void context, int niters, Measurement<Void> opts) {
+                if (!cancelled.getAndSet(true))
+                    throw new RuntimeException("Testing throw exception");
+
+                return context;
+            }
+            @Override
+            public void finishWork(Measurement<Void> measurement) {
+            }
+        };
+
+        Measurement<Void> config = new Measurement<>(2, 100);
+
+        config.measure(worker);
+
+        assertNotNull("Test should have thrown an exception", config.getException());
+
+        System.out.printf("testCancelOnException!: %s%n", config);
     }
 }

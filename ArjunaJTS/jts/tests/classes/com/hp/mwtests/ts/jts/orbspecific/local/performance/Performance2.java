@@ -31,6 +31,11 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
+import com.arjuna.ArjunaOTS.ActiveThreads;
+import com.arjuna.ArjunaOTS.ActiveTransaction;
+import com.arjuna.ArjunaOTS.BadControl;
+import com.arjuna.ArjunaOTS.Destroyed;
+import com.arjuna.ats.jts.OTSManager;
 import io.narayana.perf.Measurement;
 import io.narayana.perf.Worker;
 import io.narayana.perf.WorkerLifecycle;
@@ -56,6 +61,7 @@ public class Performance2
                 .numberOfThreads(numberOfThreads).batchSize(batchSize)
                 .numberOfWarmupCalls(warmUpCount).build().measure(worker, worker);
 
+        Assert.assertNull("Test exception: " + measurement.getException(), measurement.getException());
         Assert.assertEquals(0, measurement.getNumberOfErrors());
         Assert.assertFalse(measurement.getInfo(), measurement.shouldFail());
 
@@ -66,7 +72,6 @@ public class Performance2
 
     Worker<Void> worker = new Worker<Void>() {
         WorkerLifecycle<Void> lifecycle = new PerformanceWorkerLifecycle<>();
-        boolean doCommit = true;
         TransactionFactoryImple factory = null;
 
         @Override
@@ -83,18 +88,12 @@ public class Performance2
         @Override
         public Void doWork(Void context, int batchSize, Measurement<Void> measurement) {
             for (int i = 0; i < batchSize; i++) {
-                Control control = factory.create(0);
-
                 try {
-                    if (doCommit)
-                        control.get_terminator().commit(true);
-                    else
-                        control.get_terminator().rollback();
-                } catch (org.omg.CORBA.UserException e) {
-                    if (measurement.getNumberOfErrors() == 0)
-                        e.printStackTrace();
+                    Control control = factory.create(1);
 
-                    measurement.incrementErrorCount();
+                    control.get_terminator().commit(true);
+                } catch (Throwable e) {
+                    throw new RuntimeException(e);
                 }
             }
 
