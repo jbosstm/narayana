@@ -11,9 +11,9 @@ rmdir /S /Q jboss-as
 git clone https://github.com/jbosstm/jboss-as.git
 if %ERRORLEVEL% NEQ 0 exit -1
 cd jboss-as
-rem git remote add upstream https://github.com/wildfly/wildfly.git
-rem git pull --rebase --ff-only -s recursive -Xtheirs upstream master
-rem if %ERRORLEVEL% NEQ 0 exit -1
+git remote add upstream https://github.com/wildfly/wildfly.git
+git pull --rebase --ff-only -s recursive -Xtheirs upstream master
+if %ERRORLEVEL% NEQ 0 exit -1
 for /f "usebackq delims=<,> tokens=3" %%i in (`gawk "/wildfly-parent/ {getline;print;}" pom.xml`) do @set WILDFLY_VERSION_FROM_JBOSS_AS=%%i
 echo "AS version is %WILDFLY_VERSION_FROM_JBOSS_AS%"
 if not "%WILDFLY_MASTER_VERSION%" == "%WILDFLY_VERSION_FROM_JBOSS_AS%" (call:comment_on_pull "Need to upgrade the jboss-as.version in the narayana pom.xml to %WILDFLY_VRESION_FROM_JBOSS_AS% - Check AS Version Failed %BUILD_URL%" & exit -1)
