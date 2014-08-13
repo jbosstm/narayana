@@ -62,5 +62,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/wstx11-interop"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xts-test-servlet"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xtstest"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/test-utils"/>
 	<classpathentry kind="output" path="tests/build/classes/"/>
 </classpath>
