@@ -240,7 +240,7 @@
       <id>jts-idlj</id>
       <activation>
         <property>
-          <name>idlj-enabled</name>
+          <name>!idlj-disabled</name>
         </property>
       </activation>
       

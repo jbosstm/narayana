@@ -83,8 +83,8 @@ Narayana supports building specific components using Maven build options.
 
 ArjunaCore - ./build.[sh|bat] -am -pl :arjunacore
 NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
-NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb
-NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Didlj-enabled=true
+NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true
+NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true
 NarayanaJTS (ibmorb) - ./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true (requires IBM jdk)
 XTS - ./build.[sh|bat] -am -pl :jboss-xts
 STM - ./build.[sh|bat] -am -pl :stm

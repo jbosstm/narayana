@@ -147,11 +147,9 @@ function build_narayana {
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
   if [ $IBM_ORB = 1 ]; then
-    ORBARG="-Dibmorb-enabled -Djacorb-disabled"
+    ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
-  else
-    ORBARG="-Didlj-enabled"
   fi
   ./build.sh -P${FINDBUGS}release,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "narayana build failed"
