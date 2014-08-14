@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.jboss.spec.javax.jms</groupId>
             <artifactId>jboss-jms-api_2.0_spec</artifactId>
-            <version>1.0.0.Final</version>
+			<version>${version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec}</version>
         </dependency>
 
         <dependency>
@@ -82,18 +82,20 @@
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-processor</artifactId>
             <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-controller</artifactId>
-            <version>${jboss-as.version}</version>
+            <version>${version.org.wildfly.core}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-server</artifactId>
-            <version>${jboss-as.version}</version>
+            <version>${version.org.wildfly.core}</version>
         </dependency>
 
         <dependency>
@@ -103,15 +105,15 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-logging</artifactId>
-            <version>${jboss-as.version}</version>
+            <version>${version.org.wildfly.core}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-subsystem-test</artifactId>
-            <version>${jboss-as.version}</version>
+            <version>${version.org.wildfly.core}</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>

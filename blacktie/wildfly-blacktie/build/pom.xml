@@ -22,115 +22,102 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.jboss.narayana.blacktie</groupId>
-		<artifactId>wildfly-blacktie-parent</artifactId>
-		<version>5.0.3.Final-SNAPSHOT</version>
+    <parent>
+        <groupId>org.jboss.narayana.blacktie</groupId>
+        <artifactId>wildfly-blacktie-parent</artifactId>
+        <version>5.0.3.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
-	</parent>
+    </parent>
 
-	<artifactId>wildfly-blacktie-build</artifactId>
-	<name>WildFly: Blacktie Subsystem Build</name>
-	<packaging>pom</packaging>
+    <artifactId>wildfly-blacktie-build</artifactId>
+    <name>WildFly: Blacktie Subsystem Build</name>
+    <packaging>pom</packaging>
 
-	<properties>
-		<!-- generated configs root dirs -->
-		<generated.configs>${basedir}/target/${project.artifactId}-${project.version}</generated.configs>
-		<generated.configs.standalone>${generated.configs}/standalone/configuration</generated.configs.standalone>
-		<generated.configs.domain>${generated.configs}/domain/configuration</generated.configs.domain>
-		<generated.configs.examples>${generated.configs}/docs/examples/configs</generated.configs.examples>
-		<generated.configs.src.dir>${basedir}/src/main/resources</generated.configs.src.dir>
+    <properties>
+        <!-- generated configs root dirs -->
+        <generated.configs>${basedir}/target/${project.artifactId}-${project.version}</generated.configs>
+        <generated.configs.standalone>${generated.configs}/standalone/configuration</generated.configs.standalone>
+        <generated.configs.domain>${generated.configs}/domain/configuration</generated.configs.domain>
+        <generated.configs.examples>${generated.configs}/docs/examples/configs</generated.configs.examples>
+        <generated.configs.src.dir>${basedir}/src/main/resources</generated.configs.src.dir>
+        <server.dir>${basedir}/src/main/resources</server.dir>
+        <project.version>${project.version}</project.version>
+    </properties>
 
-		<wildfly.build.output.dir>build/target/${project.artifactId}-${project.version}</wildfly.build.output.dir>
-	</properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <artifactId>wildfly-blacktie</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>build-blacktie-modular-config</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<target>
-								<ant antfile="build.xml" target="modules-minimalistic"  inheritRefs="true"/>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-blacktie-config</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<target>
-								<ant antfile="build-configs.xml" inheritRefs="true">
-									<target name="all"/>
-								</ant>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jandex</artifactId>
-						<version>${version.org.jboss.jandex}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-apache-bsf</artifactId>
-						<version>${version.org.apache.ant}</version>
-					</dependency>
-					<dependency>
-						<groupId>rhino</groupId>
-						<artifactId>js</artifactId>
-						<version>${version.rhino.js}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/zip.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-core-build</artifactId>
+            <type>zip</type>
+            <version>${version.org.wildfly.core}</version>
+        </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jboss.narayana.blacktie</groupId>
-			<artifactId>wildfly-blacktie</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-build</artifactId>
+            <version>${jboss-as.version}</version>
+            <type>zip</type>
+        </dependency>
 
 		<dependency>
-			<groupId>org.wildfly</groupId>
-			<artifactId>wildfly-config-assembly</artifactId>
-			<version>${jboss-as.version}</version>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
+			<version>1.0.0.Final</version>
 		</dependency>
 	</dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions></executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-build-plugin</artifactId>
+                <version>${version.org.wildfly.core}</version>
+                <executions>
+                    <execution>
+                        <id>create-server</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <config-file>server-build.xml</config-file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

@@ -2,35 +2,36 @@
 <!--  See src/resources/configuration/ReadMe.txt for how the configuration assembly works -->
 <config>
    <subsystems>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/logging.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/batch.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/datasources.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/deployment-scanner.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/ee.xml</subsystem>
-      <subsystem supplement="full">../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/ejb3.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/io.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/infinispan.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jacorb.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jaxrs.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jca.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jdr.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jmx.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jpa.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jsf.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/jsr77.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/mail.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/messaging.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/naming.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/pojo.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/remoting.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/resource-adapters.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/sar.xml</subsystem>
-      <subsystem supplement="standalone">../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/security.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/transactions.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/undertow.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/webservices.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/subsystems/weld.xml</subsystem>
-      <subsystem>../../../../../../jboss-as/build/src/main/resources/configuration/examples/subsystems/rts.xml</subsystem>
-      <subsystem>configuration/examples/subsystems/blacktie.xml</subsystem>
+      <subsystem>logging.xml</subsystem>
+      <subsystem>batch.xml</subsystem>
+      <subsystem>bean-validation.xml</subsystem>
+      <subsystem>datasources.xml</subsystem>
+      <subsystem>deployment-scanner.xml</subsystem>
+      <subsystem>ee.xml</subsystem>
+      <subsystem supplement="full">ejb3.xml</subsystem>
+      <subsystem>io.xml</subsystem>
+      <subsystem>infinispan.xml</subsystem>
+      <subsystem>jacorb.xml</subsystem>
+      <subsystem>jaxrs.xml</subsystem>
+      <subsystem>jca.xml</subsystem>
+      <subsystem>jdr.xml</subsystem>
+      <subsystem>jmx.xml</subsystem>
+      <subsystem>jpa.xml</subsystem>
+      <subsystem>jsf.xml</subsystem>
+      <subsystem>jsr77.xml</subsystem>
+      <subsystem>mail.xml</subsystem>
+      <subsystem>messaging.xml</subsystem>
+      <subsystem>naming.xml</subsystem>
+      <subsystem>pojo.xml</subsystem>
+      <subsystem>remoting.xml</subsystem>
+      <subsystem>resource-adapters.xml</subsystem>
+      <subsystem>sar.xml</subsystem>
+      <subsystem supplement="standalone">security.xml</subsystem>
+      <subsystem>transactions.xml</subsystem>
+      <subsystem>undertow.xml</subsystem>
+      <subsystem>webservices.xml</subsystem>
+      <subsystem>weld.xml</subsystem>
+      <subsystem>rts.xml</subsystem>
+      <subsystem>blacktie.xml</subsystem>
    </subsystems>
 </config>
