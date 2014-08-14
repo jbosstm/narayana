@@ -155,7 +155,7 @@
 			<artifactId>blacktie-jatmibroker-xatmi</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.wildfly</groupId>
+			<groupId>org.wildfly.core</groupId>
 			<artifactId>wildfly-controller-client</artifactId>
 		</dependency>
 		<dependency>
@@ -185,7 +185,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.wildfly</groupId>
+			<groupId>org.wildfly.arquillian</groupId>
 			<artifactId>wildfly-arquillian-container-remote</artifactId>
 			<scope>test</scope>
 		</dependency>

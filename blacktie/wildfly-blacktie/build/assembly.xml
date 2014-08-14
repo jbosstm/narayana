@@ -9,6 +9,10 @@
 		<fileSet>
 			<directory>${project.build.directory}/${project.artifactId}-${project.version}</directory>
 			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>docs/**/standalone-blacktie.xml</include>
+				<include>modules/**/blacktie/main/*.*</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 </assembly>

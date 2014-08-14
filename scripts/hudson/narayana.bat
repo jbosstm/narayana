@@ -12,6 +12,7 @@ git clone https://github.com/jbosstm/jboss-as.git
 if %ERRORLEVEL% NEQ 0 exit -1
 cd jboss-as
 git remote add upstream https://github.com/wildfly/wildfly.git
+if defined AS_BRANCH git fetch origin +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head & git checkout %AS_BRANCH%
 git pull --rebase --ff-only -s recursive -Xtheirs upstream master
 if %ERRORLEVEL% NEQ 0 exit -1
 for /f "usebackq delims=<,> tokens=3" %%i in (`gawk "/wildfly-parent/ {getline;print;}" pom.xml`) do @set WILDFLY_VERSION_FROM_JBOSS_AS=%%i
