@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="dbdrivers/oracle_10_2_0_4/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/postgresql-8.3-605.jdbc4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/a ironjacamar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/a jboss-transaction-spi"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/aa org.jboss.spec.javax.transaction.jboss-transaction-api_1.2_spec"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/arjuna"/>
