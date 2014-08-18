@@ -40,7 +40,9 @@ import java.util.Vector;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
+import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerStatus;
 import com.arjuna.common.util.ConfigurationInfo;
 
 class ScanThread extends Thread
@@ -253,9 +255,24 @@ public class RecoveryManager
 
     public void suspend (boolean async)
     {
+        trySuspend(async);
+    }
+
+    public RecoveryManagerStatus trySuspend(boolean async) {
         checkState();
 
-        _theImple.suspendScan(async);
+        PeriodicRecovery.Mode mode = _theImple.trySuspendScan(async);
+
+        switch (mode) {
+            case ENABLED:
+                return RecoveryManagerStatus.ENABLED;
+            case SUSPENDED:
+                return RecoveryManagerStatus.SUSPENDED;
+            case TERMINATED:
+                return RecoveryManagerStatus.TERMINATED;
+            default:
+                throw new IllegalArgumentException("incompatible enum types");
+        }
     }
 
     /**

@@ -271,7 +271,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
      * The ActionBean needs access to the participant lists maintained by an AtomicAction but these
      * lists are protected. Therefore define a simple extension class to get at these records:
      */
-    public class GenericAtomicActionWrapper implements ActionBeanWrapperInterface {
+    public static class GenericAtomicActionWrapper implements ActionBeanWrapperInterface {
         boolean activated;
         BasicAction action;
         Map<String, RecordList> recs;
@@ -279,22 +279,33 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
         Method updateState = null;
         UidWrapper uidWrapper;
 
-        public GenericAtomicActionWrapper(String classType, UidWrapper w) {
-            uidWrapper = w;
-            recs = new HashMap<String, RecordList>();
-
+        private static BasicAction createAction(String classType, UidWrapper wrapper) {
             if (classType == null)
                 classType = "com.arjuna.ats.arjuna.AtomicAction";
 
             try {
                 Class cls = Class.forName(classType);
+
                 Class pTypes[] = new Class[1];
                 pTypes[0] = Uid.class;
                 Constructor ctor = cls.getConstructor(pTypes);
                 Object args[] = new Object[1];
-                args[0] = w.getUid();
-                action = (BasicAction) ctor.newInstance(args);
+                args[0] = wrapper.getUid();
+                return (BasicAction) ctor.newInstance(args);
+            } catch (Exception e) {
+                if (tsLogger.logger.isDebugEnabled())
+                    tsLogger.logger.debug("unable to create log wrapper for type " + wrapper.getType() + ": error: " + e.getMessage());
 
+                return null;
+            }
+        }
+
+        public GenericAtomicActionWrapper(BasicAction ba, UidWrapper w) {
+            action = ba;
+            uidWrapper = w;
+            recs = new HashMap<String, RecordList>();
+
+            if (action != null) {
                 setHeuristicDecision = getMethod(action.getClass(), "setHeuristicDecision", int.class);
                 updateState = getMethod(action.getClass(), "updateState");
 
@@ -303,13 +314,11 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 
                 if (updateState != null)
                     updateState.setAccessible(true);
-
-            } catch (Exception e) {
-                action = null;
-
-                if (tsLogger.logger.isDebugEnabled())
-                    tsLogger.logger.debug("unable to create log wrapper for type " + w.getType() + ": error: " + e.getMessage());
             }
+        }
+
+        public GenericAtomicActionWrapper(String classType, UidWrapper w) {
+            this(createAction(classType, w), w);
         }
 
         public BasicAction getAction() {
@@ -318,7 +327,12 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
 
         public boolean activate() {
             if (!activated && action != null) {
-                activated = action.activate();
+                try {
+                    activated = action.activate();
+                } catch (Exception e) {
+                    activated = false;
+                    tsLogger.logger.warn("Activate of " + action + " failed: " + e.getMessage());
+                }
             }
 
             return activated;

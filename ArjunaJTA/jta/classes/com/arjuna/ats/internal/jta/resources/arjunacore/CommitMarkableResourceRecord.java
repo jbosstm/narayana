@@ -38,6 +38,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.jboss.tm.ConnectableResource;
@@ -359,15 +360,22 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				// CommitMarkableRecoveryModule is
 				// between phases and the XID
 				// has not been GC'd
-				committed = commitMarkableResourceRecoveryModule.wasCommitted(
-						commitMarkableJndiName, xid);
-			}
+                try {
+                    committed = commitMarkableResourceRecoveryModule.wasCommitted(
+                            commitMarkableJndiName, xid);
+                } catch (ObjectStoreException e) {
+                    String resInfo = connectableResource == null ? "" : connectableResource.toString();
+                    jtaLogger.i18NLogger.warn_resources_arjunacore_restorecrstateerror(
+                        resInfo, XAHelper.xidToString(xid), e);
+                }
+            }
 			productName = os.unpackString();
 			productVersion = os.unpackString();
 			res = super.restore_state(os, t);
 		} catch (Exception e) {
-			jtaLogger.logger.warn(
-					"Could not restore_state" + XAHelper.xidToString(xid), e);
+			String resInfo = connectableResource == null ? "" : connectableResource.toString();
+			jtaLogger.i18NLogger.warn_resources_arjunacore_restorestateerror(
+				resInfo, XAHelper.xidToString(xid), e);
 		}
 
 		return res;

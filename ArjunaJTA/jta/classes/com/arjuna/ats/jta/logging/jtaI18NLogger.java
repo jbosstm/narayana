@@ -454,6 +454,10 @@ public interface jtaI18NLogger {
     @Message(id = 16111, value = "The node identifier cannot be null", format = MESSAGE_FORMAT)
     public String get_nodename_null();
 
+    @Message(id = 16112, value = "Could not determine commit status of CMR resource {0} and transaction {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_resources_arjunacore_restorecrstateerror(String arg0, String arg1, @Cause() Throwable arg2);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
