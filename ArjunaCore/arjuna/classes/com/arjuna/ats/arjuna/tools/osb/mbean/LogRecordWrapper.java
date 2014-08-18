@@ -2,6 +2,7 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * An MBean implementation for representing a participant in an Atomic Action or transaction
@@ -99,7 +100,12 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 
 	public boolean activate() {
 		if (!activated && rec != null)
-			activated = rec.activate();
+            try {
+                activated = rec.activate();
+            } catch (Exception e) {
+                activated = false;
+                tsLogger.logger.warn("Activate of " + rec + " failed: " + e.getMessage());
+            }
 
 		return activated;
 	}

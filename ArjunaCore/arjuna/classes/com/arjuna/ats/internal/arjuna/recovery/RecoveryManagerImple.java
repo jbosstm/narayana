@@ -185,9 +185,9 @@ public class RecoveryManagerImple
      * @param async false means wait for the recovery manager to finish any scans before returning.
      */
 
-    public void suspendScan (boolean async)
+    public PeriodicRecovery.Mode trySuspendScan (boolean async)
     {
-        _periodicRecovery.suspendScan(async);
+        return _periodicRecovery.suspendScan(async);
     }
 
     public void resumeScan ()
