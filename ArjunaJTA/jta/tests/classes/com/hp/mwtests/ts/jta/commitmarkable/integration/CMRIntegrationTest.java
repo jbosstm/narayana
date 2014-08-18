@@ -155,6 +155,8 @@ public class CMRIntegrationTest {
 
 					int success = 0;
 					Connection connection = null;
+					int faultType = Integer.getInteger(
+					    "com.hp.mwtests.ts.jta.commitmarkable.integration.CMRIntegrationTest", 0);
 
 					for (int i = 0; i < iterationCount; i++) {
 						try {
@@ -170,7 +172,10 @@ public class CMRIntegrationTest {
 									.execute("INSERT INTO foo (bar) VALUES (1)");
 							// System.out.printf("XXX txn close%n");
 
-							userTransaction.commit();
+							if (faultType == 1)
+								Runtime.getRuntime().halt(0);
+
+                            userTransaction.commit();
 							connection.close(); // This wouldn't work for a
 												// none-JCA code as commit has
 												// closed the connection - it

@@ -215,15 +215,17 @@ public class PeriodicRecovery extends Thread
      * progress when this method is called it will complete its scan without suspending.
      *
      * @param async false if the calling thread should wait for any in-progress scan to complete before returning
+     * @return the previous mode before attempting the suspend
      */
 
-   public void suspendScan (boolean async)
+   public Mode suspendScan (boolean async)
    {
        synchronized (_stateLock)
        {
            // only switch and kick everyone if we are currently ENABLED
+           Mode currentMode = getMode();
 
-           if (getMode() == Mode.ENABLED) {
+           if (currentMode == Mode.ENABLED) {
                if (tsLogger.logger.isDebugEnabled()) {
                    tsLogger.logger.debug("PeriodicRecovery: Mode <== SUSPENDED");
                }
@@ -246,6 +248,8 @@ public class PeriodicRecovery extends Thread
                    }
                }
            }
+
+           return currentMode;
        }
    }
 
