@@ -29,6 +29,9 @@
         <extension module="org.wildfly.extension.undertow"/>
     </extensions>
 
+    <system-properties>
+        <property name="com.hp.mwtests.ts.jta.commitmarkable.integration.CMRIntegrationTest" value="1"/>
+    </system-properties>
 
     <management>
         <security-realms>

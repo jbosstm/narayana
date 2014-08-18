@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -14,15 +14,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2013
+ * (C) 2014
  * @author JBoss Inc.
  */
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapperMBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBeanMBean;
 
-@MXBeanDescription("Management view of an CommitMarkableResource participating in a transaction")
-public interface CommitMarkableResourceRecordBeanMBean extends XAResourceMBean {
+public interface RecoverConnectableAtomicActionBeanMBean extends ActionBeanMBean {
+    @MXBeanPropertyDescription("A unique id for this transaction")
+	String toDo();
 }
