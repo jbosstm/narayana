@@ -44,7 +44,7 @@ public class BlacktieStompAdministrationServiceTest extends TestCase {
      * @throws ConnectionException
      */
     public void xtest() throws ConnectionException, ConfigurationException {
-        processStompCommand("tpadvertise,foo,FOOTest,0,queue,5.0.3.Final-SNAPSHOT,", 1);
+        processStompCommand("tpadvertise,foo,FOOTest,0,queue,5.0.3.Final,", 1);
         try {
             connection.tpacall("FOOTest", null, Connection.TPNOREPLY);
         } catch (ConnectionException e) {
@@ -59,7 +59,7 @@ public class BlacktieStompAdministrationServiceTest extends TestCase {
             // EXPECTED
         }
 
-        processStompCommand("tpadvertise,foo,FOOTest,0,queue,5.0.3.Final-SNAPSHOT,", 1);
+        processStompCommand("tpadvertise,foo,FOOTest,0,queue,5.0.3.Final,", 1);
 
         try {
             connection.tpacall("FOOTest", null, Connection.TPNOREPLY);
