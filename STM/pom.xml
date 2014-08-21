@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jboss.narayana</groupId>
     <artifactId>narayana-all</artifactId>
-    <version>5.0.3.Final</version>
+    <version>5.0.4.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.jboss.narayana.stm</groupId>
