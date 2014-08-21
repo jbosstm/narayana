@@ -1,6 +1,6 @@
 <!ENTITY PRODUCT "Narayana">
 <!ENTITY BOOKID "Transaction_Bridging_Guide">
-<!ENTITY VERSION "5.0.3.Final">
+<!ENTITY VERSION "5.0.4.Final-SNAPSHOT">
 <!ENTITY YEAR "2014">
 <!ENTITY HOLDER "JBoss.org">
 <!ENTITY APPSERVER "WildFly Application Server">
