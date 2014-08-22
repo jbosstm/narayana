@@ -110,8 +110,9 @@ public class XARecoveryModule implements RecoveryModule
     			        }
     			    }
 			    }
-	            _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
 			}
+
+	        _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
         }
     }
 
