@@ -33,26 +33,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>wildfly-blacktie-build</artifactId>
-    <name>WildFly: Blacktie Subsystem Build</name>
+    <artifactId>wildfly-blacktie-feature-pack</artifactId>
+    <name>WildFly: Blacktie Feature Pack</name>
     <packaging>pom</packaging>
-
-    <properties>
-        <!-- generated configs root dirs -->
-        <generated.configs>${basedir}/target/${project.artifactId}-${project.version}</generated.configs>
-        <generated.configs.standalone>${generated.configs}/standalone/configuration</generated.configs.standalone>
-        <generated.configs.domain>${generated.configs}/domain/configuration</generated.configs.domain>
-        <generated.configs.examples>${generated.configs}/docs/examples/configs</generated.configs.examples>
-        <generated.configs.src.dir>${basedir}/src/main/resources</generated.configs.src.dir>
-        <server.dir>${basedir}/src/main/resources</server.dir>
-        <project.version>${project.version}</project.version>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>wildfly-blacktie-feature-pack</artifactId>
+            <artifactId>wildfly-blacktie</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-feature-pack</artifactId>
+            <version>${jboss-as.version}</version>
             <type>zip</type>
             <exclusions>
                 <exclusion>
@@ -64,6 +58,7 @@
     </dependencies>
 
     <build>
+        <finalName>wildfly-blacktie-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -72,17 +67,17 @@
             </plugin>
             <plugin>
                 <groupId>org.wildfly.build</groupId>
-                <artifactId>wildfly-server-provisioning-maven-plugin</artifactId>
+                <artifactId>wildfly-feature-pack-build-maven-plugin</artifactId>
                 <version>${version.org.wildfly.build-tools}</version>
                 <executions>
                     <execution>
-                        <id>server-provisioning</id>
+                        <id>feature-pack-build</id>
                         <goals>
                             <goal>build</goal>
                         </goals>
                         <phase>compile</phase>
                         <configuration>
-                            <config-file>server-provisioning.xml</config-file>
+                            <config-file>feature-pack-build.xml</config-file>
                         </configuration>
                     </execution>
                 </executions>
@@ -93,6 +88,12 @@
                     <descriptors>
                         <descriptor>assembly.xml</descriptor>
                     </descriptors>
+                    <recompressZippedFiles>true</recompressZippedFiles>
+                    <finalName>wildfly-blacktie-feature-pack-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <workDirectory>${project.build.directory}/assembly/work</workDirectory>
+                    <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
                 <executions>
                     <execution>

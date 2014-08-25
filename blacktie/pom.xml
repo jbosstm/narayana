@@ -334,7 +334,6 @@
         <jbossas.ip.addr>127.0.0.1</jbossas.ip.addr>
     </properties>
     <modules>
-        <module>wildfly-blacktie</module>
         <module>utils/cpp-plugin</module>
         <module>common</module>
         <module>xsd</module>

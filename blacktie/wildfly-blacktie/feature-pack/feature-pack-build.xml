@@ -20,17 +20,12 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<build xmlns="urn:wildfly:build:1.0" extract-schema="false" copy-module-artifacts="true">
-    <servers>
-        <server>
-            <artifact name="org.wildfly:wildfly-build" />
-        </server>
-        <server>
-            <path name="${server.dir}"/>
-        </server>
-    </servers>
-    <config>
-        <standalone
+<build xmlns="urn:wildfly:feature-pack-build:1.0">
+    <dependencies>
+        <artifact name="org.wildfly:wildfly-feature-pack" />        
+    </dependencies>
+	<config>
+		<standalone
             template="configuration/standalone/template.xml"
             subsystems="configuration/examples/subsystems-blacktie.xml"
             output-file="docs/examples/configs/standalone-blacktie.xml"/>
