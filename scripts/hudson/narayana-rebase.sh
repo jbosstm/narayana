@@ -42,8 +42,14 @@ function rebase_narayana {
   myRev=`git rev-parse HEAD`
   ancestor417=`git merge-base $myRev 4.17`
   ancestorMaster=`git merge-base $myRev master`
-  distanceFromMaster=`git log $ancestorMaster..$myRev | grep commit | wc | cut -c 1-7 | tr -d ' '`
-  distanceFrom417=`git log $ancestor417..$myRev | grep commit | wc | cut -c 1-7 | tr -d ' '`
+  if [ `uname` = "Darwin" ]
+  then
+  	cutLen=8
+  else
+  	cutLen=7
+  fi
+  distanceFromMaster=`git log $ancestorMaster..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
+  distanceFrom417=`git log $ancestor417..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
   if [ "$distanceFromMaster" -lt "$distanceFrom417" ]
   then
     export BRANCHPOINT=master
