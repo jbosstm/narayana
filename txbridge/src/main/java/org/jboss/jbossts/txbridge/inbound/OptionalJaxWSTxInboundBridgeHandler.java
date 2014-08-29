@@ -21,11 +21,13 @@
  */
 package org.jboss.jbossts.txbridge.inbound;
 
+import com.arjuna.ats.jta.TransactionManager;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.wst.SystemException;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
+import javax.transaction.Transaction;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
 
@@ -46,18 +48,14 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
             txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleMessage()");
         }
 
-        if (!isTransactionAvailable()) {
-            return true;
-        }
-
         final Boolean isOutbound = (Boolean) messageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
         if (isOutbound == null) {
             return true;
         } else if (isOutbound) {
-            return delegate.handleOutbound(messageContext);
+            return handleOutbound(messageContext);
         } else {
-            return delegate.handleInbound(messageContext);
+            return handleInbound(messageContext);
         }
     }
 
@@ -67,7 +65,7 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
             txbridgeLogger.logger.trace("OptionalJaxWSTxInboundBridgeHandler.handleFault()");
         }
 
-        if (isTransactionAvailable()) {
+        if (isJTATransactionAvailable()) {
             return delegate.handleFault(messageContext);
         }
 
@@ -81,7 +79,23 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
         }
     }
 
-    private boolean isTransactionAvailable() {
+    private boolean handleInbound(final MessageContext messageContext) {
+        if (isWSATTransactionAvailable()) {
+            return delegate.handleInbound(messageContext);
+        }
+
+        return true;
+    }
+
+    private boolean handleOutbound(final MessageContext messageContext) {
+        if (isJTATransactionAvailable()) {
+            return delegate.handleOutbound(messageContext);
+        }
+
+        return true;
+    }
+
+    private boolean isWSATTransactionAvailable() {
         TxContext txContext = null;
 
         try {
@@ -90,5 +104,16 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
         }
 
         return txContext != null;
+    }
+
+    private boolean isJTATransactionAvailable() {
+        Transaction transaction = null;
+
+        try {
+            transaction = TransactionManager.transactionManager().getTransaction();
+        } catch (javax.transaction.SystemException e) {
+        }
+
+        return transaction != null;
     }
 }
