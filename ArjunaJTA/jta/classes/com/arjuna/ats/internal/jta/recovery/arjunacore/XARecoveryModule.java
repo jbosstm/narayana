@@ -36,10 +36,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -81,38 +82,31 @@ public class XARecoveryModule implements RecoveryModule
 
 
     public void addXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
-        synchronized (_xaResourceRecoveryHelpers) {
-            if(!_xaResourceRecoveryHelpers.contains(xaResourceRecoveryHelper)) {
-                _xaResourceRecoveryHelpers.add(xaResourceRecoveryHelper);
-            }
-        }
+        _xaResourceRecoveryHelpers.add(xaResourceRecoveryHelper);
     }
 
     public void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
-        synchronized (_xaResourceRecoveryHelpers) {
-			if (scanning) {
-			    XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
-			    if (xaResources != null) {
-    			    for (int i = 0; i < xaResources.length; i++) {
-    			        RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
-    			        if (recoveryXids != null) {
-    			            if (recoveryXids.size() > 0) {
-    			                jtaLogger.logger.warn("RecoveryManager is using this service, may delay up to 10 seconds");
-    			                try {
-    			                    // do not allow a recovery helper to be removed while the
-    			                    // scan is in progress
-    			                    _xaResourceRecoveryHelpers.wait();
-    			                } catch (InterruptedException e) {
-    			                    tsLogger.logger.warn("problem waiting for scanLock", e);
-    			                }
-    			                break;
-    			            }
-    			        }
-    			    }
-			    }
-			}
+        synchronized (scanState) {
+            if (getScanState().equals(ScanStates.FIRST_PASS)) {
+                // the first pass collects xa resources from recovery helpers - wait for it to finish
+                waitForScanState(ScanStates.BETWEEN_PASSES);
 
-	        _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
+                if (getScanState().equals(ScanStates.BETWEEN_PASSES)) {
+                    /*
+                     * check whether any resources found in the first pass were provided by
+                     * the target xaResourceRecoveryHelper and if so then we need to wait for second pass
+                     * of the scanner to finish
+                     */
+                    if (isHelperInUse(xaResourceRecoveryHelper))
+                        waitForScanState(ScanStates.IDLE);
+                }
+            } else if (!getScanState().equals(ScanStates.IDLE)) {
+                // scanner is in pass 2 or in between passes
+                if (isHelperInUse(xaResourceRecoveryHelper))
+                    waitForScanState(ScanStates.IDLE);
+            }
+
+            _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
         }
     }
 
@@ -138,17 +132,16 @@ public class XARecoveryModule implements RecoveryModule
 		return _seriablizableXAResourceDeserializers;
 	}
 
-
 	public synchronized void periodicWorkFirstPass()
 	{
 		// JBTM-1354 allow a second thread to execute the first pass but make sure it is only done once per scan (TMSTART/ENDSCAN)
-		synchronized (_xaResourceRecoveryHelpers) {
-			if (scanning) {
-				return;
-			} else {
-				scanning = true;
-			}
-		}
+        synchronized (scanState) {
+            if (!getScanState().equals(ScanStates.IDLE))
+                return;
+
+            setScanState(ScanStates.FIRST_PASS); // synchronized uses a reentrant lock
+        }
+
         if(jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debugv("{0} - first pass", _logName);
         }
@@ -190,10 +183,14 @@ public class XARecoveryModule implements RecoveryModule
 				jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 			}
 		}
+
+        setScanState(ScanStates.BETWEEN_PASSES);
 	}
 
 	public void periodicWorkSecondPass()
 	{
+        setScanState(ScanStates.SECOND_PASS);
+
 		if (jtaLogger.logger.isDebugEnabled())
 		{
             jtaLogger.logger.debugv("{0} - second pass", _logName);
@@ -224,11 +221,8 @@ public class XARecoveryModule implements RecoveryModule
 
 		clearAllFailures();
 
-		synchronized (_xaResourceRecoveryHelpers) {
-			scanning = false;
-			_xaResourceRecoveryHelpers.notifyAll();
-		}
-	}
+        setScanState(ScanStates.IDLE);
+ 	}
 
 	public String id()
 	{
@@ -506,28 +500,26 @@ public class XARecoveryModule implements RecoveryModule
     private List<XAResource> resourceInitiatedRecoveryForRecoveryHelpers()
     {
 		List<XAResource> xaresources = new ArrayList<XAResource>();
-        synchronized (_xaResourceRecoveryHelpers)
+
+        recoveryHelpersXAResource.clear();
+
+        for (XAResourceRecoveryHelper xaResourceRecoveryHelper : _xaResourceRecoveryHelpers)
         {
-            recoveryHelpersXAResource.clear();
-            
-            for (XAResourceRecoveryHelper xaResourceRecoveryHelper : _xaResourceRecoveryHelpers)
+            try
             {
-                try
+                XAResource[] xaResources = xaResourceRecoveryHelper.getXAResources();
+                if (xaResources != null)
                 {
-                    XAResource[] xaResources = xaResourceRecoveryHelper.getXAResources();
-                    if (xaResources != null)
+                    for (XAResource xaResource : xaResources)
                     {
-                        for (XAResource xaResource : xaResources)
-                        {
-                        	xaresources.add(xaResource);
-                        }
-                        recoveryHelpersXAResource.put(xaResourceRecoveryHelper, xaResources);
+                        xaresources.add(xaResource);
                     }
+                    recoveryHelpersXAResource.put(xaResourceRecoveryHelper, xaResources);
                 }
-                catch (Exception ex)
-                {
-                    jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
             }
         }
 
@@ -939,17 +931,80 @@ public class XARecoveryModule implements RecoveryModule
 			_failures.clear();
 	}
 
-	private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
+    /**
+     * Check whether an XAResourceRecoveryHelper is currently being used by the scanner.
+     * Must be called holding a lock on scanState
+     * @param xaResourceRecoveryHelper the helper
+     * @return true if the helper is in use
+     */
+    private boolean isHelperInUse(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
+        XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
+
+        if (xaResources != null) {
+            for (int i = 0; i < xaResources.length; i++) {
+                RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
+                if (recoveryXids != null && recoveryXids.size() > 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Wait until scanner reaches a specific target state.
+     * Must be called holding a lock on scanState.
+     * @param state the target scan state to wait for
+     * @return false if the thread was interrupted
+     */
+    private boolean waitForScanState(ScanStates state) {
+        try {
+            do {
+                scanState.wait();
+            } while (!getScanState().equals(state));
+
+            return true;
+        } catch (InterruptedException e) {
+            tsLogger.logger.warn("problem waiting for scanLock whilst in state " + state.name(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Update the status of the scanner
+     * @param state the new state
+     */
+    private void setScanState(ScanStates state) {
+        synchronized (scanState) {
+            tsLogger.logger.debugf("XARecoveryModule state change %s->%s%n", getScanState(), state);
+            scanState.set(state.ordinal());
+            scanState.notifyAll();
+        }
+    }
+
+    private ScanStates getScanState() {
+        return ScanStates.values()[scanState.get()];
+    }
+
+    private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
 
 	private InputObjectState _uids = new InputObjectState();
 
 	private List<XAResource> _resources;
 
-	private volatile boolean scanning;
+    // WARNING com.hp.mwtests.ts.jta.recovery.XARecoveryModuleUnitTest uses reflection to peek at the scan state of this recovery module
+    private enum ScanStates {
+        IDLE,
+        FIRST_PASS,
+        BETWEEN_PASSES,
+        SECOND_PASS
+    }
+    private AtomicInteger scanState = new AtomicInteger(ScanStates.IDLE.ordinal());
 
 	private final List<XAResourceRecovery> _xaRecoverers;
 
-    private final List<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new LinkedList<XAResourceRecoveryHelper>();
+    private final Set<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new CopyOnWriteArraySet<XAResourceRecoveryHelper>();
 
     private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
 

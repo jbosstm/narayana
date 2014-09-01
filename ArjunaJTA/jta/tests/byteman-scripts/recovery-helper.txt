@@ -1,0 +1,44 @@
+# Rules to suspend a thread until bottomUpRecovery runs
+#
+
+# create the rendezvous on entry to the test method
+RULE Recovery Helper create rendezvous
+CLASS com.hp.mwtests.ts.jta.recovery.XARecoveryModuleHelpersUnitTest
+METHOD testTimelyXAResourceRecoveryHelperRemoval3
+AT ENTRY
+IF TRUE
+DO debug("Recovery Helper: create rendezvous"),
+   createRendezvous("bottomUpRecovery", 1, true)
+ENDRULE
+
+# pause the test until bottomUpRecovery is triggered
+RULE Recovery Helper await rendezvous
+CLASS com.hp.mwtests.ts.jta.recovery.XARecoveryModuleHelpersUnitTest
+METHOD addHelper
+AT ENTRY
+IF TRUE
+DO debug("Recovery Helper: await rendezvous"),
+   waitFor("bottomUpRecovery")
+ENDRULE
+
+# trigger the rendezvous when bottomUpRecovery starts
+RULE bottomUpRecovery trigger rendezvous
+CLASS com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+METHOD bottomUpRecovery
+AT ENTRY
+IF TRUE
+DO debug("Recovery Helper: bottomUpRecovery trigger rendezvous"),
+   signalWake("bottomUpRecovery", true),
+   debug("Recovery Helper: bottomUpRecovery rendezvous triggered")
+ENDRULE
+
+# linger for a while at the end of bottomUpRecovery
+RULE bottomUpRecovery at exit
+CLASS com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+METHOD bottomUpRecovery
+AT EXIT
+IF TRUE
+DO debug("Recovery Helper: bottomUpRecovery at exit"),
+   Thread.sleep(500),
+   debug("Recovery Helper: bottomUpRecovery finished")
+ENDRULE
