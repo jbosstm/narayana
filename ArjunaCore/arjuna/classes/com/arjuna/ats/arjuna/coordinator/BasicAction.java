@@ -1915,6 +1915,9 @@ public class BasicAction extends StateManager
                 if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_ROLLBACK) {
                     TxStats.getInstance().incrementCommittedTransactions();
                 }
+               	if (new RecoveredUidCheck(get_uid()).isRecovered()) {
+               		TxStats.getInstance().incrementTransactions();
+               	}
             }
 
         }
@@ -1986,6 +1989,9 @@ public class BasicAction extends StateManager
         if (TxStats.enabled()) {
             TxStats.getInstance().incrementResourceRollbacks();
             TxStats.getInstance().incrementAbortedTransactions();
+           	if (new RecoveredUidCheck(get_uid()).isRecovered()) {
+           		TxStats.getInstance().incrementTransactions();
+           	}
         }
     }
 
@@ -3699,7 +3705,16 @@ public class BasicAction extends StateManager
     private static CheckedActionFactory _checkedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
     
     ExceptionDeferrer onePhaseCommitExceptionDeferrer;
-    
+
+	private class RecoveredUidCheck extends Uid {
+		public RecoveredUidCheck(Uid uid) {
+			super(uid);
+		}
+
+		public boolean isRecovered() {
+			return Uid.initTime == 0 || sec < Uid.initTime; // If initTime is zero, by definition it must be recovered
+		}
+	}    
 }
 
 class BasicActionFinalizer

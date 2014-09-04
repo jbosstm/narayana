@@ -744,7 +744,7 @@ public class Uid implements Cloneable, Serializable
 
     private static final AtomicInteger uidsCreated = new AtomicInteger();
 
-    private static volatile int initTime;
+    protected static volatile int initTime;
 
     private static final char breakChar = ':';
 
