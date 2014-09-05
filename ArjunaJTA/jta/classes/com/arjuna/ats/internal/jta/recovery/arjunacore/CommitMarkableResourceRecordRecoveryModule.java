@@ -121,6 +121,18 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 				.getDefaultInstance(JTAEnvironmentBean.class);
 		jndiNamesToContact.addAll(jtaEnvironmentBean
 				.getCommitMarkableResourceJNDINames());
+		
+		if (tsLogger.logger.isTraceEnabled()) {
+			tsLogger.logger
+					.trace("CommitMarkableResourceRecordRecoveryModule::list to contact");
+			for (String jndiName : jndiNamesToContact) {
+				tsLogger.logger
+						.trace("CommitMarkableResourceRecordRecoveryModule::in list: "
+								+ jndiName);
+			}
+			tsLogger.logger
+					.trace("CommitMarkableResourceRecordRecoveryModule::list to contact complete");
+		}
 
 		List<String> xaRecoveryNodes = jtaEnvironmentBean.getXaRecoveryNodes();
 		if (xaRecoveryNodes
@@ -209,6 +221,10 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 			while (iterator.hasNext()) {
 				String jndiName = iterator.next();
 				try {
+					if (tsLogger.logger.isTraceEnabled()) {
+						tsLogger.logger
+								.trace("CommitMarkableResourceRecordRecoveryModule::connecting to: " + jndiName);
+					}
 					DataSource dataSource = (DataSource) context
 							.lookup(jndiName);
 					Connection connection = dataSource.getConnection();
