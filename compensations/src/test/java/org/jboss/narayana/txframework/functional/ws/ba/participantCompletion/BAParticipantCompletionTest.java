@@ -25,10 +25,8 @@ package org.jboss.narayana.txframework.functional.ws.ba.participantCompletion;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
-import org.junit.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
@@ -42,7 +40,12 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.annotation.Annotation;
@@ -57,6 +60,7 @@ public class BAParticipantCompletionTest {
 
     @Deployment()
     public static JavaArchive createTestArchive() {
+
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(false, BAParticipantCompletionTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())

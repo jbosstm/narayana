@@ -30,6 +30,7 @@ import org.jboss.narayana.compensations.impl.BAControllerFactory;
 public class StereotypeBean {
 
     public void doSomething() throws TestException {
+
         try {
             final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
 

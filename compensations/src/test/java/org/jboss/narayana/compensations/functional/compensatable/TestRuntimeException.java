@@ -27,10 +27,12 @@ package org.jboss.narayana.compensations.functional.compensatable;
 public class TestRuntimeException extends RuntimeException {
 
     public TestRuntimeException() {
+
         super();
     }
 
     public TestRuntimeException(String message) {
+
         super(message);
     }
 

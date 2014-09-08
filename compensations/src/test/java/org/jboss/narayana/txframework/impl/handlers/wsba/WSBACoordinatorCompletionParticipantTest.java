@@ -24,8 +24,14 @@ package org.jboss.narayana.txframework.impl.handlers.wsba;
 
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.*;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Cancel;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Compensate;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Complete;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.ConfirmCompleted;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Error;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Status;
+import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Unknown;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.junit.Test;
 

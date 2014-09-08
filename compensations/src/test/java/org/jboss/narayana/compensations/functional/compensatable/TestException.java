@@ -27,10 +27,12 @@ package org.jboss.narayana.compensations.functional.compensatable;
 public class TestException extends Exception {
 
     public TestException() {
+
         super();
     }
 
     public TestException(String message) {
+
         super(message);
     }
 

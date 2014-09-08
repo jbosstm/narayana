@@ -43,6 +43,7 @@ public class Service {
     @TxLogged(MyTransactionLoggedHandler.class)
     @TxConfirm(MyConfirmationHandler.class)
     public void doWork(String setValue) throws MyRuntimeException {
+
         myData.setData(setValue);
     }
 

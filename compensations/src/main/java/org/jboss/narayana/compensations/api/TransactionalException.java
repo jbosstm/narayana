@@ -27,6 +27,7 @@ package org.jboss.narayana.compensations.api;
 public class TransactionalException extends RuntimeException {
 
     public TransactionalException(String message, Throwable cause) {
+
         super(message, cause);
     }
 

@@ -40,6 +40,7 @@ public class SingleService {
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
     public void testSingle1(Throwable throwable) throws Throwable {
+
         if (throwable != null) {
             throw throwable;
         }
@@ -49,6 +50,7 @@ public class SingleService {
     @TxConfirm(DummyConfirmationHandler2.class)
     @TxLogged(DummyTransactionLoggedHandler2.class)
     public void testSingle2(Throwable throwable) throws Throwable {
+
         if (throwable != null) {
             throw throwable;
         }

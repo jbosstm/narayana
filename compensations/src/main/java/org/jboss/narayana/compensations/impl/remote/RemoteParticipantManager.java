@@ -22,21 +22,25 @@ public class RemoteParticipantManager implements ParticipantManager {
 
     @Override
     public void exit() throws WrongStateException, UnknownTransactionException, SystemException {
+
         baParticipantManager.exit();
     }
 
     @Override
     public void completed() throws WrongStateException, UnknownTransactionException, SystemException {
+
         baParticipantManager.completed();
     }
 
     @Override
     public void cannotComplete() throws WrongStateException, UnknownTransactionException, SystemException {
+
         baParticipantManager.cannotComplete();
     }
 
     @Override
     public void fail(QName exceptionIdentifier) throws SystemException {
+
         baParticipantManager.fail(exceptionIdentifier);
     }
 }

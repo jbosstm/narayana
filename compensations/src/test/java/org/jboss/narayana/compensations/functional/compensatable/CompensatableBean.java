@@ -44,6 +44,7 @@ public class CompensatableBean {
     SingleService singleService;
 
     public void invokeWithCLassLevelDefault() throws Exception {
+
         Utills.assertTransactionActive(false);
     }
 
@@ -52,11 +53,13 @@ public class CompensatableBean {
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithDefault() throws Exception {
+
         Utills.assertTransactionActive(true);
     }
 
     @Compensatable
     public void invokeWithDefault(Throwable firstServiceException, Throwable secondServiceException) throws Throwable {
+
         Utills.assertTransactionActive(true);
 
         singleService.testSingle1(firstServiceException);
@@ -98,6 +101,7 @@ public class CompensatableBean {
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithRequiresNew(final Object oldTransaction) throws Exception {
+
         Utills.assertTransactionActive(true);
         Utills.assertDifferentTransaction(oldTransaction);
     }
@@ -107,12 +111,14 @@ public class CompensatableBean {
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithMandatory(final Object expectedTransaction) throws Exception {
+
         Utills.assertTransactionActive(true);
         Utills.assertSameTransaction(expectedTransaction);
     }
 
     @Compensatable(CompensationTransactionType.SUPPORTS)
     public void invokeWithSupports() throws Exception {
+
         Utills.assertTransactionActive(false);
         Utills.assertSameTransaction(null);
     }
@@ -122,17 +128,20 @@ public class CompensatableBean {
     @TxConfirm(DummyConfirmationHandler1.class)
     @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithSupports(final Object expectedTransaction) throws Exception {
+
         Utills.assertTransactionActive(true);
         Utills.assertSameTransaction(expectedTransaction);
     }
 
     @Compensatable(CompensationTransactionType.NOT_SUPPORTED)
     public void invokeWithNotSupported() throws Exception {
+
         Utills.assertTransactionActive(false);
     }
 
     @Compensatable(CompensationTransactionType.NEVER)
     public void invokeWithNever() throws Exception {
+
         Utills.assertTransactionActive(false);
     }
 

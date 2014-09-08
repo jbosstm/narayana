@@ -57,35 +57,35 @@ public @interface Compensatable {
 
     /**
      * The cancelOn element can be set to indicate exceptions that must cause
-     *  the interceptor to mark the transaction for compensation. Conversely, the dontCancelOn
-     *  element can be set to indicate exceptions that must not cause the interceptor to mark
-     *  the transaction for compensation. When a class is specified for either of these elements,
-     *  the designated behavior applies to subclasses of that class as well. If both elements
-     *  are specified, dontCancelOn takes precedence.
+     * the interceptor to mark the transaction for compensation. Conversely, the dontCancelOn
+     * element can be set to indicate exceptions that must not cause the interceptor to mark
+     * the transaction for compensation. When a class is specified for either of these elements,
+     * the designated behavior applies to subclasses of that class as well. If both elements
+     * are specified, dontCancelOn takes precedence.
+     *
      * @return Class[] of Exceptions
      */
-    @Nonbinding
-    Class[] cancelOn() default {};
+    @Nonbinding Class[] cancelOn() default {};
 
     /**
      * The dontCancelOn element can be set to indicate exceptions that must not cause
-     *  the interceptor to mark the transaction for compensation. Conversely, the cancelOn element
-     *  can be set to indicate exceptions that must cause the interceptor to mark the transaction
-     *  for compensation. When a class is specified for either of these elements,
-     *  the designated behavior applies to subclasses of that class as well. If both elements
-     *  are specified, dontCancelOn takes precedence.
+     * the interceptor to mark the transaction for compensation. Conversely, the cancelOn element
+     * can be set to indicate exceptions that must cause the interceptor to mark the transaction
+     * for compensation. When a class is specified for either of these elements,
+     * the designated behavior applies to subclasses of that class as well. If both elements
+     * are specified, dontCancelOn takes precedence.
+     *
      * @return Class[] of Exceptions
      */
-    @Nonbinding
-    Class[] dontCancelOn() default {};
+    @Nonbinding Class[] dontCancelOn() default {};
 
 
     /**
      * The distributed element states whether a distributed or local transaction should be begun,
      * under circumstances where this annotation causes a new transaction to begin.
+     *
      * @return Class[] of Exceptions
      */
-    @Nonbinding
-    boolean distributed() default false;
+    @Nonbinding boolean distributed() default false;
 
 }
