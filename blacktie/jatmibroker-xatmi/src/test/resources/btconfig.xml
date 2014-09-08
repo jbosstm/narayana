@@ -81,6 +81,14 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv32" hostname="lancel" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv33" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv34" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
+		<MACHINE id="myserv35" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="1" />
+		<MACHINE id="myserv36" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+			workingDirectory="." argLine="foo" serverId="2" />
 	</MACHINES>
 	<SERVERS>
 		<SERVER name='myserv'>
@@ -116,6 +124,10 @@
 			<MACHINE-REF id="myserv30" />
 			<MACHINE-REF id="myserv31" />
 			<MACHINE-REF id="myserv32" />
+			<MACHINE-REF id="myserv33" />
+			<MACHINE-REF id="myserv34" />
+			<MACHINE-REF id="myserv35" />
+			<MACHINE-REF id="myserv36" />
 			<SERVICE_NAMES>
 				<SERVICE name='TestOne'  externally-managed-destination='true'/>
 				<SERVICE name='TestTwo'  externally-managed-destination='true'/>

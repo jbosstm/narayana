@@ -99,6 +99,14 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
+		<MACHINE id="myserv33" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+			workingDirectory="." argLine=" -p 12341" serverId="1" />
+		<MACHINE id="myserv34" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+			workingDirectory="." argLine=" -p 12342" serverId="2" />
+		<MACHINE id="myserv35" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+			workingDirectory="." argLine=" -p 12341" serverId="1" />
+		<MACHINE id="myserv36" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+			workingDirectory="." argLine=" -p 12342" serverId="2" />
 	</MACHINES>
 	<SERVERS>
 		<SERVER name='myserv'>
@@ -128,6 +136,16 @@
 			<MACHINE-REF id="myserv24" />
 			<MACHINE-REF id="myserv25" />
 			<MACHINE-REF id="myserv26" />
+			<MACHINE-REF id="myserv27" />
+			<MACHINE-REF id="myserv28" />
+			<MACHINE-REF id="myserv29" />
+			<MACHINE-REF id="myserv30" />
+			<MACHINE-REF id="myserv31" />
+			<MACHINE-REF id="myserv32" />
+			<MACHINE-REF id="myserv33" />
+			<MACHINE-REF id="myserv34" />
+			<MACHINE-REF id="myserv35" />
+			<MACHINE-REF id="myserv36" />
 			<SERVICE_NAMES>
 				<SERVICE name='TestOne'  externally-managed-destination='true'/>
 				<SERVICE name='TestTwo'  externally-managed-destination='true'/>
