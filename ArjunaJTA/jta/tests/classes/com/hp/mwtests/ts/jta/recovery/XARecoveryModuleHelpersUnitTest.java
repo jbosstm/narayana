@@ -194,6 +194,14 @@ public class XARecoveryModuleHelpersUnitTest
 
         System.out.printf("Finished pass 2 (%d)%n", System.currentTimeMillis() - millis);
 
+        // wait for helper removal threads to finish 
+        try {
+            remover.join();
+            remover2.join();
+        } catch (InterruptedException e) {
+            fail("Test was interrupted whilst waiting for xa resource helper threads: " + e.getMessage());
+        }
+
         if (somethingToRecover) {
             assertEquals("helper removed in wrong state", 0, remover.getRemoveState());
         } else {
