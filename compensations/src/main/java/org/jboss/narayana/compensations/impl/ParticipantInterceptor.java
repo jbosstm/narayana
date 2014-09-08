@@ -25,7 +25,6 @@ package org.jboss.narayana.compensations.impl;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 /**
  * @author paul.robinson@redhat.com 25/04/2013

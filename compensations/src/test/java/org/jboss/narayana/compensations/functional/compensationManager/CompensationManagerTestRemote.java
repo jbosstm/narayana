@@ -26,25 +26,12 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.api.TransactionCompensatedException;
-import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
-import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
-import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
-import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
 
 
 /**

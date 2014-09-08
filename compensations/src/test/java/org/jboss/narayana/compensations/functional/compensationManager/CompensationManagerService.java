@@ -24,10 +24,10 @@ package org.jboss.narayana.compensations.functional.compensationManager;
 
 import org.jboss.narayana.compensations.api.CancelOnFailure;
 import org.jboss.narayana.compensations.api.Compensatable;
-import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.CompensationManager;
-import org.jboss.narayana.compensations.api.TxLogged;
+import org.jboss.narayana.compensations.api.TxCompensate;
 import org.jboss.narayana.compensations.api.TxConfirm;
+import org.jboss.narayana.compensations.api.TxLogged;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyTransactionLoggedHandler1;

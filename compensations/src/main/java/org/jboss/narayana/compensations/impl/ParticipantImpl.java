@@ -30,8 +30,8 @@ import com.arjuna.wst11.ConfirmCompletedParticipant;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
+
 import javax.enterprise.inject.spi.BeanManager;
-import java.util.Map;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013

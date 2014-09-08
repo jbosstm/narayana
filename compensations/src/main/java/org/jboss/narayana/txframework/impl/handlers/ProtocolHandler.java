@@ -24,8 +24,6 @@ package org.jboss.narayana.txframework.impl.handlers;
 
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 
-import javax.interceptor.InvocationContext;
-
 public interface ProtocolHandler {
 
     public void preInvocation() throws Exception;

@@ -4,7 +4,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -18,28 +17,28 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class BasicTestRemote extends BasicTest {
 
-        @Deployment
-        public static JavaArchive createTestArchive() {
+    @Deployment
+    public static JavaArchive createTestArchive() {
 
-            JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
-                    .addPackage("org.jboss.narayana.compensations.functional")
-                    .addPackage("org.jboss.narayana.compensations.functional.common")
-                    .addClass(ParticipantCompletionCoordinatorRules.class)
-                    .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
+                .addPackage("org.jboss.narayana.compensations.functional")
+                .addPackage("org.jboss.narayana.compensations.functional.common")
+                .addClass(ParticipantCompletionCoordinatorRules.class)
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-            return archive;
-        }
+        return archive;
+    }
 
 
-        @BeforeClass()
-        public static void submitBytemanScript() throws Exception {
+    @BeforeClass()
+    public static void submitBytemanScript() throws Exception {
 
-            BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-        }
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
 
-        @AfterClass()
-        public static void removeBytemanScript() {
+    @AfterClass()
+    public static void removeBytemanScript() {
 
-            BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
-        }
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+    }
 }

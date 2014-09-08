@@ -22,17 +22,17 @@
 
 package org.jboss.narayana.txframework.functional.ws.ba.coordinatorCompletion;
 
-import java.net.URL;
+import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.narayana.common.URLUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-
-import com.arjuna.mw.wst11.client.WSTXFeature;
-import org.jboss.narayana.common.URLUtils;
+import java.net.URL;
 
 public class BACoordinatorCompletionClient {
 
     public static BACoordinatorCompletion newInstance() throws Exception {
+
         URLUtils urlUtils = new URLUtils();
         URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
                 + "/test/BACoordinatorCompletionService/BACoordinatorCompletion?wsdl");

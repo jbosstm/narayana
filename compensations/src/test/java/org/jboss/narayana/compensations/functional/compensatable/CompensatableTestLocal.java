@@ -21,18 +21,14 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 /**
@@ -43,13 +39,13 @@ public class CompensatableTestLocal extends CompensatableTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.compensations.functional.common")
                 .addPackage("org.jboss.narayana.compensations.functional.compensatable")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
                 .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-
 
 
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));

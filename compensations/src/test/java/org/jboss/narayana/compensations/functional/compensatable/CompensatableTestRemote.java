@@ -22,11 +22,9 @@
 package org.jboss.narayana.compensations.functional.compensatable;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -42,6 +40,7 @@ public class CompensatableTestRemote extends CompensatableTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
+
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addPackage("org.jboss.narayana.compensations.functional.common")
                 .addPackage("org.jboss.narayana.compensations.functional.compensatable")
@@ -53,11 +52,13 @@ public class CompensatableTestRemote extends CompensatableTest {
 
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
+
         BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @AfterClass()
     public static void removeBytemanScript() {
+
         BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 

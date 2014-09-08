@@ -23,8 +23,8 @@
 package org.jboss.narayana.compensations.functional.distributed;
 
 import com.arjuna.mw.wst11.client.WSTXFeature;
-import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.common.URLUtils;
+import org.jboss.narayana.compensations.api.Compensatable;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -35,6 +35,7 @@ public class TestServiceClient implements TestService {
     private TestService testService;
 
     public TestServiceClient() throws Exception {
+
         URLUtils urlUtils = new URLUtils();
         URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
                 + "/test/TestServiceService/TestService?wsdl");
@@ -48,17 +49,20 @@ public class TestServiceClient implements TestService {
     @Override
     @Compensatable(distributed = true)
     public void saveData(Boolean throwException) {
+
         testService.saveData(throwException);
     }
 
     @Override
     @Compensatable(distributed = true)
     public void saveDataCancelOnFailure(Boolean throwException) {
+
         testService.saveDataCancelOnFailure(throwException);
     }
 
     @Override
     public void resetHandlerFlags() {
+
         testService.resetHandlerFlags();
     }
 

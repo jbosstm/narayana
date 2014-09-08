@@ -37,7 +37,6 @@ import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.ParticipantRegistrationException;
 import org.jboss.narayana.txframework.impl.handlers.ProtocolHandler;
 
-import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.UUID;

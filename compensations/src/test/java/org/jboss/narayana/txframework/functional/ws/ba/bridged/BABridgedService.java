@@ -28,8 +28,6 @@ import org.jboss.narayana.txframework.api.annotation.service.ServiceRequest;
 import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.configuration.transaction.CompletionType;
 import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.functional.common.EventLog;
 import org.jboss.narayana.txframework.functional.common.SomeApplicationException;
 
 import javax.ejb.Stateless;
@@ -113,6 +111,7 @@ public class BABridgedService implements BABridged {
     @Close
     @WebMethod(exclude = true)
     public void close() {
+
         Counter counter = getSimpleEntity();
         counter.setConfirmed(true);
         em.merge(counter);

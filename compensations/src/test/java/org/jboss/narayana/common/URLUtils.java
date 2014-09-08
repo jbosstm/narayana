@@ -6,6 +6,7 @@ package org.jboss.narayana.common;
 public final class URLUtils {
 
     public String getBaseUrl() {
+
         String baseAddress = System.getProperty("jboss.bind.address");
 
         if (baseAddress == null) {
@@ -22,6 +23,7 @@ public final class URLUtils {
     }
 
     public String getBasePort() {
+
         final String basePort = System.getProperty("jboss.bind.port");
 
         if (basePort == null) {

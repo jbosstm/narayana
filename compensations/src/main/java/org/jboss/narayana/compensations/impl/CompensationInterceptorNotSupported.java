@@ -23,11 +23,11 @@ package org.jboss.narayana.compensations.impl;
 
 import org.jboss.narayana.compensations.api.Compensatable;
 import org.jboss.narayana.compensations.api.CompensationTransactionType;
+
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -39,7 +39,8 @@ public class CompensationInterceptorNotSupported extends CompensationInterceptor
 
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
-        BAControler baControler =  BAControllerFactory.getInstance();
+
+        BAControler baControler = BAControllerFactory.getInstance();
         if (!baControler.isBARunning()) {
             return invokeInNoTx(ic);
         } else {

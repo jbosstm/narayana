@@ -22,22 +22,17 @@
 
 package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.mw.wst11.client.WSTXFeature;
 import org.jboss.narayana.common.URLUtils;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import java.net.URL;
 
 public class BABridgedClient {
 
     public static BABridged newInstance() throws Exception {
+
         URLUtils urlUtils = new URLUtils();
         URL wsdlLocation = new URL(urlUtils.getBaseUrl() + ":" + urlUtils.getBasePort()
                 + "/test/BABridgedService/BABridged?wsdl");

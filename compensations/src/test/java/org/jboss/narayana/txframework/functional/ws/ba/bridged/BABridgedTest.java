@@ -24,10 +24,8 @@ package org.jboss.narayana.txframework.functional.ws.ba.bridged;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import org.junit.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.functional.common.EventLog;
@@ -38,6 +36,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,6 +50,7 @@ public class BABridgedTest {
 
     @Deployment()
     public static JavaArchive createTestArchive() {
+
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar")
                 .addPackages(false, BABridgedTest.class.getPackage())
                 .addPackage(EventLog.class.getPackage())
