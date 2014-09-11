@@ -88,6 +88,12 @@ public class ActionManager
 			return null;
 	}
 
+    /**
+     * @deprecated this method no longer serves any useful purpose and will be removed in a future release
+     * @param id the uid of the action for which the time when it was added is required
+     * @return the time that the action was begun
+     */
+    @Deprecated
 	public long getTimeAdded (Uid id)
 	{
 		Lifetime lt = _allActions.get(id);
