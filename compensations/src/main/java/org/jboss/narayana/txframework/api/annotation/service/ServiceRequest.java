@@ -31,9 +31,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated The TXFramework API will be removed. The org.jboss.narayana.compensations API should be used instead.
+ * The new API is superior for these reasons:
+ * <p/>
+ * i) offers a higher level API;
+ * ii) The API very closely matches that of JTA, making it easier for developers to learn,
+ * iii) It works for non-distributed transactions as well as distributed transactions.
+ * iv) It is CDI based so only needs a CDI container to run, rather than a full Java EE server.
+ * <p/>
  * Method level annotation used to enable lifecycle handling and configure parameters which control its operation
  */
 
+@Deprecated
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

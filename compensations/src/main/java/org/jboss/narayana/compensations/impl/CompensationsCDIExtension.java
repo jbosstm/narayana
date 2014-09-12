@@ -20,24 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.txframework.impl.as;
-
-import org.jboss.narayana.compensations.impl.CancelOnFailureInterceptor;
-import org.jboss.narayana.compensations.impl.CompensationContext;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorMandatory;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorNever;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorNotSupported;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorRequired;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorRequiresNew;
-import org.jboss.narayana.compensations.impl.CompensationInterceptorSupports;
-import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
-import org.jboss.narayana.compensations.impl.TxCompensateInterceptor;
-import org.jboss.narayana.compensations.impl.TxConfirmInterceptor;
-import org.jboss.narayana.compensations.impl.TxLoggedInterceptor;
-import org.jboss.narayana.txframework.api.management.TXDataMap;
-import org.jboss.narayana.txframework.api.management.WSBATxControl;
-import org.jboss.narayana.txframework.impl.TXDataMapImpl;
-import org.jboss.narayana.txframework.impl.handlers.wsba.WSBATxControlImpl;
+package org.jboss.narayana.compensations.impl;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -58,12 +41,6 @@ public class CompensationsCDIExtension implements Extension {
      * @param bm  the bean manager
      */
     public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
-
-        // Deprecated API
-        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMap.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TXDataMapImpl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControl.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(WSBATxControlImpl.class));
 
         //Current API
         bbd.addAnnotatedType(bm.createAnnotatedType(CompensationManagerImpl.class));
