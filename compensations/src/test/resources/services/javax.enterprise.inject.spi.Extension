@@ -1,1 +1,2 @@
-org.jboss.narayana.txframework.impl.as.CompensationsCDIExtension
+org.jboss.narayana.txframework.impl.as.TXFrameworkCDIExtension
+org.jboss.narayana.compensations.impl.CompensationsCDIExtension
