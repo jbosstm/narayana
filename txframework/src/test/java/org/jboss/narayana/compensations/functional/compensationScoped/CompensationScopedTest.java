@@ -28,6 +28,7 @@ import org.jboss.narayana.compensations.functional.common.DummyData;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -89,6 +90,7 @@ public abstract class CompensationScopedTest {
     }
 
     @Test
+    @Ignore //JBTM-2218
     public void testSuspendResume() throws Exception {
 
         assertContextUnavailable();
