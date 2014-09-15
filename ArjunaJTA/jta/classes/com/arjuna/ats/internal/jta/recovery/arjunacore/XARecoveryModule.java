@@ -639,102 +639,104 @@ public class XARecoveryModule implements RecoveryModule
         }
 		
 		RecoveryXids xidsToRecover = _xidScans.get(xares);
-		try {
-			Xid[] xids = xidsToRecover.toRecover();
-
-			if (xids != null)
-			{
-				if (jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("Have "
-                            + xids.length
-                            + " Xids to recover on this pass.");
-                }
-
-				for (int j = 0; j < xids.length; j++)
+		if (xidsToRecover != null) {
+			try {
+				Xid[] xids = xidsToRecover.toRecover();
+	
+				if (xids != null)
 				{
-					boolean doForget = false;
-
-					/*
-					 * Check if in failure list.
-					 */
-
-					Uid recordUid = null;
-					boolean foundTransaction = false;
-
-					do
+					if (jtaLogger.logger.isDebugEnabled()) {
+	                    jtaLogger.logger.debug("Have "
+	                            + xids.length
+	                            + " Xids to recover on this pass.");
+	                }
+	
+					for (int j = 0; j < xids.length; j++)
 					{
-						// is the xid known to be one that couldn't be recovered
-
-						recordUid = previousFailure(xids[j]);
-
-						if ((recordUid == null) && (foundTransaction))
-							break; // end
-						// of
-						// recovery
-						// for
-						// this
-						// transaction
-
-						if (recordUid == null)
-                        {
-                            /*
-                            * It wasn't an xid that we couldn't recover, so the
-                            * RM knows about it, but we don't. Therefore it may
-                            * have to be rolled back.
-                            */
-                            doForget = handleOrphan(xares, xids[j]);
-                        }
-                        else
+						boolean doForget = false;
+	
+						/*
+						 * Check if in failure list.
+						 */
+	
+						Uid recordUid = null;
+						boolean foundTransaction = false;
+	
+						do
 						{
-							foundTransaction = true;
-
-							/*
-							 * In the failures list so it may be that we just
-							 * need another XAResource to be able to recover
-							 * this.
-							 */
-
-							XARecoveryResource record = _recoveryManagerClass
-									.getResource(recordUid, xares);
-							int recoveryStatus = record.recover();
-
-							if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
+							// is the xid known to be one that couldn't be recovered
+	
+							recordUid = previousFailure(xids[j]);
+	
+							if ((recordUid == null) && (foundTransaction))
+								break; // end
+							// of
+							// recovery
+							// for
+							// this
+							// transaction
+	
+							if (recordUid == null)
+	                        {
+	                            /*
+	                            * It wasn't an xid that we couldn't recover, so the
+	                            * RM knows about it, but we don't. Therefore it may
+	                            * have to be rolled back.
+	                            */
+	                            doForget = handleOrphan(xares, xids[j]);
+	                        }
+	                        else
 							{
-                                jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName+".xaRecovery", Integer.toString(recoveryStatus));
+								foundTransaction = true;
+	
+								/*
+								 * In the failures list so it may be that we just
+								 * need another XAResource to be able to recover
+								 * this.
+								 */
+	
+								XARecoveryResource record = _recoveryManagerClass
+										.getResource(recordUid, xares);
+								int recoveryStatus = record.recover();
+	
+								if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
+								{
+	                                jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName+".xaRecovery", Integer.toString(recoveryStatus));
+								}
+	
+								removeFailure(record.getXid(), record.get_uid());
 							}
-
-							removeFailure(record.getXid(), record.get_uid());
-						}
-
-						if (doForget)
-						{
-							try
+	
+							if (doForget)
 							{
-								xares.forget(xids[j]);
+								try
+								{
+									xares.forget(xids[j]);
+								}
+								catch (Exception e)
+								{
+	                                jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName+".xaRecovery", e);
+								}
 							}
-							catch (Exception e)
-							{
-                                jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName+".xaRecovery", e);
-							}
-						}
-
-					} while (recordUid != null);
+	
+						} while (recordUid != null);
+					}
 				}
 			}
-		}
-		catch (Exception e)
-		{
-            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
-		}
-
-		try
-		{
-			if (xares != null)
-				xares.recover(XAResource.TMENDRSCAN);
-		}
-		catch (XAException e)
-		{
-            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
+			catch (Exception e)
+			{
+	            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
+			}
+	
+			try
+			{
+				if (xares != null)
+					xares.recover(XAResource.TMENDRSCAN);
+			}
+			catch (XAException e)
+			{
+	            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
+			}
 		}
 
 		return;
