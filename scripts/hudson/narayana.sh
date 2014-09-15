@@ -279,11 +279,11 @@ function blacktie {
   # KILL ANY PREVIOUS BUILD REMNANTS
   ps -f
   for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
-  killall -9 -r memcheck
-  killall -9 testsuite
-  killall -9 server
-  killall -9 client
-  killall -9 cs
+  pkill -9 memcheck # pkill arg is a pattern (cf killall -r)
+  pkill -9 testsuite
+  pkill -9 server
+  pkill -9 client
+  pkill -9 cs
   ps -f
   # FOR DEBUGGING SUBSEQUENT ISSUES
   free -m
@@ -315,10 +315,10 @@ function blacktie {
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
-  	killall -9 testsuite
-	  killall -9 server
-	  killall -9 client
-  	killall -9 cs
+  	pkill -9 testsuite
+	  pkill -9 server
+	  pkill -9 client
+  	pkill -9 cs
     ps -f
   	fatal "Some tests failed: $BUILD_URL"
   fi
@@ -326,10 +326,10 @@ function blacktie {
   # KILL ANY BUILD REMNANTS
   ps -f
   for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
-  killall -9 testsuite
-  killall -9 server
-  killall -9 client
-  killall -9 cs
+  pkill -9 testsuite
+  pkill -9 server
+  pkill -9 client
+  pkill -9 cs
   ps -f
   [ $? = 0 ] || fatal "BlackTie build failed: $BUILD_URL"
 }
