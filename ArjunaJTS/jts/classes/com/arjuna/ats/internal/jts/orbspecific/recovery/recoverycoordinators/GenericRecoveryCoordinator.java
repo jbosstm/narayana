@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators;
 
+import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Inactive;
 import org.omg.CosTransactions.NotPrepared;
@@ -175,15 +176,16 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 	}
         else if ( currentStatus == Status.StatusCommitted )
         {
-            /*
-             * If the status returned is StatusCommitted, the only reason a
-             * replay_completion request can come in is if the resource on 
-             * the other end has not received the second phase and hence the 
-             * transaction is in the process of committing and has not
-	     * committed.
-             */
-
-            currentStatus = Status.StatusCommitting;
+            if (ActionManager.manager().get(id._actionUid) != null) {
+                /*
+                 * If the status returned is StatusCommitted and action is still available, the only reason a
+                 * replay_completion request can come in is if the resource on
+                 * the other end has not received the second phase and hence the
+                 * transaction is in the process of committing and has not
+                 * committed.
+                 */
+                currentStatus = Status.StatusCommitting;
+            }
         }
 
 	if (!transactionActive)
