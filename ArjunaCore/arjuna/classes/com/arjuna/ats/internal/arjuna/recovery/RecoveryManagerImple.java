@@ -96,21 +96,23 @@ public class RecoveryManagerImple
             throw new FatalError("Recovery manager already active (or recovery port and address are in use)!");
         }
 
-        // start the expiry scanners
-
         // start the activator recovery loader
 
         _recActivatorLoader = new RecActivatorLoader();
         _recActivatorLoader.startRecoveryActivators();
 
-        // start the expiry scanners
-
-        ExpiredEntryMonitor.startUp();
-
         // start the periodic recovery thread
         // (don't start this until just about to go on to the other stuff)
 
         _periodicRecovery = new PeriodicRecovery(threaded, useListener);
+
+        /*
+         * Start the expiry scanner
+         *
+         * This has to happen after initiating periodic recovery, because periodic recovery registers record types used
+         * by the expiry scanner
+         */
+        ExpiredEntryMonitor.startUp();
 
         try
         {
