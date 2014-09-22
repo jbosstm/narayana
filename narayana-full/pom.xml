@@ -65,12 +65,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>narayana-jta</artifactId>
-      <version>${project.version}</version>
-      <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>narayana-jts-integration</artifactId>
       <version>${project.version}</version>
@@ -87,12 +81,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>restat-api</artifactId>
-      <version>${project.version}</version>
-      <classifier>javadoc</classifier>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <version>${project.version}</version>
@@ -102,12 +90,6 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.xts</groupId>
-      <artifactId>jbossxts</artifactId>
-      <version>${project.version}</version>
-      <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
@@ -195,12 +177,6 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>narayana-jts-jacorb</artifactId>
           <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>narayana-jts-jacorb</artifactId>
-          <version>${project.version}</version>
-          <classifier>javadoc</classifier>
         </dependency>
       </dependencies>
     </profile>

@@ -1,11 +1,10 @@
           WELCOME TO NARAYANA
           -------------------
 This release of Narayana is designed for use standalone.
-The JTA is also used by JBossAS 7 releases, but manual upgrading of the component inside JBossAS is not recommended.
- JTS and XTS are not currently available in AS7.
+The transaction manager is also used by WildFly 8+ releases, but manual upgrading of the component inside WildFly is not recommended.
 Integration with JBossAS 6 or earlier is no longer supported.
 
-This version of Narayana contains a JTA/JTS/XTS and RTS. You should never include both lib/jts/*.jar and lib/jta/*.jar as they will conflict with each other.
+This version of Narayana contains JTA/JTS transaction managers and an XTS and RTS. You should never include both lib/jts/*.jar and lib/jta/*.jar as they will conflict with each other.
 
           WHAT'S INCLUDED
           ---------------
@@ -18,23 +17,22 @@ This release contains:
     JTA and RHQ to administer the server - more details below
     start-*.[bat|sh] - These scripts can be used to launch standalone
     transaction managers and recovery managers
-  
-  docs/
-    api - The various project components javadocs
-    idl - The IDL files for integration with the JTS
       
   etc/
     Some example configuration files are available here, remove the .jts or .jta suffix to enable the operation mode you require
+  
+  idl/
+    The IDL files for integration with the JTS
     
   jacorb/
     A jacorb deployment for use with JTS
     
   lib/
     ext/ - All the dependencies required to run Narayana JTA/JTS/XTS
-    txbridge/jbosstxbridge.jar - After removing the .txbridge suffix, deploy this into a server running JTA and XTS to enable transactional bridging
-    xts/jbossxts*.jar - More details are available in the XTS guide.
-    jta/narayana-jta*.jar - See below for usage information
-    jts/narayana-jts*.jar - See below for usage information
+    txbridge/jbosstxbridge.jar
+    xts/jbossxts*.jar
+    jta/narayana-jta*.jar
+    jts/narayana-jts*.jar
     rts/restat-api.jar
     
   services/
@@ -54,9 +52,9 @@ This release contains:
 This release download does not contain project documentation or quickstarts.
 
 PDF versions of the documentation are available from the project website at
-https://www.jboss.org/jbosstm/documentation/<release version>. For example, if
+https://narayana.io/documentation/<release version>. For example, if
 this is release 5_0_0_M4 then the documentation can be found at the following
-URL: https://www.jboss.org/jbosstm/documentation/5_0_0_M4
+URL: https://narayana.io/documentation/5_0_0_M4
 
 Documentation source is now in docbook format and the associated files are
 tagged at github: https://github.com/jbosstm/documentation/releases. Select

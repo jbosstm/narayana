@@ -21,15 +21,6 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>org.jboss.narayana.xts:jbossxts:*javadoc*</include>
-			</includes>
-			<outputDirectory>docs/api/xts</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-		<dependencySet>
-			<includes>
 				<include>org.jboss.narayana.xts:jbossxts:jar:api</include>
 			</includes>
 			<outputFileNameMapping>${artifact.artifactId}-${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
@@ -46,15 +37,6 @@
 			<outputDirectory>lib/xts</outputDirectory>
 			<unpack>false</unpack>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<useProjectArtifact>false</useProjectArtifact>
-		</dependencySet>
-  	<dependencySet>
-			<includes>
-				<include>org.jboss.narayana.rts:restat-api:*javadoc*</include>
-			</includes>
-			<outputDirectory>docs/api/rts</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
 			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
@@ -105,15 +87,6 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
-				<include>org.jboss.narayana.jts:narayana-jts-jacorb:*:javadoc</include>
-			</includes>
-			<outputDirectory>docs/api/jts</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
 				<include>org.jboss.narayana.jts:narayana-jts-*:jar</include>
 			</includes>
 			<outputDirectory>lib/jts</outputDirectory>
@@ -130,15 +103,6 @@
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
-		</dependencySet>
-  	<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jboss.narayana.jta:narayana-jta:*:javadoc</include>
-			</includes>
-			<outputDirectory>docs/api/jta</outputDirectory>
-			<useProjectAttachments>true</useProjectAttachments>
-			<unpack>true</unpack>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>

@@ -14,7 +14,7 @@ Building Naryana
 ----------------
 To build Narayana you should call:
 
-	./build.[sh|bat] <maven_goals>
+	./build.[sh|bat] <maven_goals, default is install>
 
 To use this wrapper to build an individual module (say arjuna) you would type:
 
@@ -25,7 +25,7 @@ If you are building the "community" profile and are using a different maven inst
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/
 	
 The distribution is then available in:
-	./narayana-full/target/narayana-full-5.0.0.M4-SNAPSHOT-bin.zip
+	./narayana-full/target/narayana-full-<VERSION>-bin.zip
 
 Alternatively, the uber jar for JacORB is available here:
 	./ArjunaJTS/narayana-jts-jacorb/target/narayana-jts-jacorb-<VERSION>.jar
@@ -33,7 +33,7 @@ Alternatively, the uber jar for JacORB is available here:
 The uber jar for the JDK ORB is available here:
 	./ArjunaJTS/narayana-jts-idlj/target/narayana-jts-idlj-<VERSION>.jar
 
-The local JTA jar is here:
+The user jar for local JTA is here:
 	./ArjunaJTA/narayana-jta/target/narayana-jta-<VERSION>.jar
 
 If you just need the facilities provided by ArjunaCore:
@@ -88,9 +88,3 @@ NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabl
 NarayanaJTS (ibmorb) - ./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true (requires IBM jdk)
 XTS - ./build.[sh|bat] -am -pl :jboss-xts
 STM - ./build.[sh|bat] -am -pl :stm
-
-Developing Narayana
--------------------
-Please see the following JIRA for details on how to configure your IDE for developing with the Narayana code styles:
-	
-	https://issues.jboss.org/browse/JBTM-989
