@@ -173,18 +173,45 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 
 	    currentStatus = Status.StatusRolledBack;
 	}
-        else if ( currentStatus == Status.StatusCommitted )
-        {
-            /*
-             * If the status returned is StatusCommitted, the only reason a
-             * replay_completion request can come in is if the resource on 
-             * the other end has not received the second phase and hence the 
-             * transaction is in the process of committing and has not
-	     * committed.
-             */
 
-            currentStatus = Status.StatusCommitting;
-        }
+    /*
+     * We used to do the following swap, because the assumption was that it would
+     * only happen if the transaction is still in action and
+     * the resource hadn't received the second phase call yet.
+     *
+     * However, this is not strictly true, there are scenarios where transient
+     * XA failure status' returned from a resource manager during the
+     * second phase allows the transaction to transition to committed and this
+     * swap then prevents the transaction from being completed by bottom-up recovery.
+     *
+     * The reason why the assumption about the transaction being in
+     * action was made, is that resource holds two IORs. One to contact
+     * the transaction manager and another to contact recovery coordinator.
+     * As get_status returns a valid state each time because it will check the object
+     * store and we didn't differentiate between the two calls, we never went down
+     * the branch of transactionInactive.
+     *
+     * With the new approach there is a small window for the StatusCommitted to
+     * be available during the call to the first IOR if the transaction is active
+     * when the call is made, but completed by the parent coordinator simultaneously
+     * with the call. In this case, the resource gets a commit from the parent
+     * coordinator, plus is told to commit via bottom-up recovery. Although this
+     * will result in an XAER_NOTA on one of the commit calls (race so could be
+     * either) this is acceptable in a distributed environment. As the TX was
+     * prepared, the XAER_NOTA is safe to disregard.
+     */
+    // else if ( currentStatus == Status.StatusCommitted )
+    //     {
+    //         /*
+    //          * If the status returned is StatusCommitted, the only reason a
+    //          * replay_completion request can come in is if the resource on
+    //          * the other end has not received the second phase and hence the
+    //          * transaction is in the process of committing and has not
+    //          * committed.
+    //          */
+    //
+    //         currentStatus = Status.StatusCommitting;
+    //     }
 
 	if (!transactionActive)
 	{
