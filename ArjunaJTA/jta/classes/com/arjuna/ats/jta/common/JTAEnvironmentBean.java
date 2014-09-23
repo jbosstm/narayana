@@ -110,6 +110,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
 	private Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>();
 
+    private List<String> synchronizationClassNameOrder = new ArrayList<String>();
+
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -1135,8 +1137,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Allow the default policy of whether to use a synchronization to remove
 	 * the branch should be overriden.
 	 * 
-	 * @param commitMarkableResourceTableName
-	 *            The name of the table.
+	 * @param performImmediateCleanupOfCommitMarkableResourceBranchesMap
+	 *            a map of JNDI resource names and whether clean up should be peerformed as soon as the txn has finished
 	 * 
 	 */
 	public void setPerformImmediateCleanupOfCommitMarkableResourceBranchesMap(
@@ -1227,4 +1229,36 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 			boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches) {
 		this.notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches;
 	}
+
+    /**
+     * Return an ordered list of fully qualified class names of implementations of @link{javax.transaction.Synchronization}
+     * for which the normal ordering rules do not apply @link{setSynchronizationClassNameOrder}
+     *
+     * @return a copy of an ordered collection of class names that implement @link{javax.transaction.Synchronization}
+     */
+    public List<String> getSynchronizationClassNameOrder() {
+        return new ArrayList<String>(synchronizationClassNameOrder);
+    }
+
+    /**
+     * Allow the normal rules for the ordering of javax.transaction.Synchronization calls to be overridden. The override
+     * rules only apply within a given synchronization category - ie interposed
+     * (@link{javax.transaction.TransactionSynchronizationRegistry}) versus non-interposed.
+     *
+     * @param synchronizationClassNameOrder
+     *     an ordered list of fully qualified class names. A @link{javax.transaction.Synchronization}
+     *     whose class name appears in this list will be have its @link{javax.transaction.Synchronization#beforeCompletion}
+     *     method called after other synchronizations that appear later in this list and after all other
+     *     synchronizations not in this list. Note that the usual rule that interposed synchronization beforeCompletion
+     *     callbacks are made after non-interposed ones. Also note also that afterCompletion calls are always invoked in
+     *     the reverse order of the beforeCompletion calls
+     */
+    public void setSynchronizationClassNameOrder(List<String> synchronizationClassNameOrder) {
+        synchronized (this) {
+            if (synchronizationClassNameOrder != null)
+                this.synchronizationClassNameOrder = new ArrayList<>(synchronizationClassNameOrder);
+            else
+                this.synchronizationClassNameOrder = new ArrayList<>();
+        }
+    }
 }

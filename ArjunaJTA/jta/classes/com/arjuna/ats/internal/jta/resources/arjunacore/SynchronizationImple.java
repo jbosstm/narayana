@@ -34,7 +34,11 @@ package com.arjuna.ats.internal.jta.resources.arjunacore;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.SynchronizationRecord;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.List;
 
 /**
  * Whenever a synchronization is registered, an instance of this class
@@ -50,14 +54,14 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 
     public SynchronizationImple (javax.transaction.Synchronization ptr)
     {
-	_theSynch = ptr;
-	_theUid = new Uid();
+        this(ptr, false);
     }
 
 	public SynchronizationImple (javax.transaction.Synchronization ptr, boolean isInterposed) {
 		_theSynch = ptr;
 		_theUid = new Uid();
 		_isInterposed = isInterposed;
+         _order = _theSynch == null ? -1 : synchronizationClassNameOrder.indexOf(_theSynch.getClass().getName());
 	}
 
     public Uid get_uid ()
@@ -132,7 +136,23 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 		{
 			return -1;
 		}
-		else if(this._theUid.equals(other._theUid))
+        else if (_order == -1 && other._order != -1)
+        {
+            return -1;
+        }
+        else if (_order != -1)
+        {
+            if (other._order == -1)
+                return 1;
+
+            if (_order < other._order)
+                return 1;
+
+            if (_order > other._order)
+                return -1;
+        }
+
+        if(this._theUid.equals(other._theUid))
 		{
 			return 0;
 		}
@@ -153,4 +173,8 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
     private javax.transaction.Synchronization _theSynch;
     private Uid _theUid;
 	private boolean _isInterposed;
+    private int _order;
+
+    private static List<String> synchronizationClassNameOrder = BeanPopulator
+            .getDefaultInstance(JTAEnvironmentBean.class).getSynchronizationClassNameOrder();
 }

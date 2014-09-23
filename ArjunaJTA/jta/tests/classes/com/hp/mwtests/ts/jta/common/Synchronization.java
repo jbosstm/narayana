@@ -35,6 +35,7 @@ import com.arjuna.ats.jta.utils.JTAHelper;
 
 public class Synchronization implements javax.transaction.Synchronization
 {
+    TestLog log;
 	public final static int ERROR_STATUS = 0;
 	public final static int INITIAL_STATUS = 1;
 	public final static int BEFORE_COMPLETION_STATUS = 2;
@@ -42,7 +43,14 @@ public class Synchronization implements javax.transaction.Synchronization
 
 	private int _currentStatus = INITIAL_STATUS;
 
-	public int getCurrentStatus()
+    public Synchronization() {
+    }
+
+    public Synchronization(TestLog log) {
+        this.log = log;
+    }
+
+    public int getCurrentStatus()
 	{
 		return _currentStatus;
 	}
@@ -51,7 +59,10 @@ public class Synchronization implements javax.transaction.Synchronization
     {
 	try
 	{
+        if (log != null)
+            log.add(getClass().getName() + '#' + "beforeCompletion");
 	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
 
 	    if (_currentStatus != INITIAL_STATUS)
 		_currentStatus = ERROR_STATUS;
@@ -68,6 +79,8 @@ public class Synchronization implements javax.transaction.Synchronization
 
     public void afterCompletion (int status)
     {
+        if (log != null)
+            log.add(getClass().getName() + '#' + "afterCompletion");
 	try
 	{
 	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
