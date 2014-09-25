@@ -215,6 +215,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/../ArjunaCore/scripts</directory>
+			<fileMode>0755</fileMode>
 			<outputDirectory>bin</outputDirectory>
 			<filtered>true</filtered>
 			<includes>
