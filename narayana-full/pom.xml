@@ -60,6 +60,11 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.jboss.narayana.arjunacore</groupId>
+      <artifactId>arjunacore-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
       <version>${project.version}</version>
@@ -200,16 +205,6 @@
           <version>${project.version}</version>
         </dependency>
       </dependencies>
-    </profile>
-    <profile>
-      <id>community</id>
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>arjunacore-services</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
     </profile>
     <profile>
       <id>jts-ibmorb</id>
