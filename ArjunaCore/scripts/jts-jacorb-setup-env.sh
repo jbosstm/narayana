@@ -95,6 +95,6 @@ else
 	CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
 fi
 
-export CLASSPATH
+export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jts/narayana-jts-jacorb.jar
 
 fi
