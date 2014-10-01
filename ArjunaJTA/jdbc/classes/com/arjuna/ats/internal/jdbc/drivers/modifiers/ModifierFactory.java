@@ -96,4 +96,9 @@ public class ModifierFactory
     }    
 
     private static Hashtable<String,ConnectionModifier> _modifiers = new Hashtable<String,ConnectionModifier>();
+    
+    static
+    {
+	new list();
+    }
 }
