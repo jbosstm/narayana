@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import javax.sql.XAConnection;
 
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
+import com.arjuna.ats.jta.xa.XAModifier;
 
 /**
  * Instances of this class enable us to work around problems
@@ -47,7 +48,7 @@ import com.arjuna.ats.jta.exceptions.NotImplementedException;
  * @since JTS 1.2.4.
  */
 
-public interface ConnectionModifier
+public interface ConnectionModifier extends XAModifier
 {
 
     /**
@@ -61,6 +62,7 @@ public interface ConnectionModifier
  
     /**
      * Return a new connection.
+     * @deprecated This is no longer used by the transaction manager
      */
 
     public XAConnection getConnection (XAConnection conn) throws SQLException, NotImplementedException;
@@ -76,6 +78,15 @@ public interface ConnectionModifier
      */
 
     public void setIsolationLevel (Connection conn, int level) throws SQLException, NotImplementedException;
+    
+    /**
+     * This method indicates whether the driver supports TMJOIN reliably. If isSameRM returns true but does
+     * not support xares1.start(xid1,TMNOFLAGS); xares2.start(xid2, TMJOIN) then you need to make sure you 
+     * set this to true to use a wrapped XAR that returns false for the driver.
+     * 
+     * See JBTM-2264 for more details.
+     */
+    public boolean requiresSameRMOverride();
     
 }
 

@@ -197,8 +197,13 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
 	try
 	{
-	    if (_theXAResource == null)
-		_theXAResource = getConnection().getXAResource();
+	    if (_theXAResource == null) {
+	    	if (_theModifier != null && _theModifier.requiresSameRMOverride()) {
+	    		_theXAResource = new IsSameRMOverrideXAResource(getConnection().getXAResource());
+	    	} else {
+	    		_theXAResource = getConnection().getXAResource();
+	    	}
+	    }
 
 	    return _theXAResource;
 	}
