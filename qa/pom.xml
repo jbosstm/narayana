@@ -15,7 +15,7 @@
     <name>Narayana: qa</name>
     
     <properties>
-        <version.netty>3.2.5.Final</version.netty>
+        <version.org.jboss.netty>3.2.5.Final</version.org.jboss.netty>
     </properties>
 
     <repositories>
@@ -54,13 +54,11 @@
     </build>
 
     <dependencies>
-
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${version.netty}</version>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>${version.org.jboss.netty}</version>
         </dependency>
-
     </dependencies>
 
 </project>
