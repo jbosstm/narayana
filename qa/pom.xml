@@ -15,7 +15,7 @@
     <name>Narayana: qa</name>
     
     <properties>
-        <version.netty>4.0.15.Final</version.netty>
+        <version.netty>3.2.5.Final</version.netty>
     </properties>
 
     <repositories>
