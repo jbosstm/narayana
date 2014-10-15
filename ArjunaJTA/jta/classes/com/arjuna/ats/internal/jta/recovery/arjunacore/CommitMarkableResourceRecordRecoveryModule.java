@@ -299,9 +299,6 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 					}
 				} catch (NamingException e) {
-					tsLogger.logger
-							.warn("Could not lookup CommitMarkableResource: "
-									+ jndiName);
 					tsLogger.logger.debug(
 							"Could not lookup CommitMarkableResource: "
 									+ jndiName, e);
