@@ -53,6 +53,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     {
 	_theSynch = ptr;
 	_theReference = null;
+	_theClassLoader = Thread.currentThread().getContextClassLoader();
     }
 
     public final org.omg.CosTransactions.Synchronization getSynchronization ()
@@ -77,13 +78,20 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
 	if (_theSynch != null)
 	{
+	    ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+
 	    try
 	    {
+		Thread.currentThread().setContextClassLoader(_theClassLoader);
 		_theSynch.beforeCompletion();
 	    }
 	    catch (Exception e)
 	    {
 		throw new UNKNOWN();
+	    }
+	    finally
+	    {
+		Thread.currentThread().setContextClassLoader(origClassLoader);
 	    }
 	}
 	else
@@ -99,9 +107,11 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	if (_theSynch != null)
 	{
 	    int s = StatusConverter.convert(status);
+	    ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
 
 	    try
 	    {
+		Thread.currentThread().setContextClassLoader(_theClassLoader);
 		_theSynch.afterCompletion(s);
 
 		if (_theReference != null)
@@ -115,6 +125,10 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 		    ORBManager.getPOA().shutdownObject(_thePOATie);
 
 		throw new UNKNOWN(); // should not cause any affect!
+	    }
+	    finally
+	    {
+		Thread.currentThread().setContextClassLoader(origClassLoader);
 	    }
 	}
 	else
@@ -131,4 +145,5 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     private javax.transaction.Synchronization       _theSynch;
     private org.omg.CosTransactions.Synchronization _theReference;
     private org.omg.PortableServer.Servant _thePOATie;
+    private ClassLoader _theClassLoader;
 }
