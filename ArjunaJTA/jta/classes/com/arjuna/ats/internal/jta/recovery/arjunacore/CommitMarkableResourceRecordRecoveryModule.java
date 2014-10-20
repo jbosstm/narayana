@@ -179,20 +179,12 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 		// recovery is possible
 		Map<String, List<Xid>> completedBranches2 = new HashMap<String, List<Xid>>();
 		synchronized (completedBranches) {
-			Iterator<String> iterator = completedBranches.keySet().iterator();
-			while (iterator.hasNext()) {
-				String jndiName = iterator.next();
-				List<Xid> completedXids = completedBranches.remove(jndiName);
-				completedBranches2.put(jndiName, completedXids);
-			}
+            completedBranches2.putAll(completedBranches);
+			completedBranches.clear();
 		}
 
-		Iterator<String> iterator2 = completedBranches2.keySet().iterator();
-		while (iterator2.hasNext()) {
-			String jndiName = iterator2.next();
-			List<Xid> completedXids = completedBranches2.get(jndiName);
-			delete(jndiName, completedXids);
-		}
+        for (Map.Entry<String, List<Xid>> e : completedBranches2.entrySet())
+		    delete(e.getKey(), e.getValue());
 
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger
@@ -687,11 +679,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 							} else {
 								connection.commit();
 
-								Iterator<Xid> iterator = deleted.iterator();
-								while (iterator.hasNext()) {
-									XidImple xid = (XidImple) iterator.next();
-									committedXidsToJndiNames.remove(xid);
-								}
+                                committedXidsToJndiNames.keySet().removeAll(deleted);
 							}
 						} catch (IOException e) {
 							tsLogger.logger
