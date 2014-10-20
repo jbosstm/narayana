@@ -58,6 +58,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -69,6 +70,7 @@ import com.arjuna.ats.internal.jts.interposition.FactoryList;
 import com.arjuna.ats.internal.jts.interposition.ServerFactory;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicTransaction;
 import com.arjuna.ats.internal.jts.utils.Helper;
 import com.arjuna.ats.internal.jts.utils.TxStoreLog;
 import com.arjuna.ats.jts.logging.jtsLogger;
@@ -587,9 +589,17 @@ public class TransactionFactoryImple extends
 
 				switch (status)
 				{
-				case StateStatus.OS_UNKNOWN: // means no state present, so check
-											 // if server transaction
-					return ServerFactory.getOSStatus(u);
+				case StateStatus.OS_UNKNOWN:
+				    final Status heuristicStatus = getHeuristicStatus(u, recoveryStore);
+				    
+				    if (org.omg.CosTransactions.Status.StatusNoTransaction.equals(heuristicStatus)
+				            || org.omg.CosTransactions.Status.StatusUnknown.equals(heuristicStatus)) {
+				        
+				        // means no state present, so check if server transaction
+				        return ServerFactory.getOSStatus(u);
+				    }
+				    
+				    return heuristicStatus;
 				case StateStatus.OS_COMMITTED:
 					return org.omg.CosTransactions.Status.StatusCommitted;
 				case StateStatus.OS_UNCOMMITTED:
@@ -860,6 +870,27 @@ public class TransactionFactoryImple extends
 
 			return ids;
 		}
+	}
+	
+	private org.omg.CosTransactions.Status getHeuristicStatus(final Uid uid, final RecoveryStore recoveryStore)
+	        throws ObjectStoreException
+	{
+	    final int status = recoveryStore.currentState(uid, AssumedCompleteHeuristicTransaction.typeName());
+	    
+        switch (status) {
+        case StateStatus.OS_UNKNOWN:
+            return org.omg.CosTransactions.Status.StatusNoTransaction;
+        case StateStatus.OS_COMMITTED:
+            return org.omg.CosTransactions.Status.StatusCommitted;
+        case StateStatus.OS_UNCOMMITTED:
+            return org.omg.CosTransactions.Status.StatusPrepared;
+        case StateStatus.OS_HIDDEN:
+        case StateStatus.OS_COMMITTED_HIDDEN:
+        case StateStatus.OS_UNCOMMITTED_HIDDEN:
+            return org.omg.CosTransactions.Status.StatusPrepared;
+        default:
+            return org.omg.CosTransactions.Status.StatusUnknown;
+        }
 	}
 
 	private TransactionFactory _factoryRef;

@@ -45,6 +45,7 @@ import org.omg.CosTransactions.Status;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -391,7 +392,18 @@ public class RecoveredServerTransaction extends ServerTransaction implements
 
     public boolean assumeComplete ()
     {
-        _typeName = AssumedCompleteServerTransaction.typeName();
+        final int heuristicDecision = getHeuristicDecision();
+        
+        if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT
+                || heuristicDecision == TwoPhaseOutcome.HEURISTIC_HAZARD
+                || heuristicDecision == TwoPhaseOutcome.HEURISTIC_MIXED
+                || heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK) {
+
+            _typeName = AssumedCompleteHeuristicServerTransaction.typeName();
+        } else {
+            _typeName = AssumedCompleteServerTransaction.typeName();          
+        }
+    
         return true;
     }
 
