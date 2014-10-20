@@ -266,6 +266,9 @@
 
 			<exclude name="**/${astest.dir}/**/*.java" />
 
+            <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredTransactionUnitTest.java" />
+            <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredServerTransactionUnitTest.java" />
+
             <classpath>
 				<path refid="jts.classpath"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>

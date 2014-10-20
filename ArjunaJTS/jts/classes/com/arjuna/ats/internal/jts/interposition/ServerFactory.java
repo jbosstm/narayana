@@ -43,6 +43,7 @@ import org.omg.CosTransactions.Terminator;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -50,6 +51,7 @@ import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicServerTransaction;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
@@ -195,8 +197,8 @@ public class ServerFactory
 
 				switch (status)
 				{
-				case StateStatus.OS_UNKNOWN: // means no state present
-					return org.omg.CosTransactions.Status.StatusNoTransaction;
+				case StateStatus.OS_UNKNOWN:
+				    return getHeuristicStatus(u, store);
 				case StateStatus.OS_COMMITTED:
 					return org.omg.CosTransactions.Status.StatusCommitted;
 				case StateStatus.OS_UNCOMMITTED:
@@ -276,5 +278,26 @@ public class ServerFactory
 
 		return toReturn;
 	}
+	
+    private static org.omg.CosTransactions.Status getHeuristicStatus(final Uid uid, final RecoveryStore recoveryStore)
+            throws ObjectStoreException
+    {
+        final int status = recoveryStore.currentState(uid, AssumedCompleteHeuristicServerTransaction.typeName());
+
+        switch (status) {
+        case StateStatus.OS_UNKNOWN:
+            return org.omg.CosTransactions.Status.StatusNoTransaction;
+        case StateStatus.OS_COMMITTED:
+            return org.omg.CosTransactions.Status.StatusCommitted;
+        case StateStatus.OS_UNCOMMITTED:
+            return org.omg.CosTransactions.Status.StatusPrepared;
+        case StateStatus.OS_HIDDEN:
+        case StateStatus.OS_COMMITTED_HIDDEN:
+        case StateStatus.OS_UNCOMMITTED_HIDDEN:
+            return org.omg.CosTransactions.Status.StatusPrepared;
+        default:
+            return org.omg.CosTransactions.Status.StatusUnknown;
+        }
+    }
 
 }

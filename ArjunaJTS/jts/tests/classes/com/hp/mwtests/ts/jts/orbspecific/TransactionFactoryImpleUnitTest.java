@@ -19,12 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.hp.mwtests.ts.jts.interposition;
+package com.hp.mwtests.ts.jts.orbspecific;
 
 import java.io.File;
 
+import junit.framework.Assert;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,18 +39,17 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
-import com.arjuna.ats.internal.jts.interposition.ServerFactory;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
-import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicServerTransaction;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicTransaction;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 /**
  * @author <a href="gytis@redhat.com">Gytis Trikleris</a>
  */
-public final class ServerFactoryUnitTest extends TestBase {
+public final class TransactionFactoryImpleUnitTest extends TestBase {
+
+    private TransactionFactoryImple transactionFactory;
 
     @BeforeClass
     public static void beforeClass() {
@@ -59,6 +59,7 @@ public final class ServerFactoryUnitTest extends TestBase {
     @Before
     public void before() {
         clearObjectStore();
+        transactionFactory = new TransactionFactoryImple();
     }
 
     @After
@@ -68,53 +69,32 @@ public final class ServerFactoryUnitTest extends TestBase {
 
     @Test
     public void testGetOSStatusNoTransaction() throws NoTransaction, SystemException {
-        Assert.assertEquals(Status.StatusNoTransaction, ServerFactory.getOSStatus(new Uid()));
+        Assert.assertEquals(Status.StatusNoTransaction, transactionFactory.getOSStatus(new Uid()));
     }
 
     @Test
     public void testGetOSStatusWithArjunaTransactionImple() throws Exception {
         final Uid uid = new Uid();
         final OutputObjectState outputObjectState = new OutputObjectState();
-        final ServerTransaction transaction = new ServerTransaction(uid, null);
+        final ArjunaTransactionImple transaction = new ArjunaTransactionImple(uid, null);
         
         transaction.save_state(outputObjectState, ObjectType.ANDPERSISTENT);
-        StoreManager.getRecoveryStore().write_committed(uid, ServerTransaction.typeName(), outputObjectState);
+        StoreManager.getRecoveryStore().write_committed(uid, ArjunaTransactionImple.typeName(), outputObjectState);
         
-        Assert.assertEquals(Status.StatusCommitted, ServerFactory.getOSStatus(uid));
+        Assert.assertEquals(Status.StatusCommitted, transactionFactory.getOSStatus(uid));
     }
     
     @Test
-    public void testGetOSStatusWithAssumedCompleteHeuristicServerTransaction() throws Exception {
+    public void testGetOSStatusWithAssumedCompleteHeuristicTransaction() throws Exception {
         final Uid uid = new Uid();
         final OutputObjectState outputObjectState = new OutputObjectState();
-        final AssumedCompleteHeuristicServerTransaction transaction = new AssumedCompleteHeuristicServerTransaction(uid);
+        final AssumedCompleteHeuristicTransaction transaction = new AssumedCompleteHeuristicTransaction(uid);
 
         transaction.save_state(outputObjectState, ObjectType.ANDPERSISTENT);
-        StoreManager.getRecoveryStore().write_committed(uid, AssumedCompleteHeuristicServerTransaction.typeName(),
+        StoreManager.getRecoveryStore().write_committed(uid, AssumedCompleteHeuristicTransaction.typeName(),
                 outputObjectState);
 
-        Assert.assertEquals(Status.StatusCommitted, ServerFactory.getOSStatus(uid));
-    }
-
-    @Test
-    public void test () throws Exception
-    {
-        TransactionFactoryImple factory = new TransactionFactoryImple("test");
-        ControlImple tx = factory.createLocal(1000);
-        Uid u = new Uid();
-        ServerControl server = ServerFactory.create_transaction(u, null, null, tx.get_coordinator(), tx.get_terminator(), 1000);
-        
-        try
-        {
-            ServerFactory.getCurrentStatus(new Uid("", false));
-            
-            Assert.fail();
-        }
-        catch (final Throwable ex)
-        {
-        }
-
-        Assert.assertEquals(ServerFactory.getStatus(tx.get_uid()), org.omg.CosTransactions.Status.StatusActive);
+        Assert.assertEquals(Status.StatusCommitted, transactionFactory.getOSStatus(uid));
     }
 
     private void clearObjectStore() {

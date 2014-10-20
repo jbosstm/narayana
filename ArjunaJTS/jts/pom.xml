@@ -72,6 +72,12 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${env.JAVA_HOME}/lib/tools.jar</additionalClasspathElement>
+          </additionalClasspathElements>
+          <useManifestOnlyJar>false</useManifestOnlyJar>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -152,6 +158,30 @@
       <artifactId>h2</artifactId>
       <version>${version.com.h2database}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman</artifactId>
+      <scope>test</scope>
+      <version>${version.org.jboss.byteman}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-submit</artifactId>
+      <scope>test</scope>
+      <version>${version.org.jboss.byteman}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-install</artifactId>
+      <scope>test</scope>
+      <version>${version.org.jboss.byteman}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.byteman</groupId>
+      <artifactId>byteman-bmunit</artifactId>
+      <scope>test</scope>
+      <version>${version.org.jboss.byteman}</version>
     </dependency>
   </dependencies>
 
