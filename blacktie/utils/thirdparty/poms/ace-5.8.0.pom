@@ -1,9 +1,0 @@
-<project>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>ace.contrib</groupId>
-	<artifactId>ace</artifactId>
-	<name>ace</name>
-	<version>5.8.0</version>
-	<packaging>zip</packaging>
-	<description>repackage of ACE+TAO, Douglas C. Schmidt's C++ networking toolkit</description>
-</project>

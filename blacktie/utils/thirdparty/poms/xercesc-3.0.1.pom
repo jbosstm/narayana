@@ -6,4 +6,28 @@
 	<version>3.0.1</version>
 	<packaging>zip</packaging>
 	<description>a validating XML parser written in a portable subset of C++ </description>
+      <url>http://unknown</url>
+  <licenses>
+    <license>
+      <name>Unknown</name>
+      <url>http://unknown</url>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://unknown</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>satisfynexus</id>
+      <name>satisfynexus</name>
+      <email>satisfynexus.com</email>
+      <organization>satisfynexus</organization>
+      <organizationUrl>satisfynexus</organizationUrl>
+      <roles>
+        <role>satisfynexus</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+
 </project>

@@ -6,4 +6,27 @@
 	<version>1.3.3</version>
 	<packaging>jar</packaging>
 	<description>Apache Portable Runtime (APR)</description>
+      <url>http://unknown</url>
+  <licenses>
+    <license>
+      <name>Unknown</name>
+      <url>http://unknown</url>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://unknown</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>satisfynexus</id>
+      <name>satisfynexus</name>
+      <email>satisfynexus.com</email>
+      <organization>satisfynexus</organization>
+      <organizationUrl>satisfynexus</organizationUrl>
+      <roles>
+        <role>satisfynexus</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
 </project>

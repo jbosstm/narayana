@@ -6,4 +6,28 @@
 	<version>902683</version>
 	<packaging>jar</packaging>
 	<description>Re-packaging of log4cxx, a logging framework for C++ patterned after Apache log4j</description>
+      <url>http://unknown</url>
+  <licenses>
+    <license>
+      <name>Unknown</name>
+      <url>http://unknown</url>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://unknown</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>satisfynexus</id>
+      <name>satisfynexus</name>
+      <email>satisfynexus.com</email>
+      <organization>satisfynexus</organization>
+      <organizationUrl>satisfynexus</organizationUrl>
+      <roles>
+        <role>satisfynexus</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
+  </developers>
+
 </project>
