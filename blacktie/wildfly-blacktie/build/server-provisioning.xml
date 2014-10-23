@@ -21,6 +21,6 @@
   -->
 <server-provisioning xmlns="urn:wildfly:server-provisioning:1.0">
     <feature-packs>
-		<artifact groupId="org.jboss.narayana.blacktie" artifactId="wildfly-blacktie-feature-pack" version="${project.version}"/>
+		<feature-pack groupId="org.jboss.narayana.blacktie" artifactId="wildfly-blacktie-feature-pack" version="${project.version}"/>
     </feature-packs>
 </server-provisioning>
