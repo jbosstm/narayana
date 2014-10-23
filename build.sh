@@ -16,7 +16,12 @@ uname | grep Linux >> /dev/null
 if [ "$?" -ne "1" ]; then
 	uname -a | grep x86_64 >> /dev/null
 	if [ "$?" -ne "1" ]; then
-		BPA="-Dbpa=centos54x64"
+		cat /etc/redhat-release | grep "CentOS Linux release 7" >> /dev/null
+		if [ "$?" -ne "1" ]; then
+			BPA="-Dbpa=centos70x64"
+		else
+			BPA="-Dbpa=centos54x64"
+		fi
 	else
 		BPA="-Dbpa=centos55x32"
 	fi
