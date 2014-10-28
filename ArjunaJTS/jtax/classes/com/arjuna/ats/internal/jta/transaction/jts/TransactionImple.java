@@ -1142,7 +1142,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		TransactionImple tx = null;
 
-		try {
+//		try {
 		ControlWrapper otx = OTSImpleManager.current().getControlWrapper();
 
 		if (otx != null)
@@ -1181,11 +1181,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 		        }
 		    }
 		}
-		} catch (TRANSACTION_UNAVAILABLE e) {
-            if (e.minor != 1) {
-                throw e;
-            }
-        }
+		// We used to catch the TRANSACTION_UNAVAILABLE exception here but it is not clear there is a good reason to do so.
+		// It is beneficial for TransactionManager::suspend to have knowledge that the transaction is in this state to know
+		// whether it is worth trying to locate a local instance of a transaction by Uid (potentially an expensive operation)
+//		} catch (TRANSACTION_UNAVAILABLE e) {
+//            if (e.minor != 1) {
+//                throw e;
+//            }
+//        }
         
 
 		return tx;

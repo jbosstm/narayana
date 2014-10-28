@@ -35,6 +35,7 @@ import java.util.EmptyStackException;
 import java.util.Hashtable;
 import java.util.Stack;
 
+import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
@@ -50,6 +51,7 @@ import org.omg.CosTransactions.TransactionFactory;
 import org.omg.PortableInterceptor.InvalidSlot;
 
 import com.arjuna.ArjunaOTS.ActionControl;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
@@ -58,6 +60,7 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
+import com.arjuna.ats.internal.jts.utils.Helper;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
@@ -221,7 +224,7 @@ public class ContextManager
 
 		otsCurrent.remove(threadId);
 
-		disassociateContext();
+		disassociateContext(OTSManager.getLocalSlotId());
 	    }
 	}
 
@@ -753,14 +756,12 @@ public class ContextManager
 	}
     }
 
-    private final void disassociateContext () throws SystemException
+    public final void disassociateContext (int slotId) throws SystemException
     {
 	if (_piCurrent != null)
 	{
 	    try
 	    {
-		int slotId = OTSManager.getLocalSlotId();
-
 		if (slotId != -1)
 		{
 		    _piCurrent.set_slot(slotId, null);
@@ -774,6 +775,20 @@ public class ContextManager
 	    }
 	}
     }
+    
+	public Uid getReceivedCoordinatorUid() throws InvalidSlot {
+		Any ctx = _piCurrent.get_slot(OTSManager.getReceivedSlotId());
+		if (ctx != null && ctx.type().kind().value() != TCKind._tk_null)
+		{
+			PropagationContext theContext = org.omg.CosTransactions.PropagationContextHelper.extract(ctx);
+			if (theContext.current.coord == null) // nothing to use!!
+				return null;
+			else
+				return Helper.getUid(Helper.getUidCoordinator(theContext.current.coord));
+		} 
+		else
+			return null;		
+	}
 
     private Hashtable otsCurrent = new Hashtable();
 
