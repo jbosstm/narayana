@@ -79,9 +79,11 @@ public void pre_init (ORBInitInfo init_info)
 
 	int localSlot = init_info.allocate_slot_id();
 	int receivedSlot = init_info.allocate_slot_id();
+    int rcDataSlot = init_info.allocate_slot_id();
 
 	OTSManager.setLocalSlotId(localSlot);
 	OTSManager.setReceivedSlotId(receivedSlot);
+    OTSManager.setRCSlotId(rcDataSlot);
 
 	/*
 	 * Get the CDR codec; used for encoding/decoding the service
@@ -120,7 +122,7 @@ public void pre_init (ORBInitInfo init_info)
 		jtsLogger.logger.trace("InterpositionORBInitializerImpl - registering ClientRequestInterceptor");
 	    }
 
-	    ClientRequestInterceptor client_interceptor = new InterpositionClientRequestInterceptorImpl(localSlot, cdr_codec);
+	    ClientRequestInterceptor client_interceptor = new InterpositionClientRequestInterceptorImpl(localSlot, rcDataSlot, cdr_codec);
 
 	    init_info.add_client_request_interceptor(client_interceptor);
 	}
@@ -143,7 +145,7 @@ public void pre_init (ORBInitInfo init_info)
 		jtsLogger.logger.trace("InterpositionORBInitializerImpl - registering ServerRequestInterceptor");
 	    }
 
-	    ServerRequestInterceptor server_interceptor = new InterpositionServerRequestInterceptorImpl(receivedSlot, cdr_codec);
+	    ServerRequestInterceptor server_interceptor = new InterpositionServerRequestInterceptorImpl(receivedSlot, rcDataSlot, cdr_codec);
 
 	    init_info.add_server_request_interceptor(server_interceptor);
 	}

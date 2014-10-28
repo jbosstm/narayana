@@ -32,6 +32,7 @@
 package com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.interposition;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.ibm.CORBA.iiop.ORB;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
@@ -114,7 +115,7 @@ class InterpositionServerRequestInterceptorImpl extends LocalObject implements S
      * (i) we define otsNeedTranContext to FALSE.
      */
 
-public InterpositionServerRequestInterceptorImpl (int dataSlot, Codec codec)
+public InterpositionServerRequestInterceptorImpl(int dataSlot, int rcDataSlot, Codec codec)
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
@@ -122,6 +123,7 @@ public InterpositionServerRequestInterceptorImpl (int dataSlot, Codec codec)
 	}
 
 	_dataSlot = dataSlot;
+    _rcDataSlot = rcDataSlot;
 	_codec = codec;
     }
 
@@ -147,6 +149,25 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	{
 	    try
 	    {
+            try {
+                // check to see if there is a recovery coordinator service context
+                ServiceContext rcContext = request_info.get_request_service_context(OTSManager.recoveryContextId);
+                /*
+                 * since no BAD_PARAM exception was raised the request must carry recovery coordinator data:
+                 *
+                 * put the passed context data into the request info which will be placed in PICurrent so that
+                 * the target object of the request can access the data
+                 */
+                Any any = ORB.init().create_any();
+
+                any.insert_string(new String(rcContext.context_data));
+
+                request_info.set_slot(_rcDataSlot, any);
+            } catch (BAD_PARAM e) {
+                // no recovery coordinator service context
+            } catch (Exception e) {
+            }
+
 		if (!InterceptorInfo.getAlwaysPropagate())
 		{
 		    if (!request_info.target_is_a(TransactionalObjectHelper.id()))
@@ -231,7 +252,7 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	 * reason?
 	 * Yes, so that we can do low-cost abort and registration.
 	 *
-	 * //    PropagationContext* ctx = theCoordinator->get_txcontext();
+	 * //    PropagationContextUtil* ctx = theCoordinator->get_txcontext();
 	 */
 
 	if (jtsLogger.logger.isTraceEnabled())
@@ -345,4 +366,5 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 
 private Codec _codec;
 private int   _dataSlot;
+private int   _rcDataSlot;  // recovery coordinator service context data
 }

@@ -26,35 +26,37 @@
 package com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-//import com.sun.corba.se.impl.ior.IORImpl;
-//import com.sun.corba.se.impl.orbutil.ORBUtility;
-//import com.sun.corba.se.spi.ior.IORFactories;
-//import com.sun.corba.se.spi.ior.ObjectId;
+import com.arjuna.ats.jts.OTSManager;
+import org.omg.CosTransactions.RecoveryCoordinator;
 import org.omg.CosTransactions.RecoveryCoordinatorHelper;
 import org.omg.CosTransactions._RecoveryCoordinatorStub;
+import com.ibm.rmi.corba.ClientDelegate;
+import org.omg.CORBA.portable.Delegate;
+import com.ibm.CORBA.iiop.IOR;
 
-/**
- * Construct a recovery IOR for use with the default ORB bundled with the default JDK
- */
 public class RecoverIOR
 {
-    static String getIORFromString(org.omg.CORBA.ORB orb, String str, String Key )
-    {
-        com.ibm.CORBA.iiop.ORB sun_orb = (com.ibm.CORBA.iiop.ORB) orb;
+    static org.omg.CORBA.Object addRCProfile(org.omg.CORBA.ORB orb, org.omg.CORBA.Object rcAsObject, byte[] key) {
+        Delegate delegate = ((_RecoveryCoordinatorStub) rcAsObject)._get_delegate();
+        ClientDelegate cd = (ClientDelegate) delegate;
+        IOR ior = cd.marshal();
 
-        // calculate the new object key
-        String object_key = JavaIdlRCServiceInit.RC_KEY;
-        int position = object_key.indexOf(JavaIdlRCServiceInit.RC_ID);
-        String new_object_key = object_key.substring(0, position).concat(Key);
-        org.omg.CORBA.Object corbject = ORBManager.getORB().orb().string_to_object(str);
+        ior.getProfile().putTaggedComponent(OTSManager.RC_IOP_PROFILE_TAG, key, true);
 
-//        com.sun.corba.se.spi.ior.IOR ior = IORFactories.getIOR(corbject);
-//        ObjectId oid = IORFactories.makeObjectId(new_object_key.getBytes());
-//        IORImpl new_ior = new IORImpl(sun_orb, RecoveryCoordinatorHelper.id(), ior.getIORTemplates(), oid);
-
-//        return new_ior.stringify();
-
-        return ((_RecoveryCoordinatorStub) corbject)._get_delegate().toString();
+        return orb.string_to_object(ior.stringify());
     }
 
+    /**
+     * return a recovery coordinator that contains an extra profile that encodes the details of the actual RC
+     * @param key recovery data
+     * @return recovery coordinator
+     */
+    static RecoveryCoordinator getRecoveryCoordinator(String key) {
+        org.omg.CORBA.ORB orb = ORBManager.getORB().orb();
+        org.omg.CORBA.Object rcAsObject = orb.string_to_object(JavaIdlRCManager.getRecoveryCoordinatorRef()) ;
+
+        rcAsObject = addRCProfile(orb, rcAsObject, key.getBytes());
+
+        return RecoveryCoordinatorHelper.narrow(rcAsObject);
+    }
 }

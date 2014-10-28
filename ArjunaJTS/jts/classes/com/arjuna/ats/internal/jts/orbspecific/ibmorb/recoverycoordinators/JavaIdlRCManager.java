@@ -83,12 +83,12 @@ public class JavaIdlRCManager implements RcvCoManager
 
             if (ref_ReCoo != null)
             {
-                // New for IOR template
-                String new_ior = RecoverIOR.getIORFromString(ORBManager.getORB().orb(), ref_ReCoo, rcObjectId);
-                org.omg.CORBA.Object rcAsObject = ORBManager.getORB().orb().string_to_object(new_ior);
-                //End for IOR Template
-
-                rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
+                /*
+                 * update the IOR to contain a profile to carry the recovery coordinator specific data
+                 * - with the other orbs (idlj and jacorb) we encode the data in the object key but this
+                 * technique does not work with the IBM orb
+                 */
+                rc = RecoverIOR.getRecoveryCoordinator(rcObjectId);
 
                 if (jtsLogger.logger.isDebugEnabled()) {
                     jtsLogger.logger.debug("JavaIdlRCManager: Created reference for tran "+tranUid+" = "+rc);
@@ -149,6 +149,10 @@ public class JavaIdlRCManager implements RcvCoManager
                 }
             }
         }
+    }
+
+    public static String getRecoveryCoordinatorRef() {
+        return ref_ReCoo;
     }
 
     static protected String ref_ReCoo = null;

@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.jts.orbspecific;
 
 import java.util.Enumeration;
 
+import com.arjuna.ats.internal.jts.utils.ReceivedSlotData;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.CompletionStatus;
@@ -120,8 +121,11 @@ public class TransactionFactoryImple extends
 		if (_factoryRef == null)
 		{
 			ORBManager.getPOA().objectIsReady(this);
-
+            // IBM orb clears the received data from PICurrent during the narrow - save it
+            ReceivedSlotData receivedSlotData = new ReceivedSlotData();
 			_factoryRef = org.omg.CosTransactions.TransactionFactoryHelper.narrow(ORBManager.getPOA().corbaReference(this));
+            // and now restore it
+            receivedSlotData.restoreSlot();
 		}
 
 		return _factoryRef;

@@ -32,13 +32,7 @@
 package com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.interposition;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import org.omg.CORBA.Any;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.LocalObject;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.TCKind;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.*;
 import org.omg.CosTransactions.Coordinator;
 import org.omg.CosTransactions.PropagationContext;
 import org.omg.CosTransactions.PropagationContextHelper;
@@ -50,6 +44,10 @@ import org.omg.IOP.ServiceContext;
 import org.omg.PortableInterceptor.ClientRequestInfo;
 import org.omg.PortableInterceptor.ClientRequestInterceptor;
 
+import com.ibm.CORBA.iiop.IOR;
+import com.ibm.rmi.corba.ClientDelegate;
+import org.omg.CORBA.portable.Delegate;
+
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -57,6 +55,7 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import org.omg.PortableInterceptor.InvalidSlot;
 
 /**
  * PortableInterceptor::ClientRequestInterceptor implementation which adds a 
@@ -120,7 +119,7 @@ class InterpositionClientRequestInterceptorImpl extends LocalObject implements C
      * (i) we define otsNeedTranContext to FALSE.
      */
 
-public InterpositionClientRequestInterceptorImpl (int localSlot, Codec codec)
+public InterpositionClientRequestInterceptorImpl(int localSlot, int rcDataSlot, Codec codec)
     {
 	if (jtsLogger.logger.isTraceEnabled())
 	{
@@ -128,6 +127,7 @@ public InterpositionClientRequestInterceptorImpl (int localSlot, Codec codec)
 	}
 
 	_localSlot = localSlot;
+        _rcDataSlot = rcDataSlot;
 	_codec = codec;
     }
 
@@ -153,7 +153,9 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 	if (systemCall(request_info))
 	    return;
 
-	final boolean otsAlwaysPropagate = InterceptorInfo.getAlwaysPropagate() ;
+    addServiceContexts(request_info);
+
+    final boolean otsAlwaysPropagate = InterceptorInfo.getAlwaysPropagate() ;
 	try
 	{
 	    if (!otsAlwaysPropagate)
@@ -347,7 +349,45 @@ private final boolean systemCall (ClientRequestInfo request_info)
 	    return false;
     }
 
+    /**
+     * Add any ibm specific service contexts. The only one we add is for recovery coordinator specific data
+     *
+     * @param ri client request details
+     */
+    private void addServiceContexts(ClientRequestInfo ri) {
+        Delegate delegate = ((org.omg.CORBA.portable.ObjectImpl) ri.effective_target())._get_delegate();
+        ClientDelegate cd = (ClientDelegate) delegate;
+
+        IOR ior = cd.marshal();
+
+        /*
+         * a RC target contains an extra profile to carry RC specific data - if it is present then
+         * extract it from the profile and put it into a service context
+         */
+
+        byte[] encodedRCBytes = ior.getProfile().getTaggedComponent(OTSManager.RC_IOP_PROFILE_TAG);
+
+        if (encodedRCBytes == null)
+            return;  // nothing to add
+
+        try {
+            Any indicator = ri.get_slot(_rcDataSlot);
+
+            if (indicator.type().kind().equals(TCKind.tk_null)) {
+                // mark the slot as filled
+                indicator = ORB.init().create_any();
+                indicator.insert_boolean(true);
+
+                ri.add_request_service_context(new ServiceContext(OTSManager.recoveryContextId, encodedRCBytes), true);
+            }
+        } catch (InvalidSlot invalidSlot) {
+            if (jtsLogger.logger.isTraceEnabled())
+                jtsLogger.logger.trace("Invalid RC data slot");
+        }
+    }
+
 private int   _localSlot;
+private int   _rcDataSlot;
 private Codec _codec;
 private ThreadLocal _inUse = new ThreadLocal();
 }
