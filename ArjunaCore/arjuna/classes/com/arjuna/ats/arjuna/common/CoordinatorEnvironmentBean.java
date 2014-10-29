@@ -80,6 +80,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     @FullPropertyName(name = "com.arjuna.ats.coordinator.checkedActionFactory")
     private volatile String checkedActionFactoryClassName = "com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple";
     private volatile CheckedActionFactory checkedActionFactory = null;
+    
+    private volatile boolean allowCheckedActionFactoryOverride; 
 
     private volatile boolean alternativeRecordOrdering = false;
 
@@ -797,4 +799,26 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setAsyncAfterSynchronization(boolean asyncAfterSynchronization) {
         this.asyncAfterSynchronization = asyncAfterSynchronization;
     }
+
+    /**
+     * Returns true if configured to allow the checked action factory to be overriden
+     *
+     * Default: true
+     *
+     * @return true if checked action factory can be overriden, false otherwise.
+     */
+    public boolean isAllowCheckedActionFactoryOverride() {
+		return allowCheckedActionFactoryOverride;
+	}
+
+    /**
+     * Can be enabled to allow the checked action factory to be overridden at runtime
+     *
+     * @param allowCheckedActionFactoryOverride Allow the checked action factory to be overriden
+     */
+    public void setAllowCheckedActionFactoryOverride(
+			boolean allowCheckedActionFactoryOverride) {
+		this.allowCheckedActionFactoryOverride = allowCheckedActionFactoryOverride;
+	}   
+    
 }
