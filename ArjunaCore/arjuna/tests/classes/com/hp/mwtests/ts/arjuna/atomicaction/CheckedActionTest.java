@@ -26,13 +26,18 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
 
 
 
 public class CheckedActionTest
 {
-    @Test
+    protected boolean called;
+
+	@Test
     public void test()
     {
         arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactoryClassName(DummyCheckedAction.class.getName());
@@ -74,4 +79,102 @@ public class CheckedActionTest
         assertTrue(DummyCheckedAction.factoryCalled());
         assertTrue(DummyCheckedAction.called());
     }
+    
+
+	private int factory1Called = 0;
+	private int factory2Called = 0;
+	private int factory3Called = 0;
+
+	@Test
+	public void testCanChangeCheckedActionFactory() {
+		{
+			arjPropertyManager.getCoordinatorEnvironmentBean()
+					.setCheckedActionFactory(new CheckedActionFactory() {
+						@Override
+						public CheckedAction getCheckedAction(Uid txId,
+								String actionType) {
+							factory1Called++;
+							return null;
+						}
+					});
+			AtomicAction A = new AtomicAction();
+			A.begin();
+			A.commit();
+		}
+
+		{
+			arjPropertyManager.getCoordinatorEnvironmentBean()
+					.setCheckedActionFactory(new CheckedActionFactory() {
+						@Override
+						public CheckedAction getCheckedAction(Uid txId,
+								String actionType) {
+							factory2Called++;
+							return null;
+						}
+					});
+			AtomicAction A = new AtomicAction();
+			A.begin();
+			A.commit();
+		}
+		arjPropertyManager.getCoordinatorEnvironmentBean()
+				.setAllowCheckedActionFactoryOverride(true);
+		{
+			arjPropertyManager.getCoordinatorEnvironmentBean()
+					.setCheckedActionFactory(new CheckedActionFactory() {
+						@Override
+						public CheckedAction getCheckedAction(Uid txId,
+								String actionType) {
+							factory3Called++;
+							return null;
+						}
+					});
+			AtomicAction A = new AtomicAction();
+			A.begin();
+			A.commit();
+		}
+
+		assertTrue(factory1Called == 2);
+		assertTrue(factory2Called == 0);
+		assertTrue(factory3Called == 1);
+
+		arjPropertyManager.getCoordinatorEnvironmentBean()
+				.setAllowCheckedActionFactoryOverride(false);
+
+		{
+			arjPropertyManager.getCoordinatorEnvironmentBean()
+					.setCheckedActionFactory(new CheckedActionFactory() {
+						@Override
+						public CheckedAction getCheckedAction(Uid txId,
+								String actionType) {
+							factory2Called++;
+							return null;
+						}
+					});
+			AtomicAction A = new AtomicAction();
+			A.begin();
+			A.commit();
+		}
+		assertTrue(factory1Called == 3);
+		assertTrue(factory2Called == 0);
+
+		arjPropertyManager.getCoordinatorEnvironmentBean()
+				.setAllowCheckedActionFactoryOverride(true);
+
+		{
+			arjPropertyManager.getCoordinatorEnvironmentBean()
+					.setCheckedActionFactory(new CheckedActionFactory() {
+						@Override
+						public CheckedAction getCheckedAction(Uid txId,
+								String actionType) {
+							factory2Called++;
+							return null;
+						}
+					});
+			AtomicAction A = new AtomicAction();
+			A.begin();
+			A.commit();
+		}
+		assertTrue(factory1Called == 3);
+		assertTrue(factory2Called == 1);
+	}
 }
