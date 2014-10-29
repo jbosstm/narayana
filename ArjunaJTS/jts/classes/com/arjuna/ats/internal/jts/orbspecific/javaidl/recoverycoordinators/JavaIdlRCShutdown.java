@@ -38,7 +38,7 @@ public class JavaIdlRCShutdown extends PreShutdown
 
     public JavaIdlRCShutdown()
     {
-        super("JavaIdlRCShutdown");
+        super("IBMOrbRCShutdown");
     }
 
     public void work ()

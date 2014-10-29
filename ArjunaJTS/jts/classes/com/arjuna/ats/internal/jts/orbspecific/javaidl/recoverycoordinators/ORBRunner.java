@@ -65,7 +65,7 @@ public class ORBRunner extends Thread
         {
         }
 
-        //JavaIdlRCServiceInit.orbRunnerCompleted();
+        //IBMOrbRCServiceInit.orbRunnerCompleted();
     }
 
 }

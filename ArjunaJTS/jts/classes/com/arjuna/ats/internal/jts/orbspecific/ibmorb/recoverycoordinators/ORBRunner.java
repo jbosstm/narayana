@@ -46,7 +46,7 @@ public class ORBRunner extends Thread
     {
         try
         {
-            JavaIdlRCServiceInit._orb.orb().run();
+            IBMOrbRCServiceInit._orb.orb().run();
         }
         catch (Throwable e)
         {
@@ -55,17 +55,17 @@ public class ORBRunner extends Thread
 
         try
         {
-            if (JavaIdlRCServiceInit._oa != null)
-                JavaIdlRCServiceInit._oa.destroy();
+            if (IBMOrbRCServiceInit._oa != null)
+                IBMOrbRCServiceInit._oa.destroy();
 
-            if (JavaIdlRCServiceInit._orb != null)
-                JavaIdlRCServiceInit._orb.shutdown();
+            if (IBMOrbRCServiceInit._orb != null)
+                IBMOrbRCServiceInit._orb.shutdown();
         }
         catch (Exception ex)
         {
         }
 
-        //JavaIdlRCServiceInit.orbRunnerCompleted();
+        //IBMOrbRCServiceInit.orbRunnerCompleted();
     }
 
 }

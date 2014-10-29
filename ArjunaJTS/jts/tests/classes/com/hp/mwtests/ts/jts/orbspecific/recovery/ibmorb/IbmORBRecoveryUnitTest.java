@@ -34,15 +34,15 @@ package com.hp.mwtests.ts.jts.orbspecific.recovery.ibmorb;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.IBMOrbRCServiceInit;
+import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.IBMOrbRCShutdown;
+import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.IBMOrbRecoveryInit;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.omg.CosTransactions.RecoveryCoordinator;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.JavaIdlRCManager;
-import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.JavaIdlRCServiceInit;
-import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.JavaIdlRCShutdown;
-import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.JavaIdlRecoveryInit;
+import com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.IBMOrbRCManager;
 import com.hp.mwtests.ts.jts.resources.TestBase;
 
 public class IbmORBRecoveryUnitTest extends TestBase
@@ -50,7 +50,7 @@ public class IbmORBRecoveryUnitTest extends TestBase
     @Test
     public void testORBRCManager () throws Exception
     {
-        JavaIdlRCManager manager = new JavaIdlRCManager();
+        IBMOrbRCManager manager = new IBMOrbRCManager();
         RecoveryCoordinator rc = manager.makeRC(new Uid(), new Uid(), new Uid(), false);
 
         assertTrue(rc == null);
@@ -62,7 +62,7 @@ public class IbmORBRecoveryUnitTest extends TestBase
     @Test
     public void testORBRCShutdown () throws Exception
     {
-        JavaIdlRCShutdown shutdown = new JavaIdlRCShutdown();
+        IBMOrbRCShutdown shutdown = new IBMOrbRCShutdown();
 
         shutdown.work();
     }
@@ -71,26 +71,26 @@ public class IbmORBRecoveryUnitTest extends TestBase
     @Ignore // TODO this needs fixing
     public void testInit () throws Exception
     {
-        JavaIdlRCServiceInit init = new JavaIdlRCServiceInit();
+        IBMOrbRCServiceInit init = new IBMOrbRCServiceInit();
 
         assertFalse(init.startRCservice());
 
-        JavaIdlRCServiceInit.shutdownRCService();
+        IBMOrbRCServiceInit.shutdownRCService();
 
-        assertTrue(JavaIdlRCServiceInit.type() != null);
+        assertTrue(IBMOrbRCServiceInit.type() != null);
     }
 
     @Test
     @Ignore // TODO this needs fixing
     public void testRecoveryInit () throws Exception
     {
-        JavaIdlRCServiceInit init = new JavaIdlRCServiceInit();
+        IBMOrbRCServiceInit init = new IBMOrbRCServiceInit();
 
         assertFalse(init.startRCservice());
 
-        JavaIdlRecoveryInit rinit = new JavaIdlRecoveryInit();
+        IBMOrbRecoveryInit rinit = new IBMOrbRecoveryInit();
 
-        JavaIdlRCServiceInit.shutdownRCService();
+        IBMOrbRCServiceInit.shutdownRCService();
     }
 /*
     @Test

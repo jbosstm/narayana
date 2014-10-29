@@ -76,7 +76,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
         String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
 
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCServiceInit.getRCPOA " + rcServiceName);
+            jtsLogger.logger.debug("IBMOrbRCServiceInit.getRCPOA " + rcServiceName);
         }
 
         if (_poa == null)
@@ -213,7 +213,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                 }
 
                 if (jtsLogger.logger.isDebugEnabled()) {
-                    jtsLogger.logger.debug("JavaIdlRCServiceInit - set default servant and activated");
+                    jtsLogger.logger.debug("IBMOrbRCServiceInit - set default servant and activated");
                 }
 
                 // activate the poa

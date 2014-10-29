@@ -33,17 +33,17 @@ package com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators;
 
 import com.arjuna.orbportability.oa.PreShutdown;
 
-public class JavaIdlRCShutdown extends PreShutdown
+public class IBMOrbRCShutdown extends PreShutdown
 {
 
-    public JavaIdlRCShutdown()
+    public IBMOrbRCShutdown()
     {
-        super("JavaIdlRCShutdown");
+        super("IBMOrbRCShutdown");
     }
 
     public void work ()
     {
-        JavaIdlRCServiceInit.shutdownRCService();
+        IBMOrbRCServiceInit.shutdownRCService();
     }
 
 }

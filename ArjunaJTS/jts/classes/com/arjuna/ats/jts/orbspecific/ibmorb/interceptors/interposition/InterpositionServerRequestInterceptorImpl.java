@@ -252,7 +252,7 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	 * reason?
 	 * Yes, so that we can do low-cost abort and registration.
 	 *
-	 * //    PropagationContextUtil* ctx = theCoordinator->get_txcontext();
+	 * //    PropagationContext* ctx = theCoordinator->get_txcontext();
 	 */
 
 	if (jtsLogger.logger.isTraceEnabled())

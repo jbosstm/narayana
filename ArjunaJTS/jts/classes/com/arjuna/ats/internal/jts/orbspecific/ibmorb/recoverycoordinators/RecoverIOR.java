@@ -53,7 +53,7 @@ public class RecoverIOR
      */
     static RecoveryCoordinator getRecoveryCoordinator(String key) {
         org.omg.CORBA.ORB orb = ORBManager.getORB().orb();
-        org.omg.CORBA.Object rcAsObject = orb.string_to_object(JavaIdlRCManager.getRecoveryCoordinatorRef()) ;
+        org.omg.CORBA.Object rcAsObject = orb.string_to_object(IBMOrbRCManager.getRecoveryCoordinatorRef()) ;
 
         rcAsObject = addRCProfile(orb, rcAsObject, key.getBytes());
 

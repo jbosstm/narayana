@@ -19,56 +19,49 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 2003,            
+ * Copyright (C) 1999, 2000,
  *
- * Arjuna Technologies Limited,
+ * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.
+ * UK.  
  *
- * $Id: ServerInitializer.java 2342 2006-03-30 13:06:17Z  $                                                                 
+ * $Id: JacOrbRecoveryInit.java 2342 2006-03-30 13:06:17Z  $
  */
 
 package com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators;
 
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
+import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RcvCoManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
-import org.omg.PortableInterceptor.ORBInitInfo;
-import org.omg.PortableInterceptor.ORBInitializer;
 
 /**
- * This class registers the ServerForwardInterceptor 
- * with the ORB.
+ * Initialises Java IDL orb RecoveryCoordinator IOR creation mechanism
  *
- * @author Malik Saheb
+ * An instance of this class is constructed by RecoveryEnablement and 
+ * registered as an OAAttribute whose initialise method is called after
+ * root POA is set up
+ *
+ * All orbs are likely to be the same, constructing a GenericRecoveryCreator,
+ * but with an orb-specific manager
  *
  */
 
-public class ServerInitializer
-        extends org.omg.CORBA.LocalObject
-        implements ORBInitializer
+public class IBMOrbRecoveryInit
 {
-
-    public ServerInitializer() {
-    }
-
-    /**
-     * This method resolves the NameService and registers the 
-     * interceptor.
-     */
-
-    public void post_init(ORBInitInfo info)
+    public IBMOrbRecoveryInit()
     {
-        try
-        {
-            org.omg.CORBA.ORB theORB = ((com.sun.corba.se.impl.interceptors.ORBInitInfoImpl)info).getORB();
+        RcvCoManager theManager = new IBMOrbRCManager();
 
-            info.add_server_request_interceptor (new ServerRecoveryInterceptor(theORB));
-        }
-        catch (Exception e) {
-            jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_ServerInitializer_1(e);
+        // and register it (which will cause creation of a GenericRecoveryCreator
+        // and it's registration with CosTransactions)
+        GenericRecoveryCreator.register(theManager);
+
+        if (jtsLogger.logger.isDebugEnabled()) {
+            jtsLogger.logger.debug("IBMOrb RecoveryCoordinator creator setup");
         }
     }
 
-    public void pre_init(ORBInitInfo info) {
-    }
-} // ServerInitializer
+}
+
+

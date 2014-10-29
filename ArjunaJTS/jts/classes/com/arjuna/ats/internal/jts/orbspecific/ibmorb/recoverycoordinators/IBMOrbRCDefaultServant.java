@@ -45,7 +45,7 @@ import org.omg.CosTransactions.Status;
 import org.omg.PortableInterceptor.InvalidSlot;
 
 
-public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
+public class IBMOrbRCDefaultServant extends GenericRecoveryCoordinator
 {
     private ORB _ourOrb;
 
@@ -55,13 +55,13 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
      * constructor supplies orb - used only within package
      * @param orb which orb to use
      */
-    JavaIdlRCDefaultServant(ORB orb)
+    IBMOrbRCDefaultServant(ORB orb)
     {
         super();    // ensure id is null
         _ourOrb = orb;
 
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant(orb)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant(orb)");
         }
 
     }
@@ -86,7 +86,7 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
     public Status replay_completion ( Resource res ) throws SystemException, NotPrepared
     {
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant::replay_completion)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant::replay_completion)");
         }
 
         try

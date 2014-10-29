@@ -36,14 +36,12 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.GenericRecoveryCoordinator;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RcvCoManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import org.omg.CORBA.NO_IMPLEMENT;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.RecoveryCoordinator;
-import org.omg.CosTransactions.RecoveryCoordinatorHelper;
 
 /**
  * Implementation of RecoveryCreator for ibmorb orb
@@ -53,9 +51,9 @@ import org.omg.CosTransactions.RecoveryCoordinatorHelper;
  * of this process.
  */
 
-public class JavaIdlRCManager implements RcvCoManager
+public class IBMOrbRCManager implements RcvCoManager
 {
-    public JavaIdlRCManager()
+    public IBMOrbRCManager()
     {
     }
 
@@ -91,12 +89,12 @@ public class JavaIdlRCManager implements RcvCoManager
                 rc = RecoverIOR.getRecoveryCoordinator(rcObjectId);
 
                 if (jtsLogger.logger.isDebugEnabled()) {
-                    jtsLogger.logger.debug("JavaIdlRCManager: Created reference for tran "+tranUid+" = "+rc);
+                    jtsLogger.logger.debug("IBMOrbRCManager: Created reference for tran "+tranUid+" = "+rc);
                 }
             }
             else
             {
-                if (JavaIdlRCManager._runWithoutDaemon)
+                if (IBMOrbRCManager._runWithoutDaemon)
                     throw new NO_IMPLEMENT();
                 else {
                     jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCManager_3();
@@ -134,7 +132,7 @@ public class JavaIdlRCManager implements RcvCoManager
                 try
                 {
                     ParticipantStore participantStore = StoreManager.getCommunicationStore();
-                    InputObjectState iState = participantStore.read_committed(new Uid( JavaIdlRCServiceInit.uid4Recovery), JavaIdlRCServiceInit.type());
+                    InputObjectState iState = participantStore.read_committed(new Uid( IBMOrbRCServiceInit.uid4Recovery), IBMOrbRCServiceInit.type());
 
                     if (iState != null)
                         ref_ReCoo = iState.unpackString();

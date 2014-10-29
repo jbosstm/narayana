@@ -98,7 +98,7 @@ public class JavaIdlRCManager implements RcvCoManager
                 rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
 
                 if (jtsLogger.logger.isDebugEnabled()) {
-                    jtsLogger.logger.debug("JavaIdlRCManager: Created reference for tran "+tranUid+" = "+rc);
+                    jtsLogger.logger.debug("IBMOrbRCManager: Created reference for tran "+tranUid+" = "+rc);
                 }
             }
             else
