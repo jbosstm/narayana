@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.interposition;
 
+import com.arjuna.ats.jts.orbspecific.ibmorb.interceptors.PICurrentSlotAccessor;
 import org.omg.CORBA.LocalObject;
 import org.omg.IOP.Codec;
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
@@ -79,11 +80,12 @@ public void pre_init (ORBInitInfo init_info)
 
 	int localSlot = init_info.allocate_slot_id();
 	int receivedSlot = init_info.allocate_slot_id();
-    int rcDataSlot = init_info.allocate_slot_id();
+	int rcDataSlot = init_info.allocate_slot_id();
 
 	OTSManager.setLocalSlotId(localSlot);
 	OTSManager.setReceivedSlotId(receivedSlot);
-    OTSManager.setRCSlotId(rcDataSlot);
+	OTSManager.setRCSlotId(rcDataSlot);
+	OTSManager.setSlotAccessor(new PICurrentSlotAccessor());
 
 	/*
 	 * Get the CDR codec; used for encoding/decoding the service

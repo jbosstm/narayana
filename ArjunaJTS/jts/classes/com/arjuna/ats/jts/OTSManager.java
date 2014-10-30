@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts;
 
+import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
@@ -324,12 +325,27 @@ public class OTSManager
     {
 	com.arjuna.ats.internal.jts.ORBManager.setPOA(thePoa);
     }
-    
+
+    public static PICurrentSlotAccessorInterface getSlotAccessor() {
+        return _slotAccessor;
+    }
+
+    public static void setSlotAccessor(PICurrentSlotAccessorInterface _slotAccessor) {
+        OTSManager._slotAccessor = _slotAccessor;
+    }
+
     public static final int serviceId = 0xDEADBEEF;
 
     private static int _localSlotId = -1;
     private static int _receivedSlotId = -1;
     private static int _rcSlotId = -1;
+
+    private static PICurrentSlotAccessorInterface _slotAccessor = new PICurrentSlotAccessorInterface() {
+        @Override public Any getData() {return null;}
+        @Override public void putData(Any any) {}
+        @Override public Any getData(int slotId) {return null;}
+        @Override public void putData(int slotId, Any any) {}
+    };
 
     /**
      * In contrast to other orbs, when running with the IBM orb we encode recovery data for
