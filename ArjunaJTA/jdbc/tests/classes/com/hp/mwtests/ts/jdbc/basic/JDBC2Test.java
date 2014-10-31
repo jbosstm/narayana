@@ -40,21 +40,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import javax.sql.XADataSource;
+
+import org.h2.Driver;
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arjuna.ats.internal.jdbc.DynamicClass;
 import com.arjuna.ats.jdbc.TransactionalDriver;
 
-public class JDBC2Test
+public class JDBC2Test implements DynamicClass
 {
-    public static final int CLOUDSCAPE = 0;
-    public static final int ORACLE = 1;
-    public static final int SEQUELINK = 2;
-    public static final int JNDI = 3;
-
 	protected Connection conn = null;
 	protected Connection conn2 = null;
-	protected boolean commit = false;
+	protected boolean commit = true;
 	protected boolean nested = false;
 	protected boolean reuseconn = false;
 	protected Properties dbProperties = null;
@@ -63,105 +63,17 @@ public class JDBC2Test
     @Before
 	public void setup() throws Exception
     {
-        int dbType = JNDI;
-        String user = null;//"test";
-        String password = null;//"test";
-        String dynamicClass = null; //"com.arjuna.ats.internal.jdbc.drivers.jndi";
-        String host = null;
-        String port = null;
-/*
-        for (int i = 0; i < args.length; i++)
-        {
-            if (args[i].compareTo("-oracle") == 0)
-            {
-                dbType = ORACLE;
-                user = "tester";
-                password = "tester";
-                dynamicClass = "com.arjuna.ats.internal.jdbc.drivers.oracle_8_1_6";
-            }
-            if (args[i].equalsIgnoreCase("-jndi"))
-            {
-                dbType = JNDI;
-                dynamicClass = "com.arjuna.ats.internal.jdbc.drivers.jndi";
-            }
-
-            if (args[i].compareTo("-host") == 0)
-                host = args[i + 1];
-            if (args[i].compareTo("-port") == 0)
-                port = args[i + 1];
-            if (args[i].compareTo("-commit") == 0)
-                commit = true;
-            if (args[i].compareTo("-nested") == 0)
-                nested = true;
-            if (args[i].compareTo("-reuseconn") == 0)
-                reuseconn = true;
-            if (args[i].compareTo("-url") == 0)
-                url = args[i + 1];
-            if (args[i].compareTo("-dynamicClass") == 0)
-                dynamicClass = args[i + 1];
-	    if (args[i].equalsIgnoreCase("-user"))
-		user = args[i+1];
-	    if (args[i].equalsIgnoreCase("-password"))
-		password = args[i+1];
-            if (args[i].compareTo("-help") == 0)
-            {
-                System.out.println("Usage: JDBCTest2 [-commit] [-nested] [-reuseconn] [-oracle] [-sequelink] [-cloudscape] [-url] [-dynamicClass]");
-                System.exit(0);
-            }
-        }
-*/
-        if (url == null)
-        {
-            switch (dbType)
-            {
-                case ORACLE:
-                    {
-                        if (port == null)
-                            url = "jdbc:arjuna:oracle:thin:@" + host + ":JDBCTest";
-                        else
-                            url = "jdbc:arjuna:oracle:thin:@" + host + ":" + port + ":JDBCTest";
-                    }
-                    break;
-                case JNDI:
-                    fail("JNDI URL not specified");
-                    break;
-                default:
-                    // noop
-            }
-
-        }
-
+        url = "jdbc:arjuna:jdbc:h2:target/h2/foo";
         Properties p = System.getProperties();
-
-        switch (dbType)
-        {
-            case ORACLE:
-                p.put("jdbc.drivers", "oracle.jdbc.driver.OracleDriver");
-                break;
-            case SEQUELINK:
-                p.put("jdbc.drivers", "com.merant.sequelink.jdbc.SequeLinkDriver");
-                break;
-        }
-
+        p.put("jdbc.drivers", Driver.class.getName());
+        
         System.setProperties(p);
-
-            DriverManager.registerDriver(new TransactionalDriver());
+        DriverManager.registerDriver(new TransactionalDriver());
 
         dbProperties = new Properties();
-
-            System.out.println("\nCreating connection to database: " + url);
-
-	    if ( user != null )
-            	dbProperties.put(TransactionalDriver.userName, user);
-
-	    if ( password != null )
-            	dbProperties.put(TransactionalDriver.password, password);
-
-	    if ( dynamicClass != null )
-            	dbProperties.put(TransactionalDriver.dynamicClass, dynamicClass);
-
-			conn = DriverManager.getConnection(url, dbProperties);
-            conn2 = DriverManager.getConnection(url, dbProperties);
+        dbProperties.put(TransactionalDriver.dynamicClass, JDBC2Test.class.getName());
+		conn = DriverManager.getConnection(url, dbProperties);
+        conn2 = DriverManager.getConnection(url, dbProperties);
 	}
 
     @Test
@@ -169,10 +81,6 @@ public class JDBC2Test
 	{
 		Statement stmt = null;  // non-tx statement
 		Statement stmtx = null;	// will be a tx-statement
-
-		if(conn == null || conn2 == null) {
-			return;
-		}
 
 			stmt = conn.createStatement();  // non-tx statement
 
@@ -412,4 +320,11 @@ public class JDBC2Test
         {
         }
     }
+
+	@Override
+	public XADataSource getDataSource(String dbName) throws SQLException {
+		JdbcDataSource ds = new JdbcDataSource();
+		ds.setURL(dbName);
+		return ds;
+	}
 }

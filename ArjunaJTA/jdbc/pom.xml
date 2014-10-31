@@ -44,8 +44,6 @@
           <excludes>
             <exclude>**/utils/plugins/**</exclude>
             <exclude>**/DBPlugin.java</exclude>
-            <exclude>**/JDBC2Test.java</exclude>
-            <exclude>**/JDBC3Test.java</exclude>
             <exclude>**/*JNDISetup.java</exclude>
           </excludes>
         </configuration>
@@ -53,6 +51,12 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${version.com.h2database}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.2_spec</artifactId>
