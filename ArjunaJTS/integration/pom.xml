@@ -39,6 +39,9 @@
         <configuration>
           <archive>
             <manifestEntries>
+              <Specification-Title>JTA/JTS</Specification-Title>
+              <Specification-Version>1.2/1.0</Specification-Version>
+              <Specification-Vendor>Oracle</Specification-Vendor>
               <Implementation-Version>${project.version} (revision: ${buildNumber})</Implementation-Version>
               <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
               <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
