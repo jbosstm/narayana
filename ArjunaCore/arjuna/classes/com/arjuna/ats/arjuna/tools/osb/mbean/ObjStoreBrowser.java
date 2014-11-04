@@ -67,7 +67,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                     true,
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
                     "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean",
-                    ""
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple"
             )
 
     };

@@ -1,11 +1,6 @@
 package com.hp.mwtests.ts.jta.jts.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +28,15 @@ import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
 
 /**
  * Test the the ObjStoreBrowser MBean in a JTS environment.
@@ -62,11 +66,16 @@ public class JTSObjStoreBrowserTest extends TestBase {
 		rcm.stop(false);
 	}
 
-	private ObjStoreBrowser createObjStoreBrowser() {
+	private ObjStoreBrowser createObjStoreBrowser(boolean probe) {
 		ObjStoreBrowser osb = new ObjStoreBrowser();
 
 		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");
 		osb.setType("com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper", "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean");
+
+		if (probe) {
+			osb.start();
+			osb.probe();
+		}
 
 		return osb;
 	}
@@ -137,6 +146,41 @@ public class JTSObjStoreBrowserTest extends TestBase {
 		finishTest(A, true, recs);
 	}
 
+    /**
+     * Test that MBeans corresponding to JTS record types are created
+     * @throws Exception
+     */
+    @Test
+    public void jtsMBeanTest() throws Exception {
+        ArjunaTransactionImple A = new ArjunaTransactionImple(null);
+
+        startTest(A);
+
+        try {
+            A.commit(true);
+            fail("transaction commit should have produced a heuristic hazzard");
+        } catch (HeuristicHazard e) {
+        }
+
+        createObjStoreBrowser(true); // start an mbean server and object store browser
+
+        // there should now be an MBean entry corresponding to a JTS record, read it via JMX:
+        MBeanServer mbs = JMXServer.getAgent().getServer();
+        Set<ObjectInstance> transactions = mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,*"), null);
+        boolean foundJTSType = false;
+        Pattern pattern = Pattern.compile("itype=(.*?),");
+
+        for (ObjectInstance oi : transactions) {
+            String id = oi.getObjectName().getCanonicalName();
+            Matcher matcher = pattern.matcher(id);
+
+            while (matcher.find())
+                foundJTSType = true; // matched type is in matcher.group(1)
+        }
+
+        assertTrue("MBean for JTS record type not found", foundJTSType);
+    }
+
 	/**
 	 * Similar to aaRemoveTest but uses a JTS transaction instead of an AtomicAction
 	 * @throws Exception if test fails unexpectedly
@@ -187,7 +231,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	 * checking that the MBeans have all been unregistered from the MBeanServer.
 	 */
 	private void finishTest(TwoPhaseCoordinator A, boolean replay, ExtendedCrashRecord ... recs) throws Exception {
-		ObjStoreBrowser osb = createObjStoreBrowser();
+		ObjStoreBrowser osb = createObjStoreBrowser(false);
 
 		// there should now be an entry in the object store containing two participants
 		osb.start();
