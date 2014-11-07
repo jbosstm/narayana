@@ -20,12 +20,12 @@
 	<DOMAIN>fooapp</DOMAIN>
 	
 	<MACHINES>
-		<MACHINE id="myserv1" hostname="albany"
+		<MACHINE id="myserv1" hostname="albany.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv2" hostname="albany"
+		<MACHINE id="myserv2" hostname="albany.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2" 
@@ -40,12 +40,12 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv5" hostname="beacon"
+		<MACHINE id="myserv5" hostname="beacon.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv6" hostname="beacon"
+		<MACHINE id="myserv6" hostname="beacon.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
@@ -70,12 +70,12 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv11" hostname="tarrytown"
+		<MACHINE id="myserv11" hostname="tarrytown.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv12" hostname="tarrytown"
+		<MACHINE id="myserv12" hostname="tarrytown.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
@@ -100,22 +100,22 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv17" hostname="hoboken.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv17" hostname="hoboken.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv18" hostname="hoboken.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv18" hostname="hoboken.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv19" hostname="tenafly.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv19" hostname="tenafly.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv20" hostname="tenafly.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv20" hostname="tenafly.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
@@ -130,12 +130,12 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv23" hostname="jaime"
+		<MACHINE id="myserv23" hostname="jaime.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv24" hostname="jaime"
+		<MACHINE id="myserv24" hostname="jaime.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
@@ -150,43 +150,43 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv27" hostname="cersei.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv27" hostname="cersei.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv28" hostname="cersei.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv28" hostname="cersei.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv29" hostname="janei.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv29" hostname="janei.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv30" hostname="janei.buildnet.ncl.jboss.com"
+		<MACHINE id="myserv30" hostname="janei.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv31" hostname="lancel"
+		<MACHINE id="myserv31" hostname="lancel.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv32" hostname="lancel"
+		<MACHINE id="myserv32" hostname="lancel.eng.hst.ams2.redhat.com"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv33" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+		<MACHINE id="myserv33" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
 			workingDirectory="." argLine=" -p 12341" serverId="1" />
-		<MACHINE id="myserv34" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+		<MACHINE id="myserv34" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
 			workingDirectory="." argLine=" -p 12342" serverId="2" />
-		<MACHINE id="myserv35" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+		<MACHINE id="myserv35" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
 			workingDirectory="." argLine=" -p 12341" serverId="1" />
-		<MACHINE id="myserv36" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="../cs"
+		<MACHINE id="myserv36" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
 			workingDirectory="." argLine=" -p 12342" serverId="2" />
 	</MACHINES>
 	<SERVERS>

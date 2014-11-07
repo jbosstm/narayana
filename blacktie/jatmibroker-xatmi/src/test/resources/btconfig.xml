@@ -15,9 +15,9 @@
 	xmlns="http://www.jboss.org/blacktie">
 	<DOMAIN>fooapp</DOMAIN>
 	<MACHINES>
-		<MACHINE id="myserv1" hostname="albany" pathToExecutable="notExist"
+		<MACHINE id="myserv1" hostname="albany.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv2" hostname="albany" pathToExecutable="notExist"
+		<MACHINE id="myserv2" hostname="albany.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv3" ipAddress="127.0.0.1"
 			pathToExecutable="notExist" workingDirectory="." argLine="foo"
@@ -25,9 +25,9 @@
 		<MACHINE id="myserv4" ipAddress="127.0.0.1"
 			pathToExecutable="notExist" workingDirectory="." argLine="foo"
 			serverId="2" />
-		<MACHINE id="myserv5" hostname="beacon" pathToExecutable="notExist"
+		<MACHINE id="myserv5" hostname="beacon.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv6" hostname="beacon" pathToExecutable="notExist"
+		<MACHINE id="myserv6" hostname="beacon.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv7" hostname="catskill" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
@@ -37,9 +37,9 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv10" hostname="winxp08" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv11" hostname="tarrytown" pathToExecutable="notExist"
+		<MACHINE id="myserv11" hostname="tarrytown.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv12" hostname="tarrytown" pathToExecutable="notExist"
+		<MACHINE id="myserv12" hostname="tarrytown.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv13" hostname="sol2" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
@@ -49,45 +49,45 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv16" hostname="wicket" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv17" hostname="hoboken.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv17" hostname="hoboken.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv18" hostname="hoboken.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv18" hostname="hoboken.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv19" hostname="tenafly.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv19" hostname="tenafly.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv20" hostname="tenafly.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv20" hostname="tenafly.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv21" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv22" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv23" hostname="jaime" pathToExecutable="notExist"
+		<MACHINE id="myserv23" hostname="jaime.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv24" hostname="jaime" pathToExecutable="notExist"
+		<MACHINE id="myserv24" hostname="jaime.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv25" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv26" hostname="haverstraw.buildnet.ncl.jboss.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv27" hostname="cersei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv27" hostname="cersei.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv28" hostname="cersei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv28" hostname="cersei.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv29" hostname="janei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv29" hostname="janei.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv30" hostname="janei.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv30" hostname="janei.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv31" hostname="lancel" pathToExecutable="notExist"
+		<MACHINE id="myserv31" hostname="lancel.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv32" hostname="lancel" pathToExecutable="notExist"
+		<MACHINE id="myserv32" hostname="lancel.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv33" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv33" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv34" hostname="sansa.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv34" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv35" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv35" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv36" hostname="brandon.buildnet.ncl.jboss.com" pathToExecutable="notExist"
+		<MACHINE id="myserv36" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 	</MACHINES>
 	<SERVERS>
