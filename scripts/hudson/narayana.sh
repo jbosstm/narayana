@@ -28,32 +28,32 @@ function init_test_options {
 
     PULL_DESCRIPTION=$(get_pull_description)
 
-    if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION =~ "NO_TEST" ]]; then
+    if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-    elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION =~ "!MAIN" ]]; then
+    elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
         FINDBUGS=findbugs,
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1
-    elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION =~ "!XTS" ]]; then
+    elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-    elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTA" ]]; then
+    elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTA* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-    elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JACORB" ]]; then
+    elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-    elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION =~ "!QA_JTS_JDKORB" ]]; then
+    elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-    elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION =~ "!BLACKTIE" ]]; then
+    elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
         comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
@@ -178,7 +178,7 @@ function build_as {
     git reset --hard jbosstm/5_BRANCH
     [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
-    [ $? = 0 ] || fatal "git clean failed"
+    [ $? > 1 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
@@ -477,7 +477,7 @@ function qa_tests_once {
   [ $orbtype != "jacorb" ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
 
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
-  if [[ "$MFACTOR" =~ ^[0-9]+$ ]] ; then
+  if [[ -n "$MFACTOR" ]] ; then
     sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
     # Note that setting the timeout too high (eg 2*240) will cause the defaulttimeout test cases to take
     # longer than the Task kill timeout period
@@ -514,7 +514,7 @@ function qa_tests_once {
     [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
-      if [[ "$QA_STRESS" =~ ^[0-9]+$ ]] ; then
+      if [[ -n "$QA_STRESS" ]] ; then
         ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
