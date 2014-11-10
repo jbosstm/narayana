@@ -207,7 +207,7 @@ function build_as {
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
   [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || fatal "Need to upgrade the jboss-as.version in the narayana pom.xml to ${WILDFLY_VRESION_FROM_JBOSS_AS}"
 
-  export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
+  export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
   JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
   
