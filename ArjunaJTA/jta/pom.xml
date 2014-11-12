@@ -431,13 +431,6 @@
                         <exclude>**/recovery/CrashRecovery.java</exclude>
                         <exclude>**/recovery/CrashRecovery2.java</exclude>
                       </excludes>
-
-                      <systemProperties>
-                        <property>
-                          <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
-                          <value>h2jbossts-properties.xml</value>
-                        </property>
-                      </systemProperties>
                     </configuration>
                 </plugin>
             </plugins>
