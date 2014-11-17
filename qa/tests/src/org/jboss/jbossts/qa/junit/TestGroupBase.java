@@ -50,6 +50,7 @@ public class TestGroupBase
     private final Map<String,Integer> objectStoreNamesToTaskIds = new HashMap<String,Integer>();
     private int clientCount = 0;
     private int taskCount = 0;
+    int port = 5000;
 
     @Before public void setUp()
 	{
@@ -179,6 +180,11 @@ public class TestGroupBase
             additionalCommandLineElements.add("-DportOffsetId="+portOffsetId);
             additionalCommandLineElements.add("-DObjectStoreBaseDir="+objectStoreBaseDir.getCanonicalPath());
             additionalCommandLineElements.add("-DRecoveryEnvironmentBean.recoveryListener=true"); // JBTM-810
+
+            if (false) {
+				additionalCommandLineElements.add("-Xdebug");
+				additionalCommandLineElements.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + port++);
+			}
 
             return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout, additionalCommandLineElements, directory);
         } catch (Exception e) {
