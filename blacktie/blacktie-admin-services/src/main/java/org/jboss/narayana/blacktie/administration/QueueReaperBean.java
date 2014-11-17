@@ -36,6 +36,8 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
+import javax.ejb.TimerConfig;
+import javax.ejb.NoSuchObjectLocalException;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -58,26 +60,24 @@ public class QueueReaperBean {
     @Resource
     private TimerService timerService;
 
-    public QueueReaperBean() throws ConfigurationException {
+    public QueueReaperBean() {
         beanServerConnection = java.lang.management.ManagementFactory.getPlatformMBeanServer();
     }
 
     @PostConstruct
-    public void start() throws Exception {
+    public void start() {
         log.info("QueueReaper Started");
 
-        prop = new Properties();
-        XMLParser.loadProperties("btconfig.xsd", "btconfig.xml", prop);
-        this.interval = Integer.parseInt(prop.getProperty("QueueReaperInterval", "30")) * 1000;
+        try {
+            prop = new Properties();
+            XMLParser.loadProperties("btconfig.xsd", "btconfig.xml", prop);
+            this.interval = Integer.parseInt(prop.getProperty("QueueReaperInterval", "30")) * 1000;
 
-        for(Timer timer : timerService.getTimers()) {
-            if(timer.getInfo().equals("queue reaper")) {
-                log.info("QeueueReaper cancel a timer");
-                timer.cancel();
-            }
-        }
-        timerService.createTimer(interval, "queue reaper");
-        log.info("QueueReaper create timer with " + interval + "ms");
+            timerService.createIntervalTimer(interval, interval, new TimerConfig("queue reaper", false));
+            log.info("QueueReaper create timer with " + interval + "ms");
+	} catch (ConfigurationException e) {
+            log.error("btconfig.xml is not valid: " + e);
+	} 
     }
 
     @PreDestroy
@@ -87,8 +87,8 @@ public class QueueReaperBean {
 
     @Timeout
     public void run(Timer timer) {
-        log.trace("QueueReaper Running: timer is " + timer.getInfo());
         try {
+            log.trace("QueueReaper Running: timer is " + timer.getInfo());
             ObjectName objName = new ObjectName("jboss.as:subsystem=messaging,hornetq-server=default,jms-queue=*");
             ObjectInstance[] dests = beanServerConnection.queryMBeans(objName, null).toArray(new ObjectInstance[] {});
 
@@ -123,14 +123,13 @@ public class QueueReaperBean {
                     log.debug("Undeploy not required for: " + serviceComponentOfObjectName + " at: " + server);
                 }
             }
+	} catch (NoSuchObjectLocalException e) {
+	    log.debug("The timer has expired or has been cancelled");
         } catch (InterruptedException e) {
             log.debug("Sleeping interrupted");
         } catch (Exception e) {
             log.error("run ping thread failed with (will wait for: " + interval + " ms): " + e, e);
         }
-
-        timerService.createTimer(interval, "queue reaper");
-        log.trace("create timer after " + interval + "ms");
     }
 
     int consumerCount(String serviceName) throws MalformedObjectNameException, NullPointerException,
