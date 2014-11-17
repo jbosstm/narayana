@@ -68,7 +68,7 @@ public class IsSameRMModifier implements XAModifier, ConnectionModifier {
 	@Override
 	public boolean supportsMultipleConnections() throws SQLException,
 			NotImplementedException {
-		return false; // This is the default
+		return true; // This is the default
 	}
 
 	@Override

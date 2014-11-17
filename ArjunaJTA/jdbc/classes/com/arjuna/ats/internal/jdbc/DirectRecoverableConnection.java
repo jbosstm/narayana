@@ -106,6 +106,7 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	    {
 		_theConnection.close();
 		_theConnection = null;
+        _theXAResource = null;
 	    }
 	}
 	catch (SQLException e)

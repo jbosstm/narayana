@@ -255,6 +255,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
             {
                 _theConnection.close();
                 _theConnection = null;
+                _theXAResource = null;
             }
         }
     }
