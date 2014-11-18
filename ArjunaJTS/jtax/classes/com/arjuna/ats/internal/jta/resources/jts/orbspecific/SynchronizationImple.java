@@ -37,6 +37,9 @@ import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
 import com.arjuna.ats.internal.jts.ORBManager;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * Whenever a synchronization is registered, an instance of this class
  * is used to wrap it.
@@ -53,7 +56,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     {
 	_theSynch = ptr;
 	_theReference = null;
-	_theClassLoader = Thread.currentThread().getContextClassLoader();
+	_theClassLoader = this.getContextClassLoader();
     }
 
     public final org.omg.CosTransactions.Synchronization getSynchronization ()
@@ -78,11 +81,11 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
 	if (_theSynch != null)
 	{
-	    ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+	    ClassLoader origClassLoader = this.getContextClassLoader();
 
 	    try
 	    {
-		Thread.currentThread().setContextClassLoader(_theClassLoader);
+		this.setContextClassLoader(_theClassLoader);
 		_theSynch.beforeCompletion();
 	    }
 	    catch (Exception e)
@@ -91,7 +94,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	    }
 	    finally
 	    {
-		Thread.currentThread().setContextClassLoader(origClassLoader);
+		this.setContextClassLoader(origClassLoader);
 	    }
 	}
 	else
@@ -107,11 +110,11 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	if (_theSynch != null)
 	{
 	    int s = StatusConverter.convert(status);
-	    ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+	    ClassLoader origClassLoader = this.getContextClassLoader();
 
 	    try
 	    {
-		Thread.currentThread().setContextClassLoader(_theClassLoader);
+		this.setContextClassLoader(_theClassLoader);
 		_theSynch.afterCompletion(s);
 
 		if (_theReference != null)
@@ -128,7 +131,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	    }
 	    finally
 	    {
-		Thread.currentThread().setContextClassLoader(origClassLoader);
+		this.setContextClassLoader(origClassLoader);
 	    }
 	}
 	else
@@ -140,6 +143,33 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
     // they correspond to do in the idl. Hence Servant is the only common parent.
     protected org.omg.PortableServer.Servant getPOATie() {
         return new org.omg.CosTransactions.SynchronizationPOATie(this);
+    }
+
+    private ClassLoader getContextClassLoader() {
+        if (System.getSecurityManager() == null) {
+	    return Thread.currentThread().getContextClassLoader();
+	} else {
+	    return (ClassLoader)AccessController.doPrivileged(
+	        new PrivilegedAction() {
+	            public Object run() {
+	    	        return Thread.currentThread().getContextClassLoader();
+	            }
+	        });
+	}
+    }
+
+    private void setContextClassLoader(final ClassLoader classLoader) {
+        if (System.getSecurityManager() == null) {
+	    Thread.currentThread().setContextClassLoader(classLoader);
+	} else {
+	    AccessController.doPrivileged(
+	        new PrivilegedAction() {
+	            public Object run() {
+	    	        Thread.currentThread().setContextClassLoader(classLoader);
+			return null;
+	            }
+	        });
+	}
     }
 
     private javax.transaction.Synchronization       _theSynch;
