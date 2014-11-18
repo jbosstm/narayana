@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
@@ -13,13 +14,14 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,7 +31,7 @@ import java.util.Set;
  * Test that the tooling can exposed all log record types
  */
 public class ExposeAllLogsTest {
-    private static final String FOO_TYPE = "/StateManager/LockManager/foo";
+    private static final String FOO_TYPE = File.separator+"StateManager"+File.separator+"LockManager"+File.separator+"foo";
     private static final String osMBeanName = "jboss.jta:type=ObjectStore";
 
     @Test

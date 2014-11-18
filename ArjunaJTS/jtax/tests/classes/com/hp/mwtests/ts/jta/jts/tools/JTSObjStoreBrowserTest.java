@@ -1,6 +1,7 @@
 package com.hp.mwtests.ts.jta.jts.tools;
 
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,8 @@ import com.hp.mwtests.ts.jta.jts.common.TestBase;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +45,7 @@ import static org.junit.Assert.*;
  * Test the the ObjStoreBrowser MBean in a JTS environment.
  */
 public class JTSObjStoreBrowserTest extends TestBase {
-	private RecoveryManagerImple rcm;
+	private RecoveryManager rcm;
 	private RecoveryDriver rd;
 
 	@Before
@@ -52,7 +55,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
-		rcm = new RecoveryManagerImple(true);
+		rcm = RecoveryManager.manager();
 		rcm.addModule(new XARecoveryModule());
 		rcm.addModule(new AtomicActionRecoveryModule());
 		rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(),
@@ -63,7 +66,11 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	public void tearDown () throws Exception
 	{
 		rcm.removeAllModules(false);
-		rcm.stop(false);
+		rcm.terminate(false);
+		Field f = RecoveryManager.class.getDeclaredField("_recoveryManager");
+        f.setAccessible(true);
+        f.set(rcm, null);
+        
 	}
 
 	private ObjStoreBrowser createObjStoreBrowser(boolean probe) {
