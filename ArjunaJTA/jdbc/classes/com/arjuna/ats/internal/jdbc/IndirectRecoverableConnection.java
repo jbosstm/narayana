@@ -60,7 +60,7 @@ import com.arjuna.ats.jta.xa.RecoverableXAConnection;
  * @since JTS 2.0.
  */
 
-public class IndirectRecoverableConnection implements RecoverableXAConnection, ConnectionControl
+public class IndirectRecoverableConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
 {
 
     public IndirectRecoverableConnection () throws SQLException

@@ -51,6 +51,7 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 import javax.sql.XAConnection;
+import javax.sql.XADataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
@@ -94,22 +95,29 @@ public class ConnectionImple implements Connection
 		String user = null;
 		String passwd = null;
 		String dynamic = null;
+		Object xaDataSource = null;
 
 		if (info != null)
 		{
 			user = info.getProperty(TransactionalDriver.userName);
 			passwd = info.getProperty(TransactionalDriver.password);
 			dynamic = info.getProperty(TransactionalDriver.dynamicClass);
+			xaDataSource = info.get(TransactionalDriver.XADataSource);
 		}
 
-		if ((dynamic == null) || (dynamic.equals("")))
+		if (xaDataSource != null)
 		{
-			_recoveryConnection = new IndirectRecoverableConnection(dbName,
+			_transactionalDriverXAConnectionConnection = new ProvidedXADataSourceConnection(dbName, user,
+					passwd, (XADataSource) xaDataSource, this);	
+		}
+		else if ((dynamic == null) || (dynamic.equals("")))
+		{
+			_transactionalDriverXAConnectionConnection = new IndirectRecoverableConnection(dbName,
 					user, passwd, this);
 		}
 		else
 		{
-			_recoveryConnection = new DirectRecoverableConnection(dbName, user,
+			_transactionalDriverXAConnectionConnection = new DirectRecoverableConnection(dbName, user,
 					passwd, dynamic, this);
 		}
 
@@ -124,25 +132,30 @@ public class ConnectionImple implements Connection
 	public ConnectionImple(String dbName, String user, String passwd)
 			throws SQLException
 	{
-		this(dbName, user, passwd, null);
+		this(dbName, user, passwd, null, null);
 	}
 
 	public ConnectionImple(String dbName, String user, String passwd,
-			String dynamic) throws SQLException
+			String dynamic, Object xaDataSource) throws SQLException
 	{
 		if (jdbcLogger.logger.isTraceEnabled()) {
             jdbcLogger.logger.trace("ConnectionImple.ConnectionImple ( " + dbName + ", " + user
                     + ", " + passwd + ", " + dynamic + " )");
         }
 
-		if ((dynamic == null) || (dynamic.equals("")))
+		if (xaDataSource != null)
 		{
-			_recoveryConnection = new IndirectRecoverableConnection(dbName,
+			_transactionalDriverXAConnectionConnection = new ProvidedXADataSourceConnection(dbName, user,
+					passwd, (XADataSource) xaDataSource, this);	
+		}
+		else if ((dynamic == null) || (dynamic.equals("")))
+		{
+			_transactionalDriverXAConnectionConnection = new IndirectRecoverableConnection(dbName,
 					user, passwd, this);
 		}
 		else
 		{
-			_recoveryConnection = new DirectRecoverableConnection(dbName, user,
+			_transactionalDriverXAConnectionConnection = new DirectRecoverableConnection(dbName, user,
 					passwd, dynamic, this);
 		}
 
@@ -290,7 +303,7 @@ public class ConnectionImple implements Connection
 	         * can't.
 	         */
 
-	        if (!_recoveryConnection.inuse())
+	        if (!_transactionalDriverXAConnectionConnection.inuse())
 	        {
 	            ConnectionManager.remove(this); // finalize?
 	        }
@@ -313,9 +326,9 @@ public class ConnectionImple implements Connection
 
 	        if (tx != null)
 	        {
-	            if (_recoveryConnection.validTransaction(tx))
+	            if (_transactionalDriverXAConnectionConnection.validTransaction(tx))
 	            {
-	                XAResource xares = _recoveryConnection.getResource();
+	                XAResource xares = _transactionalDriverXAConnectionConnection.getResource();
 
 	                if (!tx.delistResource(xares, XAResource.TMSUCCESS))
 	                    throw new SQLException(
@@ -355,7 +368,7 @@ public class ConnectionImple implements Connection
 
 	                if (delayClose)
 	                {
-        	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _recoveryConnection));
+        	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _transactionalDriverXAConnectionConnection));
 
                                 _theConnection = null;
 	                }
@@ -367,7 +380,7 @@ public class ConnectionImple implements Connection
 	        if (!delayClose)  // close now
 	        {
 	            if (_theModifier != null)
-	                _recoveryConnection.closeCloseCurrentConnection();
+	                _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
 
 	           
 	            if (_theConnection != null && !_theConnection.isClosed())
@@ -421,7 +434,7 @@ public class ConnectionImple implements Connection
 
 	public void setReadOnly(boolean ro) throws SQLException
 	{
-		if (!_recoveryConnection.inuse())
+		if (!_transactionalDriverXAConnectionConnection.inuse())
 		{
 			getConnection().setReadOnly(ro);
 		}
@@ -486,7 +499,11 @@ public class ConnectionImple implements Connection
 
 	public final RecoverableXAConnection recoveryConnection()
 	{
-		return _recoveryConnection;
+		if (_transactionalDriverXAConnectionConnection instanceof RecoverableXAConnection) {
+			return (RecoverableXAConnection) _transactionalDriverXAConnectionConnection;
+		} else {
+			return null;
+		}
 	}
 
 	/*
@@ -825,7 +842,7 @@ public class ConnectionImple implements Connection
 	{
 		try
 		{
-			return _recoveryConnection.getResource();
+			return _transactionalDriverXAConnectionConnection.getResource();
 		}
 		catch (Exception e)
 		{
@@ -860,7 +877,7 @@ public class ConnectionImple implements Connection
 		if (_theConnection != null && !_theConnection.isClosed())
 			return _theConnection;
 
-		XAConnection xaConn = _recoveryConnection.getConnection();
+		XAConnection xaConn = _transactionalDriverXAConnectionConnection.getConnection();
 
 		if (xaConn != null)
 		{
@@ -897,7 +914,7 @@ public class ConnectionImple implements Connection
 
 	final ConnectionControl connectionControl()
 	{
-		return (ConnectionControl) _recoveryConnection;
+		return (ConnectionControl) _transactionalDriverXAConnectionConnection;
 	}
 
 	protected final boolean transactionRunning() throws SQLException
@@ -959,7 +976,7 @@ public class ConnectionImple implements Connection
 				 * Already enlisted with this transaction?
 				 */
 
-				if (!_recoveryConnection.setTransaction(tx))
+				if (!_transactionalDriverXAConnectionConnection.setTransaction(tx))
 					throw new SQLException( jdbcLogger.i18NLogger.get_alreadyassociated() );
 
 				Object[] params;
@@ -969,7 +986,7 @@ public class ConnectionImple implements Connection
 				else
 					params = new Object[1];
 
-				params[com.arjuna.ats.jta.transaction.Transaction.XACONNECTION] = _recoveryConnection;
+				params[com.arjuna.ats.jta.transaction.Transaction.XACONNECTION] = _transactionalDriverXAConnectionConnection;
 
 				if (_theModifier != null)
 					params[com.arjuna.ats.jta.transaction.Transaction.XAMODIFIER] = (XAModifier) _theModifier;
@@ -978,7 +995,7 @@ public class ConnectionImple implements Connection
 				 * Use our extended version of enlistResource.
 				 */
 
-				xares = _recoveryConnection.getResource();
+				xares = _transactionalDriverXAConnectionConnection.getResource();
 
 				if (!((com.arjuna.ats.jta.transaction.Transaction) tx)
 						.enlistResource(xares, params))
@@ -1057,7 +1074,7 @@ public class ConnectionImple implements Connection
 			 * Now check that we are not already associated with a transaction.
 			 */
 
-			if (!_recoveryConnection.validTransaction(tx))
+			if (!_transactionalDriverXAConnectionConnection.validTransaction(tx))
 				throw new SQLException(
 						jdbcLogger.i18NLogger.get_alreadyassociatedcheck());
 		}
@@ -1087,7 +1104,7 @@ public class ConnectionImple implements Connection
 
 				_theModifier = ModifierFactory.getModifier(name, major, minor);
 
-				((ConnectionControl) _recoveryConnection)
+				((ConnectionControl) _transactionalDriverXAConnectionConnection)
 						.setModifier((ConnectionModifier) _theModifier);
 			}
 			catch (Exception ex)
@@ -1097,7 +1114,7 @@ public class ConnectionImple implements Connection
 		}
 	}
 
-	private RecoverableXAConnection _recoveryConnection;
+	private TransactionalDriverXAConnection _transactionalDriverXAConnectionConnection;
 
 	private java.lang.Object _theModifier;
 

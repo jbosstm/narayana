@@ -64,6 +64,7 @@ public class TransactionalDriver implements java.sql.Driver
     public static final String dynamicClass = "DYNAMIC_CLASS";
     public static final String createDb = "CREATE_DB";
     public static final String poolConnections = "POOL_CONNECTIONS";
+	public static final Object XADataSource = "XADATASOURCE";
 
     public TransactionalDriver ()
     {

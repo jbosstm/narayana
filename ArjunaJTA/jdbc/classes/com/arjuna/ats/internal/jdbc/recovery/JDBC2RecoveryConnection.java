@@ -64,7 +64,7 @@ public class JDBC2RecoveryConnection extends ConnectionImple
 	public JDBC2RecoveryConnection (String dbName, String user, String passwd,
 			String dynamic) throws SQLException
 	{
-		super(dbName, user, passwd, dynamic);
+		super(dbName, user, passwd, dynamic, null);
 	}
 
 }
