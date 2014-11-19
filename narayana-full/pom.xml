@@ -227,5 +227,77 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>javadoc</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>javadoc</goal>
+                </goals>
+                <configuration>
+                  <includeDependencySources>true</includeDependencySources>
+                  <docfilessubdirs>true</docfilessubdirs>
+                  <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11</subpackages>
+                  <!-- use this instead of excludePackageNames because of MJAVADOC-299 -->
+                  <additionalparam>
+                    -exclude com.arjuna.ats.internal -exclude com.arjuna.common.internal
+                    -exclude com.arjuna.orbportability.internal -exclude com.arjuna.ats.jbossatx
+                    -exclude com.arjuna.mw.wstx -exclude org.jboss.jbossts.txbridge
+                    -exclude org.jboss.jbossts.xts -exclude org.jboss.jbossts.xts11
+                  </additionalparam>
+                  <groups>
+                    <group>
+                      <title>Core</title>
+                      <packages>com.arjuna.ats.arjuna*:com.arjuna.ats.jdbc*:com.arjuna.ats.txoj*:com.arjuna.common*</packages>
+                    </group>
+                    <group>
+                      <title>JTA</title>
+                      <packages>com.arjuna.ats.jta*</packages>
+                    </group>
+                    <group>
+                      <title>JTS</title>
+                      <packages>com.arjuna.ats.jts*:com.arjuna.orbportability*</packages>
+                    </group>
+                    <group>
+                      <title>XTS</title>
+                      <packages>com.arjuna.mw*:com.arjuna.wsc*:com.arjuna.wsc11*:com.arjuna.wst*:com.arjuna.wst11*:org.jboss.jbossts</packages>
+                    </group>
+                    <group>
+                      <title>RTS</title>
+                      <packages>org.jboss.jbossts.star*</packages>
+                    </group>
+                  </groups>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>pack-javadoc</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar"
+                        basedir="${project.build.directory}/site/apidocs/" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
