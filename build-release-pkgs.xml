@@ -19,45 +19,45 @@
   @author JBoss Inc. (jonathan.halliday@redhat.com)
 -->
 <!--
-    build-release-pkgs.xml: Utility script for building JBossTS release artifacts.
-    Probably only useful for JBossTS dev team. Everyone else should only need the
+    build-release-pkgs.xml: Utility script for building Narayana release artifacts.
+    Probably only useful for Narayana dev team. Everyone else should only need the
     regular build.xml.
 
     This script automates the some steps of the release build and packaging process
     to reduce the opportunities for users to get it wrong. For example, it works from
-    a fresh svn checkout to ensure locally modified files in a dev's svn working copy
+    a fresh git checkout to ensure locally modified files in a dev's git working copy
     don't sneak into the release bundle.
 
     usage:
 
-      Tag the JBossTS release in svn.
-        or you can do a snapshot release direct from trunk, see properties below.
+      Tag the Narayana release on GitHub.
+        or you can do a snapshot release direct from master, see properties below.
 
-      Check the version of JBossAS referenced in pom.xml is sane.
-        In general, use the oldest JBossAS release the JBossTS release is intended to support.
+      Check the version of WildFly referenced in pom.xml is sane.
+        In general, use the oldest WildFly release the Narayana release is intended to support.
 
       Update the properties section below to suit your machine.
 
       Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
 
-      ant -f build-release-pkgs.xml dist downloads
+      ant -f build-release-pkgs.xml all
 
       rsync or sftp the downloads to publish to the web site (careful with the trailing '/') e.g.
         rsync \-\-protocol=29 -avz 4.11.0.Final jbosstm@filemgmt.jboss.org:downloads_htdocs/jbosstm/
 
-      Log in to magnolia cms at https://www.jboss.org/author, create page under jbosstm/downloads
-       (note: 'magnolia' target below may help) then edit downloads node itself to update table in downloads.html
+      Check out Narayana web page. This script uploas all the contents to the develop branch.
+      However, you have to execute awestruct build as explained in web page's readme.
 
       Update appropriate wiki pages, such as the 'which version to use' page.
         http://community.jboss.org/wiki/JBossTransactionsVersionGuide
 
       Then login to https://repository.jboss.org/nexus/ and publish the artifacts.
 
-      This version is for JBossTS 5.0.0 onwards. Don't use it for earlier releases, they are structured differently.
+      This version is for Narayana 5.0.4 onwards. Don't use it for earlier releases, they are structured differently.
 -->
-<project name="JBossTS Release Packaging" default="fail" basedir=".">
+<project name="Narayana Release Packaging" default="fail" basedir=".">
   <description>
-        package JBossTS binary + src files for upload to website and other repos.
+        package Narayana binary + src files for upload to website and other repos.
     </description>
   <property name="mvn.executable" value="tools/maven/bin/mvn.bat"/>
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
@@ -65,13 +65,9 @@
   <!-- where to get the source -->
   <property name="gitbase" value="https://github.com/jbosstm"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="pageName" value="5.0.4.Final-SNAPSHOT"/>
   <property name="tag" value="5.0.4.Final-SNAPSHOT"/>
-  <!-- which uber jar to use -->
-  <property name="orb" value="jacorb"/>
-  <!-- the location the JBossTS web site content is copied to -->
+  <!-- the location the Narayana web site downloads are copied to -->
   <property name="downloads.dir" value="downloads_htdocs/jbosstm/"/>
-  <property name="docs.dir" value="docs_htdocs/jbosstm/"/>
   <!-- you probably don't need to change anything below here -->
   <taskdef resource="net/sf/antcontrib/antlib.xml">
     <classpath>
@@ -81,7 +77,7 @@
   <target name="fail">
     <fail message="you must specify a target"/>
   </target>
-  <target name="all" depends="dist,downloads"/>
+  <target name="all" depends="dist,downloads,docs,web"/>
   <target name="dist-init" unless="dist-init">
     <tstamp/>
     <fail message="You must set a workdir">
@@ -135,68 +131,8 @@
     <exec dir="${workdir}/${tag}-docs" executable="${mvn.executable}" failonerror="true">
       <arg line="install"/>
     </exec>
-    <delete dir="tmp-docs-dir-docs"/>
-    <mkdir dir="tmp-docs-dir-docs"/>
-    <copy todir="tmp-docs-dir-docs/guides/stm_guide">
-      <fileset dir="${workdir}/${tag}-docs/STM/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jts-orbportability_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTS/docs/orbportability_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jts-quick_start_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTS/docs/quick_start_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jts-administration_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTS/docs/administration_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jts-development_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTS/docs/development_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/arjunacore-failure_recovery_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaCore/docs/failure_recovery_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/arjunacore-development_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaCore/docs/development_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jta-quick_start_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTA/docs/quick_start_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jta-installation_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTA/docs/installation_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jta-administration_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTA/docs/administration_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/narayana-jta-development_guide">
-      <fileset dir="${workdir}/${tag}-docs/ArjunaJTA/docs/development_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/xts-administration_and_development_guide">
-      <fileset dir="${workdir}/${tag}-docs/docs/xts_administration_and_development_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/xts-background_guide">
-      <fileset dir="${workdir}/${tag}-docs/XTS/background/target/docbook/publish/en-US/html_single/"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/failure_recovery_guide">
-      <fileset dir="${workdir}/${tag}-docs/docs/failure_recovery_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/development_guide">
-      <fileset dir="${workdir}/${tag}-docs/docs/development_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/transactions_overview_guide">
-      <fileset dir="${workdir}/${tag}-docs/docs/transactions_overview_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/txbridge_guide">
-      <fileset dir="${workdir}/${tag}-docs/docs/txbridge_guide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <copy todir="tmp-docs-dir-docs/guides/blacktie_guide">
-      <fileset dir="${workdir}/${tag}-docs/blacktie/docs/userguide/target/docbook/publish/en-US/html_single"/>
-    </copy>
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-docs-dir-docs"/>
-        <param name="to" value="${docs.dir}/${tag}"/>
-    </antcall>
   </target> 
-  <target name="downloads" description="copy release bundles to JBossTS web site content">
+  <target name="downloads" description="copy release bundles to Narayana web site storage">
     <delete dir="tmp-downloads-dir"/>
     <mkdir dir="tmp-downloads-dir"/>
     <mkdir dir="tmp-downloads-dir/src"/>
@@ -221,21 +157,11 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-jacorb-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/jts"/>
-    <copy file="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/jta"/>
-    <copy file="${workdir}/${tag}/rts/at/tx/target/restat-api-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/rts"/>
-    <copy file="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${tag}-javadoc.jar" todir="tmp-downloads-dir/api/xts"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTS/narayana-jts-${orb}/target/narayana-jts-jacorb-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jts"/>
-    <unzip src="${workdir}/${tag}/ArjunaJTA/narayana-jta/target/narayana-jta-${tag}-javadoc.jar" dest="tmp-docs-dir/api/jta"/>
-    <unzip src="${workdir}/${tag}/rts/at/tx/target/restat-api-${tag}-javadoc.jar" dest="tmp-docs-dir/api/rts"/>
-    <unzip src="${workdir}/${tag}/XTS/jbossxts/target/jbossxts-${tag}-javadoc.jar" dest="tmp-docs-dir/api/xts"/>
+    <copy file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="tmp-downloads-dir/api"/>
+    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="tmp-docs-dir/api"/>
     <antcall target="remote-copy">
         <param name="from" value="tmp-downloads-dir"/>
         <param name="to" value="${downloads.dir}/${tag}"/>
-    </antcall>
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-docs-dir"/>
-        <param name="to" value="${docs.dir}/${tag}"/>
     </antcall>
   </target>
 
@@ -250,34 +176,121 @@
               <arg value="rsync ${rsync.cmd}" />
             </exec>
   </target>
-
-  <!-- magnolia (the cms that sits behind jboss.org/jbosstm pages) is a pain. This target generates
-     xml for /downloads/somerelease.xml pages to ease some of the pain in publishing an upload
-      right click jbosstm/downloads node, import from xml, then right click new node and activate.
-      download ordering in the rollover menu is determined by ordering the GUI - move new page as needed.
-      edit the 'downloads' node itself to link the new release from downloads.html, it's not automatic. -->
-  <target name="magnolia">
-    <exec executable="date" outputproperty="date">
-      <arg line="+'%FT%H:%M:%S.000Z'"/>
+  
+  <target name="web" description="Update downloads, docs, and javadocs on Narayana web page and commit them">
+    <!-- Check out web page development branch -->
+    <delete dir="${workdir}/narayana.io"/>
+    <exec executable="git" dir="${workdir}">
+      <arg value="clone"/>
+      <arg value="${gitbase}/narayana.io.git"/>
     </exec>
-    <length property="full-src-length" file="${workdir}/narayana-full-${tag}-src.zip"/>
-    <length property="full-bin-length" file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-bin.zip"/>
-    <copy file="magnolia-release-download-page-template.xml" tofile="${workdir}/website.jbosstm.downloads.${pageName}.xml" filtering="true" overwrite="true">
-      <filterset>
-        <filter token="pageName" value="${pageName}"/>
-        <filter token="tag" value="${tag}"/>
-        <filter token="version" value="${tag}"/>
-        <filter token="date" value="${date}"/>
-        <filter token="full-src-length" value="${full-src-length}"/>
-        <filter token="full-bin-length" value="${full-bin-length}"/>
-      </filterset>
+    <exec executable="git" dir="${workdir}/narayana.io">
+      <arg value="checkout"/>
+      <arg value="develop"/>
+    </exec>
+    
+    <!-- Update web page content -->
+    <antcall target="web-downloads">
+      <param name="config-dir" value="${workdir}/narayana.io/_config/"/>
+    </antcall>
+    <antcall target="web-docs">
+      <param name="docs-dir" value="${workdir}/narayana.io/docs/"/>
+    </antcall>
+    <antcall target="web-api">
+      <param name="docs-dir" value="${workdir}/narayana.io/docs/"/>
+      <param name="config-dir" value="${workdir}/narayana.io/_config/"/>
+    </antcall>
+    
+    <!-- Commit web page changes -->
+    <exec executable="git" dir="${workdir}/narayana.io/">
+      <arg value="add"/>
+      <arg value="--all"/>
+    </exec>
+    <exec executable="git" dir="${workdir}/narayana.io/">
+      <arg value="commit"/>
+      <arg value="-m"/>
+      <arg value="Updated Narayana to ${tag}"/>
+    </exec>
+    <exec executable="git" dir="${workdir}/narayana.io/">
+      <arg value="push"/>
+      <arg value="origin"/>
+      <arg value="develop"/>
+    </exec>
+
+    <!-- Build web page and push to jboss.org -->
+    <exec executable="awestruct" dir="${workdir}/narayana.io/">
+      <arg value="-P"/>
+      <arg value="production"/>
+    </exec>
+    <exec executable="rsync" dir="${workdir}/narayana.io/">
+      <arg value="-Pr"/>
+      <arg value="--protocol=28"/>
+      <arg value="--delete-after"/>
+      <arg value="_site/*"/>
+      <arg value="jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/"/>
+    </exec>
+  </target>
+  
+  <target name="web-docs" depends="docs.check" if="docs.exist" description="Update documentations on Narayana web page">
+    <delete dir="${docs-dir}product"/>
+    <delete dir="${docs-dir}project"/>
+    <mkdir dir="${docs-dir}product"/>
+    <mkdir dir="${docs-dir}project"/>
+    <copy todir="${docs-dir}product">
+      <fileset dir="${workdir}/${tag}-docs/product/target/docbook/publish/en-US/html_single"/>
     </copy>
-    <copy file="magnolia-release-documentation-page-template.xml" tofile="${workdir}/website.jbosstm.documentation.${pageName}.xml" filtering="true" overwrite="true">
-      <filterset>
-        <filter token="pageName" value="${pageName}"/>
-        <filter token="tag" value="${tag}"/>
-        <filter token="date" value="${date}"/>
-      </filterset>
+    <copy todir="${docs-dir}project">
+      <fileset dir="${workdir}/${tag}-docs/project/target/docbook/publish/en-US/html_single"/>
     </copy>
   </target>
+  
+  <target name="web-downloads" depends="downloads.check" if="downloads.exist" description="Update downloads on Narayana web page">
+    <tstamp>
+      <format property="date" pattern="yyyy-MM-dd"/>
+    </tstamp>
+    
+    <!-- Create new current Narayana release configuration -->
+    <delete dir="${config-dir}current_narayana_release.yml"/>
+    <touch file="${config-dir}current_narayana_release.yml"/>
+    <echo file="${config-dir}current_narayana_release.yml">version: ${tag}
+date: ${date}
+binary: http://www.jboss.org/jbosstm/downloads/${tag}/binary/narayana-full-${tag}-bin.zip
+source: http://www.jboss.org/jbosstm/downloads/${tag}/src/narayana-full-${tag}-src.zip</echo>
+  </target>
+  
+  <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
+    <!-- Update javadoc htmls on the page -->
+    <delete dir="${docs-dir}api"/>
+    <mkdir dir="${docs-dir}api"/>
+    <copy todir="${docs-dir}api">
+      <fileset dir="tmp-docs-dir/api"/>
+    </copy>
+    
+    <!-- Update javadocs download url -->
+    <exec executable="sed" dir="${config-dir}" outputproperty="first-api-line">
+      <arg value="q"/>
+      <arg value="current_narayana_api.yml"/>
+    </exec>
+    <echo file="${config-dir}current_narayana_api.yml">${first-api-line}
+download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}-javadoc.jar</echo>
+  </target>
+  
+  <target name="docs.check" description="Check if documentations were built">
+    <condition property="docs.exist">
+      <available file="${workdir}/${tag}-docs" type="dir"/>
+    </condition>
+  </target>
+  
+  <target name="downloads.check" description="Check if downloads were built">
+    <condition property="downloads.exist">
+      <available file="tmp-downloads-dir" type="dir"/>
+    </condition>
+  </target>
+  
+  <target name="api.check" description="Check if javadocs were built">
+    <condition property="api.exist">
+      <available file="tmp-docs-dir" type="dir"/>
+    </condition>
+  </target>
+
 </project>
