@@ -92,11 +92,9 @@ public class BasicAction extends StateManager
         recordBeingHandled = null;
 
         heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = allowCheckedActionFactoryToBeOverriden ? arjPropertyManager
+		_checkedAction = arjPropertyManager
 				.getCoordinatorEnvironmentBean().getCheckedActionFactory()
-				.getCheckedAction(get_uid(), type())
-				: defaultCheckedActionFactory.getCheckedAction(get_uid(),
-						type());
+				.getCheckedAction(get_uid(), type());
 
         _childThreads = null;
         _childActions = null;
@@ -133,11 +131,9 @@ public class BasicAction extends StateManager
         recordBeingHandled = null;
 
         heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = allowCheckedActionFactoryToBeOverriden ? arjPropertyManager
+		_checkedAction = arjPropertyManager
 				.getCoordinatorEnvironmentBean().getCheckedActionFactory()
-				.getCheckedAction(get_uid(), type())
-				: defaultCheckedActionFactory.getCheckedAction(get_uid(),
-						type());
+				.getCheckedAction(get_uid(), type());
 
         _childThreads = null;
         _childActions = null;
@@ -1682,11 +1678,9 @@ public class BasicAction extends StateManager
         recordBeingHandled = null;
 
         heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = allowCheckedActionFactoryToBeOverriden ? arjPropertyManager
+		_checkedAction = arjPropertyManager
 				.getCoordinatorEnvironmentBean().getCheckedActionFactory()
-				.getCheckedAction(get_uid(), type())
-				: defaultCheckedActionFactory.getCheckedAction(get_uid(),
-						type());
+				.getCheckedAction(get_uid(), type());
 
         _childThreads = null;
         _childActions = null;
@@ -1716,11 +1710,9 @@ public class BasicAction extends StateManager
         recordBeingHandled = null;
 
         heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = allowCheckedActionFactoryToBeOverriden ? arjPropertyManager
+		_checkedAction = arjPropertyManager
 				.getCoordinatorEnvironmentBean().getCheckedActionFactory()
-				.getCheckedAction(get_uid(), type())
-				: defaultCheckedActionFactory.getCheckedAction(get_uid(),
-						type());
+				.getCheckedAction(get_uid(), type());
 
         _childThreads = null;
         _childActions = null;
@@ -3597,10 +3589,6 @@ public class BasicAction extends StateManager
 
     //    private Mutex _lock = new Mutex(); // TODO
 
-    private static CheckedActionFactory defaultCheckedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
-    
-    private boolean allowCheckedActionFactoryToBeOverriden = arjPropertyManager.getCoordinatorEnvironmentBean().isAllowCheckedActionFactoryOverride();
-    
 }
 
 class BasicActionFinalizer
