@@ -36,7 +36,9 @@ public class EnvironmentBeanTest
 {
     @Test
     public void testCoordinatorEnvironmentBean() throws Exception {
-        com.arjuna.common.tests.simple.EnvironmentBeanTest.testBeanByReflection(new CoordinatorEnvironmentBean());
+    	CoordinatorEnvironmentBean coordinatorEnvironmentBean = new CoordinatorEnvironmentBean();
+    	coordinatorEnvironmentBean.setAllowCheckedActionFactoryOverride(true);
+        com.arjuna.common.tests.simple.EnvironmentBeanTest.testBeanByReflection(coordinatorEnvironmentBean);
     }
 
     @Test

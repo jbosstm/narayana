@@ -611,15 +611,18 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     {
         synchronized(this)
         {
-            if(checkedActionFactoryClassName == null)
-            {
-                this.checkedActionFactory = null;
-            }
-            else if(!checkedActionFactoryClassName.equals(this.checkedActionFactoryClassName))
-            {
-                this.checkedActionFactory = null;
-            }
-            this.checkedActionFactoryClassName = checkedActionFactoryClassName;
+        	if (checkedActionFactoryClassName == null || allowCheckedActionFactoryOverride) 
+        	{	
+	            if(checkedActionFactoryClassName == null)
+	            {
+	                this.checkedActionFactory = null;
+	            }
+	            else if(!checkedActionFactoryClassName.equals(this.checkedActionFactoryClassName))
+	            {
+	            	this.checkedActionFactory = null;
+	            }
+	            this.checkedActionFactoryClassName = checkedActionFactoryClassName;
+        	}
         }
     }
 
@@ -655,18 +658,21 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     {
         synchronized(this)
         {
-            CheckedActionFactory oldInstance = this.checkedActionFactory;
-            checkedActionFactory = instance;
-
-            if(instance == null)
-            {
-                this.checkedActionFactoryClassName = null;
-            }
-            else if(instance != oldInstance)
-            {
-                String name = ClassloadingUtility.getNameForClass(instance);
-                this.checkedActionFactoryClassName = name;
-            }
+        	if (checkedActionFactoryClassName == null || allowCheckedActionFactoryOverride)
+        	{
+	            CheckedActionFactory oldInstance = this.checkedActionFactory;
+	            checkedActionFactory = instance;
+	
+	            if(instance == null)
+	            {
+	                this.checkedActionFactoryClassName = null;
+	            }
+	            else if(instance != oldInstance)
+	            {
+	                String name = ClassloadingUtility.getNameForClass(instance);
+	                this.checkedActionFactoryClassName = name;
+	            }
+        	}
         }
     }
 
