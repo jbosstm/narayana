@@ -21,7 +21,7 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 public class SimpleJdbcTest {
 	private static final String DB_USER1 = "dtf11";
 	private static final String DB_USER2 = "dtf12";
-	private static final String DB_HOST = "tywin.buildnet.ncl.jboss.com";
+	private static final String DB_HOST = "tywin.eng.hst.ams2.redhat.com";
 	private static final String DB_SID = "orcl";
 
 	@Test

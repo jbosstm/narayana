@@ -221,7 +221,7 @@ public class PerformanceTestCommitMarkableResource extends
 					.invoke(dataSource, new Object[] { "thin" });
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,
-							new Object[] { "tywin.buildnet.ncl.jboss.com" });
+							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
 			clazz.getMethod("setNetworkProtocol", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "tcp" });
 			clazz.getMethod("setDatabaseName", new Class[] { String.class })
@@ -282,7 +282,7 @@ public class PerformanceTestCommitMarkableResource extends
 			((PGConnectionPoolDataSource) dataSource).setUser("dtf11");
 			((PGConnectionPoolDataSource) dataSource).setPassword("dtf11");
 			((PGConnectionPoolDataSource) dataSource)
-					.setServerName("tywin.buildnet.ncl.jboss.com");
+					.setServerName("tywin.eng.hst.ams2.redhat.com");
 			((PGConnectionPoolDataSource) dataSource)
 					.setDatabaseName("jbossts");
 			recoveryDataSource = new PGSimpleDataSource();
@@ -290,7 +290,7 @@ public class PerformanceTestCommitMarkableResource extends
 			((PGSimpleDataSource) recoveryDataSource).setUser("dtf11");
 			((PGSimpleDataSource) recoveryDataSource).setPassword("dtf11");
 			((PGSimpleDataSource) recoveryDataSource)
-					.setServerName("tywin.buildnet.ncl.jboss.com");
+					.setServerName("tywin.eng.hst.ams2.redhat.com");
 			((PGSimpleDataSource) recoveryDataSource)
 					.setDatabaseName("jbossts");
 		} else if (dbType.equals("mysql")) {
@@ -303,7 +303,7 @@ public class PerformanceTestCommitMarkableResource extends
 			dataSource = new MysqlConnectionPoolDataSource();
 			// need paranoid as otherwise it sends a connection change user
 			((MysqlConnectionPoolDataSource) dataSource)
-					.setUrl("jdbc:mysql://tywin.buildnet.ncl.jboss.com:3306/jbossts?user=dtf11&password=dtf11&paranoid=true");
+					.setUrl("jdbc:mysql://tywin.eng.hst.ams2.redhat.com:3306/jbossts?user=dtf11&password=dtf11&paranoid=true");
 			recoveryDataSource = (DataSource) dataSource;
 		} else if (dbType.equals("db2")) {
 			Class clazz = Class
@@ -311,7 +311,7 @@ public class PerformanceTestCommitMarkableResource extends
 			dataSource = (ConnectionPoolDataSource) clazz.newInstance();
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,
-							new Object[] { "tywin.buildnet.ncl.jboss.com" });
+							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
 			clazz.getMethod("setDatabaseName", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "BTDB1" });
 			clazz.getMethod("setUser", new Class[] { String.class }).invoke(
@@ -327,7 +327,7 @@ public class PerformanceTestCommitMarkableResource extends
 			recoveryDataSource = (DataSource) clazz2.newInstance();
 			clazz2.getMethod("setServerName", new Class[] { String.class })
 					.invoke(recoveryDataSource,
-							new Object[] { "tywin.buildnet.ncl.jboss.com" });
+							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
 			clazz2.getMethod("setDatabaseName", new Class[] { String.class })
 					.invoke(recoveryDataSource, new Object[] { "BTDB1" });
 			clazz2.getMethod("setUser", new Class[] { String.class }).invoke(
@@ -380,7 +380,7 @@ public class PerformanceTestCommitMarkableResource extends
 					.invoke(dataSource, new Object[] { "thin" });
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,
-							new Object[] { "tywin.buildnet.ncl.jboss.com" });
+							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
 			clazz.getMethod("setNetworkProtocol", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "tcp" });
 			clazz.getMethod("setDatabaseName", new Class[] { String.class })
@@ -417,13 +417,13 @@ public class PerformanceTestCommitMarkableResource extends
 			((PGXADataSource) dataSource).setUser("dtf11");
 			((PGXADataSource) dataSource).setPassword("dtf11");
 			((PGXADataSource) dataSource)
-					.setServerName("tywin.buildnet.ncl.jboss.com");
+					.setServerName("tywin.eng.hst.ams2.redhat.com");
 			((PGXADataSource) dataSource).setDatabaseName("jbossts");
 		} else if (dbType.equals("mysql")) {
 
 			dataSource = new MysqlXADataSource();
 			((MysqlXADataSource) dataSource)
-					.setServerName("tywin.buildnet.ncl.jboss.com");
+					.setServerName("tywin.eng.hst.ams2.redhat.com");
 			((MysqlXADataSource) dataSource).setPortNumber(3306);
 			((MysqlXADataSource) dataSource).setDatabaseName("jbossts");
 			((MysqlXADataSource) dataSource).setUser("dtf11");
@@ -433,7 +433,7 @@ public class PerformanceTestCommitMarkableResource extends
 			dataSource = (XADataSource) clazz.newInstance();
 			clazz.getMethod("setServerName", new Class[] { String.class })
 					.invoke(dataSource,
-							new Object[] { "tywin.buildnet.ncl.jboss.com" });
+							new Object[] { "tywin.eng.hst.ams2.redhat.com" });
 			clazz.getMethod("setDatabaseName", new Class[] { String.class })
 					.invoke(dataSource, new Object[] { "BTDB1" });
 			clazz.getMethod("setUser", new Class[] { String.class }).invoke(

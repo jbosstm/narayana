@@ -412,7 +412,7 @@
         <then>
           <property name="jdbcstore-profile" value="true" />
           <property name="jdbc.datasource.class" value="org.postgresql.ds.PGSimpleDataSource" />
-          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.url" value="tywin.eng.hst.ams2.redhat.com" />
           <property name="jdbc.db.name" value="jbossts" />
           <property name="jdbc.db.user" value="dtf11" />
           <property name="jdbc.db.password" value="dtf11" />
@@ -424,7 +424,7 @@
         <then>
           <property name="jdbcstore-profile" value="true" />
           <property name="jdbc.datasource.class" value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
-          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.url" value="tywin.eng.hst.ams2.redhat.com" />
           <property name="jdbc.db.name" value="jbossts" />
           <property name="jdbc.db.user" value="dtf11" />
           <property name="jdbc.db.password" value="dtf11" />
@@ -437,7 +437,7 @@
         <then>
           <property name="jdbcstore-profile" value="true" />
           <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource" />
-          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.url" value="tywin.eng.hst.ams2.redhat.com" />
           <property name="jdbc.db.name" value="orcl" />
           <property name="jdbc.db.user" value="dtf11" />
           <property name="jdbc.db.password" value="dtf11" />
@@ -450,7 +450,7 @@
         <then>
           <property name="jdbcstore-profile" value="true" />
           <property name="jdbc.datasource.class" value="com.ibm.db2.jcc.DB2DataSource" />
-          <property name="jdbc.db.url" value="tywin.buildnet.ncl.jboss.com" />
+          <property name="jdbc.db.url" value="tywin.eng.hst.ams2.redhat.com" />
           <property name="jdbc.db.name" value="BTDB1" />
           <property name="jdbc.db.user" value="db2" />
           <property name="jdbc.db.password" value="db2" />
