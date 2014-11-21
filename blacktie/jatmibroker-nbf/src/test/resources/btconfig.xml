@@ -57,9 +57,9 @@
 			workingDirectory="." argLine="foo" serverId="1" />
 		<MACHINE id="myserv20" hostname="tenafly.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
-		<MACHINE id="myserv21" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
+		<MACHINE id="myserv21" hostname="WIN-M7NQQLQOL1D" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />
-		<MACHINE id="myserv22" hostname="WIN-5GKPEREVUOO" pathToExecutable="notExist"
+		<MACHINE id="myserv22" hostname="WIN-M7NQQLQOL1D" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="2" />
 		<MACHINE id="myserv23" hostname="jaime.eng.hst.ams2.redhat.com" pathToExecutable="notExist"
 			workingDirectory="." argLine="foo" serverId="1" />

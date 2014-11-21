@@ -120,12 +120,12 @@
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv21" hostname="WIN-5GKPEREVUOO"
+		<MACHINE id="myserv21" hostname="WIN-M7NQQLQOL1D"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv22" hostname="WIN-5GKPEREVUOO"
+		<MACHINE id="myserv22" hostname="WIN-M7NQQLQOL1D"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
