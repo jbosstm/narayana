@@ -18,55 +18,21 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-/*
- * Copyright (C) 1997, 1998, 1999, 2000, 2001,
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: CosTSInteroperation.idl 2342 2006-03-30 13:06:17Z  $
- */
 
 #ifndef COSTSINTEROPERATION_IDL_
 #define COSTSINTEROPERATION_IDL_
 
-#pragma prefix "omg.org"
+// The TAG_TRANSACTION_POLICY component is deprecated and // 
+// replaced by InvocationPolicy and OTSPolicy components //
+// It is retained for backward compatibility only. //
 
-//
-// If DRAFT3 is defined then this module is empty - it moved to CosTransactions
-//
-
-#ifndef DRAFT3
-
-#include <idl/CosTransactions.idl>
-
-module CosTSInteroperation
+module CosTSInteroperation 
 {
-    struct otid_t
-    {
-	long formatID;
-	long bequal_length;
-	sequence <octet> tid;
-    };
+	const IOP::ComponentId TAG_TRANSACTION_POLICY=26:
+	struct TransactionPolicyComponent { CosTransactions::TransactionPolicyValue tpv; };
 
-    struct TransIdentity
-    {
-	CosTransactions::Coordinator coordinator;
-	CosTransactions::Terminator terminator;
-	otid_t otid;
-    };
-
-    struct PropagationContext
-    {
-	unsigned long timeout;
-	TransIdentity current;
-	sequence <TransIdentity> parents;
-	any implementation_specific_data;
-    };
+	const IOP::ComponentId TAG_OTS_POLICY= 31;
+	const IOP::ComponentId TAG_INV_POLICY= 32;
 };
 
 #endif
-#endif
-

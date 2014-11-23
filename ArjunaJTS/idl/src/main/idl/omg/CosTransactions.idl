@@ -71,15 +71,6 @@ module CosTransactions
 
     enum Vote { VoteCommit, VoteRollback, VoteReadOnly };
 
-#ifndef ORB_OTS_SUPPORT
-    // Standard exceptions - here until the Orb supports them
-    
-    exception TransactionRequired {};
-    exception TransactionRolledBack {};
-    exception InvalidTransaction {};
-    exception WrongTransaction {};
-#endif
-
     // Heuristic exceptions
 
     exception HeuristicRollback {};
@@ -110,8 +101,6 @@ module CosTransactions
     interface TransactionalObject;
     interface Current;
     interface Synchronization;
-    
-    // Formally part of CosTSInteroperation
 
     struct otid_t
     {

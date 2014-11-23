@@ -34,11 +34,7 @@
 
 #pragma prefix "omg.org"
 
-#ifndef DRAFT3
-#  include <idl/CosTSInteroperation.idl>
-#else
-#  include <idl/CosTransactions.idl>
-#endif
+#include <idl/CosTransactions.idl>
 
 module CosTSPostability  // PIDL
 {
@@ -46,26 +42,15 @@ module CosTSPostability  // PIDL
 
     interface Sender
     {
-#ifndef DRAFT3	
-	void sending_request (in ReqId id, out CosTSInteroperation::PropagationContext ctx);
-	void received_reply (in ReqId id, in CosTSInteroperation::PropagationContext ctx,
-			     in CORBA::Environment env);
-#else
 	void sending_request (in ReqId id, out CosTransactions::PropagationContext ctx);
 	void received_reply (in ReqId id, in CosTransactions::PropagationContext ctx,
 			     in CORBA::Environment env);
-#endif	
     };
 
     interface Receiver
     {
-#ifndef DRAFT3	
-	void received_request (in ReqId id, in CosTSInteroperation::PropagationContext ctx);
-	void sending_reply (in ReqId id, out CosTSInteroperation::PropagationContext ctx);
-#else
 	void received_request (in ReqId id, in CosTransactions::PropagationContext ctx);
 	void sending_reply (in ReqId id, out CosTransactions::PropagationContext ctx);
-#endif
     };
 	
 };
