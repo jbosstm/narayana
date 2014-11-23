@@ -69,7 +69,6 @@
                     <include>omg/XA.idl</include>
                   </includes>
                   <additionalArguments>
-                    <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
                     <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
                     <additionalArgument>-i2jpackage</additionalArgument>
                     <additionalArgument>CosTransactions:org.omg.CosTransactions</additionalArgument>
@@ -103,7 +102,6 @@
                     <include>orbtests.idl</include>
                   </includes>
                   <additionalArguments>
-                    <additionalArgument>-DORB_OTS_SUPPORT=1</additionalArgument>
                     <additionalArgument>-DORB_CURRENT_SUPPORT=1</additionalArgument>
                     <additionalArgument>-i2jpackage</additionalArgument>
                     <additionalArgument>TestModule:com.hp.mwtests.ts.jts.TestModule</additionalArgument>

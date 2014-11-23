@@ -37,7 +37,6 @@
 	<out-parameters>
 	    <param>-d</param>
 	    <param>${destdir}</param>
-	    <param>-DORB_OTS_SUPPORT=1</param>
 	    <param>-DORB_CURRENT_SUPPORT=1</param>
 	    <param foreach="include">-I${include}</param>
 	    <param foreach="mapping">

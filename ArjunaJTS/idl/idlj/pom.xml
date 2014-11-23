@@ -83,8 +83,6 @@
                     <additionalArgument>${env.JAVA_HOME}/lib</additionalArgument>
 
                     <additionalArgument>-d</additionalArgument>
-                    <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
-                    <additionalArgument>-d</additionalArgument>
                     <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
                     <additionalArgument>-fallTIE</additionalArgument>
                   </additionalArguments>
@@ -133,8 +131,6 @@
                     <additionalArgument>-i</additionalArgument>
                     <additionalArgument>${env.JAVA_HOME}/lib</additionalArgument>
 
-                    <additionalArgument>-d</additionalArgument>
-                    <additionalArgument>ORB_OTS_SUPPORT=1</additionalArgument>
                     <additionalArgument>-d</additionalArgument>
                     <additionalArgument>ORB_CURRENT_SUPPORT=1</additionalArgument>
                     <additionalArgument>-fallTIE</additionalArgument>

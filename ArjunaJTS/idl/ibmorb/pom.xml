@@ -73,8 +73,6 @@
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
              <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
-             <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
              <arg value="${project.build.directory}/../../src/main/idl/omg/CosTransactions.idl"/>
@@ -104,8 +102,6 @@
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
              <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
-             <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
              <arg value="${project.build.directory}/../../src/main/idl/omg/XA.idl"/>
@@ -134,8 +130,6 @@
              <arg value="${project.build.directory}/../../src/main/idl/omg"/>
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
-             <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
              <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
@@ -176,8 +170,6 @@
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
              <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
-             <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
              <arg value="${project.build.directory}/../../src/test/idl/orbtests.idl"/>
@@ -205,8 +197,6 @@
              <arg value="${project.build.directory}/../../src/main/idl/omg"/>
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
-             <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
              <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
@@ -236,8 +226,6 @@
              <arg value="${project.build.directory}/../../src/main/idl/omg"/>
              <arg value="-i"/>
              <arg value="${env.JAVA_HOME}/lib"/>
-             <arg value="-d"/>
-             <arg value="ORB_OTS_SUPPORT=1"/>
              <arg value="-d"/>
              <arg value="ORB_CURRENT_SUPPORT=1"/>
              <arg value="-fallTIE"/>
