@@ -40,27 +40,13 @@
  * See https://issues.jboss.org/browse/JBTM-1756 for why this is
  * necessary at the moment.
  */
- 	 
+ 
 #ifndef ORB_CURRENT_SUPPORT
 module CORBA
 {
 	interface Current {};
 };
 #endif
-
-//
-// If Draft3 is defined includes most (but not all of the features
-// of the revised OTS spec at Draft3 (Nov 22, 96).
-// Those missing generally need support from other services or the ORB
-// itself
-//
-
-/*
- * We provide minimal support for drafts before 3.
- * Because some systems (e.g., Orbix) do their own parsing and
- * can't cope with '#if defined' statements, we have some "extended"
- * conditional compilation lines!
- */
 
 module CosTransactions
 {
