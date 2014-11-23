@@ -46,6 +46,13 @@ import com.arjuna.orbportability.Services;
 
 public class TMTest
 {
+    public static void main (String[] args) throws Exception
+    {
+        TMTest theTest = new TMTest();
+        
+        theTest.test();
+    }
+    
     @Test
     public void test() throws Exception
     {
@@ -60,7 +67,6 @@ public class TMTest
 
         ORBManager.setORB(myORB);
         ORBManager.setPOA(myOA);
-
 
         TransactionFactory theOTS = null;
         Control topLevelControl = null;
