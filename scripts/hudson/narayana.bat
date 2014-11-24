@@ -45,6 +45,7 @@ taskkill /F /IM testsuite.exe
 taskkill /F /IM server.exe
 taskkill /F /IM client.exe
 taskkill /F /IM cs.exe
+taskkill /F /IM java.exe
 tasklist
 
 if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
@@ -78,6 +79,14 @@ goto:eof
 :fail_build
   call:comment_on_pull "Build failed %BUILD_URL%"
   tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
+  tasklist
+  taskkill /F /IM mspdbsrv.exe
+  taskkill /F /IM testsuite.exe
+  taskkill /F /IM server.exe
+  taskkill /F /IM client.exe
+  taskkill /F /IM cs.exe
+  taskkill /F /IM java.exe
+  tasklist
   exit -1
 goto:eof
 
