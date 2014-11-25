@@ -2,11 +2,7 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -15,10 +11,8 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
-import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerStatus;
 
 /**
  * An MBean implementation for walking an ObjectStore and creating/deleting MBeans
@@ -72,14 +66,14 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
     };
 
-    private Map<String, OSBType> osbTypeMap = new HashMap<>();
+    private Map<String, OSBType> osbTypeMap = new HashMap<String, OSBType>();
 
     // A system property for defining extra bean types for instrumenting object store types
     // The format is OSType1=BeanType1,OSType2=BeanType2,etc
     public static final String OBJ_STORE_BROWSER_HANDLERS = "com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserHandlers";
     private static final String STORE_MBEAN_NAME = "jboss.jta:type=ObjectStore";
 
-    private Map<String, List<UidWrapper>> allUids;
+    private Map<String, List<UidWrapper>> registeredMBeans = new HashMap<String, List<UidWrapper>> ();;
     private boolean exposeAllLogs = false;
 
     /**
@@ -96,15 +90,30 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      */
     public void stop()
     {
-        for (List<UidWrapper> uids : allUids.values()) {
-            for (Iterator<UidWrapper> i = uids.iterator(); i.hasNext(); ) {
-                UidWrapper w = i.next();
-                i.remove();
-                w.unregister();
-            }
-        }
+        unregisterMBeans();
 
         JMXServer.getAgent().unregisterMBean(STORE_MBEAN_NAME);
+    }
+
+    private void unregisterMBeans(List<UidWrapper> beans) {
+        for (UidWrapper w : beans)
+            w.unregister();
+
+        beans.clear();
+    }
+
+    private void unregisterMBeans() {
+        for (List<UidWrapper> uids : registeredMBeans.values())
+            unregisterMBeans(uids);
+
+        registeredMBeans.clear();
+    }
+
+    private void registerMBeans() {
+        for (List<UidWrapper> uids : registeredMBeans.values()) {
+            for (UidWrapper w : uids)
+                w.createAndRegisterMBean();
+        }
     }
 
     /**
@@ -170,9 +179,6 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         for (OSBType osbType : defaultOsbTypes)
             osbTypeMap.put(osbType.typeName, osbType);
 
-        allUids = new HashMap<String, List<UidWrapper>> ();
-
-//        initTypeHandlers(defaultStateHandlers);
         initTypeHandlers(System.getProperty(OBJ_STORE_BROWSER_HANDLERS, ""));
     }
 
@@ -184,8 +190,13 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         init(logDir);
     }
 
+    /**
+     * Dump info about all registered MBeans
+     * @param sb a buffer to contain the result
+     * @return the passed in buffer
+     */
     public StringBuilder dump(StringBuilder sb) {
-        for (Map.Entry<String, List<UidWrapper>> typeEntry : allUids.entrySet()) {
+        for (Map.Entry<String, List<UidWrapper>> typeEntry : registeredMBeans.entrySet()) {
             sb.append(typeEntry.getKey()).append('\n');
 
             for (UidWrapper uid : typeEntry.getValue())
@@ -202,16 +213,39 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * if it hasn't been registered)
      */
     public UidWrapper findUid(Uid uid) {
-        return findUid(uid.stringForm());
+        for (Map.Entry<String, List<UidWrapper>> typeEntry : registeredMBeans.entrySet())
+            for (UidWrapper w : typeEntry.getValue())
+                if (w.getUid().equals(uid))
+                    return w;
+
+        return null;
     }
 
+    /**
+     * Find the registered beand corresponding to a uid.
+     * @deprecated use {@link #findUid(com.arjuna.ats.arjuna.common.Uid)} ()} instead.
+     * @param uid the uid
+     * @return the registered bean or null if the Uid is not registered
+     */
+    @Deprecated
     public UidWrapper findUid(String uid) {
-        for (Map.Entry<String, List<UidWrapper>> typeEntry : allUids.entrySet())
+        for (Map.Entry<String, List<UidWrapper>> typeEntry : registeredMBeans.entrySet())
             for (UidWrapper w : typeEntry.getValue())
                 if (w.getUid().stringForm().equals(uid))
                     return w;
 
         return null;
+    }
+
+    private boolean isRegistered(String type, Uid uid) {
+        List<UidWrapper> beans = registeredMBeans.get(type);
+
+        if (beans != null)
+            for (UidWrapper w : beans)
+                if (uid.equals(w.getUid()))
+                    return true;
+
+        return false;
     }
 
     public void viewSubordinateAtomicActions(boolean enable) {
@@ -223,7 +257,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         osbType.enabled = enable;
 
         if (!enable) {
-            for (List<UidWrapper> uids : allUids.values()) {
+            for (List<UidWrapper> uids : registeredMBeans.values()) {
                 for (Iterator<UidWrapper> i = uids.iterator(); i.hasNext(); ) {
                     UidWrapper w = i.next();
                     if (osbType.recordClass.equals(w.getClassName())) {
@@ -239,40 +273,73 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         this.exposeAllLogs = exposeAllLogs;
     }
 
-    private RecoveryManagerStatus trySuspendRM() {
-        return RecoveryManager.manager().trySuspend(true);
+    /**
+     * Update registered MBeans based on the current set of Uids.
+     * @param allCurrUids any registered MBeans not in this collection will be deregistered
+     */
+    private void unregisterRemovedUids(Map<String, Collection<Uid>> allCurrUids) {
+
+        for (Map.Entry<String, List<UidWrapper>> e : registeredMBeans.entrySet()) {
+            String type = e.getKey();
+            List<UidWrapper> registeredBeansOfType = e.getValue();
+            Collection<Uid> currUidsOfType = allCurrUids.get(type);
+
+            if (currUidsOfType != null) {
+                Iterator<UidWrapper> iterator = registeredBeansOfType.iterator();
+
+                while (iterator.hasNext()) {
+                    UidWrapper w = iterator.next();
+
+                    if (!currUidsOfType.contains(w.getUid())) {
+                        w.unregister();
+                        iterator.remove();
+                    }
+                }
+            } else {
+                unregisterMBeans(registeredBeansOfType);
+            }
+        }
     }
 
-    private void tryResumeRM(RecoveryManagerStatus previousStatus) {
-        if (previousStatus.equals(RecoveryManagerStatus.ENABLED))
-            RecoveryManager.manager().resume();
-    }
     /**
      * See if any new MBeans need to be registered or if any existing MBeans no longer exist
      * as ObjectStore entries.
      */
-    public void probe() {
-        updateAllUids();
-        Iterator<String> iterator = allUids.keySet().iterator();
-        RecoveryManagerStatus rmStatus = trySuspendRM();
+    public synchronized void probe() {
+        Map<String, Collection<Uid>> currUidsForType = new HashMap<String, Collection<Uid>>();
 
-        try {
-            while (iterator.hasNext()) {
-                String tname = iterator.next();
-                List<UidWrapper> uids = allUids.get(tname);
+        for (String type : getTypes())
+            currUidsForType.put(type, getUids(type));
 
-                if (uids == null) {
-                    uids = new ArrayList<UidWrapper>();
-                    allUids.put(tname, uids);
-                }
+        // if there are any beans in registeredMBeans that don't appear in new list and unregister them
+        unregisterRemovedUids(currUidsForType); //unregisterMBeans();
 
-                if (exposeAllLogs || osbTypeMap.containsKey(tname))
-                    updateMBeans(uids, System.nanoTime(), true, tname);
+        for (Map.Entry<String, Collection<Uid>> e : currUidsForType.entrySet()) {
+            String type = e.getKey();
+
+            List<UidWrapper> beans = registeredMBeans.get(type);
+
+            if (beans == null) {
+                beans = new ArrayList<UidWrapper>();
+                registeredMBeans.put(type, beans);
             }
-        } finally {
-            tryResumeRM(rmStatus);
+
+            for (Uid uid : e.getValue()) {
+                if (!isRegistered(type, uid)) {
+                    UidWrapper w = registerBean(uid, type, false); // can return null if type isn't instrumented
+
+                    if (w != null)
+                        beans.add(w);
+                }
+            }
         }
 
+        /*
+         * now create the actual MBeans - we create all the UidWrappers before registering because
+         * the process of creating a bean can call back into the browser to probe for a particular type
+         * (see for example com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean
+         */
+        registerMBeans();
     }
 
     /**
@@ -282,67 +349,31 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * @return the list of MBeans representing the requested ObjectStore type
      */
     public List<UidWrapper> probe(String type) {
-		if (!allUids.containsKey(type))
-            updateAllUids();
-
-        List<UidWrapper> uids = allUids.get(type);
-
-        if (uids != null && uids.size() > 0) {
-            RecoveryManagerStatus rmStatus = trySuspendRM();
-
-            try {
-                updateMBeans(uids, System.currentTimeMillis(), false, type);
-            } finally {
-                tryResumeRM(rmStatus);
-            }
-        }
-
-        return uids;
+		return registeredMBeans.get(type);
     }
 
-    /**
-     * See if any new MBeans need to be registered or if any existing MBeans no longer exist
-     * as ObjectStore entries.
-     */
-    private void updateAllUids() {
-        InputObjectState types = new InputObjectState();
-
-        try {
-            if (StoreManager.getRecoveryStore().allTypes(types)) {
-                String tname;
-
-                do {
-                    try {
-                        tname = types.unpackString();
-                    } catch (IOException e1) {
-                        tname = "";
-                    }
-
-                    if (tname.length() != 0) {
-                        List<UidWrapper> uids = allUids.get(tname);
-
-                        if (uids == null) {
-                            uids = new ArrayList<UidWrapper>();
-                            allUids.put(tname, uids);
-                        }
-                    }
-                } while (tname.length() != 0);
-            }
-        } catch (ObjectStoreException e2) {
-            if (tsLogger.logger.isTraceEnabled())
-                tsLogger.logger.trace(e2.toString());
-        }
-    }
-
-    private void updateMBeans(List<UidWrapper> uids, long tstamp, boolean register, String type) {
+    private UidWrapper registerBean(Uid uid, String type, boolean createMbean) {
         OSBType osbType = osbTypeMap.get(type);
 
-        if (osbType != null && !osbType.enabled)
-            return;
+        if (osbType == null && !exposeAllLogs)
+            return null;
 
-        ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), type);
+        if (osbType != null && !osbType.enabled)
+            return null;
+
         String beanType = osbType == null ? OSEntryBean.class.getName() : osbType.beanClass;
         String stateType = osbType == null ? null : osbType.recordClass;
+        UidWrapper w = new UidWrapper(this, beanType, type, stateType, uid);
+
+        if (createMbean)
+            w.createAndRegisterMBean();
+
+        return w;
+    }
+
+    private Collection<Uid> getUids(String type) {
+        Collection<Uid> uids = new ArrayList<Uid>();
+        ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), type);
 
         while (true) {
             Uid u = iter.iterate();
@@ -350,28 +381,34 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             if (u == null || Uid.nullUid().equals(u))
                 break;
 
-            UidWrapper w = new UidWrapper(this, beanType, type, stateType, u);
-            int i = uids.indexOf(w);
-
-            if (i == -1) {
-                w.setTimestamp(tstamp);
-                uids.add(w);
-                w.createMBean();
-                if (register)
-                    w.register();
-            } else {
-                uids.get(i).setTimestamp(tstamp);
-            }
+            uids.add(u);
         }
 
-        for (Iterator<UidWrapper> i = uids.iterator(); i.hasNext(); ) {
-            UidWrapper w = i.next();
+        return uids;
+    }
 
-            if (w.getTimestamp() != tstamp) {
-                if (register)
-                    w.unregister();
-                i.remove();
+    private Collection<String> getTypes() {
+        Collection<String> allTypes = new ArrayList<String>();
+        InputObjectState types = new InputObjectState();
+
+        try {
+            if (StoreManager.getRecoveryStore().allTypes(types)) {
+
+                while (true) {
+                    try {
+                        String typeName = types.unpackString();
+                        if (typeName.length() == 0)
+                            break;
+                        allTypes.add(typeName);
+                    } catch (IOException e1) {
+                        break;
+                    }
+                }
             }
-        }
+        } catch (ObjectStoreException e) {
+            if (tsLogger.logger.isTraceEnabled())
+                tsLogger.logger.trace(e.toString());        }
+
+        return allTypes;
     }
 }
