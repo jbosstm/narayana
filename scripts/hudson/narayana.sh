@@ -65,7 +65,7 @@ function init_test_options {
         [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
         [ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
         [ $OSGI_TESTS ] || OSGI_TESTS=1 # OSGI tests
-        [ $TXF_TESTS ] || TXF_TESTS=1 # TxFramework tests
+        [ $TXF_TESTS ] || TXF_TESTS=1 # compensations tests
         [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
         [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
@@ -340,13 +340,13 @@ function jta_cdi_tests {
   [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
-function txframework_tests {
-  echo "#0. TXFramework Test"
+function compensations_tests {
+  echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
-  [ $? = 0 ] || fatal "TxFramework build failed"
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF-distributed "$@" test
-  [ $? = 0 ] || fatal "TxFramework build failed"
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF "$@" test
+  [ $? = 0 ] || fatal "compensations build failed"
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed "$@" test
+  [ $? = 0 ] || fatal "compensations build failed"
 }
 
 function xts_tests {
@@ -618,7 +618,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $RTS_AS_TESTS = 1 ] && rts_as_tests
 [ $JTA_AS_TESTS = 1 ] && jta_as_tests
-[ $TXF_TESTS = 1 ] && txframework_tests "$@"
+[ $TXF_TESTS = 1 ] && compensations_tests "$@"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
