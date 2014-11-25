@@ -18,6 +18,7 @@ public class UidWrapper {
 	private Uid uid;
 	private long tstamp;
 	private OSEntryBean mbean;
+	boolean registered = false;
 
 	public UidWrapper(Uid uid) {
 		this.uid = uid;
@@ -62,11 +63,17 @@ public class UidWrapper {
 	}
 
 	void register() {
-		mbean.register();
+		if (mbean != null && !registered) {
+			mbean.register();
+			registered = true;
+		}
 	}
 
 	void unregister() {
-		mbean.unregister();
+		if (mbean != null) {
+			mbean.unregister();
+			registered = false;
+		}
 	}
 
     /**
@@ -112,7 +119,7 @@ public class UidWrapper {
 	}
 
 	public StringBuilder toString(String prefix, StringBuilder sb) {
-		return mbean.toString(prefix, sb);
+		return mbean == null ? sb : mbean.toString(prefix, sb);
 	}
 
 	public List<UidWrapper> probe(String type) {
@@ -137,5 +144,11 @@ public class UidWrapper {
 		mbean.activate();
 
 		return mbean;
+	}
+
+	public void createAndRegisterMBean() {
+		if (mbean == null)
+		    createMBean();
+		register();
 	}
 }
