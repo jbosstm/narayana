@@ -91,7 +91,7 @@ public class RecoveryInit
 			initClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
 			break;
 		    case ORBType.JAVAIDL:
-			initClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.IBMOrbRecoveryInit";
+			initClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.JavaIdlRecoveryInit";
 			break;
 		    case ORBType.IBMORB: // ibm jdk bundles the javaidl orb so use that
                 initClassName = "com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators.IBMOrbRecoveryInit";

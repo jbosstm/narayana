@@ -121,7 +121,7 @@ public class RecoveryEnablement implements RecoveryActivator
                 theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
                 break;
             case ORBType.JAVAIDL:
-                theClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.IBMOrbRCServiceInit";
+                theClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.JavaIdlRCServiceInit";
                 break;
             case ORBType.IBMORB:
                 // ibm jdk7 bundles the sun orb
