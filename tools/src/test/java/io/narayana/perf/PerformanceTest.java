@@ -291,7 +291,7 @@ public class PerformanceTest {
             config.setResetMetrics(false);
             builder.config(config);
             measurement = builder.build();
-            millis.incrementAndGet();
+            millis.addAndGet(5);
             measurement.measure(worker);
             assertTrue("There should have been a perf regression", measurement.isRegression());
 
