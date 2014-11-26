@@ -239,11 +239,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.narayana.blacktie</groupId>
-                <artifactId>blacktie-idl-jacorb</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.narayana.blacktie</groupId>
                 <classifier>${bpa}</classifier>
                 <artifactId>blacktie-tx-test-utilities</artifactId>
                 <version>${project.version}</version>
@@ -337,7 +332,6 @@
         <module>utils/cpp-plugin</module>
         <module>common</module>
         <module>xsd</module>
-        <module>idl</module>
         <module>messaging</module>
         <module>jatmibroker-xatmi</module>
         <module>jatmibroker-nbf</module>

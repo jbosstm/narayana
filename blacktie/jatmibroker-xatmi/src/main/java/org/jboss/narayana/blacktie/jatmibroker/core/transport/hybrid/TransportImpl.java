@@ -131,8 +131,10 @@ public class TransportImpl implements Transport {
         log.debug("Creating a sender for: " + callback_ior);
         if(callback_ior.contains("IOR:")) {
             log.debug(callback_ior + " is for corba");
-            org.omg.CORBA.Object serviceFactoryObject = orbManagement.getOrb().string_to_object(callback_ior);
-            sender = new CorbaSenderImpl(serviceFactoryObject, callback_ior);         
+            //org.omg.CORBA.Object serviceFactoryObject = orbManagement.getOrb().string_to_object(callback_ior);
+            //sender = new CorbaSenderImpl(serviceFactoryObject, callback_ior);         
+            throw new ConnectionException(org.jboss.narayana.blacktie.jatmibroker.xatmi.Connection.TPESYSTEM,
+                    "Could not create a Corba sender");
         } else {
             log.debug(callback_ior + " is for socket");
             sender = new SocketSenderImpl(callback_ior);
@@ -188,8 +190,9 @@ public class TransportImpl implements Transport {
             log.error("Already closed");
             throw new ConnectionException(Connection.TPEPROTO, "Already closed");
         }
-        log.debug("Creating a receiver with event listener");
-        return new CorbaReceiverImpl(eventListener, orbManagement, properties);
+        //log.debug("Creating a receiver with event listener");
+        //return new CorbaReceiverImpl(eventListener, orbManagement, properties);
+	return null;
     }
     
     public Receiver createReceiver(Sender sender) throws ConnectionException {

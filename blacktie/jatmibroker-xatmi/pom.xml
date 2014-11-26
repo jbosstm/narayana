@@ -175,10 +175,6 @@
             <artifactId>blacktie-xsd</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-idl-jacorb</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>restat-bridge</artifactId>
         </dependency>
