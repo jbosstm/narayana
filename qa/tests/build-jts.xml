@@ -50,8 +50,8 @@
         <if>
 	         <equals arg1="${orbtype}" arg2="ibmorb" />
         <then>
-		    <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
-		    <property name="org.jboss.jbossts.qa.orb.classpath" value="/usr/lib/jvm/java-1.7.0-ibm-1.7.0.6.1.x86_64/lib/ibmorbtools.jar;/usr/lib/jvm/java-1.7.0-ibm-1.7.0.6.1.x86_64/jre/lib/ibmorb.jar"/>
+            <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
+            <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/ibmorbtools.jar;${org.jboss.jbossts.qa.orb.home}/jre/lib/ibmorb.jar"/>
             <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
             <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
