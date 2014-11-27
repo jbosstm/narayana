@@ -527,7 +527,7 @@ void TestTransactions::test_wait_for_recovery()
 	(void) dummy_rm_add_fault(fault2);
 	(void) dummy_rm_add_fault(fault3);
 	BT_ASSERT_EQUAL(TX_OK, tx_open());
-	while (rcCnt2 == 0 && nsecs != 0) {
+	while ((rcCnt2 == 0 || (nrecs = count_log_records()) == nrecs1) && nsecs != 0) {
 		if (nsecs-- % 10 == 0) {
 			btlogger("TestTransactions::test_run_recovery sleeping for %d seconds", nsecs);
 		}
@@ -535,7 +535,7 @@ void TestTransactions::test_wait_for_recovery()
 	}
 	(void) dummy_rm_del_fault(fault2);
 	(void) dummy_rm_del_fault(fault3);
-	nrecs = count_log_records();
+
 	btlogger("TestTransactions::test_run_recovery %d recs after recovery", nrecs);
 	BT_ASSERT(nrecs < nrecs1);
 	BT_ASSERT_EQUAL(TX_OK, tx_close());
