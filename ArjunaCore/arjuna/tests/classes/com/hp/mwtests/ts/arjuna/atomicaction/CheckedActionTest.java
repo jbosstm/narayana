@@ -40,6 +40,7 @@ public class CheckedActionTest
 	@Test
     public void test()
     {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAllowCheckedActionFactoryOverride(true);
         arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactoryClassName(DummyCheckedAction.class.getName());
         DummyCheckedAction.reset();
         assertFalse(DummyCheckedAction.factoryCalled());
@@ -58,6 +59,7 @@ public class CheckedActionTest
     @Test
     public void testCheckedAction ()
     {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAllowCheckedActionFactoryOverride(true);
         arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactoryClassName(DummyCheckedAction.class.getName());
         DummyCheckedAction.reset();
         assertFalse(DummyCheckedAction.factoryCalled());
