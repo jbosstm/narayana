@@ -240,7 +240,7 @@
   </target>
 
   <target name="remote-copy">
-	    <property  name="rsync.cmd" value="--protocol=29 --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
+	    <property  name="rsync.cmd" value="--chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
             <exec executable="bash" dir="." failonerror="true">
               <arg value="-c"/>
               <arg value="echo rsync ${rsync.cmd}" />
