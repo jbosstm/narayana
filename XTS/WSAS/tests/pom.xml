@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.jboss.jbossts.xts</groupId>
 		<artifactId>xts-all</artifactId>
-		<version>4.17.25.Final</version>
+		<version>4.17.26.Final-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
