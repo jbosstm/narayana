@@ -59,6 +59,7 @@
   <description>
         package JBossTS binary + src files for upload to website and other repos.
     </description>
+  <property name="mvn.executable" value="tools/maven/bin/mvn.bat"/>
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
@@ -109,14 +110,14 @@
   </target>
   <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
     <!-- Clean all generated artefacts -->
-    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
+    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
       <arg line="clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
     <!-- package the full source release (all src tree) -->
     <delete file="${workdir}/narayana-full-${tag}-src.zip"/>
     <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
     <!-- build the binary releases -->
-    <exec dir="${workdir}/${tag}" executable="tools/maven/bin/mvn" failonerror="true">
+    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
       <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
     </exec>
   </target>
@@ -131,7 +132,7 @@
       <arg value="checkout"/>
       <arg value="${tag}"/>
     </exec>
-    <exec dir="${workdir}/${tag}-docs" executable="mvn" failonerror="true">
+    <exec dir="${workdir}/${tag}-docs" executable="${mvn.executable}" failonerror="true">
       <arg line="install"/>
     </exec>
     <delete dir="tmp-docs-dir-docs"/>
