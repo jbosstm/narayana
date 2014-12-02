@@ -15,8 +15,6 @@
 	<classpathentry kind="lib" path="dbdrivers/oracle_10_2_0_4/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="dbdrivers/postgresql-8.3-605.jdbc4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/a org.wildfly.wildfly-transactions"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/a setCheckedActionFactoryExample"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.arjunacore.arjuna"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.arjunacore.arjunacore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.arjunacore.arjunacore-services"/>
@@ -46,7 +44,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.rts.restat-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.stm.stm"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.test-utils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.txframework.txframework"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.xts.bridge"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.xts.byteman_support"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jboss.narayana.xts.jbossxts"/>
