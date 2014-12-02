@@ -562,6 +562,7 @@
             <exclude name="**/narayana-full/**"/>
             <exclude name="**/qa/**"/>
             <exclude name="**/tools/**"/>
+            <exclude name="**/apache-karaf*/**"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">
