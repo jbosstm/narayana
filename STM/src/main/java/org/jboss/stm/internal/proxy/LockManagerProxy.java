@@ -22,6 +22,7 @@
 package org.jboss.stm.internal.proxy;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -108,7 +109,7 @@ public class LockManagerProxy<T> extends LockManager
                 
                 return false;
             }
-    
+
             if (!res)  // no save_state/restore_state
             {
                 res = true;
@@ -155,13 +156,20 @@ public class LockManagerProxy<T> extends LockManager
                     /*
                      * TODO check that the user hasn't marked statics, finals etc.
                      */
-    
-                    if (afield.getType().isPrimitive())
+                    
+                    if (afield.getType().isArray())
                     {
-                        res = packPrimitive(afield, os);
+                        res = packArray(afield, os);
                     }
                     else
-                        res = packObjectType(afield, os);
+                    {
+                        if (afield.getType().isPrimitive())
+                        {
+                            res = packPrimitive(afield, os);
+                        }
+                        else
+                            res = packObjectType(afield, os);
+                    }
     
                     afield.setAccessible(false);
                 }
@@ -245,12 +253,19 @@ public class LockManagerProxy<T> extends LockManager
                      * TODO check that the user hasn't marked statics, finals etc.
                      */
                     
-                    if (afield.getType().isPrimitive())
+                    if (afield.getType().isArray())
                     {
-                        res = unpackPrimitive(afield, os);
+                        res = unpackArray(afield, os);
                     }
                     else
-                        res = unpackObjectType(afield, os);
+                    {
+                        if (afield.getType().isPrimitive())
+                        {
+                            res = unpackPrimitive(afield, os);
+                        }
+                        else
+                            res = unpackObjectType(afield, os);
+                    }
                     
                     afield.setAccessible(false);
                 }
@@ -267,6 +282,491 @@ public class LockManagerProxy<T> extends LockManager
     public String type ()
     {
         return "/StateManager/LockManager/"+_theObject.getClass().getCanonicalName();
+    }
+    
+    private boolean packArray (final Field afield, OutputObjectState os)
+    {
+        if (!packPrimitiveArray(afield, os))
+            return packObjectArray(afield, os);
+        else
+            return true;
+    }
+    
+    private boolean packPrimitiveArray (final Field afield, OutputObjectState os)
+    {
+        boolean success = true;
+        
+        try
+        {
+            Class<?> c = afield.getType();
+            final int size = Array.getLength(afield.get(_theObject));
+            
+            if (c.equals(int[].class))
+            {
+                final int[] objs = (int[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packInt(objs[i]);
+            }
+            else if (c.equals(boolean[].class))
+            {
+                final boolean[] objs = (boolean[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packBoolean(objs[i]);
+            }
+            else if (c.equals(byte[].class))
+            {
+                final byte[] objs = (byte[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packByte(objs[i]);
+            }
+            else if (c.equals(short[].class))
+            {
+                final short[] objs = (short[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packShort(objs[i]);
+            }
+            else if (c.equals(long[].class))
+            {
+                final long[] objs = (long[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packLong(objs[i]);
+            }
+            else if (c.equals(float[].class))
+            {
+                final float[] objs = (float[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packFloat(objs[i]);
+            }
+            else if (c.equals(double[].class))
+            {
+                final double[] objs = (double[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packDouble(objs[i]);
+            }
+            else if (c.equals(char[].class))
+            {
+                final char[] objs = (char[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    os.packChar(objs[i]);
+            }
+            else
+                success = false;
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace();
+            
+            success = false;
+        }
+        
+        return success;
+    }
+    
+    private boolean packObjectArray (final Field afield, OutputObjectState os)
+    {
+        boolean success = true;
+        
+        try
+        {
+            Class<?> c = afield.getType();
+            final int size = Array.getLength(afield.get(_theObject));
+            
+            if (c.equals(Integer[].class))
+            {
+                final Integer[] objs = (Integer[]) afield.get(_theObject);
+
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);                    
+                        os.packInt(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Boolean[].class))
+            {
+                final Boolean[] objs = (Boolean[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packBoolean(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Byte[].class))
+            {
+                final Byte[] objs = (Byte[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packByte(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Short[].class))
+            {
+                final Short[] objs = (Short[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packShort(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Long[].class))
+            {
+                final Long[] objs = (Long[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packLong(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Float[].class))
+            {
+                final Float[] objs = (Float[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packFloat(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Double[].class))
+            {
+                final Double[] objs = (Double[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packDouble(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(Character[].class))
+            {
+                final Character[] objs = (Character[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packChar(objs[i]);
+                    }
+                }
+            }
+            else if (c.equals(String[].class))
+            {
+                final String[] objs = (String[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    if (objs[i] == null)
+                        os.packBoolean(false);
+                    else
+                    {
+                        os.packBoolean(true);
+                        os.packString(objs[i]);
+                    }
+                }
+            }
+            else
+            {
+                System.err.println("Array type "+c+" not supported!");
+                
+                success = false;
+            }
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace();
+            
+            success = false;
+        }
+        
+        return success;
+    }
+    
+    private boolean unpackArray (final Field afield, InputObjectState os)
+    {
+        if (!unpackPrimitiveArray(afield, os))
+            return unpackObjectArray(afield, os);
+        else
+            return true;
+    }
+    
+    private boolean unpackPrimitiveArray (final Field afield, InputObjectState os)
+    {
+        boolean success = true;
+        
+        try
+        {
+            Class<?> c = afield.getType();
+            final int size = Array.getLength(afield.get(_theObject));
+            
+            if (c.equals(int[].class))
+            {
+                final int[] objs = (int[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackInt();
+            }
+            else if (c.equals(boolean[].class))
+            {
+                final boolean[] objs = (boolean[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackBoolean();
+            }
+            else if (c.equals(byte[].class))
+            {
+                final byte[] objs = (byte[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackByte();
+            }
+            else if (c.equals(short[].class))
+            {
+                final short[] objs = (short[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackShort();
+            }
+            else if (c.equals(long[].class))
+            {
+                final long[] objs = (long[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackLong();
+            }
+            else if (c.equals(float[].class))
+            {
+                final float[] objs = (float[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackFloat();
+            }
+            else if (c.equals(double[].class))
+            {
+                final double[] objs = (double[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackDouble();
+            }
+            else if (c.equals(char[].class))
+            {
+                final char[] objs = (char[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                    objs[i] = os.unpackChar();
+            }
+            else
+                success = false;
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace();
+            
+            success = false;
+        }
+        
+        return success;
+    }
+    
+    private boolean unpackObjectArray (final Field afield, InputObjectState os)
+    {
+        boolean success = true;
+        
+        try
+        {
+            Class<?> c = afield.getType();
+            final int size = Array.getLength(afield.get(_theObject));
+            
+            if (c.equals(Integer[].class))
+            {
+                final Integer[] objs = (Integer[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackInt();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Boolean[].class))
+            {
+                final Boolean[] objs = (Boolean[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackBoolean();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Byte[].class))
+            {
+                final Byte[] objs = (Byte[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackByte();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Short[].class))
+            {
+                final Short[] objs = (Short[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackShort();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Long[].class))
+            {
+                final Long[] objs = (Long[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackLong();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Float[].class))
+            {
+                final Float[] objs = (Float[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackFloat();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Double[].class))
+            {
+                final Double[] objs = (Double[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackDouble();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(Character[].class))
+            {
+                final Character[] objs = (Character[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackChar();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else if (c.equals(String[].class))
+            {
+                final String[] objs = (String[]) afield.get(_theObject);
+                
+                for (int i = 0; (i < size) && success; i++)
+                {
+                    boolean ref = os.unpackBoolean();
+                    
+                    if (ref)
+                        objs[i] = os.unpackString();
+                    else
+                        objs[i] = null;
+                }
+            }
+            else
+            {
+                System.err.println("Array type "+c+" not supported!");
+                
+                success = false;
+            }
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace();
+            
+            success = false;
+        }
+        
+        return success;
     }
     
     private boolean packPrimitive (final Field afield, OutputObjectState os)
