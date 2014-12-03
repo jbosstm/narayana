@@ -63,6 +63,24 @@
     </section>
 
     <section>
+        <title>Heuristic outcomes</title>
+        <para>
+	  In some situations the application thread may not want to be informed of heuristics during completion.
+	  However, it is possible some other component in the application, thread or admin may still want to be informed.
+	  Therefore, special participants can be registered with the transaction which are
+	  triggered during the Synchronization phase and given the true outcome of
+	  the transaction. We do not dictate a specific implementation for what these
+	  participants do with the information (e.g., OTS allows for the CORBA Notification Service
+	  to be used).
+        </para>
+        <para>
+            To use this capability, create classes derived from the HeuristicNotification class and define the heuristicOutcome
+	    method to use whatever mechanism makes sense for your application. Instances of this class should be registered with
+	    the tranasction as Synchronizations.
+        </para>
+    </section>
+
+    <section>
         <title>Nested transactions</title>
         <para>
             There are no special constructs for nesting of transactions. If an action is begun while another action is running
