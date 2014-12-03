@@ -1,247 +1,247 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JBoss, Home of Professional Open Source Copyright 2008, Red Hat Middleware 
-    LLC, and others contributors as indicated by the @authors tag. All rights 
-    reserved. See the copyright.txt in the distribution for a full listing of 
-    individual contributors. This copyrighted material is made available to anyone 
-    wishing to use, modify, copy, or redistribute it subject to the terms and 
-    conditions of the GNU Lesser General Public License, v. 2.1. This program 
-    is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
-    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-    PURPOSE. See the GNU Lesser General Public License for more details. You 
-    should have received a copy of the GNU Lesser General Public License, v.2.1 
-    along with this distribution; if not, write to the Free Software Foundation, 
-    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jboss.narayana.blacktie</groupId>
-        <artifactId>blacktie-java</artifactId>
-        <version>5.0.4.Final-SNAPSHOT</version>
-        <relativePath>../common/java/pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.narayana.blacktie</groupId>
-    <artifactId>btadmin</artifactId>
-    <version>5.0.4.Final-SNAPSHOT</version>
-    <name>BlackTie Admin CLI Tool</name>
-    <description>A command line interface to issue administration command from</description>
-    <packaging>jar</packaging>
-    <url>http://www.jboss.org/blacktie</url>
-    <scm>
-        <connection>scm:svn:http://anonsvn.jboss.org/repos/blacktie/trunk/btadmin</connection>
-        <developerConnection>scm:svn:https://svn.jboss.org/repos/blacktie/trunk/btadmin</developerConnection>
-        <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/blacktie/trunk/btadmin</url>
-    </scm>
-    <developers>
-        <developer>
-            <id>tomjenkinson</id>
-            <name>Thomas Jenkinson</name>
-            <email>tom.jenkinson@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Project Lead</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>mmusgrov</id>
-            <name>Michael Musgrove</name>
-            <email>mmusgrov@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Core Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-        <developer>
-            <id>zfeng</id>
-            <name>Amos Feng</name>
-            <email>zfeng@redhat.com</email>
-            <organization>JBoss</organization>
-            <organizationUrl>http://www.jboss.org/</organizationUrl>
-            <roles>
-                <role>Core Developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-    </developers>
-    <licenses>
-        <license>
-            <name>LGPL 2.1</name>
-            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-        </license>
-    </licenses>
-    <build>
-        <plugins>
-            <plugin>
-                <inherited>false</inherited>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jboss.narayana.blacktie.plugins</groupId>
-                <artifactId>blacktie-cpp-plugin</artifactId>
-                <configuration>
-                    <src.main.file>cs</src.main.file>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-exe</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>generate-exe</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <workingDirectory>target/test-classes</workingDirectory>
-                    <environmentVariables>
-                        <Path>${ld_library_path}</Path>
-                        <LD_LIBRARY_PATH>${ld_library_path}</LD_LIBRARY_PATH>
-                        <BLACKTIE_CONFIGURATION_DIR>${blacktie.configuration.dir}</BLACKTIE_CONFIGURATION_DIR>
-                        <BLACKTIE_SCHEMA_DIR>${project.build.directory}/cxx/test/</BLACKTIE_SCHEMA_DIR>
-                        <JBOSSAS_IP_ADDR>${jbossas.ip.addr}</JBOSSAS_IP_ADDR>
-                    </environmentVariables>
-                    <systemProperties>
-                        <property>
-                            <name>Path</name>
-                            <value>${ld_library_path}</value>
-                        </property>
-                        <property>
-                            <name>LD_LIBRARY_PATH</name>
-                            <value>${ld_library_path}</value>
-                        </property>
-                        <property>
-                            <name>BLACKTIE_CONFIGURATION_DIR</name>
-                            <value>${blacktie.configuration.dir}</value>
-                        </property>
-                        <property>
-                            <name>BLACKTIE_SCHEMA_DIR</name>
-                            <value>${project.build.directory}/cxx/test</value>
-                        </property>
-                        <property>
-                            <name>JBOSSAS_IP_ADDR</name>
-                            <value>${jbossas.ip.addr}</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                        <manifestEntries>
-                            <Main-Class>org.jboss.narayana.blacktie.btadmin.Launcher</Main-Class>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings 
-                    only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.jboss.narayana.blacktie.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            blacktie-cpp-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [5.0.4.Final-SNAPSHOT,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>generate-exe</goal>
-                                            <goal>test-compile</goal>
-                                            <goal>process-classes</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            maven-antrun-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.3,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>run</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            maven-dependency-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>
-                                                unpack-dependencies
-                                            </goal>
-                                            <goal>
-                                                copy-dependencies
-                                            </goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-jatmibroker-xatmi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-admin-services</artifactId>
-        </dependency>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jboss.narayana.blacktie</groupId>
+		<artifactId>blacktie-java</artifactId>
+		<version>5.0.4.Final-SNAPSHOT</version>
+		<relativePath>../common/java/pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.narayana.blacktie</groupId>
+	<artifactId>btadmin</artifactId>
+	<version>5.0.4.Final-SNAPSHOT</version>
+	<name>BlackTie Admin CLI Tool</name>
+	<description>A command line interface to issue administration command from</description>
+	<packaging>jar</packaging>
+	<url>http://www.jboss.org/blacktie</url>
+	<scm>
+		<connection>scm:svn:http://anonsvn.jboss.org/repos/blacktie/trunk/btadmin</connection>
+		<developerConnection>scm:svn:https://svn.jboss.org/repos/blacktie/trunk/btadmin</developerConnection>
+		<url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/blacktie/trunk/btadmin</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>tomjenkinson</id>
+			<name>Thomas Jenkinson</name>
+			<email>tom.jenkinson@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+		<developer>
+			<id>mmusgrov</id>
+			<name>Michael Musgrove</name>
+			<email>mmusgrov@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>Core Developer</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+		<developer>
+			<id>zfeng</id>
+			<name>Amos Feng</name>
+			<email>zfeng@redhat.com</email>
+			<organization>JBoss</organization>
+			<organizationUrl>http://www.jboss.org/</organizationUrl>
+			<roles>
+				<role>Core Developer</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>LGPL 2.1</name>
+			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+		</license>
+	</licenses>
+	<build>
+		<plugins>
+			<plugin>
+				<inherited>false</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jboss.narayana.blacktie.plugins</groupId>
+				<artifactId>blacktie-cpp-plugin</artifactId>
+				<configuration>
+					<src.main.file>cs</src.main.file>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-exe</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>generate-exe</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>once</forkMode>
+					<workingDirectory>target/test-classes</workingDirectory>
+					<environmentVariables>
+						<Path>${ld_library_path}</Path>
+						<LD_LIBRARY_PATH>${ld_library_path}</LD_LIBRARY_PATH>
+						<BLACKTIE_CONFIGURATION_DIR>${blacktie.configuration.dir}</BLACKTIE_CONFIGURATION_DIR>
+						<BLACKTIE_SCHEMA_DIR>${project.build.directory}/cxx/test/</BLACKTIE_SCHEMA_DIR>
+						<JBOSSAS_IP_ADDR>${jbossas.ip.addr}</JBOSSAS_IP_ADDR>
+					</environmentVariables>
+					<systemProperties>
+						<property>
+							<name>Path</name>
+							<value>${ld_library_path}</value>
+						</property>
+						<property>
+							<name>LD_LIBRARY_PATH</name>
+							<value>${ld_library_path}</value>
+						</property>
+						<property>
+							<name>BLACKTIE_CONFIGURATION_DIR</name>
+							<value>${blacktie.configuration.dir}</value>
+						</property>
+						<property>
+							<name>BLACKTIE_SCHEMA_DIR</name>
+							<value>${project.build.directory}/cxx/test</value>
+						</property>
+						<property>
+							<name>JBOSSAS_IP_ADDR</name>
+							<value>${jbossas.ip.addr}</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Main-Class>org.jboss.narayana.blacktie.btadmin.Launcher</Main-Class>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jboss.narayana.blacktie.plugins
+										</groupId>
+										<artifactId>
+											blacktie-cpp-plugin
+										</artifactId>
+										<versionRange>
+											[5.0.4.Final-SNAPSHOT,)
+										</versionRange>
+										<goals>
+											<goal>generate-exe</goal>
+											<goal>test-compile</goal>
+											<goal>process-classes</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.3,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.1,)
+										</versionRange>
+										<goals>
+											<goal>
+												unpack-dependencies
+											</goal>
+											<goal>
+												copy-dependencies
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.narayana.blacktie</groupId>
+			<artifactId>blacktie-jatmibroker-xatmi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.narayana.blacktie</groupId>
+			<artifactId>blacktie-admin-services</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.jboss.narayana.jts</groupId>
             <artifactId>narayana-jts-jacorb</artifactId>
@@ -250,60 +250,39 @@
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.1_spec</artifactId>
         </dependency>
-        <dependency>
-            <groupId>jacorb</groupId>
-            <artifactId>jacorb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <artifactId>blacktie-xsd</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.blacktie</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>blacktie-xatmi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <properties>
-        <test.output.type>shared</test.output.type>
-        <test.excludes>**/cs.cxx</test.excludes>
-    </properties>
-    <profiles>
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-	    <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
-                    </plugin>
-                </plugins>
-	    </build>
-        </profile>
-    </profiles>
+		<dependency>
+			<groupId>jacorb</groupId>
+			<artifactId>jacorb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.narayana.blacktie</groupId>
+			<artifactId>blacktie-xsd</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.narayana.blacktie</groupId>
+			<classifier>${bpa}</classifier>
+			<artifactId>blacktie-xatmi</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.9.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<properties>
+		<test.output.type>shared</test.output.type>
+		<test.excludes>**/cs.cxx</test.excludes>
+	</properties>
 </project>
