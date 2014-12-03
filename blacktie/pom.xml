@@ -386,7 +386,7 @@
                 </os>
             </activation>
             <properties>
-                <ld_library_path>${env.Path};${project.build.directory}/cxx/runtime/lib;${project.build.directory}/cxx/test/lib;${project.build.directory}</ld_library_path>
+                <ld_library_path>${env.PATH};${project.build.directory}\cxx\runtime\lib;${project.build.directory}\cxx\test\lib;${project.build.directory}</ld_library_path>
                 <exclude_unpack_type/>
                 <blacktie.configuration.dir>.</blacktie.configuration.dir>
             </properties>
