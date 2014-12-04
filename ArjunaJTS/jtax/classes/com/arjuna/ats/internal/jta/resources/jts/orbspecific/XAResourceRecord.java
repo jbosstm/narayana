@@ -479,6 +479,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				if (!_prepared)
 					throw new NotPrepared();
 
+				boolean dontRemoveConnection = false;
+				
 				try
 				{
 					if (!_committed)
@@ -539,6 +541,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBTIMEOUT:
 						case XAException.XA_RBTRANSIENT:
 						case XAException.XAER_RMERR:
+							dontRemoveConnection = true;
 							updateState(TwoPhaseOutcome.HEURISTIC_ROLLBACK);
 
 							throw new org.omg.CosTransactions.HeuristicRollback();
@@ -576,7 +579,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				finally
 				{
-					removeConnection();
+					if (!dontRemoveConnection)
+						removeConnection();
 				}
 			}
 		}
