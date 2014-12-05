@@ -62,6 +62,7 @@ import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.utils.Helper;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
@@ -486,9 +487,25 @@ public class ControlWrapper implements Reapable
             {
                 // definitely/maybe not there so rolled back.
                 
-               // return org.omg.CosTransactions.Status.StatusRolledBack;
+                /*
+                 * If checked transactions are enabled then only the starting thread
+                 * should be able to terminate the transaction. In which case, anyone
+                 * else asking for the state of the transaction is either a participant
+                 * or tooling/application and in which case OBJECT_NOT_EXIST means the
+                 * transaction rolled back (otherwise why would the participant be asking
+                 * when there's no log?) or it could have committed (and in which case the
+                 * tool needs to take care of any possible ambiguity).
+                 * 
+                 * However, if checked transactions aren't enabled then multiple threads can
+                 * terminate the transaction, meaning the ambiguity could impact at the application
+                 * level and become a source of possible inconsistency. So we err on the safe side
+                 * here and say "we don't really know".
+                 */
                 
-                return org.omg.CosTransactions.Status.StatusUnknown;
+                if (jtsPropertyManager.getJTSEnvironmentBean().isCheckedTransactions())
+                    return org.omg.CosTransactions.Status.StatusRolledBack;
+                else
+                    return org.omg.CosTransactions.Status.StatusUnknown;
             }
             catch (final Exception e)
             {
@@ -498,14 +515,6 @@ public class ControlWrapper implements Reapable
             try
             {
                 return c.get_status();
-            }
-            catch (final OBJECT_NOT_EXIST ex)
-            {
-                // definitely/maybe not there any more.
-
-               // return org.omg.CosTransactions.Status.StatusRolledBack;
-                
-                return org.omg.CosTransactions.Status.StatusUnknown;
             }
             catch (final Exception e)
             {
