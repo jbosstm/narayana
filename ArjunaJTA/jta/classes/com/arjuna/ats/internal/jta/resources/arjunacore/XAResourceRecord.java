@@ -913,122 +913,136 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 	public boolean restore_state(InputObjectState os, int t)
 	{
-		boolean res = false;
+	    boolean res = false;
 
-		try
-		{
-			_heuristic = os.unpackInt();
-			_committed = os.unpackBoolean();
-			
-			_tranID = XidImple.unpack(os);
+	    try
+	    {
+	        _heuristic = os.unpackInt();
+	        _committed = os.unpackBoolean();
 
-			_theXAResource = null;
-			_recoveryObject = null;
+	        _tranID = XidImple.unpack(os);
 
-			if (os.unpackInt() == RecoverableXAConnection.OBJECT_RECOVERY)
-			{
-                _productName = os.unpackString();
-                _productVersion = os.unpackString();
-                _jndiName = os.unpackString();
+	        _theXAResource = null;
+	        _recoveryObject = null;
 
-				boolean haveXAResource = os.unpackBoolean();
+	        if (os.unpackInt() == RecoverableXAConnection.OBJECT_RECOVERY)
+	        {
+	            _productName = os.unpackString();
+	            _productVersion = os.unpackString();
+	            _jndiName = os.unpackString();
 
-				if (haveXAResource)
-				{
-					try
-					{
-						// Read the classname of the serialized XAResource
-						String className = os.unpackString();
-						
-						byte[] b = os.unpackBytes();
+	            boolean haveXAResource = os.unpackBoolean();
 
-						ByteArrayInputStream s = new ByteArrayInputStream(b);
-						ObjectInputStream o = new ObjectInputStream(s);
-						
-						// Give the list of deserializers a chance to deserialize the record
-						boolean deserialized = false;
-						Iterator<SerializableXAResourceDeserializer> iterator = getXAResourceDeserializers().iterator();
-						while (iterator.hasNext()) {
-							SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
-							if (proxyXAResourceDeserializer.canDeserialze(className)) {
-								_theXAResource = proxyXAResourceDeserializer.deserialze(o);
-								deserialized = true;
-                                break;
-							}
-						}
+	            if (haveXAResource)
+	            {
+	                try
+	                {
+	                    // Read the classname of the serialized XAResource
+	                    String className = os.unpackString();
 
-						// Give it a go ourselves
-						if (!deserialized) {
-							_theXAResource = (XAResource) o.readObject();
-						}
-						o.close();
+	                    byte[] b = os.unpackBytes();
 
-						if (jtaLogger.logger.isTraceEnabled()) {
-                            jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
-                        }
-					}
-					catch (Exception ex)
-					{
-						// not serializable in the first place!
+	                    ByteArrayInputStream s = new ByteArrayInputStream(b);
+	                    ObjectInputStream o = new ObjectInputStream(s);
 
-                        jtaLogger.i18NLogger.warn_resources_arjunacore_restorestate(ex);
+	                    // Give the list of deserializers a chance to deserialize the record
+	                    boolean deserialized = false;
+	                    Iterator<SerializableXAResourceDeserializer> iterator = getXAResourceDeserializers().iterator();
+	                    while (iterator.hasNext()) {
+	                        SerializableXAResourceDeserializer proxyXAResourceDeserializer = iterator.next();
+	                        if (proxyXAResourceDeserializer.canDeserialze(className)) {
+	                            _theXAResource = proxyXAResourceDeserializer.deserialze(o);
+	                            deserialized = true;
+	                            break;
+	                        }
+	                    }
 
-						return false;
-					}
-				}
-				else
-				{
-					/*
-					 * Lookup new XAResource via XARecoveryModule if possible.
-					 */
+	                    // Give it a go ourselves
+	                    if (!deserialized) {
+	                        _theXAResource = (XAResource) o.readObject();
+	                    }
+	                    o.close();
 
-					_theXAResource = getNewXAResource();
+	                    if (jtaLogger.logger.isTraceEnabled()) {
+	                        jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
+	                    }
+	                }
+	                catch (Exception ex)
+	                {
+	                    // not serializable in the first place!
 
-					if (_theXAResource == null)
-					{
-                        jtaLogger.i18NLogger.warn_resources_arjunacore_norecoveryxa( toString() );
+	                    jtaLogger.i18NLogger.warn_resources_arjunacore_restorestate(ex);
 
-						/*
-						 * Don't prevent tx from activating because there may be
-						 * other participants that can still recover. Plus, we will
-						 * try to get a new XAResource later for this instance.
-						 */
+	                    return false;
+	                }
+	            }
+	            else
+	            {
+	                /*
+	                 * Lookup new XAResource via XARecoveryModule if possible.
+	                 */
 
-						res = true;
-					}
-				}
-			}
-			else
-			{
-				String creatorName = os.unpackString();
+	                _theXAResource = getNewXAResource();
 
-                _recoveryObject = ClassloadingUtility.loadAndInstantiateClass(RecoverableXAConnection.class, creatorName, null);
-                if(_recoveryObject == null) {
-                    throw new ClassNotFoundException();
-                }
+	                if (_theXAResource == null)
+	                {
+	                    jtaLogger.i18NLogger.warn_resources_arjunacore_norecoveryxa( toString() );
 
-				_recoveryObject.unpackFrom(os);
-				_theXAResource = _recoveryObject.getResource();
+	                    /*
+	                     * Don't prevent tx from activating because there may be
+	                     * other participants that can still recover. Plus, we will
+	                     * try to get a new XAResource later for this instance.
+	                     */
 
-				if (jtaLogger.logger.isTraceEnabled()) {
-                    jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource got from "
-                            + creatorName);
-                }
-			}
+	                    res = true;
+	                }
+	            }
+	        }
+	        else
+	        {
+	            String creatorName = os.unpackString();
 
-			res = true;
-		}
-		catch (Exception e)
-		{
-            jtaLogger.i18NLogger.warn_resources_arjunacore_restorestateerror(_theXAResource.toString(), XAHelper.xidToString(_tranID), e);
+	            _recoveryObject = ClassloadingUtility.loadAndInstantiateClass(RecoverableXAConnection.class, creatorName, null);
+	            if(_recoveryObject == null) {
+	                throw new ClassNotFoundException();
+	            }
 
-		    res = false;
-		}
+	            _recoveryObject.unpackFrom(os);
+	            _theXAResource = _recoveryObject.getResource();
 
-		if (res)
-			res = super.restore_state(os, t);
+	            if (jtaLogger.logger.isTraceEnabled()) {
+	                jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource got from "
+	                        + creatorName);
+	            }
+	        }
 
-		return res;
+	        res = true;
+	    }
+	    catch (Exception e)
+	    {
+	        jtaLogger.i18NLogger.warn_resources_arjunacore_restorestateerror(_theXAResource.toString(), XAHelper.xidToString(_tranID), e);
+
+	        res = false;
+	    }
+	    finally
+	    {
+
+	        if (res)
+	            res = super.restore_state(os, t);
+	            
+	        /*
+	         * If we're here then we've restored enough to print data on
+	         * this instance.
+	         */
+	        
+	        if (_heuristic != TwoPhaseOutcome.FINISH_OK)
+	        {
+	            if (jtaLogger.logger.isWarnEnabled())
+	                jtaLogger.logger.warn("XAResourceRecord restored heuristic instance: "+this);	            
+	        }
+	    }
+
+	    return res;
 	}
 
 	public String type()
