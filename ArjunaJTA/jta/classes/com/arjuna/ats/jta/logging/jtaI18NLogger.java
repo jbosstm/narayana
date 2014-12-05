@@ -431,6 +431,9 @@ public interface jtaI18NLogger {
 		format = MESSAGE_FORMAT)
 	public String warn_resources_arjunacore_restorecrstateerror(String arg0, String arg1, @Cause() Throwable arg2);
 
+    @Message(id = 16104, value = "The node identifier cannot be null", format = MESSAGE_FORMAT)
+    public String get_nodename_null();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

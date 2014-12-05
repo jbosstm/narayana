@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.arjuna.common.logging.commonLogger;
 import com.arjuna.common.util.ConfigurationInfo;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLResolver;
@@ -88,9 +89,11 @@ public class PropertiesFactory
             // try falling back to a default file built into the .jar
             // Note the default- prefix on the name, to avoid finding it from the .jar at the previous stage
             // in cases where the .jar comes before the etc dir on the classpath.
+            commonLogger.i18NLogger.warn_could_not_find_config_file(propertyFileName);
+
             URL url = PropertiesFactory.class.getResource("/default-"+propertyFileName);
             if(url == null) {
-                throw new RuntimeException("missing property file "+propertyFileName);
+                commonLogger.i18NLogger.warn_could_not_find_config_file("/default-"+propertyFileName);
             } else {
                 propertiesSourceUri = url.toString();
             }
@@ -103,7 +106,9 @@ public class PropertiesFactory
         Properties properties = null;
 
         try {
-            properties = loadFromFile(propertiesSourceUri);
+            if (propertiesSourceUri != null) {
+                properties = loadFromFile(propertiesSourceUri);
+            }
             properties = applySystemProperties(properties);
 
         } catch(Exception e) {
