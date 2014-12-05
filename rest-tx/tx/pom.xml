@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.jboss.jbossts.rts</groupId>
     <artifactId>rest-tx</artifactId>
-    <version>4.17.26.Final</version>
+    <version>4.17.27.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
