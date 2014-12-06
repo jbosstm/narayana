@@ -1037,8 +1037,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	        
 	        if (_heuristic != TwoPhaseOutcome.FINISH_OK)
 	        {
-	            if (jtaLogger.logger.isWarnEnabled())
-	                jtaLogger.logger.warn("XAResourceRecord restored heuristic instance: "+this);	            
+	            jtaLogger.logger.warn("XAResourceRecord restored heuristic instance: "+this);	            
 	        }
 	    }
 

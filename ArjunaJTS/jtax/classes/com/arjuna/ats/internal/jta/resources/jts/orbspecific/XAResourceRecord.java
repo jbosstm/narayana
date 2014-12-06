@@ -1088,8 +1088,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                 
                 if (_heuristic != TwoPhaseOutcome.FINISH_OK)
                 {
-                    if (jtaxLogger.logger.isWarnEnabled())
-                        jtaxLogger.logger.warn("XAResourceRecord restored heuristic instance: "+this); 
+                    jtaxLogger.logger.warn("XAResourceRecord restored heuristic instance: "+this); 
                 }
 	    }
 

@@ -1156,8 +1156,7 @@ public class BasicAction extends StateManager
 
         if (hSize > 0)
         {
-            if (tsLogger.logger.isWarnEnabled())
-                tsLogger.logger.warn("Transaction "+get_uid()+" has "+hSize+" heuristic participant(s)!");
+            tsLogger.logger.warn("Transaction "+get_uid()+" has "+hSize+" heuristic participant(s)!");
             
             try
             {
@@ -1182,8 +1181,7 @@ public class BasicAction extends StateManager
 
                     record_type = os.unpackInt();
                     
-                    if (tsLogger.logger.isWarnEnabled())
-                        tsLogger.logger.warn("Transaction "+get_uid()+" restored heuristic participant "+record);
+                    tsLogger.logger.warn("Transaction "+get_uid()+" restored heuristic participant "+record);
                     
 
                     if (tsLogger.logger.isTraceEnabled()) {
