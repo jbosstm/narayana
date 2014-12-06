@@ -155,7 +155,7 @@ public class ExtendedResourceRecord extends
 
 				theOrb = null;
 
-				_resourceHandle = com.arjuna.ArjunaOTS.ArjunaSubtranAwareResourceHelper.narrow(optr);
+				_resourceHandle = com.arjuna.ArjunaOTS.ArjunaSubtranAwareResourceHelper.unchecked_narrow(optr);
 
 				if (jtsLogger.logger.isTraceEnabled())
 				{
@@ -1159,7 +1159,7 @@ public class ExtendedResourceRecord extends
 				ExtendedResourceRecord theRecord = (ExtendedResourceRecord) absRec;
 				ArjunaSubtranAwareResource theResource = theRecord.resourceHandle();
 
-				resHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.narrow(theResource);
+				resHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.unchecked_narrow(theResource);
 
 				theResource = null;
 			}
@@ -1176,7 +1176,7 @@ public class ExtendedResourceRecord extends
 		try
 		{
 		    if (_otsARHandle == null) {
-		        _otsARHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.narrow(_resourceHandle);
+		        _otsARHandle = com.arjuna.ArjunaOTS.OTSAbstractRecordHelper.unchecked_narrow(_resourceHandle);
 		        lastRecord = RecordType.LASTRESOURCE == _otsARHandle.type_id();
 		    }
 
