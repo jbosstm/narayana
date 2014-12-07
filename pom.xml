@@ -458,7 +458,12 @@
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.apache.maven.plugins.maven-antrun-plugin>1.7</version.org.apache.maven.plugins.maven-antrun-plugin>
+    <version.org.jacoco>0.7.2.201409121644</version.org.jacoco>
+<!--
+    <version.org.jacoco>0.7.3-SNAPSHOT</version.org.jacoco>
+    <version.org.jacoco>0.7.2.201409121644</version.org.jacoco>
     <version.org.jacoco>0.6.3.201306030806</version.org.jacoco>
+-->
   </properties>
   <modules>
     <module>tools</module>
@@ -474,6 +479,7 @@
     <module>compensations</module>
     <module>osgi</module>
     <module>narayana-full</module>
+    <module>code-coverage</module>
   </modules>
   <profiles>
     <profile>

@@ -311,6 +311,28 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>codeCoverage</id>
+      <build>
+        <plugins>
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+            </configuration>
+          </execution>
+        </executions>
+        </plugin>
+        </plugins>
+      </build>
+    </profile>
      <profile>
           <id>community</id>
           <build>
