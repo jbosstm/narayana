@@ -60,6 +60,7 @@
         package Narayana binary + src files for upload to website and other repos.
     </description>
   <property name="mvn.executable" value="tools/maven/bin/mvn.bat"/>
+  <property name="awestruct.executable" value="awestruct.bat"/>
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
@@ -218,7 +219,7 @@
     </exec>
 
     <!-- Build web page and push to jboss.org -->
-    <exec executable="awestruct" dir="${workdir}/narayana.io/">
+    <exec executable="awestruct.executable" dir="${workdir}/narayana.io/">
       <arg value="-P"/>
       <arg value="production"/>
     </exec>
