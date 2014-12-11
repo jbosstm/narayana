@@ -123,7 +123,7 @@ public class XMLParserTest extends TestCase {
         String function = "org.jboss.narayana.blacktie.jatmibroker.xatmi.services.TPCallXOctetService";
 
         String userlist = "guest:true:true,blacktie:true:true";
-        String version = "5.0.4.Final";
+        String version = "5.0.5.Final-SNAPSHOT";
 
         assertTrue(server.equals(prop.getProperty("blacktie.TestOne.server")));
         assertTrue(function.equals(prop.getProperty("blacktie.JAVA_Converse.java_class_name")));
