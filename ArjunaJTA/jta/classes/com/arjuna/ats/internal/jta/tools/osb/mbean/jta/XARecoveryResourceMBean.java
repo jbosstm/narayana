@@ -19,28 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.arjuna.tools.osb.mbean;
+package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
+import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBeanMBean;
 
 /**
- * Common interface for JTA and JTS transactions
+ * MBean for XAResourceRecords
  *
  * @author Mike Musgrove
  */
-public interface ActionBeanWrapperInterface {
-	RecordList getRecords(ParticipantStatus type);
-	boolean activate();
-	void doUpdateState();
-	Uid get_uid();
-	Uid getUid(AbstractRecord rec);
-	StringBuilder toString(String prefix, StringBuilder sb);
-    BasicAction getAction();
-
-    void clearHeuristicDecision(int newDecision);
-
-	void remove(LogRecordWrapper logRecordWrapper);
+@MXBeanDescription("Management view of a JTS XARecoveryResource participating in a transaction")
+public interface XARecoveryResourceMBean extends OSEntryBeanMBean {
+    byte[] getGlobalTransactionId();
+    byte[] getBranchQualifier();
+    int getFormatId();
+    String getNodeName() ;
+    int getHeuristicValue();
+//    boolean isCommitted();
 }

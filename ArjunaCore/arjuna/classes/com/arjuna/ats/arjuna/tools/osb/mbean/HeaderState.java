@@ -22,25 +22,38 @@
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 /**
- * Common interface for JTA and JTS transactions
+ * All log store records contain the state held in this object.
  *
  * @author Mike Musgrove
  */
-public interface ActionBeanWrapperInterface {
-	RecordList getRecords(ParticipantStatus type);
-	boolean activate();
-	void doUpdateState();
-	Uid get_uid();
-	Uid getUid(AbstractRecord rec);
-	StringBuilder toString(String prefix, StringBuilder sb);
-    BasicAction getAction();
+public class HeaderState {
+    String state;
+    Uid txUid;
+    Uid processUid;
+    long birthDate;
 
-    void clearHeuristicDecision(int newDecision);
+    public HeaderState(String state, Uid txUid, Uid processUid, long birthDate) {
+        this.state = state;
+        this.txUid = txUid;
+        this.processUid = processUid;
+        this.birthDate = birthDate;
+    }
 
-	void remove(LogRecordWrapper logRecordWrapper);
+    public String getState() {
+        return state;
+    }
+
+    public Uid getTxUid() {
+        return txUid;
+    }
+
+    public Uid getProcessUid() {
+        return processUid;
+    }
+
+    public long getBirthDate() {
+        return birthDate;
+    }
 }

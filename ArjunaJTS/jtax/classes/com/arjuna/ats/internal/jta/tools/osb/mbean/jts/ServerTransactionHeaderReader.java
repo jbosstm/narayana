@@ -19,28 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.arjuna.tools.osb.mbean;
+package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderStateReader;
+
+import java.io.IOException;
 
 /**
- * Common interface for JTA and JTS transactions
+ * ObjectStore record header reader for ServerTransaction
  *
  * @author Mike Musgrove
  */
-public interface ActionBeanWrapperInterface {
-	RecordList getRecords(ParticipantStatus type);
-	boolean activate();
-	void doUpdateState();
-	Uid get_uid();
-	Uid getUid(AbstractRecord rec);
-	StringBuilder toString(String prefix, StringBuilder sb);
-    BasicAction getAction();
+public class ServerTransactionHeaderReader extends HeaderStateReader {
+    protected HeaderState unpackHeader(InputObjectState os) throws IOException {
+        boolean haveRecCoord = os.unpackBoolean();
 
-    void clearHeuristicDecision(int newDecision);
+        if (haveRecCoord)
+            os.unpackString(); // read ior
 
-	void remove(LogRecordWrapper logRecordWrapper);
+        return super.unpackHeader(os);
+    }
 }

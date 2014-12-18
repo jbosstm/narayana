@@ -1,15 +1,31 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -23,6 +39,8 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
 /**
  * MBean implementation of an ObjectStore entry that represents an AtomicAction
+ *
+ * @author Mike Musgrove
  */
 public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     // Basic properties this enty
@@ -32,16 +50,18 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     // wrapper around the real AtomicAction
     protected ActionBeanWrapperInterface ra;
 
+    protected List<UidWrapper> recuids = new ArrayList<UidWrapper>();
+    private static final ThreadLocal<String> classname = new ThreadLocal<String>();
+
     public ActionBean(UidWrapper w) {
         super(w);
 
-        boolean isJTS = JMXServer.isJTS() && w.getType().endsWith("ArjunaTransactionImple");
-        // Participants in a JTS transaction are represented by entries in the ObjectStore
-        List<UidWrapper> recuids = null;
+        boolean isJTS = JMXServer.isJTS() && w.getType().contains("ArjunaTransactionImple");
 
         if (isJTS) {
             try {
-                Class<ActionBeanWrapperInterface> cl = (Class<ActionBeanWrapperInterface>) Class.forName(JMXServer.AJT_WRAPPER_TYPE);
+                UidWrapper.setRecordWrapperTypeName(w.getType());
+                Class<ActionBeanWrapperInterface> cl = (Class<ActionBeanWrapperInterface>) Class.forName(w.getClassName());
                 Constructor<ActionBeanWrapperInterface> constructor = cl.getConstructor(ActionBean.class, UidWrapper.class);
                 ra = constructor.newInstance(this, w);
                 ra.activate();
@@ -52,11 +72,10 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
             }
 
             /*
-                * for JTS actions the participants will have entries in the ObjectStore.
-                * these entries will be associated with the current MBean (refer to
-                * the method findParticipants below for details)
-                */
-            recuids = w.probe(JMXServer.AJT_RECORD_TYPE);
+             * For JTS we also store participant details under "CosTransactions/XAResourceRecord"
+             * We may at some point want to augment the beans created in findParticipants below with
+             * w.probe(JMXServer.AJT_RECORD_TYPE);
+             */
         } else {
             ra = createWrapper(w, true);  // com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager.manager()
         }
@@ -105,15 +124,27 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
      * @return a textual indication of whether the remove operation succeeded
      */
     public String remove() {
+        // first unregister each participant of this action
+        Iterator<LogRecordWrapper> i = participants.iterator();
+
+        while (i.hasNext()) {
+            LogRecordWrapper w = i.next();
+
+            w.remove(false);
+
+            i.remove();
+        }
+
         try {
             if (!StoreManager.getRecoveryStore().remove_committed(getUid(), getType()))
                 return "Attempt to remove transaction failed";
-            else
-                w.probe();
 
+            _uidWrapper.unregister();
             return "Transaction successfully removed";
         } catch (ObjectStoreException e) {
             return "Unable to remove transaction: " + e.getMessage();
+        } finally {
+            _uidWrapper.probe();
         }
     }
 
@@ -268,6 +299,14 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     }
 
     /**
+     * remove the a participant
+     * @param logRecordWrapper the wrapped log record
+     */
+    public void remove(LogRecordWrapper logRecordWrapper) {
+        ra.remove(logRecordWrapper);
+    }
+
+    /**
      * The ActionBean needs access to the participant lists maintained by an AtomicAction but these
      * lists are protected. Therefore define a simple extension class to get at these records:
      */
@@ -378,6 +417,17 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                     if (tsLogger.logger.isDebugEnabled())
                         tsLogger.logger.debug("failed to update heuristic for " + action.toString() + ": error: " + e.getMessage());
                 }
+        }
+
+        @Override
+        public void remove(LogRecordWrapper logRecordWrapper) {
+            RecordList rl = getRecords(logRecordWrapper.getListType());
+
+            if (rl != null && rl.size() > 0) {
+                if (rl.remove(logRecordWrapper.getRecord())) {
+                    doUpdateState(); // rewrite the list
+                }
+            }
         }
 
         private Field getField(Class cl, String fn) {

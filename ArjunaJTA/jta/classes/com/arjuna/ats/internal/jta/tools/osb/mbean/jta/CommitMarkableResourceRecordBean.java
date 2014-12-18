@@ -22,11 +22,11 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.*;
 import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
+import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * MBean implementation of a transaction participant corresponding to a JTA
@@ -34,20 +34,34 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRe
  */
 public class CommitMarkableResourceRecordBean extends LogRecordWrapper
 		implements CommitMarkableResourceRecordBeanMBean {
-	String className = "unavailable";
-	String eisProductName = "unavailable";
-	String eisProductVersion = "unavailable";
-	String jndiName = "unavailable";
-    int timeout = 0;
+	String className;
+	String eisProductName;
+	String eisProductVersion;
+	String jndiName;
+    int timeout;
+	XidImple xidImple;
+
+	int heuristic;
 
 	public CommitMarkableResourceRecordBean(UidWrapper w) {
 		super(w.getUid());
+		init();
 	}
 
-	public CommitMarkableResourceRecordBean(ActionBean parent,
-			AbstractRecord rec, ParticipantStatus listType) {
+	public CommitMarkableResourceRecordBean(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
 		super(parent, rec, listType);
+		init();
 		// xares = new JTAXAResourceRecordWrapper(rec.order());
+	}
+
+	private void init() {
+		jndiName = getUid().stringForm();
+		className = "unavailable";
+		eisProductName = "unavailable";
+		eisProductVersion = "unavailable";
+		timeout = 0;
+		heuristic = -1;
+		xidImple = new XidImple(new XID());
 	}
 
 	public boolean activate() {
@@ -62,6 +76,7 @@ public class CommitMarkableResourceRecordBean extends LogRecordWrapper
 			eisProductName = xarec.getProductName();
 			eisProductVersion = xarec.getProductVersion();
 			jndiName = xarec.getJndiName();
+			heuristic = xarec.getHeuristic();
 		}
 
         if (xares != null) {
@@ -93,7 +108,40 @@ public class CommitMarkableResourceRecordBean extends LogRecordWrapper
         return timeout;
     }
 
-    public String getJndiName() {
+	@Override
+	public String getJndiName() {
 		return jndiName;
 	}
+
+	@Override
+	public String getHeuristicStatus() {
+		String hs = super.getHeuristicStatus();
+
+		if (heuristic != -1 && HeuristicStatus.UNKNOWN.name().equals(hs)) {
+			hs = HeuristicStatus.intToStatus(heuristic).name();
+		}
+
+		return hs;
+	}
+
+    @Override
+    public byte[] getGlobalTransactionId() {
+        return xidImple.getGlobalTransactionId();
+    }
+    @Override
+    public byte[] getBranchQualifier() {
+        return xidImple.getBranchQualifier();
+    }
+    @Override
+    public int getFormatId() {
+        return xidImple.getFormatId();
+    }
+    @Override
+    public String getNodeName() {
+        return XATxConverter.getNodeName(xidImple.getXID());
+    }
+    @Override
+    public int getHeuristicValue() {
+        return heuristic;
+    }
 }

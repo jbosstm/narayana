@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import java.lang.reflect.Constructor;
@@ -8,9 +29,21 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Base class MBean implementation wrapper for MBeans corresponding to a Uid
+ *
+ * @author Mike Musgrove
  */
 public class UidWrapper {
+	private static final ThreadLocal<String> recordWrapperTypeName = new ThreadLocal<String>();
+
+	public static void setRecordWrapperTypeName(String name) {
+		recordWrapperTypeName.set(name);
+    }
+	public static String getRecordWrapperTypeName() {
+		return recordWrapperTypeName.get();
+	}
+
 	private String name;
+
 	private ObjStoreBrowser browser;
 	private String beantype;
     private String className;
@@ -19,20 +52,17 @@ public class UidWrapper {
 	private long tstamp;
 	private OSEntryBean mbean;
 	boolean registered = false;
+	boolean allowRegistration;
 
 	public UidWrapper(Uid uid) {
-		this.uid = uid;
-		this.name = "";
-		this.beantype = "";
-		this.ostype = "";
-        this.className = null;
-	}
-
-	public OSEntryBean getMBean() {
-		return mbean;
+		this(null, "", "", null, uid);
 	}
 
 	public UidWrapper(ObjStoreBrowser browser, String beantype, String ostype, String className, Uid uid) {
+		this(browser, beantype, ostype, className, uid, true);
+	}
+
+	public UidWrapper(ObjStoreBrowser browser, String beantype, String ostype, String className, Uid uid, boolean allowRegistration) {
 		this.browser = browser;
 		this.ostype = ostype;
 		this.beantype = beantype;
@@ -40,14 +70,20 @@ public class UidWrapper {
 		this.uid = uid;
 		this.tstamp = 0L;
 		this.name = "jboss.jta:type=ObjectStore,itype=" + ostype + ",uid=" + uid.fileStringForm(); // + ",participant=false";
+		this.registered = false;
+		this.allowRegistration = allowRegistration;
+	}
 
+	public OSEntryBean getMBean() {
+		return mbean;
 	}
 
     /**
      * Refresh the management view of the whole ObjectStore
      */
 	public void probe() {
-		browser.probe();
+		if (browser != null)
+			browser.probe();
 	}
 
 	public String getType() {
@@ -58,20 +94,28 @@ public class UidWrapper {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getClassName() {
 		return className;
 	}
 
 	void register() {
-		if (mbean != null && !registered) {
+		if (allowRegistration && mbean != null && !registered) {
 			mbean.register();
 			registered = true;
 		}
 	}
 
-	void unregister() {
-		if (mbean != null) {
-			mbean.unregister();
+	public void unregister() {
+		if (registered && mbean != null) {
+			try {
+				mbean.unregister();
+			} catch (Exception e) {
+
+			}
 			registered = false;
 		}
 	}
@@ -92,6 +136,10 @@ public class UidWrapper {
 	public Uid getUid() {
         return uid;
     }
+
+	public ObjStoreBrowser getBrowser() {
+		return browser;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -150,5 +198,13 @@ public class UidWrapper {
 		if (mbean == null)
 		    createMBean();
 		register();
+	}
+
+	public boolean isAllowRegistration() {
+		return allowRegistration;
+	}
+
+	public void setAllowRegistration(boolean allowRegistration) {
+		this.allowRegistration = allowRegistration;
 	}
 }
