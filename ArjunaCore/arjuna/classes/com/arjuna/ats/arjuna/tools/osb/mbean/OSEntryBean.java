@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -9,16 +30,21 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
 /**
  * Superclass for MBean implementations representing ObjectStore entries
+ *
+ * @author Mike Musgrove
  */
 public class OSEntryBean implements OSEntryBeanMBean {	
-	protected UidWrapper w;
+	protected UidWrapper _uidWrapper;
 
 	public OSEntryBean() {
-		this.w = new UidWrapper(Uid.nullUid());
+		this._uidWrapper = new UidWrapper(Uid.nullUid());
 	}
 
 	public OSEntryBean(UidWrapper w) {
-		this.w = w;
+		if (w == null)
+			w = new UidWrapper(Uid.nullUid());
+
+		this._uidWrapper = w;
 	}
 
 	public void register(String name) {
@@ -43,11 +69,11 @@ public class OSEntryBean implements OSEntryBeanMBean {
 	}
 
 	public String getName() {
-		return w.getName();
+		return _uidWrapper.getName();
 	}
 
 	public String getType() {
-		return w.getType();
+		return _uidWrapper.getType();
 	}
 
 	public String type() {
@@ -63,11 +89,11 @@ public class OSEntryBean implements OSEntryBeanMBean {
 	}
 
 	public String getId() {
-		return w.getUid().stringForm();
+		return _uidWrapper.getUid().stringForm();
 	}
 
 	public Uid getUid() {
-		return w.getUid();
+		return _uidWrapper.getUid();
 	}
 
 	public StringBuilder toString(String prefix, StringBuilder sb) {
@@ -79,24 +105,37 @@ public class OSEntryBean implements OSEntryBeanMBean {
 	 * @return a textual indication of whether the remove operation succeeded
 	 */
 	public String remove() {
-		try {
-			if (StoreManager.getRecoveryStore().remove_committed(getUid(), w.getType())) {
-				w.probe();
+		return remove(true);
+	}
 
-				return "Record successfully removed";
-			}
+	public String remove(boolean reprobe) {
+		if (doRemove()) {
+			if (reprobe)
+				_uidWrapper.probe();
+
+			return REMOVE_OK_1;
+		}
+
+		return REMOVE_NOK_1;
+	}
+
+	public boolean doRemove() {
+		try {
+			if (StoreManager.getRecoveryStore().remove_committed(getUid(), _uidWrapper.getType()))
+				return true;
 
 			if (tsLogger.logger.isDebugEnabled())
-				tsLogger.logger.debug("Remove committed failed for uid " + getUid());
+				tsLogger.logger.debugf("%s %s", REMOVE_NOK_1, getUid().toString());
 
-			return "Remove committed failed for uid " + getUid();
+			return false;
 		} catch (ObjectStoreException e) {
 			if (tsLogger.logger.isDebugEnabled())
-				tsLogger.logger.debug("Remove committed failed for uid " + getUid()
-				    + " - " + e.getMessage());
+				tsLogger.logger.debugf("%s %s - %s", REMOVE_NOK_1, getUid().toString(), e.getMessage());
 
-			return "Remove committed failed for uid " + getUid()
-			    + " - " + e.getMessage();
+			return false;
 		}
 	}
+
+	public static final String REMOVE_OK_1 = "Record successfully removed";
+	public static final String REMOVE_NOK_1 = "Remove committed failed for uid ";
 }

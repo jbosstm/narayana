@@ -40,8 +40,9 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
 
 /**
  * Simple wrapper for accessing the JMX server
+ *
+ * @author Mike Musgrove
  */
-
 public class JMXServer
 {
 	public static String JTS_INITIALISER_CNAME = "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ToolsInitialiser";
@@ -131,7 +132,9 @@ public class JMXServer
 		} catch (MalformedObjectNameException e) {
             tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_5(name, e);
         } catch (InstanceNotFoundException e) {
-            tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_5(name, e);
+			if (tsLogger.logger.isTraceEnabled())
+				tsLogger.logger.tracef("registering bean %s", name);
+//            tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_5(name, e);
         } catch (MBeanRegistrationException e) {
             // can't happen - none of our beans implement the MBeanRegistration interface
             tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_6(name, e);

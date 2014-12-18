@@ -1,10 +1,36 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.hp.mwtests.ts.jta.jts.tools;
 
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
+import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
+import com.hp.mwtests.ts.jta.jts.common.DummyXA;
+import org.junit.*;
+import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosTransactions.HeuristicHazard;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -35,6 +61,7 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 import java.lang.reflect.Field;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,10 +70,36 @@ import static org.junit.Assert.*;
 
 /**
  * Test the the ObjStoreBrowser MBean in a JTS environment.
+ *
+ * @author Mike Musgrove
  */
 public class JTSObjStoreBrowserTest extends TestBase {
 	private RecoveryManager rcm;
 	private RecoveryDriver rd;
+
+	@BeforeClass
+	public static void initOrb() throws InvalidName {
+		int recoveryOrbPort = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
+		final Properties p = new Properties();
+		p.setProperty("OAPort", ""+recoveryOrbPort);
+		p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", ""+recoveryOrbPort);
+		p.setProperty("com.sun.CORBA.POA.ORBServerId", ""+recoveryOrbPort);
+
+		ORB orb = ORB.getInstance("test");
+		OA oa = OA.getRootOA(orb);
+		orb.initORB(new String[] {}, p);
+		oa.initOA();
+
+		ORBManager.setORB(orb);
+		ORBManager.setPOA(oa);
+	}
+
+	@AfterClass
+	public static void shutdownOrb() {
+		ORBManager.getPOA().destroy();
+		ORBManager.getORB().shutdown();
+		ORBManager.reset();
+	}
 
 	@Before
 	public void setUp () throws Exception
@@ -72,6 +125,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
         f.set(rcm, null);
         
 	}
+
 
 	private ObjStoreBrowser createObjStoreBrowser(boolean probe) {
 		ObjStoreBrowser osb = new ObjStoreBrowser();

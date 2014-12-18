@@ -102,10 +102,10 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		{
 			if (_theXid != null) {
 				os.packBoolean(true);
-			
-			    _theXid.packInto(os);
-			} else
+				_theXid.packInto(os);
+			} else {
 				os.packBoolean(false);
+			}
 			
 			return super.save_state(os, ot);
 		}

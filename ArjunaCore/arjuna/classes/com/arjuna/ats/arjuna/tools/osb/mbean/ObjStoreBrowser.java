@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import java.io.File;
@@ -17,61 +38,103 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 /**
  * An MBean implementation for walking an ObjectStore and creating/deleting MBeans
  * that represent completing transactions (ie ones on which the user has called commit)
+ *
+ * @author Mike Musgrove
  */
 public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
-    private static class OSBType {
-        boolean enabled;
-        String recordClass; // defines which object store record types will be instrumented
-        String beanClass; // the JMX mbean representation of the record type
-        String typeName; // the type name {@link com.arjuna.ats.arjuna.coordinator.AbstractRecord#type()}
-
-        private OSBType(boolean enabled, String recordClass, String beanClass, String typeName) {
-            this.enabled = enabled;
-            this.recordClass = recordClass;
-            this.beanClass = beanClass;
-            this.typeName = typeName;
-        }
-    }
-
     private static final String SUBORDINATE_AA_TYPE =
-            "StateManager"+File.separator+"BasicAction"+File.separator+"TwoPhaseCoordinator"+File.separator+"AtomicAction"+File.separator+"SubordinateAtomicAction"+File.separator+"JCA";
+            "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA".replace("/", File.separator);
 
-    private static OSBType[] defaultOsbTypes = {
-            new OSBType(
+    private static OSBTypeHandler[] defaultOsbTypes = {
+            new OSBTypeHandler(
                     true,
                     "com.arjuna.ats.internal.jta.recovery.arjunacore.RecoverConnectableAtomicAction",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.RecoverConnectableAtomicActionBean",
-//                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.CommitMarkableResourceRecordBean",
-//                    "com.arjuna.ats.arjuna.AtomicAction",
-//                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean",
-                    "StateManager"+File.separator+"BasicAction"+File.separator+"TwoPhaseCoordinator"+File.separator+"AtomicActionConnectable"),
-            new OSBType(
+                    "StateManager/BasicAction/TwoPhaseCoordinator/AtomicActionConnectable",
+                    null
+            ),
+            new OSBTypeHandler(
                     false,
                     "com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.SubordinateActionBean",
-                    SUBORDINATE_AA_TYPE),
-            new OSBType(
+                    SUBORDINATE_AA_TYPE,
+                    null
+            ),
+            new OSBTypeHandler(
                     true,
                     "com.arjuna.ats.arjuna.AtomicAction",
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean",
-                    "StateManager"+File.separator+"BasicAction"+File.separator+"TwoPhaseCoordinator"+File.separator+"AtomicAction"
-            ),
-            new OSBType(
-                    true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
                     "com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean",
-                    "StateManager"+File.separator+"BasicAction"+File.separator+"TwoPhaseCoordinator"+File.separator+"ArjunaTransactionImple"
-            )
-
+                    "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction",
+                    null
+            ),
     };
 
-    private Map<String, OSBType> osbTypeMap = new HashMap<String, OSBType>();
+    private static OSBTypeHandler[] defaultJTSOsbTypes = {
+            new OSBTypeHandler(
+                    true,
+                    false,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
+                    "CosTransactions/XAResourceRecord",
+                    null
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple",
+                    null
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader"
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteServerTransaction",
+                    null
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteHeuristicTransaction",
+                    null
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteHeuristicServerTransaction",
+                    null
+            ),
+            new OSBTypeHandler(
+                    true,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteTransaction",
+                    null
+            )
+    };
+
+    private static Map<String, OSBTypeHandler> osbTypeMap = new HashMap<String, OSBTypeHandler>();
 
     // A system property for defining extra bean types for instrumenting object store types
     // The format is OSType1=BeanType1,OSType2=BeanType2,etc
     public static final String OBJ_STORE_BROWSER_HANDLERS = "com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserHandlers";
     private static final String STORE_MBEAN_NAME = "jboss.jta:type=ObjectStore";
+
+    public static HeaderStateReader getHeaderStateUnpacker(String type) {
+        OSBTypeHandler osbType = osbTypeMap.get(type);
+
+        return (osbType != null) ? osbType.getHeaderStateReader() : null;
+    }
 
     private Map<String, List<UidWrapper>> registeredMBeans = new HashMap<String, List<UidWrapper>> ();;
     private boolean exposeAllLogs = false;
@@ -112,7 +175,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     private void registerMBeans() {
         for (List<UidWrapper> uids : registeredMBeans.values()) {
             for (UidWrapper w : uids)
-                w.createAndRegisterMBean();
+                w.register();
         }
     }
 
@@ -145,7 +208,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                 typeName = typeName.substring(1);
 
             typeName = typeName.replaceAll("/", File.separator);
-            osbTypeMap.put(typeName, new OSBType(true, osTypeClassName, beanTypeClassName, typeName));
+            osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
 
             return true;
         } catch (Exception e) {
@@ -154,6 +217,14 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
             return false;
         }
+    }
+
+    /**
+     * @param handler specification for handling object store types
+     * @return the previous value associated with type handler, or null if there was no previous handler.
+     */
+    public OSBTypeHandler registerHandler(OSBTypeHandler handler) {
+        return osbTypeMap.put(handler.getTypeName(), handler);
     }
 
     private void initTypeHandlers(String handlers) {
@@ -176,8 +247,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         setExposeAllRecordsAsMBeans(arjPropertyManager.
             getObjectStoreEnvironmentBean().getExposeAllLogRecordsAsMBeans());
 
-        for (OSBType osbType : defaultOsbTypes)
-            osbTypeMap.put(osbType.typeName, osbType);
+        for (OSBTypeHandler osbType : defaultOsbTypes)
+            osbTypeMap.put(osbType.getTypeName(), osbType);
+
+        for (OSBTypeHandler osbType : defaultJTSOsbTypes)
+            osbTypeMap.put(osbType.getTypeName(), osbType);
 
         initTypeHandlers(System.getProperty(OBJ_STORE_BROWSER_HANDLERS, ""));
     }
@@ -249,18 +323,18 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     public void viewSubordinateAtomicActions(boolean enable) {
-        OSBType osbType = osbTypeMap.get(SUBORDINATE_AA_TYPE);
+        OSBTypeHandler osbType = osbTypeMap.get(SUBORDINATE_AA_TYPE);
 
         if (osbType == null)
             return;
 
-        osbType.enabled = enable;
+        osbType.setEnabled(enable);
 
         if (!enable) {
             for (List<UidWrapper> uids : registeredMBeans.values()) {
                 for (Iterator<UidWrapper> i = uids.iterator(); i.hasNext(); ) {
                     UidWrapper w = i.next();
-                    if (osbType.recordClass.equals(w.getClassName())) {
+                    if (osbType.getRecordClass().equals(w.getClassName())) {
                         i.remove();
                         w.unregister();
                     }
@@ -326,7 +400,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
             for (Uid uid : e.getValue()) {
                 if (!isRegistered(type, uid)) {
-                    UidWrapper w = registerBean(uid, type, false); // can return null if type isn't instrumented
+                    UidWrapper w = createBean(uid, type); // can return null if type isn't instrumented
 
                     if (w != null)
                         beans.add(w);
@@ -349,24 +423,31 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * @return the list of MBeans representing the requested ObjectStore type
      */
     public List<UidWrapper> probe(String type) {
+        if (type.startsWith(File.separator))
+            return registeredMBeans.get(type.substring(File.separator.length()));
+
 		return registeredMBeans.get(type);
     }
 
-    private UidWrapper registerBean(Uid uid, String type, boolean createMbean) {
-        OSBType osbType = osbTypeMap.get(type);
+    private UidWrapper createBean(Uid uid, String type) {
+        OSBTypeHandler osbType = osbTypeMap.get(type);
+        //boolean enabled = osbType == null || osbType.isEnabled();
+        boolean registerBean = osbType != null && osbType.isAllowRegistration();
 
         if (osbType == null && !exposeAllLogs)
             return null;
 
-        if (osbType != null && !osbType.enabled)
-            return null;
+        if (exposeAllLogs)
+            registerBean = true;
 
-        String beanType = osbType == null ? OSEntryBean.class.getName() : osbType.beanClass;
-        String stateType = osbType == null ? null : osbType.recordClass;
-        UidWrapper w = new UidWrapper(this, beanType, type, stateType, uid);
+//        if (osbType != null && !osbType.enabled)
+//            return null;
 
-        if (createMbean)
-            w.createAndRegisterMBean();
+        String beanType = osbType == null ? OSEntryBean.class.getName() : osbType.getBeanClass();
+        String stateType = osbType == null ? null : osbType.getRecordClass();
+        UidWrapper w = new UidWrapper(this, beanType, type, stateType, uid, registerBean);
+
+        w.createMBean();
 
         return w;
     }

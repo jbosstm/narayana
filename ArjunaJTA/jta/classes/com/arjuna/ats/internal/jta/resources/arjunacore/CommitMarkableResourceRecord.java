@@ -104,6 +104,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	private boolean onePhase = false;
 	private String commitMarkableJndiName;
 	private boolean committed;
+	private int heuristic;
 	private BasicAction basicAction;
 	private String productName;
 	private String productVersion;
@@ -149,6 +150,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			tsLogger.logger.trace("CommitMarkableResourceRecord.CommitMarkableResourceRecord (), record id=" + order());
 		}
 
+		heuristic = TwoPhaseOutcome.FINISH_OK;
 		tableName = null;
 	}
 
@@ -170,6 +172,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 		this.productVersion = xaResourceWrapper.getProductVersion();
 		this.xid = xid;
 		this.basicAction = basicAction;
+		heuristic = TwoPhaseOutcome.FINISH_OK;
 
 		String tableName = commitMarkableResourceTableNameMap
 				.get(commitMarkableJndiName);
@@ -327,6 +330,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			os.packBoolean(hasCompleted);
 			if (hasCompleted) {
 				os.packBoolean(committed);
+//				os.packInt(heuristic);
 			}
 			os.packString(productName);
 			os.packString(productVersion);
@@ -355,6 +359,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 			if (os.unpackBoolean()) {
 				committed = os.unpackBoolean();
+//				heuristic = os.unpackInt();
 			} else {
 				// This will return true if the
 				// CommitMarkableRecoveryModule is
@@ -456,7 +461,8 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				return TwoPhaseOutcome.FINISH_OK;
 			} catch (XAException e) {
 				XAResourceErrorHandler handler = new XAResourceErrorHandler(e, (XAResource) connectableResource, xid);
-				return handler.handleCMRRollbackError();
+				heuristic = handler.handleCMRRollbackError();
+				return heuristic;
 			} catch (Throwable e) {
 					jtaLogger.i18NLogger.warn_resources_arjunacore_rollbackerror(XAHelper.xidToString(xid),
 						connectableResource.toString(), "-", e);
@@ -498,9 +504,9 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			} catch (XAException e) {
 				XAResourceErrorHandler handler = new XAResourceErrorHandler(e, (XAResource) connectableResource, xid);
 
-				int res = handler.handleCMRCommitError(onePhase);
+				heuristic = handler.handleCMRCommitError(onePhase);
 				committed = handler.isCommitted();
-				return res;
+				return heuristic;
 			} catch (Throwable e) {
 				jtaLogger.i18NLogger.warn_resources_arjunacore_commitxaerror(XAHelper.xidToString(xid),
 					connectableResource.toString(), "-", e);
@@ -529,6 +535,10 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				tsLogger.logger.warn("Could not close the preparedConnection", e);
 			}
 		}
+	}
+
+	public int getHeuristic() {
+		return heuristic;
 	}
 
 	public Uid order() {

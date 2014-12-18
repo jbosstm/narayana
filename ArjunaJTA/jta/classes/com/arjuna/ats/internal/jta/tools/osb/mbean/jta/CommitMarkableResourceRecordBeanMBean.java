@@ -20,8 +20,6 @@
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapperMBean;
 
 @MXBeanDescription("Management view of an CommitMarkableResource participating in a transaction")
 public interface CommitMarkableResourceRecordBeanMBean extends XAResourceMBean {

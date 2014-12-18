@@ -1516,6 +1516,9 @@ public interface arjunaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_recovery_ExpiredTransactionStatusManagerScanner_6(Uid arg0);
 
+    @Message(id = 12380, value = "OSB: Error constructing record header reader", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_osb_HeaderStateCtorFail(@Cause() Throwable arg0);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

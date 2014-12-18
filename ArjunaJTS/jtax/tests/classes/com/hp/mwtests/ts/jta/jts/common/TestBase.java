@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.jta.jts.common;
 
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.junit.After;
 import org.junit.Before;
 
@@ -38,6 +40,8 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
+
+import java.io.File;
 
 public class TestBase
 {   
@@ -60,7 +64,44 @@ public class TestBase
         myOA.destroy();
         myORB.shutdown();
     }
-    
+
+    public void emptyObjectStore()
+    {
+        String objectStoreDirName = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).getObjectStoreDir();
+
+        System.out.println("Emptying " + objectStoreDirName);
+
+        File objectStoreDir = new File(objectStoreDirName);
+
+        removeContents(objectStoreDir);
+    }
+
+    public void removeContents(File directory)
+    {
+        if ((directory != null) &&
+                directory.isDirectory() &&
+                (!directory.getName().equals("")) &&
+                (!directory.getName().equals("/")) &&
+                (!directory.getName().equals("\\")) &&
+                (!directory.getName().equals(".")) &&
+                (!directory.getName().equals("..")))
+        {
+            File[] contents = directory.listFiles();
+
+            if (contents != null) {
+                for (File content : contents) {
+                    if (content.isDirectory()) {
+                        removeContents(content);
+
+                        content.delete();
+                    } else {
+                        content.delete();
+                    }
+                }
+            }
+        }
+    }
+
     private ORB myORB = null;
     private RootOA myOA = null;
 }

@@ -1,30 +1,55 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBeanWrapperInterface;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.*;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 /**
  * MBean wrapper for exposing the lists maintained by a JTS transaction
  *
  * @see com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple
+ *
+ * @author Mike Musgrove
  */
 public class ArjunaTransactionImpleWrapper extends ArjunaTransactionImple implements ActionBeanWrapperInterface {
-
+    UidWrapper wrapper;
     ActionBean action;
     boolean activated;
 
     public ArjunaTransactionImpleWrapper () {
-        super(Uid.nullUid());
+        this(Uid.nullUid());
+    }
+
+    public ArjunaTransactionImpleWrapper (Uid uid) {
+        super(uid);
     }
     public ArjunaTransactionImpleWrapper (ActionBean action, UidWrapper w) {
         super(w.getUid());
+        this.wrapper = w;
         this.action = action;
     }
 
@@ -33,6 +58,15 @@ public class ArjunaTransactionImpleWrapper extends ArjunaTransactionImple implem
             activated = super.activate();
 
         return activated;
+    }
+
+    public String type () {
+        String name = UidWrapper.getRecordWrapperTypeName();
+
+        if (name != null)
+            return name;
+
+        return super.type();
     }
 
     public void doUpdateState() {
@@ -74,5 +108,16 @@ public class ArjunaTransactionImpleWrapper extends ArjunaTransactionImple implem
     public void clearHeuristicDecision(int newDecision) {
         if (super.heuristicList.size() == 0)
             setHeuristicDecision(newDecision);
+    }
+
+    @Override
+    public void remove(LogRecordWrapper logRecordWrapper) {
+        RecordList rl = getRecords(logRecordWrapper.getListType());
+
+        if (rl != null && rl.size() > 0) {
+            if (rl.remove(logRecordWrapper.getRecord())) {
+                doUpdateState(); // rewrite the list
+            }
+        }
     }
 }

@@ -21,15 +21,21 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
 import javax.transaction.xa.XAResource;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
-import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.*;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
+
+import java.io.IOException;
 
 /**
  * MBean implementation of a transaction participant corresponding to a JTA XAResource
+ *
+ * @author Mike Musgrove
  */
 public class XAResourceRecordBean extends LogRecordWrapper implements XAResourceRecordBeanMBean {
     String className = "unavailable";
@@ -37,13 +43,32 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     String eisProductVersion = "unavailable";
     String jndiName = "unavailable";
     int timeout = 0;
+    JTAXAResourceRecordWrapper xares;
+    XidImple xidImple;
+    int heuristic;
 
     public XAResourceRecordBean(UidWrapper w) {
         super(w.getUid());
+        init();
+        xares = new JTAXAResourceRecordWrapper(w.getUid());
+        xidImple = new XidImple(new XID());
+        heuristic = -1;
     }
+
     public XAResourceRecordBean(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
         super(parent, rec, listType);
-//        xares = new JTAXAResourceRecordWrapper(rec.order());
+        init();
+        xares = new JTAXAResourceRecordWrapper(rec.order());
+        xidImple = xares.xidImple;
+        heuristic = xares.heuristic;
+    }
+
+    private void init() {
+        jndiName = getUid().stringForm();
+        className = "unavailable";
+        eisProductName = "unavailable";
+        eisProductVersion = "unavailable";
+        timeout = 0;
     }
 
     public boolean activate() {
@@ -77,4 +102,55 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     public String getEisProductVersion() { return eisProductVersion; }
     public String getJndiName() { return jndiName; }
     public int getTimeout() { return timeout; }
+
+    @Override
+    public String getHeuristicStatus() {
+        return HeuristicStatus.intToStatus(xares.heuristic).name();
+    }
+
+    @Override
+    public byte[] getGlobalTransactionId() {
+        return xidImple.getGlobalTransactionId();
+    }
+    @Override
+    public byte[] getBranchQualifier() {
+        return xidImple.getBranchQualifier();
+    }
+    @Override
+    public int getFormatId() {
+        return xidImple.getFormatId();
+    }
+    @Override
+    public String getNodeName() {
+        return XATxConverter.getNodeName(xidImple.getXID());
+    }
+    @Override
+    public int getHeuristicValue() {
+        return heuristic;
+    }
+
+    /**
+     * Extension of an XAResource record for exposing the underlying XAResource which is protected
+     */
+    public class JTAXAResourceRecordWrapper extends com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord {
+        XidImple xidImple = null;
+        int heuristic = -1;
+
+        public JTAXAResourceRecordWrapper(Uid uid) {
+            super(uid);
+
+            xidImple = new XidImple(getXid());
+        }
+
+        public boolean restore_state(InputObjectState os, int t) {
+            InputObjectState copy = new InputObjectState(os);
+            try {
+                heuristic = copy.unpackInt();
+            } catch (IOException e) {
+            }
+
+            return super.restore_state(os, t);
+        }
+    }
+
 }
