@@ -193,8 +193,6 @@
     <mkdir dir="tmp-downloads-dir/src"/>
     <mkdir dir="tmp-downloads-dir/binary"/>
     <mkdir dir="tmp-downloads-dir/idl"/>
-    <delete dir="tmp-docs-dir"/>
-    <mkdir dir="tmp-docs-dir"/>
     <copy todir="tmp-downloads-dir/src">
       <fileset dir="${workdir}" includes="jbossts-*-${tag}-src.zip"/>
     </copy>
@@ -215,10 +213,6 @@
     <antcall target="remote-copy">
         <param name="from" value="tmp-downloads-dir"/>
         <param name="to" value="${downloads.dir}/${tag}"/>
-    </antcall>
-    <antcall target="remote-copy">
-        <param name="from" value="tmp-docs-dir"/>
-        <param name="to" value="${docs.dir}/${tag}"/>
     </antcall>
   </target>
 
