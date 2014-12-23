@@ -24,6 +24,11 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
 
+/**
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class SubordinateActionBean extends JTAActionBean implements SubordinateActionBeanMBean {
     public SubordinateActionBean(UidWrapper w) {
         super(w);

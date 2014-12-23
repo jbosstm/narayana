@@ -35,6 +35,11 @@ import java.util.HashMap;
  *
  * @author Mike Musgrove
  */
+/**
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class XAFailureResource implements Synchronization, XAResource, Serializable
 {
     private static final Map<String, XAException> xaCodeMap = new HashMap<String, XAException>();

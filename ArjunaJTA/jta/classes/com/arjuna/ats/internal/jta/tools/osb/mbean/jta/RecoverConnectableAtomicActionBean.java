@@ -28,6 +28,11 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoverConnectableAtomicA
 
 import java.io.IOException;
 
+/**
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class RecoverConnectableAtomicActionBean extends JTAActionBean implements RecoverConnectableAtomicActionBeanMBean {
     RecoverConnectableAtomicAction connectableAtomicAction = null;
 

@@ -41,8 +41,12 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreItemMBean;
 /**
  * Simple wrapper for accessing the JMX server
  *
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ *
  * @author Mike Musgrove
  */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class JMXServer
 {
 	public static String JTS_INITIALISER_CNAME = "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ToolsInitialiser";

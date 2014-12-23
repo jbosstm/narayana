@@ -40,8 +40,12 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 /**
  * MBean implementation of an ObjectStore entry that represents an AtomicAction
  *
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ *
  * @author Mike Musgrove
  */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     // Basic properties this enty
     private StateManagerWrapper sminfo;

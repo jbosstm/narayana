@@ -35,6 +35,11 @@ import java.util.List;
  *
  * @author Mike Musgrove
  */
+/**
+ * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSActionBean extends JTAActionBean {
     // ExtendedResourceRecord does not statically expose its type
     private static String ERRT = "StateManager/AbstractRecord/ExtendedResourceRecord";
