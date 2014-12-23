@@ -19,13 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.arjuna.tools.osb.mbean;
+package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
+import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBeanMBean;
 
 /**
- * JMX MBean interface for transaction participants.
+ * MBean for XAResourceRecords
  *
  * @author Mike Musgrove
  */
@@ -34,24 +34,12 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Representation of a transaction participant")
-public interface LogRecordWrapperMBean extends OSEntryBeanMBean {
-	@MXBeanPropertyDescription("Indication of the status of this transaction participant (prepared, heuristic, etc)")
-	String getStatus();
-
-	//@MXBeanPropertyDescription("Change the status of this participant back to prepared or to a heuristic")
-	void setStatus(String newState);
-
-    @MXBeanPropertyDescription("Clear any heuristics so that the recovery system will replay the commit")
-    String clearHeuristic();
-    
-	@MXBeanPropertyDescription("The internal type of this transaction participant")
-	String getType();
-
-	@MXBeanPropertyDescription("This entry corresponds to a transaction participant")
-	boolean isParticipant();
-
-	// TODO create an MBean to represent the different types of heuristics
-	@MXBeanPropertyDescription("If this record represents a heuristic then report the type of the heuristic")
-	String getHeuristicStatus();
+@MXBeanDescription("Management view of a JTS XARecoveryResource participating in a transaction")
+public interface XARecoveryResourceMBean extends OSEntryBeanMBean {
+    byte[] getGlobalTransactionId();
+    byte[] getBranchQualifier();
+    int getFormatId();
+    String getNodeName() ;
+    int getHeuristicValue();
+//    boolean isCommitted();
 }

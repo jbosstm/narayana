@@ -19,13 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.arjuna.tools.osb.mbean;
+package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderStateReader;
+
+import java.io.IOException;
 
 /**
- * JMX MBean interface for transaction participants.
+ * ObjectStore record header reader for ServerTransaction
  *
  * @author Mike Musgrove
  */
@@ -34,24 +37,13 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Representation of a transaction participant")
-public interface LogRecordWrapperMBean extends OSEntryBeanMBean {
-	@MXBeanPropertyDescription("Indication of the status of this transaction participant (prepared, heuristic, etc)")
-	String getStatus();
+public class ServerTransactionHeaderReader extends HeaderStateReader {
+    protected HeaderState unpackHeader(InputObjectState os) throws IOException {
+        boolean haveRecCoord = os.unpackBoolean();
 
-	//@MXBeanPropertyDescription("Change the status of this participant back to prepared or to a heuristic")
-	void setStatus(String newState);
+        if (haveRecCoord)
+            os.unpackString(); // read ior
 
-    @MXBeanPropertyDescription("Clear any heuristics so that the recovery system will replay the commit")
-    String clearHeuristic();
-    
-	@MXBeanPropertyDescription("The internal type of this transaction participant")
-	String getType();
-
-	@MXBeanPropertyDescription("This entry corresponds to a transaction participant")
-	boolean isParticipant();
-
-	// TODO create an MBean to represent the different types of heuristics
-	@MXBeanPropertyDescription("If this record represents a heuristic then report the type of the heuristic")
-	String getHeuristicStatus();
+        return super.unpackHeader(os);
+    }
 }

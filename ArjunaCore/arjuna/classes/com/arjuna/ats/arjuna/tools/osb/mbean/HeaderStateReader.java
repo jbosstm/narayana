@@ -21,11 +21,17 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+
+import java.io.IOException;
 
 /**
- * JMX MBean interface for transaction participants.
+ * Per record header reader. The majority of records pack the header state {@link HeaderState} first.
+ * This class unpacks that state. If a record type packs information before the standard header
+ * then a subclass of this type should be provided to
+ * {@link com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser#registerHandler}. For example
+ * see {@link com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader}
  *
  * @author Mike Musgrove
  */
@@ -34,24 +40,30 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Representation of a transaction participant")
-public interface LogRecordWrapperMBean extends OSEntryBeanMBean {
-	@MXBeanPropertyDescription("Indication of the status of this transaction participant (prepared, heuristic, etc)")
-	String getStatus();
+public class HeaderStateReader {
+    protected HeaderState unpackHeader(InputObjectState os) throws IOException {
+        HeaderState hs = null;
 
-	//@MXBeanPropertyDescription("Change the status of this participant back to prepared or to a heuristic")
-	void setStatus(String newState);
+        if (os != null) {
 
-    @MXBeanPropertyDescription("Clear any heuristics so that the recovery system will replay the commit")
-    String clearHeuristic();
-    
-	@MXBeanPropertyDescription("The internal type of this transaction participant")
-	String getType();
+            String state = os.unpackString();
+            byte[] txIdBytes = os.unpackBytes();
+            Uid txUid = new Uid(txIdBytes);
+            Uid processUid = null;
+            long birthDate = 0;
 
-	@MXBeanPropertyDescription("This entry corresponds to a transaction participant")
-	boolean isParticipant();
+            if (state.equals("#ARJUNA#")) {
+                if (!txUid.equals(Uid.nullUid())) {
+                    byte[] pUidBytes = os.unpackBytes();
+                    processUid = new Uid(pUidBytes);
+                }
 
-	// TODO create an MBean to represent the different types of heuristics
-	@MXBeanPropertyDescription("If this record represents a heuristic then report the type of the heuristic")
-	String getHeuristicStatus();
+                birthDate = os.unpackLong();
+            }
+
+            hs = new HeaderState(state, txUid, processUid, birthDate);
+        }
+
+        return hs;
+    }
 }

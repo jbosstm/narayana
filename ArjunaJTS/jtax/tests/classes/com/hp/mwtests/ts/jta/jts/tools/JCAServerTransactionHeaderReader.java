@@ -19,14 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.arjuna.tools.osb.mbean;
+package com.hp.mwtests.ts.jta.jts.tools;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderState;
+import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader;
+import com.arjuna.ats.jta.xa.XidImple;
+
+import java.io.IOException;
 
 /**
- * JMX MBean interface for transaction participants.
- *
+ * Header reader for {@link com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction}
+ * records.
+ * 
  * @author Mike Musgrove
  */
 /**
@@ -34,24 +39,23 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Representation of a transaction participant")
-public interface LogRecordWrapperMBean extends OSEntryBeanMBean {
-	@MXBeanPropertyDescription("Indication of the status of this transaction participant (prepared, heuristic, etc)")
-	String getStatus();
+public class JCAServerTransactionHeaderReader extends ServerTransactionHeaderReader {
+    private boolean wasInvoked = false;
 
-	//@MXBeanPropertyDescription("Change the status of this participant back to prepared or to a heuristic")
-	void setStatus(String newState);
+    public JCAServerTransactionHeaderReader() {
+        this.wasInvoked = false;
+    }
 
-    @MXBeanPropertyDescription("Clear any heuristics so that the recovery system will replay the commit")
-    String clearHeuristic();
-    
-	@MXBeanPropertyDescription("The internal type of this transaction participant")
-	String getType();
+    protected HeaderState unpackHeader(InputObjectState os) throws IOException {
+        wasInvoked = true;
 
-	@MXBeanPropertyDescription("This entry corresponds to a transaction participant")
-	boolean isParticipant();
+        if (os.unpackBoolean())
+            new XidImple().unpackFrom(os);
 
-	// TODO create an MBean to represent the different types of heuristics
-	@MXBeanPropertyDescription("If this record represents a heuristic then report the type of the heuristic")
-	String getHeuristicStatus();
+        return super.unpackHeader(os);
+    }
+
+    public boolean isWasInvoked() {
+        return wasInvoked;
+    }
 }

@@ -21,11 +21,10 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
+import com.arjuna.ats.arjuna.common.Uid;
 
 /**
- * JMX MBean interface for transaction participants.
+ * All log store records contain the state held in this object.
  *
  * @author Mike Musgrove
  */
@@ -34,24 +33,32 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Representation of a transaction participant")
-public interface LogRecordWrapperMBean extends OSEntryBeanMBean {
-	@MXBeanPropertyDescription("Indication of the status of this transaction participant (prepared, heuristic, etc)")
-	String getStatus();
+public class HeaderState {
+    String state;
+    Uid txUid;
+    Uid processUid;
+    long birthDate;
 
-	//@MXBeanPropertyDescription("Change the status of this participant back to prepared or to a heuristic")
-	void setStatus(String newState);
+    public HeaderState(String state, Uid txUid, Uid processUid, long birthDate) {
+        this.state = state;
+        this.txUid = txUid;
+        this.processUid = processUid;
+        this.birthDate = birthDate;
+    }
 
-    @MXBeanPropertyDescription("Clear any heuristics so that the recovery system will replay the commit")
-    String clearHeuristic();
-    
-	@MXBeanPropertyDescription("The internal type of this transaction participant")
-	String getType();
+    public String getState() {
+        return state;
+    }
 
-	@MXBeanPropertyDescription("This entry corresponds to a transaction participant")
-	boolean isParticipant();
+    public Uid getTxUid() {
+        return txUid;
+    }
 
-	// TODO create an MBean to represent the different types of heuristics
-	@MXBeanPropertyDescription("If this record represents a heuristic then report the type of the heuristic")
-	String getHeuristicStatus();
+    public Uid getProcessUid() {
+        return processUid;
+    }
+
+    public long getBirthDate() {
+        return birthDate;
+    }
 }

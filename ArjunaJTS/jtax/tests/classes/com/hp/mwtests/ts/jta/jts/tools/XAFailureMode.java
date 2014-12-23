@@ -1,5 +1,6 @@
 /*
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -14,18 +15,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2013
+ * (C) 2008,
  * @author JBoss Inc.
  */
-package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
+package com.hp.mwtests.ts.jta.jts.tools;
 
-import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
+import java.io.Serializable;
 
+/**
+ * Specification of what to do when a failure is injected
+ *
+ * @author Mike Musgrove
+ */
 /**
  * @Deprecated as of 4.17.26.Final In a subsequent release we will change packages names in order to 
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-@MXBeanDescription("Management view of an XAResource participating in a transaction")
-public interface XAResourceRecordBeanMBean extends XAResourceMBean {
+public enum XAFailureMode implements Serializable
+{
+    NONE(false)
+    
+    ,HALT(true)    // halt the JVM
+    ,EXIT(true)   // exit the JVM
+    ,SUSPEND(false)  // suspend the calling thread
+    ,XAEXCEPTION(false)    // fail via one of the xa exception codes
+    ;
+
+    private boolean willTerminateVM;
+
+    XAFailureMode(boolean willTerminateVM)
+    {
+        this.willTerminateVM = willTerminateVM;
+    }
+
+    public boolean willTerminateVM()
+    {
+        return willTerminateVM;
+    }
+
+    public static XAFailureMode toEnum(String mode)
+    {
+        return XAFailureMode.valueOf(mode.toUpperCase());
+    }
 }
