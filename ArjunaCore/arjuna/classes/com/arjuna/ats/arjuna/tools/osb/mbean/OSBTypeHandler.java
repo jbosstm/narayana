@@ -31,6 +31,11 @@ import java.lang.reflect.Constructor;
  *
  * @author Mike Musgrove
  */
+/**
+ * @Deprecated as of 4.17.26.Final In a subsequent release we will change packages names in order to 
+ * provide a better separation between public and internal classes.
+ */
+@Deprecated // in order to provide a better separation between public and internal classes.
 public class OSBTypeHandler {
     private boolean enabled;
     private boolean allowRegistration;
