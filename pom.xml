@@ -613,7 +613,7 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
                   <!-- Sets the VM argument line used when unit tests are run. -->
-                  <argLine>${surefireArgLine}</argLine>
+                  <argLine>${surefireArgLine} -Xss2048k</argLine>
                   <systemProperties>
                       <property>
                           <name>com.arjuna.ats.arjuna.common.propertiesFile</name>

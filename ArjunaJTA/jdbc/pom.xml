@@ -123,8 +123,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <!-- Skip because all surefire tests are skipped -->
-              <skip>true</skip>
+              <skip>false</skip>
             </configuration>
           </plugin>
         </plugins>

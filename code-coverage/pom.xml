@@ -56,10 +56,12 @@
                         <fileset dir="../STM/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../ArjunaJTA/jta/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../ArjunaJTA/jdbc/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../tools/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTS/orbportability/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../ArjunaJTS/jtax/target/coverage-reports" includes="jacoco-ut.exec"/>
                       </executiondata>
 
                       <structure name="JaCoCo">
@@ -120,14 +122,25 @@
                           </sourcefiles>
                         </group>
 
+                        <group name="org.jboss.narayana.jta.jdbc">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/jdbc/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/jdbc/classes"/>
+                          </sourcefiles>
+                        </group>
+
                         <group name="org.jboss.narayana.jts">
                           <classfiles>
                             <fileset dir="../ArjunaJTS/jts/target/classes/" includes="**/*.class"/>
                             <fileset dir="../ArjunaJTS/orbportability/target/classes" includes="**/*.class"/>
+                            <fileset dir="../ArjunaJTS/jtax/target/classes" includes="**/*.class"/>
                           </classfiles>
                           <sourcefiles>
                             <fileset dir="../ArjunaJTS/jts/classes/"/>
                             <fileset dir="../ArjunaJTS/orbportability/classes"/>
+                            <fileset dir="../ArjunaJTS/jtax/classes"/>
                           </sourcefiles>
                         </group>
                       </structure>
@@ -144,6 +157,19 @@
                     <junitreport todir="${project.build.directory}/junit">
                       <fileset dir="../ArjunaCore/arjuna/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaCore/txoj/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../rts/at/tx/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../rts/at/integration/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../common/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../STM/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../ArjunaJTA/jta/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/jdbc/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../tools/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../ArjunaJTS/jts/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/orbportability/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/jtax/target/surefire-reports" includes="**/*.xml"/>
 
                       <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
                         <param name="narayana.url" expression="${narayana.home.url}"/>

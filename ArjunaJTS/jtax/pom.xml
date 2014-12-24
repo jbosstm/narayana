@@ -187,7 +187,6 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>-Xss2048k</argLine>
                   <systemProperties combine.children="append"/>
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -247,7 +246,6 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>-Xss2048k</argLine>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -313,7 +311,6 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>-Xss2048k</argLine>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
