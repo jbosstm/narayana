@@ -178,6 +178,7 @@ public class ProvidedXADataSourceConnection implements ConnectionControl, Transa
                 _theConnection.close();
                 _theConnection = null;
 				_theXAResource = null;
+				_theTransaction = null;
             }
         }
     }
