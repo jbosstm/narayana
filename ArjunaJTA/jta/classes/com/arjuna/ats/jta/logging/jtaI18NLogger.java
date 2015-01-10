@@ -458,6 +458,10 @@ public interface jtaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_resources_arjunacore_restorecrstateerror(String arg0, String arg1, @Cause() Throwable arg2);
 
+    @Message(id = 16113, value = "Xid {0} was committed by resource manager", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_resources_arjunacore_rmcompleted(String arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
