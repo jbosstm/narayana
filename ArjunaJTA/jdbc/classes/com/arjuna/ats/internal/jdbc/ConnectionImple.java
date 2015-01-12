@@ -360,7 +360,7 @@ public class ConnectionImple implements Connection
 	                         * terminated, so register a Synchronization here.
 	                         */
 
-                            jdbcLogger.i18NLogger.warn_closingconnection(_theConnection.toString());
+                            jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
 
 	                        delayClose = true;
 	                    }

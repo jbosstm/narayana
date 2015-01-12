@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.jdbc.logging;
 
+import static org.jboss.logging.Logger.Level.DEBUG;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
@@ -63,8 +64,8 @@ public interface jdbcI18NLogger {
 	public String get_closeerrorinvalidtx(String arg0);
 
 	@Message(id = 17007, value = "Connection will be closed now. Indications are that this db does not allow multiple connections in the same transaction {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_closingconnection(String arg0);
+	@LogMessage(level = DEBUG)
+	public void debug_closingconnection(String arg0);
 
 	@Message(id = 17008, value = "No modifier information found for db. Connection will be closed immediately {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
