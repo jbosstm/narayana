@@ -360,7 +360,7 @@ public class ConnectionImple implements Connection
 	                         * terminated, so register a Synchronization here.
 	                         */
 
-                            jdbcLogger.i18NLogger.warn_closingconnection(_theConnection.toString());
+                            jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
 
 	                        delayClose = true;
 	                    }
@@ -379,8 +379,7 @@ public class ConnectionImple implements Connection
 
 	        if (!delayClose)  // close now
 	        {
-	            if (_theModifier != null)
-	                _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
+	            _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
 
 	           
 	            if (_theConnection != null && !_theConnection.isClosed())
@@ -418,8 +417,8 @@ public class ConnectionImple implements Connection
 
 		if (_theConnection == null)
 			return false; // not opened yet.
-		else
-			return _theConnection.isClosed();
+
+		return _theConnection.isClosed();
 	}
 
 	public DatabaseMetaData getMetaData() throws SQLException
