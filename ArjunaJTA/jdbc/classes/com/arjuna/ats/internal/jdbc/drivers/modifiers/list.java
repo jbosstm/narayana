@@ -38,8 +38,7 @@ public class list
 		for (String driver : new String[] { "jConnect (TM) for JDBC (TM)",
 				"Oracle JDBC driver",
 				"IBM DB2 JDBC Universal Driver Architecture",
-				"MySQL Connector Java",
-		        "H2 JDBC Driver"}) {
+				"MySQL Connector Java"}) {
 			ModifierFactory.putModifier(driver, -1, -1,
 					IsSameRMModifier.class.getName());
 		}

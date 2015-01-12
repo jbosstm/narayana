@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jdbc.basic;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
@@ -267,7 +268,7 @@ public class JDBC2Test
 
             tx.begin();
 
-            conn.isClosed(); //  this will blow up the underlying TransactionalDriverXAConnection still thinks its associated with an old txn
+            assertFalse(conn.isClosed());
 
             if (!reuseconn)
             {
