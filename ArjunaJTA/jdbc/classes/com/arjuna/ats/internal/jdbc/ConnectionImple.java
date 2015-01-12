@@ -379,8 +379,7 @@ public class ConnectionImple implements Connection
 
 	        if (!delayClose)  // close now
 	        {
-	            if (_theModifier != null)
-	                _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
+	            _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
 
 	           
 	            if (_theConnection != null && !_theConnection.isClosed())
