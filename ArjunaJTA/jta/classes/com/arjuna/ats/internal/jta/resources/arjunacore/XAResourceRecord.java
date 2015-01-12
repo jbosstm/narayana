@@ -747,7 +747,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                case XAException.XAER_PROTO:
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
 	                case XAException.XAER_RMFAIL:
-	                defaXAResourceRecordult:
+	                default:
 	                    _committed = true;  // will cause log to be rewritten
 	                    return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
 	                }

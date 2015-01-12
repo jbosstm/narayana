@@ -81,6 +81,28 @@ public class JDBC2Test
         conn2 = DriverManager.getConnection(url, dbProperties);
 	}
 
+    private void endTxn(javax.transaction.UserTransaction tx, boolean commit) throws Exception {
+        try {
+            if (commit)
+                tx.commit();
+            else
+                tx.rollback();
+        } finally {
+            try {
+                conn.close();
+            } catch (Exception ex) {
+            }
+        }
+    }
+
+    private void commitTx(javax.transaction.UserTransaction tx) throws Exception {
+        endTxn(tx, true);
+    }
+
+    private void rollbackTx(javax.transaction.UserTransaction tx) throws Exception {
+        endTxn(tx, false);
+    }
+
     @Test
 	public void test() throws Exception
 	{
@@ -173,18 +195,10 @@ public class JDBC2Test
             {
                 e.printStackTrace(System.err);
 
-                tx.rollback();
+                rollbackTx(tx);
 
                 if (nested)
-                    tx.rollback();
-
-                try
-                {
-                    conn.close();
-                }
-                catch (Exception ex)
-                {
-                }
+                    rollbackTx(tx);
 
                 fail();
             }
@@ -193,17 +207,9 @@ public class JDBC2Test
                 e.printStackTrace(System.err);
 
                 if (nested)
-                    tx.rollback();
+                    rollbackTx(tx);
 
-                tx.rollback();
-
-                try
-                {
-                    conn.close();
-                }
-                catch (Exception ex)
-                {
-                }
+                rollbackTx(tx);
 
                 fail();
             }
@@ -214,13 +220,13 @@ public class JDBC2Test
             {
                 System.out.print("commit ");
 
-                tx.commit();
+                commitTx(tx);
             }
             else
             {
                 System.out.print("rollback ");
 
-                tx.rollback();
+                rollbackTx(tx);
             }
 
             System.out.println("changes.");
@@ -263,8 +269,7 @@ public class JDBC2Test
                     }
                 }
 
-//            conn.close(); // connections must be closed before committing a JTA transaction
-            tx.commit();
+            commitTx(tx);
 
             tx.begin();
 
@@ -305,27 +310,19 @@ public class JDBC2Test
                     }
                 }
 
-            tx.commit();
+            commitTx(tx);
         }
         catch (Exception ex)
         {
             try
             {
-                tx.rollback();
+                rollbackTx(tx);
             }
             catch (Exception exp)
             {
             }
 
             fail();
-        }
-
-        try
-        {
-            conn.close();
-        }
-        catch (Exception e)
-        {
         }
     }
 }
