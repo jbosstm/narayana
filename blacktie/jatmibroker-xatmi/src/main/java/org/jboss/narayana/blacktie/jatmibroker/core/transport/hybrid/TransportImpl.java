@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.jboss.narayana.blacktie.jatmibroker.core.ResponseMonitor;
 import org.jboss.narayana.blacktie.jatmibroker.core.server.SocketServer;
 import org.jboss.narayana.blacktie.jatmibroker.core.transport.EventListener;
-import org.jboss.narayana.blacktie.jatmibroker.core.transport.OrbManagement;
 import org.jboss.narayana.blacktie.jatmibroker.core.transport.Receiver;
 import org.jboss.narayana.blacktie.jatmibroker.core.transport.Sender;
 import org.jboss.narayana.blacktie.jatmibroker.core.transport.Transport;
@@ -42,7 +41,6 @@ import org.jboss.narayana.blacktie.jatmibroker.xatmi.ConnectionException;
 public class TransportImpl implements Transport {
 
     private static final Logger log = LogManager.getLogger(TransportImpl.class);
-    private OrbManagement orbManagement;
     private SocketServer socketserver;
     private Properties properties;
     private TransportFactory transportFactoryImpl;
@@ -51,9 +49,8 @@ public class TransportImpl implements Transport {
     private Map<Boolean, Map<String, Sender>> senders = new HashMap<Boolean, Map<String, Sender>>();
     private Map<Boolean, Map<String, Receiver>> receivers = new HashMap<Boolean, Map<String, Receiver>>();
 
-    public TransportImpl(OrbManagement orbManagement, SocketServer socketserver, Properties properties, TransportFactory transportFactoryImpl) {
+    public TransportImpl(SocketServer socketserver, Properties properties, TransportFactory transportFactoryImpl) {
         log.debug("Creating transport");
-        this.orbManagement = orbManagement;
         this.socketserver = socketserver;
         this.properties = properties;
         this.transportFactoryImpl = transportFactoryImpl;
@@ -131,8 +128,6 @@ public class TransportImpl implements Transport {
         log.debug("Creating a sender for: " + callback_ior);
         if(callback_ior.contains("IOR:")) {
             log.debug(callback_ior + " is for corba");
-            //org.omg.CORBA.Object serviceFactoryObject = orbManagement.getOrb().string_to_object(callback_ior);
-            //sender = new CorbaSenderImpl(serviceFactoryObject, callback_ior);         
             throw new ConnectionException(org.jboss.narayana.blacktie.jatmibroker.xatmi.Connection.TPESYSTEM,
                     "Could not create a Corba sender");
         } else {
@@ -181,7 +176,6 @@ public class TransportImpl implements Transport {
             throw new ConnectionException(Connection.TPEPROTO, "Already closed");
         }
         log.debug("Creating a receiver");
-        //return new CorbaReceiverImpl(orbManagement, properties, cd, responseMonitor);
         return new SocketReceiverImpl(socketserver, properties, cd, responseMonitor, eventListener);
     }
 
@@ -190,8 +184,6 @@ public class TransportImpl implements Transport {
             log.error("Already closed");
             throw new ConnectionException(Connection.TPEPROTO, "Already closed");
         }
-        //log.debug("Creating a receiver with event listener");
-        //return new CorbaReceiverImpl(eventListener, orbManagement, properties);
 	return null;
     }
     

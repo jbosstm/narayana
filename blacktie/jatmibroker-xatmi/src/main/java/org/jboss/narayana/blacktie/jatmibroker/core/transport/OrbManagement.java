@@ -26,9 +26,9 @@ import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 public class OrbManagement implements Runnable {
     private static final Logger log = LogManager.getLogger(OrbManagement.class);
     private static final String CorbaOrbClassProp = "org.omg.CORBA.ORBClass";
-    private static final String CorbaOrbClassValue = "org.jacorb.orb.ORB";
+    private static final String CorbaOrbClassValue = "com.sun.corba.se.impl.orb.ORBImpl";
     private static final String CorbaSingletonClassProp = "org.omg.CORBA.ORBSingletonClass";
-    private static final String CorbaSingletonClassValue = "org.jboss.system.ORBSingleton";
+    private static final String CorbaSingletonClassValue = "com.sun.corba.se.impl.orb.ORBSingleton";
     private static OrbManagement instance;
     private ORB orb;
     private NamingContextExt nce;

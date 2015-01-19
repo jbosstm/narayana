@@ -33,7 +33,6 @@ public class TransportFactory {
 
     private static final Logger log = LogManager.getLogger(TransportFactory.class);
     private Properties properties;
-    private OrbManagement orbManagement;
     private SocketServer socketserver;
     private List<Transport> transports = new ArrayList<Transport>();
 
@@ -43,14 +42,6 @@ public class TransportFactory {
         log.debug("Creating Transportfactory: " + this);
         this.properties = properties;
 
-        try {
-            orbManagement = OrbManagement.getInstance(properties);
-        } catch (Throwable t) {
-            throw new ConfigurationException("Could not create the orb management function", t);
-        }
-
-        log.debug("Created OrbManagement");
-        
         try{
             socketserver = SocketServer.getInstance(properties);
         } catch (IOException e) {
@@ -62,7 +53,7 @@ public class TransportFactory {
 
     public synchronized Transport createTransport() {
         log.debug("Creating transport from factory: " + this);
-        TransportImpl instance = new TransportImpl(orbManagement, socketserver, properties, this);
+        TransportImpl instance = new TransportImpl(socketserver, properties, this);
         transports.add(instance);
         log.debug("Created transport from factory: " + this + " transport: " + instance);
         return instance;
