@@ -4,7 +4,7 @@ echo "Set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION%"
 
 call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
 
-call build.bat clean install "-DskipTests" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
+call build.bat clean install || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 
 echo "Cloning AS"
 rmdir /S /Q jboss-as
