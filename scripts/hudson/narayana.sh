@@ -57,6 +57,10 @@ function init_test_options {
         comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+    elif [[ $PROFILE == "PERF" ]] && [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
+        comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
+        export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
     elif [[ -z $PROFILE ]]; then
         comment_on_pull "Started testing this pull request: $BUILD_URL"
         # if the following env variables have not been set initialize them to their defaults
@@ -76,10 +80,11 @@ function init_test_options {
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
         [ $txbridge ] || txbridge=1 # bridge tests
+        [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     else
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 
     fi
 }
 
@@ -575,7 +580,10 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 -a $ok3 = 0 ] || fatal "some qa tests failed"
 }
 
-
+function perf_tests {
+  $WORKSPACE/scripts/hudson/benchmark.sh
+  [ $? = 0 ] || fatal "there were regressions in one or more of the benchmarks"
+}
 
 check_if_pull_closed
 
@@ -623,6 +631,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
+[ $PERF_TESTS = 1 ] && perf_tests "$@"
 
 if [[ -z $PROFILE ]]; then
     comment_on_pull "All tests passed - Job complete $BUILD_URL"
