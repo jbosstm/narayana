@@ -32,9 +32,11 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.internal.TxCommitStatistic;
 
 /**
  * This class is used to maintain statistics on transactions that have been
@@ -97,7 +99,14 @@ public class TxStats implements TxStatsMBean
 	 */
 	public long getNumberOfCommittedTransactions()
 	{
-        return numberOfCommittedTransactions.get();
+        return commitStatistic.get().getNumberOfCommittedTransactions();
+	}
+
+	/**
+	 * @return the average time, in nanoseconds, it has taken to commit a transaction.
+	 */
+	public long getAverageCommitTime() {
+		return commitStatistic.get().getAverageCommitTime();
 	}
 
 	/**
@@ -131,7 +140,16 @@ public class TxStats implements TxStatsMBean
 	{
         return numberOfApplicationAborts.get();
 	}
-	
+
+	/**
+	 * @return the number of transactions that been rolled back due to internal system errors including
+	 * failure to create log storage and failure to write a transaction log.
+	 */
+	public long getNumberOfSystemRollbacks()
+	{
+		return numberOfSystemAborts.get();
+	}
+
 	/**
 	 * @return the number of transactions that have been rolled back by participants.
 	 */
@@ -139,7 +157,7 @@ public class TxStats implements TxStatsMBean
 	{
         return numberOfResourceAborts.get();
 	}
-	
+
 	/**
 	 * Print all of the current statistics information.
 	 * 
@@ -167,6 +185,8 @@ public class TxStats implements TxStatsMBean
 				+ getNumberOfApplicationRollbacks());
 		pw.println("Number of resource rolled back transactions: "
 				+ getNumberOfResourceRollbacks());
+		pw.println("Average time (in nanosecs) to commit a transaction: "
+				+ getAverageCommitTime());
 	}
 
 	void incrementTransactions()
@@ -184,9 +204,48 @@ public class TxStats implements TxStatsMBean
         numberOfAbortedTransactions.incrementAndGet();
 	}
 
+	/**
+	 * @Deprecated as of 5.0.5.Final use {@link #incrementCommittedTransactions(long)}} instead
+	 */
+	@Deprecated
 	void incrementCommittedTransactions()
 	{
-        numberOfCommittedTransactions.incrementAndGet();
+        incrementCommittedTransactions(0L);
+	}
+
+	/**
+	 * Calculate a moving average:
+	 *
+	 * @param duration the new datum for updating the average
+	 * @param prevCount the previous number of datums
+	 * @param prevAvg the average of the previous prevCount datums
+	 * @return the new average that includes the new datum according to the
+	 * standard formula:
+	 *   nextAvg = (duration  + prevCount * prevAvg) / (prevCount + 1)
+	 */
+	private long nextAverage(long duration, long prevCount, long prevAvg) {
+		long nCount = prevCount + 1;
+		double d1 = duration / nCount;
+		double d2 = (prevAvg / nCount) * prevCount;
+
+		return Math.round(d1 + d2);
+	}
+
+	/**
+	 * @param duration the time in nanoseconds it took for the 2PC phase to complete. The averaged commit
+	 *                   time is available by calling {@link #getAverageCommitTime()}
+	 */
+	void incrementCommittedTransactions(long duration) {
+		TxCommitStatistic prev, next;
+
+		do {
+			prev = commitStatistic.get();
+
+			long prevCount = prev.getNumberOfCommittedTransactions();
+			long nextAvg = nextAverage(duration, prevCount, prev.getAverageCommitTime());
+
+			next = new TxCommitStatistic(prevCount + 1, nextAvg);
+		} while (!commitStatistic.compareAndSet(prev, next));
 	}
 
 	void incrementHeuristics()
@@ -203,18 +262,25 @@ public class TxStats implements TxStatsMBean
 	{
         numberOfApplicationAborts.incrementAndGet();
 	}
-	
+
+	void incrementSystemRollbacks ()
+	{
+		numberOfSystemAborts.incrementAndGet();
+	}
+
 	void incrementResourceRollbacks ()
 	{
         numberOfResourceAborts.incrementAndGet();
 	}
-	
+
 	private AtomicLong numberOfTransactions = new AtomicLong(0);
 	private AtomicLong numberOfNestedTransactions = new AtomicLong(0);
-	private AtomicLong numberOfCommittedTransactions = new AtomicLong(0);
 	private AtomicLong numberOfAbortedTransactions = new AtomicLong(0);
 	private AtomicLong numberOfHeuristics = new AtomicLong(0);
 	private AtomicLong numberOfTimeouts = new AtomicLong(0);
 	private AtomicLong numberOfApplicationAborts = new AtomicLong(0);
+	private AtomicLong numberOfSystemAborts = new AtomicLong(0);
 	private AtomicLong numberOfResourceAborts = new AtomicLong(0);
+	private AtomicReference<TxCommitStatistic> commitStatistic =
+			new AtomicReference<>(new TxCommitStatistic(0, 0));
 }

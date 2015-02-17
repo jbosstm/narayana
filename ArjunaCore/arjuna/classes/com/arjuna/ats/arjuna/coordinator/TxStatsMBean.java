@@ -53,6 +53,13 @@ public interface TxStatsMBean
     long getNumberOfCommittedTransactions();
 
     /**
+     * Returns the average time it is taking to commit a transaction.
+     * Note that a small number of stuck transactions can skew the overall average.
+     * @return the average time, in nanoseconds, it has taken to commit a transaction.
+     */
+    long getAverageCommitTime();
+
+    /**
      * Returns the number of aborted (i.e. rolledback) transactions
      * @return The number of rolledback transactions.
      */
@@ -78,6 +85,14 @@ public interface TxStatsMBean
      * @return the number of transactions that have been rolled back by application request.
      */
     long getNumberOfApplicationRollbacks();
+
+    /**
+     * Returns the number of transactions that have been rolled back due to internal system errors including
+     * failure to create log storage and failure to write a transaction log. It does not include rollbacks
+     * caused by resource failures.
+	 * @return the number of transactions that been rolled back due to internal system errors
+	 */
+    long getNumberOfSystemRollbacks();
 
     /**
      * Returns the number of transactions that rolled back due to resource (participant) failure.
