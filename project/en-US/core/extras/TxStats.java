@@ -25,6 +25,25 @@ public class TxStats
     public static int numberOfCommittedTransactions();
 
     /**
+     * Returns the average time, in nanoseconds, it is taking to commit a transaction. This time is
+     * measured from the moment the client calls commit until the transaction manager determines that the
+     * commit attempt was successful (ie that all participants successfully committed). This includes cases where:
+     *
+     * <ul>
+     *   <li>there are no transaction participants;
+     *   <li>the transaction only contains readonly participants;
+     * </ul>
+     *
+     * The average will not be updated if any participants failed to commit.
+     *
+     * Note that a small number of stuck transactions can skew the overall average. Similarly the average time
+     * will be reduced if there are many transactions without participants or with only readonly participants.
+     *
+     * @return the average time, in nanoseconds, it has taken to commit a transaction.
+     */
+    long getAverageCommitTime();
+
+    /**
      * @return the total number of transactions which have rolled back.
      */
 
@@ -46,6 +65,14 @@ public class TxStats
      */  
 
     public static int numberOfApplicationRollbacks ();
+
+    /**
+     * Returns the number of transactions that have been rolled back due to internal system errors including
+     * failure to create log storage and failure to write a transaction log. It does not include rollbacks
+     * caused by resource failures.
+     * @return the number of transactions that been rolled back due to internal system errors
+     */
+    long getNumberOfSystemRollbacks();
 
     /**
      * @return number of transactions rolled back by participants.
