@@ -69,8 +69,7 @@ public class CMRIntegrationTest {
 	public static JavaArchive createTestArchive() {
 		return ShrinkWrap
 				.create(JavaArchive.class, "test.jar")
-				.addClasses(DummyXAResource.class, Utils.class,
-						JdbcDataSource.class)
+				.addClasses(DummyXAResource.class, Utils.class)
 				.addPackage("io.narayana.connectableresource")
 				.addAsManifestResource(new StringAsset(DEPENDENCIES),
 						"MANIFEST.MF")
