@@ -38,28 +38,26 @@ import javax.transaction.Transactional;
 @Transactional(Transactional.TxType.NOT_SUPPORTED)
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class TransactionalInterceptorNotSupported extends TransactionalInterceptorBase {
+    public TransactionalInterceptorNotSupported() {
+        super(true);
+    }
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
+        return super.intercept(ic);
+    }
 
-        final TransactionManager tm = getTransactionManager();
-        final Transaction tx = tm.getTransaction();
-
-        try {
-            setUserTransactionAvailable(true);
-
-            if (tx != null) {
-                tm.suspend();
-                try {
-                    return invokeInNoTx(ic);
-                } finally {
-                    tm.resume(tx);
-                }
-            } else {
+    @Override
+    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
+        if (tx != null) {
+            tm.suspend();
+            try {
                 return invokeInNoTx(ic);
+            } finally {
+                tm.resume(tx);
             }
-        } finally {
-            resetUserTransactionAvailability();
+        } else {
+            return invokeInNoTx(ic);
         }
     }
 }

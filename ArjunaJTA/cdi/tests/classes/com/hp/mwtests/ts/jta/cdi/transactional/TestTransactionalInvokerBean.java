@@ -20,39 +20,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package com.arjuna.ats.jta.cdi.transactional;
+package com.hp.mwtests.ts.jta.cdi.transactional;
 
-import javax.annotation.Priority;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
 /**
- * @author paul.robinson@redhat.com 25/05/2013
+ * @author <a href="mailto:Tomasz%20Krakowiak%20%3ctomasz.krakowiak@efish.pl%3c">Tomasz Krakowiak
+ *         &lt;tomasz.krakowiak@efish.pl&gt;</a>
  */
+@ApplicationScoped
+public class TestTransactionalInvokerBean {
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void invokeInTxRequired(Runnable runnable) {
+		runnable.run();
+	}
 
-@Interceptor
-@Transactional(Transactional.TxType.REQUIRED)
-@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
-public class TransactionalInterceptorRequired extends TransactionalInterceptorBase {
-    public TransactionalInterceptorRequired() {
-        super(false);
-    }
+	@Transactional(Transactional.TxType.REQUIRES_NEW)
+	public void invokeInTxRequiresNew(Runnable runnable) {
+		runnable.run();
+	}
 
-    @AroundInvoke
-    public Object intercept(InvocationContext ic) throws Exception {
-        return super.intercept(ic);
-    }
+	@Transactional(Transactional.TxType.MANDATORY)
+	public void invokeInTxMandatory(Runnable runnable) {
+		runnable.run();
+	}
 
-    @Override
-    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
-        if (tx == null) {
-            return invokeInOurTx(ic, tm);
-        } else {
-            return invokeInCallerTx(ic, tx);
-        }
-    }
+	@Transactional(Transactional.TxType.NOT_SUPPORTED)
+	public void invokeInTxNotSupported(Runnable runnable) {
+		runnable.run();
+	}
+
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public void invokeInTxSupports(Runnable runnable) {
+		runnable.run();
+	}
+	@Transactional(Transactional.TxType.NEVER)
+	public void invokeInTxNever(Runnable runnable) {
+		runnable.run();
+	}
 }

@@ -45,16 +45,35 @@ import java.lang.annotation.Annotation;
  * @author paul.robinson@redhat.com 02/05/2013
  */
 
-public class TransactionalInterceptorBase implements Serializable {
+public abstract class TransactionalInterceptorBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Inject
     transient javax.enterprise.inject.spi.BeanManager beanManager;
 
-    private boolean previousUserTransactionAvailability;
-
     private static TransactionManager transactionManager;
+
+    private final boolean userTransactionAvailable;
+
+    protected TransactionalInterceptorBase(boolean userTransactionAvailable) {
+        this.userTransactionAvailable = userTransactionAvailable;
+    }
+
+    public Object intercept(InvocationContext ic) throws Exception {
+
+        final TransactionManager tm = getTransactionManager();
+        final Transaction tx = tm.getTransaction();
+
+        boolean previousUserTransactionAvailability = setUserTransactionAvailable(userTransactionAvailable);
+        try {
+            return doIntercept(tm, tx, ic);
+        } finally {
+            resetUserTransactionAvailability(previousUserTransactionAvailability);
+        }
+    }
+
+    protected abstract Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception;
 
     private Transactional getTransactional(InvocationContext ic) {
 
@@ -151,13 +170,14 @@ public class TransactionalInterceptorBase implements Serializable {
         }
     }
 
-    protected void setUserTransactionAvailable(boolean available) {
+    protected boolean setUserTransactionAvailable(boolean available) {
 
-        previousUserTransactionAvailability = ServerVMClientUserTransaction.isAvailable();
+        boolean previousUserTransactionAvailability = ServerVMClientUserTransaction.isAvailable();
         ServerVMClientUserTransaction.setAvailability(available);
+        return previousUserTransactionAvailability;
     }
 
-    protected void resetUserTransactionAvailability() {
+    protected void resetUserTransactionAvailability(boolean previousUserTransactionAvailability) {
 
         ServerVMClientUserTransaction.setAvailability(previousUserTransactionAvailability);
     }
