@@ -42,22 +42,20 @@ import javax.transaction.TransactionalException;
 @Transactional(Transactional.TxType.MANDATORY)
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class TransactionalInterceptorMandatory extends TransactionalInterceptorBase {
+    public TransactionalInterceptorMandatory() {
+        super(false);
+    }
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
+        return super.intercept(ic);
+    }
 
-        final TransactionManager tm = getTransactionManager();
-        final Transaction tx = tm.getTransaction();
-
-        try {
-            setUserTransactionAvailable(false);
-
-            if (tx == null) {
-                throw new TransactionalException(jtaLogger.i18NLogger.get_tx_required(), new TransactionRequiredException());
-            }
-            return invokeInCallerTx(ic, tx);
-        } finally {
-            resetUserTransactionAvailability();
+    @Override
+    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
+        if (tx == null) {
+            throw new TransactionalException(jtaLogger.i18NLogger.get_tx_required(), new TransactionRequiredException());
         }
+        return invokeInCallerTx(ic, tx);
     }
 }

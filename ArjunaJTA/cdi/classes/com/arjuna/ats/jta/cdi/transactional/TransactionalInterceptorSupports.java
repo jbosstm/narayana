@@ -28,9 +28,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionRequiredException;
 import javax.transaction.Transactional;
-import javax.transaction.TransactionalException;
 
 /**
  * @author paul.robinson@redhat.com 25/05/2013
@@ -40,23 +38,21 @@ import javax.transaction.TransactionalException;
 @Transactional(Transactional.TxType.SUPPORTS)
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class TransactionalInterceptorSupports extends TransactionalInterceptorBase {
+    public TransactionalInterceptorSupports() {
+        super(false);
+    }
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
+        return super.intercept(ic);
+    }
 
-        final TransactionManager tm = getTransactionManager();
-        final Transaction tx = tm.getTransaction();
-
-        try {
-            setUserTransactionAvailable(false);
-
-            if (tx == null) {
-                return invokeInNoTx(ic);
-            } else {
-                return invokeInCallerTx(ic, tx);
-            }
-        } finally {
-            resetUserTransactionAvailability();
+    @Override
+    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
+        if (tx == null) {
+            return invokeInNoTx(ic);
+        } else {
+            return invokeInCallerTx(ic, tx);
         }
     }
 }
