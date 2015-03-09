@@ -32,11 +32,16 @@ import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 
 import javax.enterprise.inject.spi.BeanManager;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
 public class ParticipantImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
+
+    private static final Map<Object, AtomicInteger> PARTICIPANT_COUNTERS = new HashMap<>();
 
     private Class<? extends CompensationHandler> compensationHandler;
     private Class<? extends ConfirmationHandler> confirmationHandler;
@@ -55,6 +60,8 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
 
         beanManager = BeanManagerUtil.getBeanManager();
         applicationClassloader = Thread.currentThread().getContextClassLoader();
+
+        incrementParticipantsCounter();
     }
 
     private <T extends Object> T instantiate(Class<T> clazz) {
@@ -92,9 +99,10 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
             ConfirmationHandler handler = instantiate(confirmationHandler);
             handler.confirm();
 
-            CompensationContext.close(currentTX);
             Thread.currentThread().setContextClassLoader(origClassLoader);
         }
+
+        decrementParticipantsCounter();
     }
 
     @Override
@@ -115,12 +123,13 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
                 CompensationHandler handler = instantiate(compensationHandler);
                 handler.compensate();
 
-                CompensationContext.close(currentTX);
                 Thread.currentThread().setContextClassLoader(origClassLoader);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        decrementParticipantsCounter();
     }
 
     @Override
@@ -137,5 +146,40 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
     @Override
     public void error() throws SystemException {
 
+    }
+
+    /**
+     * Increments the counter of the Compensations participants in the transaction.
+     */
+    private void incrementParticipantsCounter() {
+
+        synchronized (PARTICIPANT_COUNTERS) {
+            final AtomicInteger counter = PARTICIPANT_COUNTERS.get(currentTX);
+
+            if (counter == null) {
+                PARTICIPANT_COUNTERS.put(currentTX, new AtomicInteger(1));
+            } else {
+                counter.incrementAndGet();
+            }
+        }
+    }
+
+    /**
+     * Decrements the counter of the Compensations participants in the transaction.
+     * CompensationContext of the current transaction is destroyed once the counter reaches 0.
+     */
+    private void decrementParticipantsCounter() {
+
+        synchronized (PARTICIPANT_COUNTERS) {
+            final AtomicInteger counter = PARTICIPANT_COUNTERS.get(currentTX);
+
+            if (counter == null || counter.decrementAndGet() > 0) {
+                return;
+            }
+
+            PARTICIPANT_COUNTERS.remove(currentTX);
+        }
+
+        CompensationContext.close(currentTX);
     }
 }

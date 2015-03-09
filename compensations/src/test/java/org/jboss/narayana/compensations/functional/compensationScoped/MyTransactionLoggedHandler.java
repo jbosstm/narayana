@@ -43,6 +43,8 @@ public class MyTransactionLoggedHandler implements TransactionLoggedHandler {
 
         if (myData != null && myData.getData() != null && myData.getData().equals(expectedData)) {
             dataAvailable = true;
+        } else {
+            dataAvailable = false;
         }
     }
 }

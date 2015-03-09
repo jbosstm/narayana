@@ -43,6 +43,8 @@ public class MyCompensationHandler implements CompensationHandler {
 
         if (myData != null && myData.getData() != null && myData.getData().equals(expectedData)) {
             dataAvailable = true;
+        } else {
+            dataAvailable = false;
         }
     }
 }
