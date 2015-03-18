@@ -1,7 +1,8 @@
 
 # -i (1 iteration), -wi (10 warm ups), -r (300 seconds at each iteration)
 # use java -jar <maven module>/target/benchmarks.jar -h for options
-JMHARGS="-i 1 -wi 10 -f 1 -r 300 -rf csv -rff"
+[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 10 -f 1 -r 300 -rf csv -rff"
+echo "running benchmark with args $JMHARGS"
 
 [ -z "${WORKSPACE}" ] && WORKSPACE=`pwd`
 MAVEN_HOME=$WORKSPACE/tools/maven
@@ -55,7 +56,8 @@ function run_benchmarks {
 
 function regression_check {
   cd $WORKSPACE/tmp/performance/narayana
-  java -cp tools/target/classes io.narayana.perf.jmh.Benchmark  $WORKSPACE/*.csv
+# "$@" should only contain jvm args (such as -D -X etc)
+  java -cp tools/target/classes io.narayana.perf.jmh.Benchmark "$@" $WORKSPACE/*.csv
   return $?
 }
 
@@ -68,7 +70,7 @@ function generate_csv_files {
 }
 
 generate_csv_files
-regression_check
+regression_check "$@"
 rv=$?
 #rm $WORKSPACE/*.csv
 cd $WORKSPACE

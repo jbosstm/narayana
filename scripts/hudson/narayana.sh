@@ -581,7 +581,7 @@ function qa_tests {
 }
 
 function perf_tests {
-  $WORKSPACE/scripts/hudson/benchmark.sh
+  $WORKSPACE/scripts/hudson/benchmark.sh "$@"
   [ $? = 0 ] || fatal "there were regressions in one or more of the benchmarks"
 }
 
