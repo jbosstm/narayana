@@ -57,7 +57,7 @@ function run_benchmarks {
 function regression_check {
   cd $WORKSPACE/tmp/performance/narayana
 # "$@" should only contain jvm args (such as -D -X etc)
-  java -cp tools/target/classes io.narayana.perf.jmh.Benchmark "$@" $WORKSPACE/*.csv
+  java "$@" -cp tools/target/classes io.narayana.perf.jmh.Benchmark $WORKSPACE/*.csv
   return $?
 }
 
