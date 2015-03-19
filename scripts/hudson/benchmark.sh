@@ -6,6 +6,7 @@
 [ -z "${WORKSPACE}" ] && WORKSPACE=`pwd`
 MAVEN_HOME=$WORKSPACE/tools/maven
 PATH=$MAVEN_HOME/bin:$PATH
+ofile=$WORKSPACE/benchmark-output.txt
 
 # run a set of benchmarks and copy the generated jmh csv files to $WORKSPACE
 function run_bm {
@@ -56,7 +57,8 @@ function run_benchmarks {
 function regression_check {
   cd $WORKSPACE/tmp/performance/narayana
 # "$@" should only contain jvm args (such as -D -X etc)
-  java "$@" -cp tools/target/classes io.narayana.perf.jmh.Benchmark $WORKSPACE/*.csv
+  java "$@" -cp tools/target/classes io.narayana.perf.jmh.Benchmark $WORKSPACE/*.csv >> $ofile
+
   return $?
 }
 
@@ -68,9 +70,10 @@ function generate_csv_files {
   run_benchmarks master # run the benchmarks against this build of master
 }
 
-echo "JMH benchmark run:"
-echo "  args: $JMHARGS"
-echo "  output:"
+echo > $ofile
+echo "JMH benchmark run:" >> $ofile
+echo "  args: $JMHARGS" >> $ofile
+echo "  output:" >> $ofile
 generate_csv_files
 regression_check "$@"
 rv=$?
