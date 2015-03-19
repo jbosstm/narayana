@@ -581,8 +581,10 @@ function qa_tests {
 }
 
 function perf_tests {
-  $WORKSPACE/scripts/hudson/benchmark.sh "$@"
-  [ $? = 0 ] || fatal "there were regressions in one or more of the benchmarks"
+  PERF_OUTPUT=$($WORKSPACE/scripts/hudson/benchmark.sh "$@")
+  res=$?
+  comment_on_pull "${PERF_OUTPUT} $BUILD_URL"
+  [ $res = 0 ] || fatal "there were regressions in one or more of the benchmarks"
 }
 
 check_if_pull_closed
