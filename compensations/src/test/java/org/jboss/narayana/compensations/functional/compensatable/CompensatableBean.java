@@ -117,6 +117,9 @@ public class CompensatableBean {
     }
 
     @Compensatable(CompensationTransactionType.SUPPORTS)
+    @TxCompensate(DummyCompensationHandler1.class)
+    @TxConfirm(DummyConfirmationHandler1.class)
+    @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithSupports() throws Exception {
 
         Utills.assertTransactionActive(false);
@@ -134,12 +137,18 @@ public class CompensatableBean {
     }
 
     @Compensatable(CompensationTransactionType.NOT_SUPPORTED)
+    @TxCompensate(DummyCompensationHandler1.class)
+    @TxConfirm(DummyConfirmationHandler1.class)
+    @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithNotSupported() throws Exception {
 
         Utills.assertTransactionActive(false);
     }
 
     @Compensatable(CompensationTransactionType.NEVER)
+    @TxCompensate(DummyCompensationHandler1.class)
+    @TxConfirm(DummyConfirmationHandler1.class)
+    @TxLogged(DummyTransactionLoggedHandler1.class)
     public void invokeWithNever() throws Exception {
 
         Utills.assertTransactionActive(false);

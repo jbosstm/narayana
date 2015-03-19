@@ -22,6 +22,9 @@
 
 package org.jboss.narayana.compensations.impl;
 
+import org.jboss.narayana.compensations.api.NoTransactionException;
+import org.jboss.narayana.compensations.api.TxLogged;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
@@ -34,6 +37,10 @@ public abstract class ParticipantInterceptor {
 
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
+
+        if (!BAControllerFactory.getInstance().isBARunning()) {
+            return ic.proceed();
+        }
 
         ParticipantManager participantManager = enlistParticipant(ic.getMethod());
 

@@ -23,7 +23,6 @@
 package org.jboss.narayana.compensations.impl;
 
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
-import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.api.TxConfirm;
 
 import javax.annotation.Priority;
@@ -50,14 +49,8 @@ public class TxConfirmInterceptor extends ParticipantInterceptor {
     @Override
     protected ParticipantManager enlistParticipant(Method method) throws Exception {
 
-        BAControler baControler = BAControllerFactory.getInstance();
-
-        if (!baControler.isBARunning()) {
-            throw new NoTransactionException("Methods annotated with '" + TxConfirm.class.getName() + "' must be invoked in the context of a compensation based transaction");
-        }
-
         Class<? extends ConfirmationHandler> confirmationHandler = getConfirmationHandler(method);
-        return baControler.enlist(null, confirmationHandler, null);
+        return BAControllerFactory.getInstance().enlist(null, confirmationHandler, null);
     }
 
     private Class<? extends ConfirmationHandler> getConfirmationHandler(Method method) {

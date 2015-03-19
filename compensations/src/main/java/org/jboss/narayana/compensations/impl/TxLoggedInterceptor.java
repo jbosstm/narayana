@@ -22,7 +22,6 @@
 
 package org.jboss.narayana.compensations.impl;
 
-import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.api.TxLogged;
 
@@ -50,14 +49,8 @@ public class TxLoggedInterceptor extends ParticipantInterceptor {
     @Override
     protected ParticipantManager enlistParticipant(Method method) throws Exception {
 
-        BAControler baControler = BAControllerFactory.getInstance();
-
-        if (!baControler.isBARunning()) {
-            throw new NoTransactionException("Methods annotated with '" + TxLogged.class.getName() + "' must be invoked in the context of a compensation based transaction");
-        }
-
         Class<? extends TransactionLoggedHandler> transactionLogHandler = getTransactionLoggedHandler(method);
-        return baControler.enlist(null, null, transactionLogHandler);
+        return BAControllerFactory.getInstance().enlist(null, null, transactionLogHandler);
     }
 
     private Class<? extends TransactionLoggedHandler> getTransactionLoggedHandler(Method method) {

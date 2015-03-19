@@ -164,12 +164,7 @@ public abstract class BasicTest {
     @Test
     public void testNoTransaction() throws Exception {
 
-        try {
-            singleService.noTransactionPresent();
-            Assert.fail();
-        } catch (NoTransactionException e) {
-            //expected
-        }
+        singleService.noTransactionPresent();
 
         Assert.assertEquals(false, DummyCompensationHandler1.getCalled());
         Assert.assertEquals(false, DummyConfirmationHandler1.getCalled());
