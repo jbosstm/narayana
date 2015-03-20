@@ -14,7 +14,7 @@ function run_bm {
   [ -d $CSV_DIR ] || mkdir -p $CSV_DIR
 
   CSVF="$CSV_DIR/$2-$3.csv"
-  java -cp $1/target/benchmarks.jar $2 $JMHARGS $CSVF
+  java -cp $1/target/benchmarks.jar $2 $JMHARGS  -rf csv -rff $CSVF
 
   cp $CSVF $WORKSPACE # the jmh plugin looks for csv files in $WORKSPACE
 }
