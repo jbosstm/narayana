@@ -70,10 +70,7 @@ function generate_csv_files {
   run_benchmarks master # run the benchmarks against this build of master
 }
 
-echo > $ofile
-echo "JMH benchmark run:" >> $ofile
-echo "  args: $JMHARGS" >> $ofile
-echo "  output:" >> $ofile
+echo "JMH benchmark run (with args $JMHARGS)\n" > $ofile
 generate_csv_files
 regression_check "$@"
 rv=$?

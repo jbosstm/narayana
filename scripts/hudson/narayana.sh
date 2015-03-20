@@ -583,10 +583,19 @@ function qa_tests {
 function perf_tests {
   $WORKSPACE/scripts/hudson/benchmark.sh "$@"
   res=$?
-  PERF_OUTPUT=`cat $WORKSPACE/benchmark-output.txt`
-  echo "${PERF_OUTPUT}"
-  comment_on_pull "${PERF_OUTPUT} $BUILD_URL"
-  [ $res = 0 ] || fatal "there were regressions in one or more of the benchmarks"
+
+  PERF_OUTPUT=$(cat $WORKSPACE/benchmark-output.txt | sed ':a;N;$!ba;s/\n/\\n/g')
+
+  grep -q improvement $WORKSPACE/benchmark-output.txt
+  if [ $? = 1 ]; then
+    PERF_OUTPUT="$PERF_OUTPUT\n\n*If the purpose of this PR is to improve performance then there has been insufficient improvement to warrant a pass. See the previous text for the threshold (range) for passing optimization related PRs%"
+  fi
+
+  PERF_OUTPUT="Benchmark output (please refer to the article https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana for information on our testing procedures:\n$PERF_OUTPUT"
+
+  comment_on_pull "$PERF_OUTPUT" "$BUILD_URL"
+
+  [ $res = 0 ] || fatal "there were regressions in one or more of the benchmarks (see previous PR comment for details"
 }
 
 check_if_pull_closed
