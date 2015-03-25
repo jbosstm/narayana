@@ -348,6 +348,10 @@ function jta_cdi_tests {
 function compensations_tests {
   echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
+  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
+  [ $? = 0 ] || fatal "txframework build failed"
+  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF-distributed "$@" test
+  [ $? = 0 ] || fatal "txframework build failed"
   ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
   ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed "$@" test
