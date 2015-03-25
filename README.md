@@ -12,6 +12,9 @@ https://issues.jboss.org/browse/JBTM
 If you would like to contribute a pull request to help the project out, please sign our CLA over here:
 https://cla.jboss.org/index.seam (the project is JBoss Transactions)
 
+If you have a performance optimization that you would like to suggest to us, please read our document over here:
+https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana
+
 Requirements
 ------------
 To build Narayana you should have installed:
