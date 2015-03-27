@@ -4,6 +4,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.provider.HttpResponseException;
+import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatusElement;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.Vote;
@@ -17,6 +18,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,7 +30,17 @@ import java.io.File;
 @RunWith(Arquillian.class)
 public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCase {
 
+    protected static final String BASE_URL = "http://" + System.getProperty("node.address") + ":8080";
+
+    protected static final String DEPLOYMENT_NAME = "test";
+
+    protected static final String DEPLOYMENT_URL = BASE_URL + "/" + DEPLOYMENT_NAME;
+
+    protected static final String TRANSACTION_MANAGER_URL = BASE_URL + "/rest-at-coordinator/tx/transaction-manager";
+
     private static final String DEPENDENCIES = "Dependencies: org.jboss.narayana.rts,org.jboss.jts,org.codehaus.jettison\n";
+
+    private static final String CONTAINER_NAME = "jboss";
 
     private static final int RECOVERY_PERIOD = 4;
 
@@ -39,6 +51,8 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
 
     private static final String BYTEMAN_ARGUMENTS = "-Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:lib/byteman.jar=script:scripts/@BMScript@.btm,boot:lib/byteman.jar,listener:true";
 
+    protected TxSupport txSupport;
+
     @Deployment(name = DEPLOYMENT_NAME, managed = false, testable = false)
     public static WebArchive getDeployment() {
         return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
@@ -46,15 +60,24 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
                 .addAsManifestResource(new StringAsset(DEPENDENCIES), "MANIFEST.MF");
     }
 
+    @Before
+    public void before() {
+        txSupport = new TxSupport(TRANSACTION_MANAGER_URL);
+    }
+
     @After
     public void after() {
-        super.after();
-        stopContainer();
+        try {
+            txSupport.rollbackTx();
+        } catch (Throwable t) {
+            // pass
+        }
+        stopContainer(CONTAINER_NAME, DEPLOYMENT_NAME);
     }
 
     @Test
     public void testCrashAfterPrepare() throws Exception {
-        startContainer(VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashAfterPrepare"));
+        startContainer(CONTAINER_NAME, DEPLOYMENT_NAME, VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashAfterPrepare"));
 
         txSupport.startTx();
 
@@ -69,7 +92,7 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
         } catch (HttpResponseException e) {
         }
 
-        restartContainer(VM_ARGUMENTS);
+        restartContainer(CONTAINER_NAME, VM_ARGUMENTS);
         registerDeserializer();
 
         TransactionStatusElement status;
@@ -88,7 +111,7 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
 
     @Test
     public void testCrashBeforeCommit() throws Exception {
-        startContainer(VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashBeforeCommit"));
+        startContainer(CONTAINER_NAME, DEPLOYMENT_NAME, VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashBeforeCommit"));
 
         txSupport.startTx();
 
@@ -103,7 +126,7 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
         } catch (HttpResponseException e) {
         }
 
-        restartContainer(VM_ARGUMENTS);
+        restartContainer(CONTAINER_NAME, VM_ARGUMENTS);
         registerDeserializer();
 
         TransactionStatusElement status;

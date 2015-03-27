@@ -1,16 +1,12 @@
 package org.jboss.narayana.rest.integration.test.integration;
 
-import java.io.File;
-
-import org.junit.Assert;
-
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.jbossts.star.util.TxSupport;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Assert;
+
+import java.io.File;
 
 /**
  *
@@ -19,70 +15,45 @@ import org.junit.Before;
  */
 public abstract class AbstractIntegrationTestCase {
 
-    private static final String CONTAINER_NAME = "jboss";
-
-    protected static final String DEPLOYMENT_NAME = "test";
-
-    protected static final String BASE_URL = getBaseUrl();
-
-    protected static final String DEPLOYMENT_URL = BASE_URL + "/" + DEPLOYMENT_NAME;
-
-    protected static final String TRANSACTION_MANAGER_URL = BASE_URL + "/rest-at-coordinator/tx/transaction-manager";
-
     @ArquillianResource
     private ContainerController containerController;
 
     @ArquillianResource
     private Deployer deployer;
 
-    protected TxSupport txSupport;
-
-    @Before
-    public void before() {
-        txSupport = new TxSupport(TRANSACTION_MANAGER_URL);
+    protected void startContainer(final String containerName, final String deploymentName) {
+        startContainer(containerName, deploymentName, null);
     }
 
-    @After
-    public void after() {
-        try {
-            txSupport.rollbackTx();
-        } catch (Throwable t){
-        }
-    }
-
-    protected void startContainer() {
-        startContainer(null);
-    }
-
-    protected void startContainer(final String vmArguments) {
-        if (!containerController.isStarted(CONTAINER_NAME)) {
+    protected void startContainer(final String containerName, final String deploymentName, final String vmArguments) {
+        if (!containerController.isStarted(containerName)) {
             clearObjectStore();
             if (vmArguments == null) {
-                containerController.start(CONTAINER_NAME);
+                containerController.start(containerName);
             } else {
                 final Config config = new Config();
                 config.add("javaVmArguments", vmArguments);
-                containerController.start(CONTAINER_NAME, config.map());
+                containerController.start(containerName, config.map());
             }
 
-            deployer.deploy(DEPLOYMENT_NAME);
+            deployer.deploy(deploymentName);
         }
     }
 
-    protected void restartContainer(final String vmArguments) {
+    protected void restartContainer(final String containerName, final String vmArguments) {
         if (vmArguments == null) {
-            containerController.start(CONTAINER_NAME);
+            containerController.start(containerName);
         } else {
             final Config config = new Config();
             config.add("javaVmArguments", vmArguments);
-            containerController.start(CONTAINER_NAME, config.map());
+            containerController.start(containerName, config.map());
         }
     }
 
-    protected void stopContainer() {
-        deployer.undeploy(DEPLOYMENT_NAME);
-        containerController.stop(CONTAINER_NAME);
-        containerController.kill(CONTAINER_NAME);
+    protected void stopContainer(final String containerName, final String deplymentName) {
+        deployer.undeploy(deplymentName);
+        containerController.stop(containerName);
+        containerController.kill(containerName);
     }
 
     protected void clearObjectStore() {
@@ -114,23 +85,6 @@ public abstract class AbstractIntegrationTestCase {
         }
 
         return (path.delete());
-    }
-
-    private static String getBaseUrl() {
-        String baseAddress = System.getProperty("jboss.bind.address");
-        String basePort = System.getProperty("jboss.bind.port");
-
-        if (baseAddress == null) {
-            baseAddress = "http://localhost";
-        } else if (!baseAddress.toLowerCase().startsWith("http://") && !baseAddress.toLowerCase().startsWith("https://")) {
-            baseAddress = "http://" + baseAddress;
-        }
-
-        if (basePort == null) {
-            basePort = "8080";
-        }
-
-        return baseAddress + ":" + basePort;
     }
 
 }

@@ -1,5 +1,15 @@
 package org.jboss.narayana.rest.integration.test.common;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.jboss.logging.Logger;
+import org.jboss.narayana.rest.integration.ParticipantInformation;
+import org.jboss.narayana.rest.integration.ParticipantsContainer;
+import org.jboss.narayana.rest.integration.api.Aborted;
+import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
+import org.jboss.narayana.rest.integration.api.Prepared;
+import org.jboss.narayana.rest.integration.api.ReadOnly;
+import org.jboss.narayana.rest.integration.api.Vote;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -8,15 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.jboss.narayana.rest.integration.ParticipantInformation;
-import org.jboss.narayana.rest.integration.ParticipantsContainer;
-import org.jboss.narayana.rest.integration.api.Aborted;
-import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
-import org.jboss.narayana.rest.integration.api.Prepared;
-import org.jboss.narayana.rest.integration.api.ReadOnly;
-import org.jboss.narayana.rest.integration.api.Vote;
 
 /**
  *
@@ -29,6 +30,8 @@ public final class TransactionalService {
     public static final String APPLICATION_ID = "org.jboss.narayana.rest.integration.test.common.TransactionalService";
 
     public static final String PATH_SEGMENT = "transactional-service";
+
+    private static final Logger LOGGER = Logger.getLogger(TransactionalService.class);
 
     @GET
     public Response getParticipantInvocations(@QueryParam("participantId") final String participantId) {
@@ -47,6 +50,9 @@ public final class TransactionalService {
     public String enlistParticipant(@QueryParam("participantEnlistmentUrl") final String participantEnlistmentUrl,
                                     @QueryParam("vote") final String stringVote, @Context final UriInfo uriInfo) {
 
+        LOGGER.info("TransactionalService.enlistParticipant(participantEnlistmentUrl="
+                + participantEnlistmentUrl + ", vote=" + stringVote + ")");
+
         final Vote vote = stringVoteToVote(stringVote);
         final LoggingParticipant participant = new LoggingParticipant(vote);
 
@@ -55,6 +61,8 @@ public final class TransactionalService {
 
     @PUT
     public void registerDeserializer() {
+        LOGGER.info("TransactionalService.registerDeserializer");
+
         ParticipantsManagerFactory.getInstance().registerDeserializer(APPLICATION_ID, new TestParticipantDeserializer());
     }
 
