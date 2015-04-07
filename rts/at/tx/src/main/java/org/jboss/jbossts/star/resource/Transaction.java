@@ -323,7 +323,9 @@ public class Transaction extends AtomicAction
             }
         }
 
-        coordinator.removeTxState(arjunaStatus, this, enlistmentIds);
+        if (failedList == null || failedList.size() == 0) {
+            coordinator.removeTxState(arjunaStatus, this, enlistmentIds);
+        }
 
         return super.afterCompletion(arjunaStatus, report_heuristics);
     }

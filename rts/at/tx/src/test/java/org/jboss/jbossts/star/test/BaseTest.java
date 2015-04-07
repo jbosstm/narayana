@@ -652,7 +652,10 @@ public class BaseTest {
                     work.status = TxStatus.TransactionHeuristicRollback.name();
                 else if ("H_MIXED".equals(fault))
                     work.status = TxStatus.TransactionHeuristicMixed.name();
-                else {
+                else if ("CRUNTIME".equals(fault)) {
+                    work.status = TxStatus.TransactionStatusUnknown.name();
+                    throw new RuntimeException("Test runtime exception");
+                } else {
                     if ("CDELAY".equals(fault)) {
                         try {
                             Thread.sleep(3000);

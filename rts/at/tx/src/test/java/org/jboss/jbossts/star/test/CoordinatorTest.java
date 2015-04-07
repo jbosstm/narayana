@@ -274,4 +274,34 @@ public class CoordinatorTest extends BaseTest {
         String r2 = resource.request().get(String.class);
         Assert.assertTrue("xml response should have contained 2 transaction urls",r2.length() != 0);
     }
+
+    @Test
+    public void testFailureInSecondParticipantDuringCommit() {
+        final TxSupport txn = new TxSupport();
+        final int originalTxCount = txn.txCount();
+        final String pUrl = PURL;
+        final String[] pid = new String[2];
+        pid[0] = modifyResource(txn, pUrl, null, "p1", "v1");
+        pid[1] = modifyResource(txn, pUrl, null, "p1", "v1");
+
+        txn.startTx();
+
+        enlistResource(txn, pUrl + "?pId=" + pid[0]);
+        enlistResource(txn, pUrl + "?pId=" + pid[1] + "&fault=CRUNTIME");
+
+        modifyResource(txn, pUrl, pid[0], "p1", "v2");
+        modifyResource(txn, pUrl, pid[1], "p1", "v2");
+
+        Assert.assertEquals("v2", getResourceProperty(txn, pUrl, pid[0], "p1"));
+        Assert.assertEquals("v2", getResourceProperty(txn, pUrl, pid[1], "p1"));
+
+        txn.commitTx();
+
+        Assert.assertEquals("v2", getResourceProperty(txn, pUrl, pid[0], "p1"));
+        Assert.assertEquals("v1", getResourceProperty(txn, pUrl, pid[1], "p1"));
+
+        // Transaction should not be removed because of the failure
+        Assert.assertEquals(originalTxCount + 1, txn.txCount());
+    }
+
 }
