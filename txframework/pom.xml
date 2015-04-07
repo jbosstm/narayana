@@ -22,12 +22,12 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <groupId>org.jboss.narayana.compensations</groupId>
+    <groupId>org.jboss.narayana.txframework</groupId>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>compensations</artifactId>
+    <artifactId>txframework</artifactId>
     <packaging>jar</packaging>
-    <name>Narayana: compensations</name>
-    <description>Narayana: compensations</description>
+    <name>Narayana: txframework</name>
+    <description>Narayana: txframework</description>
 
     <parent>
         <groupId>org.jboss.narayana</groupId>
@@ -156,11 +156,6 @@
             <artifactId>byteman_support</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.txframework</groupId>
-            <artifactId>txframework</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>

@@ -476,6 +476,7 @@
     <module>rts</module>
     <module>txbridge</module>
     <module>STM</module>
+    <module>txframework</module>
     <module>compensations</module>
     <module>osgi</module>
     <module>narayana-full</module>
