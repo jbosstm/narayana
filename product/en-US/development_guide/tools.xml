@@ -215,6 +215,202 @@
         </section>
 
         <section>
+            <title>Browse and Manage Transactions Using JMX</title>
+            <para>
+                Transaction logs may also be managed using
+                <ulink url="https://docs.oracle.com/javase/7/docs/technotes/guides/jmx">JMX</ulink>. Each transaction
+                log record is instrumented as an MBean. Any JMX client may be used to manage logs using this mechanism.
+            </para>
+            <para>
+                The JMX MBean for the object store contains one method and one attribute. The
+                <code>probe</code>
+                operation scans the object store creating JMX MBeans for the various log records contained in the store.
+                The default behaviour is to only create MBeans for particular record types. If there is a need to view
+                everything in the store then set the
+                <code>ExposeAllRecordsAsMBeans</code>
+                attribute to <code>true</code>
+
+                Note that transaction logs are transient so these beans
+                quickly become out of date and will not be refreshed automatically so you must invoke the
+                <code>probe</code>
+                operation again to get the current up to date list of MBeans.
+            </para>
+
+            <para>
+                MBeans can be queried using the standard JMX query mechanism. ObjectStore Object Names are in
+                the format:
+                <screen>domain:key-property-list</screen>
+                where domain is <code>jboss.jta</code> and key-property-list is a comma separated list of key=value pairs.
+
+                <table>
+                    <title>Object Name Keys</title>
+                    <tgroup cols="2">
+                        <colspec colwidth="150px" />
+                        <colspec colwidth="290px" />
+
+                        <thead>
+                            <row>
+                                <entry>Name</entry>
+                                <entry>Meaning</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>itype</entry>
+                                <entry>
+                                    <para>The transaction record type</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>uid</entry>
+                                <entry>
+                                    <para>The unique id of the transaction record</para>
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>puid</entry>
+                                <entry>
+                                    <para>The unique id of a participant record</para>
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <example>
+                    <title>Transaction record</title>
+                    <para>jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/
+                        AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39</para>
+                </example>
+                <example>
+                    <title>A participant record within a transaction</title>
+                    <para>jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/
+                        AtomicAction,uid=0_ffff7f000001_-3a612f5d_53f63052_39,puid=
+                        0_ffff7f000001_-3a612f5d_53f63052_3c</para>
+                </example>
+            </para>
+
+            <variablelist id="manage_transaction">
+                <title>Manage a Transaction</title>
+                <varlistentry>
+                    <term>View a transaction's attributes.</term>
+                    <listitem>
+                        <para>
+                            To view information about a transaction or a transaction participant, such as its JNDI name,
+                            EIS product name and version, or its status, use a JMX client or alternatively use the JMX api:
+                        </para>
+                        <screen>
+    // obtain connection to the MBean server
+    MBeanServer mbs = ...
+
+    // query all ObjectStore MBean instances
+    ObjectName on = new ObjectName("jboss.jta:type=ObjectStore,*", null);
+    Set&lt;ObjectInstance&gt; transactions = mbs.queryMBeans(on);
+
+    // lookup the attribute names of an ObjectInstance
+    MBeanInfo info = mbs.getMBeanInfo( oi.getObjectName() );
+    MBeanAttributeInfo[] attributeArray = info.getAttributes();
+
+    // find the values of the attributes of an ObjectInstance
+    AttributeList attributes = mbs.getAttributes(
+                            oi.getObjectName(), attributeNames);
+                        </screen>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>View the participants of a transaction.</term>
+                    <listitem>
+                        <para>
+                            A transaction log may contain one or more participants which can be viewed as MBeans
+                            using a JMX client or programmatically as follows:
+                            <screen>
+    ObjectInstance transaction = ... //
+    ObjectName on = transaction.getObjectName();
+    String participantQuery =  on + ",puid=*";
+    Set&lt;bjectInstance&gt; participants = mbs.queryMBeans(
+                                new ObjectName(participantQuery), null)
+                            </screen>
+                        </para>
+                        <para>
+                            For example the attributes of an XAResource record might look similar to:
+                        </para>
+                        <para>
+                            <screen>
+       "eis-product-name" => "HornetQ",
+       "eis-product-version" => "2.0",
+       "jndi-name" => "java:/JmsXA",
+       "status" => "HEURISTIC",
+       "type" => "/StateManager/AbstractRecord/XAResourceRecord"
+                        </screen>
+
+                        </para>
+                        <para>
+                            The status attribute shown in this example is in a
+                            <code>HEURISTIC</code>
+                            state and is eligible for recovery. Refer to
+                            <xref linkend="recover_transaction_jmx" />
+                            for more details.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term>Delete a transaction.</term>
+                    <listitem>
+                        <para>
+                            MBeans for transaction logs and participants contain a <code>remove</code> operation. Invoke
+                            this MBean operation to remove the record from the ObjectStore.
+                        </para>
+                        <warning>
+                            <para>
+                                If failures occur, transaction logs may remain in the object store until crash recovery facilities have resolved
+                                the transactions they represent.
+                                Therefore, it is very important that the contents of the object store are not deleted inadvertently, as this will make it
+                                impossible to
+                                resolve in-doubt transactions. In addition, if multiple users share the same object store, they must understand that it
+                                is not an exclusive resource,
+                            </para>
+                        </warning>
+                    </listitem>
+                </varlistentry>
+                <varlistentry id="recover_transaction_jmx">
+                    <term>Recover a transaction.</term>
+                    <listitem>
+                        <para>
+                            Transaction participants supports recovery via the
+                            <code>clearHeuristic</code>
+                            operation.
+                        </para>
+                        <itemizedlist>
+                            <title>Recovery of Heuristic Transactions and Participants</title>
+                            <listitem>
+                                <para>
+                                    If the transaction's status is
+                                    <literal>HEURISTIC</literal>
+                                    , the clearHeuristic operation changes the state to
+                                    <literal>PREPARE</literal>
+                                    and triggers a recovery attempt.
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    If one of the transaction participants is in a heuristic state, the recovery
+                                    operation tries to replay the
+                                    <code>commit</code>
+                                    operation. If successful, the participant is removed from the transaction log. You
+                                    can verify this by re-running the
+                                    <code>probe</code>
+                                    operation on the
+                                    <code>ObjectStore</code>
+                                    MBean. If this is the last participant, the transaction is also deleted.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
+        </section>
+
+        <section>
             <title>LogEditor</title>
             <para>
                 The LogEditor tool is started by executing the following command:
