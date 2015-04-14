@@ -2,7 +2,7 @@
 # -i (1 iteration), -wi (10 warm ups), -r (300 seconds at each iteration)
 # use java -jar <maven module>/target/benchmarks.jar -h for options
 #[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 10 -f 1 -r 300"
-[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 1 -f 1 -r 1"
+[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 1 -f 1 -r 1 -prof stack"
 
 [ -z "${WORKSPACE}" ] && WORKSPACE=`pwd`
 MAVEN_HOME=$WORKSPACE/tools/maven
@@ -13,7 +13,7 @@ ofile=$WORKSPACE/benchmark-output.txt
 function run_bm {
   suffix=".\*"
   f=${2%$suffix}
-  CSV_DIR="$f/target/jmh"
+  CSV_DIR="$1/target/jmh"
   [ -d $CSV_DIR ] || mkdir -p $CSV_DIR
   CSVF="$CSV_DIR/$f-$3.csv"
 
