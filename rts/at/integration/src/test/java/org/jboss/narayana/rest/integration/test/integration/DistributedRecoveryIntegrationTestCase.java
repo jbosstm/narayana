@@ -114,7 +114,7 @@ public class DistributedRecoveryIntegrationTestCase extends AbstractIntegrationT
     }
 
     @Test
-    public void testSecondServerFailureBeforeCommit() throws JAXBException {
+    public void testSecondServerFailureBeforeCommit() throws JAXBException, InterruptedException {
         startContainer(FIRST_CONTAINER_NAME, FIRST_DEPLOYMENT_NAME, FIRST_CONTAINER_VM_ARGUMENTS);
         startContainer(SECOND_CONTAINER_NAME, SECOND_DEPLOYMENT_NAME,
                 SECOND_CONTAINER_VM_ARGUMENTS + " " + BYTEMAN_ARGUMENTS.replace("@BMScript@", "CrashBeforeCommit"));
@@ -133,29 +133,20 @@ public class DistributedRecoveryIntegrationTestCase extends AbstractIntegrationT
         Assert.assertEquals(TxStatusMediaType.TX_COMMITTED, result);
 
         restartContainer(SECOND_CONTAINER_NAME, SECOND_CONTAINER_VM_ARGUMENTS);
-        Assert.assertEquals(0, getParticipantsInformation(SECOND_DEPLOYMENT_URL).length());
         registerDeserializer(SECOND_DEPLOYMENT_URL);
-        Assert.assertEquals(1, getParticipantsInformation(SECOND_DEPLOYMENT_URL).length());
+
+        Thread.sleep(1000);
+
+        int participantsToRecover = getParticipantsInformation(SECOND_DEPLOYMENT_URL).length();
+        Assert.assertEquals(1, participantsToRecover);
 
         int cycles = 0;
-        TransactionStatusElement status = txSupport.getTransactionInfo().getStatus();
-        Assert.assertEquals(TransactionStatusElement.TransactionCommitted, status);
-
         do {
-            try {
-                Thread.sleep(RECOVERY_PERIOD + 2000);
-                // Updates coordinator's active transactions list
-                txSupport.getTransactions();
-                // After successful recovery transaction is removed and 404 is returned.
-                status = txSupport.getTransactionInfo().getStatus();
-            } catch (final Throwable t) {
-                // ignore
-            }
-        } while (status != null && cycles++ < RECOVERY_WAIT_CYCLES);
+            Thread.sleep(RECOVERY_PERIOD + 2000);
+            participantsToRecover = getParticipantsInformation(SECOND_DEPLOYMENT_URL).length();
+        } while (participantsToRecover > 0 && cycles++ < RECOVERY_WAIT_CYCLES);
 
-        if (status == null) {
-            Assert.fail("Recovery failed");
-        }
+        Assert.assertEquals(0, participantsToRecover);
     }
 
     private void enlistParticipant(final String enlistmentUrl, final String deploymentUrl, final Vote vote) {
