@@ -33,7 +33,7 @@ package com.arjuna.orbportability.internal.utils;
 
 import java.util.Map;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.utils.InitClassInterface;

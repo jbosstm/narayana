@@ -20,11 +20,11 @@
  */
 package com.arjuna.ats.jbossatx.jts;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.ORBType;
 

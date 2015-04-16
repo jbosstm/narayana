@@ -36,11 +36,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.recovery.RecoveryInit;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryServiceInit;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.ORBType;
 
