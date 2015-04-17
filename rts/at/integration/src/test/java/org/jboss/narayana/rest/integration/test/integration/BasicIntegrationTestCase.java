@@ -1,5 +1,14 @@
 package org.jboss.narayana.rest.integration.test.integration;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.bind.JAXBException;
+
+import org.junit.Assert;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.util.TxStatus;
@@ -16,17 +25,9 @@ import org.jboss.narayana.rest.integration.test.common.LoggingVolatileParticipan
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -38,21 +39,9 @@ import java.util.List;
 @RunWith(Arquillian.class)
 public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase {
 
-    protected static final String DEPLOYMENT_NAME = "test";
-
-    protected static final String BASE_URL = getBaseUrl();
-
-    protected static final String DEPLOYMENT_URL = BASE_URL + "/" + DEPLOYMENT_NAME;
-
-    protected static final String TRANSACTION_MANAGER_URL = BASE_URL + "/rest-at-coordinator/tx/transaction-manager";
-
     private static final String APPLICATION_ID = "org.jboss.narayana.rest.integration.test.integration.BasicIntegrationTestCase";
 
     private static final String DEPENDENCIES = "Dependencies: org.jboss.narayana.rts\n";
-
-    private static final String CONTAINER_NAME = "jboss";
-
-    protected TxSupport txSupport;
 
     @Deployment(name = DEPLOYMENT_NAME, managed = false, testable = true)
     public static WebArchive getDeployment() {
@@ -67,19 +56,9 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
 
     @Before
     public void before() {
-        txSupport = new TxSupport(TRANSACTION_MANAGER_URL);
-        startContainer(CONTAINER_NAME, DEPLOYMENT_NAME);
+        super.before();
+        startContainer();
         ParticipantsManagerFactory.getInstance().setBaseUrl(BASE_URL);
-    }
-
-    @After
-    public void after() {
-        try {
-            txSupport.rollbackTx();
-//            stopContainer(CONTAINER_NAME);
-        } catch (Throwable t) {
-            // pass
-        }
     }
 
     @Test
@@ -151,7 +130,7 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
 
         txSupport.rollbackTx();
 
-        Assert.assertEquals(Arrays.asList(new String[]{"rollback"}), participant1.getInvocations());
+        Assert.assertEquals(Arrays.asList(new String[] { "rollback" }), participant1.getInvocations());
         Assert.assertEquals(Arrays.asList(new String[] { "rollback" }), participant2.getInvocations());
     }
 
@@ -226,7 +205,7 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
         final String txStatus = TxSupport.getStatus(txSupport.commitTx());
 
         Assert.assertEquals(TxStatus.TransactionCommitted.name(), txStatus);
-        Assert.assertEquals(Arrays.asList(new String[]{"prepare", "commit"}), participants.get(0).getInvocations());
+        Assert.assertEquals(Arrays.asList(new String[] { "prepare", "commit" }), participants.get(0).getInvocations());
         Assert.assertEquals(Collections.EMPTY_LIST, participants.get(1).getInvocations());
     }
 
@@ -342,7 +321,7 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
         final String txStatus = TxSupport.getStatus(txSupport.commitTx());
 
         Assert.assertEquals(TxStatus.TransactionCommitted.name(), txStatus);
-        Assert.assertEquals(Arrays.asList(new String[]{"commitOnePhase"}), loggingParticipant.getInvocations());
+        Assert.assertEquals(Arrays.asList(new String[] { "commitOnePhase" }), loggingParticipant.getInvocations());
         Assert.assertEquals(Arrays.asList(new String[] { "beforeCompletion", "afterCompletion" }),
                 loggingVolatileParticipant.getInvocations());
         Assert.assertEquals(TxStatus.TransactionCommitted, loggingVolatileParticipant.getTxStatus());
@@ -365,23 +344,6 @@ public final class BasicIntegrationTestCase extends AbstractIntegrationTestCase 
         Assert.assertEquals(Arrays.asList(new String[] { "afterCompletion" }),
                 loggingVolatileParticipant.getInvocations());
         Assert.assertEquals(TxStatus.TransactionRolledBack, loggingVolatileParticipant.getTxStatus());
-    }
-
-    private static String getBaseUrl() {
-        String baseAddress = System.getProperty("jboss.bind.address");
-        String basePort = System.getProperty("jboss.bind.port");
-
-        if (baseAddress == null) {
-            baseAddress = "http://localhost";
-        } else if (!baseAddress.toLowerCase().startsWith("http://") && !baseAddress.toLowerCase().startsWith("https://")) {
-            baseAddress = "http://" + baseAddress;
-        }
-
-        if (basePort == null) {
-            basePort = "8080";
-        }
-
-        return baseAddress + ":" + basePort;
     }
 
 }

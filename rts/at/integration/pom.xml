@@ -26,18 +26,10 @@
 
     <properties>
         <ipv4.server.jvm.args></ipv4.server.jvm.args>
-        <ipv4.server2.jvm.args>-Djboss.socket.binding.port-offset=100</ipv4.server2.jvm.args>
         <ipv6.server.jvm.args>
             -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
-        <ipv6.server2.jvm.args>
-            -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
-            -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
-            -Djboss.socket.binding.port-offset=100
-        </ipv6.server2.jvm.args>
-        <jboss.dist>${env.JBOSS_HOME}</jboss.dist>
-        <jboss.home>${jboss.dist}</jboss.home>
     </properties>
 
     <dependencies>
@@ -153,7 +145,7 @@
             <version>${version.org.jboss.byteman}</version>
             <scope>provided</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
@@ -175,53 +167,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <skip>false</skip>
-                            <includes>
-                                <include>**/functional/*TestCase.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>integration-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <skip>true</skip>
-                            <includes>
-                                <include>**/integration/*TestCase.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <skip>true</skip>
-                            <stripVersion>true</stripVersion>
-                            <includeGroupIds>org.jboss.byteman</includeGroupIds>
-                            <outputDirectory>${project.build.directory}/test-classes/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/functional/*TestCase.java</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <inherited>false</inherited>
@@ -259,24 +209,18 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-containers</arquillian.launch>
-                                        <server.jvm.args>
-                                            ${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args} ${jvm.args.debug}
-                                        </server.jvm.args>
-                                        <server2.jvm.args>
-                                            ${jvm.args.other} ${jvm.args.memory} ${ipv4.server2.jvm.args}
-                                        </server2.jvm.args>
-                                        <node.address>127.0.0.1</node.address>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <skip>false</skip>
+                            <includes>
+                                <include>**/*TestCase.java</include>
+                            </includes>
+                            <systemPropertyVariables combine.children="append">
+                                <server.jvm.args>
+                                    ${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args} ${jvm.args.debug}
+                                </server.jvm.args>
+                                <node.address>127.0.0.1</node.address>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -289,93 +233,11 @@
                                     <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>false</skip>
+                                    <stripVersion>true</stripVersion>
+                                    <includeGroupIds>org.jboss.byteman</includeGroupIds>
+									<outputDirectory>${project.build.directory}/test-classes/lib</outputDirectory>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-first-server</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}</directory>
-                                            <excludes>
-                                                <exclude>bundles/</exclude>
-                                                <exclude>standalone/data/</exclude>
-                                                <exclude>standalone/log/</exclude>
-                                                <exclude>standalone/tmp/</exclude>
-                                            </excludes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-second-server</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss2</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}</directory>
-                                            <excludes>
-                                                <exclude>bundles/</exclude>
-                                                <exclude>standalone/data/</exclude>
-                                                <exclude>standalone/log/</exclude>
-                                                <exclude>standalone/tmp/</exclude>
-                                            </excludes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-first-server-config</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}/docs/examples/configs</directory>
-                                            <includes>
-                                                <include>standalone-rts.xml</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-second-server-config</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss2/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}/docs/examples/configs</directory>
-                                            <includes>
-                                                <include>standalone-rts.xml</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
+                           </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -405,24 +267,19 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-containers</arquillian.launch>
-                                        <server.jvm.args>
-                                            ${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}
-                                        </server.jvm.args>
-                                        <server2.jvm.args>
-                                            ${jvm.args.other} ${jvm.args.memory} ${ipv6.server2.jvm.args}
-                                        </server2.jvm.args>
-                                        <node.address>[::1]</node.address>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <skip>false</skip>
+                            <includes>
+                                <include>**/*TestCase.java</include>
+                            </includes>
+                            <argLine>${ipv6.server.jvm.args}</argLine>
+                            <systemPropertyVariables combine.children="append">
+                                <server.jvm.args>
+                                    ${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}
+                                </server.jvm.args>
+                                <node.address>[::1]</node.address>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -435,91 +292,9 @@
                                     <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-first-server</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}</directory>
-                                            <excludes>
-                                                <exclude>bundles/</exclude>
-                                                <exclude>standalone/data/</exclude>
-                                                <exclude>standalone/log/</exclude>
-                                                <exclude>standalone/tmp/</exclude>
-                                            </excludes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-second-server</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss2</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}</directory>
-                                            <excludes>
-                                                <exclude>bundles/</exclude>
-                                                <exclude>standalone/data/</exclude>
-                                                <exclude>standalone/log/</exclude>
-                                                <exclude>standalone/tmp/</exclude>
-                                            </excludes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-first-server-config</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}/docs/examples/configs</directory>
-                                            <includes>
-                                                <include>standalone-rts.xml</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-second-server-config</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/jboss2/standalone/configuration</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${jboss.home}/docs/examples/configs</directory>
-                                            <includes>
-                                                <include>standalone-rts.xml</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
+                                    <stripVersion>true</stripVersion>
+                                    <includeGroupIds>org.jboss.byteman</includeGroupIds>
+                                    <outputDirectory>${project.build.directory}/test-classes/lib</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
