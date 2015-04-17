@@ -512,6 +512,7 @@ void TestTransactions::test_wait_for_recovery()
 {
 	int nsecs = 180;
 	int nrecs, nrecs1 = count_log_records();
+	const int SLEEP_INTERVAL = 10;
 	fault_t fault2 = {0, 102, O_XA_COMMIT, XA_OK, F_CB, (void *) recovery_cb2};
 	fault_t fault3 = {0, 102, O_XA_ROLLBACK, XA_OK, F_CB, (void *) recovery_cb2};
 
@@ -527,12 +528,15 @@ void TestTransactions::test_wait_for_recovery()
 	(void) dummy_rm_add_fault(fault2);
 	(void) dummy_rm_add_fault(fault3);
 	BT_ASSERT_EQUAL(TX_OK, tx_open());
-	while ((rcCnt2 == 0 || (nrecs = count_log_records()) == nrecs1) && nsecs != 0) {
-		if (nsecs-- % 10 == 0) {
-			btlogger("TestTransactions::test_run_recovery sleeping for %d seconds", nsecs);
-		}
-		doSix(1);
+
+	for (int i = 0; i < nsecs; i += SLEEP_INTERVAL) {
+		if ((nrecs = count_log_records()) < nrecs1)
+			break;
+
+		btlogger("TestTransactions::test_run_recovery sleeping for another %d seconds", nsecs);
+		doSix(SLEEP_INTERVAL);
 	}
+
 	(void) dummy_rm_del_fault(fault2);
 	(void) dummy_rm_del_fault(fault3);
 

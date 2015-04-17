@@ -207,7 +207,7 @@ bool HttpTxManager::recover(XAWrapper *resource)
 	if (ri.status_code == 200) {
 		LOG4CXX_DEBUG(httptxlogger, "recovery: told TM about participant "
 			<< resource->get_name() << " xid: " << xid);
-
+		_branches.erase(resource->get_name());
 		return true;
 	} else {
 		// TODO what about the other HTTP codes
@@ -379,6 +379,7 @@ bool HttpTxManager::handle_request(
 					LOG4CXX_DEBUG(httptxlogger, "Return 200 OK with body: " <<
 						status << " XA status: " << res);
 					code = 200;
+					_branches.erase(branch->get_name());
 					break;
 				case XAER_PROTO:
 					// TODO Do all PROTO errors mean rollback for example (at least with ORACLE)
