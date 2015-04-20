@@ -28,20 +28,33 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.Status;
 
+import org.jboss.tm.listener.TransactionTypeNotSupported;
 import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionLocalDelegate;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
+import org.jboss.tm.listener.TransactionEvent;
+import org.jboss.tm.listener.TransactionListener;
+import org.jboss.tm.listener.TransactionListenerRegistry;
+import org.jboss.tm.listener.EventType;
+
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Delegate for JBoss TransactionManager/TransactionLocalDelegate.
  * @author kevin
  */
-public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration
+public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration, TransactionListenerRegistry
 {
+    private static final String LISTENER_MAP_KEY = "__TX_LISTENERS";
+
     /**
      * Delegate transaction manager.
      */
@@ -72,6 +85,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
         SecurityException, IllegalStateException, SystemException
     {
+        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
         transactionManager.commit() ;
     }
 
@@ -103,6 +117,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws InvalidTransactionException, IllegalStateException, SystemException
     {
         transactionManager.resume(transaction) ;
+        notifyAssociationListeners(transaction, EnumSet.of(EventType.ASSOCIATED));
     }
 
     /**
@@ -111,6 +126,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     public void rollback()
         throws IllegalStateException, SecurityException, SystemException
     {
+        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
         transactionManager.rollback() ;
     }
 
@@ -134,13 +150,84 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     }
 
     /**
+     * register a listener for transaction related events that effect the current thread
+     * @param listener the callback for event notifications
+     */
+    @Override
+    public void addListener (Transaction transaction, TransactionListener listener, EnumSet<EventType> types) throws TransactionTypeNotSupported
+    {
+        if (transaction == null)
+            throw new NullPointerException(); // we could interpret this as meaning register for all transactions
+
+        if (!(transaction instanceof com.arjuna.ats.jta.transaction.Transaction))
+            throw new TransactionTypeNotSupported("Unsupported transaction type");
+
+        Collection<TransactionListener> listeners = getListeners(transaction, true);
+
+        if (listeners != null) {
+            listeners.add(listener);
+
+            // if transaction is already associated with the current thread notify this listener
+            try {
+                if (transaction.equals(getTransaction()) && types.contains(EventType.ASSOCIATED))
+                    listener.onEvent(new TransactionEvent(transaction, EnumSet.of(EventType.ASSOCIATED)));
+            } catch (SystemException e) {
+                // no transaction associated so do not trigger the ASSOCIATED callback
+            }
+        }
+    }
+
+    /**
      * Suspend the current transaction.
      * @return The suspended transaction.
      */
     public Transaction suspend()
         throws SystemException
     {
-        return transactionManager.suspend() ;
+        if (getStatus() != Status.STATUS_NO_TRANSACTION)
+            notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+
+        return transactionManager.suspend();
+    }
+
+    // TransactionListener implementation methods.
+    // return all the event listeners associated with this thread
+    private Collection<TransactionListener> getListeners(Transaction transaction, boolean create)
+    {
+        com.arjuna.ats.jta.transaction.Transaction txn = (com.arjuna.ats.jta.transaction.Transaction) transaction;
+        Object resource;
+
+        // protect against two concurrent listener registrations both trying to create the initial resource entry
+        synchronized (transaction) {
+            resource = txn.getTxLocalResource(LISTENER_MAP_KEY);
+
+            if (resource == null && create) {
+                Collection<TransactionListener> listeners = new ConcurrentLinkedQueue<>();
+
+                txn.putTxLocalResource(LISTENER_MAP_KEY, listeners);
+
+                return listeners;
+            }
+        }
+
+        if (resource != null && !(resource instanceof ConcurrentLinkedQueue)) {
+            // another container subsystem has inadvertently used our key
+            throw new IllegalStateException("Invalid transaction local resource associated with key");
+        }
+
+        return (Collection<TransactionListener>) resource;
+    }
+
+    // notify any listeners for this transaction that there has been an event
+    private void notifyAssociationListeners(Transaction transaction, EnumSet<EventType> reasons)
+    {
+        Collection<TransactionListener> listeners = getListeners(transaction, false);
+        TransactionEvent event = new TransactionEvent(transaction, reasons);
+
+        if (listeners != null) {
+            for (TransactionListener s : listeners)
+                s.onEvent(event);
+        }
     }
 
     /////////////////////////
