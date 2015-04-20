@@ -40,10 +40,10 @@ import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 
 /**
  * This class is responsible for maintaining connection information

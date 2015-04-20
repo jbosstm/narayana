@@ -33,8 +33,8 @@ package com.arjuna.ats.internal.jts.recovery;
 
 import java.util.List;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.orbportability.ORBInfo;
 import com.arjuna.orbportability.ORBType;
 import com.arjuna.orbportability.common.opPropertyManager;

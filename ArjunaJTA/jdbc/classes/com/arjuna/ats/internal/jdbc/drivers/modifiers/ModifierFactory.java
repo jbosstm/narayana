@@ -34,7 +34,7 @@ package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 
 /**
  * Keep track of any "modifiers" we may require to run

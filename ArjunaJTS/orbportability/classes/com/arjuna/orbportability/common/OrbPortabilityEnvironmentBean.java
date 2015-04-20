@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.orbportability.ORBData;

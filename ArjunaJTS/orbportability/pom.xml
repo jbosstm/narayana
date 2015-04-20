@@ -78,8 +78,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>arjuna</artifactId>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

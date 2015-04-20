@@ -25,7 +25,7 @@ import java.io.File;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Process;
 import com.arjuna.ats.arjuna.utils.Utility;
-import com.arjuna.ats.internal.arjuna.common.ClassloadingUtility;
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.util.ConfigurationInfo;
