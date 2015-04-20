@@ -563,6 +563,7 @@
             <exclude name="**/qa/**"/>
             <exclude name="**/tools/**"/>
             <exclude name="**/apache-karaf*/**"/>
+            <exclude name="**/hornetq*/**"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">
