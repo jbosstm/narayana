@@ -379,7 +379,6 @@ bool HttpTxManager::handle_request(
 					LOG4CXX_DEBUG(httptxlogger, "Return 200 OK with body: " <<
 						status << " XA status: " << res);
 					code = 200;
-					_branches.erase(branch->get_name());
 					break;
 				case XAER_PROTO:
 					// TODO Do all PROTO errors mean rollback for example (at least with ORACLE)
