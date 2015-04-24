@@ -5,6 +5,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationCoordinatorPortType;
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.services.framework.task.TaskManager;
+import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
@@ -51,6 +52,10 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
         @WebParam(name = "Complete", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + " constructor");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
         final NotificationType complete = parameters;
@@ -74,6 +79,10 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
         @WebParam(name = "Close", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".closeOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType close = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -96,6 +105,10 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
         @WebParam(name = "Cancel", targetNamespace = "http://schemas.arjuna.com/ws/2005/10/wsarjtx", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".cancelOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cancel = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -114,6 +127,10 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".fault");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
