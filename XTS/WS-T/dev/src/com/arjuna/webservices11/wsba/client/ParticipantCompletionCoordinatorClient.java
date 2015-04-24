@@ -20,6 +20,7 @@
  */
 package com.arjuna.webservices11.wsba.client;
 
+import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.SoapFault;
@@ -105,6 +106,10 @@ public class ParticipantCompletionCoordinatorClient
      */
     private ParticipantCompletionCoordinatorClient()
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + " constructor");
+        }
+
         final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         completedAction = BusinessActivityConstants.WSBA_ACTION_COMPLETED;
         failAction = BusinessActivityConstants.WSBA_ACTION_FAIL;
@@ -134,6 +139,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCompleted(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendCompleted");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -154,6 +163,10 @@ public class ParticipantCompletionCoordinatorClient
         final QName exceptionIdentifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendFail");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -174,6 +187,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCompensated(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendCompensated");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -193,6 +210,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendClosed(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendClosed");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -212,6 +233,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCancelled(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendCancelled");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -231,6 +256,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendExit(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendExit");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -250,6 +279,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCannotComplete(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendCannotComplete");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -269,6 +302,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendGetStatus(W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendGetStatus");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -289,6 +326,10 @@ public class ParticipantCompletionCoordinatorClient
         final QName state)
         throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendStatus");
+        }
+
         MAPEndpoint participant = getParticipant(endpoint, map);
         AddressingHelper.installFromFaultTo(map, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -310,6 +351,10 @@ public class ParticipantCompletionCoordinatorClient
     public void sendSoapFault(SoapFault11 soapFault, W3CEndpointReference participant, MAP map, String faultAction)
             throws SoapFault, IOException
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".sendSoapFault");
+        }
+
         AddressingHelper.installNoneReplyTo(map);
         map.setAction(faultAction);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
@@ -324,6 +369,10 @@ public class ParticipantCompletionCoordinatorClient
      */
     MAPEndpoint getParticipant(W3CEndpointReference endpoint, MAP map)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".getParticipant");
+        }
+
         String address;
         if (endpoint != null) {
             NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, endpoint);

@@ -3,6 +3,7 @@ package com.arjuna.webservices11.wsba.sei;
 
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.services.framework.task.TaskManager;
+import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
@@ -52,6 +53,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Completed", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".completeOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType completed = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -75,6 +80,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Fail", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         ExceptionType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".failOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final ExceptionType fail = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -98,6 +107,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Compensated", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".compensatedOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType compensated = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -121,6 +134,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Closed", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".closedOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType closed = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -144,6 +161,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Canceled", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".canceledOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cancelled = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -167,6 +188,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Exit", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".exitOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType exit = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -190,6 +215,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "CannotComplete", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".cannotComplete");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cannotComplete = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -213,6 +242,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "GetStatus", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         NotificationType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".getStatusOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType getStatus = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -236,6 +269,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
         @WebParam(name = "Status", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")
         StatusType parameters)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".statusOperation");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final StatusType status = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
@@ -255,6 +292,10 @@ public class BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl /
             @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
             Fault fault)
     {
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.logger.trace(getClass().getSimpleName() + ".soapFault");
+        }
+
         MessageContext ctx = webServiceCtx.getMessageContext();
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
