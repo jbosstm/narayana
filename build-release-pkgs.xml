@@ -256,7 +256,11 @@
     <echo file="${config-dir}current_narayana_release.yml">version: ${tag}
 date: ${date}
 binary: http://www.jboss.org/jbosstm/downloads/${tag}/binary/narayana-full-${tag}-bin.zip
-source: http://www.jboss.org/jbosstm/downloads/${tag}/src/narayana-full-${tag}-src.zip</echo>
+source: http://www.jboss.org/jbosstm/downloads/${tag}/src/narayana-full-${tag}-src.zip
+
+blacktie:
+  windows: http://www.jboss.org/jbosstm/downloads/${tag}/binary/blacktie-${tag}-vc9x32-bin.zip
+  linux: http://www.jboss.org/jbosstm/downloads/${tag}/binary/blacktie-${tag}-centos54x64-bin.tar.gz</echo>
   </target>
   
   <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
