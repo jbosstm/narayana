@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>restat</artifactId>
-        <version>5.0.5.Final-SNAPSHOT</version>
+        <version>5.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

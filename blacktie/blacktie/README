@@ -26,7 +26,7 @@ unzip wildfly-blacktie-build-${VERSION}-bin.zip into ${WILDFLY_LOCATION}
 copy blacktie-admin-services-ear-*.ear to dir ${WILDFLY_LOCATION}/standalone/deployments
 
 4. Make changes as defined in:
-https://github.com/jbosstm/narayana/blob/5.0.5.Final-SNAPSHOT/blacktie/scripts/hudson/initializeJBoss.xml
+https://github.com/jbosstm/narayana/blob/5.1.0.Final/blacktie/scripts/hudson/initializeJBoss.xml
 
 # Configuring BlackTie
 
