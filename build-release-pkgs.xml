@@ -219,7 +219,7 @@
     </exec>
 
     <!-- Build web page and push to jboss.org -->
-    <exec executable="awestruct.executable" dir="${workdir}/narayana.io/">
+    <exec executable="${awestruct.executable}" dir="${workdir}/narayana.io/">
       <arg value="-P"/>
       <arg value="production"/>
     </exec>
