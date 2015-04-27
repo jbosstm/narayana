@@ -27,6 +27,8 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.jboss.narayana.blacktie.jatmibroker.xatmi.Connection;
+import org.jboss.narayana.blacktie.jatmibroker.xatmi.ConnectionFactory;
 
 public abstract class CSControl extends TestCase {
     static final Logger log = LogManager.getLogger(CSControl.class);
@@ -40,6 +42,7 @@ public abstract class CSControl extends TestCase {
     private String CS_EXE;
     private String REPORT_DIR;
     private static int sid = 1;
+    private Connection connection;
 
     protected boolean isSunOS = false;
     protected boolean isWinOS = false;
@@ -54,7 +57,11 @@ public abstract class CSControl extends TestCase {
             if (server != null) {
                 log.debug("destroying server process");
                 server.interrupt();
-                server.getProcess().destroy();
+
+                log.debug("send shutdown command to the BTDomainAdmin");
+                X_OCTET sendbuf = (X_OCTET) connection.tpalloc("X_OCTET", null);
+                sendbuf.setByteArray("shutdown,testsui,0,".getBytes());
+                connection.tpcall("BTDomainAdmin", sendbuf, 0);
                 log.debug("destroyed server process");
                 server.getProcess().waitFor();
             }
@@ -64,7 +71,7 @@ public abstract class CSControl extends TestCase {
         }
     }
 
-    public void setUp() {
+    public void setUp() throws Exception {
         log.info("setUp");
         String osName = (System.getProperty("os.name"));
         isSunOS = (osName != null && "SunOS".equals(osName));
@@ -86,6 +93,11 @@ public abstract class CSControl extends TestCase {
         clientBuilder.environment().putAll(environment);
         environment.put("LOG4CXXCONFIG", "log4cxx-CSTest-server.properties");
         clientBuilder.environment().put("LOG4CXXCONFIG", "log4cxx-CSTest-client.properties");
+
+        if (connection == null) {
+            ConnectionFactory cf = ConnectionFactory.getConnectionFactory();
+            connection = cf.getConnection();
+        }
     }
 
     public void runServer(String name) {
