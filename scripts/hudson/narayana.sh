@@ -361,6 +361,8 @@ function compensations_tests {
 function xts_tests {
   echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS, xtstest and CRASH RECOVERY TESTS"
 
+  [ $XTS_TRACE ] && enable_xts_trace
+
   cd $WORKSPACE
   ran_crt=1
   set_ulimit 2048
@@ -431,6 +433,13 @@ cat << 'EOF' > $WORKSPACE/qa/dist/${NARAYANA_VERSION}/etc/log4j.xml
     </category>
 </log4j:configuration>
 EOF
+}
+
+function enable_xts_trace {
+    CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+
+    sed -e ':a;N;s/<logger category="com.arjuna">\s*<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/' -i $CONF
+    sed -e ':a;N;s/<console-handler name="CONSOLE">\s*<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/' -i $CONF
 }
 
 function add_qa_xargs {
