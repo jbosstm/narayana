@@ -242,49 +242,10 @@
                                     ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
-                                <server.config>standalone.xml</server.config>
-                            </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestLocal.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arq-distributed</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <skip>false</skip>
-                            <systemPropertyVariables combine.children="append">
-                                <!--
-                                    Used in arquillian.xml
-                                -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
-                                    ${jvm.args.debug}
-                                </server.jvm.args>
-                                <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                                <include>**/*TestRemote.java</include>
+                                <include>**/*Test.java</include>
                             </includes>
                         </configuration>
                     </plugin>
@@ -321,50 +282,10 @@
                                     ${ipv6.server.jvm.args} ${jvm.args.debug}
                                 </server.jvm.args>
                                 <node.address>[::1]</node.address>
-                                <server.config>standalone.xml</server.config>
-                            </systemPropertyVariables>
-                            <includes>
-                                <include>**/*TestLocal.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arqIPv6-distributed</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <skip>false</skip>
-                            <argLine>${ipv6.server.jvm.args}</argLine>
-                            <systemPropertyVariables combine.children="append">
-                                <!--
-                                    Used in arquillian.xml
-                                -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
-                                    ${ipv6.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
-                                <node.address>[::1]</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
-                                <include>**/*TestRemote.java</include>
+                                <include>**/*Test.java</include>
                             </includes>
                         </configuration>
                     </plugin>
