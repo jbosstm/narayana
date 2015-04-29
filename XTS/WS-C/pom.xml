@@ -97,11 +97,13 @@
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <version>${version.org.jboss.spec.javax.servlet}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.ws</groupId>
       <artifactId>jbossws-api</artifactId>
       <version>${version.org.jboss.ws}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
