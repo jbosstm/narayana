@@ -192,12 +192,7 @@
             <groupId>org.jboss.narayana.xts</groupId>
             <artifactId>jbossxts</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.xts</groupId>
-            <artifactId>jbossxts</artifactId>
-            <version>${project.version}</version>
-            <classifier>api</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.ws</groupId>
@@ -209,6 +204,7 @@
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>narayana-jta</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -229,12 +225,18 @@
             <scope>provided</scope>
         </dependency>
 
-       <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-6.0</artifactId>
-            <version>${version.org.jboss.spec.jboss-javaee-6.0}</version>
-            <type>pom</type>
-            <scope>provided</scope>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.ejb}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.servlet}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -268,13 +270,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${version.org.apache.httpcomponents}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
             <version>${version.org.apache.httpcomponents}</version>
             <scope>test</scope>
         </dependency>
