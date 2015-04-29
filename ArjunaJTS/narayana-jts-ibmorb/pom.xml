@@ -328,6 +328,7 @@
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
       <version>${version.tanukisoft}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
       </profile>

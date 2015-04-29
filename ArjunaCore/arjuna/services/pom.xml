@@ -34,6 +34,7 @@
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>
       <version>${version.tanukisoft}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
