@@ -47,13 +47,19 @@ import com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate;
 
 import java.util.EnumSet;
 
-public class TimeoutTest {
+public class TransactionListenerRegistryTest {
 	private enum CompletionType {
 		CMT,
 		BMTCOMMIT,
 		BMTROLLBACK,
 		CMTSUSPEND
 	};
+  
+  @Test
+  public void testResume() throws SystemException, InvalidTransactionException {
+    TransactionManager tm = new TransactionManagerDelegate();
+		tm.resume(null); // JBTM-2385 used to cause an NPE 
+  }
 
 	@Test
 	public void test() throws SystemException, NotSupportedException, RollbackException, TransactionTypeNotSupported, InterruptedException, InvalidTransactionException, HeuristicRollbackException, HeuristicMixedException {

@@ -116,8 +116,12 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     public void resume(final Transaction transaction)
         throws InvalidTransactionException, IllegalStateException, SystemException
     {
-        transactionManager.resume(transaction) ;
-        notifyAssociationListeners(transaction, EnumSet.of(EventType.ASSOCIATED));
+        if (transaction == null) {
+            suspend(); // This is what AtomicAction does
+        } else {
+            transactionManager.resume(transaction) ;
+            notifyAssociationListeners(transaction, EnumSet.of(EventType.ASSOCIATED));
+        }
     }
 
     /**
