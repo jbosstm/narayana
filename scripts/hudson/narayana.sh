@@ -215,10 +215,6 @@ function build_as {
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
   JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
-
-  JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh -f testsuite/integration/basic/pom.xml
-  [ $? = 0 ] || fatal "AS basic integration tests failed"
-
   
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.conf
