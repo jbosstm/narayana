@@ -62,6 +62,7 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${version.log4j}</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>com.sun.jmx</groupId>
@@ -215,11 +216,13 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
         <version>${resteasy.version}</version>
+        <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client</artifactId>
         <version>${resteasy.version}</version>
+        <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
