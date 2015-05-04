@@ -399,8 +399,8 @@
     <jvm.args.other>-server</jvm.args.other>
     
     <!-- External dependencies versions -->
-    <jboss-as.version>9.0.0.CR1-SNAPSHOT</jboss-as.version>
-    <version.org.wildfly.core>1.0.0.Beta2</version.org.wildfly.core>
+    <jboss-as.version>9.0.0.CR2-SNAPSHOT</jboss-as.version>
+    <version.org.wildfly.core>1.0.0.CR1</version.org.wildfly.core>
     <version.org.wildfly.build-tools>1.0.0.Alpha8</version.org.wildfly.build-tools>
     <version.org.wildfly.arquillian>1.0.0.Alpha5</version.org.wildfly.arquillian>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
