@@ -399,7 +399,7 @@
     <jvm.args.other>-server</jvm.args.other>
     
     <!-- External dependencies versions -->
-    <jboss-as.version>9.0.0.CR2-SNAPSHOT</jboss-as.version>
+    <jboss-as.version>10.0.0.Alpha1-SNAPSHOT</jboss-as.version>
     <version.org.wildfly.core>1.0.0.CR1</version.org.wildfly.core>
     <version.org.wildfly.build-tools>1.0.0.Alpha8</version.org.wildfly.build-tools>
     <version.org.wildfly.arquillian>1.0.0.Alpha5</version.org.wildfly.arquillian>
