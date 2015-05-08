@@ -40,7 +40,7 @@ import com.arjuna.common.logging.commonLogger;
 public class ConfigurationInfo
 {
     /**
-     * @see .getSourceId
+     * @see getSourceId
      * @return the version, if known.
      */
     public static String getVersion() {

@@ -53,9 +53,8 @@ public interface JDBCAccess
     /**
      * @return the connection to use for the object store.  If a pool of
      * connections is used, this method may be called up to maxpoolsize
-     * times.  It <EM>must<EM> not return the same connection each time.
-     * @throws NamingException 
-     * @throws {@link FatalError} In case the configured store cannot be connected to
+     * times.  It <EM>must</EM> not return the same connection each time.
+     * @throws SQLException 
      */
 
     public Connection getConnection () throws SQLException;
@@ -63,7 +62,6 @@ public interface JDBCAccess
     /**
      * This method can be used to pass additional information to the
      * implementation.
-     * @throws {@link FatalError} In case the configured store cannot be connected to
      */
 
     public void initialise (StringTokenizer stringTokenizer);

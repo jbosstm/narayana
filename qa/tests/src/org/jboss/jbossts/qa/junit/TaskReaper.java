@@ -185,7 +185,6 @@ public class TaskReaper
     /**
      * entry point for the task reaper thread to detect timed out tasks in the background. this should not
      * be called anywhere except in TaskReaperThread.run
-     * @return
      */
     void check()
     {

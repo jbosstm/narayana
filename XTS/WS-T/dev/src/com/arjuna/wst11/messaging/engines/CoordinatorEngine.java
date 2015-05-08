@@ -104,12 +104,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (ignore)
-     * Active -> Aborting (forget)
-     * Preparing -> Aborting (forget)
-     * PreparedSuccess -> PreparedSuccess (invalid state)
-     * Committing -> Committing (invalid state)
-     * Aborting -> Aborting (forget)
+     * None -&gt; None (ignore)
+     * Active -&gt; Aborting (forget)
+     * Preparing -&gt; Aborting (forget)
+     * PreparedSuccess -&gt; PreparedSuccess (invalid state)
+     * Committing -&gt; Committing (invalid state)
+     * Aborting -&gt; Aborting (forget)
      */
     public synchronized void aborted(final Notification aborted, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -130,12 +130,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (ignore)
-     * Active -> Aborting (invalid state)
-     * Preparing -> Aborting (invalid state)
-     * PreparedSuccess -> PreparedSuccess (invalid state)
-     * Committing -> Committing (forget)
-     * Aborting -> Aborting (invalid state)
+     * None -&gt; None (ignore)
+     * Active -&gt; Aborting (invalid state)
+     * Preparing -&gt; Aborting (invalid state)
+     * PreparedSuccess -&gt; PreparedSuccess (invalid state)
+     * Committing -&gt; Committing (forget)
+     * Aborting -&gt; Aborting (invalid state)
      */
     public synchronized void committed(final Notification committed, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -156,12 +156,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> Durable: (send rollback), Volatile: Invalid state: none
-     * Active -> Aborting (invalid state)
-     * Preparing -> PreparedSuccess (Record Vote)
-     * PreparedSuccess -> PreparedSuccess (ignore)
-     * Committing -> Committing (resend Commit)
-     * Aborting -> Aborting (resend Rollback and forget)
+     * None -&gt; Durable: (send rollback), Volatile: Invalid state: none
+     * Active -&gt; Aborting (invalid state)
+     * Preparing -&gt; PreparedSuccess (Record Vote)
+     * PreparedSuccess -&gt; PreparedSuccess (ignore)
+     * Committing -&gt; Committing (resend Commit)
+     * Aborting -&gt; Aborting (resend Rollback and forget)
      */
     public void prepared(final Notification prepared, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -210,12 +210,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (ignore)
-     * Active -> Active (forget)
-     * Preparing -> Preparing (forget)
-     * PreparedSuccess -> PreparedSuccess (invalid state)
-     * Committing -> Committing (invalid state)
-     * Aborting -> Aborting (forget)
+     * None -&gt; None (ignore)
+     * Active -&gt; Active (forget)
+     * Preparing -&gt; Preparing (forget)
+     * PreparedSuccess -&gt; PreparedSuccess (invalid state)
+     * Committing -&gt; Committing (invalid state)
+     * Aborting -&gt; Aborting (forget)
      */
     public synchronized void readOnly(final Notification readOnly, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -252,12 +252,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the prepare event.
      *
-     * None -> None (invalid state)
-     * Active -> Preparing (send prepare)
-     * Preparing -> Preparing (resend prepare)
-     * PreparedSuccess -> PreparedSuccess (do nothing)
-     * Committing -> Committing (invalid state)
-     * Aborting -> Aborting (invalid state)
+     * None -&gt; None (invalid state)
+     * Active -&gt; Preparing (send prepare)
+     * Preparing -&gt; Preparing (resend prepare)
+     * PreparedSuccess -&gt; PreparedSuccess (do nothing)
+     * Committing -&gt; Committing (invalid state)
+     * Aborting -&gt; Aborting (invalid state)
      */
     public State prepare()
     {
@@ -302,12 +302,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the commit event.
      *
-     * None -> None (invalid state)
-     * Active -> Active (invalid state)
-     * Preparing -> Preparing (invalid state)
-     * PreparedSuccess -> Committing (send commit)
-     * Committing -> Committing (resend commit)
-     * Aborting -> Aborting (invalid state)
+     * None -&gt; None (invalid state)
+     * Active -&gt; Active (invalid state)
+     * Preparing -&gt; Preparing (invalid state)
+     * PreparedSuccess -&gt; Committing (send commit)
+     * Committing -&gt; Committing (resend commit)
+     * Aborting -&gt; Aborting (invalid state)
      */
     public State commit()
     {
@@ -360,12 +360,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the rollback event.
      *
-     * None -> None (invalid state)
-     * Active -> Aborting (send rollback)
-     * Preparing -> Aborting (send rollback)
-     * PreparedSuccess -> Aborting (send rollback)
-     * Committing -> Committing (invalid state)
-     * Aborting -> Aborting (do nothing)
+     * None -&gt; None (invalid state)
+     * Active -&gt; Aborting (send rollback)
+     * Preparing -&gt; Aborting (send rollback)
+     * PreparedSuccess -&gt; Aborting (send rollback)
+     * Committing -&gt; Committing (invalid state)
+     * Aborting -&gt; Aborting (do nothing)
      */
     public State rollback()
     {
@@ -416,8 +416,8 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the comms timeout event.
      *
-     * Preparing -> Preparing (resend Prepare)
-     * Committing -> Committing (resend Commit)
+     * Preparing -&gt; Preparing (resend Prepare)
+     * Committing -&gt; Committing (resend Commit)
      */
     private void commsTimeout(TimerTask caller)
     {

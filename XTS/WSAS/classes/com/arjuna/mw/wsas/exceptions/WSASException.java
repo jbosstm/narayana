@@ -62,6 +62,8 @@ public class WSASException extends Exception
     /**
      * Constructs a WSASException object with the specified reason.
      * errorcode defaults to 0.
+     * 
+     * @param reason the reason
      */
 
     public WSASException (String reason)
@@ -75,6 +77,9 @@ public class WSASException extends Exception
     /**
      * Constructs a WSASException object with the specified reason and
      * errorcode.
+     * 
+     * @param reason the reason
+     * @param errorcode the error code
      */
 
     public WSASException (String reason, int errorcode)

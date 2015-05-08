@@ -51,11 +51,11 @@ public interface SerializableXAResourceDeserializer {
 	 * 
 	 * @param ois
 	 *            The input stream to read from.
-	 * @return An {@link XAResource}
 	 * @throws IOException
-	 *             If the {@link ObjectInputStream.readObject()} fails.
+	 *             If the ObjectInputStream.readObject() fails.
 	 * @throws ClassNotFoundException
-	 *             If the {@link ObjectInputStream.readObject()} fails.
+	 *             If the ObjectInputStream.readObject() fails.
+     * @return An {@link XAResource}
 	 */
 	public XAResource deserialze(ObjectInputStream ois) throws IOException, ClassNotFoundException;
 }

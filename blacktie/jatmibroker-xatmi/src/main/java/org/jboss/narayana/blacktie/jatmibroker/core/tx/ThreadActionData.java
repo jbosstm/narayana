@@ -221,7 +221,6 @@ public class ThreadActionData {
      * Remove a per thread setup object to the global list. This should only happen after the transaction service really ends,
      * or you risk having some threads see one view of the list that is different to other threads.
      * 
-     * @param s the setup to add.
      */
     /*
      * XXX NOT USED public static boolean removeSetup (ThreadSetup s) { synchronized (_threadSetups) { return

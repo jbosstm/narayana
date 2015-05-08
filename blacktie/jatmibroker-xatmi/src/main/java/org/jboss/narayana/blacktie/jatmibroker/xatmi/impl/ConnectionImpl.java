@@ -47,9 +47,7 @@ import org.jboss.narayana.blacktie.jatmibroker.xatmi.Session;
 
 /**
  * This is the connection to remote BlackTie services. It must be created using
- * the ConnectionFactory.
- * 
- * @see ConnectionFactoryImpl#getConnection()
+ * the ConnectionFactory#getConnection()
  */
 public class ConnectionImpl implements Connection {
 

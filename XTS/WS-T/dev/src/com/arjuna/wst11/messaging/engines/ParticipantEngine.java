@@ -117,12 +117,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (send committed)
-     * Active -> Aborting (do nothing)
-     * Preparing -> Aborting (do nothing)
-     * PreparedSuccess -> Committing (initiate commit)
-     * Committing -> Committing (do nothing)
-     * Aborting -> Aborting (do nothing)
+     * None -&gt; None (send committed)
+     * Active -&gt; Aborting (do nothing)
+     * Preparing -&gt; Aborting (do nothing)
+     * PreparedSuccess -&gt; Committing (initiate commit)
+     * Committing -&gt; Committing (do nothing)
+     * Aborting -&gt; Aborting (do nothing)
      */
     public void commit(final Notification commit, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -160,12 +160,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (send aborted)
-     * Active -> Preparing (execute prepare)
-     * Preparing -> Preparing (do nothing)
-     * PreparedSuccess -> PreparedSuccess (resend prepared)
-     * Committing -> Committing (ignore)
-     * Aborting -> Aborting (send aborted and forget)
+     * None -&gt; None (send aborted)
+     * Active -&gt; Preparing (execute prepare)
+     * Preparing -&gt; Preparing (do nothing)
+     * PreparedSuccess -&gt; PreparedSuccess (resend prepared)
+     * Committing -&gt; Committing (ignore)
+     * Aborting -&gt; Aborting (send aborted and forget)
      */
     public void prepare(final Notification prepare, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -200,12 +200,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * None -> None (send aborted)
-     * Active -> Aborting (execute rollback, send aborted and forget)
-     * Preparing -> Aborting (execute rollback, send aborted and forget)
-     * PreparedSuccess -> Aborting (execute rollback, send aborted and forget)
-     * Committing -> Committing (ignore)
-     * Aborting -> Aborting (send aborted and forget)
+     * None -&gt; None (send aborted)
+     * Active -&gt; Aborting (execute rollback, send aborted and forget)
+     * Preparing -&gt; Aborting (execute rollback, send aborted and forget)
+     * PreparedSuccess -&gt; Aborting (execute rollback, send aborted and forget)
+     * Committing -&gt; Committing (ignore)
+     * Aborting -&gt; Aborting (send aborted and forget)
      *
      */
     public void rollback(final Notification rollback, final MAP map, final ArjunaContext arjunaContext)
@@ -265,12 +265,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the early rollback event.
      *
-     * None -> None
-     * Active -> Aborting (execute rollback, send aborted and forget)
-     * Preparing -> Aborting (execute rollback, send aborted and forget)
-     * PreparedSuccess -> PreparedSuccess
-     * Committing -> Committing
-     * Aborting -> Aborting
+     * None -&gt; None
+     * Active -&gt; Aborting (execute rollback, send aborted and forget)
+     * Preparing -&gt; Aborting (execute rollback, send aborted and forget)
+     * PreparedSuccess -&gt; PreparedSuccess
+     * Committing -&gt; Committing
+     * Aborting -&gt; Aborting
      */
     public void earlyRollback()
     {
@@ -280,12 +280,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the early readonly event.
      *
-     * None -> None
-     * Active -> None (send ReadOnly)
-     * Preparing -> None (send ReadOnly)
-     * PreparedSuccess -> PreparedSuccess
-     * Committing -> Committing
-     * Aborting -> Aborting
+     * None -&gt; None
+     * Active -&gt; None (send ReadOnly)
+     * Preparing -&gt; None (send ReadOnly)
+     * PreparedSuccess -&gt; PreparedSuccess
+     * Committing -&gt; Committing
+     * Aborting -&gt; Aborting
      */
     public void earlyReadonly()
     {
@@ -295,12 +295,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the recovery event.
      *
-     * None -> None
-     * Active -> Active
-     * Preparing -> Preparing
-     * Committing -> Committing
-     * PreparedSuccess -> PreparedSuccess (resend Prepared)
-     * Aborting -> Aborting
+     * None -&gt; None
+     * Active -&gt; Active
+     * Preparing -&gt; Preparing
+     * Committing -&gt; Committing
+     * PreparedSuccess -&gt; PreparedSuccess (resend Prepared)
+     * Aborting -&gt; Aborting
      */
     public void recovery()
     {
@@ -377,8 +377,8 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the commit decision event.
      *
-     * Preparing -> PreparedSuccess (send Prepared)
-     * Committing -> null (send committed and forget)
+     * Preparing -&gt; PreparedSuccess (send Prepared)
+     * Committing -&gt; null (send committed and forget)
      */
     private void commitDecision()
     {
@@ -484,8 +484,8 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the readOnly decision event.
      *
-     * Active -> None (send ReadOnly)
-     * Preparing -> None (send ReadOnly)
+     * Active -&gt; None (send ReadOnly)
+     * Preparing -&gt; None (send ReadOnly)
      */
     private void readOnlyDecision()
     {
@@ -509,8 +509,8 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the rollback decision event.
      *
-     * Active -> Aborting (send aborted)
-     * Preparing -> Aborting (send aborted)
+     * Active -&gt; Aborting (send aborted)
+     * Preparing -&gt; Aborting (send aborted)
      */
     private void rollbackDecision()
     {
@@ -534,7 +534,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the comms timeout event.
      *
-     * PreparedSuccess -> PreparedSuccess (resend Prepared)
+     * PreparedSuccess -&gt; PreparedSuccess (resend Prepared)
      */
     private void commsTimeout(TimerTask caller)
     {

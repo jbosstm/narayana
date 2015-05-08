@@ -96,7 +96,7 @@ public class BeanPopulator
     }
 
     /**
-     * @Deprecated Only used in tests
+     * @deprecated Only used in tests
      */
     public static void configureFromProperties(Object bean, Properties properties) throws Exception {
         configureFromProperties(bean, null, properties);

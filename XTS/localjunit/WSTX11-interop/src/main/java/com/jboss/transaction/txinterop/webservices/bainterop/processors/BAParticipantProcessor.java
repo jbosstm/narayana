@@ -59,7 +59,7 @@ public class BAParticipantProcessor
     /**
      * Execute the Cancel
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void cancel(final CoordinationContextType coordinationContext, final MAP map)
@@ -78,7 +78,7 @@ public class BAParticipantProcessor
     /**
      * Execute the Exit
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void exit(final CoordinationContextType coordinationContext, final MAP map)
@@ -100,7 +100,7 @@ public class BAParticipantProcessor
     /**
      * Execute the Fail
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void fail(final CoordinationContextType coordinationContext, final MAP map)
@@ -122,7 +122,7 @@ public class BAParticipantProcessor
     /**
      * Execute the CannotComplete
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void cannotComplete(final CoordinationContextType coordinationContext, final MAP map)
@@ -144,7 +144,7 @@ public class BAParticipantProcessor
     /**
      * Execute the ParticipantCompleteClose
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void participantCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
@@ -166,7 +166,7 @@ public class BAParticipantProcessor
     /**
      * Execute the CoordinatorCompleteClose
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void coordinatorCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
@@ -185,7 +185,7 @@ public class BAParticipantProcessor
     /**
      * Execute the UnsolicitedComplete
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void unsolicitedComplete(final CoordinationContextType coordinationContext, final MAP map)
@@ -207,7 +207,7 @@ public class BAParticipantProcessor
     /**
      * Execute the Compensate
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void compensate(final CoordinationContextType coordinationContext, final MAP map)
@@ -229,7 +229,7 @@ public class BAParticipantProcessor
     /**
      * Execute the ParticipantCompensationFail
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void participantCompensationFail(final CoordinationContextType coordinationContext, final MAP map)
@@ -251,7 +251,7 @@ public class BAParticipantProcessor
     /**
      * Execute the ParticipantCancelCompletedRace
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void participantCancelCompletedRace(final CoordinationContextType coordinationContext, final MAP map)
@@ -273,7 +273,7 @@ public class BAParticipantProcessor
     /**
      * Execute the MessageLossAndRecovery
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void messageLossAndRecovery(final CoordinationContextType coordinationContext, final MAP map)
@@ -292,7 +292,7 @@ public class BAParticipantProcessor
     /**
      * Execute the MixedOutcome
      * @param map The current addressing context.
-     * @return The response.
+
      * @throws SoapFault11 for errors during processing
      */
     public void mixedOutcome(final CoordinationContextType coordinationContext, final MAP map)

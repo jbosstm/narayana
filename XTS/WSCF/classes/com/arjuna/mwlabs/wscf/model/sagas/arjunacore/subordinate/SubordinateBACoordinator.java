@@ -163,7 +163,6 @@ public class SubordinateBACoordinator extends BACoordinator
     /**
      * this is driven by a coordinator-completion participant registered on behalf of the coordinator
      * and is required to propagate the complete to all registered coordinator-completion participants.
-     * @return the result of preparing the transaction
      */
 
 	public void complete ()  throws WrongStateException, SystemException
@@ -312,7 +311,7 @@ public class SubordinateBACoordinator extends BACoordinator
     /**
      * test whether a transaction has been restored without its proxy participant. this indicates that
      * we crashed between preparing the suborindate TX and logging the proxy participant.
-     * @return
+     * @return true, if orphaned
      */
     public boolean isOrphaned()
     {

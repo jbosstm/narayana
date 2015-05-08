@@ -242,7 +242,7 @@ public class TxControl
     /**
      * flag which is true if enable and disable operations, respectively, start and stop the transaction status
      * manager and false if they do not perform a start and stop. this flag is true by default and can only be
-     * set to false by setting property {@link#com.arjuna.ats.arjuna.common.TRANSACTION_STATUS_MANAGER_ENABLE}
+     * set to false by setting property @see#com.arjuna.ats.arjuna.common.TRANSACTION_STATUS_MANAGER_ENABLE
      * to value "NO"
      */
 	static final boolean _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();

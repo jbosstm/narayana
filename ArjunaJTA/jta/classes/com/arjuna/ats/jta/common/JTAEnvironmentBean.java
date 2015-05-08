@@ -1044,7 +1044,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Set the name of the table to use for storing commit markable resources
 	 * commit state notifiers in.
 	 * 
-	 * @param commitMarkableResourceTableName
+	 * @param commitMarkableResourceTableNameMap
 	 *            The name of the table.
 	 * 
 	 */
@@ -1135,7 +1135,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Allow the default policy of whether to use a synchronization to remove
 	 * the branch should be overriden.
 	 * 
-	 * @param commitMarkableResourceTableName
+	 * @param performImmediateCleanupOfCommitMarkableResourceBranchesMap
 	 *            The name of the table.
 	 * 
 	 */
@@ -1220,8 +1220,6 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	/**
 	 * Allow the default policy of whether to use a synchronization to remove
 	 * the branch should be overriden.
-	 * 
-	 * @return
 	 */
 	public void setNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches(
 			boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches) {

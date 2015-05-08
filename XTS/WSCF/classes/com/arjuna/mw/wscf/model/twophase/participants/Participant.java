@@ -89,7 +89,7 @@ public interface Participant
      * @exception HeuristicMixedException Thrown if upon preparing, the participant finds that
      *            some of its enlisted participants have return statuses which
      *            mean some of them cancelled and some of them confirmed.
-     * @exception HeuristicRollbackException Thrown if the participant rolls
+     * @exception HeuristicCancelException Thrown if the participant rolls
      * back rather than commits.
      * @exception SystemException Thrown if some other error occurred.
      */
@@ -110,7 +110,7 @@ public interface Participant
      * @exception HeuristicMixedException Thrown if upon preparing, the participant finds that
      *            some of its enlisted participants have return statuses which
      *            mean some of them cancelled and some of them confirmed.
-     * @exception HeuristicCommitException Thrown if the participant commits
+     * @exception HeuristicConfirmException Thrown if the participant commits
      * rather than rolls back.
      * @exception SystemException Thrown if some other error occurred.
      */
@@ -131,7 +131,7 @@ public interface Participant
      * @exception HeuristicMixedException Thrown if upon preparing, the participant finds that
      *            some of its enlisted participants have return statuses which
      *            mean some of them cancelled and some of them confirmed.
-     * @exception HeuristicRollbackException Thrown if the participant rolls
+     * @exception HeuristicCancelException Thrown if the participant rolls
      * back rather than commit.
      * @exception SystemException Thrown if some other error occurred.
      */

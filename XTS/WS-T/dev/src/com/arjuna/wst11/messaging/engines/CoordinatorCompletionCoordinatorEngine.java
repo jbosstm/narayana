@@ -127,20 +127,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Ended
-     * Canceling-Completing -> Ended
-     * Completing -> Completing (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Ended
+     * Canceling-Completing -&gt; Ended
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void cancelled(final NotificationType cancelled, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -162,20 +162,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Ended
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Ended
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void closed(final NotificationType closed, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -196,20 +196,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Ended
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Ended
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void compensated(final NotificationType compensated, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -230,20 +230,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Ended
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Ended
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void completed(final NotificationType completed, final MAP map,
         final ArjunaContext arjunaContext)
@@ -282,19 +282,19 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Exiting
-     * Canceling -> Exiting
-     * Canceling-Active -> Exiting
-     * Canceling-Completing -> Exiting
-     * Completing -> Exiting
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Faulting -> Faulting (invalid state)
-     * Faulting-Active -> Faulting (invalid state)
-     * Faulting-Compensating -> Faulting (invalid state)
-     * Exiting -> Exiting
-     * Ended -> Ended (resend Exited)
+     * Active -&gt; Exiting
+     * Canceling -&gt; Exiting
+     * Canceling-Active -&gt; Exiting
+     * Canceling-Completing -&gt; Exiting
+     * Completing -&gt; Exiting
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Faulting -&gt; Faulting (invalid state)
+     * Faulting-Active -&gt; Faulting (invalid state)
+     * Faulting-Compensating -&gt; Faulting (invalid state)
+     * Exiting -&gt; Exiting
+     * Ended -&gt; Ended (resend Exited)
      */
     public void exit(final NotificationType exit, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -326,20 +326,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Failing-Active
-     * Canceling-Active -> Failing-Canceling
-     * Canceling-Completing -> Failing-Canceling
-     * Completing -> Failing-Completing
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Failing-Compensating
-     * Failing-Active -> Failing-Active
-     * Failing-Canceling -> Failing-Canceling
-     * Failing-Completing -> Failing-Completing
-     * Failing-Compensating -> Failing-Compensating
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (resend Failed)
+     * Active -&gt; Failing-Active
+     * Canceling-Active -&gt; Failing-Canceling
+     * Canceling-Completing -&gt; Failing-Canceling
+     * Completing -&gt; Failing-Completing
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Failing-Compensating
+     * Failing-Active -&gt; Failing-Active
+     * Failing-Canceling -&gt; Failing-Canceling
+     * Failing-Completing -&gt; Failing-Completing
+     * Failing-Compensating -&gt; Failing-Compensating
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (resend Failed)
      *
      * In fact we only execute the transition to FAILING_ACTIVE and in this case we send a message to the
      * coordinator by calling executeFail. This propagates the failure back thorugh the activityy hierarchy
@@ -416,20 +416,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> NotComleting
-     * Canceling-Active -> NotCompleting
-     * Canceling-Completing -> NotCompleting
-     * Completing -> NotCompleting
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (resend NotCompleted)
+     * Active -&gt; NotComleting
+     * Canceling-Active -&gt; NotCompleting
+     * Canceling-Completing -&gt; NotCompleting
+     * Completing -&gt; NotCompleting
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (resend NotCompleted)
      */
     public void cannotComplete(final NotificationType cannotComplete, final MAP map,
         final ArjunaContext arjunaContext)
@@ -507,20 +507,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * Handle the cancel event.
      * @return The state.
      *
-     * Active -> Canceling-Active
-     * Canceling-Active -> Canceling-Active
-     * Canceling-Completing -> Canceling-Completing
-     * Completing -> Canceling-Completing
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Canceling-Active
+     * Canceling-Active -&gt; Canceling-Active
+     * Canceling-Completing -&gt; Canceling-Completing
+     * Completing -&gt; Canceling-Completing
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State cancel()
     {
@@ -563,20 +563,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * Handle the compensate event.
      * @return The state.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing (invalid state)
-     * Completed -> Compensating
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Compensating
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State compensate()
     {
@@ -623,20 +623,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * Handle the complete event.
      * @return The state.
      *
-     * Active -> Completing
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Completing
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State complete()
     {
@@ -669,20 +669,20 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * Handle the close event.
      * @return The state.
      *
-     * Active -> Active (invalid state)
-     * Canceling-Active -> Canceling-Active (invalid state)
-     * Canceling-Completing -> Canceling-Completing (invalid state)
-     * Completing -> Completing (invalid state)
-     * Completed -> Closing
-     * Closing -> Closing
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Completing -> Failing-Completing (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Active (invalid state)
+     * Canceling-Active -&gt; Canceling-Active (invalid state)
+     * Canceling-Completing -&gt; Canceling-Completing (invalid state)
+     * Completing -&gt; Completing (invalid state)
+     * Completed -&gt; Closing
+     * Closing -&gt; Closing
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Completing -&gt; Failing-Completing (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State close()
     {

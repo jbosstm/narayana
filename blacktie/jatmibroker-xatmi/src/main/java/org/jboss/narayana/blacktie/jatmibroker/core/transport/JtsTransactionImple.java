@@ -91,7 +91,6 @@ public class JtsTransactionImple extends TransactionImple {
     /**
      * Dissassociate the transaction currently associated with the callers thread
      * 
-     * @return the dissassociated transaction
      * @throws SystemException
      */
     public static void suspend() throws SystemException {

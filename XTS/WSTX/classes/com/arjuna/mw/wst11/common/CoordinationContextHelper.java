@@ -40,7 +40,7 @@ public class CoordinationContextHelper
      * Deserialise a coordination context from a DOM SOAP Header Element.
      * @param headerElement The SOAP header element to deserialise.
      * @return The coordination context.
-     * @throws javax.xml.stream.XMLStreamException for errors during parsing.
+     * @throws JAXBException for errors during parsing.
      */
     public static CoordinationContextType deserialise(final Element headerElement)
         throws JAXBException
@@ -70,8 +70,7 @@ public class CoordinationContextHelper
     /**
       * Deserialise a coordination context from a DOM SOAP Header Element.
       * @param headerElement The SOAP header element to deserialise.
-      * @return The coordination context.
-      * @throws javax.xml.stream.XMLStreamException for errors during parsing.
+      * @throws JAXBException for errors during parsing.
       */
     public static void serialise(final CoordinationContextType  coordinationContextType, Element headerElement)
         throws JAXBException

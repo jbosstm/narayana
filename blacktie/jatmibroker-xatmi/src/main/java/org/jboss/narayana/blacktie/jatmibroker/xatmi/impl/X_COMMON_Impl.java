@@ -52,13 +52,11 @@ public class X_COMMON_Impl extends BufferImpl implements X_COMMON {
     }
 
     /**
-     * The constructor is hidden as a <code>Connection</code> should be used to allocate the object.
+     * The constructor is hidden as a <code>Connection</code> should be used to allocate the object. ConnectionImpl#tpalloc(String, String)
      * 
      * @param subtype The subtype of the buffer, must be registered in the configuration
-     * @param properties The properties to use
      * @throws ConnectionException In case the buffer cannot be created.
      * @throws ConfigurationException
-     * @see {@link ConnectionImpl#tpalloc(String, String)}
      */
     public X_COMMON_Impl(String subtype) throws ConnectionException, ConfigurationException {
         super("X_COMMON", subtype, true, types);

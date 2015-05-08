@@ -226,6 +226,12 @@
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-api</artifactId>
+      <version>${version.org.jboss.ws}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>

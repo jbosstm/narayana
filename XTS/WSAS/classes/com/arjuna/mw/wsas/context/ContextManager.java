@@ -59,8 +59,8 @@ public class ContextManager
     }
 
     /**
-     * @message com.arjuna.mw.wsas.context.ContextManager_3 [com.arjuna.mw.wsas.context.ContextManager_3] - getHighLevelServices threw:
-     * @message com.arjuna.mw.wsas.context.ContextManager_4 [com.arjuna.mw.wsas.context.ContextManager_4] - assembling context and received:
+     * message com.arjuna.mw.wsas.context.ContextManager_3 [com.arjuna.mw.wsas.context.ContextManager_3] - getHighLevelServices threw:
+     * message com.arjuna.mw.wsas.context.ContextManager_4 [com.arjuna.mw.wsas.context.ContextManager_4] - assembling context and received:
      */
 
     public final Context context (String serviceType)

@@ -194,7 +194,7 @@ public class RecoveryXids
      *
      * @param xaResource
      * @param xids
-     * @return
+     * @return true if equivalent
      */
     public boolean updateIfEquivalentRM(XAResource xaResource, Xid[] xids)
     {
@@ -236,7 +236,7 @@ public class RecoveryXids
     private long _lastValidated;
 
     /**
-     * JBTM-1255 this is required to reinstate JBTM-924, see message in {@see RecoveryXids#isStale()} 
+     * JBTM-1255 this is required to reinstate JBTM-924, see message in @see RecoveryXids#isStale() 
      */
     private static final int staleSafetyIntervalMillis; // The advice is that this (if made configurable is twice the safety interval)
     

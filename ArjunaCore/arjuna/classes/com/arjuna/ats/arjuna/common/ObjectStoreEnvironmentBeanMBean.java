@@ -73,8 +73,8 @@ public interface ObjectStoreEnvironmentBeanMBean
 	/**
 	 * Sets the instance of JDBCAccess
 	 * 
-	 * @param instance
-	 *            an Object that implements JDBCAccess, or null.
+	 * @param connectionDetails
+	 *            an Object that provides JDBCAccess, or null.
 	 */
 	public void setJdbcAccess(String connectionDetails);
 

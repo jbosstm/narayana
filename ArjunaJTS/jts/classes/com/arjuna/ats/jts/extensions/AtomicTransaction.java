@@ -633,7 +633,7 @@ public class AtomicTransaction
 	 * @exception org.omg.CosTransactions.NoTransaction
 	 *                if there is no current transaction.
 	 * 
-	 * @exception org.omg.CORBA.WRONG_TRANSACTION
+	 * @exception org.omg.CORBA.WrongTransaction
 	 *                if the transaction associated with the current thread is
 	 *                different from this thread.
 	 */

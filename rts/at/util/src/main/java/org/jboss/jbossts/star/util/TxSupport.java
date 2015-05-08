@@ -300,8 +300,8 @@ public class TxSupport
 
     /**
      * Constructs the participant-resource and participant-terminator URIs for participants in the format:
-     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminator" and optionally
-     * "<baseURI>/{uid1}/{uid2}/volatile"
+     * "baseURI/{uid1}/{uid2}/participant" and "baseURI/{uid1}/{uid2}/terminator" and optionally
+     * "baseURI/{uid1}/{uid2}/volatile"
      *
      * If uid1 is null then the "{uid1}/" is not included and similarly if uid2 is null.
      *
@@ -353,7 +353,7 @@ public class TxSupport
 
     /**
      * Constructs the participant-resource and participant-terminator URIs for participants in the format:
-     * "<baseURI>/{uid1}/{uid2}/participant" and "<baseURI>/{uid1}/{uid2}/terminate"
+     * "baseURI/{uid1}/{uid2}/participant" and "baseURI/{uid1}/{uid2}/terminate"
      * If uid1 is null then the "{uid1}/" is not included and similarly if uid2 is null.
      * @param baseURI the (full) uri prefix
      * @param vParticipant if true also construct a link header for participation in the volatile protocol

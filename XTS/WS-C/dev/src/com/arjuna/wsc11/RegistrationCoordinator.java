@@ -29,10 +29,8 @@ public class RegistrationCoordinator
      * @param participantProtocolService The participant protocol service.
      * @param protocolIdentifier The protocol identifier.
      * @return The endpoint reference of the coordinator protocol service.
-     * @throws com.arjuna.wsc.AlreadyRegisteredException If the participant is already registered.
      * @throws com.arjuna.wsc.InvalidProtocolException If the protocol is unsupported.
      * @throws com.arjuna.wsc.InvalidStateException If the state is invalid
-     * @throws com.arjuna.wsc.NoActivityException If there is to activity context active.
      * @throws com.arjuna.webservices.SoapFault for errors during processing.
      */
     public static W3CEndpointReference register(final CoordinationContextType coordinationContext,

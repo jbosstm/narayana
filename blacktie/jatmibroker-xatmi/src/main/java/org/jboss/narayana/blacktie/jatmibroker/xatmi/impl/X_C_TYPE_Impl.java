@@ -52,13 +52,11 @@ public class X_C_TYPE_Impl extends BufferImpl implements X_C_TYPE {
     }
 
     /**
-     * The constructor is hidden as the <code>Connection</code> factory method should be used instead.
+     * The constructor is hidden as the <code>Connection</code> factory method should be used instead. ConnectionImpl#tpalloc(String, String)
      * 
      * @param subtype The subtype of the buffer
-     * @param properties The properties to read
      * @throws ConnectionException In case the buffer does not exist
      * @throws ConfigurationException
-     * @see {@link ConnectionImpl#tpalloc(String, String)}
      */
     public X_C_TYPE_Impl(String subtype) throws ConnectionException, ConfigurationException {
         super("X_C_TYPE", subtype, true, types);

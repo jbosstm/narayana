@@ -166,17 +166,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Canceling
-     * Canceling -> Canceling
-     * Completed -> Completed (resend Completed)
-     * Closing -> Closing
-     * Compensating -> Compensating
-     * Failing-Active -> Failing-Active (resend Fail)
-     * Failing-Canceling -> Failing-Canceling (resend Fail)
-     * Failing-Compensating -> Failing-Compensating
-     * NotCompleting -> NotCompleting (resend CannotComplete)
-     * Exiting -> Exiting (resend Exit)
-     * Ended -> Ended (resend Cancelled)
+     * Active -&gt; Canceling
+     * Canceling -&gt; Canceling
+     * Completed -&gt; Completed (resend Completed)
+     * Closing -&gt; Closing
+     * Compensating -&gt; Compensating
+     * Failing-Active -&gt; Failing-Active (resend Fail)
+     * Failing-Canceling -&gt; Failing-Canceling (resend Fail)
+     * Failing-Compensating -&gt; Failing-Compensating
+     * NotCompleting -&gt; NotCompleting (resend CannotComplete)
+     * Exiting -&gt; Exiting (resend Exit)
+     * Ended -&gt; Ended (resend Cancelled)
      */
     public void cancel(final NotificationType cancel, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -230,17 +230,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Closing
-     * Closing -> Closing
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (send Closed)
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Closing
+     * Closing -&gt; Closing
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (send Closed)
      */
     public void close(final NotificationType close, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -282,17 +282,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Compensating
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (resend Fail)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (send Compensated)
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Compensating
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (resend Fail)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (send Compensated)
      */
     public void compensate(final NotificationType compensate, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -338,17 +338,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Ended
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Ended
+     * Ended -&gt; Ended
      */
     public void exited(final NotificationType exited, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -377,17 +377,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Ended
-     * Failing-Canceling -> Ended
-     * Failing-Compensating -> Ended
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Ended
+     * Failing-Canceling -&gt; Ended
+     * Failing-Compensating -&gt; Ended
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void failed(final NotificationType failed,  final MAP map, final ArjunaContext arjunaContext)
     {
@@ -433,17 +433,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> Ended
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; Ended
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended
      */
     public void notCompleted(final NotificationType notCompleted, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -514,17 +514,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the recovery event.
      *
-     * Active -> Active (invalid state)
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (resend completed)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Active (invalid state)
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (resend completed)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public void recovery()
     {
@@ -596,17 +596,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the completed event.
      *
-     * Active -> Completed
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Completed
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State completed()
     {
@@ -668,17 +668,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the exit event.
      *
-     * Active -> Exiting
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Exiting
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting
+     * Ended -&gt; Ended (invalid state)
      */
     public State exit()
     {
@@ -711,17 +711,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the fail event.
      *
-     * Active -> Failing-Active
-     * Canceling -> Failing-Canceling
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Failing-Compensating
-     * Failing-Active -> Failing-Active
-     * Failing-Canceling -> Failing-Canceling
-     * Failing-Compensating -> Failing-Compensating
-     * NotCompleting -> NotCompleting (invalid state)
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; Failing-Active
+     * Canceling -&gt; Failing-Canceling
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Failing-Compensating
+     * Failing-Active -&gt; Failing-Active
+     * Failing-Canceling -&gt; Failing-Canceling
+     * Failing-Compensating -&gt; Failing-Compensating
+     * NotCompleting -&gt; NotCompleting (invalid state)
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State fail(final QName exceptionIdentifier)
     {
@@ -773,17 +773,17 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the cannot complete event.
      *
-     * Active -> NotCompleting
-     * Canceling -> Canceling (invalid state)
-     * Completed -> Completed (invalid state)
-     * Closing -> Closing (invalid state)
-     * Compensating -> Compensating (invalid state)
-     * Failing-Active -> Failing-Active (invalid state)
-     * Failing-Canceling -> Failing-Canceling (invalid state)
-     * Failing-Compensating -> Failing-Compensating (invalid state)
-     * NotCompleting -> NotCompleting
-     * Exiting -> Exiting (invalid state)
-     * Ended -> Ended (invalid state)
+     * Active -&gt; NotCompleting
+     * Canceling -&gt; Canceling (invalid state)
+     * Completed -&gt; Completed (invalid state)
+     * Closing -&gt; Closing (invalid state)
+     * Compensating -&gt; Compensating (invalid state)
+     * Failing-Active -&gt; Failing-Active (invalid state)
+     * Failing-Canceling -&gt; Failing-Canceling (invalid state)
+     * Failing-Compensating -&gt; Failing-Compensating (invalid state)
+     * NotCompleting -&gt; NotCompleting
+     * Exiting -&gt; Exiting (invalid state)
+     * Ended -&gt; Ended (invalid state)
      */
     public State cannotComplete()
     {
@@ -816,7 +816,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     /**
      * Handle the comms timeout event.
      *
-     * Completed -> Completed (resend Completed)
+     * Completed -&gt; Completed (resend Completed)
      */
     private void commsTimeout(TimerTask caller)
     {

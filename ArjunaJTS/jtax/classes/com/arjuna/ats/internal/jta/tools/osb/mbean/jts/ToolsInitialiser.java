@@ -24,7 +24,7 @@ package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 /**
- * @Deprecated as of 5.0.5.Final - no longer required
+ * @deprecated as of 5.0.5.Final - no longer required
  */
 @Deprecated // no longer required
 public class ToolsInitialiser {

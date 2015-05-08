@@ -424,7 +424,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	/**
 	 * 
-	 * JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
+	 * JBTM-895 garbage collection is now done when we return XAResources @see XARecoveryModule#getNewXAResource(XAResourceRecord)
 	 * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
 	 */
     private void bottomUpRecovery() {

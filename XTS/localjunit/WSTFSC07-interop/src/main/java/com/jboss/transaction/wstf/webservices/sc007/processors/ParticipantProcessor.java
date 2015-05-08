@@ -80,7 +80,6 @@ public class ParticipantProcessor
      * Execute the CompletionRollback
      * @param coordinatorURI The address of the coordinator to employ.
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void completionRollback(final String coordinatorURI, final MAP map)
@@ -101,7 +100,6 @@ public class ParticipantProcessor
     /**
      * Execute the Commit
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void commit(final CoordinationContextType coordinationContext, final MAP map)
@@ -120,7 +118,6 @@ public class ParticipantProcessor
     /**
      * Execute the Rollback
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void rollback(final CoordinationContextType coordinationContext, final MAP map)
@@ -139,7 +136,6 @@ public class ParticipantProcessor
     /**
      * Execute the Phase2Rollback
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void phase2Rollback(final CoordinationContextType coordinationContext, final MAP map)
@@ -159,7 +155,6 @@ public class ParticipantProcessor
     /**
      * Execute the Readonly
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void readonly(final CoordinationContextType coordinationContext, final MAP map)
@@ -179,7 +174,6 @@ public class ParticipantProcessor
     /**
      * Execute the VolatileAndDurable
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void volatileAndDurable(final CoordinationContextType coordinationContext, final MAP map)
@@ -198,7 +192,6 @@ public class ParticipantProcessor
     /**
      * Execute the EarlyReadonly
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void earlyReadonly(final CoordinationContextType coordinationContext, final MAP map)
@@ -219,7 +212,6 @@ public class ParticipantProcessor
     /**
      * Execute the EarlyAborted
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void earlyAborted(final CoordinationContextType coordinationContext, final MAP map)
@@ -240,7 +232,6 @@ public class ParticipantProcessor
     /**
      * Execute the ReplayCommit
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void replayCommit(final CoordinationContextType coordinationContext, final MAP map)
@@ -261,7 +252,6 @@ public class ParticipantProcessor
     /**
      * Execute the RetryPreparedCommit
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void retryPreparedCommit(final CoordinationContextType coordinationContext, final MAP map)
@@ -281,7 +271,6 @@ public class ParticipantProcessor
     /**
      * Execute the RetryPreparedAbort
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void retryPreparedAbort(final CoordinationContextType coordinationContext, final MAP map)
@@ -300,7 +289,6 @@ public class ParticipantProcessor
     /**
      * Execute the RetryCommit
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void retryCommit(final CoordinationContextType coordinationContext, final MAP map)
@@ -319,7 +307,6 @@ public class ParticipantProcessor
     /**
      * Execute the PreparedAfterTimeout
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void preparedAfterTimeout(final CoordinationContextType coordinationContext, final MAP map)
@@ -339,7 +326,6 @@ public class ParticipantProcessor
     /**
      * Execute the LostCommitted
      * @param map The current addressing context.
-     * @return The response.
      * @throws SoapFault11 for errors during processing
      */
     public void lostCommitted(final CoordinationContextType coordinationContext, final MAP map)

@@ -63,7 +63,6 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
 
     /**
      * constructor for use during recovery
-     * @throws Exception
      */
     public BusinessAgreementWithParticipantCompletionStub()
     {

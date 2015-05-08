@@ -135,6 +135,48 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>${version.org.apache.ant}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${version.javax.annotation}</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>${version.javax.enterprise}</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.transaction}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${version.org.jboss.jboss-transaction-spi}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.interceptor}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
@@ -324,6 +366,19 @@
             </plugins>
           </build>
   <dependencies>
+      <dependency>
+        <groupId>orson</groupId>
+        <artifactId>orson</artifactId>
+        <version>${version.orson}</version>
+        <scope>system</scope>
+        <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+      </dependency>
+        <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>${version.jfree}</version>
+      <scope>provided</scope>
+      </dependency>
     <dependency>
       <groupId>tanukisoft</groupId>
       <artifactId>wrapper</artifactId>

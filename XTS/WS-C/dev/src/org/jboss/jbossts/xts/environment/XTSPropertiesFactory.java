@@ -31,7 +31,6 @@ public class XTSPropertiesFactory
 
     /**
      * Returns the systems default properties, as read from the configuration file.
-     * @return the configuration Properties
      */
     public static synchronized void setDefaultProperties(Properties properties) {
         if(defaultProperties == null) {

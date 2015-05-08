@@ -153,7 +153,7 @@ public abstract class AbstractRecord extends StateManager
 	 * intentions list. This is also the Uid that the record was saved with in
 	 * the object store.
 	 *
-	 * @return <code>Uid</Uid> for this instance.
+	 * @return <code>Uid</code> for this instance.
 	 * @see com.arjuna.ats.arjuna.common.Uid
 	 */
 

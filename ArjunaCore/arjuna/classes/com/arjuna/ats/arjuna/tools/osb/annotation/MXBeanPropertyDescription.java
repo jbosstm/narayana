@@ -32,7 +32,7 @@ import javax.management.DescriptorKey;
  * Annotation for adding a description to the MBeanInfo of an MBean property
  */
 /**
- * @Deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.

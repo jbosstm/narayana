@@ -38,10 +38,9 @@ import org.jboss.narayana.blacktie.jatmibroker.xatmi.Session;
  * TPSVCINFO structure for a service (assuming the service was invoked within
  * the scope of a tpconnect).
  * 
- * It is used to send and retrieve data
- * 
- * @see ConnectionImpl#tpconnect(String, BufferImpl, int, int)
- * @see TPSVCINFO_Impl#getSession()
+ * It is used to send and retrieve data: 
+ * ConnectionImpl#tpconnect(String, BufferImpl, int, int)
+ * TPSVCINFO_Impl#getSession()
  */
 public class SessionImpl implements Session {
     /**
