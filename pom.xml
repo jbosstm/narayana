@@ -399,6 +399,7 @@
     <jvm.args.other>-server</jvm.args.other>
     
     <!-- External dependencies versions -->
+    <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.1</version.org.codehaus.mojo.findbugs-maven-plugin>
     <jboss-as.version>10.0.0.Alpha1-SNAPSHOT</jboss-as.version>
     <version.org.wildfly.core>1.0.0.CR1</version.org.wildfly.core>
     <version.org.wildfly.build-tools>1.0.0.Alpha8</version.org.wildfly.build-tools>
@@ -641,6 +642,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>${version.org.codehaus.mojo.findbugs-maven-plugin}</version>
                         <executions>
                             <execution>
                                 <id>findbugs</id>
