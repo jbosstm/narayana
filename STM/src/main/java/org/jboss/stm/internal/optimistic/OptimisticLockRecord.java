@@ -45,6 +45,12 @@ import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 /*
  * Optimistic cc in operation. Grab a copy of the current state so we can check against
  * the state again when we commit.
+ * 
+ * During commit we check the current state on disk against what we had initially. If they
+ * are not identical then we force the transaction to abort.
+ * 
+ * Note, this can mean that multiple transactions may have committed during the interim but as
+ * long as they keep the state the same then we are ok.
  */
 
 class OptimisticLockRecord extends LockRecord

@@ -1028,14 +1028,18 @@ public class LockManager extends StateManager
     /*
      * Lock and load the concurrency control state. First we grab the semaphore
      * to ensure exclusive access and then we build the held lock list by
-     * retreiving the locks from the lock repository. If there is only one
+     * retrieving the locks from the lock repository. If there is only one
      * server we do not bother doing this since all the locks can stay in the
      * server's memory. This is yet another consequence of not having
      * multi-threaded servers. Does not require synchronized since it can only
      * be called from other synchronized methods.
      */
 
-    protected final boolean loadState ()
+    /*
+     * Return to 'protected final boolean' if we address https://issues.jboss.org/browse/JBTM-2399
+     */
+    
+    protected boolean loadState ()
     {
         if (txojLogger.logger.isTraceEnabled()) {
             txojLogger.logger.trace("LockManager::loadState()");

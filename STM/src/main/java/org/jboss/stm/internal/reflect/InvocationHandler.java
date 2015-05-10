@@ -37,6 +37,7 @@ import org.jboss.stm.annotations.Nested;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.WriteLock;
 import org.jboss.stm.internal.RecoverableContainer;
+import org.jboss.stm.internal.optimistic.OptimisticLock;
 import org.jboss.stm.internal.proxy.LockManagerProxy;
 import org.jboss.stm.internal.proxy.OptimisticLockManagerProxy;
 
@@ -391,8 +392,8 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
 
                         if (!lockFree && !transactionFree)
                         {
-                            int result = _txObject.setlock(new Lock(cachedLock._lockType), cachedLock._retry, cachedLock._timeout);
-            
+                            int result = _txObject.setlock((_optimistic ? new OptimisticLock(cachedLock._lockType) : new Lock(cachedLock._lockType)), cachedLock._retry, cachedLock._timeout);
+
                             if (result != LockResult.GRANTED)
                             {
                                 throw new LockException(Thread.currentThread()+" could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));

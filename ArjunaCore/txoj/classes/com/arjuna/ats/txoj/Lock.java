@@ -347,6 +347,7 @@ public class Lock extends StateManager
         StringWriter strm = new StringWriter();
 
         strm.write("Lock object : \n");
+        strm.write("\ttype : "+type()+ "\n");
         strm.write("\tunique id is : " + get_uid() + "\n");
 
         strm.write("\tcurrent_status : "
