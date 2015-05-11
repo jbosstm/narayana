@@ -1009,7 +1009,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Get the name of the table to use for storing commit markable resources
 	 * commit state notifiers in.
 	 * 
-	 * @return
+	 * @return the default table name
 	 */
 	public String getDefaultCommitMarkableTableName() {
 		return commitMarkableResourceTableName;
@@ -1032,7 +1032,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Get the name of the table to use for storing commit markable resources
 	 * commit state notifiers in.
 	 * 
-	 * @return
+	 * @return the table name map
 	 */
 	public Map<String, String> getCommitMarkableResourceTableNameMap() {
 		synchronized (this) {
@@ -1123,7 +1123,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Allow the default policy of whether to use a synchronization to remove
 	 * the branch should be overriden.
 	 * 
-	 * @return
+	 * @return whether to perform immediate cleanup of branches or batch them
 	 */
 	public Map<String, Boolean> getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap() {
 		synchronized (this) {
@@ -1177,7 +1177,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * Allow the default policy of a batch size to delete
 	 * CommitMarkableResourceRecord from the database.
 	 * 
-	 * @return
+	 * @return the maximum batch size to clean up
 	 */
 	public Map<String, Integer> getCommitMarkableResourceRecordDeleteBatchSizeMap() {
 		synchronized (this) {
@@ -1211,7 +1211,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * branches. This means they will not in normal mode need fetching from the
 	 * database before we can delete them.
 	 * 
-	 * @return
+	 * @return whether to notify CMR module
 	 */
 	public boolean isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches() {
 		return notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches;

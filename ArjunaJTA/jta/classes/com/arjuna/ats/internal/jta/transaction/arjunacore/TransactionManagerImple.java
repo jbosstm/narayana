@@ -132,7 +132,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 	 * @param name
 	 * @param nameCtx
 	 * @param environment
-	 * @return
+	 * @return the instance of the transaction manager
 	 * @throws Exception
 	 */
 	public Object getObjectInstance(Object obj, Name name, Context nameCtx,

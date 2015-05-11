@@ -201,7 +201,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * Tell the browser which beans to use for particular Object Store Action type
      * @param osTypeClassName
      * @param beanTypeClassName
-     * @return
+     * @return whether the type was set OK
      */
     public boolean setType(String osTypeClassName, String beanTypeClassName) {
         try {

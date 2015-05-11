@@ -154,7 +154,7 @@ public class TaskReaper
 
     /**
      * obtain a handle on the currently active reaper, creating a new one if there is no reaper active
-     * @return
+     * @return the reaper
      */
     public static synchronized TaskReaper getReaper()
     {

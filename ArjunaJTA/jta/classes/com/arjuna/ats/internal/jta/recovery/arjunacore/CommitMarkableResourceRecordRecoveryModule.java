@@ -504,7 +504,8 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	 * Can only be called after the first phase has executed
 	 * 
 	 * @param xid
-	 * @return
+	 * @throws ObjectStoreException if the resource manager was offline
+	 * @return whether the Xid was commited by the resource manager
 	 */
 	public synchronized boolean wasCommitted(String jndiName, Xid xid)
 			throws ObjectStoreException {

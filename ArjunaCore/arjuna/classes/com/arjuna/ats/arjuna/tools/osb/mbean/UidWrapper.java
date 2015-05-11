@@ -128,7 +128,7 @@ public class UidWrapper {
     /**
      * The timestamp represent the time (in milliseconds) when the bean was registered.
      * It is used for deciding when a bean needs unregistering.
-     * @return
+     * @return the timestamp
      */
 	public long getTimestamp() {
 		return tstamp;
@@ -182,7 +182,7 @@ public class UidWrapper {
     /**
      * Construct an MBean to represent this ObjectStore record. The bean type used
      * for construct the MBean is provided in the configuration of the @see ObjStoreBrowser
-     * @return
+     * @return the mbean representation
      */
 	public OSEntryBean createMBean() {
 		try {
