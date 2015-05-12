@@ -170,6 +170,7 @@ public class OTSImpleManager
 		if (OTSImpleManager._theFactoryRef != null)
 		{
 			ORBManager.getPOA().shutdownObject(OTSImpleManager._theFactory);
+			OTSImpleManager._theFactoryRef = null;
 			OTSImpleManager._theFactory = null;
 		}
 	}
@@ -297,10 +298,7 @@ public class OTSImpleManager
      */
 	static
 	{
-		ORBManager.getPOA().addPreShutdown(new com.arjuna.ats.internal.jts.lifecycle.ShutdownOTS());
-
 		if (!com.arjuna.ats.internal.jts.Implementations.added())
 			com.arjuna.ats.internal.jts.Implementations.initialise();
 	}
-
 }

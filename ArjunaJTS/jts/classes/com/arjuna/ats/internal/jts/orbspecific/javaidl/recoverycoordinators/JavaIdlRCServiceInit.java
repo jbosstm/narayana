@@ -108,6 +108,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                         };
 
                 _poa = rootPOA.create_POA(poaName, rootPOA.the_POAManager(), policies);
+                _oa.addPreShutdown(new JavaIdlRCShutdown());
             }
             catch (Exception ex) {
                 jtsLogger.i18NLogger.warn_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_1(ex);
@@ -252,7 +253,6 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
     static String RC_ID = "RecoveryManager";
 
     static String RC_KEY = initRCKey();
-
 
     protected static com.arjuna.orbportability.ORB _orb = null;
     protected static RootOA _oa = null;
