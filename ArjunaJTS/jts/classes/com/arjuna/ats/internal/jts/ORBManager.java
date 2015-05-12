@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts;
 
+import com.arjuna.ats.internal.jts.lifecycle.ShutdownOTS;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.ORBShutdownListener;
@@ -99,8 +100,10 @@ public class ORBManager
 
     private static final com.arjuna.orbportability.OA getThePOA ()
     {
-        if (_thePoa == null)
+        if (_thePoa == null) {
             _thePoa = RootOA.getRootOA(_theOrb);
+            _thePoa.addPreShutdown(new ShutdownOTS());
+        }
 
         return _thePoa;
     }
@@ -110,7 +113,7 @@ public class ORBManager
         if (_thePoa == null)
         {
             _thePoa = thePoa;
-
+            _thePoa.addPreShutdown(new ShutdownOTS());
             return true;
         }
 
