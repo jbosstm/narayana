@@ -37,6 +37,12 @@ function init_test_options {
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+    elif [[ $PROFILE == "JACOCO" ]] && [[ ! $PULL_DESCRIPTION == *!JACOCO* ]]; then
+        FINDBUGS=findbugs,
+        comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=1 JTA_AS_TESTS=0 OSGI_TESTS=0
+        XARGS="-PcodeCoverage"
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
@@ -645,20 +651,20 @@ kill_qa_suite_processes $MainClassPatterns
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
-[ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[ $AS_BUILD = 1 ] && build_as "$@"
-[ $BLACKTIE = 1 ] && blacktie "$@"
-[ $OSGI_TESTS = 1 ] && osgi_tests "$@"
-[ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
-[ $XTS_AS_TESTS = 1 ] && xts_as_tests
-[ $RTS_AS_TESTS = 1 ] && rts_as_tests
-[ $JTA_AS_TESTS = 1 ] && jta_as_tests
-[ $TXF_TESTS = 1 ] && compensations_tests "$@"
-[ $XTS_TESTS = 1 ] && xts_tests "$@"
-[ $txbridge = 1 ] && tx_bridge_tests "$@"
-[ $RTS_TESTS = 1 ] && rts_tests "$@"
-[ $QA_TESTS = 1 ] && qa_tests "$@"
-[ $PERF_TESTS = 1 ] && perf_tests "$@"
+[ $NARAYANA_BUILD = 1 ] && build_narayana "$@" "$XARGS"
+[ $AS_BUILD = 1 ] && build_as "$@" "$XARGS"
+[ $BLACKTIE = 1 ] && blacktie "$@" "$XARGS"
+[ $OSGI_TESTS = 1 ] && osgi_tests "$@" "$XARGS"
+[ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@" "$XARGS"
+[ $XTS_AS_TESTS = 1 ] && xts_as_tests "$XARGS"
+[ $RTS_AS_TESTS = 1 ] && rts_as_tests "$XARGS"
+[ $JTA_AS_TESTS = 1 ] && jta_as_tests "$XARGS"
+[ $TXF_TESTS = 1 ] && compensations_tests "$@" "$XARGS"
+[ $XTS_TESTS = 1 ] && xts_tests "$@" "$XARGS"
+[ $txbridge = 1 ] && tx_bridge_tests "$@" "$XARGS"
+[ $RTS_TESTS = 1 ] && rts_tests "$@" "$XARGS"
+[ $QA_TESTS = 1 ] && qa_tests "$@" "$XARGS"
+[ $PERF_TESTS = 1 ] && perf_tests "$@" "$XARGS"
 
 if [[ -z $PROFILE ]]; then
     comment_on_pull "All tests passed - Job complete $BUILD_URL"
