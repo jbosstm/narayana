@@ -540,7 +540,11 @@
     </sequential>
   </macrodef>
 
-  <target name="jacoco-report">
+  <target name="check-jacoco-data">
+    <available file="${output.exec.file}" property="has.jacoco.data"/>
+  </target>
+
+  <target name="jacoco-report" depends="check-jacoco-data" if="has.jacoco.data">
     <jacoco:report>
 
       <!-- Specify the collected execution data from the QA test run -->
