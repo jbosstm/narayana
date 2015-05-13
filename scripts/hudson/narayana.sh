@@ -601,6 +601,7 @@ function perf_tests {
 
   grep -q improvement $WORKSPACE/benchmark-output.txt
   if [ $? = 1 ]; then
+    PERF_OUTPUT="$PERF_OUTPUT\n\nFor information on the hardware config used for this PR please consult the CI job artefact hwinfo.txt"
     PERF_OUTPUT="$PERF_OUTPUT\n\n*If the purpose of this PR is to improve performance then there has been insufficient improvement to warrant a pass. See the previous text for the threshold (range) for passing optimization related PRs*"
   fi
 
