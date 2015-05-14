@@ -23,7 +23,6 @@ public class BasicTestLocal extends BasicTest {
                 .addPackage("org.jboss.narayana.compensations.functional")
                 .addPackage("org.jboss.narayana.compensations.functional.common")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
         return archive;

@@ -63,7 +63,7 @@ public class BABridgedTest {
         archive.delete(ArchivePaths.create("META-INF/MANIFEST.MF"));
 
         String ManifestMF = "Manifest-Version: 1.0\n"
-                + "Dependencies: org.jboss.xts, org.jboss.narayana.txframework\n";
+                + "Dependencies: org.jboss.xts, org.jboss.narayana.txframework services\n";
 
 
         archive.setManifest(new StringAsset(ManifestMF));

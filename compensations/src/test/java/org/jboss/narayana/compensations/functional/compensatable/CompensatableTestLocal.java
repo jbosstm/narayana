@@ -44,7 +44,6 @@ public class CompensatableTestLocal extends CompensatableTest {
                 .addPackage("org.jboss.narayana.compensations.functional.common")
                 .addPackage("org.jboss.narayana.compensations.functional.compensatable")
                 .addClass(ParticipantCompletionCoordinatorRules.class)
-                .addAsManifestResource("services/javax.enterprise.inject.spi.Extension")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
         return archive;
