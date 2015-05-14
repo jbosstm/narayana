@@ -625,7 +625,7 @@ public abstract class JDBCImple_driver {
 	 * Set up the store for use.
 	 * 
 	 * @throws NamingException
-     * @throws {@link FatalError} In case the configured store cannot be connected to
+     * @throws SQLException In case the configured store cannot be connected to
 	 */
 	public void initialise(final JDBCAccess jdbcAccess, String tableName,
 			ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)

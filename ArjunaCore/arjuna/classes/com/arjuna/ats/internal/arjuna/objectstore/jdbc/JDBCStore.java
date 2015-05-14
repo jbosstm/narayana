@@ -186,8 +186,6 @@ public class JDBCStore implements ObjectStoreAPI {
      * @throws ObjectStoreException
      *             In case the store environment bean was not correctly
      *             configured
-     * @throws {@link FatalError} In case the configured store cannot be
-     *         connected to
      */
     public JDBCStore(ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean) throws ObjectStoreException {
         this.jdbcStoreEnvironmentBean = jdbcStoreEnvironmentBean;
