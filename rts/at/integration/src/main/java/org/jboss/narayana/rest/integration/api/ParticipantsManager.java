@@ -10,7 +10,7 @@ public interface ParticipantsManager {
     /**
      * Returns the URL of the deployment which contains the ParticipantsManager.
      *
-     * @return
+     * @return the base Url
      */
     String getBaseUrl();
 

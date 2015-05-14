@@ -335,7 +335,7 @@ public class BridgeXAResource implements XAResource, Serializable
      * Obtains a list of prepared transaction branches from a resource manager.
      *
      * @param flag
-     * @return
+     * @return the in doubt Xids
      * @throws XAException
      */
     public Xid[] recover(int flag) throws XAException

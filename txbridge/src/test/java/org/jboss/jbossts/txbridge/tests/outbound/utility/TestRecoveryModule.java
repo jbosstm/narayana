@@ -70,7 +70,7 @@ public class TestRecoveryModule implements XTSATRecoveryModule {
      * @param id                the id used when the participant was created
      * @param objectInputStream a stream from which the application should deserialise the participant
      *                          if it recognises that the id belongs to the module's application
-     * @return
+     * @return the participant
      * @throws Exception if an error occurs deserializing the durable participant
      */
     @Override

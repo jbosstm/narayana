@@ -77,7 +77,7 @@ public final class LoggingRestATResource {
     /**
      * Returns current status of the participant.
      *
-     * @return
+     * @return the status
      */
     @GET
     public Response getStatus() {
@@ -92,7 +92,7 @@ public final class LoggingRestATResource {
      * Terminates participant.
      *
      * @param content
-     * @return
+     * @return the status
      */
     @PUT
     @Path(TxLinkNames.TERMINATOR)
