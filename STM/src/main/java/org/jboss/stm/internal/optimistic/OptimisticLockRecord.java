@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.ObjectStatus;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.state.*;
 
+import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -98,7 +99,7 @@ class OptimisticLockRecord extends LockRecord
     {
         if (txojLogger.logger.isTraceEnabled())
         {
-            txojLogger.logger.trace("LockRecord::nestedAbort() for "+order());
+            txojLogger.logger.trace("OptimisticLockRecord::nestedAbort() for "+order());
         }
         
 	/*
@@ -114,7 +115,7 @@ class OptimisticLockRecord extends LockRecord
     {
         if (txojLogger.logger.isTraceEnabled())
         {
-            txojLogger.logger.trace("LockRecord::nestedPrepare() for "+order());
+            txojLogger.logger.trace("OptimisticLockRecord::nestedPrepare() for "+order());
         }
         
 	if (value() == null)
@@ -123,12 +124,21 @@ class OptimisticLockRecord extends LockRecord
 	if (checkState())
 	    return super.topLevelPrepare();
 	else
+	{
+	    txojLogger.i18NLogger.warn_OptimisticLockRecord_1((LockManager) value());
+	    
 	    return TwoPhaseOutcome.PREPARE_NOTOK;
+	}
     }
     
     public int topLevelCommit ()
     {       
         boolean stateOK = checkState();
+        
+        if (stateOK)
+        {
+            txojLogger.i18NLogger.warn_OptimisticLockRecord_2((LockManager) value());
+        }
 
         if ((super.topLevelCommit() == TwoPhaseOutcome.FINISH_OK) && stateOK)
             return TwoPhaseOutcome.FINISH_OK;

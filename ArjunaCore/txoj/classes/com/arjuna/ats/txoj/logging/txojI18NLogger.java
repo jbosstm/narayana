@@ -29,6 +29,7 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.txoj.LockManager;
 
 /**
  * i18n log messages for the txoj module.
@@ -215,6 +216,14 @@ public interface txojI18NLogger {
 	@Message(id = 15044, value = "Invocation of LockRecord::restore_state for {0} inappropriate - ignored for {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_LockRecord_7(String arg0, Uid arg1);
+
+	@Message(id = 15050, value = "OptimisticLockRecord.topLevelPrepare state check failed for {0} will force rollback.", format = MESSAGE_FORMAT)
+        @LogMessage(level = WARN)
+        public void warn_OptimisticLockRecord_1(LockManager man);
+	
+	@Message(id = 15051, value = "OptimisticLockRecord.topLevelCommit state check failed for {0} will force rollback.", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_OptimisticLockRecord_2(LockManager man);
 
     /*
         Allocate new messages directly above this notice.
