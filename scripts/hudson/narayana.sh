@@ -597,15 +597,43 @@ function qa_tests {
   [ $ok1 = 0 -a $ok2 = 0 -a $ok3 = 0 ] || fatal "some qa tests failed"
 }
 
+function hw_spec {
+  if [ -x /usr/sbin/system_profiler ]; then
+    echo "sw_vers:"; sw_vers
+    echo "system_profiler:"; /usr/sbin/system_profiler
+  else
+    set -o xtrace
+
+    echo "uname -a"; uname -a
+    echo "redhat release:"; cat /etc/redhat-release
+    echo "java version:"; java -version
+    echo "free:"; free -m
+    echo "cpuinfo:"; cat /proc/cpuinfo
+    echo "meminfo:"; cat /proc/meminfo
+    echo "devices:"; cat /proc/devices
+    echo "scsi:"; cat /proc/scsi/scsi
+    echo "partitions:"; cat /proc/partitions
+
+    echo "lspci:"; lspci
+    echo "lsusb:"; lsusb
+    echo "lsblk:"; lsblk
+    echo "df:"; df
+    echo "mount:"; mount | column -t | grep ext
+  fi
+}
+
 function perf_tests {
   $WORKSPACE/scripts/hudson/benchmark.sh "$@"
   res=$?
 
+  hw_spec | tee hwinfo.txt
+
   PERF_OUTPUT=$(cat $WORKSPACE/benchmark-output.txt | sed ':a;N;$!ba;s/\n/\\n/g')
+
+  PERF_OUTPUT="$PERF_OUTPUT\n\nFor information on the hardware config used for this PR please consult the CI job artefact hwinfo.txt or the job output"
 
   grep -q improvement $WORKSPACE/benchmark-output.txt
   if [ $? = 1 ]; then
-    PERF_OUTPUT="$PERF_OUTPUT\n\nFor information on the hardware config used for this PR please consult the CI job artefact hwinfo.txt"
     PERF_OUTPUT="$PERF_OUTPUT\n\n*If the purpose of this PR is to improve performance then there has been insufficient improvement to warrant a pass. See the previous text for the threshold (range) for passing optimization related PRs*"
   fi
 
@@ -637,7 +665,13 @@ WILDFLY_MASTER_VERSION=`grep 'jboss-as.version' pom.xml | cut -d \< -f 2|cut -d 
 echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
 
 # FOR DEBUGGING SUBSEQUENT ISSUES
-free -m
+if [ -x /usr/bin/free ]; then
+    /usr/bin/free
+elif [ -x /usr/bin/vm_stat ]; then 
+    /usr/bin/vm_stat
+else 
+    echo "Skipping memory report: no free or vm_stat"
+fi
 
 #Make sure no JBoss processes running
 for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
