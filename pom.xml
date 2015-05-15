@@ -246,16 +246,14 @@
           <dependencies>
             <dependency>
               <groupId>org.jboss.pressgang</groupId>
-              <!--Non-namespaced version for DocBook 4.5 compatibility. For XSD 
-								namespaced version, use pressgang-xslt-ns -->
-              <artifactId>pressgang-xslt</artifactId>
-              <version>2.0.0</version>
+              <artifactId>pressgang-xslt-ns</artifactId>
+              <version>3.1.2</version>
             </dependency>
             <dependency>
               <groupId>org.jboss.pressgang</groupId>
               <artifactId>pressgang-jdocbook-style</artifactId>
               <type>jdocbook-style</type>
-              <version>2.0.0</version>
+              <version>3.1.2</version>
             </dependency>
           </dependencies>
           <configuration>
@@ -279,7 +277,7 @@
 
               <format>
                 <formatName>html_single</formatName>
-                <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
+                <stylesheetResource>classpath:/xslt/org/jboss/pressgang/xhtml-single.xsl</stylesheetResource>
                 <finalName>index.html</finalName>
               </format>
             </formats>
@@ -421,9 +419,32 @@
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
     <emma.jar.location>${project.basedir}/ext/emma.jar</emma.jar.location>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <html.googleAnalyticsId>UA-25576080-1</html.googleAnalyticsId>
   </properties>
   <modules>
     <module>product</module>
     <module>project</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.jboss.maven.plugins</groupId>
+              <artifactId>maven-jdocbook-plugin</artifactId>
+              <configuration>
+                <options>
+                  <transformerParameters>
+                    <html.googleAnalyticsId>${html.googleAnalyticsId}</html.googleAnalyticsId>
+                  </transformerParameters>
+                </options>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
