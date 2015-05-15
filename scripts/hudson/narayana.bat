@@ -45,7 +45,7 @@ taskkill /F /IM testsuite.exe
 taskkill /F /IM server.exe
 taskkill /F /IM client.exe
 taskkill /F /IM cs.exe
-taskkill /F /IM java.exe
+wmic Path win32_process Where "Caption Like '%java.exe%' AND CommandLine Like '%standalone%'" Call Terminate
 tasklist
 
 if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
@@ -85,7 +85,7 @@ goto:eof
   taskkill /F /IM server.exe
   taskkill /F /IM client.exe
   taskkill /F /IM cs.exe
-  taskkill /F /IM java.exe
+  wmic Path win32_process Where "Caption Like '%java.exe%' AND CommandLine Like '%standalone%'" Call Terminate
   tasklist
   exit -1
 goto:eof
