@@ -637,7 +637,13 @@ WILDFLY_MASTER_VERSION=`grep 'jboss-as.version' pom.xml | cut -d \< -f 2|cut -d 
 echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
 
 # FOR DEBUGGING SUBSEQUENT ISSUES
-free -m
+if [ -x /usr/bin/free ]; then
+    /usr/bin/free
+elif [ -x /usr/bin/vm_stat ]; then 
+    /usr/bin/vm_stat
+else 
+    echo "Skipping memory report: no free or vm_stat"
+fi
 
 #Make sure no JBoss processes running
 for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
