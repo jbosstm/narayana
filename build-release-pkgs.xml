@@ -130,7 +130,7 @@
       <arg value="${tag}"/>
     </exec>
     <exec dir="${workdir}/${tag}-docs" executable="${mvn.executable}" failonerror="true">
-      <arg line="install"/>
+      <arg line="install -Prelease"/>
     </exec>
   </target> 
   <target name="downloads" description="copy release bundles to Narayana web site storage">
