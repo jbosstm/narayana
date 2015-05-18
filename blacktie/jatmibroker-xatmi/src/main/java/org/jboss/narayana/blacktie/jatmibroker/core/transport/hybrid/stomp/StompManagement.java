@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,10 @@ public class StompManagement {
     private static final Logger log = LogManager.getLogger(StompManagement.class);
 
     private static List<Socket> disconnectedConnections = new ArrayList<Socket>();
+
+    private static final byte[] COLON = {':'};
+    private static final byte[] EOL = {'\n'};
+    private static final byte[] EOM = {'\0', '\n', '\n'};
 
     public static void close(Socket socket, OutputStream outputStream, InputStream inputStream) throws IOException {
         log.debug("close");
@@ -68,26 +71,24 @@ public class StompManagement {
 
     public static void send(Message message, OutputStream outputStream) throws IOException {
         log.trace("Writing on: " + outputStream);
-        StringBuffer toSend = new StringBuffer(message.getCommand().toString());
-        toSend.append("\n");
+        synchronized (outputStream) {
+            outputStream.write(message.getCommand().getBytes());
+            outputStream.write(EOL);
 
-        Iterator<String> keys = message.getHeaders().keySet().iterator();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            String value = message.getHeaders().get(key);
-            toSend.append(key);
-            toSend.append(":");
-            toSend.append(value);
-            toSend.append("\n");
+            for (Map.Entry<String, String> header : message.getHeaders().entrySet()) {
+                outputStream.write(header.getKey().getBytes());
+                outputStream.write(COLON);
+                outputStream.write(header.getValue().getBytes());
+                outputStream.write(EOL);
+            }
+            outputStream.write(EOL);
+            
+            if(message.getBody() != null) {
+                outputStream.write(message.getBody());
+            }
+            outputStream.write(EOM);
         }
-        toSend.append("\n");
-        outputStream.write(toSend.toString().getBytes());
 
-        if (message.getBody() != null) {
-            outputStream.write(message.getBody());
-        }
-
-        outputStream.write("\000\n\n".getBytes());
         log.trace("Wrote on: " + outputStream);
     }
 
