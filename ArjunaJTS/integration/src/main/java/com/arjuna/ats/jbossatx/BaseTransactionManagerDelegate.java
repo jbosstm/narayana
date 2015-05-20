@@ -225,12 +225,14 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     // notify any listeners for this transaction that there has been an event
     private void notifyAssociationListeners(Transaction transaction, EnumSet<EventType> reasons)
     {
-        Collection<TransactionListener> listeners = getListeners(transaction, false);
-        TransactionEvent event = new TransactionEvent(transaction, reasons);
+        if (transaction != null) {
+            Collection<TransactionListener> listeners = getListeners(transaction, false);
+            TransactionEvent event = new TransactionEvent(transaction, reasons);
 
-        if (listeners != null) {
-            for (TransactionListener s : listeners)
-                s.onEvent(event);
+            if (listeners != null) {
+                for (TransactionListener s : listeners)
+                    s.onEvent(event);
+            }
         }
     }
 

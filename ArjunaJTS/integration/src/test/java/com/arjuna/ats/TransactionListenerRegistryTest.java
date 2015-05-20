@@ -36,9 +36,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
-import org.jboss.tm.listener.EventType;
-import org.jboss.tm.listener.TransactionListenerRegistry;
-import org.jboss.tm.listener.TransactionTypeNotSupported;
+import org.jboss.tm.listener.*;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
 import org.junit.Test;
 
@@ -46,6 +44,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchroniza
 import com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate;
 
 import java.util.EnumSet;
+import java.util.Iterator;
 
 public class TransactionListenerRegistryTest {
 	private enum CompletionType {
@@ -60,6 +59,68 @@ public class TransactionListenerRegistryTest {
     TransactionManager tm = new TransactionManagerDelegate();
 		tm.resume(null); // JBTM-2385 used to cause an NPE 
   }
+
+	private EnumSet<EventType> runTxn(TransactionManager tm) throws SystemException, TransactionTypeNotSupported, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+		ServerVMClientUserTransaction userTransaction = new ServerVMClientUserTransaction(tm);
+		TransactionListenerRegistry listenerRegistration = (TransactionListenerRegistry) tm;
+		final EnumSet<EventType> log = EnumSet.noneOf(EventType.class);
+
+		TransactionListener listener = new TransactionListener() {
+			@Override
+			public void onEvent(TransactionEvent transactionEvent) {
+				Iterator<EventType> events = transactionEvent.getTypes().iterator();
+
+				while (events.hasNext()) {
+					EventType e = events.next();
+
+					log.add(e);
+					System.out.printf("TransactionEvent: %s%n", e);
+				}
+			}
+		};
+
+		tm.suspend(); // clean the thread
+
+		userTransaction.begin();
+		listenerRegistration.addListener(tm.getTransaction(), listener, EnumSet.allOf(EventType.class));
+		userTransaction.commit();
+
+		return log;
+	}
+
+	@Test
+	public void testIllegalCommit() throws SystemException, TransactionTypeNotSupported, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+		TransactionManager tm = new TransactionManagerDelegate();
+
+		runTxn(tm);
+
+		try {
+			tm.commit();
+			fail("Commit finished transaction should have failed");
+		} catch (IllegalStateException e) {
+		}
+	}
+
+	@Test
+	public void testIllegalRollback() throws SystemException, TransactionTypeNotSupported, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+		TransactionManager tm = new TransactionManagerDelegate();
+
+		runTxn(tm);
+
+		try {
+			tm.rollback();
+			fail("Rollback finished transaction should have failed");
+		} catch (IllegalStateException e) {
+		}
+	}
+
+	@Test
+	public void testLifecycle() throws SystemException, TransactionTypeNotSupported, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+		TransactionManager tm = new TransactionManagerDelegate();
+		EnumSet<EventType> log = runTxn(tm);
+
+		assertTrue(log.containsAll(EnumSet.of(EventType.ASSOCIATED, EventType.DISASSOCIATING)));
+	}
 
 	@Test
 	public void test() throws SystemException, NotSupportedException, RollbackException, TransactionTypeNotSupported, InterruptedException, InvalidTransactionException, HeuristicRollbackException, HeuristicMixedException {
