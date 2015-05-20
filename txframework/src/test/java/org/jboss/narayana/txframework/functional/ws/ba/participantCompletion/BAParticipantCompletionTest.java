@@ -27,6 +27,7 @@ import com.arjuna.mw.wst11.UserBusinessActivityFactory;
 import com.arjuna.wst.TransactionRolledBackException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.common.URLUtils;
 import org.jboss.narayana.txframework.api.annotation.lifecycle.ba.Close;
@@ -82,13 +83,13 @@ public class BAParticipantCompletionTest {
     @BeforeClass()
     public static void submitBytemanScript() throws Exception {
 
-        ////BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+        BMScript.submit(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @AfterClass()
     public static void removeBytemanScript() {
 
-        ////BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
+        BMScript.remove(ParticipantCompletionCoordinatorRules.RESOURCE_PATH);
     }
 
     @Before
