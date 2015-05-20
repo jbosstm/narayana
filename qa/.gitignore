@@ -1,3 +1,5 @@
+.classpath
+.project
 dbdrivers
 dist
 idl-compiler.*
