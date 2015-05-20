@@ -167,7 +167,7 @@ public final class NativeEndpointReference extends EndpointReference
     * instead of leveraging the Provider's readEndpointReference method.
     *
     * @param eprInfoset
-    * @return
+    * @return the endpointreference
     */
    public static EndpointReference readFrom(Source eprInfoset)
    {

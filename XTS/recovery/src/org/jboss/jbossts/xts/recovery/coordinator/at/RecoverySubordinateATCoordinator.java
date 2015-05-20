@@ -27,7 +27,7 @@ public class RecoverySubordinateATCoordinator extends SubordinateATCoordinator {
     /**
      * run parent activate and also make this coordinator visible if there might be a durable participant waiting
      * for it to commit.
-     * @return
+     * @return whether the coordinator can be activated
      */
     public boolean activate()
     {

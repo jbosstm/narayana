@@ -70,7 +70,7 @@ public class PseudoControlWrapper
     /**
      * this returns the same hashcode as ControlWrapper for a given Control or ControlImple
      *
-     * @return
+     * @return the hashcode of the object
      */
     public int hashCode()
     {

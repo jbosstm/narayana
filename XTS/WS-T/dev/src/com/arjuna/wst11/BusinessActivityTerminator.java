@@ -40,8 +40,7 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 public interface BusinessActivityTerminator extends com.arjuna.wst.BusinessActivityTerminator
 {
     /**
-     * return either the terminator or participant endpoint depending upon what type of terminator strub this is
-     * @return
+     * @return either the terminator or participant endpoint depending upon what type of terminator strub this is
      */
     public W3CEndpointReference getEndpoint() ;
 }

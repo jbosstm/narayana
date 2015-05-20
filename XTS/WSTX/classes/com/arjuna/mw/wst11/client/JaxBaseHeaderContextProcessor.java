@@ -66,7 +66,7 @@ class JaxBaseHeaderContextProcessor
      *
      * @param soapMessage The current message context.
      * @param mustUnderstand Value of MustUnderstand attribute.
-     * @return
+     * @return whether the message was handled
      */
     public boolean handleOutboundMessage(final SOAPMessage soapMessage, boolean mustUnderstand)
     {

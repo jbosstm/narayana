@@ -44,7 +44,7 @@ public class BAParticipantHelper
      * return true if the object can be saved and restored using serialization otherwise
      * return false
      * @param participant
-     * @return
+     * @return whether the BusinessAgreementWithParticipantCompletionParticipant was serializable
      */
     public static boolean isSerializable(BusinessAgreementWithParticipantCompletionParticipant participant)
     {

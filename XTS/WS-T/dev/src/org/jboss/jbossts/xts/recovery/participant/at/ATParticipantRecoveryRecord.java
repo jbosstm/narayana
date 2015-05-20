@@ -112,7 +112,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * called during recovery processing to attempt to convert the restored application-
      * specific recovery state back into a participant
      * @param module the XTS recovery module to be used to attempt the conversion
-     * @return
+     * @return whether the record could be restored using the XTSATRecoveryModule
      */
 
     public boolean restoreParticipant(XTSATRecoveryModule module) throws Exception
@@ -153,9 +153,8 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
     }
 
     /**
-     * return the path string under which AT participant records are to be located in the TX
+     * @return the path string under which AT participant records are to be located in the TX
      * object store
-     * @return
      */
     public static String type ()
     {

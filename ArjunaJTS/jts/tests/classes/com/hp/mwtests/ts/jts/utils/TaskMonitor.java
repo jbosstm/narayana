@@ -89,7 +89,7 @@ public enum TaskMonitor {
      * @param cmdLinePattern pattern used to determine which java process should have there stacks dumpted
      * @param progress an object that a monnitored thread should periodically update
      * @param millisBetweenUpdates if the job does not make progress within this many milliseconds take stack dumps
-     * @return
+     * @return get the tasks progress back
      */
     public synchronized TaskProgress monitorProgress(String name, String cmdLinePattern,
                                                      TaskProgress progress, long millisBetweenUpdates) {

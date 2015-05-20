@@ -205,7 +205,7 @@ public class BusinessActivityTerminatorImple
     /**
      * retrieve the participant endpoint associated with this business activity terminator
      * 
-     * @return
+     * @return the W3CEndpointReference
      */
     public W3CEndpointReference getEndpoint()
     {

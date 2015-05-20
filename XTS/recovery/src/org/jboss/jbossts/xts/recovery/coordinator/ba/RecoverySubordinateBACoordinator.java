@@ -28,7 +28,7 @@ public class RecoverySubordinateBACoordinator extends SubordinateBACoordinator {
     /**
      * run parent activate and also make this coordinator visible if there might be a durable participant waiting
      * for it to commit.
-     * @return
+     * @return whether the statemanager could be activated 
      */
     public boolean activate()
     {
