@@ -133,6 +133,11 @@
                 <version>1.0.0.Alpha2</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${version.org.jboss.logging.jboss-logging}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.spec.javax.jms</groupId>
                 <artifactId>jboss-jms-api_1.1_spec</artifactId>
                 <version>1.0.1.Final</version>
