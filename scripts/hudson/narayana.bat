@@ -4,7 +4,7 @@ echo "Set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION%"
 
 call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
 
-call build.bat clean install || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
+call build.bat clean install %* || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 
 echo "Cloning AS"
 rmdir /S /Q jboss-as
@@ -24,7 +24,7 @@ call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_
 cd ..\
 
 echo "Building Blacktie Subsystem"
-call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" & exit -1)
+call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install %* || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" & exit -1)
 
 echo "Building BlackTie
 cd blacktie
@@ -62,7 +62,7 @@ echo "Started server"
 @ping 127.0.0.1 -n 20 -w 1000 > nul
 
 rem BUILD BLACKTIE
-call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" || (call:fail_build & exit -1)
+call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" %* || (call:fail_build & exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
