@@ -473,6 +473,7 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/javaidl/**</exclude>
                     <exclude>**/JacORB*/**</exclude>
+                    <exclude>**/AtomicObject2.java</exclude>
                   </excludes>
                   <reportsDirectory>${project.build.directory}/ibmorb-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>

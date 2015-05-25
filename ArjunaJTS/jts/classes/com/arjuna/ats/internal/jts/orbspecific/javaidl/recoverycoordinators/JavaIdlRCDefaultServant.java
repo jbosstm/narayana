@@ -57,7 +57,7 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
         _ourOrb = orb;
 
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant(orb)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant(orb)");
         }
 
     }
@@ -65,7 +65,7 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
     public Status replay_completion ( Resource res ) throws SystemException, NotPrepared
     {
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant::replay_completion)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant::replay_completion)");
         }
 
         try

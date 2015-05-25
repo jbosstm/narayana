@@ -34,8 +34,10 @@ package com.arjuna.ats.internal.jts.recovery.contact;
 
 import com.arjuna.ArjunaOTS.ArjunaFactory;
 import com.arjuna.ArjunaOTS.ArjunaFactoryHelper;
+import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.orbportability.event.EventManager;
+import org.omg.CORBA.Any;
 
 
 /**
@@ -72,6 +74,10 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
         if (_noted) {
             return;
         }
+
+        // save the data in the received slot (IBM orb clears it on errors)
+        Any any = OTSManager.getSlotAccessor().getData();
+
         try {
             ArjunaFactory theFactory = ArjunaFactoryHelper.narrow(obj);
 
@@ -88,6 +94,12 @@ public class RecoveryContactWriter implements com.arjuna.orbportability.event.Ev
             }
         } catch ( Exception ex) {
             // oh well - it probably wasn't ours
+            // restore the data in the received slot (IBM orb clears it on errors)
+            OTSManager.getSlotAccessor().putData(any);
+
+            if (jtsLogger.logger.isDebugEnabled())
+                jtsLogger.logger.debug("RecoveryContactWriter.connected - ex looking for an ArjunaFactory: "
+                        + ex.getMessage(), ex);
         }
     }
 

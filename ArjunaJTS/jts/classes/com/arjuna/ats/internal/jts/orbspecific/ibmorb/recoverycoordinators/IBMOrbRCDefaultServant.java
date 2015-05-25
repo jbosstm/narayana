@@ -33,15 +33,19 @@ package com.arjuna.ats.internal.jts.orbspecific.ibmorb.recoverycoordinators;
 
 import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.GenericRecoveryCoordinator;
 import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.RecoveryCoordinatorId;
+import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.NotPrepared;
 import org.omg.CosTransactions.Resource;
 import org.omg.CosTransactions.Status;
+import org.omg.PortableInterceptor.InvalidSlot;
 
 
-public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
+public class IBMOrbRCDefaultServant extends GenericRecoveryCoordinator
 {
     private ORB _ourOrb;
 
@@ -51,46 +55,48 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
      * constructor supplies orb - used only within package
      * @param orb which orb to use
      */
-    JavaIdlRCDefaultServant(ORB orb)
+    IBMOrbRCDefaultServant(ORB orb)
     {
         super();    // ensure id is null
         _ourOrb = orb;
 
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant(orb)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant(orb)");
         }
 
+    }
+
+    private String getRCDataFromCurrent() {
+        org.omg.PortableInterceptor.Current piCurrent = null;
+        try {
+            piCurrent = org.omg.PortableInterceptor.CurrentHelper.narrow(_ourOrb.resolve_initial_references("PICurrent"));
+            Any slotData = piCurrent.get_slot(OTSManager.getRCSlotId());
+
+            return slotData.extract_string();
+        } catch (InvalidName invalidName) {
+            if (jtsLogger.logger.isDebugEnabled())
+                jtsLogger.logger.debug("replay_completion invalid name " + invalidName.getMessage());
+        } catch (InvalidSlot invalidSlot) {
+            if (jtsLogger.logger.isDebugEnabled())
+                jtsLogger.logger.debug("replay_completion invalid slot " + invalidSlot.getMessage());        }
+
+        return null;
     }
 
     public Status replay_completion ( Resource res ) throws SystemException, NotPrepared
     {
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCDefaultServant::replay_completion)");
+            jtsLogger.logger.debug("IBMOrbRCDefaultServant::replay_completion)");
         }
 
         try
         {
-            //Begin New
             org.omg.CORBA.Object obj = _ourOrb.resolve_initial_references("POACurrent");
             org.omg.PortableServer.Current poa_current = org.omg.PortableServer.CurrentHelper.narrow(obj);
-            byte[] objectId = poa_current.get_object_id();
-            //End New
+            String rcData = getRCDataFromCurrent(); // was new String(poa_current.get_object_id());
 
-            String objectIdString = new String(objectId);
-            String poaName = poa_current.get_POA().the_name();
-
-            if (objectIdString.startsWith(poaName)) {
-                // strip off the POA name prefix from the object name - the remainder encodes our Uids
-                int index = poaName.length();
-
-                if (objectIdString.length() > index)
-                    index += 1;
-
-                objectIdString = objectIdString.substring(index);
-            }
-
-            // convert that to the structured id
-            RecoveryCoordinatorId  recovCoId = RecoveryCoordinatorId.reconstruct(objectIdString);
+            // convert the rc data to an actual recovery coordinator for the specific enlisted resource:
+            RecoveryCoordinatorId  recovCoId = RecoveryCoordinatorId.reconstruct(rcData);
 
             if (jtsLogger.logger.isDebugEnabled()) {
                 jtsLogger.logger.debug("JavaIdlDefaultServant replay_completion for Id "+recovCoId);

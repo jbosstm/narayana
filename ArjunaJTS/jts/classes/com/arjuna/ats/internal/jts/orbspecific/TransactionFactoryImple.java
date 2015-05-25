@@ -33,11 +33,13 @@ package com.arjuna.ats.internal.jts.orbspecific;
 
 import java.util.Enumeration;
 
+import com.arjuna.ats.jts.OTSManager;
+
 import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.CompletionStatus;
 import org.omg.CORBA.NO_MEMORY;
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Coordinator;
@@ -122,8 +124,11 @@ public class TransactionFactoryImple extends
 		if (_factoryRef == null)
 		{
 			ORBManager.getPOA().objectIsReady(this);
-
+            // IBM orb clears the received data from PICurrent during the narrow - save it
+            org.omg.CORBA.Any any = OTSManager.getSlotAccessor().getData();
 			_factoryRef = org.omg.CosTransactions.TransactionFactoryHelper.narrow(ORBManager.getPOA().corbaReference(this));
+            // and now restore it
+            OTSManager.getSlotAccessor().putData(any);
 		}
 
 		return _factoryRef;
@@ -362,7 +367,7 @@ public class TransactionFactoryImple extends
 	 * the transaction database while examining it, and this will prevent any
 	 * new transactions from being created/started.
 	 * 
-	 * @param the
+	 * @param t the
 	 *            type of transaction (active, unresolved) to get data on.
 	 * @since JTS 2.1.
 	 */

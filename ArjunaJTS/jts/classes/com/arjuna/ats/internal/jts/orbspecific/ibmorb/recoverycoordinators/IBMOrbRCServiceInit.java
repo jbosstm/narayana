@@ -60,10 +60,10 @@ import java.util.Properties;
  *
  */
 
-public class JavaIdlRCServiceInit implements RecoveryServiceInit
+public class IBMOrbRCServiceInit implements RecoveryServiceInit
 {
 
-    public JavaIdlRCServiceInit()
+    public IBMOrbRCServiceInit()
     {
     }
 
@@ -76,7 +76,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
         String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
 
         if (jtsLogger.logger.isDebugEnabled()) {
-            jtsLogger.logger.debug("JavaIdlRCServiceInit.getRCPOA " + rcServiceName);
+            jtsLogger.logger.debug("IBMOrbRCServiceInit.getRCPOA " + rcServiceName);
         }
 
         if (_poa == null)
@@ -185,7 +185,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                 // get the orb, so we can pass it to the default servant
 
                 // make the default servant
-                JavaIdlRCDefaultServant theButler = new JavaIdlRCDefaultServant(_orb.orb());
+                IBMOrbRCDefaultServant theButler = new IBMOrbRCDefaultServant(_orb.orb());
 
                 // register it on the POA
                 ourPOA.set_servant(theButler);
@@ -213,7 +213,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
                 }
 
                 if (jtsLogger.logger.isDebugEnabled()) {
-                    jtsLogger.logger.debug("JavaIdlRCServiceInit - set default servant and activated");
+                    jtsLogger.logger.debug("IBMOrbRCServiceInit - set default servant and activated");
                 }
 
                 // activate the poa

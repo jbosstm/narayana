@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts;
 
+import org.omg.CORBA.Any;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
@@ -295,6 +296,16 @@ public class OTSManager
 	return _localSlotId;
     }
 
+    public static final void setRCSlotId (int slotId)
+    {
+        _rcSlotId = slotId;
+    }
+
+    public static final int getRCSlotId ()
+    {
+        return _rcSlotId;
+    }
+
     public static final void setReceivedSlotId (int slotId)
     {
 	_receivedSlotId = slotId;
@@ -314,10 +325,47 @@ public class OTSManager
     {
 	com.arjuna.ats.internal.jts.ORBManager.setPOA(thePoa);
     }
-    
+
+    public static PICurrentSlotAccessorInterface getSlotAccessor() {
+        return _slotAccessor;
+    }
+
+    public static void setSlotAccessor(PICurrentSlotAccessorInterface _slotAccessor) {
+        OTSManager._slotAccessor = _slotAccessor;
+    }
+
     public static final int serviceId = 0xDEADBEEF;
 
     private static int _localSlotId = -1;
     private static int _receivedSlotId = -1;
+    private static int _rcSlotId = -1;
 
+    private static PICurrentSlotAccessorInterface _slotAccessor = new PICurrentSlotAccessorInterface() {
+        @Override public Any getData() {return null;}
+        @Override public void putData(Any any) {}
+        @Override public Any getData(int slotId) {return null;}
+        @Override public void putData(int slotId, Any any) {}
+    };
+
+    /**
+     * In contrast to other orbs, when running with the IBM orb we encode recovery data for
+     * RecoveryCoordinator replay_completion requests via an IIOP tagged profile (not via the
+     * object key which is vendor specific which does not work with IBM).
+     *
+     * However tagged profile ids are maintained by the OMG so use one that is unlikely to cause
+     * conflict. NB the spec also tells us that the range [0x80000000, 0xffffffff] is reserved:
+     */
+     public static int RC_IOP_PROFILE_TAG = 0x3ADDCAFE;
+
+    /**
+     * In contrast to other orbs, when running with the IBM orb we pass recovery data for
+     * RecoveryCoordinator replay_completion requests via an IIOP tagged profile (not via the
+     * object key which is vendor specific which does not work with IBM).
+     *
+     * However, service-specific context to be passed through GIOP requires a unique service
+     * context ID value allocated by the OMG so we use one that is unlikely to cause
+     * conflict. NB the spec reserves part of the available space for future use (refer to the
+     * chapter 13.7 Service Context for details) so we choose the actual value carefully:
+     */
+    public static final int recoveryContextId = 0x3ADDCAFE;
 }
