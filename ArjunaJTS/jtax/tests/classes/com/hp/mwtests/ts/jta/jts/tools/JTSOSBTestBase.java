@@ -26,7 +26,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
@@ -34,6 +34,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 import org.junit.After;
+import org.junit.Before;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
@@ -41,9 +42,11 @@ import com.arjuna.orbportability.ORB;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
 
-import java.util.Properties;
+import javax.management.*;
+import java.io.IOException;
+import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -97,6 +100,12 @@ public class JTSOSBTestBase extends TestBase {
         emptyObjectStore();
 	}
 
+	@Before
+	public void beforeTest()
+	{
+		emptyObjectStore();
+	}
+
 	@After
     public void tearDown()
 	{
@@ -117,16 +126,71 @@ public class JTSOSBTestBase extends TestBase {
 	}
 
     protected void assertBeanWasCreated(ArjunaTransactionImple txn) {
-        generatedHeuristicHazard(txn);
+        int heuristicParticipantCount = generatedHeuristicHazard(txn);
 
         ObjStoreBrowser osb = createObjStoreBrowser(true);
 
-        UidWrapper w = osb.findUid(txn.get_uid());
+        MBeanServer mbs = JMXServer.getAgent().getServer();
 
-        assertNotNull(w);
+		try {
+			String type = txn.type();
+			if (type.charAt(0) == '/')
+				type = type.substring(1);
+			StringBuilder beanName = new StringBuilder("jboss.jta:type=ObjectStore,itype=").
+					append(type).append(",uid=").append(txn.get_uid().fileStringForm());
+			Set<ObjectInstance> transactions = mbs.queryMBeans(new ObjectName(beanName.toString()), null);
+			Set<ObjectInstance> participants = mbs.queryMBeans(new ObjectName(beanName.append(",puid=*").toString()), null);
+			Map<String, String> attributes;
+
+			assertEquals(1, transactions.size());
+// mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,itype=*"), null)
+			assertEquals(heuristicParticipantCount, participants.size());
+ mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction,uid=0_ffff7f000001_de8b_557556b4_1f"),null);
+			ObjectInstance participant = participants.iterator().next();
+
+			attributes = getMBeanValues(mbs, participant.getObjectName());
+
+			assertEquals("HEURISTIC", attributes.get("Status"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("bean was not created: " + e.getMessage());
+		} finally {
+			osb.stop();
+		}
     }
 
-    protected void generatedHeuristicHazard(ArjunaTransactionImple txn) {
+	private Map<String, String> getMBeanValues(MBeanServerConnection cnx, ObjectName on, String ... attributeNames)
+			throws InstanceNotFoundException, IOException, ReflectionException, IntrospectionException {
+
+		if (attributeNames.length == 0) {
+			MBeanInfo info = cnx.getMBeanInfo( on );
+			MBeanAttributeInfo[] attributeArray = info.getAttributes();
+			int i = 0;
+			attributeNames = new String[attributeArray.length];
+
+			for (MBeanAttributeInfo ai : attributeArray)
+				attributeNames[i++] = ai.getName();
+		}
+
+		AttributeList attributes = cnx.getAttributes(on, attributeNames);
+		Map<String, String> values = new HashMap<String, String>();
+
+		for (javax.management.Attribute attribute : attributes.asList()) {
+			Object value = attribute.getValue();
+
+			values.put(attribute.getName(), value == null ? "" : value.toString());
+		}
+
+		return values;
+	}
+
+	/**
+	 * Generate a transaction log that contains a heuristic hazard
+	 * @param txn a transaction of the desired type
+	 * @return the number of participants that that will have generated a heuristic hazard
+	 */
+    protected int generatedHeuristicHazard(ArjunaTransactionImple txn) {
 		ThreadActionData.purgeActions();
 
 		ExtendedCrashRecord recs[] = {
@@ -139,6 +203,8 @@ public class JTSOSBTestBase extends TestBase {
         for (ExtendedCrashRecord rec : recs)
             txn.add(rec);
 
-        txn.end(false);
+        txn.end(true);
+
+        return 1;
     }
 }

@@ -93,35 +93,35 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             ),
             new OSBTypeHandler(
                     true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader"
             ),
             new OSBTypeHandler(
                     true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteServerTransaction",
-                    null
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader"
             ),
             new OSBTypeHandler(
                     true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.RecoveredTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteHeuristicTransaction",
                     null
             ),
             new OSBTypeHandler(
                     true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteHeuristicServerTransaction",
-                    null
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ServerTransactionHeaderReader"
             ),
             new OSBTypeHandler(
                     true,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.RecoveredTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/AssumedCompleteTransaction",
                     null
