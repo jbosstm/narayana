@@ -263,6 +263,11 @@ public class ORB
             opLogger.logger.trace("ORB::shutdown ()");
         }
 
+        // Ensure destroy is called on the root OA so that any pre/post destroy hooks get called
+        // Normally we expect whoever called shutdown to have done this however destroy is
+        // safe to call multiple times
+        OA.getRootOA(this).destroy();
+
         /*
          * Do the cleanups first!
          */

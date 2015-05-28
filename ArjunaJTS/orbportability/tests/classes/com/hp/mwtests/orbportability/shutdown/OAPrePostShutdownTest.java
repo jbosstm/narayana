@@ -142,6 +142,37 @@ public class OAPrePostShutdownTest implements PrePostTestCallback
 
         assertEquals(POSTSHUTDOWN, _currentState);
     }
+
+	@Test
+	public void testOAShutdownCalled() throws Exception
+	{
+		ORB orb = ORB.getInstance("main_orb");
+		RootOA oa = RootOA.getRootOA(orb);
+
+		System.out.println("Initialising ORB and OA");
+
+		orb.initORB(new String[] {}, null);
+		oa.initOA();
+
+		_currentState = NONE;
+
+		/**
+		 * Register pre and post shutdown handlers
+		 */
+		oa.addPreShutdown( new TestPreShutdown( "PreShutdown", this ) );
+		oa.addPostShutdown( new TestPostShutdown( "PostShutdown", this ) );
+
+		System.out.println("Shutting down ORB (expecting OA to also be destroyed)");
+		orb.shutdown();
+
+        /*
+       * Ensure final state is correct
+       */
+		System.out.println("Final state: " + PrettyPrintState(_currentState) );
+
+		assertEquals(POSTSHUTDOWN, _currentState);
+	}
+
     /**
      *
      */

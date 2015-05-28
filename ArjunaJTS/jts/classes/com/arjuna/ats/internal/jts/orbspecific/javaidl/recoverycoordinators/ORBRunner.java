@@ -52,21 +52,6 @@ public class ORBRunner extends Thread
         {
             e.printStackTrace();
         }
-
-        try
-        {
-            if (JavaIdlRCServiceInit._oa != null)
-                JavaIdlRCServiceInit._oa.destroy();
-
-            if (JavaIdlRCServiceInit._orb != null)
-                JavaIdlRCServiceInit._orb.shutdown();
-        }
-        catch (Exception ex)
-        {
-        }
-
-        //JavaIdlRCServiceInit.orbRunnerCompleted();
     }
-
 }
 

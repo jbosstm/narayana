@@ -69,6 +69,17 @@
       </modules>
     </profile>
     <profile>
+      <id>jts-openjdk</id>
+      <activation>
+        <property>
+          <name>!openjdk-disabled</name>
+        </property>
+      </activation>
+      <modules>
+        <module>idlj</module>
+      </modules>
+    </profile>
+    <profile>
       <id>jts-ibmorb</id>
       <activation>
         <property>
