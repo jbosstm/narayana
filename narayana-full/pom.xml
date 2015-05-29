@@ -138,7 +138,7 @@
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
+      <artifactId>hornetq-journal</artifactId>
       <version>${version.org.hornetq}</version>
       <exclusions>
         <exclusion>
