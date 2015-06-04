@@ -25,7 +25,7 @@
   <description>Narayana: ArjunaJTS jtax</description>
 
   <properties>
-    <openjdk-orb.jar>${project.build.directory}/openjdk-orb-8.0.2.Final.jar</openjdk-orb.jar>
+    <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
   </properties>
 
@@ -349,30 +349,6 @@
                     <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
                     <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
                   </systemPropertyVariables>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.0</version>
-            <executions>
-              <execution>
-                <id>copy</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.jboss.openjdk-orb</groupId>
-                      <artifactId>openjdk-orb</artifactId>
-                      <version>8.0.2.Final</version>
-                      <outputDirectory>${project.build.directory}</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
                 </configuration>
               </execution>
             </executions>
