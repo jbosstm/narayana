@@ -568,6 +568,7 @@
             <exclude name="**/tools/**"/>
             <exclude name="**/apache-karaf*/**"/>
             <exclude name="**/hornetq*/**"/>
+            <exclude name="**/openjdk-orb-**.jar"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">
