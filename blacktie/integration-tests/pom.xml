@@ -74,7 +74,7 @@
 					<forkMode>once</forkMode>
 					<workingDirectory>target/test-classes</workingDirectory>
 					<environmentVariables>
-						<Path>${ld_library_path}</Path>
+						<PATH>${ld_library_path}</PATH>
 						<LD_LIBRARY_PATH>${ld_library_path}</LD_LIBRARY_PATH>
 						<BLACKTIE_CONFIGURATION_DIR>${blacktie.configuration.dir}</BLACKTIE_CONFIGURATION_DIR>
 						<BLACKTIE_SCHEMA_DIR>${project.build.directory}/cxx/test/</BLACKTIE_SCHEMA_DIR>
@@ -90,7 +90,7 @@
 							<value>${project.build.directory}/cs</value>
 						</property>
 						<property>
-							<name>Path</name>
+							<name>PATH</name>
 							<value>${ld_library_path}</value>
 						</property>
 						<property>
