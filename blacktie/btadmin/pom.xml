@@ -106,7 +106,7 @@
 					<forkMode>once</forkMode>
 					<workingDirectory>target/test-classes</workingDirectory>
 					<environmentVariables>
-						<PATH>${ld_library_path}</PATH>
+						<PATH>${path}</PATH>
 						<LD_LIBRARY_PATH>${ld_library_path}</LD_LIBRARY_PATH>
 						<BLACKTIE_CONFIGURATION_DIR>${blacktie.configuration.dir}</BLACKTIE_CONFIGURATION_DIR>
 						<BLACKTIE_SCHEMA_DIR>${project.build.directory}/cxx/test/</BLACKTIE_SCHEMA_DIR>
@@ -115,7 +115,7 @@
 					<systemProperties>
 						<property>
 							<name>PATH</name>
-							<value>${ld_library_path}</value>
+							<value>${path}</value>
 						</property>
 						<property>
 							<name>LD_LIBRARY_PATH</name>
