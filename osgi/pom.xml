@@ -28,6 +28,7 @@
   <properties>
     <version.org.jboss.arquillian.osgi.karaf>2.1.0.CR15</version.org.jboss.arquillian.osgi.karaf>
 	<version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
+	<version.org.jboss.arquillian.core>1.1.2.Final</version.org.jboss.arquillian.core>
 	<version.shrinkwrap>1.1.2</version.shrinkwrap>
 	<version.apache.karaf>2.3.3</version.apache.karaf>
 </properties>
