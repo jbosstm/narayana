@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import java.util.Enumeration;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
@@ -46,6 +44,9 @@ public class TwoPhaseVolatileStore extends ObjectStore
     public TwoPhaseVolatileStore(ObjectStoreEnvironmentBean objectStoreEnvironmentBean) throws ObjectStoreException 
     {
         super(objectStoreEnvironmentBean);
+
+        if (objectStoreEnvironmentBean.isVolatileStoreSupportAllObjUids())
+            store = new VolatileStore(objectStoreEnvironmentBean);
     }
 
     /**
@@ -60,7 +61,10 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
     public boolean allObjUids(String s, InputObjectState buff, int m) throws ObjectStoreException
     {
-        throw new ObjectStoreException("Operation not supported by this implementation");
+        if (store == null)
+            throw new ObjectStoreException("Operation not supported by this implementation");
+
+        return store.allObjUids(s, buff, m);
     }
 
     /**
@@ -73,7 +77,10 @@ public class TwoPhaseVolatileStore extends ObjectStore
 
     public boolean allTypes(InputObjectState buff) throws ObjectStoreException
     {
-        throw new ObjectStoreException("Operation not supported by this implementation");
+        if (store == null)
+            throw new ObjectStoreException("Operation not supported by this implementation");
+
+        return store.allTypes(buff);
     }
 
     /**
@@ -342,7 +349,10 @@ public class TwoPhaseVolatileStore extends ObjectStore
                         return false;
                 }
             }
-            
+
+            if (store != null)
+                store.addUidMapping(u, tn);
+
             return true;
         }
     }
@@ -423,4 +433,6 @@ public class TwoPhaseVolatileStore extends ObjectStore
     //private WeakHashMap<Uid, StateInstance> _stateMap = new WeakHashMap<Uid, StateInstance>();
     
     private ConcurrentHashMap<Uid, StateInstance> _stateMap = new ConcurrentHashMap<Uid, StateInstance>();
+
+    private VolatileStore store;
 }

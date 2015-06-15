@@ -31,10 +31,16 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: ObjectStoreTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
@@ -58,6 +64,7 @@ import com.arjuna.ats.internal.arjuna.objectstore.NullActionStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 import com.arjuna.ats.internal.arjuna.objectstore.VolatileStore;
+import com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore;
 
 class DummyOS extends FileLockingStore
 {
@@ -488,7 +495,192 @@ public class ObjectStoreTest
             }
         }
     }
-    
+
+    @Test
+    public void testTwoVolatileStores () throws Exception
+    {
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean1 = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean1.setLocalOSRoot( "tmp" );
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean2 = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean2.setLocalOSRoot( "tmp2" );
+        objectStoreEnvironmentBean2.setVolatileStoreSupportAllObjUids(true);
+
+        VolatileStore as1 = new VolatileStore(objectStoreEnvironmentBean1);
+        VolatileStore as2 = new VolatileStore(objectStoreEnvironmentBean2);
+
+        final OutputObjectState buff = new OutputObjectState();
+        final String tn = "/StateManager/junit";
+
+        try {
+            as1.allObjUids("", new InputObjectState());
+            fail("testTwoVolatileStores: allObjUids should have failed");
+        } catch (final Exception ex) {
+        }
+
+        try {
+            as1.allTypes(new InputObjectState());
+            fail("testTwoVolatileStores: allTypes should have failed");
+        } catch (final Exception ex) {
+        }
+
+        try {
+            as2.allObjUids("", new InputObjectState());
+        } catch (final Exception ex) {
+            fail("testTwoVolatileStores: allObjUids should have passed");
+        }
+
+        try {
+            as2.allTypes(new InputObjectState());
+        } catch (final Exception ex) {
+            fail("testTwoVolatileStores: allTypes should have passed");
+        }
+    }
+
+    private void addType(ObjectStore store, String type) throws Exception {
+        byte[] data = new byte[10240];
+        OutputObjectState state = new OutputObjectState();
+        Uid u = new Uid();
+
+        state.packBytes(data);
+
+        assertTrue(store.write_committed(u, type, state));
+    }
+
+    private Collection<String> getAllTypes(ObjectStore store) throws Exception {
+        Collection<String> allTypes = new ArrayList<>();
+        InputObjectState types = new InputObjectState();
+
+        assertTrue(store.allTypes(types));
+
+        while (true) {
+            try {
+                String typeName = types.unpackString();
+                if (typeName.length() == 0)
+                    break;
+                allTypes.add(typeName);
+            } catch (IOException e1) {
+                break;
+            }
+        }
+
+        return allTypes;
+    }
+
+    private Collection<Uid> getUids(ObjectStore store, String type) throws Exception {
+        Collection<Uid> uids = new ArrayList<>();
+        InputObjectState ios = new InputObjectState();
+
+        assertTrue(store.allObjUids(type, ios));
+
+        while (true) {
+            Uid uid = UidHelper.unpackFrom(ios);
+
+            if (uid.equals( Uid.nullUid() ))
+                break;
+
+            uids.add(uid);
+        }
+
+        return uids;
+    }
+
+    @Test
+    public void testTypedVolatileStore () throws Exception {
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
+        objectStoreEnvironmentBean.setVolatileStoreSupportAllObjUids(true);
+
+        typedVolatileStoreCommon(new VolatileStore(objectStoreEnvironmentBean));
+    }
+
+    @Test
+    public void testTypedTwoPhaseVolatileStore () throws Exception {
+        ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+        objectStoreEnvironmentBean.setLocalOSRoot( "tmp" );
+        objectStoreEnvironmentBean.setVolatileStoreSupportAllObjUids(true);
+
+        typedVolatileStoreCommon(new TwoPhaseVolatileStore(objectStoreEnvironmentBean));
+    }
+
+    private void typedVolatileStoreCommon(ObjectStore as) throws Exception {
+        // TypedVolatileStore and TypedTwoPhaseVolatileStore extend VolatileStore and TwoPhaseVolatileStore,
+        // respectively, by supporting the allTypes and allObjUids methods
+        int FOO_UID_COUNT = 10;
+        int BAR_UID_COUNT = 20;
+
+        for (int i = 0; i < FOO_UID_COUNT; i++)
+            addType(as, FOO_TYPE);
+
+        for (int i = 0; i < BAR_UID_COUNT; i++)
+            addType(as, BAR_TYPE);
+
+        // test that allTypes contains the added types
+        Collection<String> allTypes = getAllTypes(as);
+
+        assertTrue(allTypes.contains(FOO_TYPE));
+        assertTrue(allTypes.contains(BAR_TYPE));
+
+        // test that allObjUids is correct
+        Collection<Uid> fooUids = getUids(as, FOO_TYPE);
+        Collection<Uid> barUids = getUids(as, BAR_TYPE);
+
+        assertEquals(FOO_UID_COUNT, fooUids.size());
+        assertEquals(BAR_UID_COUNT, barUids.size());
+
+        // assert that the two collections do not overlap
+        fooUids.removeAll(barUids);
+        assertEquals(FOO_UID_COUNT, fooUids.size());
+
+        // now test the remaining methods of VolatileStore (same as testVolatileStore)
+        final OutputObjectState buff = new OutputObjectState();
+        final String tn = "/StateManager/junit";
+
+        for (int i = 0; i < 100; i++)
+        {
+            Uid u = new Uid();
+
+            try
+            {
+                assertTrue(as.read_uncommitted(u, tn) == null);
+            }
+            catch (final Exception ex)
+            {
+            }
+
+            try
+            {
+                as.commit_state(u, tn);
+            }
+            catch (final Exception ex)
+            {
+            }
+
+            as.write_committed(u, tn, buff);
+
+            assertTrue(as.currentState(u, tn) == StateStatus.OS_COMMITTED);
+
+            as.read_committed(u, tn);
+
+            as.remove_committed(u, tn);
+
+            try
+            {
+                assertTrue(as.hide_state(u, tn));
+            }
+            catch (final Exception ex)
+            {
+            }
+
+            try
+            {
+                assertTrue(as.reveal_state(u, tn));
+            }
+            catch (final Exception ex)
+            {
+            }
+        }
+    }
+
     @Test
     public void testFileLockingStore () throws Exception
     {
@@ -556,4 +748,6 @@ public class ObjectStoreTest
     private static String localOSRoot = "foo";
     private static String objectStoreDir = "tmp"+"/bar";
 
+    private static final String FOO_TYPE = File.separator+"StateManager"+File.separator+"LockManager"+File.separator+"foo";
+    private static final String BAR_TYPE = File.separator+"StateManager"+File.separator+"LockManager"+File.separator+"bar";
 }
