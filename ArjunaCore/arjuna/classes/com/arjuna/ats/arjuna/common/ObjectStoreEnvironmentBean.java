@@ -52,6 +52,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile int hierarchyRetry = 100;
     private volatile int hierarchyTimeout = 100;
 
+    private volatile boolean volatileStoreSupportAllObjUids;
+
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size")
     private volatile int cacheStoreSize = 10240;  // size in bytes
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.sync")
@@ -778,5 +780,28 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public void setExposeAllLogRecordsAsMBeans(boolean exposeAllLogRecords) {
         this.exposeAllLogRecordsAsMBeans = exposeAllLogRecords;
+    }
+
+    /**
+     * @return whether the volatile store types {@link com.arjuna.ats.internal.arjuna.objectstore.VolatileStore}
+     * and {@link com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore} should support the
+     * {@link com.arjuna.ats.arjuna.objectstore.RecoveryStore#allObjUids} and
+     * {@link com.arjuna.ats.arjuna.objectstore.RecoveryStore#allTypes(com.arjuna.ats.arjuna.state.InputObjectState)}
+     * API methods
+     */
+    public boolean isVolatileStoreSupportAllObjUids() {
+        return volatileStoreSupportAllObjUids;
+    }
+
+    /**
+     * Indicate whether or not the volatile store types {@link com.arjuna.ats.internal.arjuna.objectstore.VolatileStore}
+     * and {@link com.arjuna.ats.internal.arjuna.objectstore.TwoPhaseVolatileStore} should support the
+     * {@link com.arjuna.ats.arjuna.objectstore.RecoveryStore#allObjUids} and
+     * {@link com.arjuna.ats.arjuna.objectstore.RecoveryStore#allTypes(com.arjuna.ats.arjuna.state.InputObjectState)}
+     * API methods
+     * @param volatileStoreSupportAllObjUids if true then add support for finding Uids by type in the volatile stores
+     */
+    public void setVolatileStoreSupportAllObjUids(boolean volatileStoreSupportAllObjUids) {
+        this.volatileStoreSupportAllObjUids = volatileStoreSupportAllObjUids;
     }
 }
