@@ -309,7 +309,7 @@
         <dependency>
           <groupId>org.jboss.openjdk-orb</groupId>
           <artifactId>openjdk-orb</artifactId>
-          <version>8.0.2.Final</version>
+          <version>${version.org.jboss.openjdk-orb}</version>
         </dependency>
       </dependencies>
 
