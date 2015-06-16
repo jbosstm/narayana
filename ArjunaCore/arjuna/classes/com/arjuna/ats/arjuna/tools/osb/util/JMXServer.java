@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.util;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -112,25 +113,28 @@ public class JMXServer
 
 	public ObjectInstance registerMBean(String name, ObjStoreItemMBean bean)
 	{
-		ObjectInstance oi = null;
+		name = name.replace(File.separator, "/");
 
 		try {
 			if (tsLogger.logger.isDebugEnabled())
 				tsLogger.logger.debug("registering bean " + name);
 			//tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_1(name);
-			oi = getServer().registerMBean(bean, new ObjectName(name));
+			return getServer().registerMBean(bean, new ObjectName(name));
 		} catch (InstanceAlreadyExistsException e) {
 			tsLogger.i18NLogger.info_tools_osb_util_JMXServer_m_2(name);
 		} catch (javax.management.JMException e) {
             tsLogger.i18NLogger.warn_tools_osb_util_JMXServer_m_3(name, e);
         }
 
-		return oi;
+		return null;
 	}
 
 	public boolean unregisterMBean(String name)
 	{
+		name = name.replace(File.separator, "/");
+
 		try {
+
 			getServer().unregisterMBean(new ObjectName(name));
 			return true;
 		} catch (MalformedObjectNameException e) {

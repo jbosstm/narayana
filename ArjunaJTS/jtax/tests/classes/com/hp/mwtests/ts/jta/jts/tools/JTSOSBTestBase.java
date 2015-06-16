@@ -43,6 +43,7 @@ import org.junit.BeforeClass;
 import org.junit.AfterClass;
 
 import javax.management.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -125,6 +126,17 @@ public class JTSOSBTestBase extends TestBase {
 		return osb;
 	}
 
+    private void showAllMBeans(MBeanServer mbs) {
+        try {
+            Set<ObjectInstance> allBeans = mbs.queryMBeans(new ObjectName("jboss.jta:*"), null) ;
+            System.out.printf("%d MBeans:%n", allBeans.size());
+            for (ObjectInstance oi : allBeans)
+                System.out.printf("\t%s%n", oi.getObjectName().getCanonicalName());
+        } catch (MalformedObjectNameException e) {
+            System.out.printf("error dumping MBeans %s%n", e.getMessage());
+        }
+    }
+
     protected void assertBeanWasCreated(ArjunaTransactionImple txn) {
         int heuristicParticipantCount = generatedHeuristicHazard(txn);
 
@@ -132,20 +144,27 @@ public class JTSOSBTestBase extends TestBase {
 
         MBeanServer mbs = JMXServer.getAgent().getServer();
 
+        showAllMBeans(mbs);
+
 		try {
-			String type = txn.type();
+			String type = txn.type().replace(File.separator, "/");
+
 			if (type.charAt(0) == '/')
 				type = type.substring(1);
+
 			StringBuilder beanName = new StringBuilder("jboss.jta:type=ObjectStore,itype=").
 					append(type).append(",uid=").append(txn.get_uid().fileStringForm());
+
+			System.out.printf("assertBeanWasCreated: bean name = %s%n", beanName);
+
 			Set<ObjectInstance> transactions = mbs.queryMBeans(new ObjectName(beanName.toString()), null);
 			Set<ObjectInstance> participants = mbs.queryMBeans(new ObjectName(beanName.append(",puid=*").toString()), null);
 			Map<String, String> attributes;
 
 			assertEquals(1, transactions.size());
-// mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,itype=*"), null)
+
 			assertEquals(heuristicParticipantCount, participants.size());
- mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,itype=StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction,uid=0_ffff7f000001_de8b_557556b4_1f"),null);
+
 			ObjectInstance participant = participants.iterator().next();
 
 			attributes = getMBeanValues(mbs, participant.getObjectName());
