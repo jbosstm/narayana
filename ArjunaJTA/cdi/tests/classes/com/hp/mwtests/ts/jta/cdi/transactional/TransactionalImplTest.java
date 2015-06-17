@@ -53,6 +53,9 @@ public class TransactionalImplTest {
     @Inject
     BusinessLogic businessLogic;
 
+    @Inject
+    AbstractBusinessLogic abstractBusinessLogic;
+
     @Deployment
     public static WebArchive createTestArchive() {
 
@@ -418,4 +421,20 @@ public class TransactionalImplTest {
     public void testStereotype() throws Exception {
         businessLogic.doSomething();
     }
+
+    @Test
+    public void testStereotypeOnSubclass() throws Throwable {
+        abstractBusinessLogic.doSomethingInAbstractClass(null);
+    }
+
+    @Test(expected = TestRuntimeException.class)
+    public void testStereotypeOnSubclassWithRuntimeException() throws Throwable {
+        abstractBusinessLogic.doSomethingInAbstractClass(new TestRuntimeException());
+    }
+
+    @Test(expected = TestException.class)
+    public void testStereotypeOnSubclassWithException() throws Throwable {
+        abstractBusinessLogic.doSomethingInAbstractClass(new TestException());
+    }
+
 }

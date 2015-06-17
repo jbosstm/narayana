@@ -29,6 +29,8 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
 
 import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.inject.Intercepted;
+import javax.enterprise.inject.spi.Bean;
 import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
 import javax.naming.InitialContext;
@@ -51,6 +53,10 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
     @Inject
     transient javax.enterprise.inject.spi.BeanManager beanManager;
+
+    @Inject
+    @Intercepted
+    private Bean<?> interceptedBean;
 
     private static TransactionManager transactionManager;
 
@@ -89,7 +95,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         }
 
         // see if the target is a stereotype
-        for (Annotation annotation : ic.getMethod().getDeclaringClass().getAnnotations()) {
+        for (Annotation annotation : interceptedBean.getBeanClass().getAnnotations()) {
             if (beanManager.isStereotype(annotation.annotationType())) {
                 for (Annotation stereotyped : beanManager.getStereotypeDefinition(annotation.annotationType())) {
                     if (stereotyped.annotationType().equals(Transactional.class)) {
