@@ -49,7 +49,7 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
     private static final String SUBORDINATE_AA_TYPE =
-            "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA".replace("/", File.separator);
+            "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA";
 
     private static OSBTypeHandler[] defaultOsbTypes = {
             new OSBTypeHandler(
@@ -207,12 +207,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         try {
             Class cls = Class.forName(osTypeClassName);
             StateManager sm = (StateManager) cls.getConstructor().newInstance();
-            String typeName = sm.type();
+            String typeName = canonicalType(sm.type());
 
-            if (typeName != null && typeName.startsWith("/"))
-                typeName = typeName.substring(1);
+            if (typeName == null || typeName.length() == 0)
+                return false;
 
-            typeName = typeName.replace("/", File.separator);
             osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
 
             return true;
@@ -428,10 +427,9 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      * @return the list of MBeans representing the requested ObjectStore type
      */
     public List<UidWrapper> probe(String type) {
-        if (type.startsWith(File.separator))
-            return registeredMBeans.get(type.substring(File.separator.length()));
+        type = canonicalType(type);
 
-		return registeredMBeans.get(type);
+        return (type == null ? null : registeredMBeans.get(type));
     }
 
     private UidWrapper createBean(Uid uid, String type) {
@@ -473,6 +471,18 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         return uids;
     }
 
+    public static String canonicalType(String type) {
+        if (type == null)
+            return null;
+
+        type = type.replace(File.separator, "/");
+
+        while (type.startsWith("/"))
+            type = type.substring(1);
+
+        return type;
+    }
+
     private Collection<String> getTypes() {
         Collection<String> allTypes = new ArrayList<String>();
         InputObjectState types = new InputObjectState();
@@ -482,9 +492,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
 
                 while (true) {
                     try {
-                        String typeName = types.unpackString();
+                        String typeName = canonicalType(types.unpackString());
+
                         if (typeName.length() == 0)
                             break;
+
                         allTypes.add(typeName);
                     } catch (IOException e1) {
                         break;

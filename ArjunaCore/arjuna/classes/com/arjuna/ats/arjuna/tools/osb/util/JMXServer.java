@@ -113,8 +113,6 @@ public class JMXServer
 
 	public ObjectInstance registerMBean(String name, ObjStoreItemMBean bean)
 	{
-		name = name.replace(File.separator, "/");
-
 		try {
 			if (tsLogger.logger.isDebugEnabled())
 				tsLogger.logger.debug("registering bean " + name);
@@ -131,8 +129,6 @@ public class JMXServer
 
 	public boolean unregisterMBean(String name)
 	{
-		name = name.replace(File.separator, "/");
-
 		try {
 
 			getServer().unregisterMBean(new ObjectName(name));
