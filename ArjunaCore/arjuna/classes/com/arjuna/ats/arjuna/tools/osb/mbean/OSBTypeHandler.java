@@ -54,7 +54,7 @@ public class OSBTypeHandler {
         this.allowRegistration = allowRegistration;
         this.recordClass = recordClass;
         this.beanClass = beanClass;
-        this.typeName = typeName.replace("/", File.separator);
+        this.typeName = typeName;
         this.headerStateReader = headerStateReaderClassName == null ? new HeaderStateReader() : createHeader(headerStateReaderClassName);
     }
 

@@ -147,10 +147,7 @@ public class JTSOSBTestBase extends TestBase {
         showAllMBeans(mbs);
 
 		try {
-			String type = txn.type().replace(File.separator, "/");
-
-			if (type.charAt(0) == '/')
-				type = type.substring(1);
+			String type = ObjStoreBrowser.canonicalType(txn.type());
 
 			StringBuilder beanName = new StringBuilder("jboss.jta:type=ObjectStore,itype=").
 					append(type).append(",uid=").append(txn.get_uid().fileStringForm());

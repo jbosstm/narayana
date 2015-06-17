@@ -59,7 +59,7 @@ import java.util.Set;
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
 public class ExposeAllLogsTest {
-    private static final String FOO_TYPE = File.separator+"StateManager"+File.separator+"LockManager"+File.separator+"foo";
+    private static final String FOO_TYPE = "StateManager/LockManager/foo";
     private static final String osMBeanName = "jboss.jta:type=ObjectStore";
 
     @Test
