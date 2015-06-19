@@ -46,6 +46,7 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
@@ -751,7 +752,8 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
 	                case XAException.XAER_PROTO:
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
-	                case XAException.XAER_RMFAIL:
+	                case XAException.XAER_RMFAIL: // This was modified as part of JBTM-XYZ - although RMFAIL is not clear there is a rollback/commit we are flagging this to the user
+	                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 	                    return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
