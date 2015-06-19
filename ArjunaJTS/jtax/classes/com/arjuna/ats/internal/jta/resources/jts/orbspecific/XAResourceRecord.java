@@ -420,6 +420,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBOTHER:
 						case XAException.XA_RBPROTO:
 						case XAException.XA_RBTIMEOUT:
+//						case XAException.XAER_RMFAIL:
 							destroyState();
 							break;
 						default:
@@ -813,8 +814,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    throw new TRANSACTION_ROLLEDBACK();
 
 	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
-	                    throw new org.omg.CosTransactions.HeuristicHazard();
 	                case XAException.XAER_RMFAIL:
+	                    throw new org.omg.CosTransactions.HeuristicHazard();
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 
