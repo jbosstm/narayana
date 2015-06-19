@@ -202,7 +202,7 @@ public class XAResourceRecordUnitTest
         
         xares = new XAResourceRecord(tx, new FailureXAResource(FailLocation.commit, FailType.rmfail), tx.getTxId(), null);
         
-        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.FINISH_ERROR);
+        assertEquals(xares.topLevelOnePhaseCommit(), TwoPhaseOutcome.HEURISTIC_HAZARD);
     }
     
     @Test

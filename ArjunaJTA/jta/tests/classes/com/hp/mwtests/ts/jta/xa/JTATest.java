@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jta.xa;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -39,7 +40,76 @@ import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+
 public class JTATest {
+    @Test
+    public void testRMFAILcommit1PC() throws Exception
+    {
+        XAResource theResource = new XAResource() {
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public void commit(Xid xid, boolean onePhase) throws XAException {
+                throw new XAException(XAException.XAER_RMFAIL);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+            }
+
+            @Override
+            public Xid[] recover(int flag) throws XAException {
+                return null;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaRes) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int seconds) throws XAException {
+                return false;
+            }
+        };
+
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(theResource));
+
+        try {
+            tm.commit();
+            fail();
+        } catch (javax.transaction.HeuristicMixedException e) {
+            // Expected
+        }
+    }
 
 	@Test
 	public void test() throws Exception {
