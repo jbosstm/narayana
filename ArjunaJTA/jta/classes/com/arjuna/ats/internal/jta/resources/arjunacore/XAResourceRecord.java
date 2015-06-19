@@ -747,11 +747,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                    // The alternative implication is that the RM timed out the branch between the end above and the completion call, if we do make a change to assume that scenario
 	                    // it is possible we could break existing deployments so changes should be considered and potentially configurable
 	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
+	                case XAException.XAER_RMFAIL:
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	                case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
 	                case XAException.XAER_PROTO:
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
-	                case XAException.XAER_RMFAIL:
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 	                    return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
