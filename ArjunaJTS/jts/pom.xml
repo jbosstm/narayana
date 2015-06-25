@@ -592,7 +592,6 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/javaidl/**</exclude>
                     <exclude>**/JacORB*/**</exclude>
-                    <exclude>**/Recovered*UnitTest.java</exclude>
                   </excludes>
                   <reportsDirectory>${project.build.directory}/ibmorb-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
