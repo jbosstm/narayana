@@ -103,14 +103,6 @@
 	</properties>
 	<dependencies>
         <dependency>
-            <groupId>org.hornetq.rest</groupId>
-            <artifactId>hornetq-rest</artifactId>
-            <version>2.2.3-SNAPSHOT</version>
-            <!--
-        <version>2.2.2.Final</version>
--->
-        </dependency>
-        <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
             <version>3.2.0.Final</version>

@@ -191,7 +191,7 @@ public class AdministrationProxy implements BlacktieAdministration {
         List<String> runningServerList = new ArrayList<String>();
 
         try {
-            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging,hornetq-server=default,jms-queue=BTR_*");
+            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging-activemq,server=default,jms-queue=BTR_*");
             ObjectInstance[] dests = beanServerConnection.queryMBeans(objName, null).toArray(new ObjectInstance[] {});
             for (int i = 0; i < dests.length; i++) {
                 String serviceComponentOfObjectName = dests[i].getObjectName().getCanonicalName();
@@ -221,7 +221,7 @@ public class AdministrationProxy implements BlacktieAdministration {
         ArrayList<Integer> ids = new ArrayList<Integer>();
 
         try {
-            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging,hornetq-server=default,jms-queue=BTR_*");
+            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging-activemq,server=default,jms-queue=BTR_*");
             ObjectInstance[] dests = beanServerConnection.queryMBeans(objName, null).toArray(new ObjectInstance[] {});
             for (int i = 0; i < dests.length; i++) {
                 String serviceComponentOfObjectName = dests[i].getObjectName().getCanonicalName();
@@ -604,7 +604,7 @@ public class AdministrationProxy implements BlacktieAdministration {
             } else {
                 prefix = "BTR_";
             }
-            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging,hornetq-server=default,jms-" + type + "="
+            ObjectName objName = new ObjectName("jboss.as:subsystem=messaging-activemq,server=default,jms-" + type + "="
                     + prefix + serviceName);
             depth = (Integer) beanServerConnection.getAttribute(objName, "messageCount");
         } catch (Exception e) {

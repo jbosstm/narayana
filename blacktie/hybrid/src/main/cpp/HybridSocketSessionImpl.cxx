@@ -415,7 +415,7 @@ bool HybridSocketSessionImpl::send(MESSAGE& message) {
                                 long long longSched = message.schedtime;
                                 scheduled = (char*) malloc(32); // #   define ULLONG_MAX      18446744073709551615ULL from /usr/include/limits.h
                                 sprintf(scheduled, "%lld", longSched);
-                                apr_hash_set(frame.headers, "_HQ_SCHED_DELIVERY", APR_HASH_KEY_STRING, scheduled);
+                                apr_hash_set(frame.headers, "_AMQ_SCHED_DELIVERY", APR_HASH_KEY_STRING, scheduled);
                                 LOG4CXX_TRACE(logger, "Set the scheduled delivery time: " << scheduled);
                         }
 
