@@ -400,8 +400,8 @@
     
     <!-- External dependencies versions -->
     <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.1</version.org.codehaus.mojo.findbugs-maven-plugin>
-    <jboss-as.version>10.0.0.Alpha4-SNAPSHOT</jboss-as.version>
-    <version.org.wildfly.core>2.0.0.Alpha2</version.org.wildfly.core>
+    <jboss-as.version>10.0.0.Alpha5-SNAPSHOT</jboss-as.version>
+    <version.org.wildfly.core>2.0.0.Alpha5</version.org.wildfly.core>
     <version.org.wildfly.build-tools>1.1.0.Beta1</version.org.wildfly.build-tools>
     <version.org.wildfly.arquillian>1.0.0.CR1</version.org.wildfly.arquillian>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
