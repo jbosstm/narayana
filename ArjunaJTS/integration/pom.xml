@@ -162,6 +162,18 @@
       <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnpserver</artifactId>
+      <version>5.0.3.GA</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
   </dependencies>
   <profiles>
     <profile>
