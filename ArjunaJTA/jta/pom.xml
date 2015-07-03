@@ -460,9 +460,17 @@
               <excludes>
                 <exclude>**/io/narayana/perf/product/*</exclude>
                 <exclude>**/integration/*IntegrationTest.java</exclude>
-                <!-- temporarily disable BMUnitRunner tests due to issue with the IBM java agent -->
-                <exclude>**/TestCommitMarkableResource*</exclude>
-                <exclude>**/CrashRecovery*</exclude>
+                <!-- disable BMUnitRunner tests due to issue with the IBM java agent -->
+                <exclude>**/TestCommitMarkableResourceFailAfterPrepare.java</exclude>
+                <exclude>**/TestCommitMarkableResourceFailAfterCommitTwoXAResources.java</exclude>
+                <exclude>**/TestCommitMarkableResourceFailAfterPrepareTwoXAResources.java</exclude>
+                <exclude>**/TestCommitMarkableResourceFailActivate.java</exclude>
+                <exclude>**/TestCommitMarkableResourceFailAfterCommit.java</exclude>
+                <exclude>**/TestCommitMarkableResourceGCFromCrashAfterCommit.java</exclude>
+                <exclude>**/TestCommitMarkableResourceMBeansFailAfterPrepare.java</exclude>
+                <exclude>**/CrashAfterResourcesCommitTest.java</exclude>
+                <exclude>**/CrashRecoveryCommitReturnsXA_RETRY.java</exclude>
+                <exclude>**/CrashRecovery.java</exclude>
               </excludes>
             </configuration>
           </plugin>
