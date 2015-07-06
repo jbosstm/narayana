@@ -173,7 +173,7 @@
                 <configuration>
                   <skip>false</skip>
                   <excludes>
-                    <exclude>**/RecoveryTest.java</excldue>
+                    <exclude>**/RecoveryTest.java</exclude>
                   </excludes>
                 </configuration>
               </execution>

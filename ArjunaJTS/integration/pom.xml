@@ -198,7 +198,7 @@
                 <configuration>
                   <skip>false</skip>
                   <excludes>
-                    <exclude>**/SimpleIsolatedServers.java</excldue>
+                    <exclude>**/SimpleIsolatedServers.java</exclude>
                   </excludes>
                 </configuration>
               </execution>
