@@ -29,6 +29,8 @@ import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
+import org.jboss.stm.internal.RecoverableContainer;
+import org.jboss.stm.internal.proxy.OptimisticLockManagerProxy;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -273,5 +275,15 @@ public class ContainerUnitTest extends TestCase
         }
 
         assertEquals(obj1.value()+obj2.value(), 22);
+        
+        @SuppressWarnings("unchecked")
+        RecoverableContainer<Sample1> cont = ((OptimisticLockManagerProxy<Sample1>) obj1).getContainer();
+        
+        assertTrue(cont != null);
+        
+        @SuppressWarnings("unchecked")
+        Container<Sample1> duplicateContainer = (Container<Sample1>) Container.getContainer(obj1);
+        
+        assertTrue(duplicateContainer != null);
     }
 }

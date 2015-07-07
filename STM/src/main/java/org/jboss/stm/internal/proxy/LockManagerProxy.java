@@ -284,6 +284,11 @@ public class LockManagerProxy<T> extends LockManager
         return "/StateManager/LockManager/"+_theObject.getClass().getCanonicalName();
     }
     
+    public final RecoverableContainer<T> getContainer ()
+    {
+        return _container; 
+    }
+    
     private boolean packArray (final Field afield, OutputObjectState os)
     {
         if (!packPrimitiveArray(afield, os))

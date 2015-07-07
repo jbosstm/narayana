@@ -22,10 +22,14 @@
 package org.jboss.stm;
 
 import java.security.InvalidParameterException;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.jboss.stm.internal.PersistentContainer;
 import org.jboss.stm.internal.RecoverableContainer;
+import org.jboss.stm.internal.proxy.LockManagerProxy;
+import org.jboss.stm.internal.proxy.OptimisticLockManagerProxy;
 
 import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.ObjectType;
@@ -46,7 +50,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  */
 
 public class Container<T>
-{
+{   
     /**
      * The TYPE of the objects created by this instance.
      * 
@@ -258,11 +262,49 @@ public class Container<T>
         return _theContainer.getUidForHandle(proxy);
     }
 
-    // TODO
+    /**
+     * Given the proxy return the container that is managing it.
+     * 
+     * @param proxy the instance within the container we're looking for.
+     * @return the container or null. Shouldn't really be possible to get null!
+     */
     
     public static final Container<?> getContainer (Object proxy)
     {
-        return null;
+        /*
+         * Rather than maintain a list of Container instances and iterate through them
+         * we create a clone of the Container using the real container within the
+         * proxy itself. Container is essentially a (almost) stateless wrapper class
+         * anyway so hopefully this is a lightweight and faster way of achieving this.
+         * Can revisit later if this creates too many instances.
+         */
+        
+        Container<?> toReturn = null;
+        
+        if (proxy instanceof OptimisticLockManagerProxy<?>)
+        {
+            RecoverableContainer<?> cont = ((OptimisticLockManagerProxy<?>) proxy).getContainer();
+            
+            toReturn = new Container(cont);
+        }
+        else
+        {
+            if (proxy instanceof LockManagerProxy<?>)
+            {
+                RecoverableContainer<?> cont = ((LockManagerProxy<?>) proxy).getContainer();
+                
+                toReturn = new Container(cont);
+            }
+            else
+                throw new IllegalArgumentException("Not a proxy object!");
+        }
+        
+        return toReturn;
+    }
+    
+    private Container (RecoverableContainer<T> toUse)
+    {
+        _theContainer = toUse;
     }
     
     /*
@@ -270,6 +312,4 @@ public class Container<T>
      */
     
     private RecoverableContainer<T> _theContainer;
-    
-    // private static final WeakHashMap<Container<?>, Container<?>> _containers = new WeakHashMap<Container<?>, Container<?>>();
 }
