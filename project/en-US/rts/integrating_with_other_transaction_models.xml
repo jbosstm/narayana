@@ -69,7 +69,7 @@ public class JAXRSResource {
         <para>
             WS includes two transaction models referred to as WSAT and WSBA. WSAT integration with JTA is documented
             in the Transaction Bridging section of the product guide (
-            <ulink url="http://docs.jboss.org/jbosstm/5.2.0.Final/guides/product/index.html">http://docs.jboss.org/jbosstm/5.2.0.Final/guides/product/index.html</ulink>
+            <ulink url="http://docs.jboss.org/jbosstm/5.2.1.Final-SNAPSHOT/guides/product/index.html">http://docs.jboss.org/jbosstm/5.2.1.Final-SNAPSHOT/guides/product/index.html</ulink>
             ). By using this bridge in conjunction with the RESTAT JTA bridge full interoperability between RESTAT
             and WSAT can be realised.
         </para>
