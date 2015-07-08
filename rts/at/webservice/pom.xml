@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>restat</artifactId>
-    <version>5.1.2.Final-SNAPSHOT</version>
+    <version>5.2.0.Final</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -29,7 +29,7 @@
   <description>Bundles tx as a deployable war archive</description>
 
   <properties>
-    <version.artifactId>5.1.2.Final-SNAPSHOT</version.artifactId>
+    <version.artifactId>5.2.0.Final</version.artifactId>
     <artifactId.name>restat-web</artifactId.name>
     <version.override.org.jboss.spec.javax.servlet>1.0.0.Final</version.override.org.jboss.spec.javax.servlet>
   </properties>
