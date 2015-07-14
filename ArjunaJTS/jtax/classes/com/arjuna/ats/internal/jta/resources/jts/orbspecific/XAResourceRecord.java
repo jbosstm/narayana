@@ -816,8 +816,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 	                    throw new org.omg.CosTransactions.HeuristicHazard();
-	                case XAException.XAER_RMFAIL: // This was modified as part of JBTM-XYZ - although RMFAIL is not clear there is a rollback/commit we are flagging this to the user
-                        throw new org.omg.CosTransactions.HeuristicHazard();
+	                case XAException.XAER_RMFAIL:
+	                    // This was modified as part of JBTM-2443 - although RMFAIL is not clear there is a rollback/commit we are flagging this to the user
+                        if (interpretRMFAILFrom1PCAsHeuristicHazard) {
+                            throw new org.omg.CosTransactions.HeuristicHazard();
+                        }
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 
@@ -1485,4 +1488,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private static boolean _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
 	
     private List<SerializableXAResourceDeserializer> serializableXAResourceDeserializers;
+
+    private static final boolean interpretRMFAILFrom1PCAsHeuristicHazard = jtaPropertyManager.getJTAEnvironmentBean().isInterpretRMFAILFrom1PCAsHeuristicHazard();
 }

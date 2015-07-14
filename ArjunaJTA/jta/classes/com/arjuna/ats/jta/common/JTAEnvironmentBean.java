@@ -110,6 +110,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
 	private Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>();
 
+    private volatile boolean interpretRMFAILFrom1PCAsHeuristicHazard;
+
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -1217,4 +1219,27 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 			boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches) {
 		this.notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches;
 	}
+
+	/**
+	 * If this is enabled we interpret RMFail returned during 1PC as a heuristic, else it is a finish error
+	 * 
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+    public boolean isInterpretRMFAILFrom1PCAsHeuristicHazard() {
+        return interpretRMFAILFrom1PCAsHeuristicHazard;
+    }
+
+    /**
+     * Change the behaviour of RMFAIL in 1PC to be treated as heuristic hazard. This is early access to the behaviour in Narayana5.
+     * 
+     * @param interpretRMFAILFrom1PCAsHeuristicHazard
+     * 
+     * @deprecated
+     */
+    public void setInterpretRMFAILFrom1PCAsHeuristicHazard(boolean interpretRMFAILFrom1PCAsHeuristicHazard) {
+        this.interpretRMFAILFrom1PCAsHeuristicHazard = interpretRMFAILFrom1PCAsHeuristicHazard;
+    }
+	
 }
