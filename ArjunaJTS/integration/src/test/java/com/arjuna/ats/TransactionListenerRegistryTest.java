@@ -36,6 +36,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import com.arjuna.ats.jta.distributed.spi.TxListener;
 import org.jboss.tm.listener.*;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
 import org.junit.Test;

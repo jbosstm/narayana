@@ -54,6 +54,53 @@
           <modules>
               <module>narayana-jts-jacorb</module>
           </modules>
+        <dependencies>
+          <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>jacorb</artifactId>
+            <version>${version.jacorb}</version>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.org.slf4j}</version>
+            <scope>test</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.org.slf4j}</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>surefire-jacorb</id>
+                  <phase>test</phase>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                  <configuration>
+                    <skip>false</skip>
+                    <systemPropertyVariables
+                      combine.children="append">
+                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.jacorb_2_0</OrbPortabilityEnvironmentBean.orbDataClassName>
+                    </systemPropertyVariables>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
       </profile>
       <profile>
         <id>jts-idlj</id>
@@ -65,7 +112,72 @@
         <modules>
             <module>narayana-jts-idlj</module>
         </modules>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>surefire-idlj</id>
+                  <phase>test</phase>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                  <configuration>
+                    <skip>false</skip>
+                    <systemPropertyVariables
+                      combine.children="append">
+                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                    </systemPropertyVariables>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
       </profile>
+      <profile>
+        <id>jts-ibmorb</id>
+        <activation>
+            <property>
+              <name>ibmorb-enabled</name>
+            </property>
+        </activation>
+        <modules>
+            <module>narayana-jts-ibmorb</module>
+        </modules>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>surefire-ibmorb</id>
+                  <phase>test</phase>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                  <configuration>
+                    <skip>false</skip>
+                    <systemProperties combine.children="append" />
+                    <systemPropertyVariables
+                      combine.children="append">
+                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.orb.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.ibmorb.oa.implementations.ibmorb_7_1</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.ibmorb_7_1</OrbPortabilityEnvironmentBean.orbDataClassName>
+                    </systemPropertyVariables>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+
       <profile>
           <id>release</id>
           <build>
@@ -83,17 +195,6 @@
                 </plugin>
               </plugins>
           </build>
-      </profile>
-      <profile>
-        <id>jts-ibmorb</id>
-        <activation>
-            <property>
-              <name>ibmorb-enabled</name>
-            </property>
-        </activation>
-        <modules>
-            <module>narayana-jts-ibmorb</module>
-        </modules>
       </profile>
   </profiles>
 </project>

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats;
+package com.arjuna.ats.jta.distributed.spi;
 
 import org.jboss.tm.listener.*;
 
@@ -32,6 +32,7 @@ public class TxListener implements Synchronization, TransactionListener {
     volatile int acCalled = 0;
     TransactionListenerRegistry registry;
     volatile int registrationCount = 2;
+    boolean hasEvents = false;
 
     public TxListener(TransactionListenerRegistry registry) {
         this.registry = registry;
@@ -51,6 +52,8 @@ public class TxListener implements Synchronization, TransactionListener {
 
     @Override
     public void onEvent(TransactionEvent transactionEvent) {
+        hasEvents = true;
+
         if (transactionEvent.getTypes().contains(EventType.ASSOCIATED)) {
             if (registry != null && registrationCount > 0) {
                 // test that callbacks can register listeners
@@ -88,14 +91,22 @@ public class TxListener implements Synchronization, TransactionListener {
     /**
      * @return true if the txn has been disassociated and the AC has been called just once
      */
-    protected boolean shouldDisassoc() {
+    public boolean shouldDisassoc() {
         return assoc == 0 && singleCallAC();
 
     }
 
-    protected boolean singleCallAC() {
+    public boolean singleCallAC() {
         return acCalled == 1;
 
+    }
+
+    public boolean hasEvents() {
+        return hasEvents;
+    }
+
+    public void clearEvents() {
+        hasEvents = false;
     }
 
     private static class L2 implements TransactionListener {
