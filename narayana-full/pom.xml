@@ -137,9 +137,9 @@
 
     <!-- Ensure these are in the distribution -->
     <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-journal</artifactId>
-      <version>${version.org.hornetq}</version>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-journal</artifactId>
+      <version>${version.org.apache.activemq}</version>
       <exclusions>
         <exclusion>
           <groupId>io.netty</groupId>

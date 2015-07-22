@@ -82,9 +82,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-journal</artifactId>
-      <version>${version.org.hornetq}</version>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>artemis-journal</artifactId>
+      <version>${version.org.apache.activemq}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
