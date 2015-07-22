@@ -29,15 +29,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.hornetq.core.journal.Journal;
-import org.hornetq.core.journal.JournalLoadInformation;
-import org.hornetq.core.journal.PreparedTransactionInfo;
-import org.hornetq.core.journal.RecordInfo;
-import org.hornetq.core.journal.SequentialFileFactory;
-import org.hornetq.core.journal.TransactionFailureCallback;
-import org.hornetq.core.journal.impl.AIOSequentialFileFactory;
-import org.hornetq.core.journal.impl.JournalImpl;
-import org.hornetq.core.journal.impl.NIOSequentialFileFactory;
+import org.apache.activemq.artemis.core.journal.Journal;
+import org.apache.activemq.artemis.core.journal.JournalLoadInformation;
+import org.apache.activemq.artemis.core.journal.PreparedTransactionInfo;
+import org.apache.activemq.artemis.core.journal.RecordInfo;
+import org.apache.activemq.artemis.core.journal.SequentialFileFactory;
+import org.apache.activemq.artemis.core.journal.TransactionFailureCallback;
+import org.apache.activemq.artemis.core.journal.impl.AIOSequentialFileFactory;
+import org.apache.activemq.artemis.core.journal.impl.JournalImpl;
+import org.apache.activemq.artemis.core.journal.impl.NIOSequentialFileFactory;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -80,7 +80,7 @@ public class HornetqJournalStore
         List<RecordInfo> committedRecords = new LinkedList<RecordInfo>();
         List<PreparedTransactionInfo> preparedTransactions = new LinkedList<PreparedTransactionInfo>();
         TransactionFailureCallback failureCallback = new TransactionFailureCallback() {
-            public void failedTransaction(long l, java.util.List<org.hornetq.core.journal.RecordInfo> recordInfos, java.util.List<org.hornetq.core.journal.RecordInfo> recordInfos1) {
+            public void failedTransaction(long l, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos1) {
                 tsLogger.i18NLogger.warn_journal_load_error();
             }
         };
