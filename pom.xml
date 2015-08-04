@@ -361,24 +361,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.jboss.byteman</groupId>
-        <artifactId>byteman-rulecheck-maven-plugin</artifactId>
-        <version>${version.org.jboss.byteman}</version>
-        <executions>
-          <execution>
-             <id>rulecheck</id>
-             <goals>
-               <goal>rulecheck</goal>
-             </goals>
-             <configuration>
-                 <includes>
-                     <include>**/*.btm</include>
-                 </includes>
-             </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -486,6 +468,37 @@
     <module>code-coverage</module>
   </modules>
   <profiles>
+    <profile>
+      <id>byteman-rulecheck</id>
+      <activation>
+        <property><name>!skipTests</name></property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-rulecheck-maven-plugin</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <executions>
+              <execution>
+                 <id>rulecheck</id>
+                 <phase>test</phase>
+                 <goals>
+                   <goal>rulecheck</goal>
+                 </goals>
+                 <configuration>
+                     <includes>
+                         <include>**/*.btm</include>
+                     </includes>
+                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+      
     <profile>
       <id>release</id>
       <build>
