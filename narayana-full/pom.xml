@@ -242,7 +242,6 @@
       <id>release</id>
       <build>
         <plugins>
-        <!--
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -257,7 +256,7 @@
                   <includeDependencySources>true</includeDependencySources>
                   <docfilessubdirs>true</docfilessubdirs>
                   <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11</subpackages>
-                   use this instead of excludePackageNames because of MJAVADOC-299
+                  <!-- use this instead of excludePackageNames because of MJAVADOC-299 -->
                   <additionalparam>
                     -exclude com.arjuna.ats.internal -exclude com.arjuna.common.internal
                     -exclude com.arjuna.orbportability.internal -exclude com.arjuna.ats.jbossatx
@@ -308,7 +307,6 @@
               </execution>
             </executions>
           </plugin>
-          -->
         </plugins>
       </build>
     </profile>
