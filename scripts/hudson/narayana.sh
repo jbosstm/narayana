@@ -214,23 +214,21 @@ function build_as {
   git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
 
-  WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-  [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || fatal "Need to upgrade the jboss-as.version in the narayana pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
   JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
-  echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.conf
+  echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
   init_jboss_home
 }
 
 function init_jboss_home {
   cd $WORKSPACE
-  JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_MASTER_VERSION}
+  WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
+  JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
   export JBOSS_HOME=`echo  $JBOSS_HOME`
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
   echo "JBOSS_HOME=$JBOSS_HOME"
@@ -301,6 +299,10 @@ function blacktie {
 
   echo "Building Blacktie Subsystem"
   cd ${WORKSPACE}
+  WILDFLY_MASTER_VERSION=`grep 'version.org.wildfly.wildfly-parent' blacktie/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
+  [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || fatal "Need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
+
   ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
   rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
@@ -661,10 +663,6 @@ init_test_options
 # export WSTX_MODULES="WSAS,WSCF,WSTX,WS-C,WS-T,xtstest,crash-recovery-tests"
 
 [ -z "${WORKSPACE}" ] && fatal "UNSET WORKSPACE"
-#[ -z "${WILDFLY_MASTER_VERSION}" ] && fatal "UNSET WILDFLY_MASTER_VERSION"
-# INFER WILDFLY_MASTER_VERSION from pom.xml
-WILDFLY_MASTER_VERSION=`grep 'jboss-as.version' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
 
 # FOR DEBUGGING SUBSEQUENT ISSUES
 if [ -x /usr/bin/free ]; then
