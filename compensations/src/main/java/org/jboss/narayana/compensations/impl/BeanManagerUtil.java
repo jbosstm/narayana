@@ -3,8 +3,7 @@ package org.jboss.narayana.compensations.impl;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.enterprise.inject.spi.CDI;
 import java.util.Iterator;
 
 public class BeanManagerUtil {
@@ -12,17 +11,7 @@ public class BeanManagerUtil {
 
     public static BeanManager getBeanManager() {
 
-        try {
-            return InitialContext.doLookup("java:comp/BeanManager");
-        } catch (NamingException e) {
-            //Do nothing, and move onto alternative
-        }
-
-        try {
-            return InitialContext.doLookup("java:comp/env/BeanManager");
-        } catch (NamingException e) {
-            throw new RuntimeException("BeanManager not available in JNDI");
-        }
+        return CDI.current().getBeanManager();
     }
 
     public static <T> T createBeanInstance(Class<T> clazz, BeanManager bm) {

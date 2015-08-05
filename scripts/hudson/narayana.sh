@@ -364,6 +364,8 @@ function compensations_tests {
   [ $? = 0 ] || fatal "compensations build failed"
   ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-weld "$@" test
+  [ $? = 0 ] || fatal "compensations build failed"
 }
 
 function xts_tests {
