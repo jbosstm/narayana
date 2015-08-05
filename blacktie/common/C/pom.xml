@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.jboss.narayana.blacktie</groupId>
         <artifactId>blacktie-common</artifactId>
-        <version>5.2.1.Final</version>
+        <version>5.2.2.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -283,7 +283,7 @@
         									blacktie-cpp-plugin
         								</artifactId>
         								<versionRange>
-        									[5.2.1.Final,)
+        									[5.2.2.Final-SNAPSHOT,)
         								</versionRange>
         								<goals>
         									<goal>test-compile</goal>
