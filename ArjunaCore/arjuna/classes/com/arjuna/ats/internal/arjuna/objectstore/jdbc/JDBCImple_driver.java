@@ -695,35 +695,34 @@ public abstract class JDBCImple_driver {
 		// }
 		// };
 
-		Connection connection = jdbcAccess.getConnection();
+		try (Connection connection = jdbcAccess.getConnection()) {
 
-		Statement stmt = connection.createStatement();
-
-		// table [type, object UID, format, blob]
-
-		if (jdbcStoreEnvironmentBean.getDropTable()) {
-			try {
-				stmt.executeUpdate("DROP TABLE " + tableName);
-			} catch (SQLException ex) {
-				checkDropTableException(connection, ex);
-			}
+    		try (Statement stmt = connection.createStatement()) {
+    
+        		// table [type, object UID, format, blob]
+        
+        		if (jdbcStoreEnvironmentBean.getDropTable()) {
+        			try {
+        				stmt.executeUpdate("DROP TABLE " + tableName);
+        			} catch (SQLException ex) {
+        				checkDropTableException(connection, ex);
+        			}
+        		}
+        
+        		if (jdbcStoreEnvironmentBean.getCreateTable()) {
+        			try {
+        				createTable(stmt, tableName);
+        			} catch (SQLException ex) {
+        				checkCreateTableError(ex);
+        			}
+        		}
+        
+        		// This can be the case when triggering via EmptyObjectStore
+        		if (!connection.getAutoCommit()) {
+        			connection.commit();
+        		}
+            }
 		}
-
-		if (jdbcStoreEnvironmentBean.getCreateTable()) {
-			try {
-				createTable(stmt, tableName);
-			} catch (SQLException ex) {
-				checkCreateTableError(ex);
-			}
-		}
-
-		stmt.close();
-
-		// This can be the case when triggering via EmptyObjectStore
-		if (!connection.getAutoCommit()) {
-			connection.commit();
-		}
-		connection.close();
 
 		this.tableName = tableName;
 	}
