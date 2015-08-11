@@ -56,6 +56,10 @@ function init_test_options {
         comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+    elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_OPENJDKORB* ]]; then
+        comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
+        export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
     elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
         comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
@@ -83,13 +87,14 @@ function init_test_options {
         [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+        [ $OPENJDK_ORB ] || OPENJDK_ORB=1 # Run QA test suite against the openjdk orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
         [ $txbridge ] || txbridge=1 # bridge tests
         [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     else
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
     fi
 }
 
@@ -463,7 +468,7 @@ function add_qa_xargs {
     let i=i+1
   done
 
-  sed -i "s/NEXT_COMMAND_LINE_ARG=.*$/${XARGS}/" TaskImpl.properties
+  sed -i "s#NEXT_COMMAND_LINE_ARG=.*\$#${XARGS}#" TaskImpl.properties
 }
 
 function qa_tests_once {
@@ -481,7 +486,9 @@ function qa_tests_once {
   git checkout TaskImpl.properties
 
   # check to see which orb we are running against:
-  if [ x$orb = x"idlj" ]; then
+  if [ x$orb = x"openjdk" ]; then
+    orbtype=openjdk
+  elif [ x$orb = x"idlj" ]; then
     orbtype=idlj
   elif [ x$orb = x"ibmorb" ]; then
     orbtype=ibmorb
@@ -494,6 +501,15 @@ function qa_tests_once {
 
   sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
+
+  if [ $orbtype = "openjdk" ]; then
+    openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
+    if [ ! -f ${openjdkjar} ]; then
+      fatal "building with openjdk requires ${openjdk-orb-jar} to exist"
+    fi
+    EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    orbtype="idlj"
+  fi
 
   if [[ x"$EXTRA_QA_SYSTEM_PROPERTIES" != "x" ]]; then
     add_qa_xargs "$EXTRA_QA_SYSTEM_PROPERTIES"
@@ -580,6 +596,7 @@ function qa_tests {
   ok1=0;
   ok2=0;
   ok3=0;
+  ok4=0;
   if [ $IBM_ORB = 1 ]; then
     qa_tests_once "orb=ibmorb" "$@" # run qa against the Sun orb
     ok3=$?
@@ -592,13 +609,18 @@ function qa_tests {
       qa_tests_once "orb=jacorb" "$@"    # run qa against the default orb
       ok1=$?
     fi
+    if [ $OPENJDK_ORB = 1 ]; then
+      qa_tests_once "orb=openjdk" "$@"    # run qa against the openjdk orb
+      ok4=$?
+    fi
   fi
 
   [ $ok1 = 0 ] || echo some jacorb QA tests failed
   [ $ok2 = 0 ] || echo some Sun ORB QA tests failed
   [ $ok3 = 0 ] || echo some IBM ORB QA tests failed
+  [ $ok4 = 0 ] || echo some openjdk ORB QA tests failed
 
-  [ $ok1 = 0 -a $ok2 = 0 -a $ok3 = 0 ] || fatal "some qa tests failed"
+  [ $ok1 = 0 -a $ok2 = 0 -a $ok3 = 0 -a $ok4 = 0 ] || fatal "some qa tests failed"
 }
 
 function hw_spec {
