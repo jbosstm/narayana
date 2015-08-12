@@ -385,7 +385,12 @@ function xts_tests {
     echo "BUILDING SPECIFIC WSTX11 modules"
     ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   else
-    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/unit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/xtstest/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
