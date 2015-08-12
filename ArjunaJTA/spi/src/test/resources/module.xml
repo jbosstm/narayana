@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module xmlns="urn:jboss:module:1.0" name="io.narayana.spi" slot="5.2.2.Final-SNAPSHOT">
+<module xmlns="urn:jboss:module:1.0" name="io.narayana.spi" slot="5.2.2.Final">
     <resources>
-        <resource-root path="io.narayana.spi-5.2.2.Final-SNAPSHOT.jar" />
+        <resource-root path="io.narayana.spi-5.2.2.Final.jar" />
     </resources>
     <dependencies>
         <module name="narayana.jta" slot="5.0.0"/>
