@@ -503,6 +503,7 @@ function qa_tests_once {
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
   if [ $orbtype = "openjdk" ]; then
+    openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
     EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
     orbtype="idlj"
   fi
