@@ -757,7 +757,6 @@ public class Coordinator
 
     private static Map<String, RecoveringTransaction> getRecoveringTransactions(Map<String, Transaction> transactions) {
         Map<String, RecoveringTransaction> recoveringTransactions = new ConcurrentHashMap<String, RecoveringTransaction>();
-                new HashMap<String, RecoveringTransaction>();
 
         for (Uid uid : getUids(new HashSet<Uid>(), REST_TXN_TYPE)) {
             String key =  uid.fileStringForm();

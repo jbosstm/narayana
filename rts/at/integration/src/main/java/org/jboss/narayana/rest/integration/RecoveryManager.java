@@ -116,7 +116,7 @@ public final class RecoveryManager {
 
     private byte[] getParticipantBytes(final Participant participant) throws IOException {
         if (participant instanceof Serializable) {
-            return serializeParticipant(participant);
+            return serializeParticipant((Serializable) participant);
         } else if (participant instanceof PersistableParticipant) {
             return ((PersistableParticipant) participant).getRecoveryState();
         }
@@ -125,7 +125,7 @@ public final class RecoveryManager {
         return new byte[] {};
     }
 
-    private byte[] serializeParticipant(final Participant participant) throws IOException {
+    private byte[] serializeParticipant(final Serializable participant) throws IOException {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(participant);
