@@ -30,7 +30,7 @@ public class ParticipantElement {
 
     @XmlElement
     public Date getCreated() {
-        return created;
+        return new Date(created.getTime());
     }
 
     @XmlElement
@@ -49,7 +49,7 @@ public class ParticipantElement {
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = new Date(created.getTime());
     }
 
     public void setStatus(TransactionStatusElement status) {

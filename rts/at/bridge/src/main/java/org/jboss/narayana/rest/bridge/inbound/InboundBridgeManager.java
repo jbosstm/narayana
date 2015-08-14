@@ -45,13 +45,9 @@ public final class InboundBridgeManager {
 
     private final Map<String, Xid> transactionXids;
 
-    public static InboundBridgeManager getInstance() {
+    public static synchronized InboundBridgeManager getInstance() {
         if (INSTANCE == null) {
-            synchronized (InboundBridgeManager.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new InboundBridgeManager();
-                }
-            }
+            INSTANCE = new InboundBridgeManager();
         }
 
         return INSTANCE;

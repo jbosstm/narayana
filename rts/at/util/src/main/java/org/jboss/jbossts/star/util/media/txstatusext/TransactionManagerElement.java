@@ -33,7 +33,7 @@ public class TransactionManagerElement {
 
     @XmlElement
     public Date getCreated() {
-        return created;
+        return new Date(created.getTime());
     }
 
     @XmlElement
@@ -52,7 +52,7 @@ public class TransactionManagerElement {
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = new Date(created.getTime());
     }
 
     public void setStatistics(TransactionStatisticsElement statistics) {

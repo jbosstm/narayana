@@ -22,7 +22,9 @@
 
 /**
  * Exception for wrapping unexpected http response codes
+ * @deprecated The new class will be updated to extend Exception instead of Error
  */
+@Deprecated // The new class will be updated to extend Exception instead of Error
 public class HttpResponseException extends Error
 {
     private int expectedResponse;

@@ -674,7 +674,7 @@ public class TxSupport
 
         if (v != null)
             try {
-                return Integer.valueOf(v);
+                return Integer.parseInt(v);
             } catch (NumberFormatException e) {
                 //
             }
@@ -809,7 +809,9 @@ public class TxSupport
         if (status == HttpURLConnection.HTTP_UNSUPPORTED_TYPE )
             return null;
 
-        System.out.printf("Unmarshalling TransactionManagerElement\n%s", xml);
+        if (log.isTraceEnabled())
+            log.tracef("Unmarshalling TransactionManagerElement%n%s", xml);
+
         JAXBContext jc = JAXBContext.newInstance(TransactionManagerElement.class.getPackage().getName() );
 
 
