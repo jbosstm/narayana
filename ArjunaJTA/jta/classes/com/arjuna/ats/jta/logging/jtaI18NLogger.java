@@ -63,7 +63,7 @@ public interface jtaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_constfail();
 
-	@Message(id = 16005, value = "{0} - failed to recover XAResource. status is ${1}", format = MESSAGE_FORMAT)
+	@Message(id = 16005, value = "{0} - failed to recover XAResource. status is {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_recovery_failedtorecover(String arg0, String arg1);
 
