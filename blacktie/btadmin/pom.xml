@@ -75,14 +75,11 @@
 	</licenses>
 	<build>
 		<plugins>
-			<plugin>
-				<inherited>false</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
 			<plugin>
 				<groupId>org.jboss.narayana.blacktie.plugins</groupId>
 				<artifactId>blacktie-cpp-plugin</artifactId>
