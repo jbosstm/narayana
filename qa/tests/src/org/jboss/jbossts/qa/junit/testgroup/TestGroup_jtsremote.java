@@ -24,7 +24,6 @@ import org.jboss.jbossts.qa.Utils.PerformanceProfileStore;
 import org.jboss.jbossts.qa.junit.Task;
 import org.jboss.jbossts.qa.junit.TestGroupBase;
 import org.junit.Test;
-import io.narayana.perf.RegressionChecker;
 
 /**
  * QA tests for JTS module.
