@@ -19,9 +19,9 @@
 	<!--
 	   REPLICATES THE FOLLOWING
 	chmod u+x jboss-as/bin/add-user.sh
-	(cd jboss-as/bin/ && ./add-user.sh admin password \-\-silent=true)
-	(cd jboss-as/bin/ && ./add-user.sh guest password -a \-\-silent=true)
-	(cd jboss-as/bin/ && ./add-user.sh dynsub password -a \-\-silent=true)
+	(cd jboss-as/bin/ && ./add-user.sh admin password1@ \-\-silent=true)
+	(cd jboss-as/bin/ && ./add-user.sh guest password1@ -a \-\-silent=true)
+	(cd jboss-as/bin/ && ./add-user.sh dynsub password1@ -a \-\-silent=true)
 	-->
 	<copy todir="${JBOSS_HOME}/" overwrite="true">
 		<fileset dir="config/"/>
