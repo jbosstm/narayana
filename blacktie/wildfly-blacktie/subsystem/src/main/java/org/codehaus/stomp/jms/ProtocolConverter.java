@@ -59,25 +59,20 @@ import org.jboss.narayana.rest.bridge.inbound.InboundBridgeManager;
 public class ProtocolConverter {
     private static final transient Log log = LogFactory.getLog(ProtocolConverter.class);
     private final TcpTransport tcpTransport;
-    private ConnectionFactory noneXAConnectionFactory;
-    private XAConnectionFactory xaConnectionFactory;
     private StompSession noneXaSession;
     private Map<Xid, StompSession> xaSessions = new ConcurrentHashMap<Xid, StompSession>();
 
-    private TransactionManager tm;
     private String login;
     private String passcode;
     private String clientId;
     private InitialContext initialContext;
     private boolean closed;
+    private StompConnect stompConnect;
 
-    public ProtocolConverter(InitialContext initialContext, ConnectionFactory connectionFactory,
-            XAConnectionFactory xaConnectionFactory, TcpTransport outputHandler) throws NamingException {
-        this.noneXAConnectionFactory = connectionFactory;
-        this.xaConnectionFactory = xaConnectionFactory;
-        this.tcpTransport = outputHandler;
+    public ProtocolConverter(InitialContext initialContext, StompConnect stompConnect, TcpTransport outputHandler) throws NamingException {
         this.initialContext = initialContext;
-        tm = (TransactionManager) initialContext.lookup("java:/TransactionManager");
+        this.stompConnect = stompConnect;
+        this.tcpTransport = outputHandler;
         outputHandler.setProtocolConverter(this);
     }
 
@@ -177,7 +172,7 @@ public class ProtocolConverter {
 
     // Implemenation methods
     // -------------------------------------------------------------------------
-    protected void onStompConnect(StompFrame command) throws IOException, JMSException {
+    protected void onStompConnect(StompFrame command) throws IOException, JMSException, NamingException {
         if (noneXaSession != null) {
             throw new ProtocolException("Already connected.");
         }
@@ -189,9 +184,9 @@ public class ProtocolConverter {
 
         Connection noneXaConnection;
         if (login != null) {
-            noneXaConnection = noneXAConnectionFactory.createConnection(login, passcode);
+            noneXaConnection = stompConnect.getConnectionFactory().createConnection(login, passcode);
         } else {
-            noneXaConnection = noneXAConnectionFactory.createConnection();
+            noneXaConnection = stompConnect.getConnectionFactory().createConnection();
         }
         if (clientId != null) {
             noneXaConnection.setClientID(clientId);
@@ -389,15 +384,15 @@ public class ProtocolConverter {
         return "/subscription-to/" + headers.get(Stomp.Headers.Subscribe.DESTINATION);
     }
 
-    protected StompSession getXASession(Xid xid) throws JMSException {
+    protected StompSession getXASession(Xid xid) throws JMSException, NamingException {
         StompSession xaSession = xaSessions.get(xid);
         if (xaSession == null) {
 
             XAConnection xaConnection;
             if (login != null) {
-                xaConnection = xaConnectionFactory.createXAConnection(login, passcode);
+                xaConnection = stompConnect.getXAConnectionFactory().createXAConnection(login, passcode);
             } else {
-                xaConnection = xaConnectionFactory.createXAConnection();
+                xaConnection = stompConnect.getXAConnectionFactory().createXAConnection();
             }
             if (clientId != null) {
                 xaConnection.setClientID(clientId);
