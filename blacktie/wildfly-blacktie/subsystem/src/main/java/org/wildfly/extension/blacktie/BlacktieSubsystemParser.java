@@ -62,6 +62,7 @@ XMLElementWriter<SubsystemMarshallingContext> {
         writer.writeStartElement(Element.STOMPCONNECT.getLocalName());
         BlacktieSubsystemDefinition.CONNECTION_FACTORYNAME.marshallAsAttribute(node, writer);
         BlacktieSubsystemDefinition.SOCKET_BINDING.marshallAsAttribute(node, writer);
+        BlacktieSubsystemDefinition.MQ_SERVER.marshallAsAttribute(node, writer);
         writer.writeEndElement();
 
         writer.writeEndElement();
@@ -113,6 +114,9 @@ XMLElementWriter<SubsystemMarshallingContext> {
                     break;
                 case SOCKET_BINDING:
                     BlacktieSubsystemDefinition.SOCKET_BINDING.parseAndSetParameter(value, subsystem, reader);
+                    break;
+                case MQ_SERVER:
+                    BlacktieSubsystemDefinition.MQ_SERVER.parseAndSetParameter(value, subsystem, reader);
                     break;
                 default:
                     throw ParseUtils.unexpectedAttribute(reader, i);

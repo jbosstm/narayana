@@ -100,7 +100,7 @@
 
         <dependency>
             <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-messaging</artifactId>
+            <artifactId>wildfly-messaging-activemq</artifactId>
             <version>${version.org.wildfly.wildfly-parent}</version>
         </dependency>
 

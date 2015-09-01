@@ -39,7 +39,8 @@
     </xs:complexType>
 
     <xs:complexType name="stompconnect">
-        <xs:attribute name="connection-factoryname=" type="xs:string" use="required"/>
+        <xs:attribute name="connection-factoryname" type="xs:string" use="required"/>
         <xs:attribute name="socket-binding" type="xs:string" use="required"/>
+        <xs:attribute name="mq-server" type="xs:string"/>
     </xs:complexType>
 </xs:schema>

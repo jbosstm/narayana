@@ -33,7 +33,8 @@ public enum Attribute {
     UNKNOWN(null),
 
     SOCKET_BINDING("socket-binding"),
-    CONNECTION_FACTORYNAME("connection-factoryname");
+    CONNECTION_FACTORYNAME("connection-factoryname"),
+    MQ_SERVER("mq-server");
 
     private final String name;
 

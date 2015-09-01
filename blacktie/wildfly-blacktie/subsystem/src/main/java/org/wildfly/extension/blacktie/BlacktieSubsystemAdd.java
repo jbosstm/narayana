@@ -32,9 +32,13 @@ import org.jboss.as.network.SocketBinding;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
 import org.wildfly.extension.blacktie.configuration.Attribute;
 import org.wildfly.extension.blacktie.logging.BlacktieLogger;
 import org.wildfly.extension.blacktie.service.StompConnectService;
+import org.wildfly.extension.messaging.activemq.ActiveMQActivationService;
+import org.wildfly.extension.messaging.activemq.MessagingServices;
+import org.wildfly.extension.messaging.activemq.jms.JMSServices;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Amos Feng</a>
@@ -54,6 +58,7 @@ final class BlacktieSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         BlacktieSubsystemDefinition.CONNECTION_FACTORYNAME.validateAndSet(operation, model);
         BlacktieSubsystemDefinition.SOCKET_BINDING.validateAndSet(operation, model);
+        BlacktieSubsystemDefinition.MQ_SERVER.validateAndSet(operation, model);
     }
 
     @Override
@@ -67,11 +72,14 @@ final class BlacktieSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final String connectionFactoryName = model.get(Attribute.CONNECTION_FACTORYNAME.getLocalName()).asString();
         final String socketBindingName = model.get(Attribute.SOCKET_BINDING.getLocalName()).asString();
+        final String serverName = BlacktieSubsystemDefinition.MQ_SERVER.resolveModelAttribute(context, model).asString();
+        final ServiceName activeMQServiceName = MessagingServices.getActiveMQServiceName(serverName);
 
         final StompConnectService stompConnectService = new StompConnectService(connectionFactoryName);
         final ServiceBuilder<StompConnectService> stompConnectServiceBuilder = context
                 .getServiceTarget()
                 .addService(BlacktieSubsystemExtension.STOMPCONNECT, stompConnectService)
+                .addDependency(JMSServices.getJmsManagerBaseServiceName(activeMQServiceName))
                 .addDependency(SocketBinding.JBOSS_BINDING_NAME.append(socketBindingName), SocketBinding.class,
                         stompConnectService.getInjectedSocketBinding());
 
