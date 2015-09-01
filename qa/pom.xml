@@ -163,6 +163,8 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 
 				<configuration>
+          <excludeGroupIds>org.jboss.spec.javax.transaction,junit,jboss.profiler.jvmti,org.apache.ant,javax,org.jboss.narayana</excludeGroupIds>
+          <excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
 					<outputDirectory>./ext</outputDirectory>
 					<overWriteReleases>false</overWriteReleases>
 					<overWriteSnapshots>false</overWriteSnapshots>

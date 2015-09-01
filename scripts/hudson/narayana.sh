@@ -478,6 +478,12 @@ function add_qa_xargs {
 
 function qa_tests_once {
   echo "QA Test Suite $@"
+  
+  
+  # Download dependencies
+  cd $WORKSPACE
+  ant -f $WORKSPACE/qa/build.xml get.maven.libs
+  
   cd $WORKSPACE/qa
   unset orb
   codeCoverage=false;
