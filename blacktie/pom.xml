@@ -326,7 +326,7 @@
     </dependencyManagement>
     <properties>
         <version.org.wildfly.wildfly-parent>10.0.0.CR1-SNAPSHOT</version.org.wildfly.wildfly-parent>
-        <version.org.wildfly.core>2.0.0.Beta4</version.org.wildfly.core>
+        <version.org.wildfly.core>2.0.0.Beta5</version.org.wildfly.core>
         <version.org.wildfly.build-tools>1.1.0.Beta2</version.org.wildfly.build-tools>
         <version.suffix.org.jboss.javaee>.GA</version.suffix.org.jboss.javaee>
         <version.org.jboss.integration>5.1.0.GA</version.org.jboss.integration>

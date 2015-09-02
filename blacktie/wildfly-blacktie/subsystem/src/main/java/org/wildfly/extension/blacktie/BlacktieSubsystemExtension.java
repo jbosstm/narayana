@@ -22,19 +22,18 @@
 
 package org.wildfly.extension.blacktie;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
-
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
+import org.jboss.as.controller.ModelVersion;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.StandardResourceDescriptionResolver;
 import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
-import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.msc.service.ServiceName;
+
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Amos Feng</a>
@@ -52,11 +51,11 @@ public final class BlacktieSubsystemExtension implements Extension {
      */
     public static final String SUBSYSTEM_NAME = "blacktie";
 
+    public static final ModelVersion CURRENT_MODEL_VERSION = ModelVersion.create(1, 0);
+
     public static final ServiceName BLACKTIE = ServiceName.JBOSS.append(SUBSYSTEM_NAME);
 
     public static final ServiceName STOMPCONNECT = BLACKTIE.append("stompconnect");
-
-    public static final ServiceName ADMINSERVICE = BLACKTIE.append("adminservice");
 
     protected static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
 
@@ -75,10 +74,9 @@ public final class BlacktieSubsystemExtension implements Extension {
 
     @Override
     public void initialize(ExtensionContext context) {
-        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
+        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, CURRENT_MODEL_VERSION);
         final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(BlacktieSubsystemDefinition.INSTANCE);
-        registration.registerOperationHandler(DESCRIBE, GenericSubsystemDescribeHandler.INSTANCE,
-                GenericSubsystemDescribeHandler.INSTANCE, false, OperationEntry.EntryType.PRIVATE);
+        registration.registerOperationHandler(GenericSubsystemDescribeHandler.DEFINITION, GenericSubsystemDescribeHandler.INSTANCE);
 
         subsystem.registerXMLElementWriter(parser);
     }

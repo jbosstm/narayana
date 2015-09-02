@@ -57,8 +57,7 @@ final class BlacktieSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-            ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model)
                     throws OperationFailedException {
         if(BlacktieLogger.ROOT_LOGGER.isTraceEnabled()) {
             BlacktieLogger.ROOT_LOGGER.trace("BlacktieSubsystemAdd.performBoottime");
@@ -73,16 +72,11 @@ final class BlacktieSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final ServiceBuilder<StompConnectService> stompConnectServiceBuilder = context
                 .getServiceTarget()
                 .addService(BlacktieSubsystemExtension.STOMPCONNECT, stompConnectService)
-                .addListener(verificationHandler)
                 .addDependency(SocketBinding.JBOSS_BINDING_NAME.append(socketBindingName), SocketBinding.class,
                         stompConnectService.getInjectedSocketBinding());
 
         stompConnectServiceBuilder.setInitialMode(ServiceController.Mode.ACTIVE);
 
-        final ServiceController<StompConnectService> stompConnectServiceController = stompConnectServiceBuilder.install();
-
-        if (newControllers != null) {
-            newControllers.add(stompConnectServiceController);
-        }
+        stompConnectServiceBuilder.install();
     }
 }
