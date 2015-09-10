@@ -477,11 +477,11 @@ function add_qa_xargs {
   XARGS=
   IFS=' ' read -ra ADDR <<< "$1"
   for j in "${ADDR[@]}"; do
-    XARGS="${XARGS}\nCOMMAND_LINE_$i=$j"
+    XARGS="${XARGS}COMMAND_LINE_$i=$j"
     let i=i+1
   done
 
-  sed -i "s#NEXT_COMMAND_LINE_ARG=.*\$#${XARGS}#" TaskImpl.properties
+  sed -i -e "s#NEXT_COMMAND_LINE_ARG=.*\$#${XARGS}#" TaskImpl.properties
 }
 
 function qa_tests_once {
@@ -511,14 +511,14 @@ function qa_tests_once {
     orbtype=idlj
   elif [ x$orb = x"ibmorb" ]; then
     orbtype=ibmorb
-	sed -i TaskImpl.properties -e "s#^  dist#  ${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}dist#"
+	sed -i -e "s#^  dist#  ${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}dist#" TaskImpl.properties
   else
     orbtype=jacorb
   fi
 
   testoutputzip="testoutput-${orbtype}.zip"
 
-  sed -i TaskImpl.properties -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#"
+  sed -i -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#" TaskImpl.properties
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
   if [ $orbtype = "openjdk" ]; then
@@ -536,15 +536,15 @@ function qa_tests_once {
   fi
 
   # delete lines containing jacorb
-  [ $orbtype != "jacorb" ] && sed -i TaskImpl.properties -e  '/^.*separator}jacorb/ d'
+  [ $orbtype != "jacorb" ] && sed -i -e  '/^.*separator}jacorb/ d' TaskImpl.properties
 
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   if [[ -n "$MFACTOR" ]] ; then
-    sed -i TaskImpl.properties -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/"
+    sed -i -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/" TaskImpl.properties
     # Note that setting the timeout too high (eg 2*240) will cause the defaulttimeout test cases to take
     # longer than the Task kill timeout period
     let txtimeout=$MFACTOR*120
-    sed -i TaskImpl.properties -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/"
+    sed -i -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" get.drivers dist ||
