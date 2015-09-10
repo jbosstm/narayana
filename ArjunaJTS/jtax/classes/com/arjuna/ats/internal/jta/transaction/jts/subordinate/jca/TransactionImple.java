@@ -123,6 +123,7 @@ public class TransactionImple extends
 	
 	public Xid baseXid ()
 	{
+	    System.out.println("SUBORDINATE WARNING");
 		return ((SubordinateAtomicTransaction) _theTransaction).getXid();
 	}
     

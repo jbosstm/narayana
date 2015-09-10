@@ -738,6 +738,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                         // see JBTM-362 and JBTM-363
                         XAResourceRecord xaResourceRecord = createRecord(xaRes, params, xid);
                         if(xaResourceRecord != null) {
+                            System.out.println("Attempting retry?: " + retry + " " + xid);
                             xaRes.start(xid, XAResource.TMNOFLAGS);
                             try {
                                 RecoveryCoordinator recCoord = _theTransaction.registerResource(xaResourceRecord.getResource());
@@ -768,9 +769,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 					{
 						// transaction already created by another server
 
-						/* We get this from Oracle instead of DUPID. */
-						if (e.errorCode == XAException.XAER_RMERR)
+						/* We get this RMFAIL from Oracle now, we used to see RMERR so keeping both handling */
+						if (e.errorCode == XAException.XAER_RMFAIL || e.errorCode == XAException.XAER_RMERR)
 						{
+						    System.out.println("Should create new xid on retry? " + (retry > 0));
 
 							if (retry > 0)
 								xid = createXid(true, theModifier);
@@ -1666,10 +1668,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private final Xid createXid (boolean branch, XAModifier theModifier)
 	{
+        System.out.println("createxid retry?");
 		Xid jtaXid = baseXid();
 
-		if (jtaXid != null)
+		if (jtaXid != null) {
+		    System.out.println("SUBORD RET");
 			return jtaXid;
+		}
+		System.out.println("Going on");
 
 		try
 		{
