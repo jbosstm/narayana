@@ -47,4 +47,25 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+      <profile>
+        <activation>
+          <property>
+            <name>java.vendor</name>
+            <value>IBM Corporation</value>
+          </property>
+        </activation>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <skipTests>true</skipTests>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
 </project>

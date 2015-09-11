@@ -11,6 +11,12 @@ function fatal {
   exit 1
 }
 
+# return 0 if using the IBM java compiler
+function is_ibm {
+  jvendor=$(java -XshowSettings:properties -version 2>&1 | awk -F '"' '/java.vendor = / {print $1}')
+  [[ $jvendor == *"IBM Corporation"* ]]
+}
+
 function get_pull_description {
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
 
@@ -22,6 +28,8 @@ function get_pull_description {
 }
 
 function init_test_options {
+    is_ibm
+    ISIBM=$?
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.2.3.Final-SNAPSHOT"
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
     [ $IBM_ORB ] || IBM_ORB=0
@@ -397,7 +405,9 @@ function xts_tests {
   if [ $ran_crt = 1 ]; then
     if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
       (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-      [ $? = 0 ] || fatal "Simplify CRASH RECOVERY logs failed"
+      if [[ $? != 0 && $ISIBM != 1 ]]; then
+        fatal "Simplify CRASH RECOVERY logs failed"
+      fi
     fi
   fi
 }
