@@ -405,7 +405,7 @@ function xts_tests {
   if [ $ran_crt = 1 ]; then
     if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
       (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-      if [[ $? != 0 && $ISIBM != 1 ]]; then
+      if [[ $? != 0 && $ISIBM != 0 ]]; then
         fatal "Simplify CRASH RECOVERY logs failed"
       fi
     fi
