@@ -88,6 +88,12 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
     }
 
+    @Override
+    public void stop() {
+        super.stop();
+
+        ORB.getInstance("jboss-atx").shutdown();
+    }
 
     /**
      * Set whether the transaction propagation context manager should propagate a
