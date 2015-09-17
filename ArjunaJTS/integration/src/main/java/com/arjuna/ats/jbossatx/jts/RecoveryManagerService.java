@@ -38,6 +38,12 @@ import java.lang.reflect.Method;
  */
 public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.RecoveryManagerService
 {
+    /**
+     * @param theCorbaORB an orb that the RecoveryManager should use for JTS operations. The caller is responsible for
+     *                    shutting down and destroying this orb
+     * @return
+     * @throws Exception
+     */
     public RecoveryManagerService(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
         jbossatxLogger.i18NLogger.info_jts_RecoveryManagerService_init();
@@ -50,15 +56,22 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
         }
 
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
-        ORB orb = ORB.getInstance("jboss-atx");
+        ORB orb = ORB.getInstance(TransactionManagerService.ORB_NAME);
 
         org.omg.PortableServer.POA rootPOA = org.omg.PortableServer.POAHelper.narrow(theCorbaORB.resolve_initial_references("RootPOA"));
 
-        orb.setOrb(theCorbaORB);
+        orb.setOrb(new ExternalORBWrapper(theCorbaORB));
         OA oa = OA.getRootOA(orb);
         oa.setPOA(rootPOA);
 
         ORBManager.setORB(orb);
         ORBManager.setPOA(oa);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        ORB.getInstance(TransactionManagerService.ORB_NAME).shutdown();
     }
 }
