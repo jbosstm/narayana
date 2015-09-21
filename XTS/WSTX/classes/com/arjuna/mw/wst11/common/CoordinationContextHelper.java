@@ -27,8 +27,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.soap.SOAPElement;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * Helper class for serialising Coordination Contexts into SOAP headers.
@@ -45,25 +47,23 @@ public class CoordinationContextHelper
     public static CoordinationContextType deserialise(final Element headerElement)
         throws JAXBException
     {
-        Thread current =Thread.currentThread();
-        ClassLoader loader = current.getContextClassLoader();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             // use the XTS module loader so that JAXB can find its factory
-            current.setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
-            JAXBContext jaxbContext = JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
-            Unmarshaller unmarshaller;
-            unmarshaller = jaxbContext.createUnmarshaller();
+            setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
+            JAXBContext jaxbContext = getJaxbContext();
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             // the header element is a valid CoordinationContextType node so we can unpack it directly
             // using JAXB. n.b. we will see a mustUnderstand=1 in the otherAttributes which we probably don't
             // want but it will do no harm.
             CoordinationContextType coordinationContextType = unmarshaller.unmarshal(headerElement, CoordinationContextType.class).getValue();
 
             return coordinationContextType;
-        } catch (JAXBException jaxbe) {
+        } catch (Exception e) {
             return null;
         } finally {
             // restore the original  loader
-            current.setContextClassLoader(loader);
+            setContextClassLoader(loader);
         }
     }
 
@@ -79,14 +79,12 @@ public class CoordinationContextHelper
         // only generate a Node and we need to add a SOAPHeaderElement. So, we cheat by serialising the
         // coordinationContextType into a header created by the caller, moving all its children into the
         // header element and then deleting it.
-        Thread current =Thread.currentThread();
-        ClassLoader loader = current.getContextClassLoader();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             // use the XTS module loader so that JAXB can find its factory
-            current.setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
-            JAXBContext jaxbContext = JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
-            Marshaller marshaller;
-            marshaller = jaxbContext.createMarshaller();
+            setContextClassLoader(CoordinationContextHelper.class.getClassLoader());
+            JAXBContext jaxbContext = getJaxbContext();
+            Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.marshal(coordinationContextType, headerElement);
             Node element = headerElement.getFirstChild();
             NamedNodeMap map = element.getAttributes();
@@ -114,10 +112,35 @@ public class CoordinationContextHelper
                 headerElement.appendChild(child);
             }
             headerElement.removeChild(element);
-        } catch (JAXBException jaxbe) {
+        } catch (Exception e) {
         } finally {
             // restore the original  loader
-            current.setContextClassLoader(loader);
+            setContextClassLoader(loader);
+        }
+    }
+    
+    private static void setContextClassLoader(final ClassLoader classLoader) {
+        final Thread current = Thread.currentThread();
+
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            @Override
+            public Void run() {
+                current.setContextClassLoader(classLoader);
+                return null;
+            }
+        });
+    }
+
+    private static JAXBContext getJaxbContext() throws Exception {
+        try {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<JAXBContext>() {
+                @Override
+                public JAXBContext run() throws JAXBException {
+                    return JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            throw e.getException();
         }
     }
 }

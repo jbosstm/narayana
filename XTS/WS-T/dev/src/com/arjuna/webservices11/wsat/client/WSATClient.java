@@ -1,9 +1,7 @@
 package com.arjuna.webservices11.wsat.client;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.ws.api.addressing.MAPBuilder;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.*;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -45,11 +43,6 @@ public class WSATClient
      *  thread local which maintains a per thread completion coordinator service instance
      */
     private static ThreadLocal<CompletionCoordinatorRPCService> completionCoordinatorRPCService = new ThreadLocal<CompletionCoordinatorRPCService>();
-
-    /**
-     *  builder used to construct addressing info for calls
-     */
-    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch a coordinator service unique to the current thread

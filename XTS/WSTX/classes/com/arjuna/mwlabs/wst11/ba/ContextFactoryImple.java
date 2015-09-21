@@ -42,6 +42,7 @@ import com.arjuna.mwlabs.wst11.ba.participants.CleanupSynchronization;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
@@ -150,7 +151,7 @@ public class ContextFactoryImple implements ContextFactory
     		_coordManager.begin(ArjunaContextImple.serviceType, timeout);
 
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
-            final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+            final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
             final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
             final CoordinationContext coordinationContext = new CoordinationContext() ;
@@ -205,7 +206,7 @@ public class ContextFactoryImple implements ContextFactory
                 ccp.setManager(manager);
 
                 // ok now create the context
-                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                 final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
                 final CoordinationContext coordinationContext = new CoordinationContext() ;
@@ -304,7 +305,7 @@ public class ContextFactoryImple implements ContextFactory
 
         // ok now create the context
 
-        final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
         final CoordinationContext coordinationContext = new CoordinationContext() ;
@@ -341,7 +342,8 @@ public class ContextFactoryImple implements ContextFactory
     {
         final QName serviceName = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_QNAME;
         final QName endpointName = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME, isSecure);
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final String address = serviceRegistry.getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

@@ -1,12 +1,9 @@
 package com.arjuna.webservices11.wsba.client;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.ws.api.addressing.MAPBuilder;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.*;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -41,11 +38,6 @@ public class WSBAClient
      *  thread local which maintains a per thread coordinator completion participant service instance
      */
     private static ThreadLocal<BusinessAgreementWithCoordinatorCompletionParticipantService> coordinatorCompletionParticipantService = new ThreadLocal<BusinessAgreementWithCoordinatorCompletionParticipantService>();
-
-    /**
-     *  builder used to construct addressing info for calls
-     */
-    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch a participant completion coordinator service unique to the current thread

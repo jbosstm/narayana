@@ -20,6 +20,7 @@
  */
 package com.arjuna.webservices11.wsat.server;
 
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
@@ -34,7 +35,7 @@ public class ParticipantInitialisation
 {
     public static void startup()
     {
-               final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+               final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
                String bindAddress = wscEnvironmentBean.getBindAddress11();
                int bindPort = wscEnvironmentBean.getBindPort11();

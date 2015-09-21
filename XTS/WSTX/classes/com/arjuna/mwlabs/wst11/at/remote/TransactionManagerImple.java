@@ -5,6 +5,7 @@ import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mwlabs.wst.at.remote.ContextManager;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.SoapFault;
@@ -129,7 +130,8 @@ public class TransactionManagerImple extends TransactionManager
     {
         final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
+		final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

@@ -3,11 +3,8 @@ package com.arjuna.webservices11.wsarjtx.client;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.ws.api.addressing.MAPBuilder;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -38,11 +35,6 @@ public class WSARJTXClient
      *  thread local which maintains a per thread termination coordinator service instance
      */
     private static ThreadLocal<TerminationCoordinatorRPCService> terminationCoordinatorRPCService = new ThreadLocal<TerminationCoordinatorRPCService>();
-
-    /**
-     *  builder used to construct addressing info for calls
-     */
-    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch a termination coordinator service unique to the current thread

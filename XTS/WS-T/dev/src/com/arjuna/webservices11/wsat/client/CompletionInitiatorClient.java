@@ -1,6 +1,8 @@
 package com.arjuna.webservices11.wsat.client;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices11.util.PrivilegedMapBuilderFactory;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
@@ -11,7 +13,6 @@ import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.jboss.ws.api.addressing.MAPEndpoint;
 import org.jboss.ws.api.addressing.MAPBuilder;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionInitiatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.xmlsoap.schemas.soap.envelope.Fault;
@@ -58,15 +59,16 @@ public class CompletionInitiatorClient
      */
     private CompletionInitiatorClient()
     {
-        final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
+        final MAPBuilder builder = PrivilegedMapBuilderFactory.getInstance().getBuilderInstance();
         committedAction = AtomicTransactionConstants.WSAT_ACTION_COMMITTED;
         abortedAction = AtomicTransactionConstants.WSAT_ACTION_ABORTED;
         faultAction = AtomicTransactionConstants.WSAT_ACTION_FAULT;
 
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String completionCoordinatorURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, false) ;
+                serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, false) ;
         final String secureCompletionCoordinatorURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, true) ;
+                serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, true) ;
         completionCoordinator = builder.newEndpoint(completionCoordinatorURIString);
         secureCompletionCoordinator = builder.newEndpoint(secureCompletionCoordinatorURIString);
     }

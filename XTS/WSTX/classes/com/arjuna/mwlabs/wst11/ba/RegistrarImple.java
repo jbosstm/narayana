@@ -41,11 +41,10 @@ import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithCoordinatorCompletionImple;
 import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithParticipantCompletionImple;
-import com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple;
 import com.arjuna.mwlabs.wst11.ba.remote.SubordinateBAParticipantManagerImple;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
-import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorRPCProcessor;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -169,10 +168,12 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
 				_coordManager.suspend();
 
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+
 				return getParticipantManager(
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_QNAME,
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_PORT_QNAME,
-                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                        serviceRegistry.getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
 						id);
 			}
 			catch (Exception ex)
@@ -196,10 +197,12 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
 					_coordManager.suspend();
 
+                    final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+
 					return getParticipantManager(
                             BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_QNAME,
 							BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_PORT_QNAME,
-                            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                            serviceRegistry.getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
 							id);
 				}
 				catch (Exception ex)
@@ -220,10 +223,11 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
                     try
 					{
                         _coordManager.suspend();
+                        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                         return getParticipantManager(
                                 ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_QNAME,
 								ArjunaTX11Constants.TERMINATION_COORDINATOR_PORT_QNAME,
-                                ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, isSecure),
+                                serviceRegistry.getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, isSecure),
                                 instanceIdentifier.getInstanceIdentifier());
 					}
 					catch (Exception ex)
@@ -252,10 +256,11 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
                         try
                         {
                             _coordManager.suspend();
+                            final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                             return getParticipantManager(
                                     ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_QNAME,
                                     ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_PORT_QNAME,
-                                    ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME, isSecure),
+                                    serviceRegistry.getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_RPC_SERVICE_NAME, isSecure),
                                     instanceIdentifier.getInstanceIdentifier());
                         }
                         catch (Exception ex)
@@ -329,10 +334,12 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
                 theTx.enlistParticipant(participant);
 
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+
                 return getParticipantManager(
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_QNAME,
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_PORT_QNAME,
-                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                        serviceRegistry.getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
                         id);
             } catch (DuplicateParticipantException dpe ) {
                 throw new AlreadyRegisteredException();
@@ -357,10 +364,12 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
                 theTx.enlistParticipant(participant);
 
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+
                 return getParticipantManager(
                         BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_QNAME,
                         BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_PORT_QNAME,
-                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                        serviceRegistry.getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
                         id);
             }
             catch (Exception ex)

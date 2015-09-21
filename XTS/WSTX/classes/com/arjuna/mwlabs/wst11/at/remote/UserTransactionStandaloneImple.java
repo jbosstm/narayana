@@ -1,7 +1,6 @@
 package com.arjuna.mwlabs.wst11.at.remote;
 
 import com.arjuna.mw.wsc11.context.Context;
-import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wstx.logging.wstxLogger;
@@ -9,8 +8,8 @@ import com.arjuna.mwlabs.wst.at.remote.ContextManager;
 import com.arjuna.mwlabs.wst11.at.ContextImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc.CannotRegisterException;
@@ -24,14 +23,11 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.stub.CompletionRPCStub;
-import com.arjuna.wst11.stub.CompletionStub;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.util.Hashtable;
 
 /**
@@ -56,7 +52,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 
 			if (_activationCoordinatorService == null)
 			{
-                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                 _activationCoordinatorService = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
 			}
 		}

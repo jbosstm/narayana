@@ -32,7 +32,6 @@
 package com.arjuna.mwlabs.wst11.ba.remote;
 
 import com.arjuna.mw.wsc11.context.Context;
-import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.ba.remote.ContextManager;
@@ -40,9 +39,8 @@ import com.arjuna.mwlabs.wst11.ba.ContextImple;
 import com.arjuna.mwlabs.wst11.ba.context.TxContextImple;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc.InvalidCreateParametersException;
@@ -54,14 +52,11 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.stub.BusinessActivityTerminatorRPCStub;
-import com.arjuna.wst11.stub.BusinessActivityTerminatorStub;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 /**
  * This is the interface that allows transactions to be started and terminated.
@@ -86,7 +81,7 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
 
             if (_activationCoordinatorService == null)
             {
-                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                 _activationCoordinatorService = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
             }
         }

@@ -2,13 +2,13 @@ package com.arjuna.mwlabs.wst11.at.remote;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.at.ContextImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mwlabs.wst.at.remote.ContextManager;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -48,7 +48,7 @@ public class UserTransactionImple extends UserTransaction
 
 			if (_activationCoordinatorService == null)
 			{
-                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                 _activationCoordinatorService = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
 			}
 		}
@@ -468,7 +468,8 @@ public class UserTransactionImple extends UserTransaction
     {
         final QName serviceName = AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, isSecure);
+		final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

@@ -2,6 +2,8 @@ package com.arjuna.webservices11.wsaddr;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 
@@ -70,23 +72,23 @@ public final class NativeEndpointReference extends EndpointReference
     * @throws NullPointerException
     *   If the <code>null</code> <code>source</code> value is given
     */
-   public NativeEndpointReference(Source source)
+   public NativeEndpointReference(final Source source)
    {
-      try
-      {
-         NativeEndpointReference epr = jc.createUnmarshaller().unmarshal(source, NativeEndpointReference.class).getValue();
-         this.address = epr.address;
-         this.metadata = epr.metadata;
-         this.referenceParameters = epr.referenceParameters;
-      }
-      catch (JAXBException e)
-      {
-         throw new WebServiceException("Error unmarshalling NativeEndpointReference ", e);
-      }
-      catch (ClassCastException e)
-      {
-         throw new WebServiceException("Source did not contain NativeEndpointReference", e);
-      }
+      NativeEndpointReference epr = AccessController.doPrivileged(new PrivilegedAction<NativeEndpointReference>() {
+         @Override
+         public NativeEndpointReference run() {
+            try {
+               return jc.createUnmarshaller().unmarshal(source, NativeEndpointReference.class).getValue();
+            } catch (JAXBException e) {
+               throw new WebServiceException("Error unmarshalling NativeEndpointReference ", e);
+            } catch (ClassCastException e) {
+               throw new WebServiceException("Source did not contain NativeEndpointReference", e);
+            }
+         }
+      });
+      this.address = epr.address;
+      this.metadata = epr.metadata;
+      this.referenceParameters = epr.referenceParameters;
    }
 
    @XmlTransient
@@ -202,14 +204,16 @@ public final class NativeEndpointReference extends EndpointReference
 
    private static JAXBContext getJaxbContext()
    {
-      try
-      {
-         return JAXBContext.newInstance(new Class[] { NativeEndpointReference.class });
-      }
-      catch (JAXBException ex)
-      {
-         throw new WebServiceException("Cannot obtain JAXB context", ex);
-      }
+      return AccessController.doPrivileged(new PrivilegedAction<JAXBContext>() {
+         @Override
+         public JAXBContext run() {
+            try {
+               return JAXBContext.newInstance(new Class[] { NativeEndpointReference.class });
+            } catch (JAXBException ex) {
+               throw new WebServiceException("Cannot obtain JAXB context", ex);
+            }
+         }
+      });
    }
 
    private static class Address

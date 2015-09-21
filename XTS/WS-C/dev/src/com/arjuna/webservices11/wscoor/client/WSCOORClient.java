@@ -7,10 +7,11 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationService;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationService;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Map;
 
 /**
@@ -81,10 +82,15 @@ public class WSCOORClient
 
     // don't think we ever need this as we get a registration port from the endpoint ref returned by
     // the activation port request
-    public static RegistrationPortType getRegistrationPort(W3CEndpointReference endpointReference, String action, String messageID)
+    public static RegistrationPortType getRegistrationPort(final W3CEndpointReference endpointReference, String action, String messageID)
     {
-        RegistrationService service = getRegistrationService();
-        RegistrationPortType port = service.getPort(endpointReference, RegistrationPortType.class, new AddressingFeature(true, true));
+        final RegistrationService service = getRegistrationService();
+        final RegistrationPortType port = AccessController.doPrivileged(new PrivilegedAction<RegistrationPortType>() {
+            @Override
+            public RegistrationPortType run() {
+                return service.getPort(endpointReference, RegistrationPortType.class, new AddressingFeature(true, true));
+            }
+        });
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature

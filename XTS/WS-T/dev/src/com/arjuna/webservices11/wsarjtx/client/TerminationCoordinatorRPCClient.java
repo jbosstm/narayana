@@ -21,21 +21,11 @@
 package com.arjuna.webservices11.wsarjtx.client;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
-import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationCoordinatorPortType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationCoordinatorRPCPortType;
-import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilder;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
-import org.jboss.ws.api.addressing.MAPEndpoint;
 
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -70,7 +60,6 @@ public class TerminationCoordinatorRPCClient
      */
     private TerminationCoordinatorRPCClient()
     {
-        MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         completeAction = ArjunaTXConstants.WSARJTX_ACTION_COMPLETE;
         closeAction = ArjunaTXConstants.WSARJTX_ACTION_CLOSE;
         cancelAction = ArjunaTXConstants.WSARJTX_ACTION_CANCEL;

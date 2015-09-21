@@ -20,6 +20,7 @@
  */
 package com.arjuna.webservices11.wscoor.server;
 
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
@@ -38,7 +39,7 @@ public class RegistrationCoordinatorInitialisation
     public static void startup()
     {
         // TODO work out how to configure the endpoint name here
-        final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
         String bindAddress = wscEnvironmentBean.getBindAddress11();
         int bindPort = wscEnvironmentBean.getBindPort11();

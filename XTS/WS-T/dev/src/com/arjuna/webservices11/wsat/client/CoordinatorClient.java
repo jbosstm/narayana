@@ -1,6 +1,8 @@
 package com.arjuna.webservices11.wsat.client;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices11.util.PrivilegedMapBuilderFactory;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.ServiceRegistry;
@@ -11,7 +13,6 @@ import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.jboss.ws.api.addressing.MAPEndpoint;
 import org.jboss.ws.api.addressing.MAPBuilder;
 import org.jboss.ws.api.addressing.MAP;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.xmlsoap.schemas.soap.envelope.Fault;
@@ -66,17 +67,18 @@ public class CoordinatorClient
      */
     private CoordinatorClient()
     {
-        final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
+        final MAPBuilder builder = PrivilegedMapBuilderFactory.getInstance().getBuilderInstance();
         preparedAction = AtomicTransactionConstants.WSAT_ACTION_PREPARED;
         abortedAction = AtomicTransactionConstants.WSAT_ACTION_ABORTED;
         readOnlyAction = AtomicTransactionConstants.WSAT_ACTION_READ_ONLY;
         committedAction = AtomicTransactionConstants.WSAT_ACTION_COMMITTED;
         faultAction = AtomicTransactionConstants.WSAT_ACTION_FAULT;
 
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String participantURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, false);
+                serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, false);
         final String secureParticipantURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, true);
+                serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, true);
         participant = builder.newEndpoint(participantURIString);
         secureParticipant = builder.newEndpoint(secureParticipantURIString);
     }

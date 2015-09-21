@@ -32,13 +32,13 @@
 package com.arjuna.mwlabs.wst11.ba.remote;
 
 import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.ba.ContextImple;
 import com.arjuna.mwlabs.wst11.ba.context.TxContextImple;
 import com.arjuna.mwlabs.wst.ba.remote.ContextManager;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices.SoapFault;
@@ -85,7 +85,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
 
             if (_activationCoordinatorService == null)
             {
-                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
                 _activationCoordinatorService = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
             }
         }
@@ -397,7 +397,8 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         // final String serviceURI = soapRegistry.getServiceURI(ArjunaTX11Constants.SERVICE_TERMINATION_PARTICIPANT) ;
         final QName serviceId = ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_QNAME;
         final QName endpointId = ArjunaTX11Constants.TERMINATION_PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, isSecure);
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final String address = serviceRegistry.getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceId);
         builder.endpointName(endpointId);
