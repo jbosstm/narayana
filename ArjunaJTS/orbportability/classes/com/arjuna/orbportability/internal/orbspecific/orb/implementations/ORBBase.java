@@ -34,6 +34,8 @@ package com.arjuna.orbportability.internal.orbspecific.orb.implementations;
 import java.applet.Applet;
 import java.util.Properties;
 
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean;
 import org.omg.CORBA.SystemException;
 
 import com.arjuna.orbportability.orb.core.ORBImple;
@@ -90,8 +92,11 @@ public class ORBBase implements ORBImple
     {
         if (_init)
         {
-            _orb.shutdown(waitForCompletion);
-            _init = false;
+            OrbPortabilityEnvironmentBean env = BeanPopulator.getDefaultInstance(OrbPortabilityEnvironmentBean.class);
+            if (env.isShutdownWrappedOrb()) {
+                _orb.shutdown(waitForCompletion);
+                _init = false;
+            }
         }
     }
 

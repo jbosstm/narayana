@@ -32,12 +32,14 @@ package com.arjuna.ats.jbossatx.jts;
 
 import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
 
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.orbportability.Services;
+import com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean;
 
 /**
  * JBoss Transaction Manager Service.
@@ -49,6 +51,8 @@ import com.arjuna.orbportability.Services;
  */
 public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.TransactionManagerService implements TransactionManagerServiceMBean
 {
+    final static String ORB_NAME = "jboss-atx";
+
     public TransactionManagerService() {
         mode = "JTS";
     }
@@ -58,12 +62,18 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         throw new IllegalArgumentException("JTS mode startup requires an ORB to be provided");
     }
 
+    /**
+     *
+     * @param theCorbaORB an orb that the TM should use for JTS operations. The caller is responsible for
+     *                    shutting down and destroying this orb
+     * @throws Exception
+     */
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
         jbossatxLogger.i18NLogger.info_jts_TransactionManagerService_start();
 
         // Create an ORB portability wrapper around the CORBA ORB services orb
-        ORB orb = ORB.getInstance("jboss-atx");
+        ORB orb = ORB.getInstance(ORB_NAME);
 
         org.omg.PortableServer.POA rootPOA = org.omg.PortableServer.POAHelper.narrow(theCorbaORB.resolve_initial_references("RootPOA"));
 
@@ -76,6 +86,8 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
             // OTSManager won't play nice unless we explicity bootstrap the portability layer:
             ORBManager.setORB(orb);
             ORBManager.setPOA(oa);
+            OrbPortabilityEnvironmentBean env = BeanPopulator.getDefaultInstance(OrbPortabilityEnvironmentBean.class);
+            env.setShutdownWrappedOrb(false);
 
             org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
             final int resolver = Services.getResolver();
@@ -88,6 +100,12 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
     }
 
+    @Override
+    public void stop() {
+        super.stop();
+
+        ORB.getInstance(ORB_NAME).shutdown();
+    }
 
     /**
      * Set whether the transaction propagation context manager should propagate a

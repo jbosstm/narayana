@@ -50,7 +50,7 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
         }
 
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
-        ORB orb = ORB.getInstance("jboss-atx");
+        ORB orb = ORB.getInstance(TransactionManagerService.ORB_NAME);
 
         org.omg.PortableServer.POA rootPOA = org.omg.PortableServer.POAHelper.narrow(theCorbaORB.resolve_initial_references("RootPOA"));
 

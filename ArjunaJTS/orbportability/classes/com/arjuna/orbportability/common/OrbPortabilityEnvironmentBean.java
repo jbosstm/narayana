@@ -67,6 +67,8 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
 
     private volatile Map<String,String> orbInitializationProperties = new HashMap<String, String>();
 
+    private volatile boolean shutdownWrappedOrb = true;
+
 
     /**
      * Returns the name of the directory in which the initial reference file is stored.
@@ -539,5 +541,25 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
         } else {
             this.orbInitializationProperties = new HashMap<String, String>(orbInitializationProperties);
         }
+    }
+
+    /**
+     * The orb portability layer wraps the actual orb implementation. This property determines whether or
+     * shutting down the orb portability layer will also shutdown the actual orb. This method is useful for
+     * externally supplied orbs that should not be shutdown when the TransactionService is stopped
+     * @param shutdownWrappedOrb
+     */
+    public void setShutdownWrappedOrb(boolean shutdownWrappedOrb) {
+        this.shutdownWrappedOrb = shutdownWrappedOrb;
+    }
+
+    /**
+     * Indicates whether the orb wrapped by the orb portability layer will be shutdown when the orb portability layer
+     * is shutdown
+     *
+     * @return true if the wrapped orb will be shutdown
+     */
+    public boolean isShutdownWrappedOrb() {
+        return shutdownWrappedOrb;
     }
 }
