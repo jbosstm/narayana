@@ -49,8 +49,6 @@ import com.arjuna.orbportability.Services;
  */
 public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.TransactionManagerService implements TransactionManagerServiceMBean
 {
-    final static String ORB_NAME = "jboss-atx";
-
     public TransactionManagerService() {
         mode = "JTS";
     }
@@ -60,22 +58,16 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         throw new IllegalArgumentException("JTS mode startup requires an ORB to be provided");
     }
 
-    /**
-     *
-     * @param theCorbaORB an orb that the TM should use for JTS operations. The caller is responsible for
-     *                    shutting down and destroying this orb
-     * @throws Exception
-     */
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
         jbossatxLogger.i18NLogger.info_jts_TransactionManagerService_start();
 
         // Create an ORB portability wrapper around the CORBA ORB services orb
-        ORB orb = ORB.getInstance(ORB_NAME);
+        ORB orb = ORB.getInstance("jboss-atx");
 
         org.omg.PortableServer.POA rootPOA = org.omg.PortableServer.POAHelper.narrow(theCorbaORB.resolve_initial_references("RootPOA"));
 
-        orb.setOrb(new ExternalORBWrapper(theCorbaORB));
+        orb.setOrb(theCorbaORB);
         OA oa = OA.getRootOA(orb);
         oa.setPOA(rootPOA);
 
@@ -96,12 +88,6 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
     }
 
-    @Override
-    public void stop() {
-        super.stop();
-
-        ORB.getInstance(ORB_NAME).shutdown();
-    }
 
     /**
      * Set whether the transaction propagation context manager should propagate a
