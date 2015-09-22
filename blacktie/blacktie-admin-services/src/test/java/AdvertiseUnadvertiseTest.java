@@ -60,7 +60,7 @@ public class AdvertiseUnadvertiseTest {
             log.info("Got the exception");
         }
 
-        assertTrue(service.deployQueue(".testsui1", "testui", false, "queue", "5.2.3.Final-SNAPSHOT") == 1);
+        assertTrue(service.deployQueue(".testsui1", "testui", false, "queue", "5.2.3.Final") == 1);
         try {
             new InitialContext().lookup("java:/queue/BTR_.testsui1");
             log.info("Got the queue");

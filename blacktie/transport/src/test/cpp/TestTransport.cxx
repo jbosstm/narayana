@@ -106,7 +106,7 @@ void TestTransport::test_basic()
 	btlogger_debug("TestTransport::test_basic begin");
 	int i;
 	int cnt = 2;
-	const char *qname = "http://localhost:8080/blacktie-messaging-5.2.3.Final-SNAPSHOT/queues/jms.queue.testQueue";
+	const char *qname = "http://localhost:8080/blacktie-messaging-5.2.3.Final/queues/jms.queue.testQueue";
 	
 	HttpSessionImpl s1(qname);
 
