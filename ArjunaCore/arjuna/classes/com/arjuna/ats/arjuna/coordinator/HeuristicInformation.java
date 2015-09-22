@@ -39,7 +39,7 @@ package com.arjuna.ats.arjuna.coordinator;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  */
 /**
- * @deprecated as of 5.2.4.Final In a subsequent release we will be providing this functionality via JMX MBeans
+ * @deprecated as of 5.2.5.Final-SNAPSHOT In a subsequent release we will be providing this functionality via JMX MBeans
  */
 @Deprecated
 public interface HeuristicInformation
