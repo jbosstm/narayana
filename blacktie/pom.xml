@@ -325,9 +325,9 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <version.org.wildfly.wildfly-parent>10.0.0.CR2-SNAPSHOT</version.org.wildfly.wildfly-parent>
-        <version.org.wildfly.core>2.0.0.CR3</version.org.wildfly.core>
-        <version.org.wildfly.build-tools>1.1.0.Beta2</version.org.wildfly.build-tools>
+        <version.org.wildfly.wildfly-parent>10.0.0.CR3-SNAPSHOT</version.org.wildfly.wildfly-parent>
+        <version.org.wildfly.core>2.0.0.CR5</version.org.wildfly.core>
+        <version.org.wildfly.build-tools>1.1.0.CR1</version.org.wildfly.build-tools>
         <version.suffix.org.jboss.javaee>.GA</version.suffix.org.jboss.javaee>
         <version.org.jboss.integration>5.1.0.GA</version.org.jboss.integration>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
