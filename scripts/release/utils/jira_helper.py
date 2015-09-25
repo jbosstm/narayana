@@ -73,6 +73,19 @@ def close_issue(jira_host, username, password, issue_id):
     raise ValueError('Failed to close issue: %s' % issue_id)
 
 
+def get_project_versions(jira_host, project_key):
+    """
+    Returns all versions of the specified project.
+
+    jira_host -- JIRA host to contact.
+    project_key -- project which versions should be returned.
+    """
+    response = https_helper.get(jira_host, project_versions_path % project_key)
+    if response.status != 200:
+        raise ValueError('Version does not exist: project=%s, version=%s' % (project_key, version_name))
+    return json.loads(response.read())
+
+
 def get_version_by_name(jira_host, project_key, version_name):
     """
     Returns version identified by project and version name.
@@ -81,10 +94,7 @@ def get_version_by_name(jira_host, project_key, version_name):
     project_key -- project which version should be returned.
     version_name -- version which should be returned.
     """
-    response = https_helper.get(jira_host, project_versions_path % project_key)
-    if response.status != 200:
-        raise ValueError('Version does not exist: project=%s, version=%s' % (project_key, version_name))
-    for version in json.loads(response.read()):
+    for version in get_project_versions(jira_host, project_key):
         if version['name'] == version_name:
             return version
     raise ValueError('Version does not exist: project=%s, version=%s' % (project_key, version_name))
@@ -162,6 +172,7 @@ def get_auth_header(username, password):
     return {
         'Authorization': auth_helper.encode_to_auth_header(username, password)
     }
+
 
 def get_content_type_header():
     return {
