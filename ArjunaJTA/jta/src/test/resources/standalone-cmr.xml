@@ -317,11 +317,8 @@
                     <role name="guest" delete-non-durable-queue="true" create-non-durable-queue="true" consume="true" send="true"/>
                 </security-setting>
                 <address-setting name="#" message-counter-history-day-limit="10" page-size-bytes="2097152" max-size-bytes="10485760" expiry-address="jms.queue.ExpiryQueue" dead-letter-address="jms.queue.DLQ"/>
-                <http-connector name="http-connector" socket-binding="http">
-                    <param name="http-upgrade-endpoint" value="http-acceptor"/>
-                </http-connector>
-                <http-connector name="http-connector-throughput" socket-binding="http">
-                    <param name="http-upgrade-endpoint" value="http-acceptor-throughput"/>
+                <http-connector name="http-connector" socket-binding="http" endpoint="http-acceptor"/>
+                <http-connector name="http-connector-throughput" socket-binding="http" endpoint="http-acceptor-throughput">
                     <param name="batch-delay" value="50"/>
                 </http-connector>
                 <in-vm-connector name="in-vm" server-id="0"/>
