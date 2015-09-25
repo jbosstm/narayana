@@ -1,6 +1,8 @@
 package com.arjuna.webservices11.wsarjtx.client;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;
+import com.arjuna.webservices11.util.PrivilegedServiceFactory;
+import com.arjuna.webservices11.util.PrivilegedServiceHelper;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.ws.api.addressing.MAP;
@@ -43,8 +45,8 @@ public class WSARJTXClient
     private static synchronized TerminationCoordinatorService getTerminationCoordinatorService()
     {
         if (terminationCoordinatorService.get() == null) {
-            //terminationCoordinatorService.set(new TerminationCoordinatorService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationCoordinatorService")));
-            terminationCoordinatorService.set(new TerminationCoordinatorService());
+            terminationCoordinatorService.set(
+                    PrivilegedServiceFactory.getInstance(TerminationCoordinatorService.class).getService());
         }
         return terminationCoordinatorService.get();
     }
@@ -56,8 +58,8 @@ public class WSARJTXClient
     private static synchronized TerminationParticipantService getTerminationParticipantService()
     {
         if (terminationParticipantService.get() == null) {
-            //terminationParticipantService.set(new TerminationParticipantService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationParticipantService")));
-            terminationParticipantService.set(new TerminationParticipantService());
+            terminationParticipantService.set(
+                    PrivilegedServiceFactory.getInstance(TerminationParticipantService.class).getService());
         }
         return terminationParticipantService.get();
     }
@@ -69,8 +71,8 @@ public class WSARJTXClient
     private static synchronized TerminationCoordinatorRPCService getTerminationCoordinatorRPCService()
     {
         if (terminationCoordinatorRPCService.get() == null) {
-            //terminationCoordinatorService.set(new TerminationCoordinatorService(null, new QName("http://schemas.arjuna.com/ws/2005/10/wsarjtx", "TerminationCoordinatorService")));
-            terminationCoordinatorRPCService.set(new TerminationCoordinatorRPCService());
+            terminationCoordinatorRPCService.set(
+                    PrivilegedServiceFactory.getInstance(TerminationCoordinatorRPCService.class).getService());
         }
         return terminationCoordinatorRPCService.get();
     }
@@ -79,8 +81,9 @@ public class WSARJTXClient
                                                                                 String action,
                                                                                 MAP map)
     {
-        TerminationCoordinatorService service = getTerminationCoordinatorService();
-        TerminationCoordinatorPortType port = service.getPort(endpointReference, TerminationCoordinatorPortType.class, new AddressingFeature(true, true));
+        final TerminationCoordinatorService service = getTerminationCoordinatorService();
+        final TerminationCoordinatorPortType port = PrivilegedServiceHelper.getInstance().getPort(service,
+                endpointReference, TerminationCoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
@@ -103,8 +106,9 @@ public class WSARJTXClient
                                                                                String action,
                                                                                MAP map)
     {
-        TerminationParticipantService service = getTerminationParticipantService();
-        TerminationParticipantPortType port = service.getPort(endpointReference, TerminationParticipantPortType.class, new AddressingFeature(true, true));
+        final TerminationParticipantService service = getTerminationParticipantService();
+        final TerminationParticipantPortType port = PrivilegedServiceHelper.getInstance().getPort(service,
+                endpointReference, TerminationParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
@@ -124,8 +128,9 @@ public class WSARJTXClient
                                                                                String action,
                                                                                MAP map)
     {
-        TerminationParticipantService service = getTerminationParticipantService();
-        TerminationParticipantPortType port = service.getPort(TerminationParticipantPortType.class, new AddressingFeature(true, true));
+        final TerminationParticipantService service = getTerminationParticipantService();
+        final TerminationParticipantPortType port = PrivilegedServiceHelper.getInstance().getPort(service,
+                TerminationParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
@@ -144,8 +149,9 @@ public class WSARJTXClient
                                                                                   String action,
                                                                                   MAP map)
     {
-        TerminationCoordinatorRPCService service = getTerminationCoordinatorRPCService();
-        TerminationCoordinatorRPCPortType port = service.getPort(endpointReference, TerminationCoordinatorRPCPortType.class, new AddressingFeature(true, true));
+        final TerminationCoordinatorRPCService service = getTerminationCoordinatorRPCService();
+        final TerminationCoordinatorRPCPortType port = PrivilegedServiceHelper.getInstance().getPort(service,
+                endpointReference, TerminationCoordinatorRPCPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature

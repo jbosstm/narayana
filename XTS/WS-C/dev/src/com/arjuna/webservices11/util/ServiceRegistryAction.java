@@ -23,31 +23,26 @@ package com.arjuna.webservices11.util;
 
 import com.arjuna.webservices11.ServiceRegistry;
 
-import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class PrivilegedServiceRegistryFactory {
+public class ServiceRegistryAction implements PrivilegedAction<ServiceRegistry> {
 
-    private static final PrivilegedServiceRegistryFactory INSTANCE = new PrivilegedServiceRegistryFactory();
+    private static final ServiceRegistryAction INSTANCE = new ServiceRegistryAction();
 
-    private PrivilegedServiceRegistryFactory() {
+    private ServiceRegistryAction() {
 
     }
 
-    public static PrivilegedServiceRegistryFactory getInstance() {
+    public static ServiceRegistryAction getInstance() {
         return INSTANCE;
     }
 
-    public ServiceRegistry getServiceRegistry() {
-        final ServiceRegistryAction serviceRegistryAction = ServiceRegistryAction.getInstance();
-
-        if (System.getSecurityManager() == null) {
-            return serviceRegistryAction.run();
-        }
-
-        return AccessController.doPrivileged(serviceRegistryAction);
+    @Override
+    public ServiceRegistry run() {
+        return ServiceRegistry.getRegistry();
     }
 
 }

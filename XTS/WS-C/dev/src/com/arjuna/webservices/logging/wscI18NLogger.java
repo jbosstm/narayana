@@ -301,6 +301,10 @@ public interface wscI18NLogger {
 	@Message(id = 42084, value = "Unknown activity identifier", format = MESSAGE_FORMAT)
 	public String get_wsc11_messaging_RegistrationCoordinatorProcessorImpl_4();
 
+	@Message(id = 42085, value = "Failed to create service instance: {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_cannot_create_service_instance(Class arg0, @Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

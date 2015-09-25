@@ -21,33 +21,32 @@
  */
 package com.arjuna.webservices11.util;
 
-import com.arjuna.webservices11.ServiceRegistry;
-
+import javax.xml.ws.Service;
 import java.security.AccessController;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class PrivilegedServiceRegistryFactory {
+public class PrivilegedServiceFactory<T extends Service> {
 
-    private static final PrivilegedServiceRegistryFactory INSTANCE = new PrivilegedServiceRegistryFactory();
+    private final Class<T> serviceClass;
 
-    private PrivilegedServiceRegistryFactory() {
-
+    public PrivilegedServiceFactory(final Class<T> serviceClass) {
+        this.serviceClass = serviceClass;
     }
 
-    public static PrivilegedServiceRegistryFactory getInstance() {
-        return INSTANCE;
+    public static <T extends Service> PrivilegedServiceFactory<T> getInstance(final Class<T> serviceClass) {
+        return new PrivilegedServiceFactory<>(serviceClass);
     }
 
-    public ServiceRegistry getServiceRegistry() {
-        final ServiceRegistryAction serviceRegistryAction = ServiceRegistryAction.getInstance();
+    public T getService() {
+        final ServiceAction<T> serviceAction = ServiceAction.getInstance(serviceClass);
 
         if (System.getSecurityManager() == null) {
-            return serviceRegistryAction.run();
+            return serviceAction.run();
         }
 
-        return AccessController.doPrivileged(serviceRegistryAction);
+        return AccessController.doPrivileged(serviceAction);
     }
 
 }

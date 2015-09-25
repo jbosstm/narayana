@@ -19,35 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.webservices11.util;
+package com.arjuna.mw.wst11.common;
 
-import com.arjuna.webservices11.ServiceRegistry;
-
-import java.security.AccessController;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import java.security.PrivilegedExceptionAction;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class PrivilegedServiceRegistryFactory {
+public class CoordinationContextAction implements PrivilegedExceptionAction<JAXBContext> {
 
-    private static final PrivilegedServiceRegistryFactory INSTANCE = new PrivilegedServiceRegistryFactory();
+    private static final CoordinationContextAction INSTANCE = new CoordinationContextAction();
 
-    private PrivilegedServiceRegistryFactory() {
+    private CoordinationContextAction() {
 
     }
 
-    public static PrivilegedServiceRegistryFactory getInstance() {
+    public static CoordinationContextAction getInstance() {
         return INSTANCE;
     }
 
-    public ServiceRegistry getServiceRegistry() {
-        final ServiceRegistryAction serviceRegistryAction = ServiceRegistryAction.getInstance();
-
-        if (System.getSecurityManager() == null) {
-            return serviceRegistryAction.run();
-        }
-
-        return AccessController.doPrivileged(serviceRegistryAction);
+    @Override
+    public JAXBContext run() throws JAXBException {
+        return JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
     }
 
 }

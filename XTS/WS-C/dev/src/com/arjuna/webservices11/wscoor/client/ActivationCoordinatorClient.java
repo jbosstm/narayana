@@ -26,6 +26,8 @@ import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * The Client side of the Activation Coordinator.
@@ -79,10 +81,25 @@ public class ActivationCoordinatorClient
         }
 
         // get proxy with required message id and end point address
-        ActivationPortType port = WSCOORClient.getActivationPort(map, CoordinationConstants.WSCOOR_ACTION_CREATE_COORDINATION_CONTEXT);
+        final ActivationPortType port = WSCOORClient.getActivationPort(map, CoordinationConstants.WSCOOR_ACTION_CREATE_COORDINATION_CONTEXT);
 
         // invoke remote method
-        return port.createCoordinationContextOperation(request);
+        return createCoordinationContextOperation(port, request);
+    }
+
+    private CreateCoordinationContextResponseType createCoordinationContextOperation(final ActivationPortType port,
+            final CreateCoordinationContextType request) {
+
+        if (System.getSecurityManager() == null) {
+            return port.createCoordinationContextOperation(request);
+        }
+
+        return AccessController.doPrivileged(new PrivilegedAction<CreateCoordinationContextResponseType>() {
+            @Override
+            public CreateCoordinationContextResponseType run() {
+                return port.createCoordinationContextOperation(request);
+            }
+        });
     }
 
     /**

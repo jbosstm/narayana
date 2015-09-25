@@ -15,6 +15,8 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * Wrapper around low level Registration Coordinator messaging.
@@ -43,13 +45,11 @@ public class RegistrationCoordinator
 
         try
         {
-            RegisterType registerType = new RegisterType();
-            RegisterResponseType response;
-
+            final RegisterType registerType = new RegisterType();
             registerType.setProtocolIdentifier(protocolIdentifier);
             registerType.setParticipantProtocolService(participantProtocolService);
-            RegistrationPortType port = WSCOORClient.getRegistrationPort(endpointReference, CoordinationConstants.WSCOOR_ACTION_REGISTER, messageID);
-            response = port.registerOperation(registerType);
+            final RegistrationPortType port = WSCOORClient.getRegistrationPort(endpointReference, CoordinationConstants.WSCOOR_ACTION_REGISTER, messageID);
+            final RegisterResponseType response = registerOperation(port, registerType);
             return response.getCoordinatorProtocolService();
         } catch (SOAPFaultException sfe) {
             final SOAPFault soapFault = sfe.getFault() ;
@@ -74,5 +74,20 @@ public class RegistrationCoordinator
             }
             throw SoapFault11.create(sfe);
         }
+    }
+
+    private static RegisterResponseType registerOperation(final RegistrationPortType port,
+            final RegisterType registerType)
+    {
+        if (System.getSecurityManager() == null) {
+            return port.registerOperation(registerType);
+        }
+
+        return AccessController.doPrivileged(new PrivilegedAction<RegisterResponseType>() {
+            @Override
+            public RegisterResponseType run() {
+                return port.registerOperation(registerType);
+            }
+        });
     }
 }

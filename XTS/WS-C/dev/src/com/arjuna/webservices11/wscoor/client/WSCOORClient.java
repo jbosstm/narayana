@@ -1,5 +1,7 @@
 package com.arjuna.webservices11.wscoor.client;
 
+import com.arjuna.webservices11.util.PrivilegedServiceFactory;
+import com.arjuna.webservices11.util.PrivilegedServiceHelper;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationPortType;
@@ -10,8 +12,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationService;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Map;
 
 /**
@@ -41,8 +41,7 @@ public class WSCOORClient
     private static synchronized ActivationService getActivationService()
     {
         if (activationService.get() == null) {
-            // activationService.set(new ActivationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "ActivationService")));
-            activationService.set(new ActivationService());
+            activationService.set(PrivilegedServiceFactory.getInstance(ActivationService.class).getService());
         }
         return activationService.get();
     }
@@ -54,17 +53,16 @@ public class WSCOORClient
     private static synchronized RegistrationService getRegistrationService()
     {
         if (registrationService.get() == null) {
-            // registrationService.set(new RegistrationService(null, new QName("http://docs.oasis-open.org/ws-tx/wscoor/2006/06", "RegistrationService")));
-            registrationService.set(new RegistrationService());
+            registrationService.set(PrivilegedServiceFactory.getInstance(RegistrationService.class).getService());
         }
         return registrationService.get();
     }
 
-    public static ActivationPortType getActivationPort(MAP map,
-                                                       String action)
+    public static ActivationPortType getActivationPort(MAP map, String action)
     {
-        ActivationService service = getActivationService();
-        ActivationPortType port = service.getPort(ActivationPortType.class, new AddressingFeature(true, true));
+        final ActivationService service = getActivationService();
+        final ActivationPortType port = PrivilegedServiceHelper.getInstance().getPort(service, ActivationPortType.class,
+                new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         String to = map.getTo();
         /*
@@ -85,12 +83,8 @@ public class WSCOORClient
     public static RegistrationPortType getRegistrationPort(final W3CEndpointReference endpointReference, String action, String messageID)
     {
         final RegistrationService service = getRegistrationService();
-        final RegistrationPortType port = AccessController.doPrivileged(new PrivilegedAction<RegistrationPortType>() {
-            @Override
-            public RegistrationPortType run() {
-                return service.getPort(endpointReference, RegistrationPortType.class, new AddressingFeature(true, true));
-            }
-        });
+        final RegistrationPortType port = PrivilegedServiceHelper.getInstance().getPort(service, endpointReference,
+                RegistrationPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
          * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature

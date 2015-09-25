@@ -22,31 +22,32 @@
 package com.arjuna.webservices11.util;
 
 import org.jboss.ws.api.addressing.MAPBuilder;
-import org.jboss.ws.api.addressing.MAPBuilderFactory;
 
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class PrivilegedMapBuilderFactory {
 
+    private static final PrivilegedMapBuilderFactory INSTANCE = new PrivilegedMapBuilderFactory();
+
     private PrivilegedMapBuilderFactory() {
 
     }
 
     public static PrivilegedMapBuilderFactory getInstance() {
-        return new PrivilegedMapBuilderFactory();
+        return INSTANCE;
     }
 
     public MAPBuilder getBuilderInstance() {
-        return AccessController.doPrivileged(new PrivilegedAction<MAPBuilder>() {
-            @Override
-            public MAPBuilder run() {
-                return MAPBuilderFactory.getInstance().getBuilderInstance();
-            }
-        });
+        final MapBuilderAction mapBuilderAction = MapBuilderAction.getInstance();
+
+        if (System.getSecurityManager() == null) {
+            return mapBuilderAction.run();
+        }
+
+        return AccessController.doPrivileged(mapBuilderAction);
     }
 
 }

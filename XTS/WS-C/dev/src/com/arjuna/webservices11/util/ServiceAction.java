@@ -21,33 +21,33 @@
  */
 package com.arjuna.webservices11.util;
 
-import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices.logging.WSCLogger;
 
-import java.security.AccessController;
+import javax.xml.ws.Service;
+import java.security.PrivilegedAction;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class PrivilegedServiceRegistryFactory {
+public final class ServiceAction<T extends Service> implements PrivilegedAction<T> {
 
-    private static final PrivilegedServiceRegistryFactory INSTANCE = new PrivilegedServiceRegistryFactory();
+    private final Class<T> serviceClass;
 
-    private PrivilegedServiceRegistryFactory() {
-
+    public ServiceAction(Class<T> serviceClass) {
+        this.serviceClass = serviceClass;
     }
 
-    public static PrivilegedServiceRegistryFactory getInstance() {
-        return INSTANCE;
+    public static <T extends Service> ServiceAction<T> getInstance(final Class<T> serviceClass) {
+        return new ServiceAction<>(serviceClass);
     }
 
-    public ServiceRegistry getServiceRegistry() {
-        final ServiceRegistryAction serviceRegistryAction = ServiceRegistryAction.getInstance();
-
-        if (System.getSecurityManager() == null) {
-            return serviceRegistryAction.run();
+    @Override
+    public T run() {
+        try {
+            return serviceClass.newInstance();
+        } catch (final InstantiationException | IllegalAccessException e) {
+            WSCLogger.i18NLogger.warn_cannot_create_service_instance(serviceClass, e);
+            throw new RuntimeException(e);
         }
-
-        return AccessController.doPrivileged(serviceRegistryAction);
     }
-
 }

@@ -30,7 +30,6 @@ import javax.xml.bind.Unmarshaller;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * Helper class for serialising Coordination Contexts into SOAP headers.
@@ -120,26 +119,29 @@ public class CoordinationContextHelper
     }
     
     private static void setContextClassLoader(final ClassLoader classLoader) {
-        final Thread current = Thread.currentThread();
-
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            public Void run() {
-                current.setContextClassLoader(classLoader);
-                return null;
-            }
-        });
+        if (System.getSecurityManager() == null) {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        } else {
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                @Override
+                public Void run() {
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                    return null;
+                }
+            });
+        }
     }
 
     private static JAXBContext getJaxbContext() throws Exception {
+        final CoordinationContextAction coordinationContextAction = CoordinationContextAction.getInstance();
+
+        if (System.getSecurityManager() == null) {
+            return coordinationContextAction.run();
+        }
+
         try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<JAXBContext>() {
-                @Override
-                public JAXBContext run() throws JAXBException {
-                    return JAXBContext.newInstance("org.oasis_open.docs.ws_tx.wscoor._2006._06");
-                }
-            });
-        } catch (PrivilegedActionException e) {
+            return AccessController.doPrivileged(coordinationContextAction);
+        } catch (final PrivilegedActionException e) {
             throw e.getException();
         }
     }

@@ -3,7 +3,7 @@ package com.arjuna.webservices11.wsaddr;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
 import java.util.List;
 import java.util.Map;
 
@@ -74,18 +74,7 @@ public final class NativeEndpointReference extends EndpointReference
     */
    public NativeEndpointReference(final Source source)
    {
-      NativeEndpointReference epr = AccessController.doPrivileged(new PrivilegedAction<NativeEndpointReference>() {
-         @Override
-         public NativeEndpointReference run() {
-            try {
-               return jc.createUnmarshaller().unmarshal(source, NativeEndpointReference.class).getValue();
-            } catch (JAXBException e) {
-               throw new WebServiceException("Error unmarshalling NativeEndpointReference ", e);
-            } catch (ClassCastException e) {
-               throw new WebServiceException("Source did not contain NativeEndpointReference", e);
-            }
-         }
-      });
+      NativeEndpointReference epr = unmarshalNativeEndpointReference(source);
       this.address = epr.address;
       this.metadata = epr.metadata;
       this.referenceParameters = epr.referenceParameters;
@@ -204,16 +193,32 @@ public final class NativeEndpointReference extends EndpointReference
 
    private static JAXBContext getJaxbContext()
    {
-      return AccessController.doPrivileged(new PrivilegedAction<JAXBContext>() {
-         @Override
-         public JAXBContext run() {
-            try {
-               return JAXBContext.newInstance(new Class[] { NativeEndpointReference.class });
-            } catch (JAXBException ex) {
-               throw new WebServiceException("Cannot obtain JAXB context", ex);
-            }
+      final NativeEndpointReferenceContextAction action = NativeEndpointReferenceContextAction.getInstance();
+
+      if (System.getSecurityManager() == null) {
+         try {
+            return action.run();
+         } catch (final JAXBException e) {
+            throw new WebServiceException("Cannot obtain JAXB context", e);
          }
-      });
+      }
+
+      try {
+         return AccessController.doPrivileged(action);
+      } catch (final PrivilegedActionException e) {
+         throw new WebServiceException("Cannot obtain JAXB context", e.getException());
+      }
+   }
+
+   private NativeEndpointReference unmarshalNativeEndpointReference(final Source source) {
+      final JAXBContextUnmarshalAction<NativeEndpointReference> unmarshalAction =
+              JAXBContextUnmarshalAction.getInstance(jc, source, NativeEndpointReference.class);
+
+      if (System.getSecurityManager() == null) {
+         return unmarshalAction.run();
+      }
+
+      return AccessController.doPrivileged(unmarshalAction);
    }
 
    private static class Address
