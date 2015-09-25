@@ -87,7 +87,7 @@ def get_username():
     """
     Returns JIRA username from the command prompt.
     """
-    return raw_input('JIRA Username: ');
+    return raw_input('JIRA Username: ')
 
 
 def get_options():
@@ -95,54 +95,51 @@ def get_options():
     Set up possible script arguments and return available options.
     """
     parser = OptionParser()
-    parser.add_option('-l', '--log', dest = 'LOG_LEVEL',
-        help = 'Set log level: CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET. Defaults to WARNING',
-        choices = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'],
-        default = 'WARNING')
-    parser.add_option('-j', '--jira-host', dest = 'JIRA_HOST',
-        help = 'JIRA host to use during the update. Defaults to issues.jboss.org',
-        default = 'issues.jboss.org')
-    parser.add_option('-k', '--project-key', dest = 'PROJECT_KEY',
-        help = 'JIRA project key to use during the update')
-    parser.add_option('-t', '--temp-version', dest = 'TEMP_VERSION',
-        help = 'Temporal version which should be released. Defaults to 5.next',
-        default = '5.next')
-    parser.add_option('-n', '--new-version', dest = 'NEW_VERSION',
-        help = 'Actual version of the realse')
-    parser.add_option('-u', '--username', dest = 'USERNAME',
-        help = 'JIRA user name with administration permissions')
-    parser.add_option('-p', '--password', dest = 'PASSWORD',
-        help = 'Password of the JIRA user')
+    parser.add_option('-l', '--log', dest='LOG_LEVEL',
+        help='Set log level: CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET. Defaults to WARNING',
+        choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'],
+        default='WARNING')
+    parser.add_option('-j', '--jira-host', dest='JIRA_HOST',
+        help='JIRA host to use during the update. Defaults to issues.jboss.org',
+        default='issues.jboss.org')
+    parser.add_option('-k', '--project-key', dest='PROJECT_KEY',
+        help='JIRA project key to use during the update')
+    parser.add_option('-t', '--temp-version', dest='TEMP_VERSION',
+        help='Temporal version which should be released. Defaults to 5.next',
+        default='5.next')
+    parser.add_option('-n', '--new-version', dest='NEW_VERSION',
+        help='Actual version of the realse')
+    parser.add_option('-u', '--username', dest='USERNAME',
+        help='JIRA user name with administration permissions')
+    parser.add_option('-p', '--password', dest='PASSWORD',
+        help='Password of the JIRA user')
     (options, args) = parser.parse_args()
 
-    if options.PROJECT_KEY == None:
+    if options.PROJECT_KEY is None:
         raise ValueError('Project key is required. Use --help to see options')
-    if options.NEW_VERSION == None:
+    if options.NEW_VERSION is None:
         raise ValueError('New version is required. Use --help to see options')
-    if options.USERNAME == None:
+    if options.USERNAME is None:
         options.USERNAME = get_username()
-    if options.PASSWORD == None:
+    if options.PASSWORD is None:
         options.PASSWORD = get_password()
 
     return options
 
 
-def setup_logging(options):
-    logging.basicConfig(level = options.LOG_LEVEL)
+def setup_logging(log_level):
+    logging.basicConfig(level=log_level)
 
 
-def main(options):
-    release_version(options.JIRA_HOST, options.USERNAME, options.PASSWORD,
-        options.PROJECT_KEY, options.TEMP_VERSION, options.NEW_VERSION)
-    create_version(options.JIRA_HOST, options.USERNAME, options.PASSWORD,
-        options.PROJECT_KEY, options.TEMP_VERSION)
-    close_resolved_issues(options.JIRA_HOST, options.USERNAME, options.PASSWORD,
-        options.PROJECT_KEY, options.NEW_VERSION)
-    move_unresolved_issues(options.JIRA_HOST, options.USERNAME, options.PASSWORD,
-        options.PROJECT_KEY, options.NEW_VERSION, options.TEMP_VERSION)
+def main(jira_host, project_key, username, password, new_version, temp_version):
+    release_version(jira_host, username, password, project_key, temp_version, new_version)
+    create_version(jira_host, username, password, project_key, temp_version)
+    close_resolved_issues(jira_host, username, password, project_key, new_version)
+    move_unresolved_issues(jira_host, username, password, project_key, new_version, temp_version)
 
 
 if __name__ == "__main__":
     options = get_options()
-    setup_logging(options)
-    main(options)
+    setup_logging(options.LOG_LEVEL)
+    main(options.JIRA_HOST, options.PROJECT_KEY, options.USERNAME, options.PASSWORD, options.NEW_VERSION,
+         options.TEMP_VERSION)
