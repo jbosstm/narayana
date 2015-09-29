@@ -33,8 +33,7 @@ package com.hp.mwtests.ts.jts.remote.hammer;
 
 import org.omg.CORBA.IntHolder;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.OA;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.Services;
@@ -51,17 +50,9 @@ public class DistributedHammer1
 
     public static void main(String[] args) throws Exception
     {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
+        ServerORB orb = new ServerORB();
+        ORB myORB = orb.getORB();
+        RootOA myOA = orb.getOA();
 
         String server1 = args[0];
         String server2 = args[1];

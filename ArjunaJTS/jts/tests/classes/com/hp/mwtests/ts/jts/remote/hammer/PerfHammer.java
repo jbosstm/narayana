@@ -31,8 +31,7 @@
 
 package com.hp.mwtests.ts.jts.remote.hammer;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.OA;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import io.narayana.perf.Measurement;
@@ -59,14 +58,9 @@ public class PerfHammer
         int batchSize = 100;
         int warmUpCount = 0;
 
-        ORB myORB = ORB.getInstance("test");
-        RootOA myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
+        ServerORB orb = new ServerORB();
+        ORB myORB = orb.getORB();
+        RootOA myOA = orb.getOA();
 
         String metricName = "JTSRemote_PerfTest_PerfHammer_" + System.getProperty("org.omg.CORBA.ORBClass",
                 myORB.orb().getClass().getName());

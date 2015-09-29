@@ -38,10 +38,9 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.Control;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.orbportability.OA;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.Services;
@@ -61,14 +60,9 @@ public class TimeoutClient
 
         try
         {
-            myORB = ORB.getInstance("test");
-            myOA = OA.getRootOA(myORB);
-
-            myORB.initORB(new String[] {}, null);
-            myOA.initOA();
-
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
+            ServerORB orb = new ServerORB();
+            myORB = orb.getORB();
+            myOA = orb.getOA();
 
             CurrentImple current = OTSImpleManager.current();
             Control theControl = null;

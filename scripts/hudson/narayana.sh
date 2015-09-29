@@ -590,13 +590,13 @@ function qa_tests_once {
         ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
-        ant -f run-tests.xml -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+        ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
         ok=$?
       fi
     else

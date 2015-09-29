@@ -38,8 +38,7 @@ import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.TransactionFactory;
 import org.omg.CosTransactions.TransactionFactoryHelper;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.OA;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.Services;
@@ -56,17 +55,9 @@ public class TMTest
     @Test
     public void test() throws Exception
     {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
+        ServerORB orb = new ServerORB();
+        ORB myORB = orb.getORB();
+        RootOA myOA = orb.getOA();
 
         TransactionFactory theOTS = null;
         Control topLevelControl = null;

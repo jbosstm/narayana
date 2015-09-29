@@ -41,9 +41,8 @@ import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Coordinator;
 import org.omg.CosTransactions.Status;
 
-import com.arjuna.ats.internal.jts.ORBManager;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.ats.jts.OTSManager;
-import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jts.orbspecific.resources.demosync;
@@ -62,15 +61,10 @@ public class SynchTest
 
         try
         {
-            myORB = ORB.getInstance("test");
+            ServerORB orb = new ServerORB();
 
-            myOA = OA.getRootOA(myORB);
-
-            myORB.initORB(new String[] {}, null);
-            myOA.initOA();
-
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
+            myORB = orb.getORB();
+            myOA = orb.getOA();
 
             Control myControl = null;
             org.omg.CosTransactions.Current current = OTSManager.get_current();
