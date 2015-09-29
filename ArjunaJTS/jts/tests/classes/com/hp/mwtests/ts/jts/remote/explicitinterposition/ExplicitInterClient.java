@@ -33,10 +33,9 @@ package com.hp.mwtests.ts.jts.remote.explicitinterposition;
 
 import org.omg.CosTransactions.Control;
 
-import com.arjuna.ats.internal.jts.ORBManager;
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.Services;
@@ -48,18 +47,9 @@ public class ExplicitInterClient
 {
     public static void main(String[] args) throws Exception
     {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
-
+        ServerORB orb = new ServerORB();
+        ORB myORB = orb.getORB();
+        RootOA myOA = orb.getOA();
 
         CurrentImple current = OTSImpleManager.current();
         Control theControl = null;

@@ -28,15 +28,13 @@
  *
  * $Id: TranGridServer.java 2342 2006-03-30 13:06:17Z  $
  */
-
 package com.hp.mwtests.ts.jts.remote.servers;
 
 import static org.junit.Assert.fail;
 
+import com.hp.mwtests.ts.jts.utils.ServerORB;
 import org.junit.Test;
 
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.Services;
@@ -48,18 +46,9 @@ public class TranGridServer
     @Test
     public void test() throws Exception
     {
-        ORB myORB = null;
-        RootOA myOA = null;
-
-        myORB = ORB.getInstance("test");
-        myOA = OA.getRootOA(myORB);
-
-        myORB.initORB(new String[] {}, null);
-        myOA.initOA();
-
-        ORBManager.setORB(myORB);
-        ORBManager.setPOA(myOA);
-
+        ServerORB orb = new ServerORB();
+        ORB myORB = orb.getORB();
+        RootOA myOA = orb.getOA();
 
         String serverName = "TranGrid";
         String refFile = "/tmp/trangrid.ref";
