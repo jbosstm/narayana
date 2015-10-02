@@ -32,7 +32,13 @@
 package com.hp.mwtests.ts.jta.xa;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -41,6 +47,8 @@ import org.junit.Test;
 
 public class JTATest {
 
+    private XAException exception;
+    
 	@Test
 	public void test() throws Exception {
 
@@ -57,6 +65,150 @@ public class JTATest {
 
 		tm.rollback();
 		assertTrue(rollbackCalled.getRollbackCalled());
+	}
+	
+	
+	@Test
+	public void testHeuristicRollbackSuppressedException() throws NotSupportedException, SystemException, IllegalStateException, RollbackException, SecurityException, HeuristicMixedException, HeuristicRollbackException {
+
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new XAResource() {
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+
+                
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+
+                
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+
+                return 0;
+            }
+
+            @Override
+            public void commit(Xid xid, boolean onePhase) throws XAException {
+                exception = new XAException(XAException.XA_HEURRB);
+                throw exception;
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+
+                
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+
+                
+            }
+
+            @Override
+            public Xid[] recover(int flag) throws XAException {
+
+                return null;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaRes) throws XAException {
+
+                return false;
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+
+                return 0;
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int seconds) throws XAException {
+
+                return false;
+            }}));
+        assertTrue(theTransaction.enlistResource(new XAResource() {
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+
+                
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+
+                
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+
+                return 0;
+            }
+
+            @Override
+            public void commit(Xid xid, boolean onePhase) throws XAException {
+
+                
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+
+                
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+
+                
+            }
+
+            @Override
+            public Xid[] recover(int flag) throws XAException {
+
+                return null;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaRes) throws XAException {
+
+                return false;
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+
+                return 0;
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int seconds) throws XAException {
+
+                return false;
+            }}));
+
+        try {
+            tm.commit();
+            fail();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+            assertTrue(e.getSuppressed()[0] == exception);
+        }
+	    
 	}
 
 	private class XARMERRXAResource implements XAResource {
