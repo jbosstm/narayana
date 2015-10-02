@@ -3363,6 +3363,19 @@ public class BasicAction extends StateManager
                     tsLogger.i18NLogger.warn_coordinator_BasicAction_57(get_uid());
                 } else {
                     tsLogger.i18NLogger.warn_coordinator_BasicAction_58(get_uid());
+
+                    // This was added for JBTM-2476 - it could be used during commit
+                    // but as the commit path needs to be optimum and getStackTrace is expensive
+                    // I did not include it
+                    for (Thread entry : _childThreads.values()) {
+                        StackTraceElement[] stackTrace = entry.getStackTrace();
+                        StringBuilder sb = new StringBuilder();
+                        for (StackTraceElement element : stackTrace) {
+                            sb.append(element.toString());
+                            sb.append("\n");
+                        }
+                        tsLogger.i18NLogger.warn_multiple_threads(objectUid, entry.getName(), sb.toString());
+                    }
                 }
 
                 if (_checkedAction != null)

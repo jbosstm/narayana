@@ -1519,6 +1519,11 @@ public interface arjunaI18NLogger {
     @Message(id = 12380, value = "OSB: Error constructing record header reader", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
     public void info_osb_HeaderStateCtorFail(@Cause() Throwable arg0);
+
+    @Message(id = 12381, value = "Action id {0} completed with multiple threads - thread {1} was in progress with {2}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_multiple_threads(Uid objectUid, String key, String string);
+    
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
