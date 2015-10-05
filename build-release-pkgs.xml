@@ -115,7 +115,13 @@
     <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
     <!-- build the binary releases -->
     <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
-      <arg line="deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
+      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
+    </exec>
+    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml"/>
+    </exec>
+    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am"/>
     </exec>
   </target>
   <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
