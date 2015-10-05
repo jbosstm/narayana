@@ -166,6 +166,10 @@
     </copy>
     <copy file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="tmp-downloads-dir/api"/>
     <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="tmp-docs-dir/api"/>
+    <copy file="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-xatmi-api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-xatmi-api"/>
+    <copy file="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-nbf-api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-nbf-api"/>
     <antcall target="remote-copy">
         <param name="from" value="tmp-downloads-dir"/>
         <param name="to" value="${downloads.dir}/${tag}"/>
