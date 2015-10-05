@@ -108,7 +108,7 @@ def _get_configuration():
     current_version = os.getenv('CURRENT_VERSION', '5.next')
     return {
         'jenkins_jobs': (JobConfig(jenkins_host, job) for job in jenkins_jobs),
-        'source_path': os.getenv('SOURCE_PATH', '../..'),
+        'source_path': os.getenv('SOURCE_PATH', '.'),
         'jira': JiraConfig(jira_host, project_key, current_version),
         'fail_deprecation': string_to_boolean(os.getenv('FAIL_DEPRECATION', 'False')),
         'fail_blocker': string_to_boolean(os.getenv('FAIL_BLOCKER', 'True')),

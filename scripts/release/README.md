@@ -12,7 +12,7 @@ Usage
 
 Script is configurable with environment variables:
 
-    * SOURCE_PATH - path to the Narayana source code. Default is "../..".
+    * SOURCE_PATH - path to the Narayana source code. Default is ".".
     * JENKINS_HOST - Jenkins host address. Default is "albany.eng.hst.ams2.redhat.com"
     * JENKINS_JOBS - comma separated list of Jenkins jobs. Default is "narayana,narayana-catelyn,narayana-quickstarts,narayana-benchmarks"
     * JIRA_HOST - JIRA host address. Default is "issues.jboss.org".
