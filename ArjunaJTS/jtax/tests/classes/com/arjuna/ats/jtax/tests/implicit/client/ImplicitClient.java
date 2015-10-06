@@ -31,6 +31,11 @@ package com.arjuna.ats.jtax.tests.implicit.client;
  * $Id: ImplicitClient.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+
 import org.junit.Test;
 
 import com.arjuna.ats.jta.TransactionManager;
@@ -52,7 +57,11 @@ public class ImplicitClient
         orb.initORB(new String[] {}, null);
         oa.initPOA(new String[] {});
 
-        org.omg.CORBA.Object obj = null; // TODO orb.orb().string_to_object(getService("TODO"));
+        File file = new File("server.ior");
+        FileReader fileReader = new FileReader(file);
+        BufferedReader br = new BufferedReader(fileReader);
+        String ior = br.readLine();
+        org.omg.CORBA.Object obj = orb.orb().string_to_object(ior); // TODO orb.orb().string_to_object(getService("TODO"));
 
         Example.test test = Example.testHelper.narrow(obj);
 

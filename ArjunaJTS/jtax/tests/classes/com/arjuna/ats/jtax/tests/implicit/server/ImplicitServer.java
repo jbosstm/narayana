@@ -31,6 +31,9 @@ package com.arjuna.ats.jtax.tests.implicit.server;
  * $Id: ImplicitServer.java 2342 2006-03-30 13:06:17Z  $
  */
 
+import java.io.File;
+import java.io.FileWriter;
+
 import org.junit.Test;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -57,7 +60,14 @@ public class ImplicitServer
         oa.objectIsReady(impl);
 
         org.omg.CORBA.Object obj = oa.corbaReference(impl);
-
+        
+        File file = new File("server.ior");
+        file.delete();
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(orb.orb().object_to_string(obj));
+        fileWriter.close();
+        
         // TODO registerService(args[0], orb.orb().object_to_string(obj));
 
         orb.orb().run();
