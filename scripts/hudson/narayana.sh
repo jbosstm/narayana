@@ -417,8 +417,8 @@ function tx_bridge_tests {
   cd $WORKSPACE
   CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
   grep recovery-listener "$CONF"
-  sed -e s/recovery-listener=\"true\"//g -i $CONF
-  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
+  sed -e s/recovery-listener=\"true\"//g   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#"   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
 
 #  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
@@ -474,8 +474,8 @@ EOF2
 function enable_xts_trace {
     CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
 
-    sed -e ':a;N;s/<logger category="com.arjuna">\s*<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/' -i $CONF
-    sed -e ':a;N;s/<console-handler name="CONSOLE">\s*<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/' -i $CONF
+    sed -e ':a;N;s/<logger category="com.arjuna">\s*<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/'   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+    sed -e ':a;N;s/<console-handler name="CONSOLE">\s*<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/'   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
 }
 
 function add_qa_xargs {
@@ -491,7 +491,7 @@ function add_qa_xargs {
     let i=i+1
   done
 
-  sed -i -e "s#NEXT_COMMAND_LINE_ARG=.*\$#${XARGS}#" TaskImpl.properties
+  sed -e "s#NEXT_COMMAND_LINE_ARG=.*\$#${XARGS}#" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
 }
 
 function qa_tests_once {
@@ -521,14 +521,14 @@ function qa_tests_once {
     orbtype=idlj
   elif [ x$orb = x"ibmorb" ]; then
     orbtype=ibmorb
-	sed -i -e "s#^  dist#  ${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}dist#" TaskImpl.properties
+	sed -e "s#^  dist#  ${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}dist#" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   else
     orbtype=jacorb
   fi
 
   testoutputzip="testoutput-${orbtype}.zip"
 
-  sed -i -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#" TaskImpl.properties
+  sed -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
   if [ $orbtype = "openjdk" ]; then
@@ -546,15 +546,15 @@ function qa_tests_once {
   fi
 
   # delete lines containing jacorb
-  [ $orbtype != "jacorb" ] && sed -i -e  '/^.*separator}jacorb/ d' TaskImpl.properties
+  [ $orbtype != "jacorb" ] && sed -e  '/^.*separator}jacorb/ d' TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
 
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   if [[ -n "$MFACTOR" ]] ; then
-    sed -i -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/" TaskImpl.properties
+    sed -e "s/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=[0-9]*/COMMAND_LINE_12=-DCoreEnvironmentBean.timeoutFactor=${MFACTOR}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
     # Note that setting the timeout too high (eg 2*240) will cause the defaulttimeout test cases to take
     # longer than the Task kill timeout period
     let txtimeout=$MFACTOR*120
-    sed -i -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties
+    sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" get.drivers dist ||
@@ -563,9 +563,9 @@ function qa_tests_once {
   [ $? = 0 ] || fatal "qa build failed"
 
   if [ $orbtype = "jacorb" ]; then
-    sed -i dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties -e "s#^jacorb.log.default.verbosity=.*#jacorb.log.default.verbosity=2#"
-    sed -i dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties -e "s#^jacorb.poa.thread_pool_max=.*#jacorb.poa.thread_pool_max=100#"
-    sed -i dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties -e "s#^jacorb.poa.thread_pool_min=.*#jacorb.poa.thread_pool_min=40#"
+    sed -e "s#^jacorb.log.default.verbosity=.*#jacorb.log.default.verbosity=2#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
+    sed -e "s#^jacorb.poa.thread_pool_max=.*#jacorb.poa.thread_pool_max=100#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
+    sed -e "s#^jacorb.poa.thread_pool_min=.*#jacorb.poa.thread_pool_min=40#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
   fi
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
