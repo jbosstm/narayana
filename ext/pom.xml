@@ -28,6 +28,11 @@
     <profiles>
         <profile>
             <id>codeCoverage</id>
+            <activation>
+                <property>
+                    <name>codeCoverage</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

@@ -22,6 +22,11 @@
   <profiles>
     <profile>
       <id>codeCoverage</id>
+      <activation>
+        <property>
+          <name>codeCoverage</name>
+        </property>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>org.jacoco</groupId>
@@ -62,6 +67,14 @@
                         <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTS/orbportability/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTS/jtax/target/coverage-reports" includes="jacoco-ut.exec"/>
+
+                        <fileset dir="../XTS/localjunit/disabled-context-propagation/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../XTS/localjunit/unit/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"/>
+
+                        <fileset dir="../compensations/target/coverage-reports" includes="jacoco-ut.exec"/>
+
+                        <fileset dir="../txframework/target/coverage-reports" includes="jacoco-ut.exec"/>
                       </executiondata>
 
                       <structure name="JaCoCo">
@@ -143,6 +156,49 @@
                             <fileset dir="../ArjunaJTS/jtax/classes"/>
                           </sourcefiles>
                         </group>
+
+                        <group name="org.jboss.narayana.xts">
+                          <classfiles>
+                            <fileset dir="../XTS/bridge/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/byteman_support/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/recovery/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/sar/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/WS-C/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/WS-T/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/WSAS/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/WSCF/target/classes" includes="**/*.class"/>
+                            <fileset dir="../XTS/WSTX/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../XTS/bridge/src"/>
+                            <fileset dir="../XTS/byteman_support/src/main/java"/>
+                            <fileset dir="../XTS/recovery/src"/>
+                            <fileset dir="../XTS/sar/src"/>
+                            <fileset dir="../XTS/WS-C/dev/src"/>
+                            <fileset dir="../XTS/WS-T/dev/src"/>
+                            <fileset dir="../XTS/WSAS/classes"/>
+                            <fileset dir="../XTS/WSCF/classes"/>
+                            <fileset dir="../XTS/WSTX/classes"/>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.compensations">
+                          <classfiles>
+                            <fileset dir="../compensations/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../compensations/src/main/java"/>
+                          </sourcefiles>
+                        </group>
+
+                        <group name="org.jboss.narayana.txframework">
+                          <classfiles>
+                            <fileset dir="../txframework/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../txframework/src/main/java"/>
+                          </sourcefiles>
+                        </group>
                       </structure>
 
                       <html destdir="${project.build.directory}/coverage"
@@ -170,6 +226,14 @@
                       <fileset dir="../ArjunaJTS/jts/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaJTS/orbportability/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaJTS/jtax/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../XTS/localjunit/disabled-context-propagation/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../XTS/localjunit/unit/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../XTS/localjunit/WSTX11-interop/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../compensations/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../txframework/target/surefire-reports" includes="**/*.xml"/>
 
                       <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
                         <param name="narayana.url" expression="${narayana.home.url}"/>

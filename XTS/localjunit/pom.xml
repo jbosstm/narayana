@@ -207,6 +207,9 @@
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>codeCoverage</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -274,26 +277,28 @@
         </profile>
         <profile>
             <id>codeCoverage</id>
+            <activation>
+                <property>
+                    <name>codeCoverage</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${version.org.jacoco}</version>
-                        <!-- Disable all XTS code coverage since they run under arquillian control.
-                             The current Jacoco config needs updating to include arquillian controlled tests
-                          -->
-                        <executions>
-                            <execution>
-                                <id>pre-unit-test</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>true</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables combine.children="append">
+                                <server.jvm.args>${jvm.args.jacoco}</server.jvm.args>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>**/CloseBeforeCompletedTest.java</exclude>
+                                <exclude>**/CloseTest.java</exclude>
+                                <exclude>**/CompensateTest.java</exclude>
+                                <exclude>**/MultiCloseTest.java</exclude>
+                                <exclude>**/MultiCompensateTest.java</exclude>
+                                <exclude>**/ATTest.java</exclude>
+                            </excludes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

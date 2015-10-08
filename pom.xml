@@ -383,6 +383,7 @@
                         -Dorg.jboss.byteman.transform.all
                         -javaagent:${project.build.directory}/lib/byteman.jar=listener:true
     </jvm.args.byteman>
+    <jvm.args.jacoco>-javaagent:${project.build.directory}/lib/jacocoagent.jar=destfile=${project.build.directory}/coverage-reports/jacoco-ut.exec,includes=*,append=true,output=file</jvm.args.jacoco>
     <jvm.args.memory>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
     <jvm.args.debug></jvm.args.debug>
     <jvm.args.other>-server</jvm.args.other>
@@ -540,6 +541,11 @@
     </profile>
       <profile>
           <id>codeCoverage</id>
+          <activation>
+              <property>
+                  <name>codeCoverage</name>
+              </property>
+          </activation>
           <build>
           <plugins>
           <plugin>
@@ -646,8 +652,34 @@
                   </systemProperties>
               </configuration>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-jacoco-agent</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>unpack-dependencies</goal>
+                </goals>
+                <configuration>
+                  <stripVersion>true</stripVersion>
+                  <includeGroupIds>org.jacoco</includeGroupIds>
+                  <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.jacoco</groupId>
+          <artifactId>org.jacoco.agent</artifactId>
+          <version>${version.org.jacoco}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
 
     <profile>
