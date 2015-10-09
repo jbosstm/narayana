@@ -9,7 +9,9 @@ issues_path = '/rest/api/2/search?%s'
 issue_path = '/rest/api/2/issue/%s'
 issue_transitions_path = issue_path + '/transitions'
 project_versions_path = '/rest/api/2/project/%s/versions'
+project_components_path = '/rest/api/2/project/%s/components'
 version_path = '/rest/api/2/version/%s'
+issue_types_path = '/rest/api/2/issuetype'
 
 
 def get_project(jira_host, project_key):
@@ -73,6 +75,39 @@ def close_issue(jira_host, username, password, issue_id):
     raise ValueError('Failed to close issue: %s' % issue_id)
 
 
+def create_issue(jira_host, username, password, body):
+    """
+    Creates new JIRA issue
+
+    jira_host -- JIRA host to contact.
+    username -- JIRA username with administrative permissions.
+    password -- password of the username.
+    body -- JSON with new issue body
+    """
+    headers = get_auth_header(username, password)
+    headers.update(get_content_type_header())
+    response = https_helper.post(jira_host, issue_path % '', body, headers)
+    if response.status != 201:
+        raise ValueError('Failed to create issue: status={0}, reason={1}'.format(response.status, response.reason))
+    return json.loads(response.read())
+
+
+def get_issue_type_by_name(jira_host, type_name):
+    """
+    Returns JIRA issue type based on the name
+
+    jira_host -- JIRA host to contact.
+    type_name -- type name to filter.
+    """
+    response = https_helper.get(jira_host, issue_types_path)
+    if response.status != 200:
+        raise ValueError('Failed to get issue types: status={0}, reason={1}'.format(response.status, response.reason))
+    matches = filter(lambda x: x['name'] == type_name, json.loads(response.read()))
+    if not matches:
+        raise ValueError('Requested type does not exist: {0}'.format(type_name))
+    return matches.pop()
+
+
 def get_project_versions(jira_host, project_key):
     """
     Returns all versions of the specified project.
@@ -82,7 +117,7 @@ def get_project_versions(jira_host, project_key):
     """
     response = https_helper.get(jira_host, project_versions_path % project_key)
     if response.status != 200:
-        raise ValueError('Version does not exist: project=%s, version=%s' % (project_key, version_name))
+        raise ValueError('Project does not exist: project=%s' % (project_key))
     return json.loads(response.read())
 
 
@@ -131,6 +166,33 @@ def update_version(jira_host, username, password, version_id, body):
     response = https_helper.put(jira_host, version_path % version_id, body, headers)
     if response.status != 200:
         raise ValueError('Failed to update version %s: %s %s' % (version_id, response.status, response.reason))
+
+
+def get_project_components(jira_host, project_key):
+    """
+    Returns all components of the specified project.
+
+    jira_host -- JIRA host to contact.
+    project_key -- project which components should be returned.
+    """
+    response = https_helper.get(jira_host, project_components_path % project_key)
+    if response.status != 200:
+        raise ValueError('Project does not exist: project={0}'.format(project_key))
+    return json.loads(response.read())
+
+
+def get_component_by_name(jira_host, project_key, name):
+    """
+    Gets project component based on the name.
+
+    jira_host -- JIRA host to contact.
+    project_key -- project which component should be returned.
+    name -- name of the component which should be returned
+    """
+    matches = filter(lambda x: x['name'] == name, get_project_components(jira_host, project_key))
+    if not matches:
+        raise ValueError('Requested component does not exist: {0}'.format(name))
+    return matches.pop()
 
 
 def get_transitions(jira_host, username, password, issue_id):

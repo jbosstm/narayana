@@ -35,5 +35,5 @@ Usage
 ```
 ./update_jira.py -k <project key> -n <release version>
     \ [-l <log level>] [-j <JIRA host>] [-t <temporary version>]
-    \ [-u <username>] [-p <password>]
+    \ [-u <username>] [-p <password>] [-s <summary>] [-c <component>]
 ```

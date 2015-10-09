@@ -72,8 +72,30 @@ def create_version(jira_host, username, password, project_key, version_name):
     jira_helper.create_version(jira_host, username, password, body)
 
 
-def create_component_update_issue():
-    pass
+def create_component_update_issue(jira_host, username, password, project_key, summary, component_name):
+    """
+    Creates upstream JIRA issue for the component update
+
+    jira_host -- host address of the JIRA instance to connect to.
+    username -- JIRA username with administration permissions.
+    password -- JIRA user password.
+    project_key -- upstream project key.
+    summary -- description of the new issue.
+    component_name -- name of the component to be assigned to the issue.
+    """
+    issue_type = jira_helper.get_issue_type_by_name(jira_host, 'Component  Upgrade')
+    component = jira_helper.get_component_by_name(jira_host, project_key, component_name)
+    body = json.dumps({
+        'fields': {
+            'project': {'key': project_key},
+            'summary': summary,
+            'issuetype': {'id': issue_type['id']},
+            'assignee': {'name': username},
+            'components': [{'id': component['id']}]
+        }
+    })
+    issue = jira_helper.create_issue(jira_host, username, password, body)
+    logging.info('Created component upgrade issue: https://{0}/browse/{1}'.format(jira_host, issue['key']))
 
 
 def get_password():
@@ -96,23 +118,26 @@ def get_options():
     """
     parser = OptionParser()
     parser.add_option('-l', '--log', dest='LOG_LEVEL',
-        help='Set log level: CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET. Defaults to WARNING',
-        choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'],
-        default='WARNING')
+                      help='Set log level: CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET. Defaults to WARNING',
+                      choices=['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'],
+                      default='INFO')
     parser.add_option('-j', '--jira-host', dest='JIRA_HOST',
-        help='JIRA host to use during the update. Defaults to issues.jboss.org',
-        default='issues.jboss.org')
+                      help='JIRA host to use during the update. Defaults to issues.jboss.org',
+                      default='issues.jboss.org')
     parser.add_option('-k', '--project-key', dest='PROJECT_KEY',
-        help='JIRA project key to use during the update')
+                      help='JIRA project key to use during the update')
+    parser.add_option('-s', '--upstream_key', dest='UPSTREAM_KEY', help='Upstream JIRA project key', default='WFLY')
     parser.add_option('-t', '--temp-version', dest='TEMP_VERSION',
-        help='Temporal version which should be released. Defaults to 5.next',
-        default='5.next')
+                      help='Temporal version which should be released. Defaults to 5.next',
+                      default='5.next')
     parser.add_option('-n', '--new-version', dest='NEW_VERSION',
-        help='Actual version of the realse')
+                      help='Actual version of the realse')
     parser.add_option('-u', '--username', dest='USERNAME',
-        help='JIRA user name with administration permissions')
+                      help='JIRA user name with administration permissions')
     parser.add_option('-p', '--password', dest='PASSWORD',
-        help='Password of the JIRA user')
+                      help='Password of the JIRA user')
+    parser.add_option('-c', '--component', dest='COMPONENT', help='Component name to assign for the new issue',
+                      default='Transactions')
     (options, args) = parser.parse_args()
 
     if options.PROJECT_KEY is None:
@@ -131,15 +156,17 @@ def setup_logging(log_level):
     logging.basicConfig(level=log_level)
 
 
-def main(jira_host, project_key, username, password, new_version, temp_version):
+def main(jira_host, project_key, username, password, new_version, temp_version, upstream_key, component):
     release_version(jira_host, username, password, project_key, temp_version, new_version)
     create_version(jira_host, username, password, project_key, temp_version)
     close_resolved_issues(jira_host, username, password, project_key, new_version)
     move_unresolved_issues(jira_host, username, password, project_key, new_version, temp_version)
+    create_component_update_issue(jira_host, username, password, upstream_key,
+                                  'Upgrade Narayana to {0}'.format(new_version), component)
 
 
 if __name__ == "__main__":
     options = get_options()
     setup_logging(options.LOG_LEVEL)
     main(options.JIRA_HOST, options.PROJECT_KEY, options.USERNAME, options.PASSWORD, options.NEW_VERSION,
-         options.TEMP_VERSION)
+         options.TEMP_VERSION, options.UPSTREAM_KEY, options.COMPONENT)
