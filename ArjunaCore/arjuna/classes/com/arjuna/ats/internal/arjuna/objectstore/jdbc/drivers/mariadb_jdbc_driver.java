@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,38 +15,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
- * @author JBoss Inc.
- */
-/*
- * $Id: oracle_driver.java 2342 2006-03-30 13:06:17Z  $
- *
- * Copyright (c) 2001 Hewlett-Packard Company
- * Hewlett-Packard Company Confidential
- * Copyright (c) 2004 Arjuna Technologies Limited
- *
- * $Project: ArjunaCore$
- * $Revision: 2342 $
- * $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
- * $Author: $
- */
-
-/*
- * Note: This impl has come from HP-TS-2.2 via. HP-MS 1.0
- */
-
-/*
- * JDBC store implementation driver-specific code.
- * This version for Oracle 8.1/9.* JDBC Drivers (OCI or Thin) ONLY.
+ * (C) 2009,
+ * @author JBoss by Red Hat.
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
+import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver;
-
-public class oracle_driver extends JDBCImple_driver {
+/**
+ * JDBC store implementation driver-specific code. This version for Maria DB JDBC
+ * Drivers.
+ */
+public class mariadb_jdbc_driver extends
+		com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver {
 
 	@Override
 	protected String getObjectStateSQLType() {
@@ -54,23 +38,17 @@ public class oracle_driver extends JDBCImple_driver {
 	}
 
 	@Override
-	public int getMaxStateSize() {
-		// Oracle BLOBs should be OK up to > 4 GB, but cap @ 10 MB for
-		// testing/performance:
-		return 1024 * 1024 * 10;
-	}
-
-	@Override
 	protected void checkCreateTableError(SQLException ex) throws SQLException {
-		if (!ex.getSQLState().equals("42000") && ex.getErrorCode() != 955) {
+		if (!ex.getSQLState().equals("42S01")) {
 			throw ex;
 		}
+
 	}
 
 	@Override
 	protected void checkDropTableException(Connection connection,
 			SQLException ex) throws SQLException {
-		if (!ex.getSQLState().equals("42000") && ex.getErrorCode() != 942) {
+		if (!ex.getSQLState().equals("42S02")) {
 			throw ex;
 		}
 	}
