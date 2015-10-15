@@ -500,7 +500,7 @@ function qa_tests_once {
   
   # Download dependencies
   cd $WORKSPACE
-  ant -f $WORKSPACE/qa/build.xml get.maven.libs
+  ./build.sh -f qa/pom.xml dependency:copy-dependencies
   
   cd $WORKSPACE/qa
   unset orb
