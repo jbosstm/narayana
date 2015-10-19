@@ -53,8 +53,7 @@ public ServerStrictTopLevelAction (ServerControl control, boolean doRegister)
         jtsLogger.logger.trace("ServerStrictTopLevelAction::ServerStrictTopLevelAction (ServerControl, " + doRegister + " )");
     }
 
-	_registered = false;
-	_theResource = null;
+        _theResource = null;
 	
 	if (_theControl != null)
 	{
@@ -110,6 +109,4 @@ public String type ()
 	return "/Resources/Arjuna/ServerTopLevelAction/ServerStrictTopLevelAction";
     }
 
-private boolean _registered;
-    
 }
