@@ -89,7 +89,9 @@ import com.arjuna.ats.jts.logging.jtsLogger;
 public class ServerTopLevelAction extends ServerResource implements org.omg.CosTransactions.ResourceOperations
 {
 
-public ServerTopLevelAction (ServerControl control)
+    protected boolean _registered;
+
+    public ServerTopLevelAction (ServerControl control)
     {
 	super(control);
 
@@ -130,6 +132,7 @@ public ServerTopLevelAction (ServerControl control)
 	}
 	else
 	    _valid = false;
+        _registered = false;
     }
 
 public Resource getReference ()
@@ -591,6 +594,9 @@ protected boolean registerResource (Coordinator theCoordinator)
 
 	if (theCoordinator != null)
 	{
+	    if (_registered)
+		return true;
+
 	    try
 	    {
 		/*
@@ -599,6 +605,8 @@ protected boolean registerResource (Coordinator theCoordinator)
 		 */
 
 		RecoveryCoordinator recoveryCoord = theCoordinator.register_resource(_resourceRef);
+
+            _registered = true;
 
 		if (!_theControl.isWrapper())
 		{
