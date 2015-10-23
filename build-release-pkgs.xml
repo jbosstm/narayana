@@ -64,11 +64,13 @@
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
-  <property name="gitbase" value="https://github.com/jbosstm"/>
+  <property name="gitbase" value="git@github.com:jbosstm/"/>
   <!-- The tag as it appears under svnbase -->
   <property name="tag" value="5.2.7.Final-SNAPSHOT"/>
   <!-- the location the Narayana web site downloads are copied to -->
   <property name="downloads.dir" value="downloads_htdocs/jbosstm/"/>
+  <!-- the location the Narayana web site downloads are copied to -->
+  <property name="docs.dir" value="docs_htdocs/jbosstm/"/>
   <!-- you probably don't need to change anything below here -->
   <taskdef resource="net/sf/antcontrib/antlib.xml">
     <classpath>
@@ -145,8 +147,6 @@
     <mkdir dir="tmp-downloads-dir/src"/>
     <mkdir dir="tmp-downloads-dir/binary"/>
     <mkdir dir="tmp-downloads-dir/idl"/>
-    <delete dir="tmp-docs-dir"/>
-    <mkdir dir="tmp-docs-dir"/>
     <copy todir="tmp-downloads-dir/src">
       <fileset dir="${workdir}" includes="narayana-*-${tag}-src.zip"/>
     </copy>
@@ -165,11 +165,8 @@
       </fileset>
     </copy>
     <copy file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="tmp-downloads-dir/api"/>
-    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="tmp-docs-dir/api"/>
     <copy file="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-xatmi-api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-xatmi-api"/>
     <copy file="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-nbf-api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-nbf-api"/>
     <antcall target="remote-copy">
         <param name="from" value="tmp-downloads-dir"/>
         <param name="to" value="${downloads.dir}/${tag}"/>
@@ -275,11 +272,34 @@ blacktie:
   
   <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
     <!-- Update javadoc htmls on the page -->
+    <delete dir="tmp-docs-dir"/>
+    <mkdir dir="tmp-docs-dir"/>
+    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="tmp-docs-dir/api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-xatmi-api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-nbf-api"/>
     <delete dir="${docs-dir}api"/>
     <mkdir dir="${docs-dir}api"/>
     <copy todir="${docs-dir}api">
       <fileset dir="tmp-docs-dir/api"/>
     </copy>
+    <copy todir="${docs-dir}jatmibroker-xatmi-api">
+      <fileset dir="tmp-docs-dir/jatmibroker-xatmi-api"/>
+    </copy>
+    <copy todir="${docs-dir}jatmibroker-nbf-api">
+      <fileset dir="tmp-docs-dir/jatmibroker-nbf-api"/>
+    </copy>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/>
+      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/api/" />
+    </exec>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/>
+      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/jatmibroker-xatmi-api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/jatmibroker-xatmi-api/" />
+    </exec>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/>
+      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/jatmibroker-nbf-api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/jatmibroker-nbf-api/" />
+    </exec>
     
     <!-- Update javadocs download url -->
     <exec executable="sed" dir="${config-dir}" outputproperty="first-api-line">
@@ -287,6 +307,8 @@ blacktie:
       <arg value="current_narayana_api.yml"/>
     </exec>
     <echo file="${config-dir}current_narayana_api.yml">${first-api-line}
+viewblacktie: /docs/jatmibroker-xatmi-api/index.html
+viewblacktienbf: /docs/jatmibroker-nbf-api/index.html
 download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}-javadoc.jar</echo>
   </target>
   
@@ -304,7 +326,7 @@ download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}
   
   <target name="api.check" description="Check if javadocs were built">
     <condition property="api.exist">
-      <available file="tmp-docs-dir" type="dir"/>
+      <available file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar"/>
     </condition>
   </target>
 
