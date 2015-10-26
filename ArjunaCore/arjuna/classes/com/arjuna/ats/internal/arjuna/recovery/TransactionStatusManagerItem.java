@@ -302,7 +302,7 @@ public class TransactionStatusManagerItem
 	{
 	    _host = InetAddress.getLocalHost().getHostAddress() ;
          
-	    tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
+	    tsLogger.logger.debugf("TransactionStatusManagerItem host: {0} port: {1}", _host, Integer.toString(_port));
 	}
 	catch ( UnknownHostException ex ) {
         tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);
@@ -324,7 +324,7 @@ public class TransactionStatusManagerItem
             Utility.hostNameToInetAddress(host);
             _host = host;
 
-            tsLogger.i18NLogger.info_recovery_TransactionStatusManagerItem_5(_host, Integer.toString(_port));
+            tsLogger.logger.debugf("TransactionStatusManagerItem host: {0} port: {1}", _host, Integer.toString(_port));
         }
         catch ( UnknownHostException ex ) {
             tsLogger.i18NLogger.warn_recovery_TransactionStatusManagerItem_4(ex);

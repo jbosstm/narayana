@@ -59,7 +59,7 @@ public class RecActivatorLoader
 
     public void startRecoveryActivators() throws RuntimeException
     {
-        tsLogger.i18NLogger.info_recovery_RecActivatorLoader_6();
+        tsLogger.logger.debug("Start RecoveryActivators");
 
         for(RecoveryActivator recoveryActivator : _recoveryActivators)
         {

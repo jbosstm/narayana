@@ -1197,9 +1197,9 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_ExpiredEntryMonitor_11(String arg0, String arg1);
 
-	@Message(id = 12296, value = "ExpiredEntryMonitor running at {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_ExpiredEntryMonitor_12(String arg0);
+//	@Message(id = 12296, value = "ExpiredEntryMonitor running at {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_ExpiredEntryMonitor_12(String arg0);
 
 	@Message(id = 12297, value = "ExpiredEntryMonitor - no scans on first iteration", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
@@ -1229,9 +1229,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_recovery_ExpiredTransactionScanner_4(Uid arg0);
 
-	@Message(id = 12304, value = "Removing old transaction status manager item {0}", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_ExpiredTransactionStatusManagerScanner_3(Uid arg0);
+//	@Message(id = 12304, value = "Removing old transaction status manager item {0}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_ExpiredTransactionStatusManagerScanner_3(Uid arg0);
 
 //	@Message(id = 12305, value = "{0}  has inappropriate value ({1})", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1309,9 +1309,9 @@ public interface arjunaI18NLogger {
 //	@LogMessage(level = WARN)
 //	public void warn_recovery_RecActivatorLoader_5(String arg0);
 
-	@Message(id = 12324, value = "Start RecoveryActivators", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_RecActivatorLoader_6();
+//	@Message(id = 12324, value = "Start RecoveryActivators", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_RecActivatorLoader_6();
 
 //	@Message(id = 12325, value = "property io exception {0}", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
@@ -1361,9 +1361,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_TransactionStatusManagerItem_4(@Cause() Throwable arg0);
 
-	@Message(id = 12337, value = "TransactionStatusManagerItem host: {0} port: {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_TransactionStatusManagerItem_5(String arg0, String arg1);
+//	@Message(id = 12337, value = "TransactionStatusManagerItem host: {0} port: {1}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_TransactionStatusManagerItem_5(String arg0, String arg1);
 
 	@Message(id = 12338, value = "Other Exception:", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1385,9 +1385,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = FATAL)
 	public void fatal_recovery_fail(String arg0, String arg1);
 
-	@Message(id = 12343, value = "RecoveryManagerImple is ready. Socket listener is turned off.", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_recovery_localready();
+//	@Message(id = 12343, value = "RecoveryManagerImple is ready. Socket listener is turned off.", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_recovery_localready();
 
 	@Message(id = 12344, value = "RecoveryManagerImple is ready on port {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)

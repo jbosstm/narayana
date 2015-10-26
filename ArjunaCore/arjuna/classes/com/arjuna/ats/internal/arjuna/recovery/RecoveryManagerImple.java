@@ -124,7 +124,7 @@ public class RecoveryManagerImple
                 }
                 else
                 {
-                    tsLogger.i18NLogger.info_recovery_localready();
+                    tsLogger.logger.debug("RecoveryManagerImple is ready. Socket listener is turned off.");
                 }
             }
         }

@@ -376,9 +376,9 @@ public interface jtsI18NLogger {
 	@LogMessage(level = FATAL)
 	public void fatal_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_5();
 
-	@Message(id = 22086, value = "Starting RecoveryServer ORB on port {0} and address {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(String arg0, String arg1);
+//	@Message(id = 22086, value = "Starting RecoveryServer ORB on port {0} and address {1}", format = MESSAGE_FORMAT)
+//	@LogMessage(level = INFO)
+//	public void info_orbspecific_jacorb_recoverycoordinators_JacOrbRCServiceInit_6(String arg0, String arg1);
 
 	@Message(id = 22087, value = "RecoveryServer using existing ORB", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)

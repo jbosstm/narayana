@@ -85,8 +85,7 @@ public class TransactionStatusManager
          _listener = new Listener( serverSocket, service );
          _listener.setDaemon(true);
 
-	    tsLogger.i18NLogger.info_recovery_TransactionStatusManager_1(service.getClass().getName(),
-							  Integer.toString(serverSocket.getLocalPort()));
+         tsLogger.logger.debug(service.getClass().getName() + " starting");
 
          _listener.start() ;
       }
@@ -135,8 +134,13 @@ public class TransactionStatusManager
 
            TransactionStatusManagerItem.createAndSave(socketServer.getInetAddress().getHostAddress(), socketServer.getLocalPort() ) ;
 
-           tsLogger.i18NLogger.info_recovery_TransactionStatusManager_3(Integer.toString(socketServer.getLocalPort()),
-                   socketServer.getInetAddress().getHostAddress(), serviceName);
+           if (recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerPort() == 0) {
+               tsLogger.i18NLogger.info_recovery_TransactionStatusManager_3(Integer.toString(socketServer.getLocalPort()),
+               socketServer.getInetAddress().getHostAddress(), serviceName);
+           } else {
+               tsLogger.logger.debugf("TransactionStatusManager started on port %s and host %s with service %s", 
+                   Integer.toString(socketServer.getLocalPort()), socketServer.getInetAddress().getHostAddress(), serviceName);
+           }
        }
        catch ( IOException ex ) {
            tsLogger.i18NLogger.warn_recovery_TransactionStatusManager_14(getListenerHostName(), Integer.toString(getListenerPort(-1)));

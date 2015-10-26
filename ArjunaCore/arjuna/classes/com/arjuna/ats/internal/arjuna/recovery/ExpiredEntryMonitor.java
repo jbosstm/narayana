@@ -141,7 +141,7 @@ public class ExpiredEntryMonitor extends Thread
   {
     while( true )
     {
-	    tsLogger.i18NLogger.info_recovery_ExpiredEntryMonitor_12(_theTimestamper.format(new Date()));
+	    tsLogger.logger.debugf("ExpiredEntryMonitor running at %s", _theTimestamper.format(new Date()).toString());
 	
 	if (_skipNext)
     {

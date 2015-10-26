@@ -105,7 +105,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
               
                      if ( timeOfDeath != null && timeOfDeath.before(oldestSurviving) )
                      {
-			 tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
+			 tsLogger.logger.debugf("Removing old transaction status manager item %s", newUid);
 			 
 			 _recoveryStore.remove_committed( newUid, _itemTypeName ) ;
                      }
@@ -125,7 +125,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                   
                         if ( tsc.isDead() )
                         {
-                            tsLogger.i18NLogger.info_recovery_ExpiredTransactionStatusManagerScanner_3(newUid);
+                            tsLogger.logger.debugf("Removing old transaction status manager item %s", newUid);
 			    
                            tsc.delete() ;
                            tsc = null ;
