@@ -164,6 +164,11 @@
         com.arjuna.orbportability.orb.PostSet1=com.arjuna.ats.jts.utils.ORBSetup
     </entry>
 
+    <!-- change the orb -->
+    <entry key="OrbPortabilityEnvironmentBean.orbImpleClassName">com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</entry>
+    <entry key="OrbPortabilityEnvironmentBean.poaImpleClassName">com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</entry>
+    <entry key="OrbPortabilityEnvironmentBean.orbDataClassName">com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</entry>
+
     <!--
       This property controls the port on which the Recovery ORB listens
     -->
