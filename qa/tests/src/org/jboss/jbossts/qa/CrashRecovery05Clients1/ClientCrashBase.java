@@ -7,21 +7,27 @@ public class ClientCrashBase {
     protected boolean correct = true;
     protected String serviceIOR = null;
     protected String id;
+    protected boolean didInitOrb;
 
     public ClientCrashBase(String id) {
         this.id = id;
     }
 
     public void initOrb(String[] args) throws Exception {
-        ORBInterface.initORB(args, null);
-        OAInterface.initOA();
+        if (ORBInterface.getORB() == null) {
+            didInitOrb = true;
+            ORBInterface.initORB(args, null);
+            OAInterface.initOA();
+        }
     }
 
     public void shutdownOrb() {
         try
         {
-            OAInterface.shutdownOA();
-            ORBInterface.shutdownORB();
+            if (didInitOrb) {
+                OAInterface.shutdownOA();
+                ORBInterface.shutdownORB();
+            }
         }
         catch (Exception exception)
         {

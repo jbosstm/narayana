@@ -65,14 +65,13 @@ import org.jboss.jbossts.qa.Utils.ServerIORStore;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.HeuristicHazard;
 
-public class Client10b
+public class Client10b extends ClientBase
 {
 	public static void main(String[] args)
 	{
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+			init(args, null);
 
 			String serviceIOR1 = ServerIORStore.loadIOR(args[args.length - 2]);
 			BeforeCrashService service1 = BeforeCrashServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR1));
@@ -128,8 +127,7 @@ public class Client10b
 
 		try
 		{
-			OAInterface.shutdownOA();
-			ORBInterface.shutdownORB();
+			fini();
 		}
 		catch (Exception exception)
 		{
