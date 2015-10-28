@@ -69,8 +69,10 @@ public class Server06
 	{
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+			if (ORBInterface.getORB() == null) {
+				ORBInterface.initORB(args, null);
+				OAInterface.initOA();
+			}
 
 			AfterCrashServiceImpl02 afterCrashServiceImpl = new AfterCrashServiceImpl02(args[args.length - 2].hashCode(), 0);
 			AfterCrashServicePOATie servant = new AfterCrashServicePOATie(afterCrashServiceImpl);

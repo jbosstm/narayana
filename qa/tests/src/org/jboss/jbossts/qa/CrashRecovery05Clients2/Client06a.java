@@ -63,14 +63,13 @@ import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
 import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 
-public class Client06a
+public class Client06a extends ClientBase
 {
 	public static void main(String[] args)
 	{
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+			init(args, null);
 
 			String serviceIOR1 = ServerIORStore.loadIOR(args[args.length - 2]);
 			AfterCrashService service1 = AfterCrashServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR1));
@@ -144,8 +143,7 @@ public class Client06a
 
 		try
 		{
-			OAInterface.shutdownOA();
-			ORBInterface.shutdownORB();
+			fini();
 		}
 		catch (Exception exception)
 		{
