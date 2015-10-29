@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * JDBC store implementation driver-specific code. This version for Maria DB JDBC
  * Drivers.
  */
-public class mariadb_jdbc_driver extends
+public class mariadb_driver extends
 		com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCImple_driver {
 
 	@Override
