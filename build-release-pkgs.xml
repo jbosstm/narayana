@@ -64,7 +64,7 @@
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
-  <property name="gitbase" value="git@github.com:jbosstm/"/>
+  <property name="gitbase" value="git@github.com:jbosstm"/>
   <!-- The tag as it appears under svnbase -->
   <property name="tag" value="5.2.8.Final-SNAPSHOT"/>
   <!-- the location the Narayana web site downloads are copied to -->
