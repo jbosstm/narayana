@@ -272,35 +272,15 @@ blacktie:
   
   <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
     <!-- Update javadoc htmls on the page -->
-    <delete dir="tmp-docs-dir"/>
-    <mkdir dir="tmp-docs-dir"/>
-    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="tmp-docs-dir/api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-xatmi-api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="tmp-docs-dir/jatmibroker-nbf-api"/>
-    <delete dir="${docs-dir}api"/>
+    <delete dir="${docs-dir}/api/"/>
+    <delete dir="${docs-dir}/jatmibroker-xatmi-api/"/>
+    <delete dir="${docs-dir}/jatmibroker-nbf-api/"/>
     <mkdir dir="${docs-dir}api"/>
-    <copy todir="${docs-dir}api">
-      <fileset dir="tmp-docs-dir/api"/>
-    </copy>
-    <copy todir="${docs-dir}jatmibroker-xatmi-api">
-      <fileset dir="tmp-docs-dir/jatmibroker-xatmi-api"/>
-    </copy>
-    <copy todir="${docs-dir}jatmibroker-nbf-api">
-      <fileset dir="tmp-docs-dir/jatmibroker-nbf-api"/>
-    </copy>
-    <exec executable="bash" dir="." failonerror="true">
-      <arg value="-c"/>
-      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/api/" />
-    </exec>
-    <exec executable="bash" dir="." failonerror="true">
-      <arg value="-c"/>
-      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/jatmibroker-xatmi-api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/jatmibroker-xatmi-api/" />
-    </exec>
-    <exec executable="bash" dir="." failonerror="true">
-      <arg value="-c"/>
-      <arg value="rsync -Pr --protocol=28 --chmod=D2775,F664 --delete-after --partial --progress --rsh=ssh tmp-docs-dir/jatmibroker-nbf-api/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/docs/jatmibroker-nbf-api/" />
-    </exec>
-    
+    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="${docs-dir}/api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-xatmi-api"/>
+    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-nbf-api"/>
+    <delete dir="${docs-dir}api"/>
+
     <!-- Update javadocs download url -->
     <exec executable="sed" dir="${config-dir}" outputproperty="first-api-line">
       <arg value="q"/>
