@@ -127,11 +127,33 @@ public class AfterCrashServiceImpl02 implements AfterCrashServiceOperations
 				try
 				{
 					Status status = _recoveryCoordinator[index].replay_completion(_resource[index]);
-					System.err.println("AfterCrashServiceImpl02.check_oper [O" + _objectNumber + ".R" + index + "]: replay_completion returned: " + status);
+					System.err.printf("AfterCrashServiceImpl02.check_oper [O%d.R%d]: replay_completion returned: %s%n",
+							_objectNumber, index, status.value());
+					/*
+					 * replay_completion is allowed to run in the background (see RecoveredTransactionReplayer) so the
+					 * resources are not guaranteed to have seen the request until the background replayer runs. Hence
+					 * wait a bit (an alternative would be to rendezvous with _resourceImpl[index]):
+					 * Section 2.7.1 of the OTS spec says of the replay_completion operation on the RecoveryCoordinator:
+					 * "This non-blocking operation returns the current status of the transaction"
+					 */
+					Thread.sleep(200);
+					status = _resourceImpl[index].getStatus();
+
 					correct = correct && (((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared) ||
 							((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing) ||
 							((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed) ||
 							((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback));
+
+					if (!correct) {
+						System.out.printf("AfterCrashServiceImpl02#check_oper correct=%b%n", correct);
+
+						System.out.printf("REASON: %b %b %b %b (%d)%n",
+								((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared),
+								((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing),
+								((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed),
+								((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback),
+								status.value());
+					}
 				}
 				catch (NotPrepared notPrepared)
 				{
