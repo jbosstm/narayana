@@ -285,6 +285,14 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	    // no transaction
 	} catch ( SystemException ex_corba ) {
 	    // why did this happen ?
+        if (ORBInfo.getOrbEnumValue() == ORBType.JAVAIDL)
+        {
+            // the original application has (probably) died
+            if (jtsLogger.logger.isDebugEnabled()) {
+                jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - COMM_FAILURE = dead");
+            }
+            originalDead = true;
+        }
         jtsLogger.i18NLogger.warn_recovery_contact_StatusChecker_11(ex_corba);
 	} catch ( Exception ex_other) {
 	    // this really shouldn't happen
