@@ -31,12 +31,14 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.jboss.jbossts.qa.Utils.EmptyObjectStore;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
+import org.omg.CORBA.ORBPackage.InvalidName;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -136,7 +138,7 @@ public class ExecutionWrapper
             p.setProperty("com.sun.CORBA.POA.ORBPersistentServerPort", ""+recoveryOrbPort);
             p.setProperty("com.sun.CORBA.POA.ORBServerId", ""+recoveryOrbPort);
 
-            initOrb(p, 10, args);
+            initOrb(p, 10, recoveryOrbPort, args);
 
             RecoveryManager manager = RecoveryManager.manager();
 
@@ -163,30 +165,52 @@ public class ExecutionWrapper
      *                   available the next time the orb is initialized. To avoid this problem of rapid recycling of
      *                   ports between tests we allow retries - note that there is a real time delay before
      *                   each retry attempt to give the socket close protocol sufficient time to complete.
+     * @param recoveryOrbPort
      * @param args
      */
-    private static void initOrb(Properties orbProps, int retryCount, String ... args) {
-        for (int i = 1; i <= retryCount; i++) {
+    private static void initOrb(Properties orbProps, int retryCount, int recoveryOrbPort, String... args) {
+        int i = 0;
+
+        while (!isAvailable("127.0.0.1", recoveryOrbPort)) {
+            // probably recycling port allocation too fast. wait a bit and retry.
+            if (i >= retryCount) {
+                System.err.printf("orb port %d still in use after %d seconds%n", recoveryOrbPort, (retryCount * 10));
+                fingerCulprit(recoveryOrbPort);
+                throw new RuntimeException("Still cannot initialize ORB/OA on port " + recoveryOrbPort);
+            }
+
+            i += 1;
+            System.err.printf("orb port %d is in use%n", recoveryOrbPort);
+
             try {
-                ORBInterface.initORB(args, orbProps);
-                OAInterface.initializeOA(); // don't use initOA because it swallows exception!
-                return;
-            } catch (Exception e) {
-                System.out.printf("OA init error: %s (attempt %d of %d%n", e.getMessage(), i, retryCount);
-                if (i == retryCount)
-                    fingerCulprit(4731); // JacORB OAPort TODO look it up (how?)
-                // probably recycling port allocation too fast. wait a bit and retry (I have seen it take up to 20 secs).
-                try {
-                    ORBManager.getORB().shutdown();
-                    ORBManager.reset();
-                    Thread.sleep(2000 * i);
-                } catch (Exception e1) {
-                }
+                Thread.sleep(10000);  // was 2000 * i  CrashRecovery02_2_Test26 seems to take quite a while
+            } catch (InterruptedException e1) {
+                throw new RuntimeException(e1);
             }
         }
 
-        throw new RuntimeException("Cannot initialize ORB/OA");
+        try {
+            ORBInterface.initORB(args, orbProps);
+            OAInterface.initializeOA(); // don't use initOA because it swallows exception!
+        } catch (InvalidName invalidName) {
+            invalidName.printStackTrace();
+
+            throw new RuntimeException("Cannot initialize ORB/OA on port - reason: " + invalidName.getMessage());
+        }
     }
+
+    private static boolean isAvailable(String host, int port) {
+        try {
+            (new Socket(host, port)).close();
+
+            // Successful connection means the port is taken.
+            return false;
+        } catch (IOException e) {
+            // Could not connect so it must be available
+            return true;
+        }
+    }
+
     /**
      * Find out which process has a particular port open and print its pid, its command line and,
      * if its a JVM its stack traces.
