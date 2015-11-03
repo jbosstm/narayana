@@ -170,7 +170,7 @@ public class ResourceImpl02 implements ResourceOperations
 		}
 		else
 		{
-			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
+//			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
 		System.err.println("Return");

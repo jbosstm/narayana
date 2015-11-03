@@ -227,7 +227,7 @@ public class ResourceImpl01 implements ResourceOperations
 		}
 		else
 		{
-			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
+//			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
 		if (_resourceBehavior.crash_behavior == CrashBehavior.CrashBehaviorCrashInForget)
