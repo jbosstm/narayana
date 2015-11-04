@@ -462,6 +462,10 @@ public interface jtaI18NLogger {
     @LogMessage(level = INFO)
     public void info_resources_arjunacore_rmcompleted(String arg0);
 
+    @Message(id = 16114, value = "Could not load {0} will try to get XAResource from the recovery helpers", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_resources_arjunacore_classnotfound(String arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
