@@ -136,16 +136,24 @@ public class AfterCrashServiceImpl02 implements AfterCrashServiceOperations
 					 * Section 2.7.1 of the OTS spec says of the replay_completion operation on the RecoveryCoordinator:
 					 * "This non-blocking operation returns the current status of the transaction"
 					 */
-					Thread.sleep(200);
-					status = _resourceImpl[index].getStatus();
+					boolean ok = false;
 
-					correct = correct && (((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared) ||
-							((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing) ||
-							((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed) ||
-							((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback));
+					for (int i = 0; i < 10; i++) {
+						Thread.sleep(100);
+						status = _resourceImpl[index].getStatus();
 
-					if (!correct) {
-						System.out.printf("AfterCrashServiceImpl02#check_oper correct=%b%n", correct);
+						if (((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared) ||
+								((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing) ||
+								((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed) ||
+								((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback)) {
+							ok = true;
+							break;
+						}
+					}
+
+					if (!ok) {
+						correct = false;
+						System.out.printf("AfterCrashServiceImpl01#check_oper correct=false%n");
 
 						System.out.printf("REASON: %b %b %b %b (%d)%n",
 								((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared),
