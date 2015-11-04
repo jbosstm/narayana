@@ -69,8 +69,10 @@ public class Server03
 	{
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+			if (ORBInterface.getORB() == null) {
+				ORBInterface.initORB(args, null);
+				OAInterface.initOA();
+			}
 
 			BeforeCrashServiceImpl01 beforeCrashServiceImpl1 = new BeforeCrashServiceImpl01(args[args.length - 3].hashCode(), 0);
 			BeforeCrashServiceImpl01 beforeCrashServiceImpl2 = new BeforeCrashServiceImpl01(args[args.length - 3].hashCode(), 1);

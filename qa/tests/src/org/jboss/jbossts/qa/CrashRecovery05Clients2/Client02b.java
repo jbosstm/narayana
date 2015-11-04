@@ -64,14 +64,13 @@ import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
 import org.omg.CosTransactions.HeuristicHazard;
 
-public class Client02b
+public class Client02b extends ClientBase
 {
 	public static void main(String[] args)
 	{
 		try
 		{
-			ORBInterface.initORB(args, null);
-			OAInterface.initOA();
+			init(args, null);
 
 			String serviceIOR1 = ServerIORStore.loadIOR(args[args.length - 2]);
 			BeforeCrashService service1 = BeforeCrashServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR1));
@@ -123,8 +122,7 @@ public class Client02b
 
 		try
 		{
-			OAInterface.shutdownOA();
-			ORBInterface.shutdownORB();
+			fini();
 		}
 		catch (Exception exception)
 		{
