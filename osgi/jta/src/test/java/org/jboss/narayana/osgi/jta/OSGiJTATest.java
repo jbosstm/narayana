@@ -24,7 +24,6 @@ package org.jboss.narayana.osgi.jta;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.narayana.osgi.jta.internal.Activator;
 import org.jboss.osgi.metadata.OSGiManifestBuilder;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
@@ -34,12 +33,17 @@ import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import javax.transaction.TransactionManager;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Amos Feng</a>
@@ -53,20 +57,14 @@ public class OSGiJTATest {
     @Deployment
     public static JavaArchive createTestArchive() {
         final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar");
-        archive.addClass(Activator.class);
-        archive.addPackages(true, "com.arjuna");
-        archive.addPackages(true, "org.jboss");
-        archive.addAsResource("jbossts-properties.xml");
-
+        archive.addClass(OSGiJTATest.class);
+        archive.addPackage("org.osgi.util.tracker");
         archive.setManifest(new Asset() {
             public InputStream openStream() {
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
                 builder.addBundleSymbolicName(archive.getName());
                 builder.addBundleManifestVersion(2);
-
-                builder.addImportPackages("javax.xml.parsers", "org.xml.sax", "org.xml.sax.helpers", "javax.naming.spi");
-                builder.addBundleActivator(Activator.class.getName());
-                builder.addManifestHeader("arjuna-properties-file", "jbossts-properties.xml");
+                builder.addImportPackages("javax.transaction");
                 return builder.openStream();
             }
         });
@@ -83,11 +81,37 @@ public class OSGiJTATest {
         BundleContext context = bundle.getBundleContext();
         assertNotNull("BundleContext available", context);
 
-        ServiceReference<TransactionManager> serviceReference = context.getServiceReference(TransactionManager.class);
-        assertNotNull("TransactionManager reference available", serviceReference);
+        ServiceTracker<TransactionManager, TransactionManager> tracker = new ServiceTracker<>(context, TransactionManager.class, null);
+        tracker.open();
+        TransactionManager tm = tracker.waitForService(10000);
 
-        TransactionManager tm = context.getService(serviceReference);
-        assertNotNull("TransactionManager service available", tm);
+        if (tm == null) {
+            for (Bundle b : context.getBundles()) {
+                System.out.println(b.getSymbolicName() + "/" + b.getVersion() + " = " + b.getState());
+                Dictionary<String, String> headers = b.getHeaders();
+                System.out.println("\tHeaders");
+                for (Enumeration<String> e = headers.keys(); e.hasMoreElements(); ) {
+                    String key = e.nextElement();
+                    String val = headers.get(key);
+                    System.out.println("\t\t" + key + " = " + val);
+                }
+                System.out.println("\tServices");
+                ServiceReference[] refs = b.getRegisteredServices();
+                if (refs != null) {
+                    for (ServiceReference svc : refs) {
+                        for (String key : svc.getPropertyKeys()) {
+                            Object val = svc.getProperty(key);
+                            if (val.getClass().isArray()) {
+                                val = Arrays.toString((Object[]) val);
+                            }
+                            System.out.println("\t\t" + key + " = " + val);
+                        }
+                    }
+                }
+            }
+
+            fail("TransactionManager service not available");
+        }
 
         tm.begin();
         tm.commit();

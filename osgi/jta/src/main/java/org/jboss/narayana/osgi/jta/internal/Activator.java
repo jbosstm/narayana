@@ -21,40 +21,154 @@
  */
 package org.jboss.narayana.osgi.jta.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.cm.ManagedService;
+import org.osgi.service.log.LogService;
 
-import javax.transaction.TransactionManager;
+public class Activator implements BundleActivator, ManagedService, Runnable {
 
-public class Activator implements BundleActivator {
-    private ServiceRegistration transactionManagerReg;
+    public static final String PID = "org.jboss.narayana";
+    public static final String INTERN_PACKAGE = "org.jboss.narayana.osgi.jta.internal";
+    public static final String SERVER_CLASS = INTERN_PACKAGE + ".OsgiServer";
 
+    protected BundleContext bundleContext;
 
-    public void start(BundleContext context) {
-        ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
+    protected ExecutorService executor = new ThreadPoolExecutor(0, 1, 0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>());
+    private AtomicBoolean scheduled = new AtomicBoolean();
+
+    private long schedulerStopTimeout = TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS);
+
+    private ServiceRegistration managedServiceRegistration;
+    private Dictionary<String, ?> configuration;
+    private Object service;
+
+    @Override
+    public void start(BundleContext context) throws Exception {
+        bundleContext = context;
+        scheduled.set(true);
+        Hashtable<String, Object> props = new Hashtable<>();
+        props.put(Constants.SERVICE_PID, PID);
+        managedServiceRegistration = bundleContext.registerService(ManagedService.class, this, props);
+        scheduled.set(false);
+        reconfigure();
+    }
+
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        scheduled.set(true);
+        if (managedServiceRegistration != null) {
+            managedServiceRegistration.unregister();
+        }
+        executor.shutdown();
+        executor.awaitTermination(schedulerStopTimeout, TimeUnit.MILLISECONDS);
+        doStop();
+    }
+
+    ClassLoader createClassLoader() {
+        List<URL> urls = new ArrayList<>();
+        // Find our base url
+        String name = SERVER_CLASS.replace('.', '/') + ".class";
+        URL url = bundleContext.getBundle().getResource(name);
+        String strUrl = url.toExternalForm();
+        if (!strUrl.endsWith(name)) {
+            throw new IllegalStateException();
+        }
+        strUrl = strUrl.substring(0, strUrl.length() - name.length());
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            urls.add(new URL(strUrl));
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
+        // Find all embedded jars
+        Collection<String> resources = bundleContext.getBundle().adapt(BundleWiring.class)
+                .listResources("/", "*.jar", BundleWiring.LISTRESOURCES_LOCAL);
+        for (String resource : resources) {
+            urls.add(bundleContext.getBundle().getResource(resource));
+        }
+        // Create the classloader
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]),
+                new ClassLoader(getClass().getClassLoader()) {
+                    @Override
+                    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                        // We forbid to load the server from the parent
+                        if (name.startsWith(INTERN_PACKAGE)) {
+                            throw new ClassNotFoundException(name);
+                        }
+                        return super.loadClass(name, resolve);
+                    }
+                });
+    }
 
-            // Register the TransactionManager service if is not already available
-            if (context.getServiceReference(TransactionManager.class.getName()) == null)
-            {
-                TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-                transactionManagerReg = context.registerService(TransactionManager.class.getName(), tm, null);
+    protected void doStart() throws Exception {
+        ClassLoader classLoader = createClassLoader();
+        Class<?> osgiServerClass = classLoader.loadClass(SERVER_CLASS);
+        service = osgiServerClass.getConstructor(BundleContext.class, Dictionary.class)
+                .newInstance(bundleContext, configuration);
+        service.getClass().getMethod("start").invoke(service);
+    }
+
+    protected void doStop() {
+        if (service != null) {
+            try {
+                service.getClass().getMethod("stop").invoke(service);
+            } catch (Throwable t) {
+                warn("Error stopping service", t);
+            } finally {
+                service = null;
             }
-
-        } finally {
-            Thread.currentThread().setContextClassLoader(ctxLoader);
         }
     }
 
+    public void updated(Dictionary<String, ?> properties) {
+        this.configuration = properties;
+        reconfigure();
+    }
 
-    public void stop(BundleContext context) {
-        if (transactionManagerReg != null) {
-            transactionManagerReg.unregister();
-            transactionManagerReg = null;
+    protected void reconfigure() {
+        if (scheduled.compareAndSet(false, true)) {
+            executor.submit(this);
         }
+    }
 
+    @Override
+    public void run() {
+        scheduled.set(false);
+        doStop();
+        try {
+            doStart();
+        } catch (Exception e) {
+            warn("Error starting service", e);
+            doStop();
+        }
+    }
+
+    protected void warn(String message, Throwable t) {
+        ServiceReference<LogService> ref = bundleContext.getServiceReference(LogService.class);
+        if (ref != null) {
+            LogService svc = bundleContext.getService(ref);
+            svc.log(LogService.LOG_WARNING, message, t);
+            bundleContext.ungetService(ref);
+        }
     }
 
 }
