@@ -966,13 +966,18 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 	                    // Give it a go ourselves
 	                    if (!deserialized) {
-	                        _theXAResource = (XAResource) o.readObject();
+	                        try {
+	                            _theXAResource = (XAResource) o.readObject();
+	                            if (jtaLogger.logger.isTraceEnabled()) {
+	                                jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
+	                            }
+	                        } catch (ClassNotFoundException e) {
+	                            // JBTM-2550 if we fail to deserialize the object, we treat it as haveXAResource is false
+	                            jtaLogger.i18NLogger.warn_resources_arjunacore_classnotfound(className);
+	                            haveXAResource = false;
+	                        }
 	                    }
 	                    o.close();
-
-	                    if (jtaLogger.logger.isTraceEnabled()) {
-	                        jtaLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
-	                    }
 	                }
 	                catch (Exception ex)
 	                {
@@ -983,7 +988,8 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	                    return false;
 	                }
 	            }
-	            else
+
+	            if (!haveXAResource)
 	            {
 	                /*
 	                 * Lookup new XAResource via XARecoveryModule if possible.
