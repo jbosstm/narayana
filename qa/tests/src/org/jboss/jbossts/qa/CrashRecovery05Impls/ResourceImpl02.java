@@ -186,6 +186,40 @@ public class ResourceImpl02 implements ResourceOperations
 		return _resourceTrace;
 	}
 
+	public boolean isComplete() {
+		return _status == Status.StatusCommitted || _status == Status.StatusRolledBack;
+	}
+
+	public Status getStatus() {
+		return _status;
+	}
+
+	public Status updateStatus(Status hint) {
+		Status prev = _status;
+
+		System.err.printf("ResourceImpl01.updateStatus [O%d.R%d]: status=%d -> %d%n",
+				_objectNumber, _resourceNumber, _status.value(), hint.value());
+
+		if (_status == Status.StatusUnknown || _status == Status.StatusNoTransaction) {
+			try {
+				if (hint == Status.StatusCommitted) {
+					System.err.printf("ResourceImpl01.updateStatus call commit()%n");
+					commit();
+				} else if (hint == Status.StatusRolledBack) {
+					System.err.printf("ResourceImpl01.updateStatus call rollback()%n");
+					rollback();
+				} else {
+					_status = hint;
+				}
+			} catch (Exception e) {
+				_status = hint;
+			}
+		}
+
+		return prev;
+	}
+
+	private Status _status;
 	private int _objectNumber;
 	private int _resourceNumber;
 	private ResourceBehavior _resourceBehavior;
