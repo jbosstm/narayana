@@ -129,6 +129,8 @@ public class AfterCrashServiceImpl02 implements AfterCrashServiceOperations
 					Status status = _recoveryCoordinator[index].replay_completion(_resource[index]);
 					System.err.printf("AfterCrashServiceImpl02.check_oper [O%d.R%d]: replay_completion returned: %s%n",
 							_objectNumber, index, status.value());
+					_resourceImpl[index].updateStatus(status);
+
 					/*
 					 * replay_completion is allowed to run in the background (see RecoveredTransactionReplayer) so the
 					 * resources are not guaranteed to have seen the request until the background replayer runs. Hence
