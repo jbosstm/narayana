@@ -212,6 +212,16 @@ public class ResourceImpl02 implements ResourceOperations
 		return _status;
 	}
 
+	public Status updateStatus(Status hint) {
+		Status prev = _status;
+
+		if (_status == Status.StatusUnknown || _status == Status.StatusNoTransaction) {
+			_status = hint;
+		}
+
+		return prev;
+	}
+
 	private Status _status;
 	private int _objectNumber;
 	private int _resourceNumber;

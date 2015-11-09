@@ -271,6 +271,16 @@ public class ResourceImpl01 implements ResourceOperations
 		return _status == Status.StatusCommitted || _status == Status.StatusRolledBack;
 	}
 
+	public Status updateStatus(Status hint) {
+		Status prev = _status;
+
+		if (_status == Status.StatusUnknown || _status == Status.StatusNoTransaction) {
+			_status = hint;
+		}
+
+		return prev;
+	}
+
 	public Status getStatus() {
 		return _status;
 	}
