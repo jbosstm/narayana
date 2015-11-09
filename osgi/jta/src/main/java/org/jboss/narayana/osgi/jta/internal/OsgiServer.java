@@ -27,6 +27,7 @@ import javax.transaction.UserTransaction;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -176,7 +177,9 @@ public class OsgiServer implements ServiceTrackerCustomizer<XAResourceRecovery, 
     }
 
     protected <T> void register(Class<T> clazz, T service) {
-        ServiceRegistration<T> registration = bundleContext.registerService(clazz, service, null);
+        Hashtable<String, String> props = new Hashtable<>();
+        props.put("provider", "narayana");
+        ServiceRegistration<T> registration = bundleContext.registerService(clazz, service, props);
         if (registrations == null) {
             registrations = new ArrayList<>();
         }
