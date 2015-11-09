@@ -95,6 +95,12 @@
 		   <scope>provided</scope>
 	   </dependency>
 	   <dependency>
+		   <groupId>org.springframework</groupId>
+		   <artifactId>spring-tx</artifactId>
+		   <optional>true</optional>
+		   <version>3.0.5.RELEASE</version>
+	   </dependency>
+	   <dependency>
 		   <groupId>junit</groupId>
 		   <artifactId>junit</artifactId>
 		   <version>${version.junit}</version>
@@ -182,6 +188,7 @@
 						   org.osgi.service.cm,
 						   org.osgi.service.log,
 						   org.osgi.util.tracker,
+						   org.springframework.*;resolution:=optional;version="[2.5,5)",
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
 					   <Embed-Dependency>
