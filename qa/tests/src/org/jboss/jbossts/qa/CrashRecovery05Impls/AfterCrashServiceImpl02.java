@@ -140,8 +140,14 @@ public class AfterCrashServiceImpl02 implements AfterCrashServiceOperations
 					 */
 					boolean ok = false;
 
+					correct = correct && (((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared) ||
+								((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing) ||
+								((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed) ||
+								((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback));
+					ok = correct;
+
 					// wait enough time for the replay attempt on the resources
-					for (int i = 0; i < 10; i++) {
+/*					for (int i = 0; i < 10; i++) {
 						Thread.sleep(100);
 						status = _resourceImpl[index].getStatus();
 
@@ -152,11 +158,11 @@ public class AfterCrashServiceImpl02 implements AfterCrashServiceOperations
 							ok = true;
 							break;
 						}
-					}
+					}*/
 
 					if (!ok) {
 						correct = false;
-						System.out.printf("AfterCrashServiceImpl01#check_oper correct=false%n");
+						System.out.printf("AfterCrashServiceImpl02#check_oper correct=false%n");
 
 						System.out.printf("REASON: %b %b %b %b (%d)%n",
 								((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared),
