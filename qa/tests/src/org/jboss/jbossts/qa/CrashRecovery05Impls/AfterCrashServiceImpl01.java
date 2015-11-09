@@ -130,6 +130,8 @@ public class AfterCrashServiceImpl01 implements AfterCrashServiceOperations
 					Status status = _recoveryCoordinator[index].replay_completion(_resource[index]);
 					System.err.printf("AfterCrashServiceImpl01.check_oper [O%d.R%d]: replay_completion returned: %d%n",
 							_objectNumber, index, status.value());
+					_resourceImpl[index].updateStatus(status);
+
 					/*
 					 * replay_completion is allowed to run in the background (see RecoveredTransactionReplayer) so the
 					 * resources are not guaranteed to have seen the request until the background replayer runs. Hence
@@ -139,8 +141,13 @@ public class AfterCrashServiceImpl01 implements AfterCrashServiceOperations
 					 */
 					boolean ok = false;
 
+					correct = correct && (((status == Status.StatusPrepared) && check_behaviors[index].allow_returned_prepared) ||
+					((status == Status.StatusCommitting) && check_behaviors[index].allow_returned_committing) ||
+							((status == Status.StatusCommitted) && check_behaviors[index].allow_returned_committed) ||
+							((status == Status.StatusRolledBack) && check_behaviors[index].allow_returned_rolledback));
+					ok = correct;
 					// wait enough time for the replay attempt on the resources
-					for (int i = 0; i < 10; i++) {
+/*					for (int i = 0; i < 10; i++) {
 						Thread.sleep(100);
 						status = _resourceImpl[index].getStatus();
 
@@ -151,7 +158,7 @@ public class AfterCrashServiceImpl01 implements AfterCrashServiceOperations
 							ok = true;
 							break;
 						}
-					}
+					}*/
 
 					if (!ok) {
 						correct = false;
