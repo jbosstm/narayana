@@ -3,7 +3,7 @@
 <!ENTITY % BOOK_ENTITIES SYSTEM "../product_documentation.ent">
 %BOOK_ENTITIES;
 ]>
-<chapter>
+<chapter id="txbridge">
     <title>TXBridge Guide</title>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="introduction.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="transaction_bridge_architecture.xml"/>

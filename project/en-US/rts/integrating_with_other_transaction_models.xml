@@ -32,7 +32,7 @@ public class JAXRSResource {
     public void get() {
     // Do work witout JTA.
     }
-    
+
     @POST
     @TransactionAttribute
     public void post() {
@@ -48,7 +48,7 @@ public class JAXRSResource {
     public void get() {
     // Do work with JTA.
     }
-    
+
     @POST
     public void post() {
     // Do work with JTA.
@@ -69,7 +69,7 @@ public class JAXRSResource {
         <para>
             WS includes two transaction models referred to as WSAT and WSBA. WSAT integration with JTA is documented
             in the Transaction Bridging section of the product guide (
-            <ulink url="http://docs.jboss.org/jbosstm/5.2.8.Final-SNAPSHOT/guides/product/index.html">http://docs.jboss.org/jbosstm/5.2.8.Final-SNAPSHOT/guides/product/index.html</ulink>
+            <ulink url="http://narayana.io/docs/product/index.html#txbridge">http://narayana.io/docs/product/index.html#txbridge</ulink>
             ). By using this bridge in conjunction with the RESTAT JTA bridge full interoperability between RESTAT
             and WSAT can be realised.
         </para>
