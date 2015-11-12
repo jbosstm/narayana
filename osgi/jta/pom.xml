@@ -30,6 +30,7 @@
 
    <properties>
 	   <maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
+	   <karaf.home>${project.build.directory}/apache-karaf-${version.apache.karaf}</karaf.home>
    </properties>
 
    <dependencies>
@@ -38,17 +39,66 @@
 		   <artifactId>org.osgi.core</artifactId>
 	   </dependency>
 	   <dependency>
-		   <groupId>org.jboss.osgi.metadata</groupId>
-		   <artifactId>jbosgi-metadata</artifactId>
+		   <groupId>org.osgi</groupId>
+		   <artifactId>org.osgi.compendium</artifactId>
 	   </dependency>
 	   <dependency>
-		   <groupId>org.jboss.arquillian.junit</groupId>
-		   <artifactId>arquillian-junit-container</artifactId>
+		   <groupId>org.jboss.osgi.metadata</groupId>
+		   <artifactId>jbosgi-metadata</artifactId>
 	   </dependency>
 	   <dependency>
 		   <groupId>org.jboss.spec.javax.transaction</groupId>
 		   <artifactId>jboss-transaction-api_1.2_spec</artifactId>
 		   <version>${version.org.jboss.spec.javax.transaction}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.jboss.narayana.jta</groupId>
+		   <artifactId>jta</artifactId>
+		   <version>${project.version}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.jboss.narayana</groupId>
+		   <artifactId>common</artifactId>
+		   <version>${project.version}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+           <groupId>org.jboss.narayana.arjunacore</groupId>
+		   <artifactId>arjuna</artifactId>
+		   <version>${project.version}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.jboss</groupId>
+		   <artifactId>jboss-transaction-spi</artifactId>
+		   <version>${version.org.jboss.jboss-transaction-spi}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.jboss.narayana.jts</groupId>
+		   <artifactId>narayana-jts-integration</artifactId>
+		   <version>${project.version}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.jboss.logging</groupId>
+		   <artifactId>jboss-logging</artifactId>
+		   <version>${version.org.jboss.logging.jboss-logging}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.apache.activemq</groupId>
+		   <artifactId>artemis-journal</artifactId>
+		   <version>${version.org.apache.activemq}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.springframework</groupId>
+		   <artifactId>spring-tx</artifactId>
+		   <optional>true</optional>
+		   <version>3.0.5.RELEASE</version>
 	   </dependency>
 	   <dependency>
 		   <groupId>junit</groupId>
@@ -57,24 +107,9 @@
 		   <scope>test</scope>
 	   </dependency>
 	   <dependency>
-		   <groupId>org.jboss.narayana.jta</groupId>
-		   <artifactId>jta</artifactId>
-		   <version>${project.version}</version>
-	   </dependency>
-	   <dependency>
-		   <groupId>org.jboss.narayana</groupId>
-		   <artifactId>common</artifactId>
-		   <version>${project.version}</version>
-	   </dependency>
-	   <dependency>
-           <groupId>org.jboss.narayana.arjunacore</groupId>
-		   <artifactId>arjuna</artifactId>
-		   <version>${project.version}</version>
-	   </dependency>
-	   <dependency>
-		   <groupId>org.jboss.logging</groupId>
-		   <artifactId>jboss-logging</artifactId>
-		   <version>${version.org.jboss.logging.jboss-logging}</version>
+		   <groupId>org.jboss.arquillian.junit</groupId>
+		   <artifactId>arquillian-junit-container</artifactId>
+		   <scope>test</scope>
 	   </dependency>
    </dependencies>
    <build>
@@ -97,6 +132,12 @@
 			   </excludes>
 		   </resource>
 	   </resources>
+	   <testResources>
+		   <testResource>
+			   <directory>src/test/resources</directory>
+			   <filtering>true</filtering>
+		   </testResource>
+	   </testResources>
 	   <pluginManagement>
 		   <plugins>
 			   <plugin>
@@ -124,54 +165,51 @@
 					   <Bundle-Version>${project.version}</Bundle-Version>
 					   <Bundle-Activator>org.jboss.narayana.osgi.jta.internal.Activator</Bundle-Activator>
 					   <Export-Package>
-						   org.jboss.narayana.osgi.jta;version=${project.version},
-						   javax.transaction*;version="1.1.0"
+						   org.jboss.tm*;version=${version.org.jboss.jboss-transaction-spi},
+						   javax.transaction*;version="1.2.0"
 					   </Export-Package>
-					   <Private-Package>org.jboss.narayana.osgi.jta.internal</Private-Package>
+					   <Private-Package>
+						   org.jboss.narayana.osgi.jta.internal,
+						   javax.transaction*,
+						   org.jboss.tm*
+					   </Private-Package>
 					   <Import-Package>
 						   javax.management, 
 						   javax.naming, 
 						   javax.naming.spi, 
 						   javax.xml.parsers,
-						   javax.transaction, 
+						   javax.xml.stream,
 						   org.xml.sax,
 						   org.xml.sax.helpers,
-						   org.osgi.framework,
 						   org.w3c.dom,
-						   *
-
-						   <!-- excludes -->
-						   !com.arjuna.ArjunaOTS, 
-						   !com.arjuna.ats.internal*,
-						   !javax.resource.spi, 
-						   !javax.resource.spi.work, 
-						   !javax.sql, 
-						   !javax.swing, 
-						   !javax.swing.tree, 
-						   !oracle.jdbc.xa, 
-						   !oracle.jdbc.xa.client, 
-						   !oracle.sql, 
-						   !org.apache.log4j, 
-						   !org.apache.xml.serialize, 
-						   !org.omg.*,
+						   javax.transaction*,
+						   org.osgi.framework,
+						   org.osgi.framework.wiring,
+						   org.osgi.service.cm,
+						   org.osgi.service.log,
+						   org.osgi.util.tracker,
+						   org.springframework.*;resolution:=optional;version="[2.5,5)",
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
 					   <Embed-Dependency>
-						   jboss-transaction-api_1.2_spec;inline=false,
 						   jboss-logging;inline=false,
 						   jta;inline=false,
 						   common;inline=false,
 						   arjuna;inline=false,
+						   narayana-jts-integration;inline=false,
+						   artemis*;inline=false,
+						   netty*;inline=false
 					   </Embed-Dependency>
-					   <_exportcontents>
-					       javax.transaction
-					   </_exportcontents>
-					   <Export-Service>
-						   javax.transaction.TransactionManager,
-						   javax.transaction.TransactionSynchronizationRegistry,
-						   javax.transaction.UserTransaction
-					   </Export-Service>
+					   <Provide-Capability>
+						   osgi.service;effective:=active;objectClass=javax.transaction.TransactionManager,
+						   osgi.service;effective:=active;objectClass=javax.transaction.TransactionSynchronizationRegistry,
+						   osgi.service;effective:=active;objectClass=javax.transaction.UserTransaction
+					   </Provide-Capability>
+					   <Require-Capability>
+						   osgi.service;effective:=active;resolution:=optional;cardinality:=multiple;filter:=(objectClass=org.jboss.tm.XAResourceRecovery)
+					   </Require-Capability>
 					   <_include>src/main/resources/META-INF/MANIFEST.MF</_include>
+					   <_removeheaders>Include-Resource,Private-Package,Embed*,Bundle-ClassPath</_removeheaders>
 			   </instructions>
 		   </configuration>
 	   </plugin>
@@ -209,23 +247,32 @@
 			   <plugins>
 				   <plugin>
 					   <artifactId>maven-surefire-plugin</artifactId>
-					   <configuration>
-						   <skip>false</skip>
-						   <argLine>${surefire.system.args}</argLine>
-						   <redirectTestOutputToFile>true</redirectTestOutputToFile>
-						   <workingDirectory>.</workingDirectory>
-						   <systemPropertyVariables>
-							   <log4j.configuration>file://${basedir}/src/test/resources/logging.properties</log4j.configuration>
-							   <version.apache.karaf>2.3.3</version.apache.karaf>
-						   </systemPropertyVariables>
-					   </configuration>
+					   <executions>
+						   <execution>
+							   <id>integration-test</id>
+							   <phase>integration-test</phase>
+							   <goals>
+								   <goal>test</goal>
+							   </goals>
+							   <configuration>
+								   <skip>false</skip>
+								   <argLine>${surefire.system.args}</argLine>
+								   <redirectTestOutputToFile>true</redirectTestOutputToFile>
+								   <workingDirectory>.</workingDirectory>
+								   <systemPropertyVariables>
+									   <log4j.configuration>file://${basedir}/src/test/resources/logging.properties</log4j.configuration>
+									   <version.apache.karaf>${version.apache.karaf}</version.apache.karaf>
+								   </systemPropertyVariables>
+							   </configuration>
+						   </execution>
+					   </executions>
 				   </plugin>
 				   <plugin>
 					   <artifactId>maven-dependency-plugin</artifactId>
 					   <executions>
 						   <execution>
 							   <id>unpack-karaf</id>
-							   <phase>process-test-resources</phase>
+							   <phase>pre-integration-test</phase>
 							   <goals>
 								   <goal>unpack</goal>
 							   </goals>
@@ -240,6 +287,27 @@
 										   <outputDirectory>${project.build.directory}</outputDirectory>
 									   </artifactItem>
 								   </artifactItems>
+							   </configuration>
+						   </execution>
+					   </executions>
+				   </plugin>
+				   <plugin>
+					   <artifactId>maven-antrun-plugin</artifactId>
+					   <inherited>false</inherited>
+					   <executions>
+						   <execution>
+							   <phase>pre-integration-test</phase>
+							   <goals>
+								   <goal>run</goal>
+							   </goals>
+							   <configuration>
+								   <target>
+									   <copy todir="${karaf.home}/etc" overwrite="true">
+										   <fileset dir="${project.build.directory}/test-classes/etc"/>
+									   </copy>
+									   <copy todir="${karaf.home}/system/org/jboss/narayana/osgi/narayana-osgi-jta/${project.version}"
+										   	 file="${project.build.directory}/narayana-osgi-jta-${project.version}.jar"/>
+								   </target>
 							   </configuration>
 						   </execution>
 					   </executions>
@@ -268,4 +336,4 @@
 		   </dependencies>
 	   </profile>
    </profiles>
-   </project>
+</project>
