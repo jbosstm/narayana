@@ -19,7 +19,7 @@ This release contains:
     transaction managers and recovery managers
       
   etc/
-    Some example configuration files are available here, remove the .jts or .jta suffix to enable the operation mode you require
+    Some example configuration files are available here, copy to CWD and rename to jbossts-properties.xml to enable the operation mode you require
   
   idl/
     The IDL files for integration with the JTS
@@ -39,8 +39,8 @@ This release contains:
     This directory contains the files required to install Narayana as an operating system service
     
   /
-    jta-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
-    jts-setup-env-*.[bat|sh] - This will configure an environment for use with Narayana JTA
+    jta-setup-env.[bat|sh] - This will configure an environment for use with Narayana JTA
+    jts-*-setup-env.[bat|sh] - This will configure an environment for use with Narayana JTA
     copyright.txt - A file to provide the copyright
     readme.txt - This file
     run_all_quickstarts.[bat|sh] - scripts to run all quickstarts. You will
@@ -51,10 +51,8 @@ This release contains:
           -------------------
 This release download does not contain project documentation or quickstarts.
 
-PDF versions of the documentation are available from the project website at
-https://narayana.io/documentation/<release version>. For example, if
-this is release 5_0_0_M4 then the documentation can be found at the following
-URL: https://narayana.io/documentation/5_0_0_M4
+Online versions of the documentation are available from the project website at
+http://narayana.io/documentation/.
 
 Documentation source is now in docbook format and the associated files are
 tagged at github: https://github.com/jbosstm/documentation/releases. Select
@@ -74,16 +72,15 @@ the quickstart archive.
           ------------
 To enable JTA you MUST:
 1. Execute jta-setup-env.[bat|sh] to put Narayana in the classpath
-2. export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jta/narayana-jta.jar
-3. If you need to use this version of Narayana in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
-4. If you do not intend to launch a recovery manager in your application, execute: ./bin/start-recovery-recovery-manager.[bat|sh]
+2. If you need to use this version of Narayana in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
+3. If you do not intend to launch a recovery manager in your application, execute: ./bin/start-recovery-recovery-manager.[bat|sh]
 
 
           LAUNCHING JTS
           -------------
 To enable JTS you MUST:
-1. Execute jts-setup-env.[bat|sh] to put Narayana in the classpath
-2. export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jts/narayana-jts-jacorb.jar
+1. Execute jts-${ORB}-setup-env.[bat|sh] to put Narayana in the classpath
+2. Copy default-jts-${ORB}-jbossts-properties.xml into your CWD and rename it to jbossts-properties.xml
 3. If you need to use this version of Narayana in an application server, you should also include lib/jts/narayana-jts-integration.jar, however, note the comment above regarding manual upgrading of the component inside JBossAS is not recommended
 4. If you do not intend to launch a recovery manager in your application, execute: ./bin/start-recovery-recovery-manager.[bat|sh]
 5. If you do not intend to launch an in process transaction manager, execute: ./bin/start-transaction-service.[bat|sh]
@@ -91,7 +88,7 @@ To enable JTS you MUST:
 
           ENABLING XTS
           ------------ 
-XTS standalone is not particularly well documented as yet. For details on running in this configuration you will need to include the following files:
+XTS standalone is not yet documented. For details on running in this configuration you will need to include the following files:
 1. lib/ext/*.jar
 2. lib/xts/jbossxts.jar
 3. lib/xts/jbossxts-api.jar

@@ -182,19 +182,19 @@
 			<source>../ArjunaJTS/narayana-jts-jacorb/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-			<destName>default-jts-jbossts-properties.xml</destName>
+			<destName>default-jts-jacorb-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-idlj-properties.xml</source>
+			<source>../ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-			<destName>default-jts-jbossts-properties.xml</destName>
+			<destName>default-jts-idlj-jbossts-properties.xml</destName>
 		</file>
 		<file>
-			<source>../ArjunaJTS/narayana-jts-ibmorb/src/main/resources/jbossts-ibmorb-properties.xml</source>
+			<source>../ArjunaJTS/narayana-jts-ibmorb/src/main/resources/jbossts-properties.xml</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
-			<destName>default-jts-jbossts-properties.xml</destName>
+			<destName>default-jts-jbossts-imborb-properties.xml</destName>
 		</file>
 		<file>
 			<source>../XTS/third_party_licenses.txt</source>
