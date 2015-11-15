@@ -422,7 +422,7 @@ public class OTM extends JSplitPane
 
             for (int i = 0; i < number; i++)
             {
-                machineName = (String) _machines.elementAt(i);
+                machineName = _machines.elementAt(i);
                 machine = new DefaultMutableTreeNode(machineName);
                 topMachine.add(machine);
             }
@@ -449,7 +449,7 @@ public class OTM extends JSplitPane
 
         topTran.removeAllChildren();
         transactions.repaint();
-        _dirs = new Vector();
+        _dirs = new Vector<>();
 
         DefaultTreeModel model = (DefaultTreeModel) transactions.getModel();
 
@@ -581,7 +581,7 @@ public class OTM extends JSplitPane
         {
             for (int i = 0; i < number; i++)
             {
-                DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                DirEntry dirEntry = _dirs.elementAt(i);
 
                 if (dirEntry != null)
                     dirEntry.present = false;
@@ -597,7 +597,7 @@ public class OTM extends JSplitPane
         {
             for (int i = 0; i < number; i++)
             {
-                DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                DirEntry dirEntry = _dirs.elementAt(i);
 
                 if (dirEntry != null)
                 {
@@ -642,7 +642,7 @@ public class OTM extends JSplitPane
             {
                 for (int i = 0; i < number; i++)
                 {
-                    DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                    DirEntry dirEntry = _dirs.elementAt(i);
 
                     if (dirEntry != null)
                     {
@@ -678,7 +678,7 @@ public class OTM extends JSplitPane
             {
                 for (int i = 0; i < number; i++)
                 {
-                    DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                    DirEntry dirEntry = _dirs.elementAt(i);
 
                     if (dirEntry != null)
                     {
@@ -702,11 +702,11 @@ public class OTM extends JSplitPane
 
     private void removeDirectory (String path)
     {
-        Enumeration elements = _dirs.elements();
+        Enumeration<DirEntry> elements = _dirs.elements();
 
         while (elements.hasMoreElements())
         {
-            DirEntry e = (DirEntry) elements.nextElement();
+            DirEntry e = elements.nextElement();
 
             if (e.fullPathName.compareTo(path) == 0)
             {
@@ -728,7 +728,7 @@ public class OTM extends JSplitPane
             {
                 for (int i = 0; i < number; i++)
                 {
-                    DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                    DirEntry dirEntry = _dirs.elementAt(i);
 
                     if (dirEntry != null)
                     {
@@ -756,7 +756,7 @@ public class OTM extends JSplitPane
             {
                 for (int i = 0; i < number; i++)
                 {
-                    DirEntry dirEntry = (DirEntry) _dirs.elementAt(i);
+                    DirEntry dirEntry = _dirs.elementAt(i);
 
                     if (dirEntry != null)
                     {
@@ -878,9 +878,9 @@ public class OTM extends JSplitPane
         }
     }
 
-    private static Vector _machines = new Vector();
+    private static Vector<String> _machines = new Vector<>();
 
-    private static Vector _dirs = new Vector();
+    private static Vector<DirEntry> _dirs = new Vector<>();
 
     private static DefaultMutableTreeNode topMachine = null;
 

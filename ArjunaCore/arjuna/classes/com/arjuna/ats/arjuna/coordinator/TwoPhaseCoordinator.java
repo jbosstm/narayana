@@ -508,8 +508,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
                 } else {
 					// afterCompletions should run in reverse order compared to
 					// beforeCompletions
-					Stack stack = new Stack();
-					Iterator iterator = _synchs.iterator();
+					Stack<SynchronizationRecord> stack = new Stack<>();
+					Iterator<SynchronizationRecord> iterator = _synchs.iterator();
 					while(iterator.hasNext()) {
 						stack.push(iterator.next());
 					}
@@ -520,7 +520,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					 */
 					while(!stack.isEmpty())
 					{
-						SynchronizationRecord record = (SynchronizationRecord)stack.pop();
+						SynchronizationRecord record = stack.pop();
 
 						/*
 						 * If the caller doesn't want to be informed of heuristics during completion

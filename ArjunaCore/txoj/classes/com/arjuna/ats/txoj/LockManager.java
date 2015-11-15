@@ -712,11 +712,11 @@ public class LockManager extends StateManager
                 {
                     if (super.usingActions != null)
                     {
-                        Enumeration e = super.usingActions.elements();
+                        Enumeration<BasicAction> e = super.usingActions.elements();
 
                         while (e.hasMoreElements())
                         {
-                            BasicAction action = (BasicAction) e.nextElement();
+                            BasicAction action = e.nextElement();
 
                             if (action != null)  // shouldn't be null!!
                             {

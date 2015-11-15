@@ -110,12 +110,12 @@ public class TestCommitMarkableResourceReturnUnknownOutcomeFrom1PCCommit {
         // the transaction
         // manager would have used to mark the transaction for GC
         CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule = null;
-        Vector recoveryModules = manager.getModules();
+        Vector<RecoveryModule> recoveryModules = manager.getModules();
         if (recoveryModules != null) {
-            Enumeration modules = recoveryModules.elements();
+            Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
             while (modules.hasMoreElements()) {
-                RecoveryModule m = (RecoveryModule) modules.nextElement();
+                RecoveryModule m = modules.nextElement();
 
                 if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
                     commitMarkableResourceRecoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;
@@ -203,12 +203,12 @@ public class TestCommitMarkableResourceReturnUnknownOutcomeFrom1PCCommit {
         // the transaction
         // manager would have used to mark the transaction for GC
         CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule = null;
-        Vector recoveryModules = manager.getModules();
+        Vector<RecoveryModule> recoveryModules = manager.getModules();
         if (recoveryModules != null) {
-            Enumeration modules = recoveryModules.elements();
+            Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
             while (modules.hasMoreElements()) {
-                RecoveryModule m = (RecoveryModule) modules.nextElement();
+                RecoveryModule m = modules.nextElement();
 
                 if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
                     commitMarkableResourceRecoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;

@@ -48,7 +48,7 @@ public class XTSBASubordinateRecoveryModule implements XTSBARecoveryModule
             InputObjectState ios = new InputObjectState();
             ios.setBuffer(recoveryState);
             String className = ios.unpackString();
-            Class participantClass =  this.getClass().getClassLoader().loadClass(className);
+            Class<?> participantClass =  this.getClass().getClassLoader().loadClass(className);
             BusinessAgreementWithCoordinatorCompletionParticipant participant = (BusinessAgreementWithCoordinatorCompletionParticipant)participantClass.newInstance();
             ((PersistableParticipant)participant).restoreState(ios);
             return participant;

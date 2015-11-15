@@ -327,11 +327,11 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                 classType = "com.arjuna.ats.arjuna.AtomicAction";
 
             try {
-                Class cls = Class.forName(classType);
+                Class<?> cls = Class.forName(classType);
 
-                Class pTypes[] = new Class[1];
+                Class<?> pTypes[] = new Class[1];
                 pTypes[0] = Uid.class;
-                Constructor ctor = cls.getConstructor(pTypes);
+                Constructor<?> ctor = cls.getConstructor(pTypes);
                 Object args[] = new Object[1];
                 args[0] = wrapper.getUid();
                 return (BasicAction) ctor.newInstance(args);
@@ -434,7 +434,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
             }
         }
 
-        private Field getField(Class cl, String fn) {
+        private Field getField(Class<?> cl, String fn) {
             try {
                 return cl.getDeclaredField(fn);
             } catch (NoSuchFieldException e) {
@@ -442,7 +442,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
             }
         }
 
-        private Method getMethod(Class cl, String mn, Class<?>... parameterTypes) {
+        private Method getMethod(Class<?> cl, String mn, Class<?>... parameterTypes) {
             try {
                 if (cl == null)
                     return null;

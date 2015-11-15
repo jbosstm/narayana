@@ -91,7 +91,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
     }
 
     private XARecoveryModule getRecoveryModule() {
-        for (RecoveryModule recoveryModule : ((Vector<RecoveryModule>) RecoveryManager.manager().getModules())) {
+        for (RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
             if (recoveryModule instanceof XARecoveryModule) {
                 return (XARecoveryModule) recoveryModule;
             }

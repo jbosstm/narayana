@@ -82,7 +82,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
         }
 
         XARecoveryModule xaRecoveryModule = null;
-        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)_recoveryManager.getModules())) {
+        for(RecoveryModule recoveryModule : _recoveryManager.getModules()) {
             if(recoveryModule instanceof XARecoveryModule) {
                 xaRecoveryModule = (XARecoveryModule)recoveryModule;
                 break;
@@ -120,7 +120,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
 	public void addSerializableXAResourceDeserializer(SerializableXAResourceDeserializer serializableXAResourceDeserializer) {
 
         XARecoveryModule xaRecoveryModule = null;
-        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)_recoveryManager.getModules())) {
+        for(RecoveryModule recoveryModule : _recoveryManager.getModules()) {
             if(recoveryModule instanceof XARecoveryModule) {
                 xaRecoveryModule = (XARecoveryModule)recoveryModule;
                 break;

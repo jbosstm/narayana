@@ -441,14 +441,13 @@ public abstract class AbstractRecord extends StateManager
 	}
 
 	
-	@SuppressWarnings("unchecked")
         public static AbstractRecord create (int type)
 	{
 	    try
 	    {
-        	    Class recordClass = RecordType.typeToClass(type);
+        	    Class<? extends AbstractRecord> recordClass = RecordType.typeToClass(type);
         
-        	    return (AbstractRecord) recordClass.newInstance();
+        	    return recordClass.newInstance();
 	    }
 	    catch (final NullPointerException ex) {
             tsLogger.i18NLogger.warn_coordinator_AbstractRecord_npe(Integer.toString(type));

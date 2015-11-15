@@ -71,12 +71,12 @@ public class TestCommitMarkableResourceFailAfterPrepareTwoXAResources extends
 		// manager would have used to mark the transaction for GC
 		CommitMarkableResourceRecordRecoveryModule recoveryModule = null;
 		XARecoveryModule xarm = null;
-		Vector recoveryModules = manager.getModules();
+		Vector<RecoveryModule> recoveryModules = manager.getModules();
 		if (recoveryModules != null) {
-			Enumeration modules = recoveryModules.elements();
+			Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
 			while (modules.hasMoreElements()) {
-				RecoveryModule m = (RecoveryModule) modules.nextElement();
+				RecoveryModule m = modules.nextElement();
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					recoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;

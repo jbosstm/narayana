@@ -95,7 +95,7 @@ public class SubordinationManager
             // can't link against the JTS code so we need to do it the hard way...
             try
             {
-                Class clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.TransactionImporterImple");
+                Class<?> clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.TransactionImporterImple");
                 transactionImporter = (TransactionImporter)clazz.newInstance();
             }
             catch(Exception e)
@@ -124,7 +124,7 @@ public class SubordinationManager
             // can't link against the JTS code so we need to do it the hard way...
             try
             {
-                Class clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple");
+                Class<?> clazz = Class.forName("com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple");
                 xaTerminator = (XATerminator)clazz.newInstance();
             }
             catch(Exception e)

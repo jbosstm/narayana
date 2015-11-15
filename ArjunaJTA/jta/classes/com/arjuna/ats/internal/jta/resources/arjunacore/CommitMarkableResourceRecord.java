@@ -127,12 +127,12 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	static {
 		commitMarkableResourceRecoveryModule = null;
 		RecoveryManager recMan = RecoveryManager.manager();
-		Vector recoveryModules = recMan.getModules();
+		Vector<RecoveryModule> recoveryModules = recMan.getModules();
 		if (recoveryModules != null) {
-			Enumeration modules = recoveryModules.elements();
+			Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
 			while (modules.hasMoreElements()) {
-				RecoveryModule m = (RecoveryModule) modules.nextElement();
+				RecoveryModule m = modules.nextElement();
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					commitMarkableResourceRecoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;

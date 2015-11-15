@@ -963,11 +963,11 @@ public class StateManager
 
             if (usingActions.size() > 0)
             {
-                Enumeration e = usingActions.keys();
+                Enumeration<Uid> e = usingActions.keys();
 
                 while (e.hasMoreElements())
                 {
-                    action = (BasicAction) usingActions.remove(e.nextElement());
+                    action = usingActions.remove(e.nextElement());
 
                     if (action != null)
                     {
@@ -1365,8 +1365,8 @@ public class StateManager
     {
         if (modifyingActions == null)
         {
-            modifyingActions = new Hashtable();
-            usingActions = new Hashtable();
+            modifyingActions = new Hashtable<>();
+            usingActions = new Hashtable<>();
         }
     }
     
@@ -1384,8 +1384,8 @@ public class StateManager
         currentStatus = ObjectStatus.DESTROYED;
     }
 
-    protected Hashtable modifyingActions = null;
-    protected Hashtable usingActions = null;
+    protected Hashtable<Uid, BasicAction> modifyingActions = null;
+    protected Hashtable<Uid, BasicAction> usingActions = null;
     protected final Uid objectUid;
     protected int objectModel = ObjectModel.SINGLE;
 

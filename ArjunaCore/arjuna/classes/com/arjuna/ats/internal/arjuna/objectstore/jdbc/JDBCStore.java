@@ -241,7 +241,7 @@ public class JDBCStore implements ObjectStoreAPI {
                 name = name.toLowerCase();
 
                 final String packagePrefix = JDBCStore.class.getName().substring(0, JDBCStore.class.getName().lastIndexOf('.')) + ".drivers.";
-                Class jdbcImpleClass = null;
+                Class<?> jdbcImpleClass = null;
                 try {
                     jdbcImpleClass = Class.forName(packagePrefix + name + "_" + major + "_" + minor + "_driver");
                 } catch (final ClassNotFoundException cnfe) {

@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta;
 
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
@@ -39,8 +40,7 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 class CommitMarkableResourceRecordMap implements RecordTypeMap
 {
-    @SuppressWarnings("unchecked")
-    public Class getRecordClass ()
+    public Class<? extends AbstractRecord> getRecordClass ()
     {
         return CommitMarkableResourceRecord.class;
     }
@@ -53,8 +53,7 @@ class CommitMarkableResourceRecordMap implements RecordTypeMap
 
 class XAResourceRecordMap implements RecordTypeMap
 {
-    @SuppressWarnings("unchecked")
-    public Class getRecordClass ()
+    public Class<? extends AbstractRecord> getRecordClass ()
     {
         return XAResourceRecord.class;
     }

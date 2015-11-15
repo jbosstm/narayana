@@ -940,7 +940,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     // global values (some of which may be reset on a per instance basis).
 
-    private static final Hashtable fileCache = new Hashtable();
+    private static final Hashtable<String, String> fileCache = new Hashtable<>();
     private static final int       createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
     private static final int       createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
 

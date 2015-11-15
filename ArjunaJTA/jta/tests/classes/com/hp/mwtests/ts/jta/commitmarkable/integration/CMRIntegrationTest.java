@@ -294,13 +294,13 @@ public class CMRIntegrationTest {
 	private CommitMarkableResourceRecordRecoveryModule getCRRRM() {
 		CommitMarkableResourceRecordRecoveryModule crrrm = null;
 		RecoveryManager recMan = RecoveryManager.manager();
-		Vector recoveryModules = recMan.getModules();
+		Vector<RecoveryModule> recoveryModules = recMan.getModules();
 
 		if (recoveryModules != null) {
-			Enumeration modules = recoveryModules.elements();
+			Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
 			while (modules.hasMoreElements()) {
-				RecoveryModule m = (RecoveryModule) modules.nextElement();
+				RecoveryModule m = modules.nextElement();
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					return (CommitMarkableResourceRecordRecoveryModule) m;

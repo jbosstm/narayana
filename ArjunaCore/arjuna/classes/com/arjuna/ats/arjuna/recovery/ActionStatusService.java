@@ -246,8 +246,8 @@ public class ActionStatusService implements Service
    {
       int action_status = ActionStatus.INVALID;
 
-      Vector matchingUidVector = new Vector();
-      Vector matchingUidTypeVector = new Vector();
+      Vector<Uid> matchingUidVector = new Vector<>();
+      Vector<String> matchingUidTypeVector = new Vector<>();
 
       try
       {
@@ -330,8 +330,8 @@ public class ActionStatusService implements Service
       }
       else if ( uidVectorSize == 1 )
       {
-         Uid uid = (Uid)matchingUidVector.get( first_index );
-         String typeName = (String)matchingUidTypeVector.get( first_index );
+         Uid uid = matchingUidVector.get( first_index );
+         String typeName = matchingUidTypeVector.get( first_index );
 
          action_status = getObjectStoreStatus( uid, typeName );
       }
@@ -339,16 +339,16 @@ public class ActionStatusService implements Service
       else if ( uidVectorSize > 1 )
       {
          // find root of hierarchy
-         Uid rootUid = (Uid)matchingUidVector.get( first_index );
-         String rootTypeName = (String)matchingUidTypeVector.get( first_index );
+         Uid rootUid = matchingUidVector.get( first_index );
+         String rootTypeName = matchingUidTypeVector.get( first_index );
 
          for ( int index = first_index+1; index < uidVectorSize; index++ )
          {
-            String typeName = (String)matchingUidTypeVector.get( index );
+            String typeName = matchingUidTypeVector.get( index );
             if ( typeName.length() < rootTypeName.length() )
             {
                rootTypeName = typeName;
-               rootUid = (Uid)matchingUidVector.get( index );
+               rootUid = matchingUidVector.get( index );
             }
          }
 

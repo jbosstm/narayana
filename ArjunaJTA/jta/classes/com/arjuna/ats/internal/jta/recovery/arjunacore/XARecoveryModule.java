@@ -861,17 +861,17 @@ public class XARecoveryModule implements RecoveryModule
 			return null;
 		}
 
-		Enumeration e = _failures.keys();
+		Enumeration<Xid> e = _failures.keys();
 
 		while (e.hasMoreElements())
 		{
-			Xid theXid = (Xid) e.nextElement();
+			Xid theXid = e.nextElement();
 
 			if (XAHelper.sameXID(xid, theXid))
 			{
 				// remove uid from failure list
-				Vector failureItem = (Vector) _failures.get(theXid);
-				Uid u = (Uid) failureItem.remove(0);
+				Vector<Uid> failureItem = _failures.get(theXid);
+				Uid u = failureItem.remove(0);
 
 				if (failureItem.size() == 0)
 					_failures.remove(theXid);
@@ -894,13 +894,13 @@ public class XARecoveryModule implements RecoveryModule
 	private void addFailure(Xid xid, Uid uid)
 	{
 		if (_failures == null)
-			_failures = new Hashtable();
+			_failures = new Hashtable<>();
 
-		Vector failureItem = (Vector) _failures.get(xid);
+		Vector<Uid> failureItem = _failures.get(xid);
 
 		if (failureItem == null)
 		{
-			failureItem = new Vector();
+			failureItem = new Vector<>();
 
 			_failures.put(xid, failureItem);
 		}
@@ -912,7 +912,7 @@ public class XARecoveryModule implements RecoveryModule
 	private void removeFailure(Xid xid, Uid uid)
 	{
 		// find the failure item for this xid
-		Vector failureItem = (Vector) _failures.get(xid);
+		Vector<Uid> failureItem = _failures.get(xid);
 
 		if (failureItem == null)
 		{
@@ -1032,7 +1032,7 @@ public class XARecoveryModule implements RecoveryModule
 
     private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
 
-    private Hashtable _failures = null;
+    private Hashtable<Xid, Vector<Uid>> _failures = null;
 
     private Hashtable<XAResourceRecoveryHelper,XAResource[]> recoveryHelpersXAResource = new Hashtable<XAResourceRecoveryHelper,XAResource[]>();
 

@@ -91,8 +91,8 @@ public class CrashRecoveryCommitReturnsXA_RETRY {
 		RecoveryManager.manager().initialize();
 
 		XARecoveryModule xaRecoveryModule = null;
-		for (RecoveryModule recoveryModule : ((Vector<RecoveryModule>) RecoveryManager
-				.manager().getModules())) {
+		for (RecoveryModule recoveryModule : RecoveryManager.manager()
+				.getModules()) {
 			if (recoveryModule instanceof XARecoveryModule) {
 				xaRecoveryModule = (XARecoveryModule) recoveryModule;
 				break;

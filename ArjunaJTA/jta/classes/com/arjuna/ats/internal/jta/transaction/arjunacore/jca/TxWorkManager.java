@@ -144,7 +144,7 @@ public class TxWorkManager
 	{
 		synchronized (_transactions)
 		{
-			Stack workers = _transactions.get(tx);
+			Stack<Work> workers = _transactions.get(tx);
 			
 			return (boolean) (workers != null);
 		}

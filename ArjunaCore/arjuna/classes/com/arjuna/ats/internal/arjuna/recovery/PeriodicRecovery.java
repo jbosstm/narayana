@@ -731,13 +731,13 @@ public class PeriodicRecovery extends Thread
         // dynamic updates in the middle of a scan, ensuring first+second pass happen
         // for the same stable set of modules.
 
-        Vector copyOfModules = getModules();
+        Vector<RecoveryModule> copyOfModules = getModules();
         
-        Enumeration modules = copyOfModules.elements();
+        Enumeration<RecoveryModule> modules = copyOfModules.elements();
 
         while (modules.hasMoreElements())
         {
-            RecoveryModule m = (RecoveryModule) modules.nextElement();
+            RecoveryModule m = modules.nextElement();
 
             // we need to ensure we use the class loader context of the recovery module while we are executing
             // its methods
@@ -786,7 +786,7 @@ public class PeriodicRecovery extends Thread
 
         while (modules.hasMoreElements())
         {
-            RecoveryModule m = (RecoveryModule) modules.nextElement();
+            RecoveryModule m = modules.nextElement();
 
             ClassLoader cl = switchClassLoader(m);
             try {
