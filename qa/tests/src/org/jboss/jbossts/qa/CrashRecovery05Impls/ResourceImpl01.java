@@ -71,6 +71,7 @@ public class ResourceImpl01 implements ResourceOperations
 		_objectNumber = objectNumber;
 		_resourceNumber = resourceNumber;
 		_resourceBehavior = resourceBehavior;
+		_status = Status.StatusNoTransaction;
 	}
 
 	public Vote prepare()
@@ -93,6 +94,8 @@ public class ResourceImpl01 implements ResourceOperations
 			System.exit(1);
 		}
 
+		_status = Status.StatusPrepared;
+
 		System.err.println("ReturnVoteCommit");
 
 		return Vote.VoteCommit;
@@ -102,6 +105,9 @@ public class ResourceImpl01 implements ResourceOperations
 			throws HeuristicCommit, HeuristicMixed, HeuristicHazard
 	{
 		System.err.print("ResourceImpl01.rollback [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
+
+		if (isComplete())
+			return;
 
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
@@ -132,6 +138,8 @@ public class ResourceImpl01 implements ResourceOperations
 			return;
 		}
 
+		_status = Status.StatusRolledBack;
+
 		System.err.println("Return");
 	}
 
@@ -139,6 +147,9 @@ public class ResourceImpl01 implements ResourceOperations
 			throws NotPrepared, HeuristicRollback, HeuristicMixed, HeuristicHazard
 	{
 		System.err.print("ResourceImpl01.commit [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
+
+		if (isComplete())
+			return;
 
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
@@ -159,6 +170,8 @@ public class ResourceImpl01 implements ResourceOperations
 			System.exit(1);
 		}
 
+		_status = Status.StatusCommitted;
+
 		try
 		{
 			ServerIORStore.removeIOR("RecoveryCoordinator_" + _serviceNumber + "_" + _objectNumber + "_" + _resourceNumber);
@@ -177,6 +190,9 @@ public class ResourceImpl01 implements ResourceOperations
 	{
 		System.err.print("ResourceImpl01.commit_one_phase [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
 
+		if (isComplete())
+			return;
+
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
 			_resourceTrace = ResourceTrace.ResourceTraceCommitOnePhase;
@@ -191,6 +207,8 @@ public class ResourceImpl01 implements ResourceOperations
 			System.err.println("Crash");
 			System.exit(1);
 		}
+
+		_status = Status.StatusCommitted;
 
 		try
 		{
