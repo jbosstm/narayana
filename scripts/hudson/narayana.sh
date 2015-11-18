@@ -60,6 +60,8 @@ function init_test_options {
     is_ibm
     ISIBM=$?
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.2.9.Final-SNAPSHOT"
+    [ $CODE_COVERAGE ] || CODE_COVERAGE=0
+    [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
     [ $IBM_ORB ] || IBM_ORB=0
 
@@ -81,7 +83,8 @@ function init_test_options {
     elif [[ $PROFILE == "JACOCO" ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-        export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+        export CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
@@ -203,13 +206,14 @@ function build_narayana {
   cd $WORKSPACE
 
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
+  [ $CODE_COVERAGE = 1 ] && NARAYANA_ARGS="${NARAYANA_ARGS} -pl !code-coverage"
 
   if [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
-  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -309,7 +313,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test
+  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -403,15 +407,13 @@ function jta_cdi_tests {
 function compensations_tests {
   echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "txframework build failed"
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF-distributed "$@" test
-  [ $? = 0 ] || fatal "txframework build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed "$@" test
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-weld "$@" test
+  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
 }
 
@@ -429,10 +431,10 @@ function xts_tests {
     echo "BUILDING SPECIFIC WSTX11 modules"
     ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   else
-    ./build.sh -f XTS/localjunit/unit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
-    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
-    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
-    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/unit/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     ./build.sh -f XTS/localjunit/xtstest/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
   fi
@@ -545,7 +547,7 @@ function qa_tests_once {
   # look for an argument of the form orb=<something>
   for i in $@; do
     [ ${i%%=*} = "orb" ] && orb=${i##*=}
-    [ $i = "-DcodeCoverage" ] && codeCoverage=true
+    [ $CODE_COVERAGE = 1 ] && codeCoverage=true
   done
 
   git checkout TaskImpl.properties
@@ -736,6 +738,13 @@ function perf_tests {
   [ $res = 0 ] || fatal "there were regressions in one or more of the benchmarks (see previous PR comment for details"
 }
 
+function generate_code_coverage_report {
+  echo "Generating code coverage report"
+  cd ${WORKSPACE}
+  ./build.sh -pl code-coverage $CODE_COVERAGE_ARGS "$@" clean install
+  [ $? = 0 ] || fatal "Code coverage report generation failed"
+}
+
 check_if_pull_closed
 
 init_test_options
@@ -785,6 +794,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
+[ $CODE_COVERAGE = 1 ] && generate_code_coverage_report "$@"
 
 if [[ -z $PROFILE ]]; then
     comment_on_pull "All tests passed - Job complete $BUILD_URL"

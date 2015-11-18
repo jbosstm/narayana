@@ -175,9 +175,6 @@
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>codeCoverage</name>
-                </property>
             </activation>
             <dependencies>
                 <dependency>
@@ -286,25 +283,17 @@
         </profile>
         <profile>
             <id>codeCoverage</id>
-            <activation>
-                <property>
-                    <name>codeCoverage</name>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>${jvm.args.jacoco}</server.jvm.args>
+                                <server.jvm.args>
+                                    ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
+                                    ${jvm.args.jacoco}
+                                </server.jvm.args>
                             </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/DataManagementTest.java</exclude>
-                                <exclude>**/BABridgedTest.java</exclude>
-                                <exclude>**/BAParticipantCompletionTest.java</exclude>
-                                <exclude>**/BACoordinatorCompletionTest.java</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>

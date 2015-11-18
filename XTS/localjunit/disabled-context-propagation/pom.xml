@@ -100,9 +100,6 @@
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>codeCoverage</name>
-                </property>
             </activation>
             <build>
                 <plugins>

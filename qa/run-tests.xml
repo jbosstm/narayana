@@ -569,6 +569,7 @@
             <exclude name="**/apache-karaf*/**"/>
             <exclude name="**/hornetq*/**"/>
             <exclude name="**/openjdk-orb-**.jar"/>
+            <exclude name="**/ext/jacocoant.jar"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">
