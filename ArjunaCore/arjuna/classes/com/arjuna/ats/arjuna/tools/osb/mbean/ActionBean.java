@@ -21,11 +21,20 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -126,8 +135,9 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     /**
      * Remove this AtomicAction from the ObjectStore
      * @return a textual indication of whether the remove operation succeeded
+     * @throws MBeanException 
      */
-    public String remove() {
+    public String remove() throws MBeanException {
         // first unregister each participant of this action
         Iterator<LogRecordWrapper> i = participants.iterator();
 

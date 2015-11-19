@@ -1,5 +1,7 @@
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import javax.management.MBeanException;
+
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
 
@@ -17,5 +19,5 @@ public interface ActionBeanMBean extends OSEntryBeanMBean {
 	boolean isParticipant();
 
 	@MXBeanPropertyDescription("Tell the Transaction Manager to remove this action")
-	String remove();
+	String remove() throws MBeanException;
 }

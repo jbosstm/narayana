@@ -21,6 +21,10 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import java.io.IOException;
+
+import javax.management.MBeanException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -108,12 +112,13 @@ public class OSEntryBean implements OSEntryBeanMBean {
 	/**
 	 * Remove this record from the ObjectStore
 	 * @return a textual indication of whether the remove operation succeeded
+	 * @throws MBeanException
 	 */
-	public String remove() {
+	public String remove() throws MBeanException {
 		return remove(true);
 	}
 
-	public String remove(boolean reprobe) {
+	public String remove(boolean reprobe) throws MBeanException {
 		if (doRemove()) {
 			if (reprobe)
 				_uidWrapper.probe();

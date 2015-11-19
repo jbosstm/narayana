@@ -21,15 +21,29 @@
  */
 package com.hp.mwtests.ts.jta.jts.tools;
 
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.orbportability.OA;
-import com.arjuna.orbportability.ORB;
-import com.hp.mwtests.ts.jta.jts.common.DummyXA;
-import org.junit.*;
+import java.lang.reflect.Field;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosTransactions.HeuristicHazard;
 
@@ -48,24 +62,17 @@ import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
 import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-
-import java.lang.reflect.Field;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.junit.Assert.*;
 
 /**
  * Test the the ObjStoreBrowser MBean in a JTS environment.
@@ -131,7 +138,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	}
 
 
-	private ObjStoreBrowser createObjStoreBrowser(boolean probe) {
+	private ObjStoreBrowser createObjStoreBrowser(boolean probe) throws MBeanException {
 		ObjStoreBrowser osb = new ObjStoreBrowser();
 
 		osb.setType("com.arjuna.ats.arjuna.AtomicAction", "com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean");

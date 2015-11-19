@@ -1,5 +1,7 @@
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import javax.management.MBeanException;
+
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanDescription;
 import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
 
@@ -11,7 +13,7 @@ import com.arjuna.ats.arjuna.tools.osb.annotation.MXBeanPropertyDescription;
 @MXBeanDescription("Representation of the transaction logging mechanism")
 public interface ObjStoreBrowserMBean extends ObjStoreItemMBean {
 	@MXBeanPropertyDescription("See if any new transactions have been created or completed")
-	void probe();
+	void probe() throws MBeanException;
 
 	@MXBeanPropertyDescription("Enable/disable viewing of Subordinate Atomic Actions (afterwards"
 	    + " use the probe operation to rescan the store):"

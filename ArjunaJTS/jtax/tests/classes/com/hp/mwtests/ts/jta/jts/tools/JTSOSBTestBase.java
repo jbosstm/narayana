@@ -25,6 +25,7 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
@@ -33,9 +34,11 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.omg.CORBA.ORBPackage.InvalidName;
+
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 
@@ -43,6 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.AfterClass;
 
 import javax.management.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -113,7 +117,7 @@ public class JTSOSBTestBase extends TestBase {
         emptyObjectStore();
     }
 
-	public ObjStoreBrowser createObjStoreBrowser(boolean probe) {
+	public ObjStoreBrowser createObjStoreBrowser(boolean probe) throws MBeanException {
 		ObjStoreBrowser osb = new ObjStoreBrowser();
 
 		osb.viewSubordinateAtomicActions(true);
@@ -137,7 +141,7 @@ public class JTSOSBTestBase extends TestBase {
         }
     }
 
-    protected void assertBeanWasCreated(ArjunaTransactionImple txn) {
+    protected void assertBeanWasCreated(ArjunaTransactionImple txn) throws MBeanException {
         int heuristicParticipantCount = generatedHeuristicHazard(txn);
 
         ObjStoreBrowser osb = createObjStoreBrowser(true);

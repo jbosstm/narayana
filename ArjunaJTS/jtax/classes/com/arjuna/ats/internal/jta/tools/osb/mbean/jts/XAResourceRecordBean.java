@@ -21,14 +21,20 @@
  */
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
 
+import java.io.IOException;
+
+import javax.management.MBeanException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.mbean.*;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
+import com.arjuna.ats.arjuna.tools.osb.mbean.HeuristicStatus;
+import com.arjuna.ats.arjuna.tools.osb.mbean.LogRecordWrapper;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ParticipantStatus;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
-
-import java.io.IOException;
 
 /**
  * MBean implementation of a transaction participant corresponding to a JTA XAResource
@@ -108,7 +114,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     }
 
     @Override
-    public String remove() {
+    public String remove() throws MBeanException {
         if (jtsXAResourceRecord != null && jtsXAResourceRecord.doRemove())
             jtsXAResourceRecord = null;
 

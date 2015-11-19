@@ -46,34 +46,23 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 public class ObjectStoreIterator
 {
 
-    public ObjectStoreIterator(RecoveryStore recoveryStore, String tName)
+    public ObjectStoreIterator(RecoveryStore recoveryStore, String tName) throws ObjectStoreException
     {
-        try
-        {
-            recoveryStore.allObjUids(tName, uidList);
-        }
-        catch (ObjectStoreException e)
-        {
-        }
+        recoveryStore.allObjUids(tName, uidList);
     }
 
     /**
      * return the Uids from the list one at a time. ObjStore returns either null
      * list or a list terminated by the NIL_UID. Use the latter to return 0 (for
      * end of list)
+     * @throws IOException 
      */
 
-    public final synchronized Uid iterate ()
+    public final synchronized Uid iterate () throws IOException
     {
         Uid newUid = null;
 
-        try
-        {
-            newUid = UidHelper.unpackFrom(uidList);
-        }
-        catch (IOException e)
-        {
-        }
+        newUid = UidHelper.unpackFrom(uidList);
 
         return newUid;
     }

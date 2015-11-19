@@ -21,14 +21,19 @@
  */
 package com.hp.mwtests.ts.jta.jts.tools;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
-import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
-import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.recovery.transactions.*;
+import javax.management.MBeanException;
 
 import org.junit.Test;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
+import com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicServerTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteHeuristicTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction;
 
 /**
  *
@@ -41,38 +46,38 @@ import org.junit.Test;
 @Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSOSBTransactionTypeTests extends JTSOSBTestBase {
     @Test
-    public void testArjunaTransactionImpleWrapper() {
+    public void testArjunaTransactionImpleWrapper() throws MBeanException {
         // We need to set the transaction type as a thread local to work around an issue in BasicAction constructor
         // calling overridable methods before the object is fully constructed
         UidWrapper.setRecordWrapperTypeName(ArjunaTransactionImpleWrapper.typeName());
         assertBeanWasCreated(new ArjunaTransactionImpleWrapper(new Uid()));
     }
     @Test
-    public void testAssumedCompleteHeuristicServerTransaction() {
+    public void testAssumedCompleteHeuristicServerTransaction() throws MBeanException {
         assertBeanWasCreated(new AssumedCompleteHeuristicServerTransaction(new Uid()));
     }
     @Test
-    public void testAssumedCompleteHeuristicTransaction() {
+    public void testAssumedCompleteHeuristicTransaction() throws MBeanException {
         assertBeanWasCreated(new AssumedCompleteHeuristicTransaction(new Uid()));
     }
     @Test
-    public void testAssumedCompleteServerTransaction() {
+    public void testAssumedCompleteServerTransaction() throws MBeanException {
         assertBeanWasCreated(new AssumedCompleteServerTransaction(new Uid()));
     }
     @Test
-    public void testAssumedCompleteTransaction() {
+    public void testAssumedCompleteTransaction() throws MBeanException {
         assertBeanWasCreated(new AssumedCompleteTransaction(new Uid()));
     }
     @Test
-    public void testRecoveredServerTransaction() {
+    public void testRecoveredServerTransaction() throws MBeanException {
         assertBeanWasCreated(new RecoveredServerTransaction(new Uid()));
     }
     @Test
-    public void testRecoveredTransaction() {
+    public void testRecoveredTransaction() throws MBeanException {
         assertBeanWasCreated(new RecoveredTransaction(new Uid()));
     }
     @Test
-    public void testServerTransaction() {
+    public void testServerTransaction() throws MBeanException {
         assertBeanWasCreated(new RecoveringServerTransaction(new Uid()));
     }
 

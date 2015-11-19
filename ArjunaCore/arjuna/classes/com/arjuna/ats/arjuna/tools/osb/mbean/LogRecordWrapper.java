@@ -21,6 +21,8 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
+import javax.management.MBeanException;
+
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.HeuristicInformation;
@@ -207,7 +209,7 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 		return hs.name();
 	}
 
-	public String remove(boolean reprobe) {
+	public String remove(boolean reprobe) throws MBeanException {
 		if (parent != null) {
 			parent.remove(this);
 			_uidWrapper.unregister();
@@ -219,7 +221,7 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 	}
 
 	@Override
-	public String remove() {
+	public String remove() throws MBeanException {
 		return remove(true);
 	}
 }

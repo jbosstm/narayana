@@ -24,29 +24,28 @@ package com.hp.mwtests.ts.arjuna.tools;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import org.junit.Test;
-
-import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
-import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
-import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-
-import javax.management.AttributeNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.junit.Test;
+
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * Test that the tooling can exposed all log record types
@@ -125,7 +124,7 @@ public class ExposeAllLogsTest {
         assertFalse(uids2.containsKey(u));
     }
 
-    private void probeObjectStore(boolean exposeAllLogs, boolean useJMX) {
+    private void probeObjectStore(boolean exposeAllLogs, boolean useJMX) throws MBeanException {
         ObjectStoreEnvironmentBean osEnvBean = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
 
         osEnvBean.setExposeAllLogRecordsAsMBeans(exposeAllLogs);

@@ -21,13 +21,17 @@
  */
 package com.hp.mwtests.ts.jta.jts.tools;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.tools.osb.mbean.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import javax.management.MBeanException;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.tools.osb.mbean.OSBTypeHandler;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 /**
  * An example of how to instrument new record types.
  *
@@ -41,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 public class NewTypeTest extends JTSOSBTestBase {
 
     @Test
-    public void testInstrumentNewType() {
+    public void testInstrumentNewType() throws MBeanException {
         OSBTypeHandler osbTypeHandler = new OSBTypeHandler(
                 true,
                 "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.ArjunaTransactionImpleWrapper",
