@@ -321,9 +321,9 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 			// ATOMIC_ACTION_TYPE and remove the CONNECTABLE_ATOMIC_ACTION_TYPE
 			// reference
 			try {
-				ObjectStoreIterator transactionUidEnum = new ObjectStoreIterator(
-						recoveryStore, CONNECTABLE_ATOMIC_ACTION_TYPE);
-				Uid currentUid = transactionUidEnum.iterate();
+			    InputObjectState uidList = new InputObjectState();
+			    recoveryStore.allObjUids(CONNECTABLE_ATOMIC_ACTION_TYPE, uidList);
+				Uid currentUid = UidHelper.unpackFrom(uidList);
 				while (Uid.nullUid().notEquals(currentUid)) {
 
 					// Make sure it isn't garbage from a failure to move before:
@@ -370,7 +370,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
                         }
 					}
 					
-					currentUid = transactionUidEnum.iterate();
+					currentUid = UidHelper.unpackFrom(uidList);
 				}
 			} catch (ObjectStoreException | IOException ex) {
 				tsLogger.logger.warn("Could not query objectstore: ", ex);
@@ -387,10 +387,10 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 						+ " transactions");
 			}
 			try {
-				ObjectStoreIterator transactionUidEnum = new ObjectStoreIterator(
-						recoveryStore, ATOMIC_ACTION_TYPE);
-				Uid currentUid = transactionUidEnum.iterate();
-				while (Uid.nullUid().notEquals(currentUid)) {
+			    InputObjectState uidList = new InputObjectState();
+                recoveryStore.allObjUids(ATOMIC_ACTION_TYPE, uidList);
+                Uid currentUid = UidHelper.unpackFrom(uidList);
+                while (Uid.nullUid().notEquals(currentUid)) {
 
 					// Retrieve the transaction status from its
 					// original
@@ -430,7 +430,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
     						}
 	                    }
 					}
-					currentUid = transactionUidEnum.iterate();
+					currentUid = UidHelper.unpackFrom(uidList);
 				}
 			} catch (ObjectStoreException | IOException ex) {
 				tsLogger.logger.warn("Could not query objectstore: ", ex);
