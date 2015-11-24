@@ -68,6 +68,7 @@ public class ResourceImpl02 implements ResourceOperations
 	{
 		_objectNumber = objectNumber;
 		_resourceNumber = resourceNumber;
+		_status = Status.StatusNoTransaction;
 	}
 
 	public Vote prepare()
@@ -84,6 +85,8 @@ public class ResourceImpl02 implements ResourceOperations
 			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
+		_status = Status.StatusPrepared;
+
 		System.err.println("ReturnVoteCommit");
 
 		return Vote.VoteCommit;
@@ -93,6 +96,9 @@ public class ResourceImpl02 implements ResourceOperations
 			throws HeuristicCommit, HeuristicMixed, HeuristicHazard
 	{
 		System.err.print("ResourceImpl02.rollback [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
+
+		if (isComplete())
+			return;
 
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
@@ -107,6 +113,8 @@ public class ResourceImpl02 implements ResourceOperations
 			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
+		_status = Status.StatusRolledBack;
+
 		System.err.println("Return");
 	}
 
@@ -114,6 +122,9 @@ public class ResourceImpl02 implements ResourceOperations
 			throws NotPrepared, HeuristicRollback, HeuristicMixed, HeuristicHazard
 	{
 		System.err.print("ResourceImpl02.commit [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
+
+		if (isComplete())
+			return;
 
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
@@ -128,6 +139,8 @@ public class ResourceImpl02 implements ResourceOperations
 			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
+		_status = Status.StatusCommitted;
+
 		System.err.println("Return");
 	}
 
@@ -135,6 +148,9 @@ public class ResourceImpl02 implements ResourceOperations
 			throws HeuristicHazard
 	{
 		System.err.print("ResourceImpl02.commit_one_phase [O" + _objectNumber + ".R" + _resourceNumber + "]: ");
+
+		if (isComplete())
+			return;
 
 		if (_resourceTrace == ResourceTrace.ResourceTraceNone)
 		{
@@ -144,6 +160,8 @@ public class ResourceImpl02 implements ResourceOperations
 		{
 			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
+
+		_status = Status.StatusCommitted;
 
 		System.err.println("Return");
 	}
@@ -170,7 +188,7 @@ public class ResourceImpl02 implements ResourceOperations
 		}
 		else
 		{
-			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
+//			_resourceTrace = ResourceTrace.ResourceTraceUnknown;
 		}
 
 		System.err.println("Return");
@@ -186,6 +204,40 @@ public class ResourceImpl02 implements ResourceOperations
 		return _resourceTrace;
 	}
 
+	public boolean isComplete() {
+		return _status == Status.StatusCommitted || _status == Status.StatusRolledBack;
+	}
+
+	public Status getStatus() {
+		return _status;
+	}
+
+	public Status updateStatus(Status hint) {
+		Status prev = _status;
+
+		System.err.printf("ResourceImpl01.updateStatus [O%d.R%d]: status=%d -> %d%n",
+				_objectNumber, _resourceNumber, _status.value(), hint.value());
+
+		if (_status == Status.StatusUnknown || _status == Status.StatusNoTransaction) {
+			try {
+				if (hint == Status.StatusCommitted) {
+					System.err.printf("ResourceImpl01.updateStatus call commit()%n");
+					commit();
+				} else if (hint == Status.StatusRolledBack) {
+					System.err.printf("ResourceImpl01.updateStatus call rollback()%n");
+					rollback();
+				} else {
+					_status = hint;
+				}
+			} catch (Exception e) {
+				_status = hint;
+			}
+		}
+
+		return prev;
+	}
+
+	private Status _status;
 	private int _objectNumber;
 	private int _resourceNumber;
 	private ResourceBehavior _resourceBehavior;
