@@ -27,6 +27,46 @@ function get_pull_description {
     fi
 }
 
+function show_args {
+  echo "CONFIG OPTIONS: $1"
+
+  echo "PROFILE=$PROFILE"
+  echo "QA_PROFILE=$QA_PROFILE"
+  echo "QA_TESTGROUP=$QA_TESTGROUP"
+  echo "QA_TESTMETHODS=$QA_TESTMETHODS"
+
+  echo "NARAYANA_TESTS=$NARAYANA_TESTS
+  echo "NARAYANA_BUILD=$NARAYANA_BUILD
+  echo "AS_BUILD=$AS_BUILD
+  echo "BLACKTIE=$BLACKTIE
+  echo "OSGI_TESTS=$OSGI_TESTS
+  echo "TXF_TESTS=$TXF_TESTS
+  echo "XTS_TESTS=$XTS_TESTS
+  echo "XTS_AS_TESTS=$XTS_AS_TESTS
+  echo "RTS_AS_TESTS=$RTS_AS_TESTS
+  echo "RTS_TESTS=$RTS_TESTS
+  echo "JTA_CDI_TESTS=$JTA_CDI_TESTS
+  echo "JTA_AS_TESTS=$JTA_AS_TESTS
+  echo "QA_TESTS=$QA_TESTS
+  echo "SUN_ORB=$SUN_ORB
+  echo "OPENJDK_ORB=$OPENJDK_ORB
+  echo "JAC_ORB=$JAC_ORB
+  echo "txbridge=$txbridge
+  echo "PERF_TESTS=$PERF_TESTS=
+}
+
+function get_pull_xargs {
+  res=$(echo $1 | sed 's/\\r\\n/ /g')
+  IFS=', ' read -r -a array <<< "$res"
+  for element in "${array[@]}"
+  do
+    if [[ $element == *"="* ]]; then
+      echo "$element"
+      export $element
+    fi
+  done
+}
+
 function init_test_options {
     is_ibm
     ISIBM=$?
@@ -35,6 +75,9 @@ function init_test_options {
     [ $IBM_ORB ] || IBM_ORB=0
 
     PULL_DESCRIPTION=$(get_pull_description)
+
+    get_pull_xargs "$PULL_DESCRIPTION" # see if the PR description overrides the profile
+    show_args BEFORE
 
     if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
         export COMMENT_ON_PULL=""
@@ -104,6 +147,9 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
     fi
+
+    show_args AFTER
+    get_pull_xargs "$PULL_DESCRIPTION" # see if the PR description overrides any of the defaults 
 }
 
 function set_ulimit {
