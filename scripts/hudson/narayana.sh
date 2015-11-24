@@ -27,6 +27,26 @@ function get_pull_description {
     fi
 }
 
+function get_pull_xargs {
+  rval=0
+  res=$(echo $1 | sed 's/\\r\\n/ /g')
+  IFS=', ' read -r -a array <<< "$res"
+  for element in "${array[@]}"
+  do
+    if [[ $element == *"="* ]]; then
+      if [[ $element == "PROFILE="* ]]; then
+        if [[ ! "PROFILE=$2" == $element ]]; then
+          rval=1
+        fi
+      else
+        export $element
+      fi
+   fi
+  done
+
+  return $rval
+}
+
 function init_test_options {
     is_ibm
     ISIBM=$?
@@ -36,7 +56,12 @@ function init_test_options {
 
     PULL_DESCRIPTION=$(get_pull_description)
 
-    if [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
+    if ! get_pull_xargs "$PULL_DESCRIPTION" $PROFILE; then # see if the PR description overrides the profile
+        echo "SKIPPING PROFILE=$PROFILE"
+        export COMMENT_ON_PULL=""
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
+    elif [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
@@ -104,6 +129,8 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
     fi
+
+    get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
 }
 
 function set_ulimit {
