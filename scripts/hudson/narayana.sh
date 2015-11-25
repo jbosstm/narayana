@@ -30,19 +30,28 @@ function get_pull_description {
 function get_pull_xargs {
   rval=0
   res=$(echo $1 | sed 's/\\r\\n/ /g')
+  res=$(echo $res | sed 's/"/ /g')
+  OLDIFS=$IFS
   IFS=', ' read -r -a array <<< "$res"
+  echo "get_pull_xargs: parsing $1" 
+
   for element in "${array[@]}"
   do
     if [[ $element == *"="* ]]; then
       if [[ $element == "PROFILE="* ]]; then
+        echo "comparing PROFILE=$2 with $element"
         if [[ ! "PROFILE=$2" == $element ]]; then
+          echo "SKIPING PROFILE $2"
           rval=1
         fi
       else
+        echo "exporting $element"
         export $element
       fi
-   fi
+    fi
   done
+
+  IFS=$OLDIFS
 
   return $rval
 }
