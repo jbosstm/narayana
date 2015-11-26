@@ -466,6 +466,10 @@ public interface jtaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_resources_arjunacore_classnotfound(String arg0);
 
+    @Message(id = 16115, value = "Could not access object store to check for log so will leave record alone", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_access_object_store(@Cause() Exception e);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

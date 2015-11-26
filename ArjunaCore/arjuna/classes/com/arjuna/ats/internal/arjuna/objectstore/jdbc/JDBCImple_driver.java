@@ -233,6 +233,8 @@ public abstract class JDBCImple_driver {
 	 * currentState - determine the current state of an object. State search is
 	 * ordered OS_UNCOMMITTED, OS_UNCOMMITTED_HIDDEN, OS_COMMITTED,
 	 * OS_COMMITTED_HIDDEN
+	 * 
+	 * @throws ObjectStoreException - in case the JDBC store cannot be contacted
 	 */
 	public int currentState(Uid objUid, String typeName)
 			throws ObjectStoreException {
@@ -302,7 +304,7 @@ public abstract class JDBCImple_driver {
 			}
 		} catch (SQLException e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
-			theState = StateStatus.OS_UNKNOWN;
+			throw new ObjectStoreException(e);
 		} finally {
 			if (rs != null) {
 				try {

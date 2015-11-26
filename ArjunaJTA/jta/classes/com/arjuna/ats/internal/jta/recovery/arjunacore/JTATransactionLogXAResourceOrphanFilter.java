@@ -28,7 +28,6 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
@@ -53,26 +52,28 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
             return Vote.ABSTAIN;
         }
 
-        if(transactionLog(xid)) {
-            // it's owned by a logged transaction which
-            // will recover it top down in due course
+        try {
+            if(transactionLog(xid)) {
+                // it's owned by a logged transaction which
+                // will recover it top down in due course
+                return Vote.LEAVE_ALONE;
+            }
+        } catch (ObjectStoreException | IOException e) {
+            jtaLogger.i18NLogger.warn_could_not_access_object_store(e);
+            // we don't know what the state of the parent transaction is so leave it alone
             return Vote.LEAVE_ALONE;
         }
 
         return Vote.ABSTAIN;
     }
 
-    private boolean containsCommitMarkableResourceRecord(Uid u) {
-        try {
-            InputObjectState state = StoreManager.getRecoveryStore().read_committed(
-                    u, RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE);
-            if (state != null) {
-                RecoverConnectableAtomicAction rcaa = new RecoverConnectableAtomicAction(RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE, u, state);
+    private boolean containsCommitMarkableResourceRecord(Uid u) throws ObjectStoreException, IOException {
+        InputObjectState state = StoreManager.getRecoveryStore().read_committed(
+                u, RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE);
+        if (state != null) {
+            RecoverConnectableAtomicAction rcaa = new RecoverConnectableAtomicAction(RecoverConnectableAtomicAction.CONNECTABLE_ATOMIC_ACTION_TYPE, u, state);
 
-                return (rcaa.containsIncompleteCommitMarkableResourceRecord());
-            }
-        } catch (ObjectStoreException e) {
-        } catch (IOException e) {
+            return (rcaa.containsIncompleteCommitMarkableResourceRecord());
         }
 
         return false;
@@ -85,8 +86,10 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
      *
      * @return <code>boolean</code>true if there is a log file,
      *         <code>false</code> if there isn't.
+     * @throws ObjectStoreException If there is a problem accessing the object store 
+     * @throws IOException In case the data from the object store is corrupted
      */
-    private boolean transactionLog(Xid xid)
+    private boolean transactionLog(Xid xid) throws ObjectStoreException, IOException
     {
         RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String transactionType = new AtomicAction().type();
@@ -101,32 +104,24 @@ public class JTATransactionLogXAResourceOrphanFilter implements XAResourceOrphan
 
         if (!u.equals(Uid.nullUid()))
         {
-            try
-            {
-
-                if (jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("Looking for " + u + " and " + transactionType);
-                }
-
-                if (containsCommitMarkableResourceRecord(u) ||
-                        recoveryStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
-                {
-                    if (jtaLogger.logger.isDebugEnabled()) {
-                        jtaLogger.logger.debug("Found record for " + theXid);
-                    }
-
-                    return true;
-                }
-                else
-                {
-                    if (jtaLogger.logger.isDebugEnabled()) {
-                        jtaLogger.logger.debug("No record found for " + theXid);
-                    }
-                }
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("Looking for " + u + " and " + transactionType);
             }
-            catch (Exception ex)
+
+            if (containsCommitMarkableResourceRecord(u) ||
+                    recoveryStore.currentState(u, transactionType) != StateStatus.OS_UNKNOWN)
             {
-                ex.printStackTrace();
+                if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("Found record for " + theXid);
+                }
+
+                return true;
+            }
+            else
+            {
+                if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug("No record found for " + theXid);
+                }
             }
         }
         else
