@@ -464,8 +464,8 @@
     <module>common</module>
     <module>ArjunaCore</module>
     <module>ArjunaJTA</module>
-    <module>XTS</module>
     <module>ArjunaJTS</module>
+    <module>XTS</module>
     <module>rts</module>
     <module>txbridge</module>
     <module>STM</module>
