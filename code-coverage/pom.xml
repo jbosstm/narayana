@@ -10,7 +10,7 @@
 
   <artifactId>narayana-code-coverage</artifactId>
 
-  <name>JaCoCo :: Documentation</name>
+  <name>Narayana: JaCoCo Documentation</name>
   <description>JaCoCo Documentation</description>
 
   <properties>
