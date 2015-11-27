@@ -1003,25 +1003,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     }
 
     /**
-     * Execute the completed transition.
-     *
-     */
-    private void executeCompleted()
-    {
-        try
-        {
-            coordinator.completed() ;
-        }
-        catch (final Throwable th)
-        {
-            if (WSTLogger.logger.isTraceEnabled())
-            {
-                WSTLogger.logger.tracev("Unexpected exception from coordinator completed", th) ;
-            }
-        }
-    }
-
-    /**
      * Execute the exit transition.
      *
      */

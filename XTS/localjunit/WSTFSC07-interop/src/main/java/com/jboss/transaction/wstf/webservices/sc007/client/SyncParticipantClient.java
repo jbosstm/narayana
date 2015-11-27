@@ -39,67 +39,6 @@ public class SyncParticipantClient
     private static final SyncParticipantClient CLIENT = new SyncParticipantClient() ;
     
     /**
-     * The completion commit action.
-     */
-    private static final String completionCommitAction = InteropConstants.INTEROP_ACTION_COMPLETION_COMMIT ;
-    /**
-     * The completion rollback Action.
-     */
-    private static final String completionRollbackAction = InteropConstants.INTEROP_ACTION_COMPLETION_ROLLBACK ;
-    /**
-     * The commit Action.
-     */
-    private static final String commitAction = InteropConstants.INTEROP_ACTION_COMMIT ;
-    /**
-     * The rollback Action.
-     */
-    private static final String rollbackAction = InteropConstants.INTEROP_ACTION_ROLLBACK ;
-    /**
-     * The phase 2 rollback Action.
-     */
-    private static final String phase2RollbackAction = InteropConstants.INTEROP_ACTION_PHASE_2_ROLLBACK ;
-    /**
-     * The readonly Action.
-     */
-    private static final String readonlyAction = InteropConstants.INTEROP_ACTION_READONLY ;
-    /**
-     * The volatile and durable Action.
-     */
-    private static final String volatileAndDurableAction = InteropConstants.INTEROP_ACTION_VOLATILE_AND_DURABLE ;
-    /**
-     * The early readonly Action.
-     */
-    private static final String earlyReadonlyAction = InteropConstants.INTEROP_ACTION_EARLY_READONLY ;
-    /**
-     * The early aborted Action.
-     */
-    private static final String earlyAbortedAction = InteropConstants.INTEROP_ACTION_EARLY_ABORTED ;
-    /**
-     * The replay commit Action.
-     */
-    private static final String replayCommitAction = InteropConstants.INTEROP_ACTION_REPLAY_COMMIT ;
-    /**
-     * The retry prepared commit Action.
-     */
-    private static final String retryPreparedCommitAction = InteropConstants.INTEROP_ACTION_RETRY_PREPARED_COMMIT ;
-    /**
-     * The retry prepared abort Action.
-     */
-    private static final String retryPreparedAbortAction = InteropConstants.INTEROP_ACTION_RETRY_PREPARED_ABORT ;
-    /**
-     * The retry commit Action.
-     */
-    private static final String retryCommitAction = InteropConstants.INTEROP_ACTION_RETRY_COMMIT ;
-    /**
-     * The prepared after timeout Action.
-     */
-    private static final String preparedAfterTimeoutAction = InteropConstants.INTEROP_ACTION_PREPARED_AFTER_TIMEOUT ;
-    /**
-     * The lost committed Action.
-     */
-    private static final String lostCommittedAction = InteropConstants.INTEROP_ACTION_LOST_COMMITTED ;
-    
-    /**
      * Construct the interop synch client.
      */
     private SyncParticipantClient()

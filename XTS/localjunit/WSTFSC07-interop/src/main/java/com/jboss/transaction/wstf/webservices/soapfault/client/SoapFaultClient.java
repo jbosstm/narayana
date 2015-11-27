@@ -101,30 +101,5 @@ public class SoapFaultClient
         return port;
     }
 
-    private static org.jboss.jbossts.xts.soapfault.SoapFaultPortType getSoapFaultPort(final W3CEndpointReference endpoint,
-                                                      final MAP map,
-                                                      final String action)
-    {
-        org.jboss.jbossts.xts.soapfault.SoapFaultService service = getSoapFaultService();
-        org.jboss.jbossts.xts.soapfault.SoapFaultPortType port = service.getPort(endpoint, org.jboss.jbossts.xts.soapfault.SoapFaultPortType.class, new AddressingFeature(true, true));
-        BindingProvider bindingProvider = (BindingProvider)port;
-        Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        MAP requestMap = AddressingHelper.outboundMap(requestContext);
-        if (action != null) {
-            map.setAction(action);
-        }
-        AddressingHelper.installCallerProperties(map, requestMap);
-        String to = requestMap.getTo();
-        /*
-         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
-		customHandlerChain.add(new WSAddressingClientHandler());
-        bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        */
-        AddressingHelper.configureRequestContext(requestContext, to, action);
-
-        return port;
-    }
-
     private static final ThreadLocal<org.jboss.jbossts.xts.soapfault.SoapFaultService> soapFaultService = new ThreadLocal<org.jboss.jbossts.xts.soapfault.SoapFaultService>();
 }

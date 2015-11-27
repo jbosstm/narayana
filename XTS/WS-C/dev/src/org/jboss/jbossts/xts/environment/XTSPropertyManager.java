@@ -36,18 +36,5 @@ public class XTSPropertyManager
         return BeanPopulator.getDefaultInstance(XTSEnvironmentBean.class, xtsProperties);
     }
 
-    private static Properties mergeSystemProperties(Properties properties)
-    {
-        Properties systemProperties = System.getProperties();
-        Enumeration<Object> propertyNames =  systemProperties.elements();
-        while (propertyNames.hasMoreElements()) {
-            String propertyName = (String) propertyNames.nextElement();
-            String propertyValue = (String) System.getProperty(propertyName);
-            properties.setProperty(propertyName, propertyValue);
-        }
-        
-        return properties;
-    }
-
     static Properties xtsProperties = XTSPropertiesFactory.getDefaultProperties();
 }

@@ -728,30 +728,6 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     }
 
     /**
-     * Initiate the timer.
-     */
-    private synchronized void initiateTimer()
-    {
-        if (timerTask != null)
-        {
-            timerTask.cancel() ;
-        }
-        if ((state == State.STATE_PREPARING) || (state == State.STATE_COMMITTING))
-        {
-            timerTask = new TimerTask() {
-                public void run() {
-                    commsTimeout(this) ;
-                }
-            } ;
-            TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
-        }
-        else
-        {
-            timerTask = null ;
-        }
-    }
-
-    /**
      * Create a context for the outgoing message.
      * @return The addressing context.
      */
