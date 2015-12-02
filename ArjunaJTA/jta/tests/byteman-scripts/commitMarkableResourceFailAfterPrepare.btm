@@ -6,7 +6,7 @@ BIND NOTHING
 IF readCounter("phase2commit") == 0
 	DO debug("Called"),
 	incrementCounter("phase2commit");
-	com.arjuna.ats.arjuna.coordinator.ActionManager.manager().remove($this.get_uid());
+	com.arjuna.ats.arjuna.coordinator.ActionManager.manager().remove($0.get_uid());
    	throw new Error();
 ENDRULE
 
