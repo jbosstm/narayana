@@ -105,4 +105,10 @@ public class RemoteBAControler implements BAControler {
         return new RemoteParticipantManager(pm);
     }
 
+    @Override
+    public ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler, TransactionLoggedHandler transactionLoggedHandler) throws Exception {
+
+        throw new RuntimeException("Not implemented.");
+    }
+
 }

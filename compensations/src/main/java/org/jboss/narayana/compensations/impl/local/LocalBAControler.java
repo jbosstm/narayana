@@ -99,4 +99,17 @@ public class LocalBAControler implements BAControler {
         return new LocalParticipantManager(participantId);
     }
 
+    @Override
+    public ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+            TransactionLoggedHandler transactionLoggedHandler) throws Exception {
+
+        String participantId = String.valueOf(UUID.randomUUID());
+        LocalParticipant participant = new LocalParticipant(compensationHandler, confirmationHandler, transactionLoggedHandler,
+                getCurrentTransaction(), participantId);
+
+        CoordinatorManagerFactory.coordinatorManager().enlistParticipant(participant);
+
+        return new LocalParticipantManager(participantId);
+    }
+
 }
