@@ -491,8 +491,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <excludes>
-						  <!-- TODO breaks running with JaCoCo -->
-                          <exclude>**/ObjStoreBrowserTest.java</exclude>
 						  <!-- stress tests are not unit tests -->
                           <exclude>**/LogStressTest2.java</exclude>
                         </excludes>

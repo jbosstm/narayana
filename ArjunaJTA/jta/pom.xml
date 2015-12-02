@@ -430,10 +430,7 @@
                     <configuration>
                       <excludes>
                         <exclude>**/io/narayana/perf/product/*</exclude>
-                        <exclude>**/commitmarkable/**</exclude>
-                        <!-- byteman and Jacoco seem to be interfering with each other -->
-                        <exclude>**/recovery/CrashRecovery.java</exclude>
-                        <exclude>**/recovery/CrashRecovery2.java</exclude>
+                        <exclude>**/integration/*IntegrationTest.java</exclude>
                       </excludes>
                     </configuration>
                 </plugin>
