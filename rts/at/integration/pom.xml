@@ -25,11 +25,13 @@
     <description>REST-AT Integration</description>
 
     <properties>
-        <ipv4.server.jvm.args></ipv4.server.jvm.args>
         <ipv6.server.jvm.args>
             -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
+        <server.jvm.args>
+            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
+        </server.jvm.args>
     </properties>
 
     <dependencies>
@@ -220,9 +222,7 @@
                                 <include>**/*TestCase.java</include>
                             </includes>
                             <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                         </configuration>
@@ -247,6 +247,14 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>codeCoverage</id>
+            <properties>
+                <server.jvm.args>
+                    ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco}
+                </server.jvm.args>
+            </properties>
         </profile>
         <profile>
             <id>arqIPv6</id>
@@ -279,9 +287,7 @@
                             </includes>
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.memory} ${ipv6.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>
                         </configuration>

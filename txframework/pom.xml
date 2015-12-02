@@ -40,6 +40,9 @@
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
+        <server.jvm.args>
+            ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
+        </server.jvm.args>
     </properties>
 
     <build>
@@ -196,9 +199,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
-                                    ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
@@ -236,9 +237,7 @@
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory}
-                                    ${ipv6.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
@@ -283,21 +282,12 @@
         </profile>
         <profile>
             <id>codeCoverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
-                                    ${jvm.args.jacoco}
-                                </server.jvm.args>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <server.jvm.args>
+                    ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
+                    ${jvm.args.jacoco}
+                </server.jvm.args>
+            </properties>
         </profile>
         <profile>
             <id>release</id>

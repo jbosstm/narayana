@@ -83,7 +83,7 @@ function init_test_options {
     elif [[ $PROFILE == "JACOCO" ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-        export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
         export CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
@@ -321,11 +321,11 @@ function jta_as_tests {
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f ./rts/at/integration/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./rts/at/integration/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 
   echo "#0. REST-AT To JTA Bridge Test"
-    ./build.sh -f ./rts/at/bridge/pom.xml -P$ARQ_PROF "$@" test
+    ./build.sh -f ./rts/at/bridge/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
     [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
@@ -400,7 +400,7 @@ function blacktie {
 
 function jta_cdi_tests {
   echo "#0. JTA CDI Tests"
-  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
@@ -462,7 +462,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS install "$@"
+  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 

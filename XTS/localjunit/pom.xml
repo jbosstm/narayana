@@ -19,10 +19,12 @@
     <description>localjunit tests for xts</description>
     <properties>
         <buildType>11</buildType>
-        <ipv4.server.jvm.args></ipv4.server.jvm.args>
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
+        <server.jvm.args>
+            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${jvm.args.debug}
+        </server.jvm.args>
     </properties>
 
     <build>
@@ -186,7 +188,7 @@
                                 <!--
                                   Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${ipv4.server.jvm.args}</server.jvm.args>
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                             <skip>false</skip>
@@ -219,8 +221,7 @@
                                 <!--
                                   Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv4.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                             <skip>false</skip>
@@ -254,8 +255,7 @@
                                 <!--
                                   Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv6.server.jvm.args} ${jvm.args.debug}
-                                </server.jvm.args>
+                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
                                 <node.address>[::1]</node.address>
                             </systemPropertyVariables>
                             <skip>false</skip>
@@ -274,17 +274,16 @@
         </profile>
         <profile>
             <id>codeCoverage</id>
+            <properties>
+                <server.jvm.args>
+                    ${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${jvm.args.debug} ${jvm.args.jacoco}
+                </server.jvm.args>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <systemPropertyVariables combine.children="append">
-                                <server.jvm.args>
-                                    ${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${ipv4.server.jvm.args}
-                                    ${jvm.args.debug} ${jvm.args.jacoco}
-                                </server.jvm.args>
-                            </systemPropertyVariables>
                             <excludes>
                                 <exclude>**/CloseBeforeCompletedTest.java</exclude>
                                 <exclude>**/CloseTest.java</exclude>

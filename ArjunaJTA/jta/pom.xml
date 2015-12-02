@@ -23,6 +23,13 @@
   <name>Narayana: ArjunaJTA jta</name>
   <description>Narayana: ArjunaJTA jta</description>
   <packaging>jar</packaging>
+
+  <properties>
+      <server.jvm.args>
+          ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
+      </server.jvm.args>
+  </properties>
+
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <resources>
@@ -363,18 +370,13 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration combine.self="override">
+                        <configuration>
                             <skip>false</skip>
-                            <includes>
-                                <!--<include>**/integration/*.java</include>
-								-->
-                                <include>**/integration/*IntegrationTest.java</include>
-                            </includes>
                             <systemPropertyVariables combine.children="append">
                                 <!--
                                     Used in arquillian.xml
                                 -->
-                                <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}</server.jvm.args>
+                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
@@ -422,20 +424,11 @@
 	</profile>
     <profile>
         <id>codeCoverage</id>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                      <excludes>
-                        <exclude>**/io/narayana/perf/product/*</exclude>
-                        <exclude>**/integration/*IntegrationTest.java</exclude>
-                      </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
+        <properties>
+            <server.jvm.args>
+                ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco}
+            </server.jvm.args>
+        </properties>
     </profile>
     <profile>
       <id>jts-ibmorb</id>

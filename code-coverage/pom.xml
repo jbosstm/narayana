@@ -52,11 +52,13 @@
                         <fileset dir="../ArjunaCore/txoj/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../rts/at/tx/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../rts/at/integration/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../rts/at/bridge/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../common/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../STM/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../ArjunaJTA/jta/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTA/jdbc/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../ArjunaJTA/cdi/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../tools/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"/>
@@ -66,6 +68,8 @@
                         <fileset dir="../XTS/localjunit/disabled-context-propagation/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../XTS/localjunit/unit/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../XTS/localjunit/WSTX11-interop/target/coverage-reports" includes="jacoco-ut.exec"/>
+
+                        <fileset dir="../txbridge/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../compensations/target/coverage-reports" includes="jacoco-ut.exec"/>
 
@@ -87,10 +91,12 @@
                           <classfiles>
                             <fileset dir="../rts/at/tx/target/classes" includes="**/*.class"/>
                             <fileset dir="../rts/at/integration/target/classes" includes="**/*.class"/>
+                            <fileset dir="../rts/at/bridge/target/classes" includes="**/*.class"/>
                           </classfiles>
                           <sourcefiles>
                             <fileset dir="../rts/at/tx/src/main/java"/>
                             <fileset dir="../rts/at/integration/src/main/java"/>
+                            <fileset dir="../rts/at/bridge/src/main/java"/>
                           </sourcefiles>
                         </group>
 
@@ -139,6 +145,15 @@
                           </sourcefiles>
                         </group>
 
+                        <group name="org.jboss.narayana.jta.cdi">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/cdi/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/cdi/classes"/>
+                          </sourcefiles>
+                        </group>
+
                         <group name="org.jboss.narayana.jts">
                           <classfiles>
                             <fileset dir="../ArjunaJTS/jts/target/classes/" includes="**/*.class"/>
@@ -177,6 +192,15 @@
                           </sourcefiles>
                         </group>
 
+                        <group name="org.jboss.narayana.txbridge">
+                          <classfiles>
+                            <fileset dir="../txbridge/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../txbridge/src/main/java"/>
+                          </sourcefiles>
+                        </group>
+
                         <group name="org.jboss.narayana.compensations">
                           <classfiles>
                             <fileset dir="../compensations/target/classes" includes="**/*.class"/>
@@ -211,11 +235,13 @@
 
                       <fileset dir="../rts/at/tx/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../rts/at/integration/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../rts/at/bridge/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../common/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../STM/target/surefire-reports" includes="**/*.xml"/>
 
                       <fileset dir="../ArjunaJTA/jta/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaJTA/jdbc/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/cdi/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../tools/target/surefire-reports" includes="**/*.xml"/>
 
                       <fileset dir="../ArjunaJTS/jts/target/surefire-reports" includes="**/*.xml"/>
@@ -225,6 +251,8 @@
                       <fileset dir="../XTS/localjunit/disabled-context-propagation/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../XTS/localjunit/unit/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../XTS/localjunit/WSTX11-interop/target/surefire-reports" includes="**/*.xml"/>
+
+                      <fileset dir="../txbridge/target/surefire-reports" includes="**/*.xml"/>
 
                       <fileset dir="../compensations/target/surefire-reports" includes="**/*.xml"/>
 
