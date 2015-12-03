@@ -58,6 +58,11 @@ import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
+import static java.security.AccessController.doPrivileged;
+
 /**
  * PortableInterceptor::ClientRequestInterceptor implementation which adds a 
  * service context carrying the transaction context.
@@ -220,7 +225,22 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 				
 			    if (theCoordinator != null)
 			    {
-				ctx = theCoordinator.get_txcontext();
+                    final Coordinator finalTheCoordinator = theCoordinator;
+                    try
+                    {
+                        ctx = doPrivileged(new PrivilegedExceptionAction<PropagationContext>()
+                        {
+                            @Override
+                            public PropagationContext run() throws Unavailable
+                            {
+                                return finalTheCoordinator.get_txcontext();
+                            }
+                        });
+                    }
+                    catch (PrivilegedActionException pex)
+                    {
+                        throw pex.getException();
+                    }
 
 				data = packPropagationContext(ctx);
 				
@@ -260,8 +280,24 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		    
 		if (data != null)
 		{
-		    byte[] octets = _codec.encode_value(data);
-							 
+            byte[] octets;
+            try
+            {
+                final Any finalData = data;
+                octets = doPrivileged(new PrivilegedExceptionAction<byte[]>()
+                {
+                    @Override
+                    public byte[] run() throws org.omg.CORBA.UserException
+                    {
+                        return _codec.encode_value(finalData);
+                    }
+                });
+            }
+            catch (PrivilegedActionException pex)
+            {
+                throw pex.getException();
+            }
+
 		    ServiceContext service_context = new ServiceContext(OTSManager.serviceId, octets);
 
 		    request_info.add_request_service_context(service_context, true);

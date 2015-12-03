@@ -53,6 +53,11 @@ import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
+import static java.security.AccessController.doPrivileged;
+
 /**
  * PortableInterceptor::ServerRequestInterceptor implementation which checks
  * that a transaction context was received.
@@ -180,7 +185,22 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 
 		if (serviceContext != null)
 		{
-		    Any receivedData = _codec.decode_value(serviceContext.context_data, PropagationContextHelper.type());
+			Any receivedData;
+			try
+			{
+				final ServiceContext finalServiceContext = serviceContext;
+				receivedData = doPrivileged(new PrivilegedExceptionAction<Any>()
+				{
+					@Override
+					public Any run() throws org.omg.CORBA.UserException {
+						return _codec.decode_value(finalServiceContext.context_data, PropagationContextHelper.type());
+					}
+				});
+			}
+			catch (PrivilegedActionException pex)
+			{
+				throw pex.getException();
+			}
 
 		    /*
 		     * Set the slot information for the "current" thread. When
