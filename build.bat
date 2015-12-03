@@ -57,7 +57,7 @@ REM ********* Search for names in the subfolders *********
 REM ******************************************************
 
 :subLoop
-for %%j in (%SUBFOLDERS%) do call :testIfExists %%j\%1\bin\mvn.bat %2 %3 %4 %5 %6 %7
+for %%j in (%SUBFOLDERS%) do call :testIfExists %%j\%1\bin\mvn.cmd %2 %3 %4 %5 %6 %7
 
 goto :EOF
 
