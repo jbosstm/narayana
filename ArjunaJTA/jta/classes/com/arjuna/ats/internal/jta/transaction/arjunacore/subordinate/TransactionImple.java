@@ -155,7 +155,7 @@ public class TransactionImple extends
 		}
 	}
 
-	public void doCommit () throws IllegalStateException,
+	public boolean doCommit () throws IllegalStateException,
 			HeuristicMixedException, HeuristicRollbackException,
 			javax.transaction.SystemException
 	{
@@ -168,10 +168,12 @@ public class TransactionImple extends
 			switch (res)
 			{
 			case ActionStatus.COMMITTED:
-			case ActionStatus.COMMITTING:
 			case ActionStatus.H_COMMIT:
 				TransactionImple.removeTransaction(this);
 				break;
+            case ActionStatus.COMMITTING:
+                TransactionImple.removeTransaction(this);
+                return false;
 			case ActionStatus.ABORTED:
 			case ActionStatus.ABORTING:
 				throw new HeuristicRollbackException();
@@ -198,6 +200,7 @@ public class TransactionImple extends
             unexpectedConditionException.initCause(ex);
 			throw unexpectedConditionException;
 		}
+		return true;
 	}
 
 	public void doRollback () throws IllegalStateException,

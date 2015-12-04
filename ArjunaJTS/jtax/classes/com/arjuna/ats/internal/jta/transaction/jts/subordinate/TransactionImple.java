@@ -168,6 +168,8 @@ public class TransactionImple extends
          * Drive the subordinate transaction to commit. It must have previously
          * been prepared.
          *
+         *@return true if the transaction was committed
+         *
          * @throws IllegalStateException thrown if the transaction has not been prepared
          * or is unknown.
          * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
@@ -176,7 +178,7 @@ public class TransactionImple extends
          * @throws SystemException thrown if some other error occurs.
          */
 
-        public void doCommit () throws IllegalStateException,
+        public boolean doCommit () throws IllegalStateException,
                         HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException,
                         SystemException
         {
@@ -191,8 +193,9 @@ public class TransactionImple extends
                         case ActionStatus.H_COMMIT:
                             throw new HeuristicCommitException();
                         case ActionStatus.COMMITTED:
-                        case ActionStatus.COMMITTING:
                                 break;
+                        case ActionStatus.COMMITTING:
+                            return false;
                         case ActionStatus.ABORTED:
                         case ActionStatus.ABORTING:
                         case ActionStatus.H_ROLLBACK:
@@ -219,6 +222,7 @@ public class TransactionImple extends
                 {
                         TransactionImple.removeTransaction(this);
                 }
+                return true;
         }
 
         /**
