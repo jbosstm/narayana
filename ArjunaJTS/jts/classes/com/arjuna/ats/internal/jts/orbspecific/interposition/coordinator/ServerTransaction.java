@@ -241,6 +241,9 @@ public class ServerTransaction extends ArjunaTransactionImple
         }
 
 		super.phase2Commit(true);
+		if (super.failedList != null && super.failedList.size() > 0) {
+		    return ActionStatus.COMMITTING;
+		}
 
 		/*
 		 * Now do after completion stuff.

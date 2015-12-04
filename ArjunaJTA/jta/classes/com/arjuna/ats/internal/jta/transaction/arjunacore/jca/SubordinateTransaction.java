@@ -48,6 +48,8 @@ public interface SubordinateTransaction extends Transaction
 	 * Drive the subordinate transaction to commit. It must have previously
 	 * been prepared.
 	 *
+	 * @return true, if the transaction was fully committed, false if there was a transient error
+	 *
 	 * @throws IllegalStateException thrown if the transaction has not been prepared
 	 * or is unknown.
 	 * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
@@ -55,7 +57,7 @@ public interface SubordinateTransaction extends Transaction
 	 * @throws HeuristicRollbackException thrown if the transaction rolled back.
 	 * @throws SystemException thrown if some other error occurs.
 	 */
-    public void doCommit () throws IllegalStateException,
+    public boolean doCommit () throws IllegalStateException,
 			HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException,
 			SystemException;
 

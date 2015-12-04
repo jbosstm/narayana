@@ -58,6 +58,12 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
         ORBManager.setPOA(oa);
     }
 
+    @Override
+    public void testFailOnCommitRetry() throws Exception {
+        com.arjuna.ats.internal.jta.Implementationsx.initialise();
+        super.testFailOnCommitRetry();
+    }
+
     @After
     public void tearDown()
         throws Exception
@@ -78,4 +84,6 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
     public SubordinateTransaction createTransaction() {
             return new TransactionImple(0); // implicit begin
     }
+    
+    
 }
