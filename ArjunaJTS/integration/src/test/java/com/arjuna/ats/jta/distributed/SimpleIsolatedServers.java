@@ -170,7 +170,8 @@ public class SimpleIsolatedServers {
 		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
 		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
 		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
-		final CompletionCountLock phase2CommitAborted = new CompletionCountLock();
+        final CompletionCountLock phase2CommitAborted = new CompletionCountLock();
+		synchronized (phase2CommitAborted) {	        
 		{
 			Thread thread = new Thread(new Runnable() {
 				public void run() {
@@ -195,6 +196,9 @@ public class SimpleIsolatedServers {
 						originalServer.removeRootTransaction(currentXid);
 						transactionManager.commit();
 						Thread.currentThread().setContextClassLoader(classLoader);
+                        synchronized (phase2CommitAborted) {
+                            phase2CommitAborted.notify();
+                        }
 					} catch (ExecuteException e) {
 						System.err.println("Should be a thread death but cest la vie");
 						synchronized (phase2CommitAborted) {
@@ -243,6 +247,9 @@ public class SimpleIsolatedServers {
 						originalServer.removeRootTransaction(currentXid);
 						transactionManager.commit();
 						Thread.currentThread().setContextClassLoader(classLoader);
+                        synchronized (phase2CommitAborted) {
+                            phase2CommitAborted.notify();
+                        }
 					} catch (ExecuteException e) {
 						System.err.println("Should be a thread death but cest la vie");
 						synchronized (phase2CommitAborted) {
@@ -266,12 +273,11 @@ public class SimpleIsolatedServers {
 			}, "Orphan-creator");
 			thread.start();
 		}
-		synchronized (phase2CommitAborted) {
 		    int waitedCount = 0;
-			while (phase2CommitAborted.getCount() < 2) {
+			while (waitedCount < 2) {
 				phase2CommitAborted.wait(50000);
 				waitedCount++;
-	            if (waitedCount > 2 && phase2CommitAborted.getCount() < 2) {
+	            if (waitedCount == 2 && phase2CommitAborted.getCount() < 2) {
 	                fail("Servers were not aborted");
 	            }           
 			}
@@ -494,7 +500,7 @@ public class SimpleIsolatedServers {
 	 * can be recovered
 	 */
 	@Test
-	@BMScript("leave-subordinate-orphan")
+	@BMScript("leave-subordinate-orphan2")
 	public void testOnePhaseSubordinateOrphan() throws Exception {
 		System.out.println("testOnePhaseSubordinateOrphan");
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 0);
@@ -524,6 +530,9 @@ public class SimpleIsolatedServers {
 					originalServer.removeRootTransaction(currentXid);
 					transactionManager.commit();
 					Thread.currentThread().setContextClassLoader(classLoader);
+                    synchronized (phase2CommitAborted) {
+                        phase2CommitAborted.notify();
+                    }
 				} catch (ExecuteException e) {
 					System.err.println("Should be a thread death but cest la vie");
 					synchronized (phase2CommitAborted) {
@@ -720,7 +729,6 @@ public class SimpleIsolatedServers {
 	 * Top down recovery of a prepared transaction
 	 */
 	@Test
-//	@BMScript("fail2pc")
 	public void testRecovery2() throws Exception {
 		System.out.println("testRecovery");
 		for (String nodeName: serverNodeNames) {
@@ -738,7 +746,7 @@ public class SimpleIsolatedServers {
 
                         try {
                             doRecursiveTransactionalWork2(startingTimeout, nodesToFlowTo, true, false);
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             e.printStackTrace();
                             errors.incrementCount();
 
@@ -761,7 +769,7 @@ public class SimpleIsolatedServers {
 		getLocalServer("2000").doRecoveryManagerScan(true);
 		getLocalServer("1000").doRecoveryManagerScan(false);
 
-		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 1);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 2);
 		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 1);
 		for (String nodeName: serverNodeNames) {
@@ -914,7 +922,7 @@ public class SimpleIsolatedServers {
 		XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", migratedXid);
 		originalTransaction.enlistResource(proxyXAResource);
 		originalServer.removeRootTransaction(currentXid);
-		Thread.currentThread().sleep((subordinateTimeout + 2) * 1000);
+		Thread.sleep((subordinateTimeout + 2) * 1000);
 		try {
 			transactionManager.commit();
 			fail("Did not rollback");
@@ -932,8 +940,8 @@ public class SimpleIsolatedServers {
 		System.out.println("testMigrateTransactionParentTimeout");
 		tearDown();
 		setup();
-		int rootTimeout = 20;
-		int subordinateTimeout = 60; // artificially high to ensure the timeout is performed by the parent
+		int rootTimeout = 5;
+		int subordinateTimeout = 10; // artificially high to ensure the timeout is performed by the parent
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
@@ -1263,7 +1271,7 @@ public class SimpleIsolatedServers {
 				// performance drain and will result in multiple subordinate
 				// transactions and performance issues
 				if (dataReturnedFromRemoteServer.getProxyRequired() != null) {
-					XAResource proxyXAResource = currentServer.generateProxyXAResource(nextServerNodeName, dataReturnedFromRemoteServer.getProxyRequired());
+					XAResource proxyXAResource = currentServer.generateProxyXAResource(nextServerNodeName, dataReturnedFromRemoteServer.getProxyRequired(), true);
 					transaction.enlistResource(proxyXAResource);
 					transaction.registerSynchronization(currentServer.generateProxySynchronization(nextServerNodeName, toMigrate));
 				}

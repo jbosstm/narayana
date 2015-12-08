@@ -9,8 +9,8 @@ CLASS  com.arjuna.ats.arjuna.coordinator.BasicAction
 METHOD phase2Commit
 AT ENTRY
 BIND NOTHING
-IF readCounter("phase2commit") == 0
+IF readCounter("phase2commit2") == 0
 	DO debug("Called"),
-	incrementCounter("phase2commit");
+	incrementCounter("phase2commit2");
    	Thread.currentThread().stop()
 ENDRULE
