@@ -113,8 +113,7 @@ public class SubordinateJTAXAResourceOrphanFilter implements XAResourceOrphanFil
 						if (uid.notEquals(Uid.nullUid())) {
 							SubordinateAtomicAction tx = new SubordinateAtomicAction(uid, true);
 							XidImple transactionXid = (XidImple) tx.getXid();
-							if (transactionXid.isSameTransaction(recoveredResourceXid)
-									&& recoveredResourceNodeName.equals(XATxConverter.getSubordinateNodeName(transactionXid.getXID()))) {
+							if (transactionXid.isSameTransaction(recoveredResourceXid)) {
 								if (jtaLogger.logger.isDebugEnabled()) {
 									jtaLogger.logger.debug("Found record for " + theXid);
 								}
