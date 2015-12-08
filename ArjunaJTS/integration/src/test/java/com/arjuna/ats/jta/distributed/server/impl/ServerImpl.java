@@ -107,7 +107,7 @@ public class ServerImpl implements LocalServer {
 		coordinatorEnvironmentBean.setDefaultTimeout(0);
 
 		ObjectStoreEnvironmentBean actionStoreObjectStoreEnvironmentBean = com.arjuna.common.internal.util.propertyservice.BeanPopulator.getNamedInstance(
-				com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.class, "default");
+				com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.class, null);
 		actionStoreObjectStoreEnvironmentBean.setObjectStoreDir(System.getProperty("user.dir") + "/distributedjta-tests/tx-object-store/" + nodeName);
 
 		ObjectStoreEnvironmentBean stateStoreObjectStoreEnvironmentBean = com.arjuna.common.internal.util.propertyservice.BeanPopulator.getNamedInstance(
@@ -267,8 +267,13 @@ public class ServerImpl implements LocalServer {
 
 	@Override
 	public ProxyXAResource generateProxyXAResource(String remoteServerName, Xid migratedXid) throws SystemException, IOException {
-		return new ProxyXAResource(nodeName, remoteServerName, migratedXid);
+		return new ProxyXAResource(nodeName, remoteServerName, migratedXid, false);
 	}
+	
+	@Override
+    public ProxyXAResource generateProxyXAResource(String remoteServerName, Xid migratedXid, boolean handleError) throws SystemException, IOException {
+        return new ProxyXAResource(nodeName, remoteServerName, migratedXid, handleError);
+    }
 
 	@Override
 	public Synchronization generateProxySynchronization(String remoteServerName, Xid toRegisterAgainst) {

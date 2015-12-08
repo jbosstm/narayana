@@ -66,4 +66,6 @@ public interface LocalServer {
 	public Xid getCurrentXid() throws SystemException;
 
 	public void shutdown() throws Exception;
+
+    public XAResource generateProxyXAResource(String nextServerNodeName, Xid proxyRequired, boolean handleError) throws SystemException, IOException;
 }

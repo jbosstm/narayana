@@ -11,8 +11,8 @@ CLASS  com.arjuna.ats.arjuna.coordinator.BasicAction
 METHOD phase2Commit
 AT ENTRY
 BIND NOTHING
-IF readCounter("phase2commit") < 2
+IF readCounter("leave-subordinate-orphan2") == 0
 	DO debug("Called"),
-	incrementCounter("phase2commit");
+	incrementCounter("leave-subordinate-orphan2");
 	throw new Error()
 ENDRULE

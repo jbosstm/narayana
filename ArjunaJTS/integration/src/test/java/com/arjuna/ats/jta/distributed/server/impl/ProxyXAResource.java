@@ -50,6 +50,7 @@ public class ProxyXAResource implements XAResource, XAResourceWrapper, Serializa
 	private transient boolean nonerecovered;
 
 	private Xid migratedXid;
+    private transient boolean handleError;
 
 	/**
 	 * Create a new proxy to the remote server.
@@ -59,11 +60,12 @@ public class ProxyXAResource implements XAResource, XAResourceWrapper, Serializa
 	 * @param localServerName
 	 * @param remoteServerName
 	 */
-	public ProxyXAResource(String localServerName, String remoteServerName, Xid migratedXid) {
+	public ProxyXAResource(String localServerName, String remoteServerName, Xid migratedXid, boolean handleError) {
 		this.localServerName = localServerName;
 		this.remoteServerName = remoteServerName;
 		this.migratedXid = migratedXid;
 		this.nonerecovered = true;
+		this.handleError = handleError;
 	}
 
 	/**
@@ -113,7 +115,17 @@ public class ProxyXAResource implements XAResource, XAResourceWrapper, Serializa
 		System.out.println("[" + Thread.currentThread().getName() + "] ProxyXAResource (" + localServerName + ":" + remoteServerName + ") XA_COMMIT  [" + xid + "]");
 
 		Xid toPropagate = migratedXid != null ? migratedXid : xid;
-		LookupProvider.getInstance().lookup(remoteServerName).commit(toPropagate, onePhase, !nonerecovered);
+
+        
+        try {
+            LookupProvider.getInstance().lookup(remoteServerName).commit(toPropagate, onePhase, !nonerecovered);
+        } catch (Error e) {
+            if (handleError) {
+                throw new RuntimeException();
+            } else {
+                throw e;
+            }
+        }
 		System.out.println("[" + Thread.currentThread().getName() + "] ProxyXAResource (" + localServerName + ":" + remoteServerName + ") XA_COMMITED");
 
 		CompletionCounter.getInstance().incrementCommit(localServerName);
