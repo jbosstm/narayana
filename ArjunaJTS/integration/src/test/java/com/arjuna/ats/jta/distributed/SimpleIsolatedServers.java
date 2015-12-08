@@ -1023,8 +1023,8 @@ public class SimpleIsolatedServers {
 		System.out.println("testMigrateTransactionParentTimeout");
 		tearDown();
 		setup();
-		int rootTimeout = 20;
-		int subordinateTimeout = 60; // artificially high to ensure the timeout is performed by the parent
+		int rootTimeout = 5;
+		int subordinateTimeout = 10; // artificially high to ensure the timeout is performed by the parent
 		LocalServer originalServer = getLocalServer("1000");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
