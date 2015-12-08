@@ -51,6 +51,8 @@ public class TestResource implements XAResource {
 
 	private boolean scanning;
 
+    private transient boolean fatalCommit;
+
 	public TestResource(String serverId, boolean readonly) {
 		this.completionCounter = CompletionCounter.getInstance();
 		this.serverId = serverId;
@@ -120,7 +122,12 @@ public class TestResource implements XAResource {
 		fis.close();
 	}
 
-	/**
+	public TestResource(String nodeName, boolean b, boolean fatalCommit) {
+       this(nodeName, b);
+       this.fatalCommit = true;
+    }
+
+    /**
 	 * This class declares that it throws an Error *purely for byteman* so that
 	 * we can crash the resource during this method:
 	 * https://issues.jboss.org/browse/BYTEMAN-156
@@ -167,6 +174,10 @@ public class TestResource implements XAResource {
 			}
 		}
 		this.xid = null;
+		
+		if (fatalCommit) {
+		    throw new Error();
+		}
 	}
 
 	public synchronized void rollback(Xid xid) throws XAException {

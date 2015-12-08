@@ -113,7 +113,13 @@ public class ProxyXAResource implements XAResource, XAResourceWrapper, Serializa
 		System.out.println("[" + Thread.currentThread().getName() + "] ProxyXAResource (" + localServerName + ":" + remoteServerName + ") XA_COMMIT  [" + xid + "]");
 
 		Xid toPropagate = migratedXid != null ? migratedXid : xid;
-		LookupProvider.getInstance().lookup(remoteServerName).commit(toPropagate, onePhase, !nonerecovered);
+
+        
+        try {
+            LookupProvider.getInstance().lookup(remoteServerName).commit(toPropagate, onePhase, !nonerecovered);
+        } catch (Error e) {
+            throw new RuntimeException();
+        }
 		System.out.println("[" + Thread.currentThread().getName() + "] ProxyXAResource (" + localServerName + ":" + remoteServerName + ") XA_COMMITED");
 
 		CompletionCounter.getInstance().incrementCommit(localServerName);

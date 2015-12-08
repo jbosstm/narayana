@@ -716,6 +716,59 @@ public class SimpleIsolatedServers {
 		}
 	}
 
+	/**
+	 * Top down recovery of a prepared transaction
+	 */
+	@Test
+//	@BMScript("fail2pc")
+	public void testRecovery2() throws Exception {
+		System.out.println("testRecovery");
+		for (String nodeName: serverNodeNames) {
+			assertTrue("" + completionCounter.getCommitCount(nodeName), completionCounter.getCommitCount(nodeName) == 0);
+			assertTrue("" + completionCounter.getRollbackCount(nodeName), completionCounter.getRollbackCount(nodeName) == 0);
+		}
+		
+		final CompletionCountLock errors = new CompletionCountLock();
+        synchronized (errors) {
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+                    int startingTimeout = 0;
+                    List<String> nodesToFlowTo = new LinkedList<String>(Arrays.asList(serverNodeNames));
+                    synchronized (errors) {
+
+                        try {
+                            doRecursiveTransactionalWork2(startingTimeout, nodesToFlowTo, true, false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            errors.incrementCount();
+
+                        }
+                        errors.notify();
+                    }
+			}
+		});
+		thread.start();
+		
+		    errors.wait();
+		    if (errors.getCount() > 0) {
+		        fail("Unexpected errors");
+		    }
+		}
+
+        reboot("2000");
+        
+        getLocalServer("3000").doRecoveryManagerScan(true);
+		getLocalServer("2000").doRecoveryManagerScan(true);
+		getLocalServer("1000").doRecoveryManagerScan(false);
+
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("3000"), completionCounter.getCommitCount("3000") == 1);
+		for (String nodeName: serverNodeNames) {
+			assertTrue("" + completionCounter.getRollbackCount(nodeName), completionCounter.getRollbackCount(nodeName) == 0);
+		}
+	}
+
 	@Test
 	public void testOnePhaseCommit() throws Exception {
 		System.out.println("testOnePhaseCommit");
@@ -994,6 +1047,68 @@ public class SimpleIsolatedServers {
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 
+	private void doRecursiveTransactionalWork2(int startingTimeout, List<String> nodesToFlowTo, boolean commit, boolean rollbackOnlyOnLastNode) throws Exception {
+		List<String> uniqueServers = new ArrayList<String>();
+		Iterator<String> iterator = nodesToFlowTo.iterator();
+		while (iterator.hasNext()) {
+			String intern = iterator.next().intern();
+			if (!uniqueServers.contains(intern)) {
+				uniqueServers.add(intern);
+			}
+		}
+		// Start out at the first server
+		int totalCompletionCount = nodesToFlowTo.size() + uniqueServers.size() - 1;
+		String startingServer = nodesToFlowTo.get(0);
+		LocalServer originalServer = getLocalServer(startingServer);
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
+		TransactionManager transactionManager = originalServer.getTransactionManager();
+		transactionManager.setTransactionTimeout(startingTimeout);
+		transactionManager.begin();
+		Transaction transaction = transactionManager.getTransaction();
+		int remainingTimeout = (int) (originalServer.getTimeLeftBeforeTransactionTimeout() / 1000);
+		Xid currentXid = originalServer.getCurrentXid();
+		originalServer.storeRootTransaction();
+		transactionManager.suspend();
+		DataReturnedFromRemoteServer dataReturnedFromRemoteServer = performTransactionalWork2(nodesToFlowTo, remainingTimeout, currentXid, 1, true,
+				rollbackOnlyOnLastNode);
+		transactionManager.resume(transaction);
+		originalServer.removeRootTransaction(currentXid);
+
+		// Align the local state with the returning state of the
+		// transaction
+		// from the subordinate
+		switch (dataReturnedFromRemoteServer.getTransactionState()) {
+		case Status.STATUS_MARKED_ROLLBACK:
+		case Status.STATUS_ROLLEDBACK:
+		case Status.STATUS_ROLLING_BACK:
+			switch (transaction.getStatus()) {
+			case Status.STATUS_MARKED_ROLLBACK:
+			case Status.STATUS_ROLLEDBACK:
+			case Status.STATUS_ROLLING_BACK:
+				transaction.setRollbackOnly();
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (commit) {
+			try {
+				transactionManager.commit();
+				assertTrue("" + completionCounter.getTotalCommitCount(), completionCounter.getTotalCommitCount() == 2);
+			} catch (RollbackException e) {
+				if (!rollbackOnlyOnLastNode) {
+					assertTrue(completionCounter.getTotalRollbackCount() == totalCompletionCount);
+				}
+			}
+		} else {
+			transactionManager.rollback();
+			assertTrue(completionCounter.getTotalRollbackCount() == totalCompletionCount);
+		}
+		Thread.currentThread().setContextClassLoader(classLoader);
+	}
+	
 	private DataReturnedFromRemoteServer performTransactionalWork(List<String> nodesToFlowTo, int remainingTimeout, Xid toMigrate,
 			int numberOfResourcesToRegister, boolean addSynchronization, boolean rollbackOnlyOnLastNode) throws RollbackException, IllegalStateException,
 			XAException, SystemException, NotSupportedException, IOException {
@@ -1057,6 +1172,116 @@ public class SimpleIsolatedServers {
 					transaction.enlistResource(proxyXAResource);
 					transaction.registerSynchronization(currentServer.generateProxySynchronization(nextServerNodeName, toMigrate));
 				}
+
+				// Align the local state with the returning state of the
+				// transaction
+				// from the subordinate
+				switch (dataReturnedFromRemoteServer.getTransactionState()) {
+				case Status.STATUS_MARKED_ROLLBACK:
+				case Status.STATUS_ROLLEDBACK:
+				case Status.STATUS_ROLLING_BACK:
+					switch (transaction.getStatus()) {
+					case Status.STATUS_MARKED_ROLLBACK:
+					case Status.STATUS_ROLLEDBACK:
+					case Status.STATUS_ROLLING_BACK:
+						transaction.setRollbackOnly();
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		TransactionManager transactionManager = currentServer.getTransactionManager();
+		int transactionState = transactionManager.getStatus();
+		// SUSPEND THE TRANSACTION WHEN YOU ARE READY TO RETURN TO YOUR CALLER
+		transactionManager.suspend();
+		// Return to the previous caller back over the transport/classloader
+		// boundary in this case
+		Thread.currentThread().setContextClassLoader(classLoader);
+		return new DataReturnedFromRemoteServer(requiresProxyAtPreviousServer, transactionState);
+	}
+
+	private DataReturnedFromRemoteServer performTransactionalWork2(List<String> nodesToFlowTo, int remainingTimeout, Xid toMigrate,
+			int numberOfResourcesToRegister, boolean addSynchronization, boolean rollbackOnlyOnLastNode) throws RollbackException, IllegalStateException,
+			XAException, SystemException, NotSupportedException, IOException {
+		String currentServerName = nodesToFlowTo.remove(0);
+		LocalServer currentServer = getLocalServer(currentServerName);
+
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(currentServer.getClassLoader());
+
+		Xid requiresProxyAtPreviousServer = currentServer.locateOrImportTransactionThenResumeIt(remainingTimeout, toMigrate);
+
+		// Perform work on the migrated transaction
+		
+		if (!currentServerName.equals("1000"))
+		{
+			TransactionManager transactionManager = currentServer.getTransactionManager();
+			Transaction transaction = transactionManager.getTransaction();
+			if (addSynchronization) {
+				transaction.registerSynchronization(new TestSynchronization(currentServer.getNodeName()));
+			}
+			for (int i = 0; i < numberOfResourcesToRegister; i++) {
+				transaction.enlistResource(new TestResource(currentServer.getNodeName(), false, currentServerName.equals("2000")));
+			}
+
+			if (rollbackOnlyOnLastNode && nodesToFlowTo.isEmpty()) {
+				transaction.setRollbackOnly();
+			}
+		}
+
+		if (!nodesToFlowTo.isEmpty()) {
+
+			TransactionManager transactionManager = currentServer.getTransactionManager();
+			Transaction transaction = transactionManager.getTransaction();
+			int status = transaction.getStatus();
+
+			// Only propagate active transactions - this may be inactive through
+			// user code (rollback/setRollbackOnly) or it may be inactive due to
+			// the transaction reaper
+			if (status == Status.STATUS_ACTIVE) {
+				String nextServerNodeName = nodesToFlowTo.get(0);
+
+				// FLOW THE TRANSACTION
+				remainingTimeout = (int) (currentServer.getTimeLeftBeforeTransactionTimeout() / 1000);
+
+				// STORE AND SUSPEND THE TRANSACTION
+				Xid currentXid = currentServer.getCurrentXid();
+				transactionManager.suspend();
+
+				DataReturnedFromRemoteServer dataReturnedFromRemoteServer = performTransactionalWork2(nodesToFlowTo, remainingTimeout, currentXid,
+						numberOfResourcesToRegister, addSynchronization, rollbackOnlyOnLastNode);
+				transactionManager.resume(transaction);
+
+				// Create a proxy for the new server if necessary, this can
+				// orphan
+				// the remote server but XA recovery will handle that on the
+				// remote
+				// server
+				// The alternative is to always create a proxy but this is a
+				// performance drain and will result in multiple subordinate
+				// transactions and performance issues
+				if (dataReturnedFromRemoteServer.getProxyRequired() != null) {
+					XAResource proxyXAResource = currentServer.generateProxyXAResource(nextServerNodeName, dataReturnedFromRemoteServer.getProxyRequired());
+					transaction.enlistResource(proxyXAResource);
+					transaction.registerSynchronization(currentServer.generateProxySynchronization(nextServerNodeName, toMigrate));
+				}
+				
+				if (currentServerName.equals("1000"))
+		        {
+		            if (addSynchronization) {
+		                transaction.registerSynchronization(new TestSynchronization(currentServer.getNodeName()));
+		            }
+		            for (int i = 0; i < numberOfResourcesToRegister; i++) {
+		                transaction.enlistResource(new TestResource(currentServer.getNodeName(), false));
+		            }
+
+		            if (rollbackOnlyOnLastNode && nodesToFlowTo.isEmpty()) {
+		                transaction.setRollbackOnly();
+		            }
+		        }
+
 
 				// Align the local state with the returning state of the
 				// transaction
