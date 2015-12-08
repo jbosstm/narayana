@@ -26,6 +26,8 @@ shipped as part of this example and uncomment the lines.
 =======
 Next go into each example directory and see the corresponding readme.
 
+Note, this was built against Vert.x 2.x and would definitely need revisiting for later versions of Vert.x.
+
 --
 
 Maven artifacts equivalent to lib ...
