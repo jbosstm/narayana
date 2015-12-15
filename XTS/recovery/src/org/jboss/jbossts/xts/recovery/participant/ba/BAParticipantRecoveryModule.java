@@ -275,4 +275,7 @@ public class BAParticipantRecoveryModule implements XTSRecoveryModule
     // Reference to the Object Store.
     private static RecoveryStore _recoveryStore = null ;
 
+    // This object provides information about whether or not a participant is currently active.
+
+    private HashMap<String, BAParticipantRecoveryRecord> _recoveredParticipantMap ;
 }
