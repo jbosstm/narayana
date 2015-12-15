@@ -39,55 +39,6 @@ public class SyncParticipantClient
     private static final SyncParticipantClient CLIENT = new SyncParticipantClient() ;
     
     /**
-     * The cancel action.
-     */
-    private static final String cancelAction = BAInteropConstants.INTEROP_ACTION_CANCEL ;
-    /**
-     * The exit action.
-     */
-    private static final String exitAction = BAInteropConstants.INTEROP_ACTION_EXIT ;
-    /**
-     * The fail action.
-     */
-    private static final String failAction = BAInteropConstants.INTEROP_ACTION_FAIL ;
-    /**
-     * The cannot complete action.
-     */
-    private static final String cannotCompleteAction = BAInteropConstants.INTEROP_ACTION_CANNOT_COMPLETE ;
-    /**
-     * The participant complete close action.
-     */
-    private static final String participantCompleteCloseAction = BAInteropConstants.INTEROP_ACTION_PARTICIPANT_COMPLETE_CLOSE ;
-    /**
-     * The coordinator complete close action.
-     */
-    private static final String coordinatorCompleteCloseAction = BAInteropConstants.INTEROP_ACTION_COORDINATOR_COMPLETE_CLOSE ;
-    /**
-     * The unsolicited complete action.
-     */
-    private static final String unsolicitedCompleteAction = BAInteropConstants.INTEROP_ACTION_UNSOLICITED_COMPLETE ;
-    /**
-     * The compensate action.
-     */
-    private static final String compensateAction = BAInteropConstants.INTEROP_ACTION_COMPENSATE ;
-    /**
-     * The compensation fail action.
-     */
-    private static final String participantCompensationFailAction = BAInteropConstants.INTEROP_ACTION_COMPENSATION_FAIL ;
-    /**
-     * The participant cancel completed race action.
-     */
-    private static final String participantCancelCompletedRaceAction = BAInteropConstants.INTEROP_ACTION_PARTICIPANT_CANCEL_COMPLETED_RACE ;
-    /**
-     * The message loss and recovery action.
-     */
-    private static final String messageLossAndRecoveryAction = BAInteropConstants.INTEROP_ACTION_MESSAGE_LOSS_AND_RECOVERY ;
-    /**
-     * The mixed outcome action.
-     */
-    private static final String mixedOutcomeAction = BAInteropConstants.INTEROP_ACTION_MIXED_OUTCOME ;
-    
-    /**
      * Construct the interop synch client.
      */
     private SyncParticipantClient()

@@ -57,11 +57,6 @@ public class BAInteropClient {
     private static ThreadLocal<ParticipantService> participantService = new ThreadLocal<ParticipantService>();
 
     /**
-     *  builder used to construct addressing info for calls
-     */
-    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
-
-    /**
      * fetch a coordinator activation service unique to the current thread
      * @return
      */

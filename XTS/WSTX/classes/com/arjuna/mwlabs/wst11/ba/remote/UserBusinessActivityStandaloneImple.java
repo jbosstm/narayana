@@ -369,5 +369,4 @@ public class UserBusinessActivityStandaloneImple extends UserBusinessActivity
 
     private ContextManager _ctxManager = new ContextManager();
     private String _activationCoordinatorService;
-    private UserSubordinateBusinessActivityImple _userSubordinateBusinessActivity;
 }
