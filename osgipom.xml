@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
+		LLC, and individual contributors as indicated by the @author tags. See the 
+		copyright.txt in the distribution for a full listing of individual contributors. 
+		This copyrighted material is made available to anyone wishing to use, modify, 
+		copy, or redistribute it subject to the terms and conditions of the GNU Lesser 
+		General Public License, v. 2.1. This program is distributed in the hope that 
+		it will be useful, but WITHOUT A WARRANTY; without even the implied warranty 
+		of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
+		General Public License for more details. You should have received a copy 
+		of the GNU Lesser General Public License, v.2.1 along with this distribution; 
+		if not, write to the Free Software Foundation, Inc., 51 Franklin Street, 
+		Fifth Floor, Boston, MA 02110-1301, USA. (C) 2009, @author JBoss Inc. (jonathan.halliday@redhat.com) -->
+  <parent>
+	  <groupId>org.jboss.narayana</groupId>
+	  <artifactId>narayana-all</artifactId>
+	  <version>5.2.10.Final-SNAPSHOT</version>
+	  <relativePath>../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.narayana.osgi</groupId>
+  <artifactId>narayana-osgi-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Narayana: OSGi Transaction Service</name>
+  <description>Narayana: OSGi Transaction Service</description>
+
+  <properties>
+    <version.org.jboss.arquillian.osgi.karaf>2.1.0.CR15</version.org.jboss.arquillian.osgi.karaf>
+    <version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
+    <version.org.jboss.arquillian.core>1.1.2.Final</version.org.jboss.arquillian.core>
+    <version.shrinkwrap>1.1.2</version.shrinkwrap>
+    <version.apache.karaf>2.3.3</version.apache.karaf>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+        <version>5.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.compendium</artifactId>
+        <version>5.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian.junit</groupId>
+        <artifactId>arquillian-junit-container</artifactId>
+        <version>${version.org.jboss.arquillian.core}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.osgi.metadata</groupId>
+        <artifactId>jbosgi-metadata</artifactId>
+        <version>${version.jboss.osgi.metadata}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  <modules>
+    <module>jta</module>
+  </modules>
+</project>

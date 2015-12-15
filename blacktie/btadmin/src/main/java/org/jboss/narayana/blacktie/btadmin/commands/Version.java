@@ -43,6 +43,6 @@ public class Version implements Command {
     }
 
     public void invoke(BlacktieAdministration connection, Properties configuration) {
-        log.info("JBoss BlackTie 5.2.9.Final");
+        log.info("JBoss BlackTie 5.2.10.Final-SNAPSHOT");
     }
 }
