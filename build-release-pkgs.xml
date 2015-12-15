@@ -66,7 +66,7 @@
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm"/>
   <!-- The tag as it appears under svnbase -->
-  <property name="tag" value="5.2.9.Final-SNAPSHOT"/>
+  <property name="tag" value="5.2.9.Final"/>
   <!-- the location the Narayana web site downloads are copied to -->
   <property name="downloads.dir" value="downloads_htdocs/jbosstm/"/>
   <!-- the location the Narayana web site downloads are copied to -->
