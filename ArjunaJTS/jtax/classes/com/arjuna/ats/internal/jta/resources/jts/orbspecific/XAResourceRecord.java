@@ -1008,16 +1008,19 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                        }
 	                    }
 
-	                    // Give it a go ourselves
-	                    if (!deserialized) {
-	                        _theXAResource = (XAResource) o.readObject();
-	                    }
-
-	                    o.close();
-
-	                    if (jtaxLogger.logger.isTraceEnabled()) {
-	                        jtaxLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
-	                    }
+                        try {
+                            // Give it a go ourselves
+                            if (!deserialized) {
+                                _theXAResource = (XAResource) o.readObject();
+                            }
+                            if (jtaxLogger.logger.isTraceEnabled()) {
+                                jtaxLogger.logger.trace("XAResourceRecord.restore_state - XAResource de-serialized");
+                            }
+                        } catch (ClassNotFoundException cnfe) {
+                            jtaxLogger.i18NLogger.warn_could_not_load_class_will_wait_for_bottom_up(cnfe);
+                        } finally {
+                            o.close();
+                        }
 	                }
 	                catch (Exception ex)
 	                {

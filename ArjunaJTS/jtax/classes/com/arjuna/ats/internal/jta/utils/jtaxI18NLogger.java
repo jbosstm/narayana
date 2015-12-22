@@ -256,6 +256,10 @@ public interface jtaxI18NLogger {
     @LogMessage(level = WARN)
     public void warn_jtax_transaction_jts_timeouterror(String arg0, String arg1, String arg2, @Cause() Throwable arg3);
 
+    @Message(id = 24058, value = "Could not deserialize class. Will wait for bottom up recovery", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_load_class_will_wait_for_bottom_up(@Cause() ClassNotFoundException cnfe);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
