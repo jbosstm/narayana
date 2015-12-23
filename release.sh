@@ -28,9 +28,17 @@ export CURRENT=$2
 export NEXT=$3
 ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
 read -p "Enter WFLY issue: " WFLYISSUE
+(cd jboss-as; git fetch wildfly; git checkout -b ${WFLYISSUE}; git reset --hard wildfly/master)
+WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+WILDFLY_MASTER_VERSION=`grep 'version.org.wildfly.wildfly-parent' blacktie/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+if [[ ${WILDFLY_MASTER_VERSION} != ${WILDFLY_VERSION_FROM_JBOSS_AS} ]]
+then
+  echo "Need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
+  exit
+fi
+(cd jboss-as; git branch -u jbosstm/${WFLYISSUE}; sed -i "s/narayana>$PREVIOUS/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push jbosstm $WFLYISSUE)
+(cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest ersion of Narayana"; git push -f)
 (cd scripts; ./pre-release.sh $CURRENT $NEXT)
-(cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest version of Narayana"; git push -f)
-(cd jboss-as; git fetch wildfly; git checkout -b ${WFLYISSUE}; git reset --hard wildfly/master; git branch -u jbosstm/${WFLYISSUE}; sed -i "s/narayana>$PREVIOUS/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push jbosstm $WFLYISSUE)
 if [[ $(uname) == CYGWIN* ]]
 then
   echo "Detected Cygwin build"
@@ -40,7 +48,9 @@ else
   git fetch upstream; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn" -Dawestruct.executable="awestruct" all
 fi
 echo "build and retrieve the centos54x64 blacktie binary on centos54x64 machine"
-ssh lancel.eng.hst.ams2.redhat.com -x "cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; git clone -b $WFLYISSUE  https://github.com/jbosstm/jboss-as.git; (cd jboss-as; JAVA_HOME=/usr/local/jdk1.8.0/ ./build.sh install -DskipTests); ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests" ; scp lancel.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz . ; scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
+ssh lancel.eng.hst.ams2.redhat.com -x "cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; git clone -b $WFLYISSUE  https://github.com/jbosstm/jboss-as.git; (cd jboss-as; JAVA_HOME=/usr/local/jdk1.8.0/ ./build.sh install -DskipTests); ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
+scp lancel.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz .
+scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
 echo "You need to execute the following commands on a Windows box"
 echo "set CURRENT="
 echo "set WFLYISSUE="
