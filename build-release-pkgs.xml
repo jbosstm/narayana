@@ -90,7 +90,7 @@
         </not>
       </condition>
     </fail>
-    <fail message="You cannot perform a build without cleaning the old version out">
+    <fail message="You cannot perform a build without cleaning the old version out ${workdir}/${tag}">
       <condition>
         <available file="${workdir}/${tag}" type="dir"/>
       </condition>
