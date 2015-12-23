@@ -39,7 +39,7 @@ TEMP_WORKING_DIR=/tmp/$0
 mkdir $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
-for REPO in documentation quickstart narayana performance
+for REPO in documentation quickstart performance narayana
 do
     echo ""
     echo "=== TAGGING AND UPDATING $REPO ==="
