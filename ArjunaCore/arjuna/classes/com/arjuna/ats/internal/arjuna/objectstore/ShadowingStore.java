@@ -454,7 +454,21 @@ public class ShadowingStore extends FileSystemStore
             }
             else
             {
-                tsLogger.i18NLogger.warn_objectstore_ShadowingStore_6(objUid.stringForm());
+                /*
+                 * We tried to read either a committed or uncommitted state but neither was present.
+                 * This may be an error but we can't tell at the level of the ObjectStore and so
+                 * SHOULD NOT issue a warning message by default. The application can figure this out because
+                 * we're going to return a null InputObjectState anyway!
+                 * 
+                 * Changing this from a warning to trace so that anyone who needs to check this can do so. But
+                 * it shouldn't be the default action!
+                 * 
+                 * https://issues.jboss.org/browse/JBTM-2593
+                 */
+                
+                if (tsLogger.logger.isTraceEnabled())
+                    tsLogger.logger.trace("ShadowingStore.read_state could not find committed or uncommitted state for "+objUid+
+                                    " instead found state "+StateStatus.stateStatusString(state));
             }
         }
         else

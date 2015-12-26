@@ -1139,9 +1139,14 @@ public interface arjunaI18NLogger {
          * NOTE re-used old message id and signature in case we ever need to resurrect the above warning.
          */
         
+	/*
+	 * This should not be a warning message!
+	 * https://issues.jboss.org/browse/JBTM-2593
+	 * 
         @Message(id = 12281, value = "ShadowingStore::read_state() - no state found for object instance {0}", format = MESSAGE_FORMAT)
         @LogMessage(level = WARN)
         public void warn_objectstore_ShadowingStore_6(String arg0);
+        */
         
 	@Message(id = 12282, value = "ShadowingStore::read_state() failed", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
