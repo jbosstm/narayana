@@ -7,3 +7,5 @@ target
 jboss-as
 *.swp
 *~
+
+*.orig
