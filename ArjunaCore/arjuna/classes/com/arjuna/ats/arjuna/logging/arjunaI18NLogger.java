@@ -1139,7 +1139,7 @@ public interface arjunaI18NLogger {
          * NOTE re-used old message id and signature in case we ever need to resurrect the above warning.
          */
         
-        @Message(id = 12281, value = "ShadowingStore::read_state() - no type name given for object state {0}", format = MESSAGE_FORMAT)
+        @Message(id = 12281, value = "ShadowingStore::read_state() - no state found for object instance {0}", format = MESSAGE_FORMAT)
         @LogMessage(level = WARN)
         public void warn_objectstore_ShadowingStore_6(String arg0);
         
