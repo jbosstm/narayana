@@ -7,7 +7,7 @@ Don't forget to install and set up Vert.x!
 
 Next go into each example directory and see the corresponding readme.
 
-Note, this was built against Vert.x 2.x and would definitely need revisiting for later versions of Vert.x.
+Note, this was built against Vert.x 2.x and would definitely need revisiting for later versions of Vert.x. The module directory contains a Vert.x module for STM - will need updating too for more recent versions of Vert.x.
 
 --
 
