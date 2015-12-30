@@ -73,7 +73,7 @@
                 methods
             </title>
             <para>
-                TxCore may invoke the user-defined
+                ArjunaCore may invoke the user-defined
                 <methodname>save_state</methodname>
                 operation of an object at any time during
                 the lifetime of an object, including during the execution of the body of the object’s constructor. This is
@@ -86,7 +86,7 @@
                 <methodname>restore_state</methodname>
                 operations, to ensure that no
                 transactions are started, either explicitly in the operation, or implicitly through use of some other
-                operation. The reason for this restriction is that TxCore may invoke
+                operation. The reason for this restriction is that ArjunaCore may invoke
                 <methodname>restore_state</methodname>
                 as
                 part of its commit processing. This would result in the attempt to execute an atomic transaction during the
@@ -146,7 +146,7 @@
                     <methodname>restore_state</methodname>
                     would unpack the two
                     strings into different areas of memory, destroying the original aliasing information. The current version of
-                    TxCore packs and unpacks separate object references.
+                    ArjunaCore packs and unpacks separate object references.
                 </para>
             </section>
         </section>
@@ -173,7 +173,7 @@
             </listitem>
         </orderedlist>
         <para>
-            However, if you only require access to TxCore's persistence and recovery mechanisms, direct derivation of a
+            However, if you only require access to ArjunaCore's persistence and recovery mechanisms, direct derivation of a
             user
             class from
             <classname>StateManager</classname>

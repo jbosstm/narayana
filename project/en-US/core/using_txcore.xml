@@ -4,19 +4,22 @@
 %BOOK_ENTITIES;
 ]>
 <section>
-    <title>Using TxCore</title>
+    <title>Using ArjunaCore</title>
     <para>
-        This section describes TxCore and
+        This section describes ArjunaCore and
         <application>Transactional Objects for Java (TXOJ)</application>
         in more detail,
-        and shows how to use TxCore to construct transactional applications.
+        and shows how to use ArjunaCore to construct transactional applications.
+    </para>
+    <para>
+	Note: in previous releases ArjunaCore was often referred to as TxCore.
     </para>
     <section>
         <title>State management</title>
         <section>
             <title>Object states</title>
             <para>
-                TxCore needs to be able to remember the state of an object for several purposes, including recovery (the state
+                ArjunaCore needs to be able to remember the state of an object for several purposes, including recovery (the state
                 represents some past state of the object), and for persistence (the state represents the final state of an
                 object at application termination). Since all of these requirements require common functionality they are all
                 implemented using the same mechanism - the classes Input/OutputObjectState and Input/OutputBuffer.
@@ -84,15 +87,15 @@
         <section>
             <title>The object store</title>
             <para>
-                The object store provided with TxCore deliberately has a fairly restricted interface so that it can be
+                The object store provided with ArjunaCore deliberately has a fairly restricted interface so that it can be
                 implemented in a variety of ways. For example, object stores are implemented in shared memory, on the
                 Unix file
                 system (in several different forms), and as a remotely accessible store. More complete information about the
-                object stores available in TxCore can be found in the Appendix. <!-- xref -->
+                object stores available in ArjunaCore can be found in the Appendix. <!-- xref -->
             </para>
             <note>
                 <para>
-                    As with all TxCore classes, the default object stores are pure Java implementations. to access the shared
+                    As with all ArjunaCore classes, the default object stores are pure Java implementations. to access the shared
                     memory and other more complex object store implementations, you need to use native methods.
                 </para>
             </note>
@@ -112,7 +115,7 @@
                 only when the
                 <methodname>commit_state</methodname>
                 operation is invoked. Normally all interaction with the
-                object store is performed by TxCore system components as appropriate thus the existence of any shadow versions
+                object store is performed by ArjunaCore system components as appropriate thus the existence of any shadow versions
                 of objects in the store are hidden from the programmer.
             </para>
             <example>
@@ -131,13 +134,13 @@
                 the event of a failure and either continue to commit, or rollback. When using
                 <application>TXOJ</application>
                 ,
-                TxCore will take care of this automatically. To guarantee
+                ArjunaCore will take care of this automatically. To guarantee
                 <systemitem>ACID</systemitem>
                 properties, these state
                 changes must be flushed to the persistence store implementation before the transaction can proceed to
                 commit. Otherwise, the application may assume that the transaction has committed when in fact the state changes
                 may still reside within an operating system cache, and may be lost by a subsequent machine failure. By default,
-                TxCore ensures that such state changes are flushed. However, doing so can impose a significant performance
+                ArjunaCore ensures that such state changes are flushed. However, doing so can impose a significant performance
                 penalty on the application.
             </para>
             <para><!-- How / where do you do this? -->
@@ -152,7 +155,7 @@
         <section>
             <title>Selecting an object store implementation</title>
             <para>
-                TxCore comes with support for several different object store implementations. The Appendix<!-- xref -->
+                ArjunaCore comes with support for several different object store implementations. The Appendix<!-- xref -->
                 describes these implementations, how to select and configure a given implementation on a per-object
                 basis using
                 the
@@ -164,7 +167,7 @@
             <section>
                 <title>StateManager</title>
                 <para>
-                    The TxCore class
+                    The ArjunaCore class
                     <classname>StateManager</classname>
                     manages the state of an object and provides all of the
                     basic support mechanisms required by an object for state management
@@ -295,7 +298,7 @@
                         method is used to determine the location in the object store where the
                         state of instances of that class will be saved and ultimately restored. This location can actually be any
                         valid string. However, you should avoid using the hash character (#) as this is reserved for special
-                        directories that TxCore requires.
+                        directories that ArjunaCore requires.
                     </para>
                 </note>
                 <para>
@@ -341,10 +344,10 @@
             <section>
                 <title>Object models</title>
                 <para>
-                    TxCore supports two models for objects, which affect how an objects state and concurrency control are implemented.
+                    ArjunaCore supports two models for objects, which affect how an objects state and concurrency control are implemented.
                 </para>
                 <variablelist>
-                    <title>TxCore Object Models</title>
+                    <title>ArjunaCore Object Models</title>
                     <varlistentry>
                         <term>Single</term>
                         <listitem>
@@ -398,7 +401,7 @@
             <section>
                 <title>Summary</title>
                 <para>
-                    In summary, the TxCore class
+                    In summary, the ArjunaCore class
                     <classname>StateManager</classname>
                     manages the state of an object and provides
                     all of the basic support mechanisms required by an object for state management purposes. Some operations must
@@ -431,12 +434,12 @@
                                 <parameter>objectType</parameter>
                                 parameter indicates the reason that
                                 <methodname>save_state</methodname>
-                                was invoked by TxCore. This enables the programmer to save different
+                                was invoked by ArjunaCore. This enables the programmer to save different
                                 pieces of information into the
                                 <classname>OutputObjectState</classname>
                                 supplied as the first parameter
                                 depending upon whether the state is needed for recovery or persistence purposes. For example, pointers
-                                to other TxCore objects might be saved simply as pointers for recovery purposes but as
+                                to other ArjunaCore objects might be saved simply as pointers for recovery purposes but as
                                 <type>Uid</type>
                                 s
                                 for persistence purposes. As shown earlier, the
@@ -490,7 +493,7 @@
                         </term>
                         <listitem>
                             <para>
-                                The TxCore persistence mechanism requires a means of determining the type of an object
+                                The ArjunaCore persistence mechanism requires a means of determining the type of an object
                                 as a string so
                                 that it can save or restore the state of the object into or from the object store. By convention this
                                 information indicates the position of the class in the hierarchy. For example,
@@ -503,7 +506,7 @@
                                 method is used to determine the location in the object store where the
                                 state of instances of that class will be saved and ultimately restored. This can actually be any valid
                                 string. However, you should avoid using the hash character (#) as this is reserved for special
-                                directories that TxCore requires.
+                                directories that ArjunaCore requires.
                             </para>
                         </listitem>
                     </varlistentry>
@@ -539,17 +542,17 @@
     <section>
         <title>Lock management and concurrency control</title>
         <para>
-            Concurrency control information within TxCore is maintained by locks. Locks which are required to be shared
+            Concurrency control information within ArjunaCore is maintained by locks. Locks which are required to be shared
             between objects in different processes may be held within a lock store, similar to the object store facility
-            presented previously. The lock store provided with TxCore deliberately has a fairly restricted interface so
+            presented previously. The lock store provided with ArjunaCore deliberately has a fairly restricted interface so
             that
             it can be implemented in a variety of ways. For example, lock stores are implemented in shared memory, on the Unix
             file system (in several different forms), and as a remotely accessible store. More information about the object
-            stores available in TxCore can be found in the Appendix.<!-- xref -->
+            stores available in ArjunaCore can be found in the Appendix.<!-- xref -->
         </para>
         <note>
             <para>
-                As with all TxCore classes, the default lock stores are pure Java implementations. To access the shared memory
+                As with all ArjunaCore classes, the default lock stores are pure Java implementations. To access the shared memory
                 and other more complex lock store implementations it is necessary to use native methods.
             </para>
         </note>
@@ -564,7 +567,7 @@
         <section>
             <title>Selecting a lock store implementation</title>
             <para>
-                TxCore comes with support for several different object store implementations. If the object model being
+                ArjunaCore comes with support for several different object store implementations. If the object model being
                 used is
                 SINGLE, then no lock store is required for maintaining locks, since the information about the object is not
                 exported from it. However, if the MULTIPLE model is used, then different run-time environments (processes, Java
@@ -594,7 +597,7 @@
                             execution environments that share the same file store can share concurrency control information. The root
                             of the file system into which locking information is written is the
                             <filename>LockStore</filename>
-                            directory within the TxCore installation directory. You can override this at runtime by
+                            directory within the ArjunaCore installation directory. You can override this at runtime by
                             setting the
                             <varname>TxojEnvironmentBean.lockStoreDir</varname>
                             property variable accordingly, or placing the location
@@ -625,7 +628,7 @@
                 semantics of the class being programmed. The primary programmer interface to the concurrency controller is via
                 the
                 <methodname>setlock</methodname>
-                operation. By default, the TxCore runtime system enforces strict two-phase
+                operation. By default, the ArjunaCore runtime system enforces strict two-phase
                 locking following a multiple reader, single writer policy on a per object basis. Lock acquisition is under
                 programmer control, since just as
                 <classname>StateManager</classname>
@@ -745,9 +748,9 @@
         <section>
             <title>Locking policy</title>
             <para>
-                Unlike many other systems, locks in TxCore are not special system types. Instead they are simply
+                Unlike many other systems, locks in ArjunaCore are not special system types. Instead they are simply
                 instances of
-                other TxCore objects (the class
+                other ArjunaCore objects (the class
                 <classname>Lock</classname>
                 which is also derived from
                 <classname>StateManager</classname>
@@ -794,7 +797,7 @@
         <section>
             <title>Object constructor and finalizer</title>
             <para>
-                Recall that TxCore objects can be recoverable, recoverable and persistent, or neither. Additionally each
+                Recall that ArjunaCore objects can be recoverable, recoverable and persistent, or neither. Additionally each
                 object
                 possesses a unique internal name. These attributes can only be set when that object is constructed. Thus
                 <classname>LockManager</classname>

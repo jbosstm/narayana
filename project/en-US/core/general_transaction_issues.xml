@@ -4,11 +4,11 @@
 %BOOK_ENTITIES;
 ]>
 <section>
-    <title>Advanced transaction issues with TxCore</title>
+    <title>Advanced transaction issues with ArjunaCore</title>
     <para>
         Atomic actions (transactions) can be used by both application programmers and class developers. Thus entire
         operations (or parts of operations) can be made atomic as required by the semantics of a particular operation. This
-        chapter will describe some of the more subtle issues involved with using transactions in general and TxCore in
+        chapter will describe some of the more subtle issues involved with using transactions in general and ArjunaCore in
         particular.
 
     </para>
@@ -88,7 +88,7 @@
             implemented using atomic actions within their operations without the application programmer having to worry about
             the applications which use them, and whether or not the applications will use atomic actions as well. Thus, in
             some applications actions may be top-level, whereas in others they may be nested. Objects written in this way can
-            then be shared between application programmers, and TxCore will guarantee their consistency.
+            then be shared between application programmers, and ArjunaCore will guarantee their consistency.
         </para>
         <para>
             If a nested action is aborted, all of its work will be undone, although strict two-phase locking means that
@@ -190,7 +190,7 @@
     <section>
         <title>Independent top-level transactions</title>
         <para>
-            In addition to normal top-level and nested atomic actions, TxCore also supports independent top-level actions,
+            In addition to normal top-level and nested atomic actions, ArjunaCore also supports independent top-level actions,
             which can be used to relax strict serializability in a controlled manner. An independent top-level action can be
             executed from anywhere within another atomic action and behaves exactly like a normal top-level action. Its
             results are made permanent when it commits and will not be undone if any of the actions within which it was
@@ -236,7 +236,7 @@
             <methodname>restore_state</methodname>
             operations to ensure that no atomic actions are started, either explicitly in the operation or implicitly
             through
-            use of some other operation. This restriction arises due to the fact that TxCore may invoke
+            use of some other operation. This restriction arises due to the fact that ArjunaCore may invoke
             <methodname>restore_state</methodname>
             as part of its commit processing resulting in the attempt to execute an
             atomic action during the commit or abort phase of another action. This might violate the atomicity properties of
@@ -271,7 +271,7 @@
             Java objects are deleted when the garbage collector determines that they are no longer required. Deleting an
             object that is currently under the control of a transaction must be approached with caution since if the object is
             being manipulated within a transaction its fate is effectively determined by the transaction. Therefore,
-            regardless of the references to a transactional object maintained by an application, TxCore will always retain its
+            regardless of the references to a transactional object maintained by an application, ArjunaCore will always retain its
             own references to ensure that the object is not garbage collected until after any transaction has terminated.
         </para>
     </section>
@@ -284,7 +284,7 @@
             transaction has not terminated before the timeout expires it will be automatically rolled back.
         </para>
         <para>
-            In TxCore, the timeout value is provided as a parameter to the
+            In ArjunaCore, the timeout value is provided as a parameter to the
             <methodname>AtomicAction</methodname>
             constructor. If a value of
             <literal>AtomicAction.NO_TIMEOUT</literal>

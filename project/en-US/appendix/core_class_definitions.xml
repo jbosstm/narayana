@@ -8,7 +8,7 @@
     <para>
         This appendix contains an overview of those classes that the application programmer will typically use. The aim of
         this appendix is to provide a quick reference guide to these classes for use when writing applications in
-        TxCore. For clarity only the public and protected interfaces of the classes will be given.
+        ArjunaCore. For clarity only the public and protected interfaces of the classes will be given.
     </para>
 
     <example>

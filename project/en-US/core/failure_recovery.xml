@@ -6,7 +6,7 @@
 <section>
     <title>Failure Recovery</title>
     <para>In
-        this chapter we shall cover information on failure recovery that is specific to TxCore, TXOJ or using &PRODUCT;
+        this chapter we shall cover information on failure recovery that is specific to ArjunaCore, TXOJ or using &PRODUCT;
         outside the scope of a
         supported application server.
     </para>

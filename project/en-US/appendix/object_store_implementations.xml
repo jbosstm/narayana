@@ -8,7 +8,7 @@
     <section>
         <title>The ObjectStore</title>
         <para>
-            This appendix examines the various TxCore object store implementations and gives guidelines for creating other
+            This appendix examines the various ArjunaCore object store implementations and gives guidelines for creating other
             implementations and plugging into an application.
         </para>
         <para>

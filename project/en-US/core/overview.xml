@@ -13,7 +13,7 @@
         Transactions ensure data integrity when an application interacts with multiple datasources.
     </para>
     <para>
-        This chapter contains a description of the use of the TxCore transaction engine and the
+        This chapter contains a description of the use of the ArjunaCore transaction engine and the
         <application>Transactional
             Objects for Java (TXOJ)
         </application>
@@ -38,13 +38,13 @@
     </note>
 
     <section>
-        <title>TxCore</title>
+        <title>ArjunaCore</title>
         <subtitle>The Transaction Engine</subtitle>
         <para>
             In keeping with the object-oriented view, the mechanisms needed to construct reliable distributed applications are
             presented to programmers in an object-oriented manner. Some mechanisms need to be inherited, for example,
             concurrency control and state management. Other mechanisms, such as object storage and transactions, are
-            implemented as TxCore objects that are created and manipulated like any other object.
+            implemented as ArjunaCore objects that are created and manipulated like any other object.
         </para>
         <note>
             <para>
@@ -55,7 +55,7 @@
             </para>
         </note>
         <para>
-            TxCore exploits object-oriented techniques to present programmers with a toolkit of Java classes from which
+            ArjunaCore exploits object-oriented techniques to present programmers with a toolkit of Java classes from which
             application classes can inherit to obtain desired properties, such as persistence and concurrency control.
             These
             classes form a hierarchy, part of which is shown in
@@ -64,7 +64,7 @@
             described later in this document.
         </para>
         <figure id="txcore_class_hierarchy">
-            <title>TxCore Class Hierarchy</title>
+            <title>ArjunaCore Class Hierarchy</title>
             <mediaobject>
                 <imageobject>
                     <imagedata width="440" fileref="images/core-txcore_class_hierarchy.png" format="PNG" />
@@ -74,7 +74,7 @@
         <para>
             Apart from specifying the scopes of transactions, and setting appropriate locks within objects, the
             application
-            programmer does not have any other responsibilities: TxCore and
+            programmer does not have any other responsibilities: ArjunaCore and
             <application>TXOJ</application>
             guarantee that
             transactional objects will be registered with, and be driven by, the appropriate transactions, and crash recovery
@@ -85,7 +85,7 @@
     <section>
         <title>Saving object states</title>
         <para>
-            TxCore needs to be able to remember the state of an object for several purposes.
+            ArjunaCore needs to be able to remember the state of an object for several purposes.
         </para>
         <variablelist>
             <varlistentry>
@@ -130,7 +130,7 @@
         <title>The object store</title>
         <para>
             Implementations of persistence can be affected by restrictions imposed by the Java SecurityManager. Therefore, the
-            object store provided with TxCore is implemented using the techniques of interface and implementation. The current
+            object store provided with ArjunaCore is implemented using the techniques of interface and implementation. The current
             distribution includes implementations which write object states to the local file system or database, and
             remote
             implementations, where the interface uses a client stub (proxy) to remote services.
@@ -431,12 +431,12 @@
             to record sufficient information for crash recovery mechanisms to complete the
             transaction in the event of failures. It has methods for starting and terminating the transaction, and, for those
             situations where programmers need to implement their own resources, methods for registering them with the current
-            transaction. Because TxCore supports sub-transactions, if a transaction is begun within the scope of an already
+            transaction. Because ArjunaCore supports sub-transactions, if a transaction is begun within the scope of an already
             executing transaction it will automatically be nested.
         </para>
         <para>
-            You can use TxCore with multi-threaded applications. Each thread within an application can share a transaction or
-            execute within its own transaction. Therefore, all TxCore classes are also thread-safe.
+            You can use ArjunaCore with multi-threaded applications. Each thread within an application can share a transaction or
+            execute within its own transaction. Therefore, all ArjunaCore classes are also thread-safe.
         </para>
         <example id="activation_termination_commitment">
             <title>Relationships Between Activation, Termination, and Commitment</title>
@@ -496,7 +496,7 @@
     <section>
         <title>The class hierarchy</title>
         <para>
-            The principal classes which make up the class hierarchy of TxCore are depicted below.
+            The principal classes which make up the class hierarchy of ArjunaCore are depicted below.
         </para>
 
         <itemizedlist>
@@ -605,7 +605,7 @@
             .
         </para>
         <para>
-            Most TxCore classes are derived from the base class
+            Most ArjunaCore classes are derived from the base class
             <classname>StateManager</classname>
             , which provides primitive
             facilities necessary for managing persistent and recoverable objects. These facilities include support for the
@@ -741,9 +741,9 @@
             .
         </para>
         <para>
-            It is important to realize that all of the above work is automatically being performed by TxCore on behalf
+            It is important to realize that all of the above work is automatically being performed by ArjunaCore on behalf
             of the
-            application programmer. The programmer need only start the transaction and set an appropriate lock; TxCore and
+            application programmer. The programmer need only start the transaction and set an appropriate lock; ArjunaCore and
             <application>TXOJ</application>
             take care of participant registration, persistence, concurrency control and
             recovery.

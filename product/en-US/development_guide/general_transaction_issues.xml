@@ -6,7 +6,7 @@
 <section>
     <title>General Transaction Issues</title>
     <section>
-        <title>Advanced transaction issues with TxCore</title>
+        <title>Advanced transaction issues with ArjunaCore</title>
         <para>
             Atomic actions (transactions) can be used by both application programmers and class
             developers. Thus entire
@@ -15,9 +15,11 @@
             semantics of a particular operation. This
             chapter will describe some of the more subtle
             issues
-            involved with using transactions in general and TxCore in
+            involved with using transactions in general and ArjunaCore in
             particular.
-
+	</para>
+	<para>
+	    Note: in the past ArjunaCore was also referred to as TxCore.
         </para>
 
         <section>
@@ -31,7 +33,7 @@
                 environment, it can be difficult to guarantee that all threads have
                 finished with a
                 transaction
-                when it is terminated. By default, TxCore will issue a warning if a thread
+                when it is terminated. By default, ArjunaCore will issue a warning if a thread
                 terminates
                 a
                 transaction when other threads are still active within it. However, it will allow
@@ -43,7 +45,7 @@
                 Other solutions to this problem are possible. One example would be to block the thread which
                 is terminating the
                 transaction until all other threads have disassociated themselves from the
-                transaction context. Therefore, TxCore
+                transaction context. Therefore, ArjunaCore
                 provides the
                 <classname>com.arjuna.ats.arjuna.coordinator.CheckedAction</classname>
                 class, which allows the thread

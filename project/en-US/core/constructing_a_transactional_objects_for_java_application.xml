@@ -6,7 +6,7 @@
 <section>
     <title>Constructing a Transactional Objects for Java application</title>
     <orderedlist>
-        <title>Development Phases of a TxCore Application</title>
+        <title>Development Phases of a ArjunaCore Application</title>
         <listitem>
             <para>
                 First, develop new classes with characteristics like persistence, recoverability, and concurrency control.
@@ -27,7 +27,7 @@
         <methodname>save_state</methodname>
         and
         <methodname>restore_state</methodname>
-        operations for the class, sets appropriate locks in operations, and invokes the appropriate TxCore class
+        operations for the class, sets appropriate locks in operations, and invokes the appropriate ArjunaCore class
         constructors. The applications developer defines the general structure of the application, particularly with
         regard
         to the use of atomic actions.
@@ -35,8 +35,8 @@
     <para>
         This chapter outlines a simple application, a simple FIFO Queue class for integer values. The Queue is implemented
         with a doubly linked list structure, and is implemented as a single object. This example is used throughout the rest
-        of this manual to illustrate the various mechanisms provided by TxCore. Although this is an unrealistic example
-        application, it illustrates all of the TxCore modifications without requiring in depth knowledge of the
+        of this manual to illustrate the various mechanisms provided by ArjunaCore. Although this is an unrealistic example
+        application, it illustrates all of the ArjunaCore modifications without requiring in depth knowledge of the
         application
         code.
     </para>
