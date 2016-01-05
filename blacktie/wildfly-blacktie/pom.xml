@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.jboss.narayana.blacktie</groupId>
         <artifactId>blacktie-all</artifactId>
-        <version>5.2.12.Final</version>
+        <version>5.2.13.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
