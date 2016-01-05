@@ -40,6 +40,8 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     private volatile int minFiles = 4;
 
+    private volatile int poolSize = -1;
+
     private volatile int compactMinFiles = 10;
 
     private volatile int compactPercentage = 30;
@@ -80,7 +82,7 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     /**
      * Sets the desired size in bytes for each log file.
-     * 
+     *
      * @param fileSize the individual log file size, in bytes.
      */
     public void setFileSize(int fileSize)
@@ -109,6 +111,28 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
     public void setMinFiles(int minFiles)
     {
         this.minFiles = minFiles;
+    }
+
+    /**
+     * How many journal files can be reused.
+     *
+     * Default: -1
+     *
+     * @return the number of files that can be reused.
+     */
+    public int getPoolSize()
+    {
+        return poolSize;
+    }
+
+    /**
+     * Sets the number of files that can be reused.
+     *
+     * @param poolSize the number of files that can be reused.
+     */
+    public void setPoolSize(int poolSize)
+    {
+        this.poolSize = poolSize;
     }
 
     /**

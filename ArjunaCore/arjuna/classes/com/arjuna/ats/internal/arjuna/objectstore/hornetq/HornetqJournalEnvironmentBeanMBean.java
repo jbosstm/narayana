@@ -31,6 +31,8 @@ public interface HornetqJournalEnvironmentBeanMBean
 
     public int getMinFiles();
 
+    public int getPoolSize();
+
     public int getCompactMinFiles();
 
     public int getCompactPercentage();
