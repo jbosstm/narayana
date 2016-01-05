@@ -61,12 +61,12 @@
     </description>
   <property name="mvn.executable" value="tools/maven/bin/mvn.bat"/>
   <property name="awestruct.executable" value="awestruct.bat"/>
-  <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
-  <property name="workdir" location="/tmp/narayana_releases"/>
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm"/>
   <!-- The tag as it appears under svnbase -->
   <property name="tag" value="5.2.13.Final-SNAPSHOT"/>
+  <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
+  <property name="workdir" location="${user.home}/tmp/narayana/${tag}"/>
   <!-- the location the Narayana web site downloads are copied to -->
   <property name="downloads.dir" value="downloads_htdocs/jbosstm/"/>
   <!-- the location the Narayana web site downloads are copied to -->
@@ -90,85 +90,76 @@
         </not>
       </condition>
     </fail>
-    <fail message="You cannot perform a build without cleaning the old version out ${workdir}/${tag}">
+    <fail message="You cannot perform a build without a clone in ${workdir}/sources/narayana/">
       <condition>
-        <available file="${workdir}/${tag}" type="dir"/>
+        <not>
+          <available file="${workdir}/sources/narayana/" type="dir"/>
+        </not>
       </condition>
     </fail>
-    <mkdir dir="${workdir}"/>
     <!-- pull the source code from git -->
-    <exec executable="git" dir="${workdir}">
-      <arg value="clone"/>
-      <arg value="${gitbase}/narayana.git"/>
-      <arg value="${tag}"/>
-    </exec>
-    <exec executable="git" dir="${workdir}/${tag}">
+    <exec executable="git" dir="${workdir}/sources/narayana/">
       <arg value="checkout"/>
       <arg value="${tag}"/>
     </exec>
   </target>
   <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
     <!-- Clean all generated artefacts -->
-    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
       <arg line="clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
     </exec>
     <!-- package the full source release (all src tree) -->
     <delete file="${workdir}/narayana-full-${tag}-src.zip"/>
-    <zip basedir="${workdir}" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="${tag}/**"/>
+    <zip basedir="${workdir}/sources/narayana/" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="**"/>
     <!-- build the binary releases -->
-    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
       <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
     </exec>
-    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
       <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml"/>
     </exec>
-    <exec dir="${workdir}/${tag}" executable="${mvn.executable}" failonerror="true">
+    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
       <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am"/>
     </exec>
   </target>
   <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
   <target name="docs">
-    <exec executable="git" dir="${workdir}">
-      <arg value="clone"/>
-      <arg value="${gitbase}/documentation.git"/>
-      <arg value="${tag}-docs"/>
-    </exec>
-    <exec executable="git" dir="${workdir}/${tag}-docs">
+    <exec executable="git" dir="${workdir}/sources/documentation/">
       <arg value="checkout"/>
       <arg value="${tag}"/>
     </exec>
-    <exec dir="${workdir}/${tag}-docs" executable="${mvn.executable}" failonerror="true">
+    <exec dir="${workdir}/sources/documentation/" executable="${mvn.executable}" failonerror="true">
       <arg line="install -Prelease"/>
     </exec>
   </target> 
   <target name="downloads" description="copy release bundles to Narayana web site storage">
-    <delete dir="tmp-downloads-dir"/>
-    <mkdir dir="tmp-downloads-dir"/>
-    <mkdir dir="tmp-downloads-dir/src"/>
-    <mkdir dir="tmp-downloads-dir/binary"/>
-    <mkdir dir="tmp-downloads-dir/idl"/>
-    <copy todir="tmp-downloads-dir/src">
+    <delete dir="${workdir}/downloads/"/>
+    <mkdir dir="${workdir}/downloads/"/>
+    <mkdir dir="${workdir}/downloads/src"/>
+    <mkdir dir="${workdir}/downloads/binary"/>
+    <mkdir dir="${workdir}/downloads/idl"/>
+    <copy todir="${workdir}/downloads/src">
       <fileset dir="${workdir}" includes="narayana-*-${tag}-src.zip"/>
     </copy>
-    <copy todir="tmp-downloads-dir/binary">
-      <fileset dir="${workdir}/${tag}/narayana-full/target/" includes="narayana-full-${tag}-bin.zip"/>
+    <copy todir="${workdir}/downloads/binary">
+      <fileset dir="${workdir}/sources/narayana/narayana-full/target/" includes="narayana-full-${tag}-bin.zip"/>
     </copy>
-    <copy todir="tmp-downloads-dir/idl">
-      <fileset dir="${workdir}/${tag}/ArjunaJTS/idl/src/main/idl/arjuna">
+    <copy todir="${workdir}/downloads/idl">
+      <fileset dir="${workdir}/sources/narayana/ArjunaJTS/idl/src/main/idl/arjuna">
         <include name="ArjunaOTS.idl"/>
       </fileset>
     </copy>
-    <copy todir="tmp-downloads-dir/idl">
-      <fileset dir="${workdir}/${tag}/ArjunaJTS/idl/src/main/idl/omg">
+    <copy todir="${workdir}/downloads/idl">
+      <fileset dir="${workdir}/sources/narayana/ArjunaJTS/idl/src/main/idl/omg">
         <include name="CosTransactions.idl"/>
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="tmp-downloads-dir/api"/>
-    <copy file="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-xatmi-api"/>
-    <copy file="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="tmp-downloads-dir/jatmibroker-nbf-api"/>
+    <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
+    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-xatmi-api"/>
+    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-nbf-api"/>
     <antcall target="remote-copy">
-        <param name="from" value="tmp-downloads-dir"/>
+        <param name="from" value="${workdir}/downloads"/>
         <param name="to" value="${downloads.dir}/${tag}"/>
     </antcall>
   </target>
@@ -245,10 +236,10 @@
     <mkdir dir="${docs-dir}product"/>
     <mkdir dir="${docs-dir}project"/>
     <copy todir="${docs-dir}product">
-      <fileset dir="${workdir}/${tag}-docs/product/target/docbook/publish/en-US/html_single"/>
+      <fileset dir="${workdir}/sources/documentation/product/target/docbook/publish/en-US/html_single"/>
     </copy>
     <copy todir="${docs-dir}project">
-      <fileset dir="${workdir}/${tag}-docs/project/target/docbook/publish/en-US/html_single"/>
+      <fileset dir="${workdir}/sources/documentation/project/target/docbook/publish/en-US/html_single"/>
     </copy>
   </target>
   
@@ -275,9 +266,9 @@ blacktie:
     <delete dir="${docs-dir}/api/"/>
     <delete dir="${docs-dir}/jatmibroker-xatmi-api/"/>
     <delete dir="${docs-dir}/jatmibroker-nbf-api/"/>
-    <unzip src="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="${docs-dir}/api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-xatmi-api"/>
-    <unzip src="${workdir}/${tag}/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-nbf-api"/>
+    <unzip src="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="${docs-dir}/api"/>
+    <unzip src="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-xatmi-api"/>
+    <unzip src="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-nbf-api"/>
 
     <!-- Update javadocs download url -->
     <exec executable="sed" dir="${config-dir}" outputproperty="first-api-line">
@@ -292,19 +283,19 @@ download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}
   
   <target name="docs.check" description="Check if documentations were built">
     <condition property="docs.exist">
-      <available file="${workdir}/${tag}-docs" type="dir"/>
+      <available file="${workdir}/sources/documentation" type="dir"/>
     </condition>
   </target>
   
   <target name="downloads.check" description="Check if downloads were built">
     <condition property="downloads.exist">
-      <available file="tmp-downloads-dir" type="dir"/>
+      <available file="${workdir}/downloads" type="dir"/>
     </condition>
   </target>
   
   <target name="api.check" description="Check if javadocs were built">
     <condition property="api.exist">
-      <available file="${workdir}/${tag}/narayana-full/target/narayana-full-${tag}-javadoc.jar"/>
+      <available file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar"/>
     </condition>
   </target>
 

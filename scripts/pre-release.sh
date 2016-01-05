@@ -35,8 +35,9 @@ fi
 
 echo "Proceeding..."
 
-TEMP_WORKING_DIR=/tmp/$0
-mkdir $TEMP_WORKING_DIR
+set -e
+TEMP_WORKING_DIR=~/tmp/narayana/$CURRENT/sources/
+mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
 for REPO in documentation quickstart performance narayana
@@ -58,6 +59,3 @@ do
     git push origin $BRANCH --tags || fatal
     cd ..
 done
-
-rm -rf $TEMP_WORKING_DIR
-
