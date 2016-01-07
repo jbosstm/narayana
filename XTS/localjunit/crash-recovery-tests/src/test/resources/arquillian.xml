@@ -4,9 +4,6 @@
 	http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <container qualifier="jboss-as" default="true" mode="manual">
-        <protocol type="jmx-as7">
-            <property name="executionType">REMOTE</property>
-        </protocol>
         <configuration>
             <property name="javaVmArguments">${server.jvm.args}</property>
             <property name="serverConfig">standalone-xts.xml</property>
