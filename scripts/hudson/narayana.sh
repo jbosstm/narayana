@@ -452,6 +452,7 @@ function xts_tests {
 
 function tx_bridge_tests {
   echo "XTS: TXBRIDGE TESTS update conf"
+  [ $XTS_TRACE ] && enable_xts_trace
   cd $WORKSPACE
   CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
   grep recovery-listener "$CONF"
@@ -510,10 +511,11 @@ EOF2
 }
 
 function enable_xts_trace {
+    echo "Enable XTS trace logs"
     CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
 
-    sed -e ':a;N;s/<logger category="com.arjuna">\s*<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/'   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
-    sed -e ':a;N;s/<console-handler name="CONSOLE">\s*<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/'   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+    sed -e '/<logger category="com.arjuna">$/N;s/<logger category="com.arjuna">\n *<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+    sed -e '/<console-handler name="CONSOLE">$/N;s/<console-handler name="CONSOLE">\n *<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
 }
 
 function add_qa_xargs {
