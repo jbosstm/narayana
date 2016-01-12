@@ -464,9 +464,10 @@
                             <para>Heuristic Rollback</para>
                         </entry>
                         <entry>
-                            <para>The commit operation failed because some or all of the participants unilaterally
-                                rolled back the
-                                transaction.</para>
+                            <para>
+                                The commit operation was not able to commit the resources but all of the participants
+                                were able to be rolled back and so an atomic outcome was still achieved.
+                            </para>
                         </entry>
                     </row>
                     <row>
@@ -490,7 +491,7 @@
                             <para>Heuristic Mixed</para>
                         </entry>
                         <entry>
-                            <para>Some participants commit ed, while others were rolled back.</para>
+                            <para>Some participants committed, while others were rolled back.</para>
                         </entry>
                     </row>
                     <row>
