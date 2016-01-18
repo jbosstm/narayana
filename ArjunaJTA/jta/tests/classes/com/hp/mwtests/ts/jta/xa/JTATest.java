@@ -50,6 +50,8 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 public class JTATest {
 
     private XAException exception;
+    protected boolean resource1Rollback;
+    protected boolean resource2Rollback;
     
     @Test
     public void testRMFAILcommit1PC() throws Exception
@@ -136,6 +138,57 @@ public class JTATest {
 		tm.rollback();
 		assertTrue(rollbackCalled.getRollbackCalled());
 	}
+	
+    /**
+     * This is none-spec behaviour that some resource managers perform where they throw a RTE instead of return an XAException
+     * This test verifies that RTE will result in rollback in Narayana
+     *  
+     * @throws SecurityException
+     * @throws IllegalStateException
+     * @throws HeuristicMixedException
+     * @throws HeuristicRollbackException
+     * @throws SystemException
+     * @throws NotSupportedException
+     * @throws RollbackException
+     */
+	@Test
+    public void testRollbackRTE() throws SecurityException, IllegalStateException, HeuristicMixedException, HeuristicRollbackException, SystemException, NotSupportedException, RollbackException {
+
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+            .transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                throw new RuntimeException();
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource1Rollback = true;
+            }
+        }));
+        
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                resource2Rollback = true;
+            }
+        }));
+
+        try {
+            tm.commit();
+            fail("Should not have committed");
+        } catch (RollbackException e) {
+            assertTrue(resource1Rollback);
+            assertTrue(resource2Rollback);
+        }
+    }
 	
 	
 	@Test
@@ -355,4 +408,60 @@ public class JTATest {
 		}
 
 	}
+	
+	private abstract class SimpleXAResource implements XAResource {
+
+        @Override
+        public void start(Xid xid, int flags) throws XAException {
+
+        }
+
+        @Override
+        public boolean setTransactionTimeout(int seconds) throws XAException {
+
+            return false;
+        }
+
+        @Override
+        public void rollback(Xid xid) throws XAException {
+        }
+
+        @Override
+        public Xid[] recover(int flag) throws XAException {
+
+            return null;
+        }
+
+        @Override
+        public int prepare(Xid xid) throws XAException {
+            return XAResource.XA_OK;
+        }
+
+        @Override
+        public boolean isSameRM(XAResource xares) throws XAException {
+
+            return false;
+        }
+
+        @Override
+        public int getTransactionTimeout() throws XAException {
+
+            return 0;
+        }
+
+        @Override
+        public void forget(Xid xid) throws XAException {
+
+        }
+
+        @Override
+        public void end(Xid xid, int flags) throws XAException {
+
+        }
+
+        @Override
+        public void commit(Xid xid, boolean onePhase) throws XAException {
+
+        }
+    }
 }
