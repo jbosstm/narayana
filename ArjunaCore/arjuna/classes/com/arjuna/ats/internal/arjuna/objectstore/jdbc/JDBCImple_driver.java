@@ -102,13 +102,13 @@ public abstract class JDBCImple_driver {
 
 			int rowcount2 = pstmt2.executeUpdate();
 			if (rowcount2 > 0) {
-				result = true;
 				connection.commit();
+				result = true;
 			} else {
 				connection.rollback();
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
 		} finally {
 			if (pstmt != null) {
@@ -157,11 +157,11 @@ public abstract class JDBCImple_driver {
 			pstmt.setString(2, typeName);
 
 			int rowcount = pstmt.executeUpdate();
+			connection.commit();
 			if (rowcount > 0) {
 				result = true;
 			}
-			connection.commit();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_1(e);
 		} finally {
 			if (pstmt != null) {
@@ -203,11 +203,11 @@ public abstract class JDBCImple_driver {
 			pstmt.setString(2, typeName);
 
 			int rowcount = pstmt.executeUpdate();
+			connection.commit();
 			if (rowcount > 0) {
 				result = true;
 			}
-			connection.commit();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_2(e);
 		} finally {
 			if (pstmt != null) {
@@ -302,7 +302,7 @@ public abstract class JDBCImple_driver {
 			if (have_OS_UNCOMMITTED) {
 				theState = StateStatus.OS_UNCOMMITTED;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			tsLogger.i18NLogger.warn_objectstore_JDBCImple_3(e);
 			throw new ObjectStoreException(e);
 		} finally {
@@ -367,22 +367,31 @@ public abstract class JDBCImple_driver {
 						tsLogger.i18NLogger.warn_objectstore_JDBCImple_5(ex);
 
 						return false;
-					} catch (Exception e) {
-						tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
-
-						finished = true;
 					}
 				}
 				connection.commit();
-			} catch (Exception e) {
-				tsLogger.i18NLogger.warn_objectstore_JDBCImple_4(e);
 			} finally {
-				if (rs != null)
-					rs.close();
-				if (stmt != null)
-					stmt.close();
-	            if (connection != null)
-	                connection.close();
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
 			}
 
 			UidHelper.packInto(Uid.nullUid(), store);
@@ -425,23 +434,32 @@ public abstract class JDBCImple_driver {
 						tsLogger.i18NLogger.warn_objectstore_JDBCImple_7(ex);
 
 						return false;
-					} catch (Exception e) {
-						tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
-
-						finished = true;
 					}
 				}
 
 				connection.commit();
-			} catch (Exception e) {
-				tsLogger.i18NLogger.warn_objectstore_JDBCImple_6(e);
 			} finally {
-				if (rs != null)
-					rs.close();
-				if (stmt != null)
-					stmt.close();
-	            if (connection != null)
-	                connection.close();
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						// Ignore
+					}
+				}
 			}
 
 			store.packString("");
@@ -483,7 +501,8 @@ public abstract class JDBCImple_driver {
 					}
 
 					connection.commit();
-				} catch (SQLException e) {
+				} catch (Exception e) {
+					result = false;
 					tsLogger.i18NLogger.warn_objectstore_JDBCImple_8(e);
 				} finally {
 					if (pstmt != null) {
@@ -550,7 +569,8 @@ public abstract class JDBCImple_driver {
 				}
 
 				connection.commit();
-			} catch (SQLException e) {
+			} catch (Exception e) {
+				result = null;
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_14(e);
 			} finally {
 				if (rs != null) {
@@ -649,7 +669,7 @@ public abstract class JDBCImple_driver {
 
 				connection.commit();
 				result = true;
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				tsLogger.i18NLogger.warn_objectstore_JDBCImple_writefailed(e);
 			} finally {
 				if (rs != null) {
