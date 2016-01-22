@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
@@ -78,21 +79,8 @@ public class TransactionImporterImple implements TransactionImporter
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
-		
-		/*
-		 * Check to see if we haven't already imported this thing.
-		 */
-		
-		SubordinateTransaction imported = getImportedTransaction(xid);
-		
-		if (imported == null)
-		{	
-			imported = new TransactionImple(timeout, xid);
-			
-			_transactions.put(new XidImple(xid), imported);
-		}
-		
-		return imported;
+
+		return addImportedTransaction(null, new XidImple(xid), xid, timeout);
 	}
 
 	public SubordinateTransaction recoverTransaction (Uid actId) throws XAException
@@ -104,19 +92,8 @@ public class TransactionImporterImple implements TransactionImporter
 		
 		if (recovered.baseXid() == null)
 		    throw new IllegalArgumentException();
-		
-		TransactionImple tx = (TransactionImple) _transactions.get(recovered.baseXid());
 
-		if (tx == null)
-		{
-			recovered.recordTransaction();
-
-			_transactions.put(recovered.baseXid(), recovered);
-			
-			return recovered;
-		}
-		else
-			return tx;
+		return addImportedTransaction(recovered, recovered.baseXid(), null, 0);
 	}
     
 	/**
@@ -135,11 +112,19 @@ public class TransactionImporterImple implements TransactionImporter
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
-		
-		SubordinateTransaction tx = _transactions.get(new XidImple(xid));
-		
-		if (tx == null)
+
+		AtomicReference<SubordinateTransaction> holder = _transactions.get(new XidImple(xid));
+		SubordinateTransaction tx = holder == null ? null : holder.get();
+
+		if (tx == null) {
+			/*
+			 * Remark: if holder != null and holder.get() == null then the setter is about to
+			 * import the transaction but has not yet updated the holder. We implement the getter
+			 * (the thing that is trying to terminate the imported transaction) as though the imported
+			 * transaction only becomes observable when it has been fully imported.
+			 */
 			return null;
+		}
 
 		if (tx.baseXid() == null)
 		{
@@ -170,7 +155,41 @@ public class TransactionImporterImple implements TransactionImporter
 
 		_transactions.remove(new XidImple(xid));
 	}
-	
-	private static ConcurrentHashMap<Xid, SubordinateTransaction> _transactions = new ConcurrentHashMap<Xid, SubordinateTransaction>();
-	
+
+	private SubordinateTransaction addImportedTransaction(
+			TransactionImple importedTransaction, Xid importedXid, Xid xid, int timeout)
+	{
+		// We need to store the imported transaction in a volatile field holder so that it can be shared between threads
+		AtomicReference<SubordinateTransaction> holder = new AtomicReference<>();
+		AtomicReference<SubordinateTransaction> existing;
+
+		if ((existing = _transactions.putIfAbsent(importedXid, holder)) != null) {
+			holder = existing;
+		}
+
+		SubordinateTransaction txn = holder.get();
+
+		if (txn == null) {
+			// retry the get under a lock - this double check idiom is safe because AtomicReference is effectively
+			// a volatile so can be concurrently accessed by multiple threads
+			synchronized (holder) {
+				txn = holder.get();
+				if (txn == null) {
+					// now it's safe to add the imported transaction to the holder
+					if (importedTransaction != null) {
+						importedTransaction.recordTransaction();
+						txn = importedTransaction;
+					} else {
+						txn = new TransactionImple(timeout, xid);
+					}
+
+					holder.set(txn);
+				}
+			}
+		}
+
+		return txn;
+	}
+
+	private static ConcurrentHashMap<Xid, AtomicReference<SubordinateTransaction>> _transactions = new ConcurrentHashMap<>();
 }
