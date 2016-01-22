@@ -35,13 +35,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class TransactionImporterImple implements TransactionImporter
 {
@@ -87,19 +91,11 @@ public class TransactionImporterImple implements TransactionImporter
 			throw new IllegalArgumentException();
 
 		/*
-		 * Check to see if we haven't already imported this thing.
+		 * the imported transaction map is keyed by xid and the xid used is the one created inside
+		 * the TransactionImple ctor (it encodes the node name of this transaction manager) and is
+		 * the one returned by TransactionImple#baseXid() so pass in the converted value (using convertXid).
 		 */
-
-		TransactionImple imported = (TransactionImple) getImportedTransaction(xid);
-
-		if (imported == null)
-		{
-			imported = new TransactionImple(timeout, xid);
-			
-			_transactions.put(new SubordinateXidImple(imported.baseXid()), imported);
-		}
-
-		return imported;
+		return addImportedTransaction(null, convertXid(xid), xid, timeout);
 	}
 
 	/**
@@ -123,28 +119,16 @@ public class TransactionImporterImple implements TransactionImporter
 		    throw new IllegalArgumentException();
 		
 		/*
-		 * Is the transaction already in the list? This may be the case because
+		 * Is the transaction already in the map? This may be the case because
 		 * we scan the object store periodically and may get Uids to recover for
 		 * transactions that are progressing normally, i.e., do not need
-		 * recovery. In which case, we need to ignore them.
+		 * recovery. In which case, we need to ignore them:
+		 *
+		 * ie calling addImportedTransaction with a non null value for recovered will
+		 * call recovered.recordTransaction()
 		 */
 
-		TransactionImple tx = (TransactionImple) _transactions.get(recovered
-				.baseXid());
-
-		if (tx == null)
-		{
-
-			Xid baseXid = recovered.baseXid();
-			_transactions.put(new SubordinateXidImple(baseXid), recovered);
-			recovered.recordTransaction();
-
-			return recovered;
-		}
-		else
-		{
-			return tx;
-		}
+		return addImportedTransaction(recovered, recovered.baseXid(), null, 0);
 	}
 
 	/**
@@ -167,11 +151,19 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		SubordinateTransaction tx = _transactions.get(new SubordinateXidImple(xid));
+		AtomicReference<TransactionImple> holder = _transactions.get(new SubordinateXidImple(xid));
+		TransactionImple tx = holder == null ? null : holder.get();
 
-		if (tx == null)
+		if (tx == null) {
+			/*
+			 * Remark: if holder != null and holder.get() == null then the setter is about to
+			 * import the transaction but has not yet updated the holder. We implement the getter
+			 * (the thing that is trying to terminate the imported transaction) as though the imported
+			 * transaction only becomes observable when it has been fully imported.
+			 */
 			return null;
-		
+		}
+
 		// https://issues.jboss.org/browse/JBTM-927
 		try {
 			if (tx.getStatus() == javax.transaction.Status.STATUS_ROLLEDBACK) {
@@ -211,17 +203,65 @@ public class TransactionImporterImple implements TransactionImporter
 	}
 	
 	public Set<Xid> getInflightXids(String parentNodeName) {
-		Iterator<TransactionImple> iterator = _transactions.values().iterator();
+		Iterator<AtomicReference<TransactionImple>> iterator = _transactions.values().iterator();
 		Set<Xid> toReturn = new HashSet<Xid>();
 		while (iterator.hasNext()) {
-			TransactionImple next = iterator.next();
-			if (next.getParentNodeName().equals(parentNodeName)) {
-				toReturn.add(next.baseXid());
+			AtomicReference<TransactionImple> holder = iterator.next();
+			TransactionImple imported = holder.get();
+
+			if (imported != null && imported.getParentNodeName().equals(parentNodeName)) {
+				toReturn.add(imported.baseXid());
 			}
 		}
 		return toReturn;
 	}
 
-	private static ConcurrentHashMap<SubordinateXidImple, TransactionImple> _transactions = new ConcurrentHashMap<SubordinateXidImple, TransactionImple>();
+	private TransactionImple addImportedTransaction(TransactionImple importedTransaction, Xid mapKey, Xid xid, int timeout) {
+		SubordinateXidImple importedXid = new SubordinateXidImple(mapKey);
+		// We need to store the imported transaction in a volatile field holder so that it can be shared between threads
+		AtomicReference<TransactionImple> holder = new AtomicReference<>();
+		AtomicReference<TransactionImple> existing;
+
+		if ((existing = _transactions.putIfAbsent(importedXid, holder)) != null) {
+			holder = existing;
+		}
+
+		TransactionImple txn = holder.get();
+
+		if (txn == null) {
+			// retry the get under a lock - this double check idiom is safe because AtomicReference is effectively
+			// a volatile so can be concurrently accessed by multiple threads
+			synchronized (holder) {
+				txn = holder.get();
+				if (txn == null) {
+					// now it's safe to add the imported transaction to the holder
+					if (importedTransaction != null) {
+						importedTransaction.recordTransaction();
+						txn = importedTransaction;
+					} else {
+						txn = new TransactionImple(timeout, xid);
+					}
+
+					holder.set(txn);
+				}
+			}
+		}
+
+		return txn;
+	}
+
+	private XidImple convertXid(Xid xid)
+	{
+		if (xid != null && xid.getFormatId() == XATxConverter.FORMAT_ID) {
+			XidImple toImport = new XidImple(xid);
+			XATxConverter.setSubordinateNodeName(toImport.getXID(), TxControl.getXANodeName());
+			return new XidImple(toImport);
+		} else {
+			return new XidImple(xid);
+		}
+	}
+
+	private static ConcurrentHashMap<SubordinateXidImple, AtomicReference<TransactionImple>> _transactions =
+			new ConcurrentHashMap<>();
 }
 
