@@ -38,6 +38,11 @@
           </goals>
         </execution>
       </executions>
+      <configuration>
+        <excludes>
+          <exclude>org/omg/CORBA/*</exclude>
+        </excludes>
+      </configuration>
       </plugin>
 
       <plugin>
