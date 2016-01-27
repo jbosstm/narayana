@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.activemq.artemis.core.journal.Journal;
 import org.apache.activemq.artemis.core.journal.JournalLoadInformation;
@@ -60,10 +61,9 @@ public class HornetqJournalStore
 
     private final ConcurrentMap<String,Map<Uid, RecordInfo>> content = new ConcurrentHashMap<String, Map<Uid, RecordInfo>>();
 
-    private final Object uidMappingLock = new Object();
     private final boolean syncWrites;
     private final boolean syncDeletes;
-    private long maxID = 0;
+    private final AtomicLong maxID = new AtomicLong(0);
 
     private final String storeDirCanonicalPath;
 
@@ -86,7 +86,7 @@ public class HornetqJournalStore
         };
 
         JournalLoadInformation journalLoadInformation = journal.load(committedRecords, preparedTransactions, failureCallback);
-        maxID = journalLoadInformation.getMaxID();
+        maxID.set(journalLoadInformation.getMaxID());
 
         if(!preparedTransactions.isEmpty()) {
             tsLogger.i18NLogger.warn_journal_load_error();
@@ -252,22 +252,24 @@ public class HornetqJournalStore
 
     private Map<Uid, RecordInfo> getContentForType(String typeName) {
         Map<Uid, RecordInfo> result = content.get(typeName);
+
         if(result == null) {
-            content.putIfAbsent(typeName, new ConcurrentHashMap<Uid, RecordInfo>());
-            result = content.get(typeName);
+            ConcurrentHashMap<Uid, RecordInfo> newMap = new ConcurrentHashMap<Uid, RecordInfo>();
+            result = content.putIfAbsent(typeName, newMap);
+
+            if(result == null) {
+                result = newMap;
+            }
         }
         return result;
     }
 
     private long getId(Uid uid, String typeName) {
-        synchronized (uidMappingLock) {
-            RecordInfo record = getContentForType(typeName).get(uid);
-            if(record != null) {
-                return record.id;
-            } else {
-                maxID++;
-                return maxID;
-            }
+        RecordInfo record = getContentForType(typeName).get(uid);
+        if(record != null) {
+            return record.id;
+        } else {
+            return maxID.incrementAndGet();
         }
     }
 }
