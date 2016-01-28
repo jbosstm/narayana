@@ -730,7 +730,7 @@ public class SimpleIsolatedServers {
 	 */
 	@Test
 	public void testRecovery2() throws Exception {
-		System.out.println("testRecovery");
+		System.out.println("testRecovery2");
 		for (String nodeName: serverNodeNames) {
 			assertTrue("" + completionCounter.getCommitCount(nodeName), completionCounter.getCommitCount(nodeName) == 0);
 			assertTrue("" + completionCounter.getRollbackCount(nodeName), completionCounter.getRollbackCount(nodeName) == 0);
