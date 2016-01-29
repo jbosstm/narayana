@@ -38,6 +38,7 @@
     <module>cdi</module>
     <module>jdbc</module>
     <module>spi</module>
+    <module>jms</module>
     <module>narayana-jta</module>
   </modules>
   <profiles>

@@ -397,6 +397,7 @@
     <!-- External dependencies versions -->
     <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.1</version.org.codehaus.mojo.findbugs-maven-plugin>
     <version.org.wildfly.arquillian>1.0.0.CR1</version.org.wildfly.arquillian>
+    <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.jandex>1.1.0.Final</version.org.jboss.jandex>
     <version.rhino.js>1.7R2</version.rhino.js>
@@ -451,6 +452,7 @@
     <version.org.jboss.arquillian.container.weld>1.0.0.CR8</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.jboss-transaction-spi>7.3.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
+    <version.org.mockito>1.10.19</version.org.mockito>
 
     <!-- Maven plugin versions -->
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
