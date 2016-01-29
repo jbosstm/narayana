@@ -42,7 +42,16 @@ then
     exit
   fi
   (cd jboss-as; sed -i "s/narayana>$PREVIOUS/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push --set-upstream jbosstm ${WFLYISSUE})
-  (cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest ersion of Narayana"; git push -f)
+  (cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest version of Narayana"; git push -f)
+fi
+set +e
+git tag | grep $CURRENT
+if [[ $? != 0 ]]
+then
+  set -e
+  (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
+else  
+  set -e
 fi
 if [[ $(uname) == CYGWIN* ]]
 then
