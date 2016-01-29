@@ -55,9 +55,9 @@ else
 fi
 if [[ $(uname) == CYGWIN* ]]
 then
-  git fetch --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn.cmd" -Dawestruct.executable="awestruct.bat" all
+  git fetch upstream --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn.cmd" -Dawestruct.executable="awestruct.bat" all
 else
-  git fetch --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn" -Dawestruct.executable="awestruct" all
+  git fetch upstream --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn" -Dawestruct.executable="awestruct" all
 fi
 echo "build and retrieve the centos54x64 blacktie binary on centos54x64 machine"
 ssh lancel.eng.hst.ams2.redhat.com -x "cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; git clone -b $WFLYISSUE  https://github.com/jbosstm/jboss-as.git; (cd jboss-as; JAVA_HOME=/usr/local/jdk1.8.0/ ./build.sh install -DskipTests); ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
