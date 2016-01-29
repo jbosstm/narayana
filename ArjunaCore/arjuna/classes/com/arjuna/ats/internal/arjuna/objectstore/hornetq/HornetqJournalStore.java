@@ -59,7 +59,7 @@ public class HornetqJournalStore
 {
     private final Journal journal;
 
-    private final ConcurrentMap<String,Map<Uid, RecordInfo>> content = new ConcurrentHashMap<String, Map<Uid, RecordInfo>>();
+    private final ConcurrentMap<String,ConcurrentMap<Uid, RecordInfo>> content = new ConcurrentHashMap<String, ConcurrentMap<Uid, RecordInfo>>();
 
     private final boolean syncWrites;
     private final boolean syncDeletes;
@@ -80,7 +80,7 @@ public class HornetqJournalStore
         List<RecordInfo> committedRecords = new LinkedList<RecordInfo>();
         List<PreparedTransactionInfo> preparedTransactions = new LinkedList<PreparedTransactionInfo>();
         TransactionFailureCallback failureCallback = new TransactionFailureCallback() {
-            public void failedTransaction(long l, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos1) {
+            public void failedTransaction(long l, List<RecordInfo> recordInfos, List<RecordInfo> recordInfos1) {
                 tsLogger.i18NLogger.warn_journal_load_error();
             }
         };
@@ -148,8 +148,8 @@ public class HornetqJournalStore
     public boolean remove_committed(Uid uid, String typeName) throws ObjectStoreException
     {
         try {
-            long id = getId(uid, typeName); // look up the id *before* doing the remove from state, or it won't be there any more.
-            getContentForType(typeName).remove(uid);
+            RecordInfo record = getContentForType(typeName).remove(uid);
+            long id = (record != null ? record.id : getId(uid, typeName));
             journal.appendDeleteRecord(id, syncDeletes);
 
             return true;
@@ -182,15 +182,15 @@ public class HornetqJournalStore
             long id = getId(uid, typeName);
             byte[] data = outputBuffer.buffer();
 
-            // yup, there is a race condition here.
-            if(getContentForType(typeName).containsKey(uid)) {
+            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false, (short)0);
+            RecordInfo previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
+
+            if(previousRecord != null) {
                 journal.appendUpdateRecord(id, RECORD_TYPE, data, syncWrites);
             } else {
                 journal.appendAddRecord(id, RECORD_TYPE, data, syncWrites);
             }
 
-            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false, (short)0);
-            getContentForType(typeName).put(uid, record);
         } catch(Exception e) {
             throw new ObjectStoreException(e);
         }
@@ -217,18 +217,16 @@ public class HornetqJournalStore
         // not too much of an issue as log reads are done for recovery only.
         try {
             InputBuffer inputBuffer = new InputBuffer(record.data);
-            Uid unpackedUid = UidHelper.unpackFrom(inputBuffer);
-            String unpackedTypeName = inputBuffer.unpackString();
-            InputObjectState inputObjectState = new InputObjectState(uid, typeName, inputBuffer.unpackBytes());
-            return inputObjectState;
+            UidHelper.unpackFrom(inputBuffer);
+            inputBuffer.unpackString();
+            return new InputObjectState(uid, typeName, inputBuffer.unpackBytes());
         } catch(Exception e) {
             throw new ObjectStoreException(e);
         }
     }
 
     public boolean contains(Uid uid, String typeName) {
-        RecordInfo record = getContentForType(typeName).get(uid);
-        return record != null;
+        return getContentForType(typeName).containsKey(uid);
     }
 
     /**
@@ -250,8 +248,8 @@ public class HornetqJournalStore
 
     /////////////////////////////////
 
-    private Map<Uid, RecordInfo> getContentForType(String typeName) {
-        Map<Uid, RecordInfo> result = content.get(typeName);
+    private ConcurrentMap<Uid, RecordInfo> getContentForType(String typeName) {
+        ConcurrentMap<Uid, RecordInfo> result = content.get(typeName);
 
         if(result == null) {
             ConcurrentHashMap<Uid, RecordInfo> newMap = new ConcurrentHashMap<Uid, RecordInfo>();
