@@ -158,22 +158,10 @@
     <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
     <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-xatmi-api"/>
     <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-nbf-api"/>
-    <antcall target="remote-copy">
-        <param name="from" value="${workdir}/downloads"/>
-        <param name="to" value="${downloads.dir}/${tag}"/>
-    </antcall>
-  </target>
-
-  <target name="remote-copy">
-	    <property  name="rsync.cmd" value="--chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r ${from}/* jbosstm@filemgmt.jboss.org:${to}" />
-            <exec executable="bash" dir="." failonerror="true">
-              <arg value="-c"/>
-              <arg value="echo rsync ${rsync.cmd}" />
-            </exec>
-            <exec executable="bash" dir="." failonerror="true">
-              <arg value="-c"/>
-              <arg value="rsync ${rsync.cmd}" />
-            </exec>
+    <exec executable="bash" dir="${workdir}" failonerror="true">
+      <arg value="-c"/>
+      <arg value="rsync --chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r downloads/* jbosstm@filemgmt.jboss.org:${downloads.dir}/${tag}" />
+    </exec>
   </target>
   
   <target name="web" description="Update downloads, docs, and javadocs on Narayana web page and commit them">
