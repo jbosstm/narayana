@@ -174,24 +174,28 @@ public class HornetqJournalStore
      */
     public boolean write_committed(Uid uid, String typeName, OutputObjectState txData) throws ObjectStoreException
     {
+        RecordInfo previousRecord = null;
         try {
             OutputBuffer outputBuffer = new OutputBuffer();
             UidHelper.packInto(uid, outputBuffer);
             outputBuffer.packString(typeName);
             outputBuffer.packBytes(txData.buffer());
-            long id = getId(uid, typeName);
             byte[] data = outputBuffer.buffer();
 
-            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false, (short)0);
-            RecordInfo previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
+            RecordInfo record = new RecordInfo(getId(uid, typeName), RECORD_TYPE, data, false, (short)0);
+            previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
 
             if(previousRecord != null) {
-                journal.appendUpdateRecord(id, RECORD_TYPE, data, syncWrites);
+                journal.appendUpdateRecord(previousRecord.id, RECORD_TYPE, data, syncWrites);
             } else {
-                journal.appendAddRecord(id, RECORD_TYPE, data, syncWrites);
+                journal.appendAddRecord(record.id, RECORD_TYPE, data, syncWrites);
             }
 
         } catch(Exception e) {
+            if (previousRecord == null) {
+                // if appendAddRecord() fails, remove record from map. Leave it there if appendUpdateRecord() fails.
+                getContentForType(typeName).remove(uid);
+            }
             throw new ObjectStoreException(e);
         }
 
