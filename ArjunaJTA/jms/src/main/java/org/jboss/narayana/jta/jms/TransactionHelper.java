@@ -34,8 +34,8 @@ public interface TransactionHelper {
 
     void registerSynchronization(Synchronization synchronization) throws JMSException;
 
-    void enlistResource(XAResource xaResource) throws JMSException;
+    void registerXAResource(XAResource xaResource) throws JMSException;
 
-    void delistResource(XAResource xaResource) throws JMSException;
+    void deregisterXAResource(XAResource xaResource) throws JMSException;
 
 }

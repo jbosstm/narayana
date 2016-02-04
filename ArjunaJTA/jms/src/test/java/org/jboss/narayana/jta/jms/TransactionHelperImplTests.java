@@ -109,37 +109,55 @@ public class TransactionHelperImplTests {
     }
 
     @Test
-    public void shouldEnlistResource() throws Exception {
+    public void shouldRegisterXAResource() throws Exception {
         when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
+        when(transactionMock.enlistResource(any(XAResource.class))).thenReturn(true);
 
-        transactionHelper.enlistResource(xaResourceMock);
+        transactionHelper.registerXAResource(xaResourceMock);
         verify(transactionManagerMock, times(1)).getTransaction();
         verify(transactionMock, times(1)).enlistResource(xaResourceMock);
     }
 
     @Test(expected = JMSException.class)
-    public void shouldFailToEnlistResource() throws Exception {
+    public void shouldFailToRegisterXAResource() throws Exception {
+        when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
+        when(transactionMock.enlistResource(any(XAResource.class))).thenReturn(false);
+
+        transactionHelper.registerXAResource(xaResourceMock);
+    }
+
+    @Test(expected = JMSException.class)
+    public void shouldFailToRegisterXAResourceWithException() throws Exception {
         when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
         when(transactionMock.enlistResource(any(XAResource.class))).thenThrow(new IllegalStateException());
 
-        transactionHelper.enlistResource(xaResourceMock);
+        transactionHelper.registerXAResource(xaResourceMock);
     }
 
     @Test
-    public void shouldDelistResource() throws Exception {
+    public void shouldDeregisterXAResource() throws Exception {
         when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
+        when(transactionMock.delistResource(any(XAResource.class), anyInt())).thenReturn(true);
 
-        transactionHelper.delistResource(xaResourceMock);
+        transactionHelper.deregisterXAResource(xaResourceMock);
         verify(transactionManagerMock, times(1)).getTransaction();
         verify(transactionMock, times(1)).delistResource(xaResourceMock, XAResource.TMSUCCESS);
     }
 
     @Test(expected = JMSException.class)
-    public void shouldFailToDeslitResource() throws Exception {
+    public void shouldFailToDeregisterXAResource() throws Exception {
+        when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
+        when(transactionMock.delistResource(any(XAResource.class), anyInt())).thenReturn(false);
+
+        transactionHelper.deregisterXAResource(xaResourceMock);
+    }
+
+    @Test(expected = JMSException.class)
+    public void shouldFailToDeregisterXAResourceWithException() throws Exception {
         when(transactionManagerMock.getTransaction()).thenReturn(transactionMock);
         when(transactionMock.delistResource(any(XAResource.class), anyInt())).thenThrow(new IllegalStateException());
 
-        transactionHelper.delistResource(xaResourceMock);
+        transactionHelper.deregisterXAResource(xaResourceMock);
     }
 
 }

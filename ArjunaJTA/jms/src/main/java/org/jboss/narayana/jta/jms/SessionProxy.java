@@ -64,7 +64,7 @@ public class SessionProxy implements Session {
     @Override
     public void close() throws JMSException {
         if (transactionHelper.isTransactionAvailable()) {
-            transactionHelper.delistResource(xaSession.getXAResource());
+            transactionHelper.deregisterXAResource(xaSession.getXAResource());
 
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Delisted " + xaSession + " XA resource from the transaction");

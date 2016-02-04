@@ -21,18 +21,18 @@
  */
 package org.jboss.narayana.jta.jms;
 
+import org.jboss.logging.Logger;
+
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.transaction.Synchronization;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class ConnectionClosingSynchronization implements Synchronization {
 
-    private static final Logger LOGGER = Logger.getLogger(ConnectionClosingSynchronization.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConnectionClosingSynchronization.class);
 
     private final Connection connection;
 
@@ -47,22 +47,15 @@ public class ConnectionClosingSynchronization implements Synchronization {
 
     @Override
     public void afterCompletion(int status) {
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Closing connection " + connection);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Closing connection " + connection);
         }
 
         try {
             connection.close();
         } catch (JMSException e) {
-            LOGGER.warning("Failed to close connection " + connection + ": " + e.getMessage());
+            LOGGER.warn("Failed to close connection " + connection + ": " + e.getMessage());
         }
-    }
-
-    /**
-     * Should only be used for testing.
-     */
-    Connection getConnection() {
-        return connection;
     }
 
 }

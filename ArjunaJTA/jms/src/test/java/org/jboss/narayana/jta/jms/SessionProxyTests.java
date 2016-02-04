@@ -23,16 +23,19 @@ package org.jboss.narayana.jta.jms;
 
 import javax.jms.Session;
 import javax.jms.XASession;
+import javax.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,16 +64,22 @@ public class SessionProxyTests {
 
     @Test
     public void shouldCloseSession() throws Exception {
-        ArgumentCaptor<SessionClosingSynchronization> argument = ArgumentCaptor.forClass(SessionClosingSynchronization.class);
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
         when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
 
+        List<Synchronization> synchronizations = new ArrayList<>(1);
+        doAnswer(i -> synchronizations.add(i.getArgumentAt(0, Synchronization.class))).when(transactionHelperMock)
+                .registerSynchronization(any(Synchronization.class));
+
         session.close();
 
+        // Will check if the correct session was registered for closing
+        synchronizations.get(0).afterCompletion(0);
+
         verify(transactionHelperMock, times(1)).isTransactionAvailable();
-        verify(transactionHelperMock, times(1)).delistResource(xaResourceMock);
-        verify(transactionHelperMock, times(1)).registerSynchronization(argument.capture());
-        assertThat(xaSessionMock, sameInstance(argument.getValue().getSession()));
+        verify(transactionHelperMock, times(1)).deregisterXAResource(xaResourceMock);
+        verify(transactionHelperMock, times(1)).registerSynchronization(any(SessionClosingSynchronization.class));
+        verify(xaSessionMock, times(1)).close();
     }
 
 }

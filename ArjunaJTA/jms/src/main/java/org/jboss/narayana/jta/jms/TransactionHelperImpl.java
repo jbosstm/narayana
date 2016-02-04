@@ -21,7 +21,10 @@
  */
 package org.jboss.narayana.jta.jms;
 
+import org.jboss.logging.Logger;
+
 import javax.jms.JMSException;
+import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
@@ -34,6 +37,8 @@ import javax.transaction.xa.XAResource;
  */
 public class TransactionHelperImpl implements TransactionHelper {
 
+    private static final Logger LOGGER = Logger.getLogger(TransactionHelperImpl.class);
+
     private final TransactionManager transactionManager;
 
     public TransactionHelperImpl(TransactionManager transactionManager) {
@@ -45,7 +50,8 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION;
         } catch (SystemException e) {
-            throw new JMSException("Failed to get transaction status: " + e.getMessage());
+            LOGGER.warn("Failed to get transaction status", e);
+            throw getJmsException("Failed to get transaction status", e);
         }
     }
 
@@ -53,26 +59,35 @@ public class TransactionHelperImpl implements TransactionHelper {
     public void registerSynchronization(Synchronization synchronization) throws JMSException {
         try {
             getTransaction().registerSynchronization(synchronization);
-        } catch (Throwable t) {
-            throw new JMSException("Failed to register synchronization: " + t.getMessage());
+        } catch (IllegalStateException | RollbackException | SystemException e) {
+            LOGGER.warn("Failed to register synchronization", e);
+            throw getJmsException("Failed to register synchronization", e);
         }
     }
 
     @Override
-    public void enlistResource(XAResource xaResource) throws JMSException {
+    public void registerXAResource(XAResource xaResource) throws JMSException {
         try {
-            getTransaction().enlistResource(xaResource);
-        } catch (Throwable t) {
-            throw new JMSException("Failed to enlist XA resource: " + t.getMessage());
+            if (!getTransaction().enlistResource(xaResource)) {
+                LOGGER.warn("Failed to enlist XA resource");
+                throw getJmsException("Failed to enlist XA resource", null);
+            }
+        } catch (RollbackException | IllegalStateException | SystemException e) {
+            LOGGER.warn("Failed to enlist XA resource", e);
+            throw getJmsException("Failed to enlist XA resource", e);
         }
     }
 
     @Override
-    public void delistResource(XAResource xaResource) throws JMSException {
+    public void deregisterXAResource(XAResource xaResource) throws JMSException {
         try {
-            getTransaction().delistResource(xaResource, XAResource.TMSUCCESS);
-        } catch (Throwable t) {
-            throw new JMSException("Failed to delist XA resource: " + t.getMessage());
+            if (!getTransaction().delistResource(xaResource, XAResource.TMSUCCESS)) {
+                LOGGER.warn("Failed to delist XA resource");
+                throw getJmsException("Failed to delist XA resource", null);
+            }
+        } catch (IllegalStateException | SystemException e) {
+            LOGGER.warn("Failed to delist XA resource", e);
+            throw getJmsException("Failed to delist XA resource", e);
         }
     }
 
@@ -80,8 +95,15 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getTransaction();
         } catch (SystemException e) {
-            throw new JMSException("Failed to get transaction: " + e.getMessage());
+            LOGGER.warn("Failed to get transaction", e);
+            throw getJmsException("Failed to get transaction", e);
         }
+    }
+
+    private JMSException getJmsException(String message, Exception cause) {
+        JMSException jmsException = new JMSException(message);
+        jmsException.setLinkedException(cause);
+        return jmsException;
     }
 
 }

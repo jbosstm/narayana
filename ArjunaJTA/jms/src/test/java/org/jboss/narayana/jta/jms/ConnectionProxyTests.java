@@ -26,19 +26,23 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.XAConnection;
 import javax.jms.XASession;
+import javax.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -93,15 +97,15 @@ public class ConnectionProxyTests {
 
         assertThat(session, instanceOf(SessionProxy.class));
         verify(transactionHelperMock, times(1)).isTransactionAvailable();
-        verify(transactionHelperMock, times(1)).enlistResource(xaResourceMock);
+        verify(transactionHelperMock, times(1)).registerXAResource(xaResourceMock);
         verify(xaConnectionMock, times(1)).createXASession();
         verify(xaSessionMock, times(1)).getXAResource();
     }
 
     @Test
-    public void shouldFailToEnlistSessionResource() throws Exception {
+    public void shouldFailToRegisterSessionResource() throws Exception {
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
-        doThrow(new JMSException(null)).when(transactionHelperMock).enlistResource(any(XAResource.class));
+        doThrow(new JMSException(null)).when(transactionHelperMock).registerXAResource(any(XAResource.class));
         when(xaConnectionMock.createXASession()).thenReturn(xaSessionMock);
         when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
 
@@ -115,14 +119,14 @@ public class ConnectionProxyTests {
         }
 
         verify(transactionHelperMock, times(1)).isTransactionAvailable();
-        verify(transactionHelperMock, times(1)).enlistResource(xaResourceMock);
+        verify(transactionHelperMock, times(1)).registerXAResource(xaResourceMock);
         verify(xaConnectionMock, times(1)).createXASession();
         verify(xaSessionMock, times(1)).getXAResource();
         verify(xaSessionMock, times(1)).close();
     }
 
     @Test
-    public void shouldCloseSessionWithoutTransaction() throws Exception {
+    public void shouldCloseConnectionWithoutTransaction() throws Exception {
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(false);
 
         Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);
@@ -133,17 +137,22 @@ public class ConnectionProxyTests {
     }
 
     @Test
-    public void shouldCloseSessionWithTransaction() throws Exception {
-        ArgumentCaptor<ConnectionClosingSynchronization> argument = ArgumentCaptor
-                .forClass(ConnectionClosingSynchronization.class);
+    public void shouldCloseConnectionWithTransaction() throws Exception {
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
+
+        List<Synchronization> synchronizations = new ArrayList<>(1);
+        doAnswer(i -> synchronizations.add(i.getArgumentAt(0, Synchronization.class))).when(transactionHelperMock)
+                .registerSynchronization(any(Synchronization.class));
 
         Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);
         connection.close();
 
+        // Will check if the correct connection was registered for closing
+        synchronizations.get(0).afterCompletion(0);
+
         verify(transactionHelperMock, times(1)).isTransactionAvailable();
-        verify(transactionHelperMock, times(1)).registerSynchronization(argument.capture());
-        assertThat(xaConnectionMock, sameInstance(argument.getValue().getConnection()));
+        verify(transactionHelperMock, times(1)).registerSynchronization(any(Synchronization.class));
+        verify(xaConnectionMock, times(1)).close();
     }
 
 }

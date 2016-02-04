@@ -22,7 +22,6 @@
 package org.jboss.narayana.jta.jms.helpers;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
@@ -36,6 +35,7 @@ import org.apache.activemq.artemis.jms.server.config.impl.ConnectionFactoryConfi
 import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
+import org.jboss.logging.Logger;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
