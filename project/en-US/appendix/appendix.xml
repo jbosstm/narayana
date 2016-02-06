@@ -10,4 +10,5 @@
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="core_class_definitions.xml" />
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="idl_definitions.xml" />
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="rts_transaction_statuses.xml" />
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="QANotes5-1.xml" />
 </chapter>
