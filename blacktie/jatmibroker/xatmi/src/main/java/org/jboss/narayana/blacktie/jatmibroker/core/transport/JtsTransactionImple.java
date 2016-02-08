@@ -42,7 +42,6 @@ public class JtsTransactionImple extends TransactionImple {
      * check whether the calling thread is associated with a transaction
      * 
      * @return true if there is transaction on the callers thread
-     * @throws NamingException
      */
     public static boolean hasTransaction() {
         if (hasTransactionManager()) {
@@ -68,7 +67,6 @@ public class JtsTransactionImple extends TransactionImple {
      * Associated a transaction with the callers thread
      * 
      * @param ior IOR for the corresponding OTS transaction, must not be null
-     * @param control
      * 
      * @throws SystemException
      * @throws IllegalStateException
@@ -145,7 +143,6 @@ public class JtsTransactionImple extends TransactionImple {
      * If the current transaction represents an OTS transaction then return it IOR
      * 
      * @return the IOR or null if the current transaction is not an OTS transaction
-     * @throws NamingException
      * @throws org.omg.CORBA.SystemException
      * @throws SystemException
      * @throws Unavailable

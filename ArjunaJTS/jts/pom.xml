@@ -42,6 +42,11 @@
     <testSourceDirectory>tests/classes</testSourceDirectory>
     <plugins>
       <plugin>
+        <inherited>false</inherited>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
        <groupId>org.apache.maven.plugins</groupId>
        <artifactId>maven-jar-plugin</artifactId>
        <executions>
@@ -218,6 +223,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>jacorb-idl</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -310,6 +316,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -532,6 +539,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>ibmorb-idl</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -626,6 +634,24 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+        <id>release</id>
+        <build>
+          <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
           </plugin>
         </plugins>
       </build>

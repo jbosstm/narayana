@@ -28,7 +28,7 @@ public interface Transport {
      * 
      * @param serviceName
      * @return the sender
-     * @throws ConfigurationException
+     * @throws ConnectionException
      */
     public Sender getSender(String serviceName, boolean conversational) throws ConnectionException;
 
@@ -37,7 +37,7 @@ public interface Transport {
      * 
      * @param replyTo
      * @return the new sender
-     * @throws ConfigurationException
+     * @throws ConnectionException
      */
     public Sender createSender(Object replyTo) throws ConnectionException;
     
@@ -48,7 +48,7 @@ public interface Transport {
      * 
      * @param serviceName
      * @return the receiver
-     * @throws ConfigurationException
+     * @throws ConnectionException
      */
     public Receiver getReceiver(String serviceName, boolean conversational) throws ConnectionException;
 
@@ -56,7 +56,7 @@ public interface Transport {
      * Create a receiver on a temporary queue.
      * 
      * @return The receiver
-     * @throws ConfigurationException
+     * @throws ConnectionException
      */
     public Receiver createReceiver(int cd, ResponseMonitor responseMonitor, EventListener eventListener) throws ConnectionException;
 

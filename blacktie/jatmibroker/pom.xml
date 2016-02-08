@@ -24,9 +24,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.narayana.blacktie</groupId>
-    <artifactId>blacktie-common</artifactId>
+    <artifactId>jatmibroker</artifactId>
     <packaging>pom</packaging>
-    <name>Blacktie Defaults and Dependencies</name>
+    <name>Blacktie Jatmibroker</name>
     <url>http://www.jboss.org/blacktie</url>
     <description>A BlackTie component</description>
     <scm>
@@ -85,6 +85,8 @@
         </plugins>
     </build>
     <modules>
-        <module>C</module>
+        <module>java</module>
+        <module>xatmi</module>
+        <module>nbf</module>
     </modules>
 </project>

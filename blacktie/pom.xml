@@ -138,11 +138,6 @@
                 <version>${version.org.jboss.logging.jboss-logging}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.spec.javax.jms</groupId>
-                <artifactId>jboss-jms-api_1.1_spec</artifactId>
-                <version>1.0.1.Final</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
                 <version>${version.org.jboss.arquillian.core}</version>
@@ -207,6 +202,11 @@
             <dependency>
                 <groupId>org.jboss.narayana.blacktie</groupId>
                 <artifactId>blacktie-xsd</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.narayana.blacktie</groupId>
+                <artifactId>jatmibroker</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -341,8 +341,7 @@
         <module>common</module>
         <module>xsd</module>
         <module>messaging</module>
-        <module>jatmibroker-xatmi</module>
-        <module>jatmibroker-nbf</module>
+        <module>jatmibroker</module>
         <module>blacktie-admin-services</module>
         <module>blacktie-admin-services/ear</module>
         <module>core</module>

@@ -377,7 +377,8 @@
     </plugins>
   </build>
 
-  <properties>
+  <properties>  
+    <skip.blacktie.tests>true</skip.blacktie.tests>
     <!-- IP stack configs. -->
     <testLogToFile>true</testLogToFile>
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
@@ -545,6 +546,9 @@
           </plugin>
           </plugins>
       </build>
+      <modules>
+        <module>blacktie/jatmibroker</module>
+      </modules>
     </profile>
       <profile>
           <id>codeCoverage</id>
