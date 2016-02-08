@@ -94,21 +94,17 @@ public class XARecoveryModule implements RecoveryModule
 
     public void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
         synchronized (scanState) {
-            if (getScanState().equals(ScanStates.FIRST_PASS)) {
-                // the first pass collects xa resources from recovery helpers - wait for it to finish
-                waitForScanState(ScanStates.BETWEEN_PASSES);
-
-                if (getScanState().equals(ScanStates.BETWEEN_PASSES)) {
-                    /*
-                     * check whether any resources found in the first pass were provided by
-                     * the target xaResourceRecoveryHelper and if so then we need to wait for second pass
-                     * of the scanner to finish
-                     */
-                    if (isHelperInUse(xaResourceRecoveryHelper))
-                        waitForScanState(ScanStates.IDLE);
-                }
-            } else if (!getScanState().equals(ScanStates.IDLE)) {
-                // scanner is in pass 2 or in between passes
+            // the first pass collects xa resources from recovery helpers - wait for it to finish
+        	// we can't just wait for BETWEEN_PHASES or even SECOND_PASS because its possible
+        	// that we would miss seeing those states when there is contention
+            waitForNotScanState(ScanStates.FIRST_PASS);
+            
+            if (!getScanState().equals(ScanStates.IDLE)) {
+                /*
+                 * check whether any resources found in the first pass were provided by
+                 * the target xaResourceRecoveryHelper and if so then we need to wait for second pass
+                 * of the scanner to finish
+                 */
                 if (isHelperInUse(xaResourceRecoveryHelper))
                     waitForScanState(ScanStates.IDLE);
             }
@@ -975,6 +971,18 @@ public class XARecoveryModule implements RecoveryModule
             do {
                 scanState.wait();
             } while (!getScanState().equals(state));
+
+            return true;
+        } catch (InterruptedException e) {
+            tsLogger.logger.warn("problem waiting for scanLock whilst in state " + state.name(), e);
+            return false;
+        }
+    }
+    private boolean waitForNotScanState(ScanStates state) {
+        try {
+			while (getScanState().equals(state)) {
+				scanState.wait();
+			} 
 
             return true;
         } catch (InterruptedException e) {
