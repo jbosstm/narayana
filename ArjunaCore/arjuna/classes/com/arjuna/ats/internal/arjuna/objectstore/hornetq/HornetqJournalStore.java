@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.activemq.artemis.core.journal.Journal;
 import org.apache.activemq.artemis.core.journal.JournalLoadInformation;
@@ -58,12 +59,11 @@ public class HornetqJournalStore
 {
     private final Journal journal;
 
-    private final ConcurrentMap<String,Map<Uid, RecordInfo>> content = new ConcurrentHashMap<String, Map<Uid, RecordInfo>>();
+    private final ConcurrentMap<String,ConcurrentMap<Uid, RecordInfo>> content = new ConcurrentHashMap<String, ConcurrentMap<Uid, RecordInfo>>();
 
-    private final Object uidMappingLock = new Object();
     private final boolean syncWrites;
     private final boolean syncDeletes;
-    private long maxID = 0;
+    private final AtomicLong maxID = new AtomicLong(0);
 
     private final String storeDirCanonicalPath;
 
@@ -80,13 +80,13 @@ public class HornetqJournalStore
         List<RecordInfo> committedRecords = new LinkedList<RecordInfo>();
         List<PreparedTransactionInfo> preparedTransactions = new LinkedList<PreparedTransactionInfo>();
         TransactionFailureCallback failureCallback = new TransactionFailureCallback() {
-            public void failedTransaction(long l, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos, java.util.List<org.apache.activemq.artemis.core.journal.RecordInfo> recordInfos1) {
+            public void failedTransaction(long l, List<RecordInfo> recordInfos, List<RecordInfo> recordInfos1) {
                 tsLogger.i18NLogger.warn_journal_load_error();
             }
         };
 
         JournalLoadInformation journalLoadInformation = journal.load(committedRecords, preparedTransactions, failureCallback);
-        maxID = journalLoadInformation.getMaxID();
+        maxID.set(journalLoadInformation.getMaxID());
 
         if(!preparedTransactions.isEmpty()) {
             tsLogger.i18NLogger.warn_journal_load_error();
@@ -148,8 +148,8 @@ public class HornetqJournalStore
     public boolean remove_committed(Uid uid, String typeName) throws ObjectStoreException
     {
         try {
-            long id = getId(uid, typeName); // look up the id *before* doing the remove from state, or it won't be there any more.
-            getContentForType(typeName).remove(uid);
+            RecordInfo record = getContentForType(typeName).remove(uid);
+            long id = (record != null ? record.id : getId(uid, typeName));
             journal.appendDeleteRecord(id, syncDeletes);
 
             return true;
@@ -174,24 +174,28 @@ public class HornetqJournalStore
      */
     public boolean write_committed(Uid uid, String typeName, OutputObjectState txData) throws ObjectStoreException
     {
+        RecordInfo previousRecord = null;
         try {
             OutputBuffer outputBuffer = new OutputBuffer();
             UidHelper.packInto(uid, outputBuffer);
             outputBuffer.packString(typeName);
             outputBuffer.packBytes(txData.buffer());
-            long id = getId(uid, typeName);
             byte[] data = outputBuffer.buffer();
 
-            // yup, there is a race condition here.
-            if(getContentForType(typeName).containsKey(uid)) {
-                journal.appendUpdateRecord(id, RECORD_TYPE, data, syncWrites);
+            RecordInfo record = new RecordInfo(getId(uid, typeName), RECORD_TYPE, data, false, (short)0);
+            previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
+
+            if(previousRecord != null) {
+                journal.appendUpdateRecord(previousRecord.id, RECORD_TYPE, data, syncWrites);
             } else {
-                journal.appendAddRecord(id, RECORD_TYPE, data, syncWrites);
+                journal.appendAddRecord(record.id, RECORD_TYPE, data, syncWrites);
             }
 
-            RecordInfo record = new RecordInfo(id, RECORD_TYPE, data, false, (short)0);
-            getContentForType(typeName).put(uid, record);
         } catch(Exception e) {
+            if (previousRecord == null) {
+                // if appendAddRecord() fails, remove record from map. Leave it there if appendUpdateRecord() fails.
+                getContentForType(typeName).remove(uid);
+            }
             throw new ObjectStoreException(e);
         }
 
@@ -217,18 +221,16 @@ public class HornetqJournalStore
         // not too much of an issue as log reads are done for recovery only.
         try {
             InputBuffer inputBuffer = new InputBuffer(record.data);
-            Uid unpackedUid = UidHelper.unpackFrom(inputBuffer);
-            String unpackedTypeName = inputBuffer.unpackString();
-            InputObjectState inputObjectState = new InputObjectState(uid, typeName, inputBuffer.unpackBytes());
-            return inputObjectState;
+            UidHelper.unpackFrom(inputBuffer);
+            inputBuffer.unpackString();
+            return new InputObjectState(uid, typeName, inputBuffer.unpackBytes());
         } catch(Exception e) {
             throw new ObjectStoreException(e);
         }
     }
 
     public boolean contains(Uid uid, String typeName) {
-        RecordInfo record = getContentForType(typeName).get(uid);
-        return record != null;
+        return getContentForType(typeName).containsKey(uid);
     }
 
     /**
@@ -250,24 +252,26 @@ public class HornetqJournalStore
 
     /////////////////////////////////
 
-    private Map<Uid, RecordInfo> getContentForType(String typeName) {
-        Map<Uid, RecordInfo> result = content.get(typeName);
+    private ConcurrentMap<Uid, RecordInfo> getContentForType(String typeName) {
+        ConcurrentMap<Uid, RecordInfo> result = content.get(typeName);
+
         if(result == null) {
-            content.putIfAbsent(typeName, new ConcurrentHashMap<Uid, RecordInfo>());
-            result = content.get(typeName);
+            ConcurrentHashMap<Uid, RecordInfo> newMap = new ConcurrentHashMap<Uid, RecordInfo>();
+            result = content.putIfAbsent(typeName, newMap);
+
+            if(result == null) {
+                result = newMap;
+            }
         }
         return result;
     }
 
     private long getId(Uid uid, String typeName) {
-        synchronized (uidMappingLock) {
-            RecordInfo record = getContentForType(typeName).get(uid);
-            if(record != null) {
-                return record.id;
-            } else {
-                maxID++;
-                return maxID;
-            }
+        RecordInfo record = getContentForType(typeName).get(uid);
+        if(record != null) {
+            return record.id;
+        } else {
+            return maxID.incrementAndGet();
         }
     }
 }
