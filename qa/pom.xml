@@ -152,6 +152,8 @@
 					<target>1.7</target>
 					<excludes>
 						<exclude>**/astests/**</exclude>
+            <exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_perfprofile01_i.java</exclude>
+            <exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_jtsremote.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -178,31 +180,15 @@
 	</build>
 
 	<dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>narayana-jts-idlj</artifactId>
+          <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
 			<version>${version.org.jboss.netty}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.narayana.jts</groupId>
-			<artifactId>jtax</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.narayana.arjunacore</groupId>
-			<artifactId>txoj</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.narayana.jta</groupId>
-			<artifactId>jdbc</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.narayana.jts</groupId>
-			<artifactId>jts</artifactId>
-			<type>test-jar</type>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
@@ -236,4 +222,46 @@
 		</dependency>
 	</dependencies>
 
+  <profiles>
+    <profile>
+      <id>IDE</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <source>1.7</source>
+              <target>1.7</target>
+              <excludes>
+                <exclude>**/astests/**</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jtax</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.arjunacore</groupId>
+          <artifactId>txoj</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jta</groupId>
+          <artifactId>jdbc</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>jts</artifactId>
+          <type>test-jar</type>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
