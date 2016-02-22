@@ -285,6 +285,10 @@ public interface wscfI18NLogger {
     @LogMessage(level = ERROR)
     public void error_protocols_ProtocolManager_5(String arg0, @Cause() Throwable arg1);
 
+	@Message(id = 44067, value = "SynchronizationRecord.beforeCompletion caught exception", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_model_twophase_arjunacore_SynchronizationRecord_2(@Cause() Throwable arg1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
