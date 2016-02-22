@@ -104,32 +104,31 @@ public class RecoveredTransactionalObject extends StateManager
                 txojLogger.logger.debug("RecoveredTransactionalObject - transaction status "+ActionStatus.stringForm(tranStatus));
             }
 
-            boolean inactive = false;
-
-            if (tranStatus == ActionStatus.INVALID) // should be
-                                                    // ActionStatus.NO_ACTION
-            {
-                if (txojLogger.logger.isDebugEnabled())
-                {
-                    txojLogger.logger.debug("transaction Status from original application "+Integer.toString(tranStatus)+" and inactive: "+inactive);
-                }
-
-                inactive = true;
-            }
-
             /*
              * Only do anything if we are sure the transaction rolledback if it
              * is still in progress in the original application, let that run
              * otherwise the transaction should recover and do the committment
              * eventually.
              */
-
-            if ((tranStatus == ActionStatus.ABORTED) || inactive)
-            {
-                rollback();
-            }
-            else
-                commit();
+			if ((tranStatus == ActionStatus.PREPARED) ||
+				(tranStatus == ActionStatus.COMMITTING) ||
+				(tranStatus == ActionStatus.COMMITTED) ||
+				(tranStatus == ActionStatus.H_COMMIT) ||
+				(tranStatus == ActionStatus.H_MIXED) ||
+				(tranStatus == ActionStatus.H_HAZARD))
+			{
+				commit();
+			}
+			else if ((tranStatus == ActionStatus.ABORTED) ||
+				(tranStatus == ActionStatus.H_ROLLBACK) ||
+				(tranStatus == ActionStatus.ABORTING) ||
+				(tranStatus == ActionStatus.ABORT_ONLY))
+			{
+				rollback();
+			}
+			else {
+				txojLogger.logger.debug("RecoveredTransactionalObject.replayPhase2 - cannot find state to complete");
+			}
         }
         else
         {

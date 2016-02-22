@@ -258,8 +258,6 @@ public class ActionStatusService implements Service
          {
             String theTypeName = null;
 
-            try
-            {
                boolean endOfList = false;
 
                while ( !endOfList )
@@ -275,8 +273,6 @@ public class ActionStatusService implements Service
                   {
                      InputObjectState uids = new InputObjectState();
 
-                     try
-                     {
                         boolean endOfUids = false;
 
                         if ( _recoveryStore.allObjUids( theTypeName, uids ) )
@@ -300,24 +296,18 @@ public class ActionStatusService implements Service
                                  tsLogger.i18NLogger.info_recovery_ActionStatusService_4(tranUid);
 			      }
                            }
+                        } else {
+                        	return action_status; // Errors contacting recovery store for the list of uids it has for a type so return INVALID state
                         }
-                     }
-                     catch ( Exception ex ) {
-                         tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-                     }
                   }
                }
-            }
-            catch ( IOException ex ) {
-                tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-            }
-            catch ( Exception ex ) {
-                tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
-            }
+         } else {
+        	 return action_status; // Errors contacting recovery store for the list of types it holds so return INVALID state
          }
       }
       catch ( Exception ex ) {
           tsLogger.i18NLogger.warn_recovery_ActionStatusService_5(tranUid, ex);
+          return action_status; // Read invalid data from the objectstore so return INVALID state
       }
 
       int uidVectorSize = matchingUidVector.size();
