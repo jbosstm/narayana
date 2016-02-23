@@ -246,22 +246,6 @@
               </executions>
               <inherited>false</inherited>
             </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <excludePackageNames>org.*:com.arjuna.services.*:com.arjuna.webservices*:com.arjuna.mwlabs.*:com.arjuna.webservices11*:com.arjuna.schemas:com.arjuna.mw.wstx</excludePackageNames>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>
