@@ -66,15 +66,15 @@
             http://www.jboss.org/community/docs/DOC-11381  -->
   <!--
     <property name="tag" value="trunk"/>
-    <property name="version" value="5.2.14.Final"/>
+    <property name="version" value="5.3.0.Final-SNAPSHOT"/>
 -->
   <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
   <property name="workdir" location="/tmp/blacktie_releases"/>
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm/blacktie.git"/>
   <!-- The tag as it appears under gitbase -->
-  <property name="pageName" value="5.2.14.Final"/>
-  <property name="tag" value="5.2.14.Final"/>
+  <property name="pageName" value="5.3.0.Final-SNAPSHOT"/>
+  <property name="tag" value="5.3.0.Final-SNAPSHOT"/>
   <!-- the location the web site content is copied to -->
   <property name="downloads.dir" value="${user.home}/blacktie/filemgmt.jboss.org/downloads_htdocs/blacktie/"/>
   <property name="docs.dir" value="${user.home}/blacktie/filemgmt.jboss.org/docs_htdocs/blacktie/"/>
