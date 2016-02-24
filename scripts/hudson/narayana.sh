@@ -480,7 +480,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
         <param name="Threshold" value="TRACE"/>
 
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{ABSOLUTE} {%8.8t} (%x) [%-5p,%-10c{1}] %m%n"/>
+            <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
         </layout>
     </appender>
 
@@ -490,7 +490,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
         <param name="Threshold" value="TRACE"/>
 
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%t] %p - %m%n"/>
+            <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
         </layout>
     </appender>
 
@@ -501,13 +501,6 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
     </category>
 </log4j:configuration>
 EOF
-
-cat << 'EOF2' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/logging.properties
-handlers= java.util.logging.ConsoleHandler
-.level= ALL
-java.util.logging.ConsoleHandler.level = ALL
-java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
-EOF2
 }
 
 function enable_xts_trace {
@@ -575,10 +568,6 @@ function qa_tests_once {
     openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
     EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
     orbtype="idlj"
-  fi
-
-  if [ $QA_TRACE ]; then
-    EXTRA_QA_SYSTEM_PROPERTIES="-Djava.util.logging.config.file=dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/logging.properties $EXTRA_QA_SYSTEM_PROPERTIES"
   fi
 
   if [[ x"$EXTRA_QA_SYSTEM_PROPERTIES" != "x" ]]; then
