@@ -476,7 +476,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out"/>
+        <param name="Target" value="System.err"/>
         <param name="Threshold" value="TRACE"/>
 
         <layout class="org.apache.log4j.PatternLayout">
