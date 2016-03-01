@@ -43,23 +43,37 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
 
     private static final Map<Object, AtomicInteger> PARTICIPANT_COUNTERS = new HashMap<>();
 
-    private Class<? extends CompensationHandler> compensationHandler;
-    private Class<? extends ConfirmationHandler> confirmationHandler;
-    private Class<? extends TransactionLoggedHandler> transactionLoggedHandler;
+    private CompensationHandler compensationHandler;
+    private ConfirmationHandler confirmationHandler;
+    private TransactionLoggedHandler transactionLoggedHandler;
 
     private BeanManager beanManager;
     private ClassLoader applicationClassloader;
     private Object currentTX;
 
-    public ParticipantImpl(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, Object currentTX) {
+    public ParticipantImpl(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+            TransactionLoggedHandler transactionLoggedHandler, Object currentTX) {
 
-        this.compensationHandler = compensationHandlerClass;
-        this.confirmationHandler = confirmationHandlerClass;
-        this.transactionLoggedHandler = transactionLoggedHandlerClass;
+        this.compensationHandler = compensationHandler;
+        this.confirmationHandler = confirmationHandler;
+        this.transactionLoggedHandler = transactionLoggedHandler;
         this.currentTX = currentTX;
 
         beanManager = BeanManagerUtil.getBeanManager();
         applicationClassloader = Thread.currentThread().getContextClassLoader();
+
+        incrementParticipantsCounter();
+    }
+
+    public ParticipantImpl(Class<? extends CompensationHandler> compensationHandlerClass, Class<? extends ConfirmationHandler> confirmationHandlerClass, Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass, Object currentTX) {
+
+        beanManager = BeanManagerUtil.getBeanManager();
+        applicationClassloader = Thread.currentThread().getContextClassLoader();
+
+        this.compensationHandler = instantiate(compensationHandlerClass);
+        this.confirmationHandler = instantiate(confirmationHandlerClass);
+        this.transactionLoggedHandler = instantiate(transactionLoggedHandlerClass);
+        this.currentTX = currentTX;
 
         incrementParticipantsCounter();
     }
@@ -80,8 +94,7 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
             ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(applicationClassloader);
 
-            TransactionLoggedHandler handler = instantiate(transactionLoggedHandler);
-            handler.transactionLogged(confirmed);
+            transactionLoggedHandler.transactionLogged(confirmed);
 
             Thread.currentThread().setContextClassLoader(origClassLoader);
         }
@@ -96,8 +109,7 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
             Thread.currentThread().setContextClassLoader(applicationClassloader);
             CompensationContext.setTxContextToExtend(currentTX);
 
-            ConfirmationHandler handler = instantiate(confirmationHandler);
-            handler.confirm();
+            confirmationHandler.confirm();
 
             Thread.currentThread().setContextClassLoader(origClassLoader);
         }
@@ -120,8 +132,7 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
                 Thread.currentThread().setContextClassLoader(applicationClassloader);
                 CompensationContext.setTxContextToExtend(currentTX);
 
-                CompensationHandler handler = instantiate(compensationHandler);
-                handler.compensate();
+                compensationHandler.compensate();
 
                 Thread.currentThread().setContextClassLoader(origClassLoader);
             }

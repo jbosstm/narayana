@@ -29,4 +29,7 @@ public interface BAControler {
     public ParticipantManager enlist(Class<? extends CompensationHandler> compensationHandlerClass,
                                      Class<? extends ConfirmationHandler> confirmationHandlerClass,
                                      Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) throws Exception;
+
+    public ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+                                     TransactionLoggedHandler transactionLoggedHandler) throws Exception;
 }
