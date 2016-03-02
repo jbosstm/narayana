@@ -28,7 +28,7 @@
 
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
-	<property name="narayana.version" value="5.3.0.Final-SNAPSHOT"/>
+	<property name="narayana.version" value="5.3.0.Final"/>
 	<property name="orbtype" value="jacorb"/>
 
 	<!-- set properties for AS testing -->
