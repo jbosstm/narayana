@@ -13,11 +13,11 @@ then
   exit
 fi
 if [ $# -lt 3 ]; then
-  echo 1>&2 "$0: not enough arguments: PREVIOUS CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
+  echo 1>&2 "$0: not enough arguments: CURRENT_VERSION_IN_WFLY CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
   grep 5.2.10.Final pom.xml
   exit 2
 elif [ $# -gt 4 ]; then
-  echo 1>&2 "$0: too many arguments: PREVIOUS CURRENT NEXT (versions should end in .Final or similar)"
+  echo 1>&2 "$0: too many arguments: CURRENT_VERSION_IN_WFLY CURRENT NEXT (versions should end in .Final or similar)"
   grep 5.2.10.Final pom.xml
   exit 2
 else
@@ -25,7 +25,7 @@ else
 fi
 
 set -e
-export PREVIOUS=$1
+export CURRENT_VERSION_IN_WFLY=$1
 export CURRENT=$2
 export NEXT=$3
 if [ -z "$WFLYISSUE" ]
@@ -41,7 +41,7 @@ then
     echo "Need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
     exit
   fi
-  (cd jboss-as; sed -i "s/narayana>$PREVIOUS/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push --set-upstream jbosstm ${WFLYISSUE})
+  (cd jboss-as; sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push --set-upstream jbosstm ${WFLYISSUE})
   (cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest version of Narayana"; git push -f)
 fi
 set +e
