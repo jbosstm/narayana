@@ -59,6 +59,7 @@
                         <fileset dir="../ArjunaJTA/jta/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTA/jdbc/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../ArjunaJTA/cdi/target/coverage-reports" includes="jacoco-ut.exec"/>
+                        <fileset dir="../ArjunaJTA/jms/target/coverage-reports" includes="jacoco-ut.exec"/>
                         <fileset dir="../tools/target/coverage-reports" includes="jacoco-ut.exec"/>
 
                         <fileset dir="../ArjunaJTS/jts/target/coverage-reports" includes="jacoco-ut.exec"/>
@@ -154,6 +155,15 @@
                           </sourcefiles>
                         </group>
 
+                        <group name="org.jboss.narayana.jta.jms">
+                          <classfiles>
+                            <fileset dir="../ArjunaJTA/jms/target/classes" includes="**/*.class"/>
+                          </classfiles>
+                          <sourcefiles>
+                            <fileset dir="../ArjunaJTA/jms/src/main/java"/>
+                          </sourcefiles>
+                        </group>
+
                         <group name="org.jboss.narayana.jts">
                           <classfiles>
                             <fileset dir="../ArjunaJTS/jts/target/classes/" includes="**/*.class"/>
@@ -242,6 +252,7 @@
                       <fileset dir="../ArjunaJTA/jta/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaJTA/jdbc/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../ArjunaJTA/cdi/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/jms/target/surefire-reports" includes="**/*.xml"/>
                       <fileset dir="../tools/target/surefire-reports" includes="**/*.xml"/>
 
                       <fileset dir="../ArjunaJTS/jts/target/surefire-reports" includes="**/*.xml"/>
