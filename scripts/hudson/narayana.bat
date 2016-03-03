@@ -30,7 +30,7 @@ rmdir wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% /s /q
 mkdir wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%
 xcopy ..\jboss-as\build\target\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% /S
 set JBOSS_HOME=%CD%\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%\
-unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.3.1.Final-bin.zip -d %JBOSS_HOME%
+unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.3.2.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
 cd ..\
 
 set NOPAUSE=true
