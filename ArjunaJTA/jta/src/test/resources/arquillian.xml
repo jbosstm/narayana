@@ -32,6 +32,7 @@ cp /home/mmusgrov/source/forks/narayana/tom/jboss-as/build/target/wildfly-8.0.0.
             <property name="serverConfig">standalone-cmr.xml</property>
             <property name="javaVmArguments">${server.jvm.args}</property>
             <property name="managementAddress">${node.address}</property>
+            <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
         </configuration> 
    </container>
 
