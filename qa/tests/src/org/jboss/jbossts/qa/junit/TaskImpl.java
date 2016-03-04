@@ -20,6 +20,7 @@
  */
 package org.jboss.jbossts.qa.junit;
 
+import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 import org.junit.Assert;
 
 import java.util.*;
@@ -186,7 +187,7 @@ public class TaskImpl implements Task
         this.taskName = taskName;
         this.clazz = clazz;
         this.type = type;
-        this.timeout = timeout;
+        this.timeout = timeout * CrashRecoveryDelays.getDelayFactor();
         this.out = out;
         this.additionalLocalCommandLineElements.addAll(additionalLocalCommandLineElements);
         this.started = false;

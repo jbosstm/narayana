@@ -178,7 +178,7 @@ public class CrashRecoveryDelays
         Thread.sleep(getDelayFactor() * seconds * 1000);
     }
 
-    private static int getDelayFactor() {
+    public static int getDelayFactor() {
         if (delayFactor < 0) {
             delayFactor = arjPropertyManager.getCoreEnvironmentBean().getTimeoutFactor();
 
