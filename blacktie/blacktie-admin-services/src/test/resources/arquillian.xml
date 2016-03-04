@@ -22,6 +22,7 @@
 	<container qualifier="jboss" default="true">
         <configuration>
             <property name="managementAddress">${jbossas.ip.addr}</property>
+            <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
         </configuration>
 	</container>
 
