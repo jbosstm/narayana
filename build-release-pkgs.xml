@@ -209,12 +209,9 @@
       <arg value="-P"/>
       <arg value="production"/>
     </exec>
-    <exec executable="rsync" dir="${workdir}/narayana.io/">
-      <arg value="-Pr"/>
-      <arg value="--protocol=28"/>
-      <arg value="--delete-after"/>
-      <arg value="_site/*"/>
-      <arg value="jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/"/>
+    <exec executable="bash" dir="${workdir}/narayana.io/" failonerror="true">
+      <arg value="-c"/>
+      <arg value="rsync --protocol=29 --partial --progress --rsh=ssh --delete-after -r _site/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/" />
     </exec>
   </target>
   
