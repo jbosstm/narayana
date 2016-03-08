@@ -335,7 +335,7 @@ public class XAOnePhaseResource implements OnePhaseResource, ExceptionDeferrer
     void addDeferredThrowable(Exception e) 
     {
         if (this.deferredExceptions == null)
-            this.deferredExceptions = new ArrayList<>();
+            this.deferredExceptions = new ArrayList<Throwable>();
         this.deferredExceptions.add(e);
     }
 

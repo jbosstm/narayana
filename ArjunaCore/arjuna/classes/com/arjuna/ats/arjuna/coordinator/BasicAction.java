@@ -3617,7 +3617,7 @@ public class BasicAction extends StateManager
 
     //    private Mutex _lock = new Mutex(); // TODO
 
-    private List<Throwable> deferredThrowables = new ArrayList<>();
+    private List<Throwable> deferredThrowables = new ArrayList<Throwable>();
 }
 
 class BasicActionFinalizer
