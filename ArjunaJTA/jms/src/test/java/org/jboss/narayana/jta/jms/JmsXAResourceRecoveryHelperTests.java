@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.jms.JMSException;
 import javax.jms.XAConnection;
 import javax.jms.XAConnectionFactory;
 import javax.jms.XASession;
@@ -70,181 +71,129 @@ public class JmsXAResourceRecoveryHelperTests {
     }
 
     @Test
-    public void shouldGetXAResource() throws Exception {
+    public void shouldCreateConnectionAndGetXAResource() throws JMSException {
+        when(xaConnectionFactoryMock.createXAConnection(anyString(), anyString())).thenReturn(xaConnectionMock);
+        recoveryHelper = new JmsXAResourceRecoveryHelper(xaConnectionFactoryMock, "username", "password");
+
         XAResource[] xaResources = recoveryHelper.getXAResources();
 
         assertEquals(1, xaResources.length);
         assertThat(xaResources[0], sameInstance(recoveryHelper));
+        verify(xaConnectionFactoryMock, times(1)).createXAConnection("username", "password");
+        verify(xaConnectionMock, times(1)).createXASession();
+        verify(xaSessionMock, times(1)).getXAResource();
     }
 
     @Test
-    public void shouldCreateConnectionOnScanStart() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
-        verifyCreatedConnection();
+    public void shouldCreateConnectionWithCredentialsAndGetXAResource() throws JMSException {
+        XAResource[] xaResources = recoveryHelper.getXAResources();
+
+        assertEquals(1, xaResources.length);
+        assertThat(xaResources[0], sameInstance(recoveryHelper));
+        verify(xaConnectionFactoryMock, times(1)).createXAConnection();
+        verify(xaConnectionMock, times(1)).createXASession();
+        verify(xaSessionMock, times(1)).getXAResource();
     }
 
     @Test
-    public void shouldCreateConnectionWithCredentialsOnScanStart() throws Exception {
-        when(xaConnectionFactoryMock.createXAConnection(anyString(), anyString())).thenReturn(xaConnectionMock);
-        recoveryHelper = new JmsXAResourceRecoveryHelper(xaConnectionFactoryMock, "userName", "password");
+    public void shouldFailToCreateConnectionAndNotGetXAResource() throws JMSException {
+        when(xaConnectionMock.createXASession()).thenThrow(new JMSException("Test exception"));
 
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
-        verifyCreatedConnection("userName", "password");
+        XAResource[] xaResources = recoveryHelper.getXAResources();
+
+        assertEquals(0, xaResources.length);
+        verify(xaConnectionFactoryMock, times(1)).createXAConnection();
+        verify(xaConnectionMock, times(1)).createXASession();
+        verify(xaSessionMock, times(0)).getXAResource();
     }
 
     @Test
-    public void shouldCloseConnectionOnScanEnd() throws Exception {
+    public void shouldDelegateRecoverCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+
+        verify(xaResourceMock, times(1)).recover(XAResource.TMSTARTRSCAN);
+    }
+
+    @Test
+    public void shouldDelegateRecoverCallAndCloseConnection() throws XAException, JMSException {
+        recoveryHelper.getXAResources();
         recoveryHelper.recover(XAResource.TMENDRSCAN);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).recover(XAResource.TMENDRSCAN);
         verify(xaConnectionMock, times(1)).close();
     }
 
     @Test
-    public void shouldRecover() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
-        recoveryHelper.recover(XAResource.TMRESUME);
-        verifyCreatedConnection();
-        verify(xaResourceMock, times(1)).recover(XAResource.TMRESUME);
-    }
-
-    @Test(expected = AssertionError.class)
-    public void shouldFailRecover() throws XAException {
-        recoveryHelper.recover(XAResource.TMRESUME);
-    }
-
-    @Test
-    public void shouldStart() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateStartCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.start(null, 0);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).start(null, 0);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailStart() throws Exception {
-        recoveryHelper.start(null, 0);
-    }
-
     @Test
-    public void shouldEnd() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateEndCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.end(null, 0);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).end(null, 0);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailEnd() throws Exception {
-        recoveryHelper.end(null, 0);
-    }
-
     @Test
-    public void shouldPrepare() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegatePrepareCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.prepare(null);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).prepare(null);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailPrepare() throws Exception {
-        recoveryHelper.prepare(null);
-    }
-
     @Test
-    public void shouldCommit() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateCommitCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.commit(null, true);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).commit(null, true);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailCommit() throws Exception {
-        recoveryHelper.commit(null, true);
-    }
-
     @Test
-    public void shouldRollback() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateRollbackCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.rollback(null);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).rollback(null);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailRollback() throws Exception {
-        recoveryHelper.rollback(null);
-    }
-
     @Test
-    public void shouldCheckSameRM() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateIsSameRMCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.isSameRM(null);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).isSameRM(null);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailSameRMCheck() throws Exception {
-        recoveryHelper.isSameRM(null);
-    }
-
     @Test
-    public void shouldForget() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateForgetCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.forget(null);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).forget(null);
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailForget() throws Exception {
-        recoveryHelper.forget(null);
-    }
-
     @Test
-    public void shouldGetTransactionTimeout() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateGetTransactionTimeoutCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.getTransactionTimeout();
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).getTransactionTimeout();
     }
 
-    @Test(expected = AssertionError.class)
-    public void shouldFailGetTransactionTimeout() throws Exception {
-        recoveryHelper.getTransactionTimeout();
-    }
-
     @Test
-    public void shouldSetTransactionTimeout() throws Exception {
-        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+    public void shouldDelegateSetTransactionTimeoutCall() throws XAException {
+        recoveryHelper.getXAResources();
         recoveryHelper.setTransactionTimeout(0);
-        verifyCreatedConnection();
+
         verify(xaResourceMock, times(1)).setTransactionTimeout(0);
-    }
-
-    @Test(expected = AssertionError.class)
-    public void shouldFailSetTransactionTimeout() throws Exception {
-        recoveryHelper.setTransactionTimeout(0);
-    }
-
-    private void verifyCreatedConnection() throws Exception {
-        verifyCreatedConnection(null, null);
-    }
-
-    private void verifyCreatedConnection(String user, String pass) throws Exception {
-        if (user == null && pass == null) {
-            verify(xaConnectionFactoryMock, times(1)).createXAConnection();
-        } else {
-            verify(xaConnectionFactoryMock, times(1)).createXAConnection(user, pass);
-        }
-
-        verify(xaConnectionMock, times(1)).createXASession();
-        verify(xaSessionMock, times(1)).getXAResource();
-        verify(xaResourceMock, times(1)).recover(XAResource.TMSTARTRSCAN);
     }
 
 }

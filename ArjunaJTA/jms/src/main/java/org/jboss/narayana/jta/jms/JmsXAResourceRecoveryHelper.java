@@ -61,6 +61,12 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
         this.pass = pass;
     }
 
+    /**
+     * Nothing to initialise.
+     *
+     * @param properties
+     * @return Always returns true
+     */
     @Override
     public boolean initialise(String properties) {
         if (LOGGER.isTraceEnabled()) {
@@ -70,23 +76,34 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
         return true;
     }
 
+    /**
+     * If JMS connection was created successfully, returns an array with one instance of JmsXAResourceRecoveryHelper. Otherwise,
+     * returns an empty array.
+     *
+     * @return Array with one instance of JmsXAResourceRecoveryHelper or an empty array
+     */
     @Override
     public XAResource[] getXAResources() {
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Returning XA resource: " + this);
+        if (connect()) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Returning XA resource: " + this);
+            }
+
+            return new XAResource[] { this };
         }
 
-        return new XAResource[] { this };
+        return new XAResource[0];
     }
 
+    /**
+     * Delegates XAResource#recover call to the connected JMS resource. If provided argument is XAResource.TMENDRSCAN, then JMS
+     * connection will be closed at the end of the call.
+     *
+     * @param i
+     * @throws XAException
+     */
     @Override
     public Xid[] recover(int i) throws XAException {
-        if (i == XAResource.TMSTARTRSCAN) {
-            connect();
-        }
-
-        assert delegate != null : "Recovery scan has to be started";
-
         try {
             return delegate.recover(i);
         } finally {
@@ -96,72 +113,114 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
         }
     }
 
+    /**
+     * Delegates XAResource#start call to the connected JMS resource.
+     *
+     * @param xid
+     * @param i
+     * @throws XAException
+     */
     @Override
     public void start(Xid xid, int i) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         delegate.start(xid, i);
     }
 
+    /**
+     * Delegates XAResource#end call to the connected JMS resource.
+     *
+     * @param xid
+     * @param i
+     * @throws XAException
+     */
     @Override
     public void end(Xid xid, int i) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         delegate.end(xid, i);
     }
 
+    /**
+     * Delegates XAResource#prepare call to the connected JMS resource.
+     *
+     * @param xid
+     * @return Prepare outcome
+     * @throws XAException
+     */
     @Override
     public int prepare(Xid xid) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         return delegate.prepare(xid);
     }
 
+    /**
+     * Delegates XAResource#commit call to the connected JMS resource.
+     *
+     * @param xid
+     * @param b
+     * @throws XAException
+     */
     @Override
     public void commit(Xid xid, boolean b) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         delegate.commit(xid, b);
     }
 
+    /**
+     * Delegates XAResource#rollback call to the connected JMS resource.
+     *
+     * @param xid
+     * @throws XAException
+     */
     @Override
     public void rollback(Xid xid) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         delegate.rollback(xid);
     }
 
+    /**
+     * Delegates XAResource#isSameRM call to the connected JMS resource.
+     *
+     * @param xaResource
+     * @return True if is same resource manager or false if not.
+     * @throws XAException
+     */
     @Override
     public boolean isSameRM(XAResource xaResource) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         return delegate.isSameRM(xaResource);
     }
 
+    /**
+     * Delegates XAResource#forget call to the connected JMS resource.
+     *
+     * @param xid
+     * @throws XAException
+     */
     @Override
     public void forget(Xid xid) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         delegate.forget(xid);
     }
 
+    /**
+     * Delegates XAResource#getTransactionTimeout call to the connected JMS resource.
+     *
+     * @return Transaction timeout value.
+     * @throws XAException
+     */
     @Override
     public int getTransactionTimeout() throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         return delegate.getTransactionTimeout();
     }
 
+    /**
+     * Delegates XAResource#setTransactionTimeout call to the connected JMS resource.
+     *
+     * @param i
+     * @return True if transaction timeout was set, or false if wasn't.
+     * @throws XAException
+     */
     @Override
     public boolean setTransactionTimeout(int i) throws XAException {
-        assert delegate != null : "Recovery scan has to be started";
-
         return delegate.setTransactionTimeout(i);
     }
 
-    private void connect() throws XAException {
+    private boolean connect() {
         if (delegate != null) {
-            return;
+            return true;
         }
 
         try {
@@ -170,16 +229,17 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
             delegate = xaSession.getXAResource();
         } catch (JMSException e) {
             LOGGER.warn("Failed to create connection", e);
-            throw new XAException(e.getMessage());
+            return false;
         }
+
+        return true;
     }
 
-    private void disconnect() throws XAException {
+    private void disconnect() {
         try {
             xaConnection.close();
         } catch (JMSException e) {
             LOGGER.warn("Failed to close connection", e);
-            throw new XAException(e.getMessage());
         } finally {
             xaConnection = null;
             xaSession = null;
