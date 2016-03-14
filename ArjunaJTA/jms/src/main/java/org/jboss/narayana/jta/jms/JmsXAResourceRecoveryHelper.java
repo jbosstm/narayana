@@ -41,6 +41,10 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
 
     private final XAConnectionFactory xaConnectionFactory;
 
+    private final String user;
+
+    private final String pass;
+
     private XAConnection xaConnection;
 
     private XASession xaSession;
@@ -48,7 +52,13 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
     private XAResource delegate;
 
     public JmsXAResourceRecoveryHelper(XAConnectionFactory xaConnectionFactory) {
+        this(xaConnectionFactory, null, null);
+    }
+
+    public JmsXAResourceRecoveryHelper(XAConnectionFactory xaConnectionFactory, String user, String pass) {
         this.xaConnectionFactory = xaConnectionFactory;
+        this.user = user;
+        this.pass = pass;
     }
 
     @Override
@@ -155,7 +165,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
         }
 
         try {
-            xaConnection = xaConnectionFactory.createXAConnection();
+            xaConnection = createXAConnection();
             xaSession = xaConnection.createXASession();
             delegate = xaSession.getXAResource();
         } catch (JMSException e) {
@@ -175,6 +185,14 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
             xaSession = null;
             delegate = null;
         }
+    }
+
+    private XAConnection createXAConnection() throws JMSException {
+        if (user == null && pass == null) {
+            return xaConnectionFactory.createXAConnection();
+        }
+
+        return xaConnectionFactory.createXAConnection(user, pass);
     }
 
 }

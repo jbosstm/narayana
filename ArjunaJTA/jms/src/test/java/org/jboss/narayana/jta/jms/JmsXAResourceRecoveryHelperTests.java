@@ -35,6 +35,7 @@ import javax.transaction.xa.XAResource;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,6 +81,15 @@ public class JmsXAResourceRecoveryHelperTests {
     public void shouldCreateConnectionOnScanStart() throws Exception {
         recoveryHelper.recover(XAResource.TMSTARTRSCAN);
         verifyCreatedConnection();
+    }
+
+    @Test
+    public void shouldCreateConnectionWithCredentialsOnScanStart() throws Exception {
+        when(xaConnectionFactoryMock.createXAConnection(anyString(), anyString())).thenReturn(xaConnectionMock);
+        recoveryHelper = new JmsXAResourceRecoveryHelper(xaConnectionFactoryMock, "userName", "password");
+
+        recoveryHelper.recover(XAResource.TMSTARTRSCAN);
+        verifyCreatedConnection("userName", "password");
     }
 
     @Test
@@ -222,7 +232,16 @@ public class JmsXAResourceRecoveryHelperTests {
     }
 
     private void verifyCreatedConnection() throws Exception {
-        verify(xaConnectionFactoryMock, times(1)).createXAConnection();
+        verifyCreatedConnection(null, null);
+    }
+
+    private void verifyCreatedConnection(String user, String pass) throws Exception {
+        if (user == null && pass == null) {
+            verify(xaConnectionFactoryMock, times(1)).createXAConnection();
+        } else {
+            verify(xaConnectionFactoryMock, times(1)).createXAConnection(user, pass);
+        }
+
         verify(xaConnectionMock, times(1)).createXASession();
         verify(xaSessionMock, times(1)).getXAResource();
         verify(xaResourceMock, times(1)).recover(XAResource.TMSTARTRSCAN);
