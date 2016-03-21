@@ -50,10 +50,24 @@ module CORBA
 
 module CosTransactions
 {
-    enum Status { StatusActive, StatusMarkedRollback, StatusPrepared,
-		  StatusCommitted, StatusRolledBack, StatusUnknown,
-		  StatusPreparing, StatusCommitting, StatusRollingBack,
-		  StatusNoTransaction };
+//    enum Status { StatusActive, StatusMarkedRollback, StatusPrepared,
+//		  StatusCommitted, StatusRolledBack, StatusUnknown,
+//		  StatusPreparing, StatusCommitting, StatusRollingBack,
+//		  StatusNoTransaction };
+
+    enum Status {
+                StatusActive,
+                StatusMarkedRollback,
+                StatusPrepared,
+                StatusCommitted,
+                StatusRolledBack,
+                StatusUnknown,
+                StatusNoTransaction,
+                StatusPreparing,
+                StatusCommitting,
+                StatusRollingBack
+    };
+
 
     enum Vote { VoteCommit, VoteRollback, VoteReadOnly };
 
