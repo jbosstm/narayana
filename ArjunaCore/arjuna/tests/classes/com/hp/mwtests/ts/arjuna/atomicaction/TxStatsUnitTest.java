@@ -65,18 +65,44 @@ public class TxStatsUnitTest
         B.begin();
         
         assertTrue(TxStats.enabled());
-        assertEquals(TxStats.getInstance().getNumberOfAbortedTransactions(), 100);
-        assertEquals(TxStats.getInstance().getNumberOfApplicationRollbacks(), 100);
-        assertEquals(TxStats.getInstance().getNumberOfCommittedTransactions(), 200);
-        assertEquals(TxStats.getInstance().getNumberOfHeuristics(), 0);
-        assertEquals(TxStats.getInstance().getNumberOfInflightTransactions(), 1);
-        assertEquals(TxStats.getInstance().getNumberOfNestedTransactions(), 100);
-        assertEquals(TxStats.getInstance().getNumberOfResourceRollbacks(), 0);
-        assertEquals(TxStats.getInstance().getNumberOfTimedOutTransactions(), 0);
-        assertEquals(TxStats.getInstance().getNumberOfTransactions(), 301);
+        assertEquals(100, TxStats.getInstance().getNumberOfAbortedTransactions());
+        assertEquals(100, TxStats.getInstance().getNumberOfApplicationRollbacks());
+        assertEquals(200, TxStats.getInstance().getNumberOfCommittedTransactions());
+        assertEquals(0, TxStats.getInstance().getNumberOfHeuristics());
+        assertEquals(1, TxStats.getInstance().getNumberOfInflightTransactions());
+        assertEquals(100, TxStats.getInstance().getNumberOfNestedTransactions());
+        assertEquals(0, TxStats.getInstance().getNumberOfResourceRollbacks());
+        assertEquals(0, TxStats.getInstance().getNumberOfTimedOutTransactions());
+        assertEquals(301, TxStats.getInstance().getNumberOfTransactions());
         
         PrintWriter pw = new PrintWriter(new StringWriter());
         
         TxStats.getInstance().printStatus(pw);
+
+        // https://issues.jboss.org/browse/JBTM-2643
+        for (int i = 0; i < 100; i++) {
+            final AtomicAction D = new AtomicAction();
+            D.begin();
+            Thread t1 = new Thread() {
+                @Override
+                public void run() {
+                    D.cancel();
+                }
+            };
+            Thread t2 = new Thread() {
+                @Override
+                public void run() {
+                    D.abort();
+                }
+            };
+            t1.start();
+            t2.start();
+            t1.join();
+            t2.join();
+        }
+
+        assertEquals(200, TxStats.getInstance().getNumberOfAbortedTransactions());
+        assertEquals(200, TxStats.getInstance().getNumberOfApplicationRollbacks());
+        assertEquals(401, TxStats.getInstance().getNumberOfTransactions());
     }
 }
