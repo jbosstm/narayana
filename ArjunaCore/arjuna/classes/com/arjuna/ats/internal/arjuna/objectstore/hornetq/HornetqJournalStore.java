@@ -186,6 +186,8 @@ public class HornetqJournalStore
             previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
 
             if(previousRecord != null) {
+                // the packed data may have changed so updated the map with the latest data
+                getContentForType(typeName).replace(uid,  record);
                 journal.appendUpdateRecord(previousRecord.id, RECORD_TYPE, data, syncWrites);
             } else {
                 journal.appendAddRecord(record.id, RECORD_TYPE, data, syncWrites);
