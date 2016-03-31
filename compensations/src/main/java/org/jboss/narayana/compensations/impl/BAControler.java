@@ -1,6 +1,5 @@
 package org.jboss.narayana.compensations.impl;
 
-
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
@@ -18,15 +17,18 @@ public interface BAControler {
 
     void completeBusinessActivity(boolean isException) throws Exception;
 
-    public boolean isBARunning();
+    boolean isBARunning();
 
-    public Object suspend() throws Exception;
+    Object suspend() throws Exception;
 
-    public void resume(Object context) throws Exception;
+    void resume(Object context) throws Exception;
 
-    public Object getCurrentTransaction() throws Exception;
+    Object getCurrentTransaction() throws Exception;
 
-    public ParticipantManager enlist(Class<? extends CompensationHandler> compensationHandlerClass,
-                                     Class<? extends ConfirmationHandler> confirmationHandlerClass,
-                                     Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) throws Exception;
+    ParticipantManager enlist(Class<? extends CompensationHandler> compensationHandlerClass,
+            Class<? extends ConfirmationHandler> confirmationHandlerClass,
+            Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) throws Exception;
+
+    ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+            TransactionLoggedHandler transactionLoggedHandler) throws Exception;
 }

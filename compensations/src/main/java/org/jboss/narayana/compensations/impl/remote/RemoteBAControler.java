@@ -14,6 +14,7 @@ import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.impl.BAControler;
+import org.jboss.narayana.compensations.impl.BeanManagerUtil;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.CompensationManagerState;
 import org.jboss.narayana.compensations.impl.ParticipantManager;
@@ -99,10 +100,32 @@ public class RemoteBAControler implements BAControler {
                                      Class<? extends ConfirmationHandler> confirmationHandlerClass,
                                      Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass) throws Exception {
 
-        RemoteParticipant p = new RemoteParticipant(compensationHandlerClass, confirmationHandlerClass, transactionLoggedHandlerClass, getCurrentTransaction());
-        BAParticipantManager pm = BusinessActivityManagerFactory.businessActivityManager().
-                enlistForBusinessAgreementWithParticipantCompletion(p, String.valueOf(UUID.randomUUID()));
-        return new RemoteParticipantManager(pm);
+        CompensationHandler compensationHandler = instantiate(compensationHandlerClass);
+        ConfirmationHandler confirmationHandler = instantiate(confirmationHandlerClass);
+        TransactionLoggedHandler transactionLoggedHandler = instantiate(transactionLoggedHandlerClass);
+
+        return enlist(compensationHandler, confirmationHandler, transactionLoggedHandler);
+    }
+
+    @Override
+    public ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+            TransactionLoggedHandler transactionLoggedHandler) throws Exception {
+
+        RemoteParticipant participant = new RemoteParticipant(compensationHandler, confirmationHandler,
+                transactionLoggedHandler, getCurrentTransaction());
+        BAParticipantManager baParticipantManager = BusinessActivityManagerFactory.businessActivityManager()
+                .enlistForBusinessAgreementWithParticipantCompletion(participant, String.valueOf(UUID.randomUUID()));
+
+        return new RemoteParticipantManager(baParticipantManager);
+    }
+
+    private <T> T instantiate(Class<T> clazz) {
+
+        if (clazz == null) {
+            return null;
+        }
+
+        return BeanManagerUtil.createBeanInstance(clazz);
     }
 
 }

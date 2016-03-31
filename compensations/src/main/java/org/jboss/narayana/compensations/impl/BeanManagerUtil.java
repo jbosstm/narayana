@@ -14,6 +14,11 @@ public class BeanManagerUtil {
         return CDI.current().getBeanManager();
     }
 
+    public static <T> T createBeanInstance(Class<T> clazz) {
+
+        return BeanManagerUtil.createBeanInstance(clazz, BeanManagerUtil.getBeanManager());
+    }
+
     public static <T> T createBeanInstance(Class<T> clazz, BeanManager bm) {
 
         Iterator<Bean<?>> iter = bm.getBeans(clazz).iterator();

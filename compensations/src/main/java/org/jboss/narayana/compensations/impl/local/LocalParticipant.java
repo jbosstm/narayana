@@ -41,16 +41,14 @@ import org.jboss.narayana.compensations.impl.ParticipantImpl;
  */
 public class LocalParticipant implements BAParticipant, Participant {
 
-
     private ParticipantImpl participant;
+
     private String participantId;
 
-    public LocalParticipant(Class<? extends CompensationHandler> compensationHandlerClass,
-                            Class<? extends ConfirmationHandler> confirmationHandlerClass,
-                            Class<? extends TransactionLoggedHandler> transactionLoggedHandlerClass,
-                            Object currentTX, String participantId) {
+    public LocalParticipant(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
+            TransactionLoggedHandler transactionLoggedHandler, Object currentTX, String participantId) {
 
-        participant = new ParticipantImpl(compensationHandlerClass, confirmationHandlerClass, transactionLoggedHandlerClass, currentTX);
+        participant = new ParticipantImpl(compensationHandler, confirmationHandler, transactionLoggedHandler, currentTX);
         this.participantId = participantId;
     }
 
