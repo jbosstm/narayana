@@ -65,6 +65,7 @@ scp lancel.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blackti
 scp ~/tmp/narayana/$CURRENT/blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
 echo "You need to execute the following commands on a Windows box"
 echo "set WFLYISSUE="
+echo "set NOPAUSE=true"
 echo "cd %USERPROFILE%\tmp & del \S narayana & git clone https://github.com/jbosstm/narayana & cd narayana & git fetch origin --tags & git clone -b %WFLYISSUE% https://github.com/jbosstm/jboss-as.git & cd jboss-as & git checkout %WFLYISSUE% & build.bat install -DskipTests & cd .."
 echo "set CURRENT="
 echo 'git checkout %CURRENT% & call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" & build.bat -f blacktie\wildfly-blacktie\pom.xml clean install -DskipTests & build.bat -f blacktie\pom.xml clean install -DskipTests & cd blacktie\blacktie\target & rsync -P --protocol=28 --chmod=ugo=rwX blacktie-%CURRENT%-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/%CURRENT%/binary/blacktie-%CURRENT%-vc9x32-bin.zip'
