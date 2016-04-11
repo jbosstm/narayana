@@ -26,14 +26,13 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.BMScript;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.impl.BAControler;
+import org.jboss.narayana.compensations.impl.BAController;
 import org.jboss.narayana.compensations.impl.BAControllerFactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 
@@ -69,7 +68,7 @@ public class CompensationScopedTestRemote extends CompensationScopedTest {
     }
 
     @Override
-    BAControler getBAControler() {
+    BAController getBAController() {
 
         return BAControllerFactory.getRemoteInstance();
     }

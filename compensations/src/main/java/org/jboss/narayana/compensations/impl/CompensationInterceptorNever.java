@@ -42,8 +42,8 @@ public class CompensationInterceptorNever extends CompensationInterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 
-        BAControler baControler = BAControllerFactory.getInstance();
-        if (baControler.isBARunning()) {
+        BAController baController = BAControllerFactory.getInstance();
+        if (baController.isBARunning()) {
             throw new TransactionalException("Transaction is not allowed for invocation", new InvalidTransactionException());
         }
 

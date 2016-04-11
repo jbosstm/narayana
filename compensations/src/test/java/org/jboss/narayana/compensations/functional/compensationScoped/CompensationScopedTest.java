@@ -24,7 +24,7 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.functional.common.DummyData;
-import org.jboss.narayana.compensations.impl.BAControler;
+import org.jboss.narayana.compensations.impl.BAController;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,13 +45,13 @@ public abstract class CompensationScopedTest {
     @Inject
     DummyData dummyData;
 
-    abstract BAControler getBAControler();
+    abstract BAController getBAController();
 
     @After
     public void tearDown() {
 
         try {
-            getBAControler().cancelBusinessActivity();
+            getBAController().cancelBusinessActivity();
         } catch (Exception e) {
         }
     }
@@ -66,9 +66,9 @@ public abstract class CompensationScopedTest {
     @Test
     public void testSimple() throws Exception {
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         dummyData.setValue("1");
-        getBAControler().closeBusinessActivity();
+        getBAController().closeBusinessActivity();
     }
 
     @Test
@@ -82,8 +82,8 @@ public abstract class CompensationScopedTest {
 
         assertContextUnavailable();
 
-        getBAControler().beginBusinessActivity();
-        getBAControler().closeBusinessActivity();
+        getBAController().beginBusinessActivity();
+        getBAController().closeBusinessActivity();
 
         assertContextUnavailable();
     }
@@ -93,29 +93,29 @@ public abstract class CompensationScopedTest {
 
         assertContextUnavailable();
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         dummyData.setValue("1");
         Assert.assertEquals("1", dummyData.getValue());
-        Object txContext1 = getBAControler().suspend();
+        Object txContext1 = getBAController().suspend();
 
         assertContextUnavailable();
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         dummyData.setValue("2");
         Assert.assertEquals("2", dummyData.getValue());
-        Object txContext2 = getBAControler().suspend();
+        Object txContext2 = getBAController().suspend();
 
         assertContextUnavailable();
 
-        getBAControler().resume(txContext1);
+        getBAController().resume(txContext1);
         Assert.assertEquals("1", dummyData.getValue());
-        getBAControler().closeBusinessActivity();
+        getBAController().closeBusinessActivity();
 
         assertContextUnavailable();
 
-        getBAControler().resume(txContext2);
+        getBAController().resume(txContext2);
         Assert.assertEquals("2", dummyData.getValue());
-        getBAControler().closeBusinessActivity();
+        getBAController().closeBusinessActivity();
 
         assertContextUnavailable();
     }
@@ -139,9 +139,9 @@ public abstract class CompensationScopedTest {
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         service.doWork("blah");
-        getBAControler().cancelBusinessActivity();
+        getBAController().cancelBusinessActivity();
 
         Assert.assertEquals(true, MyCompensationHandler.dataAvailable);
         Assert.assertEquals(false, MyConfirmationHandler.dataAvailable);
@@ -155,10 +155,10 @@ public abstract class CompensationScopedTest {
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         service.doWork("blah");
         service.doWork("blah");
-        getBAControler().cancelBusinessActivity();
+        getBAController().cancelBusinessActivity();
 
         Assert.assertTrue(MyCompensationHandler.dataAvailable);
         Assert.assertFalse(MyConfirmationHandler.dataAvailable);
@@ -172,9 +172,9 @@ public abstract class CompensationScopedTest {
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         service.doWork("blah");
-        getBAControler().closeBusinessActivity();
+        getBAController().closeBusinessActivity();
 
         Assert.assertEquals(false, MyCompensationHandler.dataAvailable);
         Assert.assertEquals(true, MyConfirmationHandler.dataAvailable);
@@ -188,10 +188,10 @@ public abstract class CompensationScopedTest {
         MyCompensationHandler.expectedData = "blah";
         MyConfirmationHandler.expectedData = "blah";
 
-        getBAControler().beginBusinessActivity();
+        getBAController().beginBusinessActivity();
         service.doWork("blah");
         service.doWork("blah");
-        getBAControler().closeBusinessActivity();
+        getBAController().closeBusinessActivity();
 
         Assert.assertFalse(MyCompensationHandler.dataAvailable);
         Assert.assertTrue(MyConfirmationHandler.dataAvailable);
