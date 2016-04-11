@@ -470,6 +470,53 @@ public interface jtaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_could_not_access_object_store(@Cause() Exception e);
 
+	@Message(id = 16116, value = "Failed to create JMS connection", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_create_jms_connection(@Cause() Exception e);
+
+	@Message(id = 16117, value = "Failed to close JMS connection {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_close_jms_connection(String arg0, @Cause() Exception e);
+
+	@Message(id = 16118, value = "Failed to close JMS session {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_close_jms_session(String arg0, @Cause() Exception e);
+
+	@Message(id = 16119, value = "Failed to get transaction", format = MESSAGE_FORMAT)
+	String get_failed_to_get_transaction();
+
+	@Message(id = 16120, value = "Failed to get transaction", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_get_transaction(@Cause() Exception e);
+
+	@Message(id = 16121, value = "Failed to get transaction status", format = MESSAGE_FORMAT)
+	String get_failed_to_get_transaction_status();
+
+	@Message(id = 16122, value = "Failed to get transaction status", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_get_transaction_status(@Cause() Exception e);
+
+	@Message(id = 16123, value = "Failed to register synchronization", format = MESSAGE_FORMAT)
+	String get_failed_to_register_synchronization();
+
+	@Message(id = 16124, value = "Failed to register synchronization", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_register_synchronization(@Cause() Exception e);
+
+	@Message(id = 16125, value = "Failed to enlist XA resource", format = MESSAGE_FORMAT)
+	String get_failed_to_enlist_xa_resource();
+
+	@Message(id = 16126, value = "Failed to enlist XA resource", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_enlist_xa_resource(@Cause() Exception e);
+
+	@Message(id = 16127, value = "Failed to delist XA resource", format = MESSAGE_FORMAT)
+	String get_failed_to_delist_xa_resource();
+
+	@Message(id = 16128, value = "Failed to delist XA resource", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_delist_xa_resource(@Cause() Exception e);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

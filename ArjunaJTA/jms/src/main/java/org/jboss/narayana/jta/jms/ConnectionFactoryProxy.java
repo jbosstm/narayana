@@ -21,12 +21,12 @@
  */
 package org.jboss.narayana.jta.jms;
 
+import com.arjuna.ats.jta.logging.jtaLogger;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.XAConnectionFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Proxy connection factory to wrap around provided {@link XAConnectionFactory}.
@@ -34,8 +34,6 @@ import java.util.logging.Logger;
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class ConnectionFactoryProxy implements ConnectionFactory {
-
-    private static final Logger LOGGER = Logger.getLogger(ConnectionFactoryProxy.class.getName());
 
     private final XAConnectionFactory xaConnectionFactory;
 
@@ -50,8 +48,8 @@ public class ConnectionFactoryProxy implements ConnectionFactory {
     public Connection createConnection() throws JMSException {
         Connection connection = new ConnectionProxy(xaConnectionFactory.createXAConnection(), transactionHelper);
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Created new proxied connection: " + connection);
+        if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("Created new proxied connection: " + connection);
         }
 
         return connection;
@@ -62,8 +60,8 @@ public class ConnectionFactoryProxy implements ConnectionFactory {
         Connection connection = new ConnectionProxy(xaConnectionFactory.createXAConnection(userName, password),
                 transactionHelper);
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Created new proxied connection: " + connection);
+        if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("Created new proxied connection: " + connection);
         }
 
         return connection;

@@ -21,6 +21,8 @@
  */
 package org.jboss.narayana.jta.jms;
 
+import com.arjuna.ats.jta.logging.jtaLogger;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionConsumer;
 import javax.jms.ConnectionMetaData;
@@ -33,8 +35,6 @@ import javax.jms.Topic;
 import javax.jms.XAConnection;
 import javax.jms.XASession;
 import javax.transaction.Synchronization;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Proxy connection to wrap around provided {@link XAConnection}.
@@ -42,8 +42,6 @@ import java.util.logging.Logger;
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class ConnectionProxy implements Connection {
-
-    private static final Logger LOGGER = Logger.getLogger(ConnectionProxy.class.getName());
 
     private final XAConnection xaConnection;
 
@@ -69,8 +67,8 @@ public class ConnectionProxy implements Connection {
             Synchronization synchronization = new ConnectionClosingSynchronization(xaConnection);
             transactionHelper.registerSynchronization(synchronization);
 
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Registered synchronization to close the connection: " + synchronization);
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("Registered synchronization to close the connection: " + synchronization);
             }
         } else {
             xaConnection.close();
@@ -135,8 +133,8 @@ public class ConnectionProxy implements Connection {
             throw e;
         }
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Created new proxied session: " + session);
+        if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("Created new proxied session: " + session);
         }
 
         return session;

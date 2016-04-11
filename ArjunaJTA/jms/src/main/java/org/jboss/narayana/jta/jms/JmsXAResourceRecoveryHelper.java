@@ -29,15 +29,13 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
-import org.jboss.logging.Logger;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XAResource {
-
-    private static final Logger LOGGER = Logger.getLogger(JmsXAResourceRecoveryHelper.class);
 
     private final XAConnectionFactory xaConnectionFactory;
 
@@ -69,8 +67,8 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public boolean initialise(String properties) {
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Initialise with properties=" + properties);
+        if (jtaLogger.logger.isTraceEnabled()) {
+            jtaLogger.logger.trace("Initialise with properties=" + properties);
         }
 
         return true;
@@ -85,8 +83,8 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
     @Override
     public XAResource[] getXAResources() {
         if (connect()) {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Returning XA resource: " + this);
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("Returning XA resource: " + this);
             }
 
             return new XAResource[] { this };
@@ -228,7 +226,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
             xaSession = xaConnection.createXASession();
             delegate = xaSession.getXAResource();
         } catch (JMSException e) {
-            LOGGER.warn("Failed to create connection", e);
+            jtaLogger.i18NLogger.warn_failed_to_create_jms_connection(e);
             return false;
         }
 
@@ -239,7 +237,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
         try {
             xaConnection.close();
         } catch (JMSException e) {
-            LOGGER.warn("Failed to close connection", e);
+            jtaLogger.i18NLogger.warn_failed_to_close_jms_connection(xaConnection.toString(), e);
         } finally {
             xaConnection = null;
             xaSession = null;

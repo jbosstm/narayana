@@ -21,7 +21,7 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import org.jboss.logging.Logger;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 import javax.jms.JMSException;
 import javax.transaction.RollbackException;
@@ -37,8 +37,6 @@ import javax.transaction.xa.XAResource;
  */
 public class TransactionHelperImpl implements TransactionHelper {
 
-    private static final Logger LOGGER = Logger.getLogger(TransactionHelperImpl.class);
-
     private final TransactionManager transactionManager;
 
     public TransactionHelperImpl(TransactionManager transactionManager) {
@@ -50,8 +48,8 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION;
         } catch (SystemException e) {
-            LOGGER.warn("Failed to get transaction status", e);
-            throw getJmsException("Failed to get transaction status", e);
+            jtaLogger.i18NLogger.warn_failed_to_get_transaction_status(e);
+            throw getJmsException(jtaLogger.i18NLogger.get_failed_to_get_transaction_status(), e);
         }
     }
 
@@ -60,8 +58,8 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             getTransaction().registerSynchronization(synchronization);
         } catch (IllegalStateException | RollbackException | SystemException e) {
-            LOGGER.warn("Failed to register synchronization", e);
-            throw getJmsException("Failed to register synchronization", e);
+            jtaLogger.i18NLogger.warn_failed_to_register_synchronization(e);
+            throw getJmsException(jtaLogger.i18NLogger.get_failed_to_register_synchronization(), e);
         }
     }
 
@@ -69,12 +67,12 @@ public class TransactionHelperImpl implements TransactionHelper {
     public void registerXAResource(XAResource xaResource) throws JMSException {
         try {
             if (!getTransaction().enlistResource(xaResource)) {
-                LOGGER.warn("Failed to enlist XA resource");
-                throw getJmsException("Failed to enlist XA resource", null);
+                jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(null);
+                throw getJmsException(jtaLogger.i18NLogger.get_failed_to_enlist_xa_resource(), null);
             }
         } catch (RollbackException | IllegalStateException | SystemException e) {
-            LOGGER.warn("Failed to enlist XA resource", e);
-            throw getJmsException("Failed to enlist XA resource", e);
+            jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(e);
+            throw getJmsException(jtaLogger.i18NLogger.get_failed_to_enlist_xa_resource(), e);
         }
     }
 
@@ -82,12 +80,12 @@ public class TransactionHelperImpl implements TransactionHelper {
     public void deregisterXAResource(XAResource xaResource) throws JMSException {
         try {
             if (!getTransaction().delistResource(xaResource, XAResource.TMSUCCESS)) {
-                LOGGER.warn("Failed to delist XA resource");
-                throw getJmsException("Failed to delist XA resource", null);
+                jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(null);
+                throw getJmsException(jtaLogger.i18NLogger.get_failed_to_delist_xa_resource(), null);
             }
         } catch (IllegalStateException | SystemException e) {
-            LOGGER.warn("Failed to delist XA resource", e);
-            throw getJmsException("Failed to delist XA resource", e);
+            jtaLogger.i18NLogger.warn_failed_to_delist_xa_resource(e);
+            throw getJmsException(jtaLogger.i18NLogger.get_failed_to_delist_xa_resource(), e);
         }
     }
 
@@ -95,8 +93,8 @@ public class TransactionHelperImpl implements TransactionHelper {
         try {
             return transactionManager.getTransaction();
         } catch (SystemException e) {
-            LOGGER.warn("Failed to get transaction", e);
-            throw getJmsException("Failed to get transaction", e);
+            jtaLogger.i18NLogger.warn_failed_to_get_transaction(e);
+            throw getJmsException(jtaLogger.i18NLogger.get_failed_to_get_transaction(), e);
         }
     }
 

@@ -21,6 +21,8 @@
  */
 package org.jboss.narayana.jta.jms;
 
+import com.arjuna.ats.jta.logging.jtaLogger;
+
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -42,15 +44,11 @@ import javax.jms.TopicSubscriber;
 import javax.jms.XASession;
 import javax.transaction.Synchronization;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class SessionProxy implements Session {
-
-    private static final Logger LOGGER = Logger.getLogger(SessionProxy.class.getName());
 
     private final XASession xaSession;
 
@@ -66,15 +64,15 @@ public class SessionProxy implements Session {
         if (transactionHelper.isTransactionAvailable()) {
             transactionHelper.deregisterXAResource(xaSession.getXAResource());
 
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Delisted " + xaSession + " XA resource from the transaction");
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("Delisted " + xaSession + " XA resource from the transaction");
             }
 
             Synchronization synchronization = new SessionClosingSynchronization(xaSession);
             transactionHelper.registerSynchronization(synchronization);
 
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Registered synchronization to close the session: " + synchronization);
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("Registered synchronization to close the session: " + synchronization);
             }
 
         } else {
