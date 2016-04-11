@@ -25,12 +25,10 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.impl.BAControler;
+import org.jboss.narayana.compensations.impl.BAController;
 import org.jboss.narayana.compensations.impl.BAControllerFactory;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 
@@ -55,7 +53,7 @@ public class CompensationScopedTestLocal extends CompensationScopedTest {
     }
 
     @Override
-    BAControler getBAControler() {
+    BAController getBAController() {
 
         return BAControllerFactory.getLocalInstance();
     }

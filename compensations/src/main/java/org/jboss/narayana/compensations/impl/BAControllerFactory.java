@@ -1,36 +1,36 @@
 package org.jboss.narayana.compensations.impl;
 
 import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
-import org.jboss.narayana.compensations.impl.local.LocalBAControler;
-import org.jboss.narayana.compensations.impl.remote.RemoteBAControler;
+import org.jboss.narayana.compensations.impl.local.LocalBAController;
+import org.jboss.narayana.compensations.impl.remote.RemoteBAController;
 
 /**
  * @author paul.robinson@redhat.com 19/04/2014
  */
 public class BAControllerFactory {
 
-    public static BAControler getInstance() {
+    public static BAController getInstance() {
 
-        BAControler remoteBAControler = getRemoteInstance();
-        if (remoteBAControler.isBARunning()) {
-            return remoteBAControler;
+        BAController remoteBAController = getRemoteInstance();
+        if (remoteBAController.isBARunning()) {
+            return remoteBAController;
         }
-        BAControler localBAControler = getLocalInstance();
-        if (localBAControler.isBARunning()) {
-            return localBAControler;
+        BAController localBAController = getLocalInstance();
+        if (localBAController.isBARunning()) {
+            return localBAController;
         }
-        return localBAControler;
+        return localBAController;
     }
 
-    public static BAControler getRemoteInstance() {
+    public static BAController getRemoteInstance() {
 
-        return new RemoteBAControler();
+        return new RemoteBAController();
     }
 
-    public static BAControler getLocalInstance() {
+    public static BAController getLocalInstance() {
 
         ProtocolRegistry.sharedManager().initialise();
-        return new LocalBAControler();
+        return new LocalBAController();
     }
 
     public static boolean isLocalTransactionRunning() {
@@ -38,8 +38,8 @@ public class BAControllerFactory {
         if (getRemoteInstance().isBARunning()) {
             return false;
         }
-        BAControler localBAControler = getLocalInstance();
-        return localBAControler.isBARunning();
+        BAController localBAController = getLocalInstance();
+        return localBAController.isBARunning();
     }
 
     public static boolean isRemoteTransactionRunning() {

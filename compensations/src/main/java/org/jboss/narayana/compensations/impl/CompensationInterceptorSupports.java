@@ -40,8 +40,8 @@ public class CompensationInterceptorSupports extends CompensationInterceptorBase
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 
-        BAControler baControler = BAControllerFactory.getInstance();
-        if (!baControler.isBARunning()) {
+        BAController baController = BAControllerFactory.getInstance();
+        if (!baController.isBARunning()) {
             return invokeInNoTx(ic);
         } else {
             return invokeInCallerTx(ic);

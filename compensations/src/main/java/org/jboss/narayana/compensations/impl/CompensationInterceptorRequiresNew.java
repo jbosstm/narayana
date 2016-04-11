@@ -40,17 +40,17 @@ public class CompensationInterceptorRequiresNew extends CompensationInterceptorB
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 
-        BAControler baControler = BAControllerFactory.getInstance();
-        if (!baControler.isBARunning()) {
+        BAController baController = BAControllerFactory.getInstance();
+        if (!baController.isBARunning()) {
             return invokeInOurTx(ic);
         } else {
-            final Object txContext = baControler.suspend();
+            final Object txContext = baController.suspend();
             final CompensationManagerState compensationManagerState = CompensationManagerImpl.suspend();
 
             try {
                 return invokeInOurTx(ic);
             } finally {
-                baControler.resume(txContext);
+                baController.resume(txContext);
                 CompensationManagerImpl.resume(compensationManagerState);
             }
         }

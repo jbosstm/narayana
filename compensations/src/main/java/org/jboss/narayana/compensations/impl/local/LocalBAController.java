@@ -9,7 +9,7 @@ import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
-import org.jboss.narayana.compensations.impl.BAControler;
+import org.jboss.narayana.compensations.impl.BAController;
 import org.jboss.narayana.compensations.impl.BeanManagerUtil;
 import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
 import org.jboss.narayana.compensations.impl.CompensationManagerState;
@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * @author paul.robinson@redhat.com 19/04/2014
  */
-public class LocalBAControler implements BAControler {
+public class LocalBAController implements BAController {
 
     @Override
     public void beginBusinessActivity() throws Exception {
