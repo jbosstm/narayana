@@ -7,7 +7,7 @@ import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 /**
  * @author paul.robinson@redhat.com 19/04/2014
  */
-public interface BAControler {
+public interface BAController {
 
     void beginBusinessActivity() throws Exception;
 

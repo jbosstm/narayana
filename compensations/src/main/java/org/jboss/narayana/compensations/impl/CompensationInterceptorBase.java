@@ -41,14 +41,14 @@ public class CompensationInterceptorBase {
 
     protected Object invokeInOurTx(InvocationContext ic) throws Exception {
 
-        BAControler baControler;
+        BAController baController;
         Compensatable compensatable = getCompensatable(ic);
         if (compensatable.distributed()) {
-            baControler = BAControllerFactory.getRemoteInstance();
+            baController = BAControllerFactory.getRemoteInstance();
         } else {
-            baControler = BAControllerFactory.getLocalInstance();
+            baController = BAControllerFactory.getLocalInstance();
         }
-        baControler.beginBusinessActivity();
+        baController.beginBusinessActivity();
 
         Object result = null;
         boolean isException = false;
@@ -59,7 +59,7 @@ public class CompensationInterceptorBase {
             isException = true;
             handleException(ic, e, true);
         } finally {
-            baControler.completeBusinessActivity(isException);
+            baController.completeBusinessActivity(isException);
         }
 
         return result;
