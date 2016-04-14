@@ -435,6 +435,10 @@ public interface jtaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_resources_arjunacore_classnotfound(String arg0);
 
+    @Message(id = 16105, value = "Suppressed throwables are not available: exception {0} deferred {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_suppressed(Throwable e, Throwable t);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

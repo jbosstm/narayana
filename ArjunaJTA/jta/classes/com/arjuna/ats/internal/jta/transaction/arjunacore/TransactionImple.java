@@ -59,6 +59,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ExceptionDeferrer;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.logging.arjunaI18NLogger;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.CommitMarkableResourceRecord;
@@ -89,7 +90,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		com.arjuna.ats.jta.transaction.Transaction
 {
 
-	/*
+    /*
 	 * Only works with AtomicAction and TwoPhaseCoordinator.
 	 */
 
@@ -245,8 +246,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 	<T extends Exception> T addSuppressedThrowables(T e) {
         for (Throwable t : _theTransaction.getDeferredThrowables())
         {
-            e.addSuppressed(t);
-        }
+            if (canSuppress) {
+                e.addSuppressed(t);
+            } else {
+                jtaLogger.i18NLogger.warn_suppressed(e, t);
+            }
+	    }
+	    
 	    return e;
 	}
 
@@ -1640,6 +1646,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     protected static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin;
 
+    private static boolean canSuppress;
+
 	static
 	{
         XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
@@ -1651,6 +1659,15 @@ public class TransactionImple implements javax.transaction.Transaction,
         }
 
         _xaResourceRecordWrappingPlugin = jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
+        
+        try {
+            Throwable.class.getMethod("addSuppressed", Throwable.class);
+            canSuppress = true;
+        } catch (Throwable e) {
+            if (jtaLogger.logger.isTraceEnabled()) {
+                jtaLogger.logger.trace("Can't suppress throwables (likely running on JDK6 or lower)");
+            }
+        }
 	}
 
 	private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
