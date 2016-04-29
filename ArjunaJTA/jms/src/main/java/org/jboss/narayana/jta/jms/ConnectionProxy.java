@@ -54,11 +54,7 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
-        if (transactionHelper.isTransactionAvailable()) {
-            return createAndRegisterSession();
-        }
-
-        return xaConnection.createSession(transacted, acknowledgeMode);
+        return createAndRegisterSession();
     }
 
     @Override
@@ -127,7 +123,9 @@ public class ConnectionProxy implements Connection {
         Session session = new SessionProxy(xaSession, transactionHelper);
 
         try {
-            transactionHelper.registerXAResource(xaSession.getXAResource());
+            if (transactionHelper.isTransactionAvailable()) {
+                transactionHelper.registerXAResource(xaSession.getXAResource());
+            }
         } catch (JMSException e) {
             xaSession.close();
             throw e;

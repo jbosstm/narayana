@@ -45,6 +45,8 @@ import javax.jms.XASession;
 import javax.transaction.Synchronization;
 import java.io.Serializable;
 
+import static org.jboss.narayana.jta.jms.MessageListenerProxy.isDeclaredTransactional;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
@@ -151,8 +153,13 @@ public class SessionProxy implements Session {
     }
 
     @Override
-    public void setMessageListener(MessageListener messageListener) throws JMSException {
-        xaSession.setMessageListener(messageListener);
+    public void setMessageListener(MessageListener listener) throws JMSException {
+        if (isDeclaredTransactional(listener)) {
+            MessageListenerProxy messageListenerProxy = new MessageListenerProxy(listener, xaSession);
+            xaSession.setMessageListener(messageListenerProxy);
+        } else {
+            xaSession.setMessageListener(listener);
+        }
     }
 
     @Override
@@ -167,17 +174,17 @@ public class SessionProxy implements Session {
 
     @Override
     public MessageConsumer createConsumer(Destination destination) throws JMSException {
-        return xaSession.createConsumer(destination);
+        return new MessageConsumerProxy(xaSession.createConsumer(destination), xaSession);
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination, String s) throws JMSException {
-        return xaSession.createConsumer(destination, s);
+        return new MessageConsumerProxy(xaSession.createConsumer(destination, s), xaSession);
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination, String s, boolean b) throws JMSException {
-        return xaSession.createConsumer(destination, s, b);
+        return new MessageConsumerProxy(xaSession.createConsumer(destination, s, b), xaSession);
     }
 
     @Override

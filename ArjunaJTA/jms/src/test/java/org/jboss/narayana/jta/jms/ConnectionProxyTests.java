@@ -73,18 +73,19 @@ public class ConnectionProxyTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void shouldCreateSessionWithoutTransaction() throws Exception {
-        when(transactionHelperMock.isTransactionAvailable()).thenReturn(false);
-        when(xaConnectionMock.createSession(true, 0)).thenReturn(sessionMock);
-
-        Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);
-        Session session = connection.createSession(true, 0);
-
-        assertThat(session, sameInstance(sessionMock));
-        verify(xaConnectionMock, times(1)).createSession(true, 0);
-        verify(transactionHelperMock, times(1)).isTransactionAvailable();
-    }
+// No more relevant, as we always create a proxy, even without transaction
+//    @Test
+//    public void shouldCreateSessionWithoutTransaction() throws Exception {
+//        when(transactionHelperMock.isTransactionAvailable()).thenReturn(false);
+//        when(xaConnectionMock.createSession(true, 0)).thenReturn(sessionMock);
+//
+//        Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);
+//        Session session = connection.createSession(true, 0);
+//
+//        assertThat(session, sameInstance(sessionMock));
+//        verify(xaConnectionMock, times(1)).createSession(true, 0);
+//        verify(transactionHelperMock, times(1)).isTransactionAvailable();
+//    }
 
     @Test
     public void shouldCreateSessionWithTransaction() throws Exception {
