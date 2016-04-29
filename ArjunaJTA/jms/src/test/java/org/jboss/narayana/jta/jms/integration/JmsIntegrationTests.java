@@ -137,15 +137,12 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
             @Override @Transactional
             public void onMessage(Message message) {
                 try {
-                    System.out.println("RECEIVED");
                     TransactionManager.transactionManager().getTransaction().enlistResource(xaResourceMock);
                     // Disable listener to avoid onMessage on redelivery
                     messageConsumer.setMessageListener(null);
                 } catch (Exception e) {
-                    System.out.println("PROBLEM " + e.getMessage());
                     throw new RuntimeException(e);
                 }
-                System.out.println("EXCEPTION");
                 throw new RuntimeException("Fail - should imply a rollback");
             }
         });
