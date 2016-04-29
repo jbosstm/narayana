@@ -29,9 +29,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.jms.*;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.Transactional;
+import javax.transaction.*;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.util.Date;
@@ -124,13 +122,11 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
             }
         });
 
-        Session sendSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        TextMessage originalMessage = sendSession.createTextMessage("Test " + new Date());
-        sendSession.createProducer(queue).send(originalMessage);
+        sendMessage();
 
         // Adding timeout, wait until transaction has ended
         verify(xaResourceMock, timeout(1_000L).times(1)).prepare(any(Xid.class));
-        verify(xaResourceMock, times(1)).commit(any(Xid.class), anyBoolean());
+        verify(xaResourceMock, timeout(100L).times(1)).commit(any(Xid.class), anyBoolean());
     }
 
     @Test
@@ -141,19 +137,30 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
             @Override @Transactional
             public void onMessage(Message message) {
                 try {
+                    System.out.println("RECEIVED");
                     TransactionManager.transactionManager().getTransaction().enlistResource(xaResourceMock);
+                    // Disable listener to avoid onMessage on redelivery
+                    messageConsumer.setMessageListener(null);
                 } catch (Exception e) {
+                    System.out.println("PROBLEM " + e.getMessage());
                     throw new RuntimeException(e);
                 }
+                System.out.println("EXCEPTION");
                 throw new RuntimeException("Fail - should imply a rollback");
             }
         });
 
-        Session sendSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        TextMessage originalMessage = sendSession.createTextMessage("Test " + new Date());
-        sendSession.createProducer(queue).send(originalMessage);
+        sendMessage();
 
         verify(xaResourceMock, timeout(1_000L).times(1)).rollback(any(Xid.class));
+    }
+
+    private void sendMessage() throws NotSupportedException, SystemException, JMSException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        TransactionManager.transactionManager().begin();
+        Session sendSession = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+        TextMessage originalMessage = sendSession.createTextMessage("Test " + new Date());
+        sendSession.createProducer(queue).send(originalMessage);
+        TransactionManager.transactionManager().commit();
     }
 
 }

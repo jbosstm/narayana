@@ -19,6 +19,10 @@ public class MessageListenerProxy implements MessageListener {
 
     static boolean isDeclaredTransactional(MessageListener messageListener) {
         try {
+            if (messageListener == null) {
+                return false;
+            }
+
             Class<? extends MessageListener> listenerClass = messageListener.getClass();
             if (listenerClass.isAnnotationPresent(Transactional.class)) {
                 return true;
