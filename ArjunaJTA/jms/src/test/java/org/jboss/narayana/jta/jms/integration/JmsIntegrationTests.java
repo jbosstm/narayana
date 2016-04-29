@@ -33,10 +33,10 @@ import javax.transaction.*;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.*;
@@ -127,6 +127,11 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
         // Adding timeout, wait until transaction has ended
         verify(xaResourceMock, timeout(1_000L).times(1)).prepare(any(Xid.class));
         verify(xaResourceMock, timeout(100L).times(1)).commit(any(Xid.class), anyBoolean());
+
+        // Assert that the message is no more in the queue
+        messageConsumer.setMessageListener(null);
+        Message receivedMessage = messageConsumer.receiveNoWait();
+        assertNull(receivedMessage);
     }
 
     @Test
@@ -150,6 +155,10 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
         sendMessage();
 
         verify(xaResourceMock, timeout(1_000L).times(1)).rollback(any(Xid.class));
+
+        // Assert that the message has been put back in the queue
+        Message receivedMessage = messageConsumer.receiveNoWait();
+        assertNotNull(receivedMessage);
     }
 
     private void sendMessage() throws NotSupportedException, SystemException, JMSException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
