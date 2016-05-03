@@ -37,12 +37,18 @@ import static org.junit.Assert.fail;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.jta.Implementations;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -415,6 +421,153 @@ public class XATerminatorUnitTest
         }
 
         assertEquals("some transaction import futures did not complete", completionCount.get(), TASK_COUNT);
+    }
+
+    @Test
+    public void testRecovery() throws Exception {
+        Implementations.initialise();
+        XATerminatorImple xa = new XATerminatorImple();
+        Xid[] recover = xa.recover(XAResource.TMSTARTRSCAN);
+        int initialLength = recover == null ? 0 : recover.length;
+        xa.recover(XAResource.TMENDRSCAN);
+
+        
+        XidImple xid = new XidImple(new Uid());
+        TransactionImporter imp = SubordinationManager.getTransactionImporter();
+
+        SubordinateTransaction importTransaction = imp.importTransaction(xid);
+
+        importTransaction.enlistResource(new XAResource() {
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public void commit(Xid xid, boolean onePhase) throws XAException {
+                throw new XAException(XAException.XA_RETRY);
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+            }
+
+            @Override
+            public Xid[] recover(int flag) throws XAException {
+                return null;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaRes) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int seconds) throws XAException {
+                return false;
+            }
+        });
+
+        assertTrue(xa.beforeCompletion(xid));
+
+        assertEquals(xa.prepare(xid), XAResource.XA_OK);
+
+        try {
+            xa.commit(xid, false);
+            fail();
+        } catch (XAException e) {
+            assertTrue(e.errorCode == XAException.XAER_RMFAIL);
+        }
+
+        Xid[] recover2 = xa.recover(XAResource.TMSTARTRSCAN);
+        assertTrue(recover2.length == initialLength+1);
+        try {
+            xa.commit(xid, false);
+            fail();
+        } catch (XAException e) {
+            assertTrue("Wrong errorcode" + e.errorCode, e.errorCode == XAException.XAER_RMFAIL);
+        }
+        xa.recover(XAResource.TMENDRSCAN);
+
+        // Feed the recovery manager with something it can recover with
+        RecoveryManager.manager().addModule(new XARecoveryModule() {
+            @Override
+            public XAResource getNewXAResource(final XAResourceRecord xaResourceRecord) {
+                return new XAResource() {
+
+                    @Override
+                    public void start(Xid xid, int flags) throws XAException {
+                    }
+
+                    @Override
+                    public void end(Xid xid, int flags) throws XAException {
+                    }
+
+                    @Override
+                    public int prepare(Xid xid) throws XAException {
+                        return 0;
+                    }
+
+                    @Override
+                    public void commit(Xid xid, boolean onePhase) throws XAException {
+                    }
+
+                    @Override
+                    public void rollback(Xid xid) throws XAException {
+                    }
+
+                    @Override
+                    public void forget(Xid xid) throws XAException {
+                    }
+
+                    @Override
+                    public Xid[] recover(int flag) throws XAException {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isSameRM(XAResource xaRes) throws XAException {
+                        return false;
+                    }
+
+                    @Override
+                    public int getTransactionTimeout() throws XAException {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean setTransactionTimeout(int seconds) throws XAException {
+                        return false;
+                    }
+                };
+            }
+        });
+        Xid[] recover3 = xa.recover(XAResource.TMSTARTRSCAN);
+        assertTrue(recover3.length == recover2.length);
+        xa.commit(xid, false);
+        xa.recover(XAResource.TMENDRSCAN);
+
+        Xid[] recover4 = xa.recover(XAResource.TMSTARTRSCAN);
+        assertTrue(recover4 == null || recover4.length == initialLength);
+        xa.recover(XAResource.TMENDRSCAN);
     }
 
     /*
