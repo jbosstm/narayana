@@ -75,6 +75,7 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		setTestName("Test03");
 		Task client0 = createTask("client0", org.jboss.jbossts.qa.CrashRecovery12Clients.Client01.class, Task.TaskType.EXPECT_READY_PASS_FAIL, 240, "store");
 		client0.start("commit", "CR12_03.log");
+		suspend(500); // Workaround for JBTM-2648
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240, "store");
 		outcome0.start("CR12_03.log", "yes");
 		outcome0.waitFor();
@@ -123,5 +124,14 @@ public class TestGroup_crashrecovery12 extends TestGroupBase
 		Task outcome0 = createTask("outcome0", org.jboss.jbossts.qa.CrashRecovery12Outcomes.Outcome01.class, Task.TaskType.EXPECT_PASS_FAIL, 240);
 		outcome0.start("CR12_07.log", "no");
 		outcome0.waitFor();
+	}
+
+	private void suspend(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			Thread.currentThread().interrupt();
+		}
 	}
 }
