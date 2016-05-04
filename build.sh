@@ -59,7 +59,7 @@ MAVEN_SEARCH_PATH="\
     maven"
 
 #  Default arguments
-MVN_OPTIONS="-s tools/maven/conf/settings.xml -Dorson.jar.location=`pwd`/ext/ $BPA"
+MVN_OPTIONS="-s tools/maven/conf/settings.xml $BPA"
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
@@ -125,6 +125,7 @@ main() {
 
     #  Increase the maximum file descriptors if we can.
     if [ $cygwin = "false" ]; then
+        MVN_OPTIONS="$MVN_OPTIONS -Dorson.jar.location=`pwd`/ext/"
         MAX_FD_LIMIT=`ulimit -H -n`
         if [ $? -eq 0 ]; then
             if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ]; then
@@ -139,6 +140,8 @@ main() {
         else
             warn "Could not query system maximum file descriptor limit: $MAX_FD_LIMIT"
         fi
+    else
+        MVN_OPTIONS="$MVN_OPTIONS -Dorson.jar.location=`cygpath -w $(pwd)/ext/`"
     fi
 
     #  Try the search path.
