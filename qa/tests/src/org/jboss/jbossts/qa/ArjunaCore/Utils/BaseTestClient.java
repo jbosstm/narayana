@@ -74,16 +74,16 @@ public class BaseTestClient extends BaseTestCase
 		mAtom.begin();
 	}
 
-	public void commit()
+	public int commit()
 			throws Exception
 	{
-		commit(true);
+		return commit(true);
 	}
 
-	public void commit(boolean flag)
+	public int commit(boolean flag)
 			throws Exception
 	{
-		mAtom.commit(flag);
+		return mAtom.commit(flag);
 	}
 
 	//extra methods because we are changing the return type of the base class

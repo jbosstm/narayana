@@ -3217,8 +3217,8 @@ public class TestJDBCAccess implements JDBCAccess {
 
                     @Override
                     public int executeUpdate() throws SQLException {
-                        // TODO Auto-generated method stub
-                        return 0;
+                        // So that updates appear to have happened JBTM-2655
+                        return 1;
                     }
 
                     @Override

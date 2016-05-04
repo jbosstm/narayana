@@ -56,6 +56,7 @@ public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAc
 			Class driverClass = Class.forName(JDBCProfileStore.driver(dbName, 0));
 			DriverManager.registerDriver((java.sql.Driver) driverClass.newInstance());
 			Connection conn = DriverManager.getConnection(JDBCProfileStore.databaseURL(dbName), prop);
+			conn.setAutoCommit(false);
 			return conn;
 		}
 		catch (Exception e)

@@ -1528,6 +1528,18 @@ public interface arjunaI18NLogger {
     @Message(id = 12381, value = "Action id {0} completed with multiple threads - thread {1} was in progress with {2}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_multiple_threads(Uid objectUid, String key, String string);
+
+    @Message(id = 12382, value = "Action id {0} could not be transitioned to committed", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_objectstore_JDBCImple_nothingtocommit(String string);
+
+    @Message(id = 12383, value = "Action id {0} could not be updated during write_state", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_objectstore_JDBCImple_nothingtoupdate(String string);
+
+    @Message(id = 12384, value = "Action id {0} could not be inserted during write_state", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_objectstore_JDBCImple_nothingtoinsert(String string);
     
     /*
         Allocate new messages directly above this notice.

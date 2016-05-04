@@ -25,6 +25,8 @@ import org.jboss.jbossts.qa.ArjunaCore.StateManager.impl.BasicStateRecord;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.BaseTestClient;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.qautil;
 
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+
 public class Client002b extends BaseTestClient
 {
 	public static void main(String[] args)
@@ -74,7 +76,9 @@ public class Client002b extends BaseTestClient
 			{
 				mStateRecordList[j].increase();
 			}
-			commit();
+			if (commit() != ActionStatus.COMMITTED) {
+			    Fail("Not committed 1");
+			}
 
 			//start new AtomicAction
 			startTx();
@@ -86,7 +90,10 @@ public class Client002b extends BaseTestClient
 					mStateRecordList[j].increase();
 				}
 			}
-			commit();
+
+            if (commit() != ActionStatus.COMMITTED) {
+                Fail("Not committed 2");
+            }
 
 			//we do not need to do anything else it should finish here if not print failed
 			Fail();
