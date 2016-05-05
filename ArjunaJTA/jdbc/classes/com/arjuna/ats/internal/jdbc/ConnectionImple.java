@@ -366,25 +366,25 @@ public class ConnectionImple implements Connection
 	                    }
 	                }
 
+	                tx.registerSynchronization(new ConnectionSynchronization(null, _transactionalDriverXAConnectionConnection));
 	                if (delayClose)
 	                {
-        	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _transactionalDriverXAConnectionConnection));
+        	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, null));
 
                                 _theConnection = null;
 	                }
 	            }
 	            else
 	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
+	        } else {
+	            _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
 	        }
 
 	        if (!delayClose)  // close now
 	        {
-	            if (_theModifier != null)
-	                _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
-
-	           
-	            if (_theConnection != null && !_theConnection.isClosed())
+	            if (!_theConnection.isClosed()) {
 	                _theConnection.close();
+	            }
 
 	            _theConnection = null;
 	        }
