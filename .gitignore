@@ -9,3 +9,5 @@ jboss-as
 *~
 
 *.orig
+qa/ext/log4j.jar
+qa/ext/netty.jar
