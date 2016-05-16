@@ -59,15 +59,15 @@ function init_test_options {
         # if the following env variables have not been set initialize them to their defaults
         [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
         [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
-        [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
+        [ $AS_BUILD ] || AS_BUILD=0 # git clone and build a fresh copy of the AS
         [ $TXF_TESTS ] || TXF_TESTS=0 # TxFramework tests
-        [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
-        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
+        [ $XTS_TESTS ] || XTS_TESTS=0 # XTS tests
+        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
         [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
         [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
         [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-        [ $txbridge ] || txbridge=1 # bridge tests
+        [ $txbridge ] || txbridge=0 # bridge tests
     else
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
