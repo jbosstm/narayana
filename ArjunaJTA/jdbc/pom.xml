@@ -222,6 +222,7 @@
                     <exclude>**/DBPlugin.java</exclude>
                     <exclude>**/*JNDISetup.java</exclude>
                     <exclude>**/*SimpleJdbcTest.java</exclude>
+                    <exclude>**/*StableConnections.java</exclude>
                   </excludes>
                 </configuration>
               </execution>
@@ -257,6 +258,7 @@
                     <exclude>**/DBPlugin.java</exclude>
                     <exclude>**/*JNDISetup.java</exclude>
                     <exclude>**/*SimpleJdbcTest.java</exclude>
+                    <exclude>**/*StableConnections.java</exclude>
                   </excludes>
                 </configuration>
               </execution>
