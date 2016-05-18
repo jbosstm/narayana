@@ -194,7 +194,7 @@ public class ContextManager
     }
 
 	ControlWrapper action = null;
-	Object arg = otsCurrent.get(threadId);
+	Object arg = threadId == null ? null : otsCurrent.get(threadId);
 
 	if (arg != null)
 	{
@@ -296,7 +296,7 @@ public class ContextManager
 
     public final void purgeActions ()
     {
-        purgeActions(ThreadUtil.getThreadId());
+        purgeActions(ThreadUtil.removeThreadId(Thread.currentThread()));
     }
 
     /**
