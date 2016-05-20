@@ -55,7 +55,7 @@ public class ParticipantSideInitialisation implements XTSInitialisation
         ParticipantCompletionParticipantInitialisation.shutdown();
         CoordinatorCompletionParticipantInitialisation.shutdown();
 
-        ParticipantInitialisation.startup();
+        ParticipantInitialisation.shutdown();
 
         // there is no WS-C coordinator shutdown
     }
