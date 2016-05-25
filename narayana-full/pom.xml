@@ -89,12 +89,12 @@
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <version>${project.version}</version>
-      <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>jbossxts</artifactId>
       <version>${project.version}</version>
+      <classifier>api</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
