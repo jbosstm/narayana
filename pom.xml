@@ -688,7 +688,12 @@
         </dependency>
       </dependencies>
     </profile>
-
+    <profile>
+      <id>debug</id>
+      <properties>
+        <jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</jvm.args.debug>
+      </properties>
+    </profile>
     <profile>
       <id>community</id>
       <properties>
