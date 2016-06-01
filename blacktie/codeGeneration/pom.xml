@@ -19,13 +19,13 @@
     <parent>
         <groupId>org.jboss.narayana.blacktie</groupId>
         <artifactId>blacktie-all</artifactId>
-        <version>5.3.3.Final-SNAPSHOT</version>
+        <version>5.3.3.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.narayana.blacktie</groupId>
     <artifactId>blacktie-codeGeneration</artifactId>
-    <version>5.3.3.Final-SNAPSHOT</version>
+    <version>5.3.3.Final</version>
     <name>Blacktie Server Code Generation</name>
     <packaging>jar</packaging>
     <url>http://www.jboss.org/blacktie</url>
