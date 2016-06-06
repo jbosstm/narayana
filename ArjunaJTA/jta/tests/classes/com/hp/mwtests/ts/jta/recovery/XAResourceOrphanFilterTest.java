@@ -95,27 +95,30 @@ public class XAResourceOrphanFilterTest
     public void testJTAActionStatusServiceXAResourceOrphanFilter() {
         XAResourceOrphanFilter orphanFilter = new JTAActionStatusServiceXAResourceOrphanFilter();
 
-        Uid uid = new Uid();
-
-        Xid xid = XATxConverter.getXid(uid, false, XATxConverter.FORMAT_ID);
-        assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xid));
-
-        TwoPhaseCoordinator tpc = new TwoPhaseCoordinator(uid);
-        try {
-            tpc.start();
-            assertEquals(XAResourceOrphanFilter.Vote.LEAVE_ALONE, orphanFilter.checkXid(xid));
-        } finally {
-            tpc.cancel();
-        }
-        assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xid));
         List<String> xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
-        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(null);
-        TwoPhaseCoordinator tpc2 = new TwoPhaseCoordinator(uid);
+        List<String> recoveryNodes = new LinkedList<String>();
+        recoveryNodes.add("1");
+        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(recoveryNodes);
         try {
+            Uid uid = new Uid();
+
+            Xid xid = XATxConverter.getXid(uid, false, XATxConverter.FORMAT_ID);
+            assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xid));
+
+            TwoPhaseCoordinator tpc = new TwoPhaseCoordinator(uid);
+            try {
+                tpc.start();
+                assertEquals(XAResourceOrphanFilter.Vote.LEAVE_ALONE, orphanFilter.checkXid(xid));
+            } finally {
+                tpc.cancel();
+            }
+            assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xid));
+            jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(null);
+            TwoPhaseCoordinator tpc2 = new TwoPhaseCoordinator(uid);
             tpc2.start();
             assertEquals(XAResourceOrphanFilter.Vote.ABSTAIN, orphanFilter.checkXid(xid));
-        } finally {
             tpc2.cancel();
+        } finally {
             jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
         }
     }
