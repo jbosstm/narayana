@@ -30,7 +30,7 @@
     <version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
     <version.org.jboss.arquillian.core>1.1.2.Final</version.org.jboss.arquillian.core>
     <version.shrinkwrap>1.1.2</version.shrinkwrap>
-    <version.apache.karaf>2.3.3</version.apache.karaf>
+    <version.apache.karaf>4.0.5</version.apache.karaf>
   </properties>
   <dependencyManagement>
     <dependencies>

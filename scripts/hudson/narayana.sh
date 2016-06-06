@@ -290,7 +290,7 @@ function init_jboss_home {
 function osgi_tests {
   echo "#-1. OSGI Test"
   cd ${WORKSPACE}
-  ./build.sh -f osgi/jta/pom.xml -Parq-karaf-embedded clean test
+  #./build.sh -f osgi/jta/pom.xml -Parq-karaf-embedded clean integration-test
   [ $? = 0 ] || fatal "OSGI Test failed"
 }
 

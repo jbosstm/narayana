@@ -83,6 +83,12 @@
 		   <scope>provided</scope>
 	   </dependency>
 	   <dependency>
+		   <groupId>org.jboss.narayana.jts</groupId>
+		   <artifactId>jtax</artifactId>
+		   <version>${project.version}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
 		   <groupId>org.jboss.logging</groupId>
 		   <artifactId>jboss-logging</artifactId>
 		   <version>${version.org.jboss.logging.jboss-logging}</version>
@@ -92,6 +98,12 @@
 		   <groupId>org.apache.activemq</groupId>
 		   <artifactId>artemis-journal</artifactId>
 		   <version>${version.org.apache.activemq}</version>
+		   <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.apache.karaf.shell</groupId>
+		   <artifactId>org.apache.karaf.shell.console</artifactId>
+		   <version>${version.apache.karaf}</version>
 		   <scope>provided</scope>
 	   </dependency>
 	   <dependency>
@@ -154,7 +166,7 @@
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
       </plugin>
-		   <plugin>
+      <plugin>
 			   <groupId>org.apache.felix</groupId>
 			   <artifactId>maven-bundle-plugin</artifactId>
 			   <version>${maven-bundle-plugin.version}</version>
@@ -166,6 +178,8 @@
 					   <Bundle-Activator>org.jboss.narayana.osgi.jta.internal.Activator</Bundle-Activator>
 					   <Export-Package>
 						   org.jboss.tm*;version=${version.org.jboss.jboss-transaction-spi},
+						   org.jboss.narayana.osgi.jta;version=${project.version},
+						   org.jboss.narayana.osgi.jta.command;version=${project.version},
 						   javax.transaction*;version="1.2.0"
 					   </Export-Package>
 					   <Private-Package>
@@ -174,9 +188,9 @@
 						   org.jboss.tm*
 					   </Private-Package>
 					   <Import-Package>
-						   javax.management, 
-						   javax.naming, 
-						   javax.naming.spi, 
+						   javax.management,
+						   javax.naming,
+						   javax.naming.spi,
 						   javax.xml.parsers,
 						   javax.xml.stream,
 						   org.xml.sax,
@@ -189,11 +203,16 @@
 						   org.osgi.service.log,
 						   org.osgi.util.tracker,
 						   org.springframework.*;resolution:=optional;version="[2.5,5)",
+						   org.apache.felix.service.command,
+						   org.apache.karaf.shell.api.action,
+						   org.apache.karaf.shell.api.action.lifecycle,
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
 					   <Embed-Dependency>
 						   jboss-logging;inline=false,
 						   jta;inline=false,
+						   jtax;inline=false,
+						   orbportability;inline=false,
 						   common;inline=false,
 						   arjuna;inline=false,
 						   narayana-jts-integration;inline=false,
@@ -210,6 +229,7 @@
 					   </Require-Capability>
 					   <_include>src/main/resources/META-INF/MANIFEST.MF</_include>
 					   <_removeheaders>Include-Resource,Private-Package,Embed*,Bundle-ClassPath</_removeheaders>
+					   <Karaf-Commands>org.jboss.narayana.osgi.jta.command</Karaf-Commands>
 			   </instructions>
 		   </configuration>
 	   </plugin>

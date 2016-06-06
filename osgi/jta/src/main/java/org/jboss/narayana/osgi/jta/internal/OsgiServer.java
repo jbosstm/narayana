@@ -34,11 +34,14 @@ import java.util.Properties;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserMBean;
 import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
 import com.arjuna.ats.jbossatx.jta.TransactionManagerService;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
+import org.jboss.narayana.osgi.jta.ObjStoreBrowserService;
 import org.jboss.tm.XAResourceRecovery;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -56,6 +59,7 @@ public class OsgiServer implements ServiceTrackerCustomizer<XAResourceRecovery, 
     ServiceTracker<XAResourceRecovery, XAResourceRecovery> resourceRecoveryTracker;
     TransactionManagerService transactionManagerService;
     RecoveryManagerService recoveryManagerService;
+    ObjStoreBrowserService objStoreBrowserService;
 
     public OsgiServer(BundleContext bundleContext, Dictionary<String, ?> configuration) {
         this.bundleContext = bundleContext;
@@ -98,13 +102,19 @@ public class OsgiServer implements ServiceTrackerCustomizer<XAResourceRecovery, 
         tmSvc.create();
         transactionManagerService = tmSvc;
 
+        ObjStoreBrowser osb = new ObjStoreBrowser();
+        osb.setExposeAllRecordsAsMBeans(true);
+        objStoreBrowserService = new ObjStoreBrowserImpl(osb);
+
         resourceRecoveryTracker.open();
         transactionManagerService.start();
         recoveryManagerService.start();
+        objStoreBrowserService.start();
 
         register(TransactionManager.class, transactionManagerService.getTransactionManager());
         register(TransactionSynchronizationRegistry.class, transactionManagerService.getTransactionSynchronizationRegistry());
         register(UserTransaction.class, transactionManagerService.getUserTransaction());
+        register(ObjStoreBrowserService.class, objStoreBrowserService);
 
         try {
             registrations.add(PlatformTransactionManagerImple.register(
@@ -171,6 +181,16 @@ public class OsgiServer implements ServiceTrackerCustomizer<XAResourceRecovery, 
                 resourceRecoveryTracker = null;
             }
         }
+        if (objStoreBrowserService != null) {
+            try {
+                objStoreBrowserService.stop();
+            } catch (Throwable t) {
+                warn("Error stopping object browser", t);
+            } finally {
+                objStoreBrowserService = null;
+            }
+        }
+
         TransactionReaper.terminate(false);
         TxControl.disable(true);
         StoreManager.shutdown();
