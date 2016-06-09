@@ -20,6 +20,7 @@
  */
 package com.hp.mwtests.ts.jta.jts.subordinate;
 
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.After;
 import org.junit.Before;
 
@@ -29,6 +30,12 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
+import org.junit.Test;
+
+import javax.transaction.HeuristicMixedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * JTAX version of the Subordinate transaction tests.
@@ -79,7 +86,21 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
 //        System.clearProperty("com.arjuna.ats.jta.jtaTMImplementation");
 //        System.clearProperty("com.arjuna.ats.jta.jtaUTImplementation");
     }
-    
+
+    @Test
+    public void testPrepareRollback() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
+        try {
+            tm.doRollback();
+            fail("TransactionImple stub can't be sure why the transaction was committed it shouldn't massage");
+        } catch (HeuristicMixedException e) {
+            // TransactionImple stub can't be sure why the transaction was committed it shouldn't massage
+            //  - this DOES NOT match doPhase2Abort in ServerTransaction which allows a massage
+        }
+    }
+
     @Override
     public SubordinateTransaction createTransaction() {
             return new TransactionImple(0); // implicit begin

@@ -611,4 +611,12 @@ public class SubordinateTestCase
 
         assertTrue("commit should throw an exception and not get to here", false);
     }
+
+    @Test
+    public void testPrepareRollback() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
+        tm.doRollback(); // Due to the readonly we allow the massage - this matches doPhase2Abort in ServerTransaction
+    }
 }

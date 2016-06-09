@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.jts.orbspecific.interposition;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import org.junit.Test;
 import org.omg.CosTransactions.Status;
 
@@ -89,7 +90,7 @@ public class ServerTransactionUnitTest extends TestBase
         ServerTransaction sc = new ServerTransaction(new Uid(), null);
 
         assertEquals(sc.doPrepare(), TwoPhaseOutcome.PREPARE_READONLY);  // readonly so we commit here
-        assertEquals(sc.doPhase2Abort(), TwoPhaseOutcome.HEURISTIC_COMMIT);
+        assertEquals(sc.doPhase2Abort(), ActionStatus.ABORTED);  // Due to the readonly we allow the massage
     }
     
     @Test
