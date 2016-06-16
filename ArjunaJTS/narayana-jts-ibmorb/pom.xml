@@ -64,6 +64,7 @@
                 <source>../../ArjunaCore/txoj/classes</source>
                 <source>../../ArjunaJTA/jta/classes</source>
                 <source>../../ArjunaJTA/jdbc/classes</source>
+                <source>../../ArjunaJTA/jms/classes</source>
                 <source>../../ArjunaJTA/cdi/classes</source>
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
@@ -99,6 +100,7 @@
                   <include>org.jboss.narayana.arjunacore:txoj</include>
                   <include>org.jboss.narayana.jta:jta</include>
                   <include>org.jboss.narayana.jta:jdbc</include>
+                  <include>org.jboss.narayana.jta:jms</include>
                   <include>org.jboss.narayana.jta:cdi</include>
                   <include>org.jboss.narayana.jts:orbportability</include>
                   <include>org.jboss.narayana.jts:jts</include>
@@ -196,6 +198,11 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

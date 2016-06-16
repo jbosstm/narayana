@@ -65,6 +65,7 @@
                 <source>../jta/classes</source>
                 <source>../cdi/classes</source>
                 <source>../jdbc/classes</source>
+                <source>../jms/classes</source>
               </sources>
             </configuration>
           </execution>
@@ -97,6 +98,7 @@
                   <include>org.jboss.narayana.jta:jta</include>
                   <include>org.jboss.narayana.jta:cdi</include>
                   <include>org.jboss.narayana.jta:jdbc</include>
+                  <include>org.jboss.narayana.jta:jms</include>
                 </includes>
               </artifactSet>
             </configuration>
@@ -188,6 +190,11 @@
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
