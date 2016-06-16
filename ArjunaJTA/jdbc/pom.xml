@@ -153,6 +153,19 @@
       <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${version.org.mockito}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- JUnit already comes with Hamcrest -->
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <profiles>
 	<profile>
