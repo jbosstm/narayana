@@ -1134,6 +1134,21 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return state;
 	}
 
+	public void setXAResourceState (XAResource xaRes, int state) {
+		if (xaRes != null)
+		{
+			TxInfo info = (TxInfo) _resources.get(xaRes);
+
+			if (info == null)
+			{
+				info = (TxInfo) _duplicateResources.get(xaRes);
+			}
+
+			if (info != null)
+				info.setState(state);
+		}
+	}
+
 	/**
 	 * Creates if does not exist and adds to our internal mapping table.
 	 */
