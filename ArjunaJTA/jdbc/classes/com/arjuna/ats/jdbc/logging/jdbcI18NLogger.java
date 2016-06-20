@@ -173,6 +173,10 @@ public interface jdbcI18NLogger {
 	@Message(id = 17037, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
 	public String get_xa_recjndierror();
 
+	@Message(id = 17038, value = "ConnectionSynchronization could not close connection", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_not_closed(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
