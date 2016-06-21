@@ -60,13 +60,16 @@ public class OSBTypeHandler {
 
     private static HeaderStateReader createHeader(String headerStateReaderClassName) {
 		try {
-			Class<HeaderStateReader> cl = (Class<HeaderStateReader>) Class.forName(headerStateReaderClassName);
-			Constructor<HeaderStateReader> constructor = cl.getConstructor();
-			return constructor.newInstance();
-		} catch (Throwable e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
-			tsLogger.i18NLogger.info_osb_HeaderStateCtorInfo(e.getMessage());
-			return new HeaderStateReader();
+            Class<HeaderStateReader> cl = (Class<HeaderStateReader>) Class.forName(headerStateReaderClassName);
+            Constructor<HeaderStateReader> constructor = cl.getConstructor();
+            return constructor.newInstance();
+        } catch (ClassNotFoundException e) {
+            tsLogger.logger.debugf("OSB: Header reader for class %s not found", headerStateReaderClassName);
+		} catch (Throwable e) { // NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
+			tsLogger.i18NLogger.info_osb_HeaderStateCtorFail(e);
         }
+
+        return new HeaderStateReader();
     }
 
     public boolean isEnabled() {

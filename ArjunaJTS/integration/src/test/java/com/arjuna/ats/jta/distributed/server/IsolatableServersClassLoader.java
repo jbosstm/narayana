@@ -21,19 +21,23 @@
  */
 package com.arjuna.ats.jta.distributed.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import sun.misc.Resource;
-import sun.misc.URLClassPath;
+//import sun.misc.Resource;
+//import sun.misc.URLClassPath;
+import java.net.URLClassLoader;
 
 public class IsolatableServersClassLoader extends ClassLoader {
 
 	private Map<String, Class<?>> clazzMap = new HashMap<String, Class<?>>();
-	private URLClassPath ucp;
+	//private URLClassPath ucp;
+	private URLClassLoader ucp;
 	private String ignoredPackage;
 	private String includedPackage;
 	private String otherIgnoredPackage;
@@ -55,7 +59,7 @@ public class IsolatableServersClassLoader extends ClassLoader {
 				urls[i] = new URL("file:" + url + "/");
 			}
 		}
-		this.ucp = new URLClassPath(urls);
+		this.ucp = new URLClassLoader(urls); //URLClassPath(urls);
 	}
 
 	@Override
@@ -80,14 +84,26 @@ public class IsolatableServersClassLoader extends ClassLoader {
 					|| (includedPackage != null && !name.startsWith(includedPackage))) {
 				clazz = getParent().loadClass(name);
 			} else {
-
 				String path = name.replace('.', '/').concat(".class");
-				Resource res = ucp.getResource(path, false);
+				URL res = ucp.getResource(path);
 				if (res == null) {
 					throw new ClassNotFoundException(name);
 				}
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				InputStream is = null;
 				try {
-					byte[] classData = res.getBytes();
+					try {
+						is = res.openStream();
+						byte[] byteChunk = new byte[4096];
+						int n;
+
+						while ((n = is.read(byteChunk)) > 0) {
+							baos.write(byteChunk, 0, n);
+						}
+					} finally {
+						if (is != null) { is.close(); }
+					}
+					byte[] classData = baos.toByteArray();
 					clazz = defineClass(name, classData, 0, classData.length);
 					clazzMap.put(name, clazz);
 				} catch (IOException e) {

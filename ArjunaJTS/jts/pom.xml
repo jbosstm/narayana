@@ -30,6 +30,9 @@
     <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
+    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+
   </properties>
 
   <build>
@@ -55,6 +58,7 @@
        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
         <executions>
           <execution>
             <id>default-compile</id>
@@ -67,6 +71,9 @@
           <execution>
             <id>default-testCompile</id>
             <configuration>
+<compilerArgs>
+  <arg>-XYZ1</arg>
+</compilerArgs>
               <testExcludes>
                 <exclude>**</exclude>
               </testExcludes>
@@ -206,6 +213,238 @@
 
   <profiles>
     <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>${java.corba.patch.name}</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jts</groupId>
+                      <artifactId>${java.corba.patch.name}</artifactId>
+                      <version>${project.version}</version>
+                      <type>${project.packaging}</type>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- disable maven compiler in favour of the ant javac task
+            (when https://issues.apache.org/jira/browse/MCOMPILER-279 is fixed renable it)
+            -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+              <execution>
+                <id>compile-j9</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks name="compile sources">
+                    <mkdir dir="${project.build.directory}/classes"/>
+                    <property name="compile_classpath" refid="maven.compile.classpath"/>
+                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                      excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**">
+                      <compilerarg value="--add-modules"/>
+                      <compilerarg value="java.corba"/>
+                      <compilerarg value="--patch-module"/>
+                      <compilerarg value="java.corba=${java.corba.patch.jar}"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CosTransactions=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.portable=ALL-UNNAMED"/>
+
+                      <src>
+                        <pathelement location="${project.build.sourceDirectory}"/>
+                      </src>
+                    </javac>
+                  </tasks>
+                </configuration>
+              </execution>
+              <execution>
+                <id>testCompile-j9</id>
+                <phase>testCompile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks name="compile sources">
+                    <mkdir dir="${project.build.directory}/classes"/>
+                    <property name="compile_classpath" refid="maven.compile.classpath"/>
+                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                      excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**,**/GenericRecoveryCreatorUnitTest.java">
+                      <compilerarg value="--add-modules"/>
+                      <compilerarg value="java.corba"/>
+                      <compilerarg value="--patch-module"/>
+                      <compilerarg value="java.corba=${java.corba.patch.jar}"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CosTransactions=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.portable=ALL-UNNAMED"/>
+
+                      <src>
+                        <pathelement location="${project.build.testSourceDirectory}"/>
+                      </src>
+                    </javac>
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration combine.self="override">
+                  <systemProperties combine.children="append" />
+                  <argLine>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED</argLine>
+                  <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                  <excludes>
+                    <exclude>**/common/**</exclude>
+                    <exclude>**/exceptions/**</exclude>
+                    <exclude>**/orbspecific/resources/**</exclude>
+                    <exclude>**/resources/**</exclude>
+                    <exclude>**/utils/ResourceTrace.java</exclude>
+                    <exclude>**/utils/Util.java</exclude>
+                    <exclude>**/TransactionTest2.java</exclude>
+                    <exclude>**/CheckedTransactions.java</exclude>
+                    <exclude>**/GridTest.java</exclude>
+                    <exclude>**/remote/**</exclude>
+                    <exclude>**/DefaultTimeout.java</exclude>
+                    <exclude>**/JacORB*.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
+
+                    <!-- j9 TODO -->
+<!--
+                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
+                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                    <exclude>**/RecoveredServerTransactionUnitTest.java</exclude>
+                    <exclude>**/RecoveredTransactionUnitTest.java</exclude>
+
+                    <exclude>**/ArjunaInterpositionUnitTest.java</exclude>
+                    <exclude>**/ExplicitInterpositionUnitTest.java</exclude>
+                    <exclude>**/FactoryListUnitTest.java</exclude>
+                    <exclude>**/RestrictedInterpositionUnitTest.java</exclude>
+                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
+                    <exclude>**/ServerFactoryUnitTest.java</exclude>
+                    <exclude>**/StrictInterpositionUnitTest.java</exclude>
+                    <exclude>**/SynchTest.java</exclude>
+-->
+                    <!-- j9 TODO org.omg.CORBA.BAD_INV_ORDER  -->
+<!--
+                    <exclude>**/AsyncTest.java</exclude>
+                    <exclude>**/TxUnitTest.java</exclude>
+-->
+                    <!-- end j9 TODO -->
+                  </excludes>
+                  <reportsDirectory>${project.build.directory}/surefire-reports-j9</reportsDirectory>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>jts-jacorb</id>
       <activation>
         <property>
@@ -238,6 +477,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.5.1</version>
             <executions>
               <execution>
                 <id>jacorb-compile</id>
@@ -276,7 +516,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <excludes>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>
@@ -330,6 +569,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
             <executions>
               <execution>
                 <id>idlj-compile</id>
@@ -349,6 +589,9 @@
                   <goal>testCompile</goal>
                 </goals>
                 <configuration>
+<compilerArgs>
+  <arg>-XYZ2</arg>
+</compilerArgs>
                   <testExcludes>
 				    <!-- TODO make sure all supported ORBs have "RecoveryCreator" tests -->
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
@@ -371,7 +614,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -445,6 +687,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
             <executions>
               <execution>
                 <id>idlj-compile</id>
@@ -464,6 +707,9 @@
                   <goal>testCompile</goal>
                 </goals>
                 <configuration>
+<compilerArgs>
+  <arg>-XYZ2</arg>
+</compilerArgs>
                   <testExcludes>
                     <!-- TODO make sure all supported ORBs have "RecoveryCreator" tests -->
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
@@ -487,7 +733,6 @@
                 </goals>
                 <configuration>
                   <argLine>${idlj.boot.args}</argLine>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -552,6 +797,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
             <executions>
               <execution>
                 <id>ibmorb-compile</id>
@@ -571,6 +817,9 @@
                   <goal>testCompile</goal>
                 </goals>
                 <configuration>
+<compilerArgs>
+  <arg>-XYZ2</arg>
+</compilerArgs>
                   <testExcludes>
                     <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
                     <exclude>**/jacorb/**</exclude>
@@ -592,7 +841,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <!-- exclude tests that load the byteman agent (BMUnitRunner) -->

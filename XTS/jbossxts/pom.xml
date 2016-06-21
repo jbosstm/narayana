@@ -258,6 +258,7 @@
               </execution>
             </executions>
             <configuration>
+              <skip>true</skip>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>org.*:com.arjuna.services.*:com.arjuna.webservices*:com.arjuna.mwlabs.*:com.arjuna.webservices11*:com.arjuna.schemas:com.arjuna.mw.wstx</excludePackageNames>
             </configuration>
