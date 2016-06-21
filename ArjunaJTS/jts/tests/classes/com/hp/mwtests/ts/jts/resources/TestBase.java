@@ -67,14 +67,14 @@ public class TestBase
     public void tearDown () throws Exception
     {
         myOA.destroy();
-        myORB.shutdown();
+        myORB.shutdown(true);
 		// JBTM-1829 as the orbportability version of shutdown does not wait for
 		// completion some jacorb tests will fail due to possible race conditions
-        try {
+/*        try {
         	myORB.orb().shutdown(true);
         } catch (BAD_INV_ORDER bio) {
         	// ignore - jacorb can tolerate the second call to shutdown, IDLJ will not
-        }
+        }*/
         emptyObjectStore();
     }
 
