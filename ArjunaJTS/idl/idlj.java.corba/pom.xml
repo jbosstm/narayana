@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2016, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss.narayana.jts</groupId>
+    <artifactId>narayana-idl</artifactId>
+    <version>5.3.5.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>idlj.java.corba.patch</artifactId>
+  <name>Narayana: ArjunaJTS patch java.corba module</name>
+  <description>Narayana: ArjunaJTS patch of java.corba module</description>
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks name="Generate idl stubs">
+                <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
+                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="-addmods"/>
+                  <jvmarg value="java.corba"/>
+                  <arg value="-i"/>
+                  <arg value="${project.build.directory}/../../src/main/idl"/>
+                  <arg value="-td"/>
+                  <arg value="${project.build.directory}/generated-sources/idl"/>
+                  <arg value="-pkgPrefix"/>
+                  <arg value="CosTransactions"/>
+                  <arg value="org.omg"/>
+                  <arg value="-fallTIE"/>
+                  <arg value="-i"/>
+                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+                  <arg value="-i"/>
+                  <arg value="${env.JAVA_HOME}/lib"/>
+                  <arg value="-i"/>
+                  <arg value="${env.JAVA_HOME}/include"/>
+                  <arg value="-d"/>
+                  <arg value="ORB_CURRENT_SUPPORT=1"/>
+                  <arg value="-fallTIE"/>
+                  <arg value="${project.build.directory}/../../src/main/idl/omg/CosTransactions.idl"/>
+                </java>
+                <mkdir dir="${project.build.directory}/classes"/>
+                <javac destdir="${project.build.directory}/classes">
+                   <compilerarg value="-Xmodule:java.corba"/>
+                   <src>
+                      <pathelement location="${project.build.directory}/generated-sources/idl/org/omg/CORBA"/>
+                      <!-- include the following in the module patch since without it we get:
+                        "error: org.omg.CosTransactions.XXX is not visible because
+                               package org.omg.CosTransactions is not visible"
+                        It seems as if the java.corba module is hiding the package
+                        org.omg.CosTransactions which is odd because
+                        jmod describe <jdk-9 install dir>/jmods/java.corba.jmod
+                        does not report any org.omg.CosTransactions clases
+                        -->
+                      <pathelement location="${project.build.directory}/generated-sources/idl/org/omg/CosTransactions"/>
+                   </src>
+                </javac>
+                <delete>
+                  <fileset dir="${project.build.directory}/generated-sources/idl/org/omg/CORBA" includes="**/*"/>
+                </delete>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>add-source</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>
+                    ${project.build.directory}/generated-sources/idl/org/omg/CORBA
+                  </source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

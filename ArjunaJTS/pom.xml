@@ -24,6 +24,10 @@
   <packaging>pom</packaging>
   <name>Narayana: ArjunaJTS</name>
   <description>Narayana: ArjunaJTS</description>
+  <properties>
+    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -34,13 +38,51 @@
     </plugins>
   </build>
   <modules>
-    <module>orbportability</module>
     <module>idl</module>
+    <module>orbportability</module>
     <module>jts</module>
     <module>jtax</module>
     <module>integration</module>
   </modules>
   <profiles>
+      <profile>
+        <id>j9</id>
+        <activation>
+          <jdk>[1.9,)</jdk>
+        </activation>
+        <modules>
+            <module>narayana-jts-idlj-j9</module>
+        </modules>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+<!-- TODO move j9 specific config from child modules to here -->
+                  <id>default-test</id>
+                  <phase>test</phase>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                  <configuration combine.self="override">
+                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                    <argLine>-Xpatch:java.corba=${java.corba.patch.jar} -addmods java.corba</argLine>
+                    <systemPropertyVariables
+                      combine.children="append">
+                      <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                      <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                      <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                    </systemPropertyVariables>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+
       <profile>
           <id>jts-jacorb</id>
           <activation>
@@ -85,7 +127,6 @@
                     <goal>test</goal>
                   </goals>
                   <configuration>
-                    <skip>false</skip>
                     <systemPropertyVariables
                       combine.children="append">
                       <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0</OrbPortabilityEnvironmentBean.orbImpleClassName>
@@ -122,7 +163,6 @@
                     <goal>test</goal>
                   </goals>
                   <configuration>
-                    <skip>false</skip>
                     <systemPropertyVariables
                       combine.children="append">
                       <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
@@ -159,7 +199,6 @@
                     <goal>test</goal>
                   </goals>
                   <configuration>
-                    <skip>false</skip>
                     <systemProperties combine.children="append" />
                     <systemPropertyVariables
                       combine.children="append">

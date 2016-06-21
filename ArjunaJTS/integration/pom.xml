@@ -23,6 +23,12 @@
   <name>Narayana: ArjunaJTS integration</name>
   <description>Narayana: ArjunaJTS integration (atx)</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -50,10 +56,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M -Djava.util.logging.config.file=logging.properties</argLine>
-          <useManifestOnlyJar>false</useManifestOnlyJar>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <configuration>
+              <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M -Djava.util.logging.config.file=logging.properties</argLine>
+              <useManifestOnlyJar>false</useManifestOnlyJar>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -92,7 +103,7 @@
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-spi</artifactId>
           </exclusion>
-        </exclusions>  
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
@@ -169,6 +180,66 @@
       </dependency>
   </dependencies>
   <profiles>
+
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <showDeprecation>false</showDeprecation>
+              <compilerArgs>
+                <arg>-addmods</arg>
+                <arg>java.base</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+               <executions>
+                 <execution>
+                   <id>default-test</id>
+                   <configuration combine.self="override">
+                     <argLine>-Xmx256m -Djava.util.logging.config.file=logging.properties</argLine>
+                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                     <!-- TODO j9 -->
+                     <excludes>
+                       <exclude>**/SPIUnitTest.java</exclude>
+                     </excludes>
+                   </configuration>
+                 </execution>
+               </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-j9</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-j9</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>${java.corba.patch.name}</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
 
     <profile>
         <id>release</id>

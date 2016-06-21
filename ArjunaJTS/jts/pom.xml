@@ -30,6 +30,9 @@
     <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
+    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+
   </properties>
 
   <build>
@@ -200,6 +203,187 @@
 
   <profiles>
     <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>${java.corba.patch.name}</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-j9</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-j9</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jts</groupId>
+                      <artifactId>${java.corba.patch.name}</artifactId>
+                      <version>${project.version}</version>
+                      <type>${project.packaging}</type>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>compile-j9</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <fork>true</fork>
+                  <compilerArgs>
+                    <arg>-addmods</arg>
+                    <arg>java.corba</arg>
+                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                  </compilerArgs>
+                  <excludes>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>testCompile-j9</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <compilerArgs>
+                    <arg>-addmods</arg>
+                    <arg>java.corba</arg>
+                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
+                    <arg>-XaddExports:java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                  </compilerArgs>
+                  <testExcludes>
+                    <exclude>**/GenericRecoveryCreatorUnitTest.java</exclude>
+                    <exclude>**/JacORB*.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
+                  </testExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration combine.self="override">
+                  <systemProperties combine.children="append" />
+                  <argLine>-addmods java.corba -Xpatch:java.corba=${java.corba.patch.jar} -XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED -XaddExports:java.corba/org.omg.CosTransactions=ALL-UNNAMED</argLine>
+                  <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                  <excludes>
+                    <exclude>**/common/**</exclude>
+                    <exclude>**/exceptions/**</exclude>
+                    <exclude>**/orbspecific/resources/**</exclude>
+                    <exclude>**/resources/**</exclude>
+                    <exclude>**/utils/ResourceTrace.java</exclude>
+                    <exclude>**/utils/Util.java</exclude>
+                    <exclude>**/TransactionTest2.java</exclude>
+                    <exclude>**/CheckedTransactions.java</exclude>
+                    <exclude>**/GridTest.java</exclude>
+                    <exclude>**/remote/**</exclude>
+                    <exclude>**/DefaultTimeout.java</exclude>
+                    <exclude>**/JacORB*.java</exclude>
+                    <exclude>**/jacorb/**</exclude>
+                    <exclude>**/ibmorb/**</exclude>
+
+                    <!-- j9 TODO -->
+                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
+                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
+                    <exclude>**/RecoveredServerTransactionUnitTest.java</exclude>
+                    <exclude>**/RecoveredTransactionUnitTest.java</exclude>
+
+                    <exclude>**/ArjunaInterpositionUnitTest.java</exclude>
+                    <exclude>**/ExplicitInterpositionUnitTest.java</exclude>
+                    <exclude>**/FactoryListUnitTest.java</exclude>
+                    <exclude>**/RestrictedInterpositionUnitTest.java</exclude>
+                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
+                    <exclude>**/ServerFactoryUnitTest.java</exclude>
+                    <exclude>**/StrictInterpositionUnitTest.java</exclude>
+                    <exclude>**/SynchTest.java</exclude>
+                    <!-- j9 TODO org.omg.CORBA.BAD_INV_ORDER  -->
+                    <exclude>**/AsyncTest.java</exclude>
+                    <exclude>**/TxUnitTest.java</exclude>
+                    <!-- end j9 TODO -->
+                  </excludes>
+                  <reportsDirectory>${project.build.directory}/surefire-reports-j9</reportsDirectory>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                  <systemPropertyVariables combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>jts-jacorb</id>
       <activation>
         <property>
@@ -270,7 +454,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <excludes>
                     <exclude>**/exceptions/**</exclude>
                     <exclude>**/orbspecific/resources/**</exclude>
@@ -365,7 +548,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -481,7 +663,6 @@
                 </goals>
                 <configuration>
                   <argLine>${idlj.boot.args}</argLine>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -586,7 +767,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>false</skip>
                   <systemProperties combine.children="append" />
                   <excludes>
                     <!-- exclude tests that load the byteman agent (BMUnitRunner) -->

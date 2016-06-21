@@ -107,6 +107,7 @@
               <goal>jar</goal>
             </goals>
             <configuration>
+              <classifier>impl</classifier>
               <forceCreation>true</forceCreation>
               <excludes>
                 <exclude>com/arjuna/wst/Vote.class</exclude>
@@ -225,4 +226,32 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <configuration>
+                  <compilerArgs>
+                    <arg>-addmods</arg>
+                    <arg>java.xml,java.xml.bind,java.xml.ws</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

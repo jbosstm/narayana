@@ -41,7 +41,11 @@ MAVEN_HOME=""
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	MAVEN_OPTS="$MAVEN_OPTS -Xmx512M -XX:MaxPermSize=256m"
+	if [ $JAVA_VERSION="9-ea" ]; then
+		MAVEN_OPTS="$MAVEN_OPTS -Xmx512M"
+	else
+		MAVEN_OPTS="$MAVEN_OPTS -Xmx512M XX:MaxPermSize=256m"
+	fi
 	export MAVEN_OPTS
 fi
 
@@ -204,6 +208,7 @@ main() {
 
     echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
+    JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
     #  Execute in debug mode, or simply execute.
     if [ "x$MVN_DEBUG" != "x" ]; then
         /bin/sh -x $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS
