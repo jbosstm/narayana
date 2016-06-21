@@ -220,16 +220,6 @@
                             <excludes>
                                 <exclude>**</exclude>
                             </excludes>
-                            <forceCreation>true</forceCreation>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jar-with-classifier</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
                             <classifier>${bpa}</classifier>
                             <forceCreation>true</forceCreation>
                         </configuration>

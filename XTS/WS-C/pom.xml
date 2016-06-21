@@ -17,7 +17,7 @@
     <artifactId>xts-all</artifactId>
     <version>5.9.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
-  </parent>
+ </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ws-c11</artifactId>
   <packaging>jar</packaging>
@@ -38,6 +38,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>ws-c11</id>
@@ -74,6 +75,7 @@
             <id>impl</id>
             <phase>package</phase>
             <configuration>
+              <classifier>impl</classifier>
               <forceCreation>true</forceCreation>
               <excludes>
                 <exclude>com/arjuna/wsc/AlreadyRegisteredException.class</exclude>
@@ -115,4 +117,55 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <configuration>
+                  <compilerArgs>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml,java.xml.bind,java.xml.ws</arg>
+                    <arg>--add-opens</arg>
+                    <arg>java.base/java.util=ALL-UNNAMED,java.base/java.lang.reflect=ALL-UNNAMED,java.base/java.text=ALL-UNNAMED,java.desktop/java.awt.font=ALL-UNNAMED</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
