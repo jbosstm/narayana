@@ -23,6 +23,11 @@
   <name>Narayana: ArjunaJTS integration</name>
   <description>Narayana: ArjunaJTS integration (atx)</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -50,10 +55,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M -Djava.util.logging.config.file=logging.properties</argLine>
-          <useManifestOnlyJar>false</useManifestOnlyJar>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals> 
+            <configuration>
+              <useManifestOnlyJar>false</useManifestOnlyJar>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -76,6 +89,11 @@
     </plugins>
   </build>
   <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
@@ -92,7 +110,7 @@
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging-spi</artifactId>
           </exclusion>
-        </exclusions>  
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
@@ -169,6 +187,113 @@
       </dependency>
   </dependencies>
   <profiles>
+
+    <profile>
+      <id>not-j9</id>
+      <activation>
+        <jdk>[1.7,1.9)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <!-- TODO do the other profiles generate an idlj-idl-tests artifact -->
+          <artifactId>idlj-idl-tests</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>${java.corba.patch.name}</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-tests</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <showDeprecation>false</showDeprecation>
+              <compilerArgs>
+                <arg>--add-modules</arg>
+                <arg>java.base</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jts</groupId>
+                      <artifactId>${java.corba.patch.name}</artifactId>
+                      <version>${project.version}</version>
+                      <type>${project.packaging}</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jta</groupId>
+                      <artifactId>narayana-jta-j9-module</artifactId>
+                      <version>${project.version}</version>
+                      <type>jar</type>
+                      <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+               <executions>
+                 <execution>
+                   <id>default-test</id>
+                   <phase>test</phase>
+                   <goals>
+                     <goal>test</goal>
+                   </goals> 
+                   <configuration>
+                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                     <classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                     </classpathDependencyExcludes>
+                   </configuration>
+                 </execution>
+               </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <profile>
         <id>release</id>

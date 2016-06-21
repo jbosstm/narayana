@@ -251,5 +251,5 @@ public class BaseTestCase
 	public int clientMemory0 = 0;
 	//there can only be 1 client (this)
 	public int clientMemory1 = 0;
-	public float clientIncreaseThreshold = new Float(0.025).floatValue();//default value
+	public float clientIncreaseThreshold = Float.valueOf("0.025").floatValue();//default value
 }

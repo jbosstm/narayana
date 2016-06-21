@@ -41,7 +41,16 @@ MAVEN_HOME=""
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
+	if [ $JAVA_VERSION = "9-ea" ]; then
+		MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m"
+		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
+		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.util=ALL-UNNAMED"
+		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.lang.reflect=ALL-UNNAMED"
+		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.text=ALL-UNNAMED"
+		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.desktop/java.awt.font=ALL-UNNAMED"
+	else
+    MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
+	fi
 	export MAVEN_OPTS
 fi
 

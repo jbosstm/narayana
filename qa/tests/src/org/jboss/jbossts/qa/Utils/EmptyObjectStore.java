@@ -60,7 +60,7 @@ public class EmptyObjectStore
 			{
 				Class c = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.jbossts.qa.Utils.OrbSetup");
 
-				orbClass = (Setup) c.newInstance();
+				orbClass = (Setup) c.getDeclaredConstructor().newInstance();
 
 				orbClass.start(args);
 			}

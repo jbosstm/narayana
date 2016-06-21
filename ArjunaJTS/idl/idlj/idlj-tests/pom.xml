@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2012, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss.narayana.jts</groupId>
+    <artifactId>idlj-idl-parent</artifactId>
+    <version>5.5.2.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>idlj-idl-tests</artifactId>
+  <name>Narayana: ArjunaJTS idl idlj tests</name>
+  <description>Narayana: ArjunaJTS idl idlj tests</description>
+  <packaging>jar</packaging>
+
+  <properties>
+    <surefire.system.args/>
+  </properties>
+
+  <build>
+    <finalName>idlj-idl-${project.version}-tests</finalName>
+    <resources>
+      <resource>
+        <directory>${project.build.directory}/generated-resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+
+      <plugins>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                  <id>copy-dependencies</id>
+                  <phase>initialize</phase>
+                  <goals>
+                      <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                      <artifactItems>
+                          <artifactItem>
+                              <groupId>org.jboss.narayana.jts</groupId>
+                              <artifactId>idlj-idl-jdk8</artifactId>
+                              <version>${project.version}</version>
+                              <type>test-jar</type>
+                              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                          </artifactItem>
+                      </artifactItems>
+                  </configuration>
+              </execution>
+          </executions>
+          </plugin>
+          <!-- j9 TODO which of the following plugin configs do we need -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                  <execution>
+                      <id>default-test</id>
+                      <phase>test</phase>
+                      <goals>
+                          <goal>test</goal>
+                      </goals>
+                      <configuration combine.self="override">
+                          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                          <systemProperties combine.children="append" />
+                          <argLine>${surefire.system.args}</argLine>
+                          <systemPropertyVariables
+                                  combine.children="append">
+                              <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                              <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                              <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                          </systemPropertyVariables>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+      </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <properties>
+        <surefire.system.args>--add-modules java.corba</surefire.system.args>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                      <artifactItem>
+                          <groupId>org.jboss.narayana.jts</groupId>
+                          <artifactId>idlj-idl-jdk8</artifactId>
+                          <version>${project.version}</version>
+                          <type>test-jar</type>
+                          <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                      </artifactItem>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jts</groupId>
+                      <artifactId>idlj-idl-jdk9</artifactId>
+                      <version>${project.version}</version>
+                      <type>test-jar</type>
+                      <outputDirectory>${project.build.directory}/generated-resources/META-INF/versions/9</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

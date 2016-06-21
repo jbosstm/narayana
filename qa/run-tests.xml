@@ -61,6 +61,10 @@
   <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
   <property name="profile" value=""/>
 
+  <condition property="modular.jdk.args" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" else="">
+    <equals arg1="${ant.java.version}" arg2="1.9"/>
+  </condition>
+
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="scratch">
     <junit-tests tests="defaulttimeout"/>
@@ -219,6 +223,8 @@
   <property name="test.timeout" value=""/>
   <target name="onetest">
     <echo message="Running a single test group ${test.name}"/>
+    <echo message="jdk version: ${ant.java.version}"/>
+    <echo message="modular.jdk.args ${modular.jdk.args}"/>
     <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}"/>
     <fail if="failed-tests" message="${test.name} - some tests failed"/>
   </target>
@@ -518,7 +524,7 @@
                 <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
                 <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
                 <sysproperty key="names" value=".*"/>
-                <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+                <sysproperty key="additional.elements" value="${modular.jdk.args} @{additional.elements} ${objectStoreElements}"/>
                 <sysproperty key="test.timeout" value="@{test.timeout}"/>
               </junit>
             </jacoco:coverage>
@@ -530,7 +536,7 @@
               <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" methods="@{methods}" if="m"/>
               <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_@{tests}" if="n"/>
               <sysproperty key="names" value=".*"/>
-              <sysproperty key="additional.elements" value="@{additional.elements} ${objectStoreElements}"/>
+              <sysproperty key="additional.elements" value="${modular.jdk.args} @{additional.elements} ${objectStoreElements}"/>
               <sysproperty key="test.timeout" value="@{test.timeout}"/>
               <!--<jvmarg value="-Xdebug"/>-->
               <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007"/>-->
