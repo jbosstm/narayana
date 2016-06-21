@@ -141,6 +141,81 @@
         </dependency>
     </dependencies>
     <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <configuration>
+                  <compilerArgs>
+                      <arg>--add-modules</arg>
+                  <arg>java.xml.ws</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <configuration>
+                  <compilerArgs>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml.ws</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-test</id>
+                  <phase>test</phase>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                  <configuration combine.self="override">
+                    <argLine>--add-modules java.xml.ws</argLine>
+                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                    <excludes>
+                      <exclude>**/**</exclude>
+                    </excludes>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+        </plugins>
+      </build>
+    </profile>
+
       <profile>
         <id>jts-ibmorb</id>
         <activation>
