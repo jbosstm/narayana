@@ -40,6 +40,7 @@
     <module>spi</module>
     <module>jms</module>
     <module>narayana-jta</module>
+    <module>jta-module</module>
   </modules>
   <profiles>
       <profile>
