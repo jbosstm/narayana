@@ -206,6 +206,9 @@
 						   org.apache.felix.service.command,
 						   org.apache.karaf.shell.api.action,
 						   org.apache.karaf.shell.api.action.lifecycle,
+						   javax.enterprise.util;resolution:=optional,
+						   javax.interceptor;resolution:=optional,
+						   javax.enterprise.context;resolution:=optional
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
 					   <Embed-Dependency>
