@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
-import org.apache.activemq.artemis.core.remoting.impl.netty.NettyAcceptorFactory;
-import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
+import org.apache.activemq.artemis.core.remoting.impl.invm.InVMAcceptorFactory;
+import org.apache.activemq.artemis.core.remoting.impl.invm.InVMConnectorFactory;
 import org.apache.activemq.artemis.jms.server.config.ConnectionFactoryConfiguration;
 import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
 import org.apache.activemq.artemis.jms.server.config.JMSQueueConfiguration;
@@ -70,9 +70,9 @@ public class JmsHelper {
         configuration.setPersistenceEnabled(false);
         configuration.setJournalDirectory("target/data/journal");
         configuration.setSecurityEnabled(false);
-        configuration.getAcceptorConfigurations().add(new TransportConfiguration(NettyAcceptorFactory.class.getName()));
+        configuration.getAcceptorConfigurations().add(new TransportConfiguration(InVMAcceptorFactory.class.getName()));
         configuration.getConnectorConfigurations().put("connector",
-                new TransportConfiguration(NettyConnectorFactory.class.getName()));
+                new TransportConfiguration(InVMConnectorFactory.class.getName()));
 
         return configuration;
     }
