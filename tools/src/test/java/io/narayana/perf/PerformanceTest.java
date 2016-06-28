@@ -22,6 +22,7 @@
 package io.narayana.perf;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
+@Ignore
 public class PerformanceTest {
     private BigInteger factorial(int num) {
         BigInteger serialFac = BigInteger.ONE;
