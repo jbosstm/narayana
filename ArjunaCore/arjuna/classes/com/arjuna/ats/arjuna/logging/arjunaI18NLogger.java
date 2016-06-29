@@ -1540,6 +1540,12 @@ public interface arjunaI18NLogger {
     @Message(id = 12384, value = "Action id {0} could not be inserted during write_state", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_objectstore_JDBCImple_nothingtoinsert(String string);
+
+	@Message(id = 12385, value = "Could not read from object store", format = MESSAGE_FORMAT)
+	public String warn_objectstore_JDBCImple_readfailed_message();
+
+	@Message(id = 12386, value = "Unexpected state type {0}", format = MESSAGE_FORMAT)
+	String unexpected_state_type(int stateType);
     
     /*
         Allocate new messages directly above this notice.
