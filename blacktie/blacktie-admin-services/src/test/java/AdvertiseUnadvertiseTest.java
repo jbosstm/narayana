@@ -12,6 +12,7 @@ import org.jboss.narayana.blacktie.administration.Authentication;
 import org.jboss.narayana.blacktie.administration.BlacktieAdministration;
 import org.jboss.narayana.blacktie.administration.BlacktieStompAdministrationService;
 import org.jboss.narayana.blacktie.administration.core.AdministrationProxy;
+import org.jboss.narayana.blacktie.jatmibroker.core.ResponseMonitor;
 import org.jboss.narayana.blacktie.jatmibroker.core.conf.ConfigurationException;
 import org.jboss.narayana.blacktie.jatmibroker.core.transport.Message;
 import org.jboss.narayana.blacktie.jatmibroker.core.tx.TransactionException;
@@ -21,6 +22,7 @@ import org.jboss.narayana.blacktie.jatmibroker.xatmi.impl.X_OCTET_Impl;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +38,7 @@ public class AdvertiseUnadvertiseTest {
         return ShrinkWrap
                 .create(WebArchive.class, "test.war")
                 .addClasses(BlacktieStompAdministrationService.class, Authentication.class, AdministrationProxy.class,
-                        BlacktieAdministration.class)
+                        BlacktieAdministration.class, ResponseMonitor.class)
                         .addPackage(MDBBlacktieService.class.getPackage())
                         .addPackage(BlackTieService.class.getPackage())
                         .addPackage(TransactionException.class.getPackage())
@@ -44,7 +46,8 @@ public class AdvertiseUnadvertiseTest {
                         .addPackage(Message.class.getPackage())
                         .addPackage(X_OCTET_Impl.class.getPackage())
                         .addAsResource("btconfig.xsd")
-                .addAsResource("btconfig.xml").setManifest(new StringAsset(ManifestMF));
+                .addAsResource("btconfig.xml").setManifest(new StringAsset(ManifestMF))
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
