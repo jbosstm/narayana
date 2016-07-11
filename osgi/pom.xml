@@ -26,9 +26,9 @@
   <description>Narayana: OSGi Transaction Service</description>
 
   <properties>
-    <version.org.jboss.arquillian.osgi.karaf>2.1.0.CR15</version.org.jboss.arquillian.osgi.karaf>
+    <version.org.jboss.arquillian.osgi.karaf>2.2.0-SNAPSHOT</version.org.jboss.arquillian.osgi.karaf>
     <version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
-    <version.org.jboss.arquillian.core>1.1.2.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.core>1.1.10.Final</version.org.jboss.arquillian.core>
     <version.shrinkwrap>1.1.2</version.shrinkwrap>
     <version.apache.karaf>4.0.5</version.apache.karaf>
   </properties>
@@ -44,6 +44,12 @@
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
         <version>5.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.osgi</groupId>
+         <artifactId>org.osgi.enterprise</artifactId>
+         <version>5.0.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

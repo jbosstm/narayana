@@ -30,7 +30,7 @@
 
    <properties>
 	   <maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
-	   <karaf.home>${project.build.directory}/apache-karaf-${version.apache.karaf}</karaf.home>
+	   <karaf.home>${project.build.directory}/apache-karaf-minimal-${version.apache.karaf}</karaf.home>
    </properties>
 
    <dependencies>
@@ -45,6 +45,10 @@
 	   <dependency>
 		   <groupId>org.jboss.osgi.metadata</groupId>
 		   <artifactId>jbosgi-metadata</artifactId>
+	   </dependency>
+	   <dependency>
+		   <groupId>org.osgi</groupId>
+		   <artifactId>org.osgi.enterprise</artifactId>
 	   </dependency>
 	   <dependency>
 		   <groupId>org.jboss.spec.javax.transaction</groupId>
@@ -203,9 +207,9 @@
 						   org.osgi.service.log,
 						   org.osgi.util.tracker,
 						   org.springframework.*;resolution:=optional;version="[2.5,5)",
-						   org.apache.felix.service.command,
-						   org.apache.karaf.shell.api.action,
-						   org.apache.karaf.shell.api.action.lifecycle,
+						   org.apache.felix.service.command;resolution:=optional,
+						   org.apache.karaf.shell.api.action;resolution:=optional,
+						   org.apache.karaf.shell.api.action.lifecycle;resolution:=optional,
 						   javax.enterprise.util;resolution:=optional,
 						   javax.interceptor;resolution:=optional,
 						   javax.enterprise.context;resolution:=optional
@@ -280,7 +284,7 @@
           </build>
      </profile>
 	   <profile>
-		   <id>arq-karaf-embedded</id>
+		   <id>arq-karaf-managed</id>
 		   <activation>
 			   <activeByDefault>false</activeByDefault>
 		   </activation>
@@ -321,9 +325,8 @@
 								   <artifactItems>
 									   <artifactItem>
 										   <groupId>org.apache.karaf</groupId>
-										   <artifactId>apache-karaf</artifactId>
+										   <artifactId>apache-karaf-minimal</artifactId>
 										   <version>${version.apache.karaf}</version>
-										   <classifier>minimal</classifier>
 										   <type>tar.gz</type>
 										   <outputDirectory>${project.build.directory}</outputDirectory>
 									   </artifactItem>
@@ -358,20 +361,8 @@
 		   <dependencies>
 			   <dependency>
 				   <groupId>org.jboss.arquillian.container</groupId>
-				   <artifactId>arquillian-container-karaf-embedded</artifactId>
+				   <artifactId>arquillian-container-karaf-managed</artifactId>
 				   <version>${version.org.jboss.arquillian.osgi.karaf}</version>
-				   <scope>test</scope>
-			   </dependency>
-			   <dependency>
-				   <groupId>org.jboss.shrinkwrap</groupId>
-				   <artifactId>shrinkwrap-depchain</artifactId>
-				   <version>${version.shrinkwrap}</version>
-				   <type>pom</type>
-			   </dependency>
-			   <dependency>
-				   <groupId>org.slf4j</groupId>
-				   <artifactId>slf4j-log4j12</artifactId>
-				   <version>${version.org.slf4j}</version>
 				   <scope>test</scope>
 			   </dependency>
 		   </dependencies>

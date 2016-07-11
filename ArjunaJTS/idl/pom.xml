@@ -86,5 +86,22 @@
         <module>ibmorb</module>
       </modules>
     </profile>
+    <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-install-plugin</artifactId>
+                      <executions>
+                          <execution>
+                              <id>default-install</id>
+                              <phase>install</phase>
+                          </execution>
+                      </executions>
+                  </plugin>
+              </plugins>
+          </build>
+     </profile>
   </profiles>
 </project>
