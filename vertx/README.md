@@ -9,6 +9,8 @@ Next go into each example directory and see the corresponding readme.
 
 Note, this was built against Vert.x 2.x and would definitely need revisiting for later versions of Vert.x. The module directory contains a Vert.x module for STM - will need updating too for more recent versions of Vert.x.
 
+Also started to look at some async API changes within Narayana (https://github.com/jbosstm/narayana/blob/master/STM/src/main/java/org/jboss/stm/async/Transaction.java)
+
 --
 
 Maven artifacts equivalent to lib ...
