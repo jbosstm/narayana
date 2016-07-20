@@ -30,3 +30,7 @@ variable tables. this incorporates a patch supplied by mdlavin
 available from the emma site plus extra patches provided by the
 JBossTS team. The complete patched source code is available from the
 JBossTS repository as detailed in JIRA issue JBTM-682.
+
+getpids (http://www.scheibli.com/projects/getpids/) is covered by GPL and is here as a
+cached copy in case the original vanishes. See https://github.com/jbosstm/narayana/blob/master/ArjunaCore/Readme.txt
+for more details.
