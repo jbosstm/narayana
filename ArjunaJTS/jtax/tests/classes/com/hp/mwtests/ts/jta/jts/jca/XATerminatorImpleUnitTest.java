@@ -49,12 +49,10 @@ import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 public class XATerminatorImpleUnitTest extends TestBase
 {
@@ -238,19 +236,26 @@ public class XATerminatorImpleUnitTest extends TestBase
         final int TASK_COUNT = 400;
         final int THREAD_COUNT = 200;
         final CyclicBarrier gate = new CyclicBarrier(THREAD_COUNT + 1);
+        final AtomicInteger gateOut = new AtomicInteger();
 
-        ArrayList<CompletableFuture<SubordinateTransaction>> futures = new ArrayList<>();
+        ArrayList<SubordinateTransaction> futures = new ArrayList<SubordinateTransaction>();
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
 
         for (int i = 0; i < TASK_COUNT; i++)
-            futures.add(doAsync(completionCount, gate, i < THREAD_COUNT, executor, xid));
+            doAsync(completionCount, gate, i < THREAD_COUNT, executor, xid, futures, gateOut);
 
         gate.await();
 
         SubordinateTransaction prevStx = null;
 
-        for (CompletableFuture<SubordinateTransaction> future : futures) {
-            SubordinateTransaction stx = future.get();
+
+        synchronized (gateOut) {
+            while (gateOut.get() < TASK_COUNT) {
+                gateOut.wait();
+            }
+        }
+
+        for (SubordinateTransaction stx : futures) {
             if (stx == null) {
                 fail("transaction import returned null for future ");
             } else {
@@ -267,24 +272,30 @@ public class XATerminatorImpleUnitTest extends TestBase
     /*
      * import a transaction asynchronously to maximise the opportunity for concurrency errors in TransactionImporterImple
      */
-    private CompletableFuture<SubordinateTransaction> doAsync(
-            final AtomicInteger completionCount, final CyclicBarrier gate, final boolean wait, ExecutorService executor, final XidImple xid) {
-        return CompletableFuture.supplyAsync(new Supplier<SubordinateTransaction>() {
+    private void doAsync(
+            final AtomicInteger completionCount, final CyclicBarrier gate, final boolean wait, ExecutorService executor, final XidImple xid, final ArrayList<SubordinateTransaction> futures, final AtomicInteger gateOut) {
+        executor.submit(new Runnable() {
             @Override
-            public SubordinateTransaction get() {
+            public void run() {
                 try {
                     if (wait)
                         gate.await();
-
-                    TransactionImporter imp = SubordinationManager.getTransactionImporter();
-                    SubordinateTransaction stx = imp.importTransaction(xid);
+                    SubordinateTransaction stx = SubordinationManager.getTransactionImporter().importTransaction(xid);
                     completionCount.incrementAndGet();
 
-                    return stx;
+                    synchronized (futures) {
+                        futures.add(stx);
+                    }
                 } catch (Exception e) {
-                    throw new AssertionError(e);
+                    e.printStackTrace();
+                    fail(e.getMessage());
+                } finally {
+                    synchronized(gateOut) {
+                        gateOut.incrementAndGet();
+                        gateOut.notify();
+                    }
                 }
             }
-        }, executor);
+        });
     }
 }

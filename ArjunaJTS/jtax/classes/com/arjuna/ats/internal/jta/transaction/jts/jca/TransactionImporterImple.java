@@ -160,7 +160,7 @@ public class TransactionImporterImple implements TransactionImporter
 			TransactionImple importedTransaction, Xid importedXid, Xid xid, int timeout)
 	{
 		// We need to store the imported transaction in a volatile field holder so that it can be shared between threads
-		AtomicReference<SubordinateTransaction> holder = new AtomicReference<>();
+		AtomicReference<SubordinateTransaction> holder = new AtomicReference<SubordinateTransaction>();
 		AtomicReference<SubordinateTransaction> existing;
 
 		if ((existing = _transactions.putIfAbsent(importedXid, holder)) != null) {
@@ -191,5 +191,5 @@ public class TransactionImporterImple implements TransactionImporter
 		return txn;
 	}
 
-	private static ConcurrentHashMap<Xid, AtomicReference<SubordinateTransaction>> _transactions = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Xid, AtomicReference<SubordinateTransaction>> _transactions = new ConcurrentHashMap<Xid, AtomicReference<SubordinateTransaction>>();
 }
