@@ -35,10 +35,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -590,5 +596,123 @@ public class XATerminatorUnitTest
                 }
             }
         }, executor);
+    }
+
+    @Test
+    public void testCommitMid () throws Exception
+    {
+
+        TransactionManagerImple tm = new TransactionManagerImple();
+
+        RecordTypeManager.manager().add(new RecordTypeMap() {
+            @SuppressWarnings("unchecked")
+            public Class getRecordClass ()
+            {
+                return XAResourceRecord.class;
+            }
+
+            public int getType ()
+            {
+                return RecordType.JTA_RECORD;
+            }
+        });
+
+        XATerminatorImple xaTerminator = new XATerminatorImple();
+        XidImple xid = new XidImple(new Uid());
+        XAResourceImple toCommit = new XAResourceImple(XAResource.XA_OK);
+
+        {
+            SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
+            tm.resume(subordinateTransaction);
+            subordinateTransaction.enlistResource(new XAResourceImple(XAResource.XA_RDONLY));
+            subordinateTransaction.enlistResource(toCommit);
+            Transaction suspend = tm.suspend();
+        }
+
+        {
+            SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
+            tm.resume(subordinateTransaction);
+            subordinateTransaction.doPrepare();
+            Transaction suspend = tm.suspend();
+        }
+
+        xaTerminator.doRecover(null, null);
+
+        {
+            SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
+            tm.resume(subordinateTransaction);
+            subordinateTransaction.doCommit();
+            tm.suspend();
+        }
+
+        assertTrue(toCommit.wasCommitted());
+
+        SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+    }
+
+
+
+    private class XAResourceImple implements XAResource {
+
+        private final int prepareFlag;
+        private boolean committed;
+
+        public XAResourceImple(int prepareFlag) {
+            this.prepareFlag = prepareFlag;
+        }
+
+        @Override
+        public void commit(Xid xid, boolean b) throws XAException {
+            committed = true;
+        }
+
+        boolean wasCommitted() {
+            return committed;
+        }
+
+        @Override
+        public void end(Xid xid, int i) throws XAException {
+
+        }
+
+        @Override
+        public void forget(Xid xid) throws XAException {
+
+        }
+
+        @Override
+        public int getTransactionTimeout() throws XAException {
+            return 0;
+        }
+
+        @Override
+        public boolean isSameRM(XAResource xaResource) throws XAException {
+            return false;
+        }
+
+        @Override
+        public int prepare(Xid xid) throws XAException {
+            return prepareFlag;
+        }
+
+        @Override
+        public Xid[] recover(int i) throws XAException {
+            return new Xid[0];
+        }
+
+        @Override
+        public void rollback(Xid xid) throws XAException {
+
+        }
+
+        @Override
+        public boolean setTransactionTimeout(int i) throws XAException {
+            return false;
+        }
+
+        @Override
+        public void start(Xid xid, int i) throws XAException {
+
+        }
     }
 }
