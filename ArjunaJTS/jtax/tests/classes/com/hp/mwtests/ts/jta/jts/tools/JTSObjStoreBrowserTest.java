@@ -105,7 +105,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	}
 
 	@Before
-	public void setUp () throws Exception
+	public void setUpTest () throws Exception
 	{
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
@@ -119,7 +119,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	}
 
 	@After
-	public void tearDown () throws Exception
+	public void tearDownTest () throws Exception
 	{
 		rcm.removeAllModules(false);
 		rcm.stop(false);
