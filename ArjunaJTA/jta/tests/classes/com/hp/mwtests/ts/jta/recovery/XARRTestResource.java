@@ -65,6 +65,7 @@ public class XARRTestResource implements XAResource {
         final int bqual_length = fis.readInt();
         final byte[] bqual = new byte[bqual_length];
         fis.read(bqual, 0, bqual_length);
+        fis.close();
         xids.put(file, new Xid() {
 
             @Override
