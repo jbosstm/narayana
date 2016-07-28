@@ -215,6 +215,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                 return false;
 
             osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
+            typeName = typeName.replaceAll("/", File.separator);
+            osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
 
             return true;
         } catch (Exception e) {
