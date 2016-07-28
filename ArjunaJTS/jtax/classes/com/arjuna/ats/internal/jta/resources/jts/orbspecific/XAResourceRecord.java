@@ -480,6 +480,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				if (!_prepared)
 					throw new NotPrepared();
 
+				boolean removeConnection = true;
 				try
 				{
 					if (!_committed)
@@ -558,6 +559,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 						case XAException.XA_RETRY:
 						case XAException.XAER_RMFAIL:
+							removeConnection = false;
 						    _committed = true;  // remember for recovery later.
 							throw new UNKNOWN();  // will cause log to be rewritten.
 						case XAException.XAER_INVAL: // resource manager failed, did it rollback?
@@ -577,7 +579,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				finally
 				{
-					removeConnection();
+					if (removeConnection) {
+						removeConnection();
+					}
 				}
 			}
 		}
@@ -1363,8 +1367,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 		}
 
-		if (_recoveryObject != null)
-			removeConnection();
+		removeConnection();
 
 		return _valid;
 	}

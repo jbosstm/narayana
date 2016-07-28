@@ -36,6 +36,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.transaction.Transaction;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -45,6 +47,8 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -63,6 +67,8 @@ import com.hp.mwtests.ts.jta.common.FailureXAResource.FailLocation;
 import com.hp.mwtests.ts.jta.common.FailureXAResource.FailType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -514,7 +520,7 @@ public class XATerminatorUnitTest
         xa.recover(XAResource.TMENDRSCAN);
 
         // Feed the recovery manager with something it can recover with
-        RecoveryManager.manager().addModule(new XARecoveryModule() {
+        RecoveryModule module = new XARecoveryModule() {
             @Override
             public XAResource getNewXAResource(final XAResourceRecord xaResourceRecord) {
                 return new XAResource() {
@@ -565,15 +571,20 @@ public class XATerminatorUnitTest
                     }
                 };
             }
-        });
-        Xid[] recover3 = xa.recover(XAResource.TMSTARTRSCAN);
-        assertTrue(recover3.length == recover2.length);
-        xa.commit(xid, false);
-        xa.recover(XAResource.TMENDRSCAN);
+        };
+        RecoveryManager.manager().addModule(module);
+        try {
+            Xid[] recover3 = xa.recover(XAResource.TMSTARTRSCAN);
+            assertTrue(recover3.length == recover2.length);
+            xa.commit(xid, false);
+            xa.recover(XAResource.TMENDRSCAN);
 
-        Xid[] recover4 = xa.recover(XAResource.TMSTARTRSCAN);
-        assertTrue(recover4 == null || recover4.length == initialLength);
-        xa.recover(XAResource.TMENDRSCAN);
+            Xid[] recover4 = xa.recover(XAResource.TMSTARTRSCAN);
+            assertTrue(recover4 == null || recover4.length == initialLength);
+            xa.recover(XAResource.TMENDRSCAN);
+        } finally {
+            RecoveryManager.manager().removeModule(module, false);
+        }
     }
 
     /*
@@ -619,12 +630,12 @@ public class XATerminatorUnitTest
 
         XATerminatorImple xaTerminator = new XATerminatorImple();
         XidImple xid = new XidImple(new Uid());
-        XAResourceImple toCommit = new XAResourceImple(XAResource.XA_OK);
+        XAResourceImple toCommit = new XAResourceImple(XAResource.XA_OK, XAResource.XA_OK);
 
         {
             SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
             tm.resume(subordinateTransaction);
-            subordinateTransaction.enlistResource(new XAResourceImple(XAResource.XA_RDONLY));
+            subordinateTransaction.enlistResource(new XAResourceImple(XAResource.XA_RDONLY, XAResource.XA_OK));
             subordinateTransaction.enlistResource(toCommit);
             Transaction suspend = tm.suspend();
         }
@@ -652,18 +663,83 @@ public class XATerminatorUnitTest
 
 
 
+
+
+    @Test
+    public void testImportMultipleTx () throws XAException, RollbackException, SystemException {
+        Implementations.initialise();
+
+        XidImple xid = new XidImple(new Uid());
+        TransactionImporter imp = SubordinationManager.getTransactionImporter();
+
+        SubordinateTransaction subordinateTransaction = imp.importTransaction(xid);
+
+        XATerminatorImple xa = new XATerminatorImple();
+
+        XAResourceImple xar1 = new XAResourceImple(XAResource.XA_OK, XAResource.XA_OK);
+        XAResourceImple xar2 = new XAResourceImple(XAResource.XA_OK, XAException.XAER_RMFAIL);
+        subordinateTransaction.enlistResource(xar1);
+        subordinateTransaction.enlistResource(xar2);
+
+        xa.prepare(xid);
+        try {
+            xa.commit(xid, false);
+            fail("Did not expect to pass");
+        } catch (XAException xae) {
+            assertTrue(xae.errorCode == XAException.XAER_RMFAIL);
+        }
+
+        XARecoveryModule xarm = new XARecoveryModule();
+        xarm.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[]{xar2};
+            }
+        });
+        RecoveryManager.manager().addModule(xarm);
+
+        Xid[] xids = xa.recover(XAResource.TMSTARTRSCAN);
+        assertTrue(Arrays.binarySearch(xids, xid, new Comparator<Xid>() {
+            @Override
+            public int compare(Xid o1, Xid o2) {
+                if (((XidImple)o1).equals(o2)) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+        }) != -1);
+        xa.rollback(xid);
+        assertTrue(xar2.rollbackCalled());
+        xa.recover(XAResource.TMENDRSCAN);
+
+    }
+
     private class XAResourceImple implements XAResource {
 
         private final int prepareFlag;
         private boolean committed;
+        private final int commitException;
+        private boolean rollbackCalled;
+        private Xid xid;
 
-        public XAResourceImple(int prepareFlag) {
+        public XAResourceImple(int prepareFlag, int commitException) {
             this.prepareFlag = prepareFlag;
+            this.commitException = commitException;
         }
 
         @Override
         public void commit(Xid xid, boolean b) throws XAException {
             committed = true;
+            if (commitException < 0) {
+                this.xid = xid;
+                throw new XAException(commitException);
+            }
         }
 
         boolean wasCommitted() {
@@ -697,12 +773,19 @@ public class XATerminatorUnitTest
 
         @Override
         public Xid[] recover(int i) throws XAException {
+            if (xid != null) {
+                return new Xid[]{xid};
+            }
             return new Xid[0];
+        }
+
+        public boolean rollbackCalled()  {
+            return rollbackCalled;
         }
 
         @Override
         public void rollback(Xid xid) throws XAException {
-
+            rollbackCalled = true;
         }
 
         @Override
