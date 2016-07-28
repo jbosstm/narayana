@@ -56,4 +56,27 @@
             </para>
         </important>
     </section>
+    <section>
+        <title>Multi cause log message</title>
+        <para>The following table shows some log messages that you may see with an explanation of alternate reasons</para>
+        <informaltable>
+            <tgroup cols="2">
+                <tbody>
+                    <row>
+                        <entry>
+                            <para>INFO  [com.arjuna.ats.arjuna] ObjectStore record was deleted during restoration, users should not deleted records manually</para>
+                        </entry>
+                        <entry>
+                            <para>If you manually deleted a transaction log then this applies to you - you deleted a transaction that was in flight and so may have caused a data integrity issue in so far as one of the resources may be committed and without the log you will not be able to infer this.</para>
+                            <para>If a transaction is committed at the same time as a resource adapter or remote server attempts recovery then you may see the message in the log due to intentional but unavoidable interaction between distributed transaction managers and the local recovery manager.</para>
+                            <para>The log message will indicate the path of the removed file something like:  ***/ShadowNoFileLockStore/defaultStore/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA/***: java.io.FileNotFoundException: ***/ShadowNoFileLockStore/defaultStore/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA/*** (No such file or directory)</para>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </informaltable>
+        <important>
+            <para>There are many more logging messages to check for, above are those that we are often asked about.</para>
+        </important>
+    </section>
 </section>
