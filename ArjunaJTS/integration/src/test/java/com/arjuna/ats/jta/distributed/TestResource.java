@@ -124,7 +124,7 @@ public class TestResource implements XAResource {
 
 	public TestResource(String nodeName, boolean b, boolean fatalCommit) {
        this(nodeName, b);
-       this.fatalCommit = true;
+       this.fatalCommit = fatalCommit;
     }
 
     /**

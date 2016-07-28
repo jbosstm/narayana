@@ -38,6 +38,7 @@ import static org.junit.Assert.fail;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -46,6 +47,12 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporte
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
+
+import java.util.ArrayList;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class XATerminatorImpleUnitTest extends TestBase
 {
@@ -219,5 +226,76 @@ public class XATerminatorImpleUnitTest extends TestBase
         catch (final Exception ex)
         {
         }
+    }
+
+    @Test
+    public void testConcurrentImport () throws Exception {
+        AtomicInteger completionCount = new AtomicInteger(0);
+        XidImple xid = new XidImple(new Uid());
+
+        final int TASK_COUNT = 400;
+        final int THREAD_COUNT = 200;
+        final CyclicBarrier gate = new CyclicBarrier(THREAD_COUNT + 1);
+        final AtomicInteger gateOut = new AtomicInteger();
+
+        ArrayList<SubordinateTransaction> futures = new ArrayList<SubordinateTransaction>();
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+
+        for (int i = 0; i < TASK_COUNT; i++)
+            doAsync(completionCount, gate, i < THREAD_COUNT, executor, xid, futures, gateOut);
+
+        gate.await();
+
+        SubordinateTransaction prevStx = null;
+
+
+        synchronized (gateOut) {
+            while (gateOut.get() < TASK_COUNT) {
+                gateOut.wait();
+            }
+        }
+
+        for (SubordinateTransaction stx : futures) {
+            if (stx == null) {
+                fail("transaction import returned null for future ");
+            } else {
+                if (prevStx != null)
+                    assertEquals("transaction import for same xid returned a different instance", stx, prevStx);
+                else
+                    prevStx = stx;
+            }
+        }
+
+        assertEquals("some transaction import futures did not complete", completionCount.get(), TASK_COUNT);
+    }
+
+    /*
+     * import a transaction asynchronously to maximise the opportunity for concurrency errors in TransactionImporterImple
+     */
+    private void doAsync(
+            final AtomicInteger completionCount, final CyclicBarrier gate, final boolean wait, ExecutorService executor, final XidImple xid, final ArrayList<SubordinateTransaction> futures, final AtomicInteger gateOut) {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (wait)
+                        gate.await();
+                    SubordinateTransaction stx = SubordinationManager.getTransactionImporter().importTransaction(xid);
+                    completionCount.incrementAndGet();
+
+                    synchronized (futures) {
+                        futures.add(stx);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    fail(e.getMessage());
+                } finally {
+                    synchronized(gateOut) {
+                        gateOut.incrementAndGet();
+                        gateOut.notify();
+                    }
+                }
+            }
+        });
     }
 }

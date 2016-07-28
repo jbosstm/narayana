@@ -34,6 +34,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.hp.mwtests.ts.jta.jts.common.ExtendedCrashRecord;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
 import org.junit.After;
+import org.junit.Before;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
@@ -92,13 +93,14 @@ public class JTSOSBTestBase extends TestBase {
 		ORBManager.reset();
 	}
 
-    public void setUp()
+	@Before
+    public void setUpStore()
 	{
         emptyObjectStore();
 	}
 
 	@After
-    public void tearDown()
+    public void tearDownStore()
 	{
         emptyObjectStore();
     }

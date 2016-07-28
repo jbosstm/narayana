@@ -212,6 +212,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             if (typeName != null && typeName.startsWith("/"))
                 typeName = typeName.substring(1);
 
+            osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
             typeName = typeName.replaceAll("/", File.separator);
             osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
 

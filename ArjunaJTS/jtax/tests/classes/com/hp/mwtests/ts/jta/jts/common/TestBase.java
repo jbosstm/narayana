@@ -34,19 +34,22 @@ package com.hp.mwtests.ts.jta.jts.common;
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
+import org.junit.BeforeClass;
 
 import java.io.File;
 
 public class TestBase
-{   
-    @Before
-    public void setUp () throws Exception
+{
+
+    @BeforeClass
+    public static void setUp () throws Exception
     {
         myORB = ORB.getInstance("test");
         myOA = OA.getRootOA(myORB);
@@ -58,8 +61,8 @@ public class TestBase
         ORBManager.setPOA(myOA);
     }
     
-    @After
-    public void tearDown () throws Exception
+    @AfterClass
+    public static void tearDown () throws Exception
     {
         myOA.destroy();
         myORB.shutdown();
@@ -102,6 +105,6 @@ public class TestBase
         }
     }
 
-    private ORB myORB = null;
-    private RootOA myOA = null;
+    private static ORB myORB = null;
+    private static RootOA myOA = null;
 }
