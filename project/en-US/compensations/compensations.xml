@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+        <!ENTITY % BOOK_ENTITIES SYSTEM "../project_documentation.ent">
+        %BOOK_ENTITIES;
+        ]>
+<chapter>
+    <title>Compensations Framework</title>
+    <para>
+        The Compensations Framework is still in development so the documentation is evolving. For now you can see the notes below plus take a look at our blog series:
+    </para>
+    <itemizedlist>
+        <listitem>
+            <para>
+                <ulink url="http://jbossts.blogspot.com/2013/05/compensating-transactions-when-acid-is.html">
+                    Compensating Transactions: When ACID is too much (Part 1: Introduction)
+                </ulink>
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <ulink url="http://jbossts.blogspot.com/2013/05/compensating-transactions-when-acid-is_29.html">
+                    Compensating Transactions: When ACID is too much (Part 2: Non-Transactional Resources)
+                </ulink>
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <ulink url="http://jbossts.blogspot.com/2013/06/compensating-transactions-when-acid-is_26.html">
+                    Compensating Transactions: When ACID is too much (Part 3: Cross-Domain Distributed Transactions)
+                </ulink>
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <ulink url="http://jbossts.blogspot.com/2013/07/compensating-transactions-when-acid-is.html">
+                    Compensating Transactions: When ACID is too much (Part 4: Long Lived Transactions)
+                </ulink>
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <ulink url="http://jbossts.blogspot.com/2014/05/bringing-transactional-guarantees-to.html">
+                    Bringing Transactional Guarantees to MongoDB: Part 1
+                </ulink>
+            </para>
+        </listitem>
+    </itemizedlist>
+    <section>
+        <title>Outstanding Important Issues</title>
+        <itemizedlist>
+            <listitem>
+                <para>[JBTM-1107] Recovery Support in Compensation API</para>
+            </listitem>
+            <listitem>
+                <para>[JBTM-2680] Document compensations API</para>
+            </listitem>
+        </itemizedlist>
+        <para>
+            The rest of the open issues in our <ulink url="https://issues.jboss.org/issues/?jql=project%20%3D%20JBTM%20AND%20status%20in%20(Open%2C%20%22Coding%20In%20Progress%22%2C%20Reopened%2C%20%22Pull%20Request%20Sent%22)%20AND%20component%20%3D%20Compensations">JIRA</ulink>.
+        </para>
+    </section>
+    <section>
+        <title>Notes</title>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    Compensations framework directly depends on Weld as a result of <ulink url="https://issues.jboss.org/browse/JBTM-2704">JBTM-2704</ulink>
+                </para>
+            </listitem>
+        </itemizedlist>
+    </section>
+</chapter>
