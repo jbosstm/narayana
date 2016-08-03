@@ -129,7 +129,7 @@ public class CompensatableActionImpl implements CompensatableAction {
         });
     }
 
-    private class WorkInfo {
+    private static class WorkInfo {
 
         private CompensatableWork compensatableWork;
 
@@ -137,7 +137,7 @@ public class CompensatableActionImpl implements CompensatableAction {
 
         private ConfirmationHandler confirmationHandler;
 
-        public WorkInfo(CompensatableWork compensatableWork, CompensationHandler compensationHandler,
+        WorkInfo(CompensatableWork compensatableWork, CompensationHandler compensationHandler,
                 ConfirmationHandler confirmationHandler) {
             this.compensatableWork = compensatableWork;
             this.compensationHandler = compensationHandler;
