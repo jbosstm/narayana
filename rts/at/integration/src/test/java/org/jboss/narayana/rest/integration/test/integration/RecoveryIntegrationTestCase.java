@@ -10,8 +10,6 @@ import org.jboss.narayana.rest.integration.api.Vote;
 import org.jboss.narayana.rest.integration.test.common.LoggingParticipant;
 import org.jboss.narayana.rest.integration.test.common.RestATManagementResource;
 import org.jboss.narayana.rest.integration.test.common.TransactionalService;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -20,6 +18,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import java.io.File;
 
 /**
@@ -122,31 +122,31 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
         } while (status != null && cycles++ < RECOVERY_WAIT_CYCLES);
 
         if (status != null) {
-            Assert.fail("Recovery failed");
+            Assert.fail("Recovery failed unexpected status " + status);
         }
     }
 
     private void enlistParticipant(final String enlistmentUrl, final Vote vote) throws Exception {
-        ClientResponse<String> clientResponse = new ClientRequest(DEPLOYMENT_URL + "/" + TransactionalService.PATH_SEGMENT)
-                .queryParameter("participantEnlistmentUrl", enlistmentUrl).queryParameter("vote", vote.getClass().getName())
-                .post(String.class);
+        Response clientResponse = ClientBuilder.newClient().target(DEPLOYMENT_URL + "/" + TransactionalService.PATH_SEGMENT)
+                .queryParam("participantEnlistmentUrl", enlistmentUrl).queryParam("vote", vote.getClass().getName()).request()
+                .post(null);
 
         Assert.assertEquals(200, clientResponse.getStatus());
     }
 
     private void registerDeserializer() throws Exception {
-        ClientResponse<String> clientResponse = new ClientRequest(DEPLOYMENT_URL + "/" + TransactionalService.PATH_SEGMENT)
-                .put(String.class);
+        Response clientResponse = ClientBuilder.newClient().target(DEPLOYMENT_URL + "/" + TransactionalService.PATH_SEGMENT)
+                .request().put(null);
 
         Assert.assertEquals(204, clientResponse.getStatus());
     }
 
     private JSONArray getParticipantsInformation() {
         try {
-            final ClientResponse<String> response = new ClientRequest(DEPLOYMENT_URL + "/"
+            final Response response = ClientBuilder.newClient().target(DEPLOYMENT_URL + "/"
                     + RestATManagementResource.BASE_URL_SEGMENT + "/"
-                    + RestATManagementResource.PARTICIPANTS_URL_SEGMENT).get(String.class);
-            return new JSONArray(response.getEntity());
+                    + RestATManagementResource.PARTICIPANTS_URL_SEGMENT).request().get();
+            return new JSONArray(response.readEntity(String.class));
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONArray();
