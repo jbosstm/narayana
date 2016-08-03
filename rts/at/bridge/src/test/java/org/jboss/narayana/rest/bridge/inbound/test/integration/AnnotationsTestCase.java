@@ -8,8 +8,10 @@ import org.jboss.narayana.rest.bridge.inbound.TransactionalExceptionMapper;
 import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWithTransactionAttributeAnnotation;
 import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWithTransactionalAnnotation;
 import org.jboss.narayana.rest.bridge.inbound.test.common.ResourceWitoutAnnotation;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
+
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
@@ -68,7 +70,7 @@ public class AnnotationsTestCase extends AbstractTestCase {
     @Test
     public void testNoAnnotationWithTransaction() {
         txSupport.startTx();
-        final ClientResponse<String> response = postRestATResource(NO_ANNOTATION_URL);
+        final Response response = postRestATResource(NO_ANNOTATION_URL);
         txSupport.commitTx();
         Assert.assertEquals(200, response.getStatus());
     }
@@ -76,69 +78,69 @@ public class AnnotationsTestCase extends AbstractTestCase {
     @Test
     public void testTransactionalMandatoryWithTransaction() throws Exception {
         txSupport.startTx();
-        final ClientResponse<String> response = postRestATResource(TRANSACTIONAL_MANDATORY_URL);
+        final Response response = postRestATResource(TRANSACTIONAL_MANDATORY_URL);
         txSupport.commitTx();
         Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
     public void testTransactionalMandatoryWithoutTransaction() throws Exception {
-        final ClientResponse response = new ClientRequest(TRANSACTIONAL_MANDATORY_URL).post(String.class);
+        final Response response = ClientBuilder.newClient().target(TRANSACTIONAL_MANDATORY_URL).request().post(null);
         Assert.assertEquals(412, response.getStatus());
-        Assert.assertEquals(TransactionalExceptionMapper.TRANSACTIONA_REQUIRED_MESSAGE, response.getEntity());
+        Assert.assertEquals(TransactionalExceptionMapper.TRANSACTIONA_REQUIRED_MESSAGE, response.readEntity(String.class));
     }
 
     @Test
     public void testTransactionalNeverWithTransaction() throws Exception {
         txSupport.startTx();
-        final ClientResponse<String> response = postRestATResource(TRANSACTIONAL_NEVER_URL);
+        final Response response = postRestATResource(TRANSACTIONAL_NEVER_URL);
         txSupport.commitTx();
         Assert.assertEquals(412, response.getStatus());
-        Assert.assertEquals(TransactionalExceptionMapper.INVALID_TRANSACTIONA_MESSAGE, response.getEntity());
+        Assert.assertEquals(TransactionalExceptionMapper.INVALID_TRANSACTIONA_MESSAGE, response.readEntity(String.class));
     }
 
     @Test
     public void testTransactionalNeverWithoutTransaction() throws Exception {
-        final ClientResponse response = new ClientRequest(TRANSACTIONAL_NEVER_URL).post(String.class);
+        final Response response = ClientBuilder.newClient().target(TRANSACTIONAL_NEVER_URL).request().post(null);
         Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
     public void testTransactionAttributeMandatoryWithTransaction() throws Exception {
         txSupport.startTx();
-        final ClientResponse<String> response = postRestATResource(TRANSACTION_ATTRIBUTE_MANDATORY_URL);
+        final Response response = postRestATResource(TRANSACTION_ATTRIBUTE_MANDATORY_URL);
         txSupport.commitTx();
         Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
     public void testTransactionAttributeMandatoryWithoutTransaction() throws Exception {
-        final ClientResponse response = new ClientRequest(TRANSACTION_ATTRIBUTE_MANDATORY_URL).post(String.class);
+        final Response response = ClientBuilder.newClient().target(TRANSACTION_ATTRIBUTE_MANDATORY_URL).request().post(null);
         Assert.assertEquals(412, response.getStatus());
-        Assert.assertEquals(EJBExceptionMapper.TRANSACTIONA_REQUIRED_MESSAGE, response.getEntity());
+        Assert.assertEquals(EJBExceptionMapper.TRANSACTIONA_REQUIRED_MESSAGE, response.readEntity(String.class));
     }
 
     @Test
     public void testTransactionAttributeNeverWithTransaction() throws Exception {
         txSupport.startTx();
-        final ClientResponse<String> response = postRestATResource(TRANSACTION_ATTRIBUTE_NEVER_URL);
+        final Response response = postRestATResource(TRANSACTION_ATTRIBUTE_NEVER_URL);
         txSupport.commitTx();
         Assert.assertEquals(412, response.getStatus());
-        Assert.assertEquals(EJBExceptionMapper.INVALID_TRANSACTIONA_MESSAGE, response.getEntity());
+        Assert.assertEquals(EJBExceptionMapper.INVALID_TRANSACTIONA_MESSAGE, response.readEntity(String.class));
     }
 
     @Test
     public void testTransactionAttributeNeverWithoutTransaction() throws Exception {
-        final ClientResponse response = new ClientRequest(TRANSACTION_ATTRIBUTE_NEVER_URL).post(String.class);
+        final Response response = ClientBuilder.newClient().target(TRANSACTION_ATTRIBUTE_NEVER_URL).request().post(null);
         Assert.assertEquals(200, response.getStatus());
     }
 
-    protected ClientResponse<String> postRestATResource(final String resourceUrl) {
+    protected Response postRestATResource(final String resourceUrl) {
         final Link participantLink = Link.fromUri(txSupport.getTxnUri()).rel(TxLinkNames.PARTICIPANT)
                 .title(TxLinkNames.PARTICIPANT).build();
 
         try {
-            return new ClientRequest(resourceUrl).header("link", participantLink).post(String.class);
+            return ClientBuilder.newClient().target(resourceUrl).request().header("link", participantLink).post(null);
         } catch (Exception e) {
             return null;
         }

@@ -35,7 +35,6 @@
     <name>Narayana: Bridge between REST-AT and JTA</name>
 
     <properties>
-        <version.org.jboss.resteasy>3.0-beta-5</version.org.jboss.resteasy>
         <ipv6.server.jvm.args>
             -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
@@ -66,14 +65,12 @@
             <version>${version.org.jboss.resteasy}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-            <version>${version.org.jboss.resteasy}</version>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${version.javax.ws.rs-api}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
