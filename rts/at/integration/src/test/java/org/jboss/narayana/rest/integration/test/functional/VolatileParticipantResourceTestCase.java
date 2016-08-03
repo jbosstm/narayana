@@ -8,8 +8,7 @@ import org.jboss.narayana.rest.integration.ParticipantsContainer;
 import org.jboss.narayana.rest.integration.VolatileParticipantResource;
 import org.jboss.narayana.rest.integration.api.VolatileParticipant;
 import org.jboss.narayana.rest.integration.test.common.LoggingVolatileParticipant;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
+
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.test.TestPortProvider;
@@ -19,6 +18,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,7 @@ public final class VolatileParticipantResourceTestCase {
 
     @Test
     public void testRequestsToNotRegisteredParticipant() throws Exception {
-        ClientResponse simpleResponse = beforeCompletion(participantId);
+        Response simpleResponse = beforeCompletion(participantId);
         Assert.assertEquals(404, simpleResponse.getStatus());
 
         simpleResponse = afterCompletion(participantId, TxStatus.TransactionCommitted);
@@ -77,7 +79,7 @@ public final class VolatileParticipantResourceTestCase {
         LoggingVolatileParticipant participant = new LoggingVolatileParticipant();
         registerParticipant(participantId, participant);
 
-        ClientResponse response = beforeCompletion(participantId);
+        Response response = beforeCompletion(participantId);
 
         Assert.assertEquals(200, response.getStatus());
 
@@ -91,7 +93,7 @@ public final class VolatileParticipantResourceTestCase {
         LoggingVolatileParticipant participant = new LoggingVolatileParticipant();
         registerParticipant(participantId, participant);
 
-        ClientResponse response = afterCompletion(participantId, TxStatus.TransactionCommitted);
+        Response response = afterCompletion(participantId, TxStatus.TransactionCommitted);
 
         Assert.assertEquals(200, response.getStatus());
 
@@ -110,13 +112,13 @@ public final class VolatileParticipantResourceTestCase {
         ParticipantsContainer.getInstance().addVolatileParticipant(participantId, volatileParticipant);
     }
 
-    private ClientResponse beforeCompletion(final String participantId) throws Exception {
-        return new ClientRequest(VOLATILE_PARTICIPANT_URL + "/" + participantId).put();
+    private Response beforeCompletion(final String participantId) throws Exception {
+        return ClientBuilder.newClient().target(VOLATILE_PARTICIPANT_URL + "/" + participantId).request().put(null);
     }
 
-    private ClientResponse afterCompletion(final String participantId, final TxStatus txStatus) throws Exception {
-        return new ClientRequest(VOLATILE_PARTICIPANT_URL + "/" + participantId)
-                .body(TxMediaType.TX_STATUS_MEDIA_TYPE, TxSupport.toStatusContent(txStatus.name())).put();
+    private Response afterCompletion(final String participantId, final TxStatus txStatus) throws Exception {
+        return ClientBuilder.newClient().target(VOLATILE_PARTICIPANT_URL + "/" + participantId).request()
+                .put(Entity.entity(TxSupport.toStatusContent(txStatus.name()), TxMediaType.TX_STATUS_MEDIA_TYPE));
     }
 
 }

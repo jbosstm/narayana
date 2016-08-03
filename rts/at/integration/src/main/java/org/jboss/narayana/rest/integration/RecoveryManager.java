@@ -8,6 +8,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
 import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.api.HeuristicException;
 import org.jboss.narayana.rest.integration.api.Participant;
@@ -15,9 +16,11 @@ import org.jboss.narayana.rest.integration.api.ParticipantDeserializer;
 import org.jboss.narayana.rest.integration.api.ParticipantException;
 import org.jboss.narayana.rest.integration.api.ParticipantsManagerFactory;
 import org.jboss.narayana.rest.integration.api.PersistableParticipant;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.spi.Link;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.Response;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -232,14 +235,15 @@ public final class RecoveryManager {
 
     private boolean synchronizeParticipantUrlWithCoordinator(final ParticipantInformation participantInformation) {
         final String participantUrl = getParticipantUrl(participantInformation.getId());
-        final Link participantLink = new Link(TxLinkNames.PARTICIPANT_RESOURCE, TxLinkNames.PARTICIPANT_RESOURCE,
-                participantUrl, null, null);
-        final Link terminatorLink = new Link(TxLinkNames.PARTICIPANT_TERMINATOR, TxLinkNames.PARTICIPANT_TERMINATOR,
-                participantUrl, null, null);
+
+        Client client = ClientBuilder.newClient();
+        Link participantLink = Link.fromUri(participantUrl).title(TxLinkNames.PARTICIPANT_RESOURCE).rel(TxLinkNames.PARTICIPANT_RESOURCE).type(TxMediaType.PLAIN_MEDIA_TYPE).build();
+        Link terminatorLink = Link.fromUri(participantUrl).title(TxLinkNames.PARTICIPANT_TERMINATOR).rel(TxLinkNames.PARTICIPANT_TERMINATOR).type(TxMediaType.PLAIN_MEDIA_TYPE).build();
+
+        Response response = client.target(participantInformation.getRecoveryURL()).request()
+                .header("Link", participantLink).header("Link", terminatorLink).put(null);
 
         try {
-            final ClientResponse response = new ClientRequest(participantInformation.getRecoveryURL())
-                    .addLink(participantLink).addLink(terminatorLink).put();
             if (response.getStatus() == 404) {
                 return false;
             }

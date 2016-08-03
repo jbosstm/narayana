@@ -32,7 +32,6 @@
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
 
-    <resteasy.version>3.0.8.Final</resteasy.version>
     <undertow.io.version>1.0.1.Final</undertow.io.version>
 
     <!-- ssl debug: -Djavax.net.debug=ssl:handshake  http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Debug
@@ -145,12 +144,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>jaxrs-api</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
       <version>${version.commons-httpclient}</version>
@@ -215,19 +208,19 @@
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client</artifactId>
-        <version>${resteasy.version}</version>
+        <version>${version.org.jboss.resteasy}</version>
         <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>async-http-servlet-3.0</artifactId>
-        <version>${resteasy.version}</version>
+        <version>${version.org.jboss.resteasy}</version>
         <scope>test</scope>
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-undertow</artifactId>
-        <version>${resteasy.version}</version>
+        <version>${version.org.jboss.resteasy}</version>
         <scope>test</scope>
     </dependency>
     <dependency>

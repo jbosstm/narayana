@@ -47,9 +47,8 @@ import org.jboss.jbossts.star.util.media.txstatusext.CoordinatorElement;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.spi.Link;
-import org.jboss.resteasy.spi.LinkHeader;
 
+import javax.ws.rs.core.Link;
 import java.security.KeyStore;
 import javax.net.ssl.*;
 
@@ -136,13 +135,14 @@ public class TxSupport
 
         String uri = builder.build().toString();
 
-        setLinkHeader(response, title, name, uri, null);
+        setLinkHeader(response, title, name, uri, TxMediaType.PLAIN_MEDIA_TYPE);
     }
 
     public static void setLinkHeader(Response.ResponseBuilder builder, String title, String rel, String href,
                                      String type)
     {
-        Link link = new Link(title, rel, href, type, null);
+        Link link = Link.fromUri(href).title(title).rel(rel).type(type).build();
+
         setLinkHeader(builder, link);
     }
 
@@ -257,27 +257,12 @@ public class TxSupport
     // return a map of link name to link uri
     public static Map<String, String> decodeLinkHeader(String linkHeader) {
         int i;
-        Map<String, String> links = new HashMap<String, String>();
+        Map<String, String> decodedLinks = new HashMap<String, String>();
 
         if (linkHeader == null || (i = linkHeader.indexOf('<')) == -1)
-            return links;
+            return decodedLinks;
 
-        linkHeader = linkHeader.substring(i);
-
-        try {
-            for (Link link : LinkHeader.valueOf(linkHeader).getLinks()) {
-                try {
-                    links.put(link.getRelationship(), link.getHref());
-                } catch (Throwable e) {
-                    // not interested in this link header
-                }
-            }
-        } catch (Exception e) {
-            log.warn("Error decoding Link header: " + e.getMessage());
-            return links;
-        }
-
-        return links;
+        return extractLinkHeaders(linkHeader.substring(i), decodedLinks);
     }
 
     public StringBuilder addLink(StringBuilder linkHeader, String linkName, StringBuilder hrefPrefix, boolean first) {
@@ -533,6 +518,18 @@ public class TxSupport
         }
     }
 
+    private static Map<String, String> extractLinkHeaders(String header, Map<String, String> links) {
+        if (header != null) {
+            for (String linkHeader : header.split(",")) {
+                Link lnk = Link.valueOf(linkHeader);
+
+                links.put(lnk.getRel(), lnk.getUri().toString());
+            }
+        }
+
+        return links;
+    }
+
     private void extractLinkHeaders(HttpURLConnection connection, Map<String, String> links) {
         Collection<String> linkHeaders = connection.getHeaderFields().get("Link");
 
@@ -540,18 +537,8 @@ public class TxSupport
             linkHeaders = connection.getHeaderFields().get("link");
 
         if (linkHeaders != null) {
-            for (String link : linkHeaders) {
-                for (Link lnk : LinkHeader.valueOf( link).getLinks())
-                    links.put(lnk.getRelationship(), lnk.getHref());
-
-/*                String[] lhs = link.split(","); // links are separated by a comma
-
-                for (String lnk : lhs) {
-                    Matcher m = LINK_PATTERN.matcher(lnk);
-                    if (m.find() && m.groupCount() > 1)
-                        links.put(m.group(2), m.group(1));
-                }*/
-            }
+            for (String header : linkHeaders)
+                extractLinkHeaders(header, links);
         }
     }
 
@@ -580,9 +567,17 @@ public class TxSupport
                 connection.setRequestProperty("Content-Type", contentType);
         }
 
-        if (reqHeaders != null)
+        if (reqHeaders != null) {
+            /*
+             * NOTE: HTTP requires all request properties which can legally have multiple instances
+             * with the same key to use a comma-separated list syntax which enables multiple
+             * properties to be appended into a single property.
+             *
+             * In particular this applies to the Link header defined in rfc5988 (web linking)
+             */
             for (Map.Entry<String, String> entry : reqHeaders.entrySet())
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
+        }
 
         if (content != null) {
             connection.setDoOutput(true);
