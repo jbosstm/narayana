@@ -14,6 +14,9 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 
+# NOTE
+If you are building with master branch, please replace references to "5.3.4.Final-SNAPSHOT" with "master"
+
 # Installing Blacktie into JBoss AS
 
 1. Install a WildFly build
@@ -36,4 +39,5 @@ Edit the setenv.[sh|bat] file as appropriate
 
 These can be obtained from http://github.com/jbosstm/quickstart
 
+A good quickstart to begin with is: https://github.com/jbosstm/quickstart/tree/5.3.4.Final-SNAPSHOT/blacktie/xatmi/fooapp
 
