@@ -240,7 +240,7 @@ public final class RecoveryManager {
         Link participantLink = Link.fromUri(participantUrl).title(TxLinkNames.PARTICIPANT_RESOURCE).rel(TxLinkNames.PARTICIPANT_RESOURCE).type(TxMediaType.PLAIN_MEDIA_TYPE).build();
         Link terminatorLink = Link.fromUri(participantUrl).title(TxLinkNames.PARTICIPANT_TERMINATOR).rel(TxLinkNames.PARTICIPANT_TERMINATOR).type(TxMediaType.PLAIN_MEDIA_TYPE).build();
 
-        Response response = client.target(participantInformation.getRecoveryURL()).request().header("Link", participantLink).get();
+        Response response = client.target(participantInformation.getRecoveryURL()).request().header("Link", participantLink).put(null);
 
         try {
             if (response.getStatus() == 404) {
