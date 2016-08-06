@@ -48,10 +48,6 @@ public class TMApplication extends Application
 
     public TMApplication(Class<?> ... extraClasses)
     {
-        Collections.addAll(classes, resourceClasses);
-        Collections.addAll(classes, mappers);
-        Collections.addAll(classes, extraClasses);
-
 //        singletons.addAll(Arrays.asList(resources));
         try
         {
@@ -66,6 +62,10 @@ public class TMApplication extends Application
                public Class<? extends AbstractRecord> getRecordClass () { return RESTRecord.class;}
                public int getType () {return RecordType.RESTAT_RECORD;}
            });
+
+            Collections.addAll(classes, resourceClasses);
+            Collections.addAll(classes, mappers);
+            Collections.addAll(classes, extraClasses);
         }
         catch (Throwable e)
         {
@@ -94,9 +94,5 @@ public class TMApplication extends Application
     
     private static Class<?>[] resourceClasses = {
             Coordinator.class,
-    };
-
-    private static Object[] resources = {
-            new Coordinator(),
     };
 }

@@ -646,7 +646,9 @@ public class BaseTest {
                     work.status = TxStatus.TransactionPrepared.name();
                 }
             } else if (status.isCommit() || status.isCommitOnePhase()) {
-                if ("H_HAZARD".equals(fault))
+                if ("HALT".equals(fault))
+                    Runtime.getRuntime().halt(1);
+                else if ("H_HAZARD".equals(fault))
                     work.status = TxStatus.TransactionHeuristicHazard.name();
                 else if ("H_ROLLBACK".equals(fault))
                     work.status = TxStatus.TransactionHeuristicRollback.name();

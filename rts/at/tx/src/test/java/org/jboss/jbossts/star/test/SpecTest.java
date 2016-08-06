@@ -476,6 +476,29 @@ public class SpecTest extends BaseTest {
 
     }
 
+    //@Test // generate a recoverable record to test that JBTM-1853 is fixed
+    public void testHalt() throws Exception {
+        TxSupport txn = new TxSupport();
+
+        String[] pUrl = {
+                PURL,
+                PURL + "?fault=HALT",
+                PURL,
+        };
+
+        // start another transaction
+        txn.startTx();
+
+        // enlist transactional participants (one of which will delay during commit)
+        for (String url : pUrl)
+            txn.enlistTestResource(url, false);
+
+        Future<String> future = submitJob((Callable<String>) new AsynchronousCommit(txn));
+
+        Assert.assertEquals(TxStatusMediaType.TX_COMMITTED, future.get());
+
+    }
+
     @Test
     public void testParticipantStatus() throws Exception {
         TxSupport txn = new TxSupport();
