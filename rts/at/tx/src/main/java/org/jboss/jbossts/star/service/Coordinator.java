@@ -43,6 +43,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.jboss.jbossts.star.provider.ResourceNotFoundException;
 import org.jboss.jbossts.star.provider.TransactionStatusException;
+import org.jboss.jbossts.star.resource.RESTRecord;
 import org.jboss.jbossts.star.resource.RecoveringTransaction;
 import org.jboss.jbossts.star.resource.Transaction;
 import org.jboss.jbossts.star.util.*;
@@ -74,6 +75,7 @@ public class Coordinator
     private static final AtomicInteger aborted = new AtomicInteger(0);
 
     private static long age = System.currentTimeMillis();
+
     /**
      * Performing a GET on the transaction-manager returns a list of all transaction URIs
      * known to the coordinator (active and in recovery) separated by
@@ -761,6 +763,23 @@ public class Coordinator
         for (Uid uid : getUids(new HashSet<Uid>(), REST_TXN_TYPE)) {
             String key =  uid.fileStringForm();
             RecoveringTransaction txn = new RecoveringTransaction(uid);
+
+            try {
+                // the recoverable transaction contains the recovery urls of each of its participants
+                // so it needs activate in order to make it available to anyone that wants to obtain it:
+                if (txn.activate()) {
+                    for (RESTRecord r : txn.getParticipants(new ArrayList<RESTRecord>())) {
+                        Map<String, String> links = new HashMap<String, String>();
+
+                        links.put(TxLinkNames.PARTICIPANT_RECOVERY, r.getRecoveryURI());
+                        links.put(TxLinkNames.TRANSACTION, r.getTxId());
+
+                        participants.put(r.getCoordinatorURI(), new HashMap<>(links));
+                    }
+                }
+            } catch (Throwable e) {
+                log.warnf("Could not reactivate pending transaction %s (reason: %s)", txn.get_uid(), e.getMessage());
+            }
 
             recoveringTransactions.put(key, txn);
             transactions.put(key, txn);
