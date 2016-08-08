@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>19</version>
+    <version>20</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -396,7 +396,7 @@
     
     <!-- External dependencies versions -->
     <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.1</version.org.codehaus.mojo.findbugs-maven-plugin>
-    <version.org.wildfly.arquillian>1.0.0.CR1</version.org.wildfly.arquillian>
+    <version.org.wildfly.arquillian>1.0.2.Final</version.org.wildfly.arquillian>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.jandex>1.1.0.Final</version.org.jboss.jandex>
@@ -407,7 +407,7 @@
     <version.org.jboss.integration>6.0.0.CR1</version.org.jboss.integration>
     <version.org.jboss.ironjacamar>1.1.1.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.ws>1.0.2.Final</version.org.jboss.ws>
-    <version.org.jboss.resteasy>3.0.5.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>3.1.0.Beta1</version.org.jboss.resteasy>
     <version.org.jboss.weld>2.3.5.Final</version.org.jboss.weld>
     <version.org.apache.activemq>1.1.0.wildfly-010</version.org.apache.activemq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
@@ -452,6 +452,7 @@
     <version.org.jboss.arquillian.container.weld>1.0.0.CR8</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.jboss-transaction-spi>7.3.2.Final</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
+    <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
     <version.org.mockito>1.10.19</version.org.mockito>
 
     <!-- Maven plugin versions -->
