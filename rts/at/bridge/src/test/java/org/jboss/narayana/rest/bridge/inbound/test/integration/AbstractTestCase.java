@@ -50,7 +50,7 @@ import java.io.File;
 public abstract class AbstractTestCase {
 
     protected static final String ManifestMF = "Manifest-Version: 1.0\n"
-            + "Dependencies: org.jboss.jts, org.jboss.narayana.rts, org.jboss.logging, org.codehaus.jettison\n";
+            + "Dependencies: org.jboss.narayana.rts,org.jboss.jts,org.codehaus.jettison\n";
 
     protected static final String CONTAINER_NAME = "jboss";
 
