@@ -51,11 +51,11 @@ if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims="
 rem INITIALIZE JBOSS
 for /f "usebackq delims=<,> tokens=3" %%i in (`findstr "version.org.wildfly.wildfly-parent" blacktie\pom.xml`) do @set WILDFLY_MASTER_VERSION=%%i
 echo "Set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION%"
-if not "%WILDFLY_MASTER_VERSION%" == "%WILDFLY_VERSION_FROM_JBOSS_AS%" (call:comment_on_pull "Need to upgrade the version.org.wildfly.wildfly-parent in the narayana\blacktie pom.xml to %WILDFLY_VRESION_FROM_JBOSS_AS% - Check AS Version Failed %BUILD_URL%" & exit -1)
+if not "%WILDFLY_MASTER_VERSION%" == "%WILDFLY_VERSION_FROM_JBOSS_AS%" (echo "WARN: May need to upgrade the version.org.wildfly.wildfly-parent in the narayana\blacktie pom.xml to %WILDFLY_VRESION_FROM_JBOSS_AS% - Check AS Version Failed %BUILD_URL%")
 
-call ant -f blacktie\scripts\hudson\initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION% initializeJBoss -debug || (call:fail_build & exit -1)
+call ant -f blacktie\scripts\hudson\initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% initializeJBoss -debug || (call:fail_build & exit -1)
 
-set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION%
+set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%
 
 rem START JBOSS
 rem set JAVA_OPTS="%JAVA_OPTS% -Xmx1024m -XX:MaxPermSize=512m"
