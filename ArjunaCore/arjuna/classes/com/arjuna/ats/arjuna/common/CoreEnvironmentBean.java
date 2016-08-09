@@ -116,8 +116,8 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 
         if (nodeIdentifier.getBytes().length > NODE_NAME_SIZE)
         {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier);
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier));
+            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE);
+            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE));
         }
 
     	this.nodeIdentifier = nodeIdentifier;

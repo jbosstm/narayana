@@ -34,7 +34,6 @@ package com.arjuna.ats.arjuna.coordinator;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
-import com.arjuna.ats.arjuna.utils.Utility;
 
 /**
  * Transaction configuration object. We have a separate object for this so that
@@ -168,7 +167,7 @@ public class TxControl
 	public static void setXANodeName(String name)
 	{
 	    if (name.getBytes().length > NODE_NAME_SIZE) {
-            tsLogger.i18NLogger.warn_coordinator_toolong();
+            tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
 
             throw new IllegalArgumentException();
         }

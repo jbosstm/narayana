@@ -587,9 +587,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_coordinator_notrunning();
 
-	@Message(id = 12138, value = "Node name cannot exceed 36 bytes!", format = MESSAGE_FORMAT)
+	@Message(id = 12138, value = "Node name cannot exceed {0} bytes!", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_coordinator_toolong();
+	public void warn_coordinator_toolong(Integer arg0);
 
 	@Message(id = 12139, value = "You have chosen to disable the Multiple Last Resources warning. You will see it only once.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1491,12 +1491,12 @@ public interface arjunaI18NLogger {
 	public void warn_objectstore_JDBCImple_over_max_image_size(int imageSize,
 			int maxStateSize);
 
-    @Message(id = 12372, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
+    @Message(id = 12372, value = "The node identifier {0} was too long {1}, aborting initialization", format = MESSAGE_FORMAT)
     @LogMessage(level = FATAL)
-    public void fatal_nodename_too_long(String xaNodeName);
+    public void fatal_nodename_too_long(String xaNodeName, Integer nameLength);
 
-    @Message(id = 12373, value = "The node identifier was too long {0}, aborting initialization", format = MESSAGE_FORMAT)
-    public String get_fatal_nodename_too_long(String xaNodeName);
+    @Message(id = 12373, value = "The node identifier {0} was too long {1}, aborting initialization", format = MESSAGE_FORMAT)
+    public String get_fatal_nodename_too_long(String xaNodeName, Integer nameLength);
 
     @Message(id = 12374, value = "The node identifier cannot be null, aborting initialization", format = MESSAGE_FORMAT)
     @LogMessage(level = FATAL)
