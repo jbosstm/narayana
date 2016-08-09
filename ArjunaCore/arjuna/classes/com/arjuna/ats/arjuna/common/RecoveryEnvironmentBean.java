@@ -44,6 +44,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 {
     private volatile int periodicRecoveryPeriod = PeriodicRecovery._defaultRecoveryPeriod;
     private volatile int recoveryBackoffPeriod = PeriodicRecovery._defaultBackoffPeriod;
+    private volatile int periodicRecoveryInitilizationOffset = 0;
     private volatile boolean recoveryListener = false;
     private volatile int recoveryPort = 0;
     private volatile String recoveryAddress = "localhost";
@@ -112,6 +113,26 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setRecoveryBackoffPeriod(int recoveryBackoffPeriod)
     {
         this.recoveryBackoffPeriod = recoveryBackoffPeriod;
+    }
+
+
+    /**
+     * Returns the initial period to wait before starting recovery. Useful when starting multiple servers at once.
+     *
+     * @return The initial offset (in seconds)
+     */
+    public int getPeriodicRecoveryInitilizationOffset() {
+        return periodicRecoveryInitilizationOffset;
+    }
+
+    /**
+     * Set the period of time to wait before starting recovery.
+     *
+     * @param periodicRecoveryInitilizationOffset The period (in seconds) to wait before starting first recovery run.
+     */
+    public RecoveryEnvironmentBean setPeriodicRecoveryInitilizationOffset(int periodicRecoveryInitilizationOffset) {
+        this.periodicRecoveryInitilizationOffset = periodicRecoveryInitilizationOffset;
+        return null;
     }
 
     /**
