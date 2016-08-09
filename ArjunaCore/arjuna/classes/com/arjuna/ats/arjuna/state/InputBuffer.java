@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -379,7 +380,7 @@ public class InputBuffer
 
         realign(length);
 
-        return new String(b);
+        return new String(b, StandardCharsets.UTF_8);
     }
 
     /**

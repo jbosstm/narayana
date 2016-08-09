@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
+import java.nio.charset.StandardCharsets;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
@@ -166,7 +167,7 @@ public class TxControl
 
 	public static void setXANodeName(String name)
 	{
-	    if (name.getBytes().length > NODE_NAME_SIZE) {
+	    if (name.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE) {
             tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
 
             throw new IllegalArgumentException();

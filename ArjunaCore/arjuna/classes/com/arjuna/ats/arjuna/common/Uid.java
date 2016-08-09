@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -370,7 +371,7 @@ public class Uid implements Cloneable, Serializable
                 ds.writeInt(process);
                 ds.writeInt(sec);
                 ds.writeInt(other);
-                //_byteForm = stringForm().getBytes("UTF-8");
+                //_byteForm = stringForm().getBytes(StandardCharsets.UTF_8);
                 
                 _byteForm = ba.toByteArray();
             }

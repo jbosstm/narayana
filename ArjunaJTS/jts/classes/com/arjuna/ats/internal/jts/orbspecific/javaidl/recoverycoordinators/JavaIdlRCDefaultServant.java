@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators;
 import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.GenericRecoveryCoordinator;
 import com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators.RecoveryCoordinatorId;
 import com.arjuna.ats.jts.logging.jtsLogger;
+import java.nio.charset.StandardCharsets;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.NotPrepared;
@@ -76,7 +77,7 @@ public class JavaIdlRCDefaultServant extends GenericRecoveryCoordinator
             byte[] objectId = poa_current.get_object_id();
             //End New
 
-            String objectIdString = new String(objectId);
+            String objectIdString = new String(objectId, StandardCharsets.UTF_8);
             String poaName = poa_current.get_POA().the_name();
 
             if (objectIdString.startsWith(poaName)) {

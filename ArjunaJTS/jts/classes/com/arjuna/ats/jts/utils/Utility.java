@@ -32,7 +32,7 @@
 package com.arjuna.ats.jts.utils;
 
 import java.io.PrintWriter;
-
+import java.nio.charset.StandardCharsets;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CosTransactions.PropagationContext;
@@ -250,13 +250,13 @@ public class Utility
 	    return null;
 
 	otid_t otid = new otid_t();
-	byte[] b = theUid.getBytes();
+	byte[] b = theUid.getBytes(StandardCharsets.UTF_8);
 
 	if (TxControl.getXANodeName() == null) {
 		throw new IllegalStateException(jtsLogger.i18NLogger.get_nodename_null());
 	}
 
-	byte[] nodeName = TxControl.getXANodeName().getBytes();
+	byte[] nodeName = TxControl.getXANodeName().getBytes(StandardCharsets.UTF_8);
 
 	otid.formatID = 0;
 	otid.tid = new byte[b.length+nodeName.length];
@@ -291,7 +291,7 @@ public class Utility
 	    
 	    System.arraycopy(otid.tid, 0, theUid, 0, uidLength);
 	    
-	    Uid u = new Uid(new String(theUid), true);  // errors in string give NIL_UID
+	    Uid u = new Uid(new String(theUid, StandardCharsets.UTF_8), true);  // errors in string give NIL_UID
 	    
 	    /*
 	     * Currently we ignore bqual. THIS WILL BE AN ISSUE FOR INTEROPERABILITY!!

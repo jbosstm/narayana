@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -156,7 +157,7 @@ public class ProtocolConverter {
             log.debug("Caught an exception: ", e);
             // Let the stomp client know about any protocol errors.
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintWriter stream = new PrintWriter(new OutputStreamWriter(baos, "UTF-8"));
+            PrintWriter stream = new PrintWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
             e.printStackTrace(stream);
             stream.close();
 
@@ -304,7 +305,7 @@ public class ProtocolConverter {
         StompFrame sf;
         if (msg == null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintWriter stream = new PrintWriter(new OutputStreamWriter(baos, "UTF-8"));
+            PrintWriter stream = new PrintWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
             stream.print("No messages available");
             stream.close();
 

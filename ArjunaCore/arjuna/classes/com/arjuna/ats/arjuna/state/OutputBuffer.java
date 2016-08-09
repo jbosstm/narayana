@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -373,7 +374,7 @@ public class OutputBuffer
 
         if (sz > 0)
         {
-            byte[] bytes = dummy.getBytes();
+            byte[] bytes = dummy.getBytes(StandardCharsets.UTF_8);
             _output.write(bytes, 0, bytes.length);
             realign(bytes.length);
         }

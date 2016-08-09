@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -194,9 +195,9 @@ public class TransactionStatusConnector
             _connector_socket.setSoTimeout ( _socket_timeout_in_msecs ) ;
    
             // streams to and from the TransactionStatusManager
-            _from_server = new BufferedReader ( new InputStreamReader( _connector_socket.getInputStream() )) ;
+            _from_server = new BufferedReader ( new InputStreamReader( _connector_socket.getInputStream(), StandardCharsets.UTF_8 )) ;
                               
-            _to_server = new PrintWriter ( new OutputStreamWriter( _connector_socket.getOutputStream() ) ) ;
+            _to_server = new PrintWriter ( new OutputStreamWriter( _connector_socket.getOutputStream(), StandardCharsets.UTF_8 ) ) ;
 
             // Check that the process id of the server is the same as
             // this connectors process id.

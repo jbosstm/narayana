@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
+import java.nio.charset.StandardCharsets;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.NotPrepared;
@@ -77,7 +78,7 @@ public class JacOrbRCDefaultServant extends GenericRecoveryCoordinator
 	     byte[] objectId = poa_current.get_object_id();
 	     //End New
 	     
-	     String objectIdString = new String(objectId);
+	     String objectIdString = new String(objectId, StandardCharsets.UTF_8);
 
 	     // convert that to the structured id
 	     RecoveryCoordinatorId  recovCoId = RecoveryCoordinatorId.reconstruct(objectIdString);

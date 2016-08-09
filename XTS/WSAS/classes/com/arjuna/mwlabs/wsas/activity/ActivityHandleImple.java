@@ -32,6 +32,7 @@
 package com.arjuna.mwlabs.wsas.activity;
 
 import com.arjuna.mwlabs.wsas.activity.ActivityImple;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.mw.wsas.activity.ActivityHandle;
 
@@ -126,7 +127,7 @@ public class ActivityHandleImple implements ActivityHandle
 
     public String tid ()
     {
-	return ((_theActivity == null) ? null : new String(_theActivity.getGlobalId().value()));
+	return ((_theActivity == null) ? null : new String(_theActivity.getGlobalId().value(), StandardCharsets.UTF_8));
     }
 
     public final ActivityImple getActivity ()

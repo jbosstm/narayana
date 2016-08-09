@@ -30,6 +30,8 @@ import com.sun.corba.se.impl.ior.IORImpl;
 import com.sun.corba.se.impl.orbutil.ORBUtility;
 import com.sun.corba.se.spi.ior.IORFactories;
 import com.sun.corba.se.spi.ior.ObjectId;
+import java.nio.charset.StandardCharsets;
+
 import org.omg.CosTransactions.RecoveryCoordinatorHelper;
 
 /**
@@ -48,7 +50,8 @@ public class RecoverIOR
         org.omg.CORBA.Object corbject = ORBManager.getORB().orb().string_to_object(str);
 
         com.sun.corba.se.spi.ior.IOR ior = IORFactories.getIOR(corbject);
-        ObjectId oid = IORFactories.makeObjectId(new_object_key.getBytes());
+        ObjectId oid = IORFactories.makeObjectId(new_object_key.getBytes(StandardCharsets.UTF_8));
+
         IORImpl new_ior = new IORImpl(sun_orb, RecoveryCoordinatorHelper.id(), ior.getIORTemplates(), oid);
 
         return new_ior.stringify();

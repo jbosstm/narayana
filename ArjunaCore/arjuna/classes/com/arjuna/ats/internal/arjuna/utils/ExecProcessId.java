@@ -37,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -141,7 +143,14 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     if (tempFile != null)
                         tempFile.delete();
 
-                    StringTokenizer theTokenizer = new StringTokenizer(bstream.toString());
+                    StringTokenizer theTokenizer;
+                    try {
+                        theTokenizer = new StringTokenizer(bstream.toString(StandardCharsets.UTF_8.name()));
+                    } catch (UnsupportedEncodingException e) {
+                        tsLogger.i18NLogger.fatal_encoding_not_supported(StandardCharsets.UTF_8.name());
+                        throw new IllegalStateException(
+                            tsLogger.i18NLogger.get_encoding_not_supported(StandardCharsets.UTF_8.name()));
+                    }
                     theTokenizer.nextToken();
 
                     String pid = theTokenizer.nextToken();

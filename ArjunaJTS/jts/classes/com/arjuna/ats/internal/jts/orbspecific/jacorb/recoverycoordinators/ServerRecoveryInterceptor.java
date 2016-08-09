@@ -37,7 +37,7 @@ import org.omg.IOP.ServiceContext;
 import org.omg.PortableInterceptor.ForwardRequest;
 import org.omg.PortableInterceptor.ServerRequestInfo;
 import org.omg.PortableInterceptor.ServerRequestInterceptor;
-
+import java.nio.charset.StandardCharsets;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
@@ -76,7 +76,7 @@ public class ServerRecoveryInterceptor
         try
         {
             context = ri.get_request_service_context (RecoveryContextId);
-	    String objectIdString = new String(context.context_data);
+	    String objectIdString = new String(context.context_data, StandardCharsets.UTF_8);
 	    JacOrbRCDefaultServant.RCObjectId = context.context_data;
         }
         catch (Exception ex) {

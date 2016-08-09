@@ -1546,7 +1546,14 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12386, value = "Unexpected state type {0}", format = MESSAGE_FORMAT)
 	String unexpected_state_type(int stateType);
+
+    @Message(id = 12387, value = "Encoding {0} is not supported", format = MESSAGE_FORMAT)
+    @LogMessage(level = FATAL)
+    public void fatal_encoding_not_supported(String encodingName);
     
+    @Message(id = 12388, value = "Encoding {0} is not supported", format = MESSAGE_FORMAT)
+    public String get_encoding_not_supported(String encodingName);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
