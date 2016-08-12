@@ -15,7 +15,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 
 # NOTE
-If you are building with master branch, please replace references to "5.3.4.Final-SNAPSHOT" with "master"
+If you are building with master branch, please replace references to "5.3.4.Final" with "master"
 
 # Installing Blacktie into JBoss AS
 
@@ -29,7 +29,7 @@ unzip wildfly-blacktie-build-${VERSION}-bin.zip into ${WILDFLY_LOCATION}
 copy blacktie-admin-services-ear-*.ear to dir ${WILDFLY_LOCATION}/standalone/deployments
 
 4. Make changes as defined in:
-https://raw.githubusercontent.com/jbosstm/narayana/5.3.4.Final-SNAPSHOT/blacktie/scripts/hudson/initializeJBoss.xml
+https://raw.githubusercontent.com/jbosstm/narayana/5.3.4.Final/blacktie/scripts/hudson/initializeJBoss.xml
 
 # Configuring BlackTie
 
@@ -39,5 +39,5 @@ Edit the setenv.[sh|bat] file as appropriate
 
 These can be obtained from http://github.com/jbosstm/quickstart
 
-A good quickstart to begin with is: https://github.com/jbosstm/quickstart/tree/5.3.4.Final-SNAPSHOT/blacktie/xatmi/fooapp
+A good quickstart to begin with is: https://github.com/jbosstm/quickstart/tree/5.3.4.Final/blacktie/xatmi/fooapp
 
