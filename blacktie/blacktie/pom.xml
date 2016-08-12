@@ -101,8 +101,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <!-- this is required for EL5 as the newer versions of the assembly plugin do not allow us to update the zip -->
-                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
