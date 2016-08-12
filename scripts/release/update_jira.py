@@ -83,7 +83,7 @@ def create_component_update_issue(jira_host, username, password, project_key, su
     summary -- description of the new issue.
     component_name -- name of the component to be assigned to the issue.
     """
-    issue_type = jira_helper.get_issue_type_by_name(jira_host, 'Component  Upgrade')
+    issue_type = jira_helper.get_issue_type_by_name(jira_host, 'Component Upgrade')
     component = jira_helper.get_component_by_name(jira_host, project_key, component_name)
     body = json.dumps({
         'fields': {

@@ -38,13 +38,6 @@ then
     (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add wildfly git@github.com:wildfly/wildfly.git)
   fi
   (cd jboss-as; git fetch wildfly; git checkout -b ${WFLYISSUE}; git reset --hard wildfly/master)
-  WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  WILDFLY_MASTER_VERSION=`grep 'version.org.wildfly.wildfly-parent' blacktie/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  if [[ ${WILDFLY_MASTER_VERSION} != ${WILDFLY_VERSION_FROM_JBOSS_AS} ]]
-  then
-    echo "Need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-    exit
-  fi
   (cd jboss-as; sed -i "" "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml; git commit -am "${WFLYISSUE} Upgrade Narayana to $CURRENT"; git push --set-upstream jbosstm ${WFLYISSUE})
   (cd jboss-as; git fetch jbosstm; git checkout 5_BRANCH; git reset --hard jbosstm/5_BRANCH; sed -i "" "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml; git add pom.xml; git commit --amend -m "Update to latest version of Narayana"; git push -f)
 fi
