@@ -51,26 +51,26 @@ do
     git checkout $BRANCH || fatal
 
     find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT_SNAPSHOT_VERSION/$CURRENT/g" || fatal
-    set -e
+    set +e
     git status | grep "new\|deleted"
     if [ $? -eq 0 ]
     then
       "Found new files changing to tag - very strange!"
       exit
     fi
-    set +e
+    set -e
     git commit -am "Updated to $CURRENT" || fatal
     git tag $CURRENT || fatal
 
     find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT/$NEXT/g" || fatal
-    set -e
+    set +e
     git status | grep "new\|deleted"
     if [ $? -eq 0 ]
     then
       "Found new files changing to new snapshot - very strange!"
       exit
     fi
-    set +e
+    set -e
     git commit -am "Updated to $NEXT" || fatal
     git push origin $BRANCH --tags || fatal
     cd ..
