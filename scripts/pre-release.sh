@@ -50,7 +50,12 @@ do
     cd $REPO
     git checkout $BRANCH || fatal
 
-    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT_SNAPSHOT_VERSION/$CURRENT/g" || fatal
+    if [[ $(uname) == CYGWIN* ]]
+    then
+      find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT_SNAPSHOT_VERSION/$CURRENT/g" || fatal
+    else
+      find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT_SNAPSHOT_VERSION/$CURRENT/g" || fatal
+    fi
     set +e
     git status | grep "new\|deleted"
     if [ $? -eq 0 ]
@@ -62,7 +67,12 @@ do
     git commit -am "Updated to $CURRENT" || fatal
     git tag $CURRENT || fatal
 
-    find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT/$NEXT/g" || fatal
+    if [[ $(uname) == CYGWIN* ]]
+    then
+      find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "s/$CURRENT/$NEXT/g" || fatal
+    else
+      find . -name \*.java -o -name \*.xml -o -name \*.properties -o -name \*.ent -o -name \INSTALL -o -name \README -o -name pre-release-vars.sh -o -name \*.sh -o -name \*.bat -o -name \*.cxx -o -name \*.c -o -name \*.cpp -o -iname \makefile | grep -v ".svn" | grep -v ".git" | grep -v target | grep -v .idea | xargs sed -i "" "s/$CURRENT/$NEXT/g" || fatal
+    fi
     set +e
     git status | grep "new\|deleted"
     if [ $? -eq 0 ]
