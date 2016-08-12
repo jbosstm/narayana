@@ -354,25 +354,25 @@ function blacktie {
   cd ${WORKSPACE}
   WILDFLY_MASTER_VERSION=`grep 'version.org.wildfly.wildfly-parent' blacktie/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
-  [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || fatal "Need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
+  [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || echo "WARN: May need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
 
   ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
-  rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
-  cp -rp ${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_MASTER_VERSION} -d $PWD/blacktie
+  rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
+  cp -rp ${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} -d $PWD/blacktie
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.3.4.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.3.4.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
-  ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
+  ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} initializeJBoss
   if [ "$?" != "0" ]; then
 	  fatal "Failed to init JBoss: $BUILD_URL"
   fi
-  chmod u+x $WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh
+  chmod u+x $WORKSPACE/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}/bin/standalone.sh
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} JAVA_OPTS="-Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     sleep 5
   fi
 
