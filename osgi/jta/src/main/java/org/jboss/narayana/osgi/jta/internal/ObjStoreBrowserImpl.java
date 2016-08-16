@@ -44,6 +44,8 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -54,13 +56,19 @@ import java.util.Set;
 
 public class ObjStoreBrowserImpl implements ObjStoreBrowserService{
     private ObjStoreBrowser osb;
-    private PrintStream printStream = new PrintStream(System.out, true);
+    private PrintStream printStream;
     private List<String> recordTypes = new ArrayList<String>();
     private String currentType = null;
     private String currentLog = "";
     private boolean attached = false;
 
     public ObjStoreBrowserImpl(ObjStoreBrowser osb) {
+        try {
+            printStream = new PrintStream(System.out, true, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Encoding " + StandardCharsets.UTF_8.name() + " is not supported");
+            throw new IllegalStateException(StandardCharsets.UTF_8.name() + " is not supported");
+        }
         this.osb = osb;
     }
 

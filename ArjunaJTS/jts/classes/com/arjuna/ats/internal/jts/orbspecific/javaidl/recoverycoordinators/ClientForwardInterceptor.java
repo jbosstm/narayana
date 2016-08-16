@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators;
 
 
 import com.arjuna.ats.jts.logging.jtsLogger;
+import java.nio.charset.StandardCharsets;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
 import org.omg.CosTransactions.RecoveryCoordinator;
@@ -118,7 +119,7 @@ public class ClientForwardInterceptor
 			     * Extract the substring of the ObjectId that contains the Uid and 
 			     * the Process Id and pass it to the data of the service context
 			     */
-			    RCobjectId = extractObjectId(objectIdString).getBytes();
+			    RCobjectId = extractObjectId(objectIdString).getBytes(StandardCharsets.UTF_8);
 			    RCctx = new ServiceContext(RecoveryContextId, RCobjectId);
 			    in_loop = false;
 			    throw new ForwardRequest( reco );

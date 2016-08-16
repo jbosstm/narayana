@@ -31,10 +31,10 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
+import java.nio.charset.StandardCharsets;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
-import com.arjuna.ats.arjuna.utils.Utility;
 
 /**
  * Transaction configuration object. We have a separate object for this so that
@@ -167,8 +167,8 @@ public class TxControl
 
 	public static void setXANodeName(String name)
 	{
-	    if (name.getBytes().length > NODE_NAME_SIZE) {
-            tsLogger.i18NLogger.warn_coordinator_toolong();
+	    if (name.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE) {
+            tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
 
             throw new IllegalArgumentException();
         }

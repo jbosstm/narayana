@@ -22,6 +22,7 @@
 package com.arjuna.ats.arjuna.tools.log;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -87,7 +88,7 @@ class LogConsole
 
                 System.in.read(command);
 
-                String commandString = new String(command);
+                String commandString = new String(command, StandardCharsets.UTF_8);
 
                 Command com = validCommand(commandString);
 

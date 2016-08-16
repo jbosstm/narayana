@@ -25,6 +25,7 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.jacorb.orb.CDROutputStream;
@@ -36,6 +37,7 @@ import org.omg.IOP.TaggedProfile;
 import org.omg.IOP.TaggedProfileHolder;
 
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.sun.corba.se.spi.ior.IORFactories;
 
 public class RecoverIOR
 {
@@ -67,7 +69,7 @@ public class RecoverIOR
 		IIOPProfile pb = (IIOPProfile) profiles.get(i);
 		IIOPProfile new_pb = (IIOPProfile) pb.copy();
 
-		new_pb.set_object_key(new_object_key.getBytes());
+		new_pb.set_object_key(new_object_key.getBytes(StandardCharsets.UTF_8));
 
 		new_ior.profiles[i] = new TaggedProfile();
 		new_ior.profiles[i].tag = 0; // IIOP
@@ -84,7 +86,7 @@ public class RecoverIOR
 	// It appears that the following method do the same role as above
 	public IOR newIOR(String objectId)
 	{
-	    String the_object_key = new String(get_object_key());
+	    String the_object_key = new String(get_object_key(), StandardCharsets.UTF_8);
 	    int position = the_object_key.indexOf("RecoveryManager");
 	    String new_object_key = the_object_key.substring(0, position).concat(objectId);
 	    IOR new_ior = ParsedIOR.createObjectIOR(getEffectiveProfile());

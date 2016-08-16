@@ -19,6 +19,7 @@ package org.codehaus.stomp.jms;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -263,7 +264,7 @@ public class StompSession {
             bm.writeBytes(command.getContent());
             msg = bm;
         } else {
-            String text = new String(command.getContent(), "UTF-8");
+            String text = new String(command.getContent(), StandardCharsets.UTF_8);
             msg = session.createTextMessage(text);
         }
         copyStandardHeadersFromFrameToMessage(command, msg);
@@ -280,7 +281,7 @@ public class StompSession {
 
         if (message instanceof TextMessage) {
             TextMessage msg = (TextMessage) message;
-            command.setContent(msg.getText().getBytes("UTF-8"));
+            command.setContent(msg.getText().getBytes(StandardCharsets.UTF_8));
         } else if (message instanceof BytesMessage) {
 
             BytesMessage msg = (BytesMessage) message;

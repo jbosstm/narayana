@@ -39,6 +39,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
 import org.omg.CORBA.BAD_PARAM;
@@ -271,7 +272,7 @@ public org.omg.CORBA.Object getService (String serviceName,
 		    ifile.read(b);
 		    ifile.close();
 	
-		    String objString = new String(b);
+		    String objString = new String(b, StandardCharsets.UTF_8);
 		    objRef = _orb.orb().string_to_object(objString);
 
 		    objString = null;
@@ -472,7 +473,7 @@ public void registerService (org.omg.CORBA.Object objRef,
 		    ofile = new FileOutputStream(serviceName);
 		
 		String objString = _orb.orb().object_to_string(objRef);
-		byte b[] = objString.getBytes();
+		byte b[] = objString.getBytes(StandardCharsets.UTF_8);
 
 		ofile.write(b);
 		ofile.close();

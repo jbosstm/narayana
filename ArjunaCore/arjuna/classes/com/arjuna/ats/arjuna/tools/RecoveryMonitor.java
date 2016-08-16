@@ -37,6 +37,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
 
@@ -132,9 +133,9 @@ public class RecoveryMonitor
 
 	    // streams to and from the RecoveryManager
 
-	    BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream())) ;
+	    BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8)) ;
                               
-	    PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream()));
+	    PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
 
 	    if (asyncScan)
 		toServer.println(RecoveryDriver.ASYNC_SCAN);

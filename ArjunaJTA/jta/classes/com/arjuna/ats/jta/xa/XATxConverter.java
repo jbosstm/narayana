@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jta.xa;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.transaction.xa.Xid;
@@ -95,13 +96,12 @@ public class XATxConverter
             throw new IllegalStateException(jtaLogger.i18NLogger.get_nodename_null());
         }
 
-        int nodeNameLengthToUse =  nodeName.getBytes().length;
+        int nodeNameLengthToUse = nodeName.getBytes(StandardCharsets.UTF_8).length;
         xid.gtrid_length = gtridUid.length+nodeNameLengthToUse;
 
         // src, srcPos, dest, destPos, length
         System.arraycopy(gtridUid, 0, xid.data, 0, gtridUid.length);
-        System.arraycopy(nodeName.getBytes(), 0, xid.data, gtridUid.length, nodeNameLengthToUse);
-
+        System.arraycopy(nodeName.getBytes(StandardCharsets.UTF_8), 0, xid.data, gtridUid.length, nodeNameLengthToUse);
         
         
         if (branch.notEquals(Uid.nullUid()))
@@ -165,7 +165,7 @@ public class XATxConverter
 		// way to tell where it starts is to figure out how long the Uid is.
 		int offset = Uid.UID_SIZE;
 
-		return new String(Arrays.copyOfRange(globalTransactionId, offset, globalTransactionId.length));
+		return new String(Arrays.copyOfRange(globalTransactionId, offset, globalTransactionId.length), StandardCharsets.UTF_8);
 	}
 
 	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
@@ -182,7 +182,7 @@ public class XATxConverter
 		theXid.data[offset++] = (byte) (length >>> 8);
 		theXid.data[offset++] = (byte) (length >>> 0);
 		if (length > 0) {
-			byte[] nameAsBytes = xaNodeName.getBytes();
+			byte[] nameAsBytes = xaNodeName.getBytes(StandardCharsets.UTF_8);
 			System.arraycopy(nameAsBytes, 0, theXid.data, offset, length);
 		}
 		theXid.bqual_length = Uid.UID_SIZE+4+4+length;
@@ -206,7 +206,7 @@ public class XATxConverter
 				+ ((branchQualifier[offset++] & 0xFF) << 8)
 				+ (branchQualifier[offset++] & 0xFF);
 		if (length > 0) {
-			return new String(Arrays.copyOfRange(branchQualifier, offset, offset+length));
+			return new String(Arrays.copyOfRange(branchQualifier, offset, offset+length), StandardCharsets.UTF_8);
 		} else {
 			return null;
 		}

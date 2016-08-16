@@ -24,6 +24,7 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class StompMarshaller {
         // Add a newline to seperate the headers from the content.
         buffer.append(Stomp.NEWLINE);
 
-        os.write(buffer.toString().getBytes("UTF-8"));
+        os.write(buffer.toString().getBytes(StandardCharsets.UTF_8));
         os.write(stomp.getContent());
         os.write(END_OF_FRAME);
     }
@@ -187,6 +188,6 @@ public class StompMarshaller {
             baos.write(b);
         }
         byte[] sequence = baos.toByteArray();
-        return new String(sequence, "UTF-8");
+        return new String(sequence, StandardCharsets.UTF_8);
     }
 }

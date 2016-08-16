@@ -20,6 +20,7 @@ package org.jboss.narayana.blacktie.jatmibroker.xatmi;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -260,7 +261,7 @@ public abstract class CSControl extends TestCase {
                                 }
                                 pos = 0;
                             } else if (pos == buf.length) {
-                                ostream.write("missing synchronization sequence from service - force notify".getBytes("UTF-8"));
+                                ostream.write("missing synchronization sequence from service - force notify".getBytes(StandardCharsets.UTF_8));
                                 log.warn("missing synchronization sequence from service");
                                 synchronized (this) {
                                     this.notify();

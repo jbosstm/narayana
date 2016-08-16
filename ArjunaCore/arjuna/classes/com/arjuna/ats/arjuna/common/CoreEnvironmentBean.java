@@ -21,7 +21,7 @@
 package com.arjuna.ats.arjuna.common;
 
 import java.io.File;
-
+import java.nio.charset.StandardCharsets;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.utils.Process;
 import com.arjuna.ats.arjuna.utils.Utility;
@@ -114,10 +114,10 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
             throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_null());
         }
 
-        if (nodeIdentifier.getBytes().length > NODE_NAME_SIZE)
+        if (nodeIdentifier.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE)
         {
-            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier);
-            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier));
+            tsLogger.i18NLogger.fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE);
+            throw new CoreEnvironmentBeanException(tsLogger.i18NLogger.get_fatal_nodename_too_long(nodeIdentifier, NODE_NAME_SIZE));
         }
 
     	this.nodeIdentifier = nodeIdentifier;
