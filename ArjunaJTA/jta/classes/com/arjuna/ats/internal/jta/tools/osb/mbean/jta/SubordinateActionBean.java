@@ -38,6 +38,9 @@ public class SubordinateActionBean extends JTAActionBean implements SubordinateA
         try {
             SubordinateAtomicAction sub = (SubordinateAtomicAction) ra.getAction();
 
+            if (sub.getXid() == null) {
+                return "Error: The objectstore record could not be activated";
+            }
             return sub.getXid().toString();
         } catch (ClassCastException e) {
             if (tsLogger.logger.isDebugEnabled()) {
