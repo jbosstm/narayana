@@ -197,7 +197,7 @@
                 <groupId>apr-1.contrib</groupId>
                 <classifier>${bpa}</classifier>
                 <artifactId>apr-1</artifactId>
-                <version>1.3.3</version>
+                <version>1.5.2.BT2</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.narayana.blacktie.plugins</groupId>
