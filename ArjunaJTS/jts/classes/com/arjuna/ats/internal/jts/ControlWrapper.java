@@ -306,7 +306,7 @@ public class ControlWrapper implements Reapable
 		}
 		catch (NullPointerException ex)
 		{
-			throw new TRANSACTION_ROLLEDBACK();
+			return;
 		}
 	}
 

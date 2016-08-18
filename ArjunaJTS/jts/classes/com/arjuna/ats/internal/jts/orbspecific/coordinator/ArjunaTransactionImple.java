@@ -500,6 +500,9 @@ public class ArjunaTransactionImple extends
 			destroyAction();
 
 			status = super.status();
+		} else if ((status == ActionStatus.ABORTING)
+				|| (status == ActionStatus.ABORTED) || (status == ActionStatus.H_ROLLBACK)) {
+			return;
 		}
 		else
 		{
