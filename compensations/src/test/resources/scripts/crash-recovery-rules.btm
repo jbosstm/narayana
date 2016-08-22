@@ -1,0 +1,74 @@
+################################################################################################
+# Rule to trigger crash after confirm completed
+################################################################################################
+RULE trigger crash after confirm completed
+CLASS org.jboss.narayana.compensations.functional.recovery.deployment.BytemanHelper
+METHOD triggerRule
+AT ENTRY
+IF "CRASH_AFTER_CONFIRM_COMPLETED".equals($1)
+DO debug("Flagging CRASH_AFTER_CONFIRM_COMPLETED"),
+   flag("CRASH_AFTER_CONFIRM_COMPLETED")
+ENDRULE
+
+################################################################################################
+# Rule to crash before close
+################################################################################################
+RULE crash after confirm completed
+INTERFACE org.jboss.narayana.compensations.internal.BAController
+METHOD completeBusinessActivity
+AT ENTRY
+IF flagged("CRASH_AFTER_CONFIRM_COMPLETED")
+DO clear("CRASH_AFTER_CONFIRM_COMPLETED"),
+   debug("Killing JVM!"),
+   killJVM()
+ENDRULE
+
+################################################################################################
+# Rule to trigger crash before close
+################################################################################################
+RULE trigger crash before close
+CLASS org.jboss.narayana.compensations.functional.recovery.deployment.BytemanHelper
+METHOD triggerRule
+AT ENTRY
+IF "CRASH_BEFORE_CLOSE".equals($1)
+DO debug("Flagging CRASH_BEFORE_CLOSE"),
+   flag("CRASH_BEFORE_CLOSE")
+ENDRULE
+
+################################################################################################
+# Rule to crash before close
+################################################################################################
+RULE crash before close
+INTERFACE org.jboss.narayana.compensations.internal.BAParticipant
+METHOD close
+AT ENTRY
+IF flagged("CRASH_BEFORE_CLOSE")
+DO clear("CRASH_BEFORE_CLOSE"),
+   debug("Killing JVM!"),
+   killJVM()
+ENDRULE
+
+################################################################################################
+# Rule to trigger crash before compensate
+################################################################################################
+RULE trigger crash before compensate
+CLASS org.jboss.narayana.compensations.functional.recovery.deployment.BytemanHelper
+METHOD triggerRule
+AT ENTRY
+IF "CRASH_BEFORE_COMPENSATE".equals($1)
+DO debug("Flagging CRASH_BEFORE_COMPENSATE"),
+   flag("CRASH_BEFORE_COMPENSATE")
+ENDRULE
+
+################################################################################################
+# Rule to crash before compensate
+################################################################################################
+RULE crash before compensate
+INTERFACE org.jboss.narayana.compensations.internal.BAParticipant
+METHOD compensate
+AT ENTRY
+IF flagged("CRASH_BEFORE_COMPENSATE")
+DO clear("CRASH_BEFORE_COMPENSATE"),
+   debug("Killing JVM!"),
+   killJVM()
+ENDRULE
