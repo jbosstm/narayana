@@ -19,11 +19,11 @@ public interface BAController {
 
     boolean isBARunning();
 
-    Object suspend() throws Exception;
+    CurrentTransaction suspend() throws Exception;
 
-    void resume(Object context) throws Exception;
+    void resume(CurrentTransaction currentTransaction) throws Exception;
 
-    Object getCurrentTransaction() throws Exception;
+    CurrentTransaction getCurrentTransaction() throws Exception;
 
     ParticipantManager enlist(Class<? extends CompensationHandler> compensationHandlerClass,
             Class<? extends ConfirmationHandler> confirmationHandlerClass,

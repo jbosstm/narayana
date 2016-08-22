@@ -211,6 +211,7 @@
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_1">org.jboss.jbossts.xts.initialisation.CoordinatorSideInitialisation</entry>
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_2">org.jboss.jbossts.xts.initialisation.ParticipantSideInitialisation</entry>
     <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_3">org.jboss.jbossts.xts.initialisation.ClientSideInitialisation</entry>
+    <entry key="org.jboss.jbossts.xts.initialisation.xtsInitialisation_4">org.jboss.jbossts.xts.initialisation.RecoveryInitialisation</entry>
 
     <!--
      if you are deploying XTS outside of JBoss then you may not be able to map the WS-C and WS-T service

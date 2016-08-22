@@ -28,12 +28,12 @@ package org.jboss.narayana.compensations.internal;
 public interface BAParticipant {
 
 
-    public void confirmCompleted(boolean confirmed);
+    void confirmCompleted(boolean confirmed);
 
-    public void close() throws Exception;
+    void close() throws Exception;
 
-    public void cancel() throws Exception;
+    void cancel() throws Exception;
 
-    public void compensate() throws Exception;
+    void compensate() throws Exception;
 
 }
