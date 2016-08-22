@@ -19,29 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.compensations.functional.compensatable;
+package org.jboss.narayana.compensations.internal;
 
-import org.jboss.narayana.compensations.internal.BAControllerFactory;
+import org.jboss.narayana.compensations.api.Compensatable;
+import org.jboss.narayana.compensations.api.CompensationTransactionType;
+import org.jboss.narayana.compensations.api.TransactionRequiredException;
+import org.jboss.narayana.compensations.api.TransactionalException;
+
+import javax.annotation.Priority;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-@TestStereotype
-public class StereotypeBean {
+@Compensatable(CompensationTransactionType.MANDATORY)
+@Interceptor
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 197)
+public class CompensationInterceptorMandatory extends CompensationInterceptorBase {
 
-    public void doSomething() throws TestException {
+    @AroundInvoke
+    public Object intercept(final InvocationContext ic) throws Exception {
 
-        try {
-            final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
-
-            if (txContext == null) {
-                throw new RuntimeException("No transaction is active");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error looking up current transaction", e);
+        BAController baController = BAControllerFactory.getInstance();
+        if (!baController.isBARunning()) {
+            throw new TransactionalException("Transaction is required for invocation", new TransactionRequiredException());
         }
 
-        throw new TestException();
+        return invokeInCallerTx(ic);
     }
 
 }

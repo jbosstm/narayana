@@ -30,7 +30,7 @@ import org.jboss.narayana.compensations.functional.common.DummyCompensationHandl
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
+import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

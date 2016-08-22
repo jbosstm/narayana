@@ -30,9 +30,9 @@ import org.jboss.narayana.compensations.functional.common.DummyCompensationHandl
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandler2;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
-import org.jboss.narayana.compensations.impl.CompensationManagerImpl;
-import org.jboss.narayana.compensations.impl.CompensationManagerState;
+import org.jboss.narayana.compensations.internal.BAControllerFactory;
+import org.jboss.narayana.compensations.internal.CompensationManagerImpl;
+import org.jboss.narayana.compensations.internal.CompensationManagerState;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -24,7 +24,7 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.functional.common.DummyData;
-import org.jboss.narayana.compensations.impl.BAController;
+import org.jboss.narayana.compensations.internal.BAController;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

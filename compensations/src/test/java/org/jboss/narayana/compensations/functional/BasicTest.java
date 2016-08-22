@@ -23,7 +23,6 @@
 package org.jboss.narayana.compensations.functional;
 
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
-import org.jboss.narayana.compensations.api.NoTransactionException;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler1;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler2;
 import org.jboss.narayana.compensations.functional.common.DummyCompensationHandler3;
@@ -33,7 +32,7 @@ import org.jboss.narayana.compensations.functional.common.DummyConfirmationHandl
 import org.jboss.narayana.compensations.functional.common.MultiService;
 import org.jboss.narayana.compensations.functional.common.MyRuntimeException;
 import org.jboss.narayana.compensations.functional.common.SingleService;
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
+import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

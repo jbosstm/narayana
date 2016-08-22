@@ -19,29 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.compensations.functional.compensatable;
 
-import org.jboss.narayana.compensations.internal.BAControllerFactory;
+package org.jboss.narayana.compensations.internal;
+
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+import java.lang.reflect.Method;
 
 /**
- * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ * @author paul.robinson@redhat.com 25/04/2013
  */
-@TestStereotype
-public class StereotypeBean {
+public abstract class ParticipantInterceptor {
 
-    public void doSomething() throws TestException {
 
-        try {
-            final Object txContext = BAControllerFactory.getInstance().getCurrentTransaction();
+    @AroundInvoke
+    public Object intercept(InvocationContext ic) throws Exception {
 
-            if (txContext == null) {
-                throw new RuntimeException("No transaction is active");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error looking up current transaction", e);
+        if (!BAControllerFactory.getInstance().isBARunning()) {
+            return ic.proceed();
         }
 
-        throw new TestException();
+        ParticipantManager participantManager = enlistParticipant(ic.getMethod());
+
+        Object result;
+        try {
+
+
+            result = ic.proceed();
+            participantManager.completed();
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            participantManager.exit();
+            throw e;
+        } catch (Exception e) {
+            participantManager.completed();
+            throw e;
+        }
+        return result;
     }
+
+    protected abstract ParticipantManager enlistParticipant(Method method) throws Exception;
 
 }

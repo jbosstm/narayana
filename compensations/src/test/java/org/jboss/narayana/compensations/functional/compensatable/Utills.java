@@ -21,7 +21,7 @@
  */
 package org.jboss.narayana.compensations.functional.compensatable;
 
-import org.jboss.narayana.compensations.impl.BAControllerFactory;
+import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.junit.Assert;
 
 /**
