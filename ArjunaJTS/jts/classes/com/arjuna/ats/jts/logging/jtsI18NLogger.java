@@ -1070,6 +1070,10 @@ public interface jtsI18NLogger {
     @Message(id = 22262, value = "The node identifier cannot be null", format = MESSAGE_FORMAT)
     public String get_nodename_null();
 
+	@Message(id = 22263, value = "rollback for {0} was already rolled back", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_rollback_aborted_transaction(String arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
