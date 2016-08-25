@@ -50,6 +50,7 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
@@ -238,12 +239,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         case XAResource.TMSTARTRSCAN: // check the object store
             if (_recoveryStarted)
                 throw new XAException(XAException.XAER_PROTO);
-            else
+            else {
                 _recoveryStarted = true;
+                if (XARecoveryModule.getRegisteredXARecoveryModule() != null) {
+                    XARecoveryModule.getRegisteredXARecoveryModule().periodicWorkFirstPass();
+                }
+            }
             break;
         case XAResource.TMENDRSCAN: // null op for us
-            if (_recoveryStarted)
+            if (_recoveryStarted) {
                 _recoveryStarted = false;
+                if (XARecoveryModule.getRegisteredXARecoveryModule() != null) {
+                    XARecoveryModule.getRegisteredXARecoveryModule().periodicWorkSecondPass();
+                }
+            }
             else
                 throw new XAException(XAException.XAER_PROTO);
             return null;
