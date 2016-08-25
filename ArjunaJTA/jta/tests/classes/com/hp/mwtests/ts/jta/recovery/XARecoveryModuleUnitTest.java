@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -289,6 +290,90 @@ public class XARecoveryModuleUnitTest
         m.invoke(xarm, parameters);
     }
 
+
+    @Test
+    public void testCanRepeatFirstPass () throws Exception
+    {
+
+        XARecoveryModule xarm = new XARecoveryModule();
+
+
+        xarm.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[]{new XAResource() {
+
+                    @Override
+                    public void commit(Xid xid, boolean b) throws XAException {
+
+                    }
+
+                    @Override
+                    public void end(Xid xid, int i) throws XAException {
+
+                    }
+
+                    @Override
+                    public void forget(Xid xid) throws XAException {
+
+                    }
+
+                    @Override
+                    public int getTransactionTimeout() throws XAException {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isSameRM(XAResource xaResource) throws XAException {
+                        return false;
+                    }
+
+                    @Override
+                    public int prepare(Xid xid) throws XAException {
+                        return 0;
+                    }
+
+                    @Override
+                    public Xid[] recover(int i) throws XAException {
+                        recoverCalled++;
+                        return new Xid[0];
+                    }
+
+                    @Override
+                    public void rollback(Xid xid) throws XAException {
+
+                    }
+
+                    @Override
+                    public boolean setTransactionTimeout(int i) throws XAException {
+                        return false;
+                    }
+
+                    @Override
+                    public void start(Xid xid, int i) throws XAException {
+
+                    }
+                }};
+            }
+        });
+
+        xarm.periodicWorkFirstPass();
+        assertEquals(recoverCalled, 1);
+        xarm.periodicWorkSecondPass();
+        assertEquals(recoverCalled, 2);
+        xarm.periodicWorkFirstPass();
+        assertEquals(recoverCalled, 3);
+        xarm.periodicWorkFirstPass();
+        assertEquals(recoverCalled, 5);
+        xarm.periodicWorkSecondPass();
+        assertEquals(recoverCalled, 6);
+    }
+
     class DummyXAResourceOrphanFilter implements XAResourceOrphanFilter
     {
         public DummyXAResourceOrphanFilter ()
@@ -309,4 +394,7 @@ public class XARecoveryModuleUnitTest
         
         private Vote _vote;
     }
+
+    private int recoverCalled;
+
 }
