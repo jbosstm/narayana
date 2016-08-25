@@ -70,10 +70,7 @@ public class TxWorkManager
 			workers = _transactions.get(tx);
 
 			/*
-			 * TODO
-			 * 
-			 * Is this really correct? We only get to add one unit of work per
-			 * transaction?! If so why use a stack datastructure?
+			 * Stack is not required due to JCA 15.4.4 which restricts to one unit of work per TX.
 			 */
 			
 			if (workers == null)
