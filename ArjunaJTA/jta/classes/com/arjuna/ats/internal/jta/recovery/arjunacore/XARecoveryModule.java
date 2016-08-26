@@ -259,8 +259,10 @@ public class XARecoveryModule implements RecoveryModule
 
 				// JBTM-1255 moved stale check back to bottomUpRecovery
 				if (xids.contains(xid)) {
-					// This Xid is going to be recovered by the AtomicAction
-					xids.remove(xid);
+					// This Xid will hopefully be recovered by the AtomicAction
+					// We do not remove it from the map as there is garbage collection in RecoveryXids already
+					// and it is possible that the Xid is recovered by both txbridge and XATerminator - the second
+					// would get noxaresource error message
 					return theKey;
 				}
 			}

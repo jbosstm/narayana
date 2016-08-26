@@ -216,7 +216,16 @@ public class TransactionImporterImple implements TransactionImporter
 		return toReturn;
 	}
 
-	private TransactionImple addImportedTransaction(TransactionImple importedTransaction, Xid mapKey, Xid xid, int timeout) {
+	/**
+	 * This can be used for newly imported transactions or recovered ones.
+	 *
+	 * @param recoveredTransaction If this is recovery
+	 * @param mapKey
+	 * @param xid if this is import
+	 * @param timeout
+	 * @return
+	 */
+	private TransactionImple addImportedTransaction(TransactionImple recoveredTransaction, Xid mapKey, Xid xid, int timeout) {
 		SubordinateXidImple importedXid = new SubordinateXidImple(mapKey);
 		// We need to store the imported transaction in a volatile field holder so that it can be shared between threads
 		AtomicReference<TransactionImple> holder = new AtomicReference<>();
@@ -228,20 +237,23 @@ public class TransactionImporterImple implements TransactionImporter
 
 		TransactionImple txn = holder.get();
 
+		// Should only be called by the recovery system - this will replace the Transaction with one from disk
+		if (recoveredTransaction!= null) {
+			synchronized (holder) {
+				// now it's safe to add the imported transaction to the holder
+				recoveredTransaction.recordTransaction();
+				txn = recoveredTransaction;
+				holder.set(txn);
+			}
+		}
+
 		if (txn == null) {
 			// retry the get under a lock - this double check idiom is safe because AtomicReference is effectively
 			// a volatile so can be concurrently accessed by multiple threads
 			synchronized (holder) {
 				txn = holder.get();
 				if (txn == null) {
-					// now it's safe to add the imported transaction to the holder
-					if (importedTransaction != null) {
-						importedTransaction.recordTransaction();
-						txn = importedTransaction;
-					} else {
-						txn = new TransactionImple(timeout, xid);
-					}
-
+					txn = new TransactionImple(timeout, xid);
 					holder.set(txn);
 				}
 			}
