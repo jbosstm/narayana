@@ -225,14 +225,7 @@ public class TransactionImporterImple implements TransactionImporter
 			synchronized (holder) {
 				txn = holder.get();
 				if (txn == null) {
-					// now it's safe to add the imported transaction to the holder
-					if (recoveredTransaction != null) {
-						recoveredTransaction.recordTransaction();
-						txn = recoveredTransaction;
-					} else {
-						txn = new TransactionImple(timeout, xid);
-					}
-
+					txn = new TransactionImple(timeout, xid);
 					holder.set(txn);
 					holder.notifyAll();
 					isNew = true;
