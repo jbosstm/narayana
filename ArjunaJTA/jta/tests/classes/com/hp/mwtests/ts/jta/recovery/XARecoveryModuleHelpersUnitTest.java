@@ -205,6 +205,7 @@ public class XARecoveryModuleHelpersUnitTest
         if (somethingToRecover) {
             assertEquals("helper removed in wrong state", 0, remover.getRemoveState());
         } else {
+            // See https://issues.jboss.org/browse/JBTM-2717
             assertEquals("helper removed in wrong state", 2, remover.getRemoveState());
         }
 
