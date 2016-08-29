@@ -147,7 +147,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>catalina</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
       <version>${version.org.apache.tomcat}</version>
       <scope>test</scope>
     </dependency>

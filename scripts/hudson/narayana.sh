@@ -71,48 +71,55 @@ function init_test_options {
         echo "SKIPPING PROFILE=$PROFILE"
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+        export TOMCAT_TESTS=1
     elif [[ $PROFILE == "JACOCO" ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-        export CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+        export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
     elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
         comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTA* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_OPENJDKORB* ]]; then
         comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
+        export JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
         comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "PERF" ]] && [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
         comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
         export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "NONE" ]]; then
         echo "Not using any PROFILE (will use the environment for config variables)."
     elif [[ -z $PROFILE ]]; then
@@ -128,6 +135,7 @@ function init_test_options {
         [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
         [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
         [ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
+        [ $TOMCAT_TESTS ] || TOMCAT_TESTS=1 # Narayana Tomcat tests
         [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
         [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # JTA AS tests
         [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
@@ -139,7 +147,8 @@ function init_test_options {
     else
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 PERF_TESTS=0 OSGI_TESTS=0 
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
     fi
 
     get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
@@ -478,6 +487,28 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
+function tomcat_tests {
+    echo "Initializing Narayana Tomcat tests"
+    cd ${WORKSPACE}
+    TOMCAT_NAME=apache-tomcat-7.0.70
+    curl -LOk http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.70/bin/${TOMCAT_NAME}.zip
+    unzip ${TOMCAT_NAME}.zip
+    rm ${TOMCAT_NAME}.zip
+    export CATALINA_HOME=$PWD/${TOMCAT_NAME}
+    chmod u+x ${CATALINA_HOME}/bin/*.sh
+    cat << 'EOF' > ${CATALINA_HOME}/conf/tomcat-users.xml
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+    <user username="test" password="test" roles="manager-script"/>
+</tomcat-users>
+EOF
+    echo "Executing Narayana Tomcat tests"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} install "$@"
+    RESULT=$?
+    rm -r ${TOMCAT_NAME}
+    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
+}
+
 function enable_qa_trace {
 echo "creating file $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml"
 cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
@@ -795,6 +826,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
+[ $TOMCAT_TESTS = 1 ] && tomcat_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
 [ $CODE_COVERAGE = 1 ] && generate_code_coverage_report "$@"

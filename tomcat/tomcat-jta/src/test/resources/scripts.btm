@@ -1,0 +1,28 @@
+############################################################
+# Rule to trigger system crash simulation.
+# If isCrash is set to true crash flag is created.
+############################################################
+RULE Trigger system crash simulation
+CLASS org.jboss.narayana.tomcat.jta.integration.TestXAResource
+METHOD start
+AT ENTRY
+IF TRUE
+DO debug("Setting commit failure flag"),
+   flag("crash")
+ENDRULE
+
+############################################################
+# Rule to simulate system crash
+# 2PC is interrupted before commit if crash flag is set
+############################################################
+RULE Simulate system crash
+CLASS com.arjuna.ats.arjuna.coordinator.BasicAction
+METHOD phase2Commit
+AT ENTRY
+IF flagged("crash")
+DO debug("Simulating system crash"),
+   clear("crash"),
+   com.arjuna.ats.arjuna.coordinator.ActionManager.manager().remove($0.get_uid()),
+   com.arjuna.ats.internal.arjuna.thread.ThreadActionData.popAction(),
+   throw new RuntimeException("Simulating system crash")
+ENDRULE
