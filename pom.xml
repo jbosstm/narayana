@@ -431,7 +431,7 @@
     <version.dom4j>1.6.1</version.dom4j>
     <version.jfree>1.0.9</version.jfree>
     <version.com.h2database>1.4.182</version.com.h2database>
-    <version.org.apache.tomcat>6.0.37</version.org.apache.tomcat>
+    <version.org.apache.tomcat>7.0.70</version.org.apache.tomcat>
     <version.org.apache.ant>1.8.2</version.org.apache.ant>
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
@@ -450,6 +450,8 @@
     <version.org.jboss.byteman>2.1.3</version.org.jboss.byteman>
     <version.org.jboss.arquillian.core>1.1.7.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.arquillian.container.weld>1.0.0.CR8</version.org.jboss.arquillian.container.weld>
+    <version.org.jboss.arquillian.container.tomcat>1.0.0.CR7</version.org.jboss.arquillian.container.tomcat>
+    <version.org.jboss.shrinkwrap.resolver>2.2.2</version.org.jboss.shrinkwrap.resolver>
     <version.org.jboss.jboss-transaction-spi>7.5.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
@@ -486,6 +488,7 @@
     <module>osgi</module>
     <module>narayana-full</module>
     <module>code-coverage</module>
+    <module>tomcat</module>
   </modules>
   <profiles>
     <profile>

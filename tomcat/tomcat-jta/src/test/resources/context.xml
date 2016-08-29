@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!-- Narayana resources -->
+    <Transaction factory="org.jboss.narayana.tomcat.jta.UserTransactionFactory"/>
+    <Resource name="TransactionManager" type="javax.transaction.TransactionManager"
+              factory="org.jboss.narayana.tomcat.jta.TransactionManagerFactory"/>
+    <Resource name="TransactionSynchronizationRegistry" type="javax.transaction.TransactionSynchronizationRegistry"
+              factory="org.jboss.narayana.tomcat.jta.TransactionSynchronizationRegistryFactory"/>
+
+    <!-- Database resources -->
+    <Resource name="h2DataSource" uniqueName="h2Datasource" auth="Container" type="org.h2.jdbcx.JdbcDataSource" username="sa"
+              user="sa" password="sa" url="jdbc:h2:mem:testdb" description="H2 Data Source" loginTimeout="0"
+              factory="org.h2.jdbcx.JdbcDataSourceFactory"/>
+    <Resource name="transactionalDataSource" uniqueName="transactionalDataSource" auth="Container" type="javax.sql.DataSource"
+              username="sa" password="sa" driverClassName="com.arjuna.ats.jdbc.TransactionalDriver"
+              url="jdbc:arjuna:java:comp/env/h2DataSource" description="Transactional Driver Data Source"/>
+</Context>
