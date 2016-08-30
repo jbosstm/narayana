@@ -64,9 +64,7 @@ public class CrashRecovery2 {
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
 	    
-	    jtaPropertyManager.getJTAEnvironmentBean().setOrphanSafetyInterval(0);
-	    
-		recoveryPropertyManager.getRecoveryEnvironmentBean()
+	    recoveryPropertyManager.getRecoveryEnvironmentBean()
 				.setRecoveryBackoffPeriod(1);
 
 		// ok, now drive a TX to completion. the script should ensure that the
@@ -121,9 +119,9 @@ public class CrashRecovery2 {
 
 		manager.scan();
 
-		assertTrue(secondResource.rollbackCount() == 0);
+		assertTrue(firstResource.rollbackCount() == 0);
 		assertTrue(secondResource.rollbackCount() == 0);
 		assertTrue(firstResource.commitCount() == 1);
-		assertTrue(firstResource.commitCount() == 1);
+		assertTrue(secondResource.commitCount() == 1);
 	}
 }
