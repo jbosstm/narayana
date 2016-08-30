@@ -44,7 +44,7 @@ public abstract class MDBBlacktieService extends BlackTieService implements Mess
      * 
      * @param message The message received wrapping an XATMI invocation
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void onMessage(Message message) {
         try {
             String serviceName = null;
