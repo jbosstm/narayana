@@ -59,7 +59,20 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	this->addr = strdup(addr);
 	this->port = port;
 	this->socket = NULL;
-	apr_pollset_create(&this->pollset, 1, this->pool, 0);
+	#ifdef BROKEN_WSAPOLL
+	/* JBTM-2743
+	 *
+	 * APR 1.4.x switched to using WSAPoll() on Win32, but it does not
+	 * properly handle errors on a non-blocking sockets (such as
+	 * connecting to a server where no listener is active).
+	 *
+	 * http://social.msdn.microsoft.com/Forums/en/wsk/thread/18769abd-fca0-4d3c-9884-1a38ce27ae90
+	 */
+		apr_pollset_create_ex(&this->pollset, 1, this->pool, 0, APR_POLLSET_SELECT);
+		LOG4CXX_DEBUG(logger, (char*) "create the pollset with the select impl as it has the broken wsapoll");
+	#else
+		apr_pollset_create(&this->pollset, 1, this->pool, 0);
+	#endif
 	this->ctx = &this->queue_ctx;
 	ctx->sock = NULL;
 	ctx->sid = id;

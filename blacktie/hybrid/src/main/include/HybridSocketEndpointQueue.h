@@ -31,6 +31,7 @@
 #include "apr_errno.h"
 #include "apr_poll.h"
 #include "apr_thread_cond.h"
+#include "apr_version.h"
 #include "apr.h"
 
 #include "SocketServer.h"
@@ -38,6 +39,16 @@
 
 class HybridSocketSessionImpl;
 #define DEF_POLL_TIMEOUT    (APR_USEC_PER_SEC * 3)
+
+/**
+ * JBTM-2743 we're on WIN32, and APR is version 1.4.0+,
+ * then we have a broken WSAPoll() implementation.
+ */
+#if defined(APR_VERSION_AT_LEAST) && defined(WIN32)
+#if APR_VERSION_AT_LEAST(1,4,0)
+#define BROKEN_WSAPOLL
+#endif
+#endif
 
 class BLACKTIE_HYBRID_DLL HybridSocketEndpointQueue: public virtual Destination {
 public:
