@@ -387,21 +387,24 @@
                                     If the transaction's status is
                                     <literal>HEURISTIC</literal>
                                     , the clearHeuristic operation changes the state to
-                                    <literal>PREPARE</literal>
-                                    and triggers a recovery attempt.
+                                    <literal>PREPARED</literal>.
                                 </para>
                             </listitem>
                             <listitem>
                                 <para>
-                                    If one of the transaction participants is in a heuristic state, the recovery
-                                    operation tries to replay the
+                                    Subsequent runs of the recovery manager (periodic recovery) will try to replay the
                                     <code>commit</code>
-                                    operation. If successful, the participant is removed from the transaction log. You
-                                    can verify this by re-running the
+                                    operation. If successful, the participant is removed from the transaction log. 
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    You
+                                    can verify the transaction is completed by re-running the
                                     <code>probe</code>
                                     operation on the
                                     <code>ObjectStore</code>
-                                    MBean. If this is the last participant, the transaction is also deleted.
+                                    MBean. If this is the last participant, the transaction will have been also deleted.
                                 </para>
                             </listitem>
                         </itemizedlist>
