@@ -45,6 +45,7 @@
 	<property name="org.jboss.jbossts.qa.src" location="src"/>
 	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 	<property name="org.jboss.jbossts.qa.idl" location="idl"/>
+        <property name="jdk-9-upgrademodulepath" value="-upgrademodulepath ../ArjunaJTS/jtax/target/upgrademodulepath"/>
 
 	<target name="setIdlProps">
         <if>
@@ -73,10 +74,13 @@
         <then>
 		    <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
             <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
-            <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
-            <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/lib;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+            <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/include;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;../../ArjunaJTS/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+            <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/include;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
             <property name="is.sunorb" value="1"/>
+<echo message="XXXX cp: ${org.jboss.jbossts.qa.orb.classpath}"/>
+<echo message="XXXX idl.params1: ${idl.params1}"/>
+<echo message="XXXX idl.params2: ${idl.params2}"/>
         </then>
         </elseif>
         <elseif>
@@ -94,6 +98,10 @@
             <fail message="Unsupported orbtype: ${orbtype}"/>
         </else>
         </if>
+
+        <path id="target.classpath">
+            <pathelement location="../target/classes"/>
+        </path>
 
         <path id="jts.classpath">
             <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/">
@@ -252,6 +260,7 @@
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on"
                includeantruntime="false">
+			<compilerarg line="${jdk-9-upgrademodulepath} -addmods java.sql,java.corba" />
 
 			<classpath>
 				<path refid="jts.classpath"/>
@@ -262,10 +271,12 @@
 	</target>
 
 	<target name="org.jboss.jbossts.qa.compile" depends="org.jboss.jbossts.qa.idl.compile">
+<echo>DEBUG: target.classpath ${toString:target.classpath}</echo>
+<echo>DEBUG: jts.classpath ${toString:jts.classpath}</echo>
 		<javac			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on" deprecation="on"
                includeantruntime="false">
-			<compilerarg line="-addmods java.corba" />
+			<compilerarg line="${jdk-9-upgrademodulepath} -addmods java.corba,java.sql" />
       <src path="${org.jboss.jbossts.qa.src}"/>
       <src path="../../ArjunaJTS/jts/tests/classes"/>
       <src path="../../common/tests"/>
@@ -283,6 +294,7 @@
 
             <classpath>
 				<path refid="jts.classpath"/>
+				<path refid="target.classpath"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
 			</classpath>
 		</javac>
