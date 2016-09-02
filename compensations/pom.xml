@@ -40,8 +40,9 @@
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
+        </server.jvm.j9.args>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
+            ${server.jvm.j9.args} ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
         </server.jvm.args>
     </properties>
 
@@ -178,6 +179,9 @@
             <activation>
                 <jdk>[1.9,)</jdk>
             </activation>
+            <properties>
+              <server.jvm.j9.args>-addmods java.xml.ws</server.jvm.j9.args>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
