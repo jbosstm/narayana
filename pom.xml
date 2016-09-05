@@ -418,8 +418,8 @@
     <version.junit>4.10</version.junit> 
     <version.org.jboss.byteman>2.1.2</version.org.jboss.byteman>
     <version.org.jboss.arquillian.core>1.0.0.Final</version.org.jboss.arquillian.core>
-    <version.org.jboss.jboss-transaction-spi>7.1.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.org.jboss.arquillian.osgi>1.0.2.Final</version.org.jboss.arquillian.osgi>   
+    <version.org.jboss.jboss-transaction-spi>7.5.0.Final</version.org.jboss.jboss-transaction-spi>
   </properties>
   <profiles>
     <profile>

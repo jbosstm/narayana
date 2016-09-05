@@ -41,12 +41,13 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.WorkSynchronization;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
-
 import org.jboss.tm.JBossXATerminator;
-
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
 
 /**
  * The implementation of JBossXATerminator using the purely local (ArjunaCore)
@@ -58,9 +59,9 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
  * @author mcl
  */
 
-public class XATerminator extends XATerminatorImple implements
-		JBossXATerminator
+public class XATerminator extends XATerminatorImple implements JBossXATerminator
 {
+    private static final Xid[] NO_XIDS = new Xid[0];
 
 	/**
 	 * Register the unit of work with the specified transaction. The

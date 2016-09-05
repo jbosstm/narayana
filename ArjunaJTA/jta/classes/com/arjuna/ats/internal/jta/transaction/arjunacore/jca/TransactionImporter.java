@@ -24,6 +24,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import org.jboss.tm.TransactionImportResult;
 
 /**
  * A TransactionImporter is used to manager the relationship with external SubordinateTransactions.
@@ -59,6 +60,8 @@ public interface TransactionImporter
 	 *             thrown if there are any errors.
 	 */
     public SubordinateTransaction importTransaction(Xid xid, int timeout) throws XAException;
+
+    public TransactionImportResult importRemoteTransaction(Xid xid, int timeout) throws XAException;
 
 	/**
 	 * Used to recover an imported transaction.
