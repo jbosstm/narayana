@@ -37,6 +37,8 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
@@ -60,6 +62,8 @@ import com.arjuna.ats.jta.distributed.TestResourceRecovery;
 import com.arjuna.ats.jta.distributed.server.LocalServer;
 import com.arjuna.ats.jta.distributed.server.LookupProvider;
 import com.arjuna.ats.jta.distributed.server.RemoteServer;
+
+import static org.junit.Assert.assertTrue;
 
 public class ServerImpl implements LocalServer {
 
@@ -232,7 +236,23 @@ public class ServerImpl implements LocalServer {
 				transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
 				toReturn = ((TransactionImple) transaction).getTxId();
 			}
+
+			JBossXATerminator xaTerminator = transactionManagerService.getJbossXATerminator();
+
+			if (!ExtendedJBossXATerminator.class.isInstance(xaTerminator)) {
+				System.out.printf("ExtendedJBossXATerminator: FAIL not an instance");
+			} else {
+				ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+				Transaction tx = extendedJBossXATerminator.getTransaction(toResume);
+				if (tx == null)
+					System.out.printf("ExtendedJBossXATerminator: FAIL missing tx");
+			}
+
+//		assertTrue(ExtendedJBossXATerminator.class.isInstance(xaTerminator));
+//		ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+//		assertTrue(extendedJBossXATerminator.getTransaction(toResume) != null);
 		}
+
 		transactionManagerService.getTransactionManager().resume(transaction);
 		return toReturn;
 	}
