@@ -260,7 +260,7 @@
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on"
                includeantruntime="false">
-			<compilerarg line="${jdk-9-upgrademodulepath} -addmods java.sql,java.corba" />
+			<compilerarg line="${jdk-9-upgrademodulepath} -addmods java.corba" />
 
 			<classpath>
 				<path refid="jts.classpath"/>
