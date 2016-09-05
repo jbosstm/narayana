@@ -50,10 +50,6 @@ public interface LocalServer {
 
 	public long getTimeLeftBeforeTransactionTimeout() throws RollbackException;
 
-	public void storeRootTransaction() throws SystemException;
-
-	public void removeRootTransaction(Xid toMigrate);
-
 	public Xid locateOrImportTransactionThenResumeIt(int remainingTimeout, Xid toImport) throws XAException, InvalidTransactionException,
 			IllegalStateException, SystemException, IOException;
 

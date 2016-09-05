@@ -125,6 +125,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-transaction-spi</artifactId>
+        <version>${version.org.jboss.jboss-transaction-spi}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.jbossts.jts</groupId>
       <artifactId>jacorb-idl</artifactId>
       <version>${project.version}</version>
