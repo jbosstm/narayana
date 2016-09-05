@@ -125,7 +125,12 @@ public class TransactionImple extends
 	{
 		return ((SubordinateAtomicTransaction) _theTransaction).getXid();
 	}
-    
+
+    @Override
+    public Object getId() {
+        return get_uid();
+    }
+
     public void recover() {
         getControlWrapper().getImple().getImplHandle().activate();
     }

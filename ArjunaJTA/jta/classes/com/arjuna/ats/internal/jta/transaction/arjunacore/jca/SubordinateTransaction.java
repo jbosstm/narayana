@@ -25,16 +25,16 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
-import javax.transaction.Transaction;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import org.jboss.tm.ImportedTransaction;
 
 /**
  * Subordinate transactions are those designed to be driven by a foreign controller,
  * so they expose methods for driving each of the termination phases individually.
  */
-public interface SubordinateTransaction extends Transaction
+public interface SubordinateTransaction extends ImportedTransaction
 {
 	/**
 	 * Drive the subordinate transaction through the prepare phase. Any
