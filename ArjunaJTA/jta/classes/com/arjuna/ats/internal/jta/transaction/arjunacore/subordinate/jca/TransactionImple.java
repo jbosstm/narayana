@@ -131,7 +131,12 @@ public class TransactionImple
 		return ((SubordinateAtomicAction) _theTransaction).getXid();
 	}
 
-	/**
+    @Override
+    public Object getId() {
+        return get_uid();
+    }
+
+    /**
 	 * Force this transaction to try to recover itself again.
 	 */
 

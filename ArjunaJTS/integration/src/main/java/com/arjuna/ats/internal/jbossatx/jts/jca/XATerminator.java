@@ -44,13 +44,12 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.WorkSynchronization;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
 
-import org.jboss.tm.JBossXATerminator;
-
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
 
 import com.arjuna.ats.internal.jta.transaction.jts.jca.TxWorkManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import org.jboss.tm.JBossXATerminator;
 
 /**
  * The implementation of JBossXATerminator using the JTS implementation of the
@@ -59,10 +58,8 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManag
  * @author mcl
  */
 
-public class XATerminator extends XATerminatorImple implements
-		JBossXATerminator
+public class XATerminator extends XATerminatorImple implements JBossXATerminator
 {
-
 	/**
 	 * Register the unit of work with the specified transaction. The
 	 * thread-to-transaction association is not changed yet. Basically this

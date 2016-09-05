@@ -25,9 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
@@ -37,6 +35,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.TransactionImportResult;
+import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
@@ -51,8 +52,6 @@ import com.arjuna.ats.internal.arjuna.utils.ManualProcessId;
 import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecordWrappingPluginImpl;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateXidImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
 import com.arjuna.ats.jbossatx.jta.TransactionManagerService;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
@@ -66,7 +65,6 @@ public class ServerImpl implements LocalServer {
 	private String nodeName;
 	private RecoveryManagerService recoveryManagerService;
 	private TransactionManagerService transactionManagerService;
-	private Map<SubordinateXidImple, TransactionImple> rootTransactionsAsSubordinate = new HashMap<SubordinateXidImple, TransactionImple>();
 	private RecoveryManager _recoveryManager;
 	private ClassLoader classLoaderForTransactionManager;
 
@@ -224,17 +222,27 @@ public class ServerImpl implements LocalServer {
 	@Override
 	public Xid locateOrImportTransactionThenResumeIt(int remainingTimeout, Xid toResume) throws XAException, IllegalStateException, SystemException,
 			IOException {
-		Xid toReturn = null;
-		Transaction transaction = rootTransactionsAsSubordinate.get(new SubordinateXidImple(toResume));
-		if (transaction == null) {
-			transaction = SubordinationManager.getTransactionImporter().getImportedTransaction(toResume);
-			if (transaction == null) {
-				transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
-				toReturn = ((TransactionImple) transaction).getTxId();
-			}
+		JBossXATerminator xaTerminator = transactionManagerService.getJbossXATerminator();
+
+		if (!ExtendedJBossXATerminator.class.isInstance(xaTerminator)) {
+			System.out.printf("ExtendedJBossXATerminator: FAIL not an instance");
+			return null;
 		}
+
+		ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+
+		boolean subordinateCreated = false;
+		Transaction transaction = extendedJBossXATerminator.getTransaction(toResume);
+
+		if (transaction == null) {
+			TransactionImportResult transactionImportResult = extendedJBossXATerminator.importTransaction(toResume, remainingTimeout);
+			subordinateCreated = transactionImportResult.isNewImportedTransaction();
+			transaction = transactionImportResult.getTransaction();
+		}
+
 		transactionManagerService.getTransactionManager().resume(transaction);
-		return toReturn;
+
+		return subordinateCreated ? ((com.arjuna.ats.jta.transaction.Transaction) transaction).getTxId() : null;
 	}
 
 	@Override
@@ -248,21 +256,9 @@ public class ServerImpl implements LocalServer {
 	}
 
 	@Override
-	public void storeRootTransaction() throws SystemException {
-		TransactionImple transaction = ((TransactionImple) transactionManagerService.getTransactionManager().getTransaction());
-		Xid txId = transaction.getTxId();
-		rootTransactionsAsSubordinate.put(new SubordinateXidImple(txId), transaction);
-	}
-
-	@Override
 	public Xid getCurrentXid() throws SystemException {
 		TransactionImple transaction = ((TransactionImple) transactionManagerService.getTransactionManager().getTransaction());
 		return transaction.getTxId();
-	}
-
-	@Override
-	public void removeRootTransaction(Xid toMigrate) {
-		rootTransactionsAsSubordinate.remove(new SubordinateXidImple(toMigrate));
 	}
 
 	@Override
