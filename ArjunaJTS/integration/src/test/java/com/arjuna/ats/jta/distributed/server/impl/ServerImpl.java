@@ -37,6 +37,8 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jta.xa.XidImple;
 import org.jboss.tm.ExtendedJBossXATerminator;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.TransactionTimeoutConfiguration;
@@ -228,28 +230,24 @@ public class ServerImpl implements LocalServer {
 	public Xid locateOrImportTransactionThenResumeIt(int remainingTimeout, Xid toResume) throws XAException, IllegalStateException, SystemException,
 			IOException {
 		Xid toReturn = null;
-		Transaction transaction = null;
 		JBossXATerminator xaTerminator = transactionManagerService.getJbossXATerminator();
 
 		if (!ExtendedJBossXATerminator.class.isInstance(xaTerminator)) {
 			System.out.printf("ExtendedJBossXATerminator: FAIL not an instance");
-		} else {
-			ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
-			transaction = extendedJBossXATerminator.getTransaction(toResume);
-			if (transaction == null)
-				System.out.printf("ExtendedJBossXATerminator: FAIL missing tx");
-		}
-		if (transaction == null) {
-			transaction = SubordinationManager.getTransactionImporter().getImportedTransaction(toResume);
-			if (transaction == null) {
-				transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
-				toReturn = ((TransactionImple) transaction).getTxId();
-			}
+			return null;
 		}
 
-		if (transaction != null) {
-			transactionManagerService.getTransactionManager().resume(transaction);
+		ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+		Transaction transaction = extendedJBossXATerminator.getTransaction(toResume);
+
+		if (transaction == null) {
+			// there is no such imported transaction so create one and associate with the toResume Xid
+			transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
+			toReturn = ((TransactionImple) transaction).getTxId();
 		}
+
+		transactionManagerService.getTransactionManager().resume(transaction);
+
 		return toReturn;
 	}
 
