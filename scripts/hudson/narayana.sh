@@ -257,6 +257,7 @@ function build_as {
   [ $? = 0 ] || fatal "git fetch of pulls failed"
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
+  comment_on_pull "$BUILD_URL using non-default AS_BRANCH: $AS_BRANCH"
 
   git fetch upstream
   echo "This is the JBoss-AS commit"
