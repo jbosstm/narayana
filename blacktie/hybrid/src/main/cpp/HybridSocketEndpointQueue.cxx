@@ -68,10 +68,10 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	 *
 	 * http://social.msdn.microsoft.com/Forums/en/wsk/thread/18769abd-fca0-4d3c-9884-1a38ce27ae90
 	 */
-		apr_pollset_create_ex(&this->pollset, 1, this->pool, 0, APR_POLLSET_SELECT);
+		apr_pollset_create_ex(&this->pollset, 1, this->pool, APR_POLLSET_WAKEABLE, APR_POLLSET_SELECT);
 		LOG4CXX_DEBUG(logger, (char*) "create the pollset with the select impl as it has the broken wsapoll");
 	#else
-		apr_pollset_create(&this->pollset, 1, this->pool, 0);
+		apr_pollset_create(&this->pollset, 1, this->pool, APR_POLLSET_WAKEABLE);
 	#endif
 	this->ctx = &this->queue_ctx;
 	ctx->sock = NULL;
@@ -103,6 +103,7 @@ HybridSocketEndpointQueue::HybridSocketEndpointQueue(HybridSocketSessionImpl* se
 	LOG4CXX_TRACE(logger, (char*) "create id from ctx->sid is " << id);
 	this->session = session;
 	this->messagesAvailableCallback = messagesAvailableCallback;
+	this->pollset = NULL;
 }
 // ~EndpointQueue destructor.
 //
@@ -212,8 +213,15 @@ bool HybridSocketEndpointQueue::connect() {
 
 void HybridSocketEndpointQueue::disconnect() {
 	LOG4CXX_DEBUG(logger, (char*) "disconnect");
-	//_connected = false;
-	shutdown = true;
+	if (!shutdown) {
+		shutdown = true;
+		LOG4CXX_TRACE(logger, (char*) "session conv is " << session->getIsConv());
+		LOG4CXX_TRACE(logger, (char*) "session close is " << socketIsClose());
+		if (pollset != NULL && !session->getIsConv() && !socketIsClose()) {
+			LOG4CXX_DEBUG(logger, (char*) "try to wake up the polling");
+			apr_pollset_wakeup(pollset);
+		}
+	}
 }
 
 const char * HybridSocketEndpointQueue::getName() {
