@@ -41,10 +41,12 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.WorkSynchronization;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
 
-import org.jboss.tm.JBossXATerminator;
+import com.arjuna.ats.jta.xa.XidImple;
+import org.jboss.tm.ExtendedJBossXATerminator;
 
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
@@ -60,7 +62,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManag
  */
 
 public class XATerminator extends XATerminatorImple implements
-		JBossXATerminator
+		ExtendedJBossXATerminator
 {
 
 	/**
@@ -237,5 +239,23 @@ public class XATerminator extends XATerminatorImple implements
         {
             throw new RuntimeException(xaException);
         }
+	}
+
+	@Override
+	public Transaction getTransaction(Xid xid) throws XAException {
+		// first see if the xid is a root coordinator
+		Transaction txn = TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
+
+		if (txn == null) {
+			/*
+			 * If it wasn't created locally. Check to see if it has been imported from
+			 * another server. Note that:
+			 * - this call may reload the transaction from disk
+			 * - will throw exceptions if it has already been aborted
+			 */
+			return SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
+		}
+
+		return txn;
 	}
 }

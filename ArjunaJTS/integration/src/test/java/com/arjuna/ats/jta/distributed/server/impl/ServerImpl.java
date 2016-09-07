@@ -37,6 +37,10 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.jta.xa.XidImple;
+import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 import com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean;
@@ -61,12 +65,13 @@ import com.arjuna.ats.jta.distributed.server.LocalServer;
 import com.arjuna.ats.jta.distributed.server.LookupProvider;
 import com.arjuna.ats.jta.distributed.server.RemoteServer;
 
+import static org.junit.Assert.assertTrue;
+
 public class ServerImpl implements LocalServer {
 
 	private String nodeName;
 	private RecoveryManagerService recoveryManagerService;
 	private TransactionManagerService transactionManagerService;
-	private Map<SubordinateXidImple, TransactionImple> rootTransactionsAsSubordinate = new HashMap<SubordinateXidImple, TransactionImple>();
 	private RecoveryManager _recoveryManager;
 	private ClassLoader classLoaderForTransactionManager;
 
@@ -225,15 +230,24 @@ public class ServerImpl implements LocalServer {
 	public Xid locateOrImportTransactionThenResumeIt(int remainingTimeout, Xid toResume) throws XAException, IllegalStateException, SystemException,
 			IOException {
 		Xid toReturn = null;
-		Transaction transaction = rootTransactionsAsSubordinate.get(new SubordinateXidImple(toResume));
-		if (transaction == null) {
-			transaction = SubordinationManager.getTransactionImporter().getImportedTransaction(toResume);
-			if (transaction == null) {
-				transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
-				toReturn = ((TransactionImple) transaction).getTxId();
-			}
+		JBossXATerminator xaTerminator = transactionManagerService.getJbossXATerminator();
+
+		if (!ExtendedJBossXATerminator.class.isInstance(xaTerminator)) {
+			System.out.printf("ExtendedJBossXATerminator: FAIL not an instance");
+			return null;
 		}
+
+		ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+		Transaction transaction = extendedJBossXATerminator.getTransaction(toResume);
+
+		if (transaction == null) {
+			// there is no such imported transaction so create one and associate with the toResume Xid
+			transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
+			toReturn = ((TransactionImple) transaction).getTxId();
+		}
+
 		transactionManagerService.getTransactionManager().resume(transaction);
+
 		return toReturn;
 	}
 
@@ -248,21 +262,9 @@ public class ServerImpl implements LocalServer {
 	}
 
 	@Override
-	public void storeRootTransaction() throws SystemException {
-		TransactionImple transaction = ((TransactionImple) transactionManagerService.getTransactionManager().getTransaction());
-		Xid txId = transaction.getTxId();
-		rootTransactionsAsSubordinate.put(new SubordinateXidImple(txId), transaction);
-	}
-
-	@Override
 	public Xid getCurrentXid() throws SystemException {
 		TransactionImple transaction = ((TransactionImple) transactionManagerService.getTransactionManager().getTransaction());
 		return transaction.getTxId();
-	}
-
-	@Override
-	public void removeRootTransaction(Xid toMigrate) {
-		rootTransactionsAsSubordinate.remove(new SubordinateXidImple(toMigrate));
 	}
 
 	@Override
