@@ -49,6 +49,7 @@ import org.jboss.tm.ExtendedJBossXATerminator;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
+import org.jboss.tm.TransactionImportResult;
 
 /**
  * The implementation of JBossXATerminator using the purely local (ArjunaCore)
@@ -92,7 +93,7 @@ public class XATerminator extends XATerminatorImple implements
 			 * Remember to convert timeout to seconds.
 			 */
 
-			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid, (int) timeout/1000);
+			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid, (int) timeout/1000).getTransaction();
 
 			switch (tx.getStatus())
 			{
@@ -242,18 +243,11 @@ public class XATerminator extends XATerminatorImple implements
 	@Override
 	public Transaction getTransaction(Xid xid) throws XAException {
 		// first see if the xid is a root coordinator
-		Transaction txn = TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
+		return TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
+	}
 
-		if (txn == null) {
-			/*
-			 * If it wasn't created locally check to see if it has been imported from
-			 * another server. Note that:
-			 * - this call may reload the transaction from disk
-			 * - will throw exceptions if it has already been aborted
-			 */
-			return SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
-		}
-
-		return txn;
+	@Override
+	public TransactionImportResult importTransaction(Xid xid, int timeoutIfNew) throws XAException {
+        return SubordinationManager.getTransactionImporter().importTransaction(xid, timeoutIfNew);
 	}
 }

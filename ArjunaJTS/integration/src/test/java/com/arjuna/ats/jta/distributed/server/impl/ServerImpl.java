@@ -25,9 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
@@ -37,9 +35,8 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.jta.xa.XidImple;
 import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.TransactionImportResult;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
@@ -55,8 +52,6 @@ import com.arjuna.ats.internal.arjuna.utils.ManualProcessId;
 import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecordWrappingPluginImpl;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateXidImple;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
 import com.arjuna.ats.jbossatx.jta.TransactionManagerService;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
@@ -229,7 +224,6 @@ public class ServerImpl implements LocalServer {
 	@Override
 	public Xid locateOrImportTransactionThenResumeIt(int remainingTimeout, Xid toResume) throws XAException, IllegalStateException, SystemException,
 			IOException {
-		Xid toReturn = null;
 		JBossXATerminator xaTerminator = transactionManagerService.getJbossXATerminator();
 
 		if (!ExtendedJBossXATerminator.class.isInstance(xaTerminator)) {
@@ -238,17 +232,19 @@ public class ServerImpl implements LocalServer {
 		}
 
 		ExtendedJBossXATerminator extendedJBossXATerminator = (ExtendedJBossXATerminator) xaTerminator;
+
+		boolean subordinateCreated = false;
 		Transaction transaction = extendedJBossXATerminator.getTransaction(toResume);
 
 		if (transaction == null) {
-			// there is no such imported transaction so create one and associate with the toResume Xid
-			transaction = SubordinationManager.getTransactionImporter().importTransaction(toResume, remainingTimeout);
-			toReturn = ((TransactionImple) transaction).getTxId();
+			TransactionImportResult transactionImportResult = extendedJBossXATerminator.importTransaction(toResume, remainingTimeout);
+			subordinateCreated = transactionImportResult.isSubordinateCreated();
+			transaction = transactionImportResult.getTransaction();
 		}
 
 		transactionManagerService.getTransactionManager().resume(transaction);
 
-		return toReturn;
+		return subordinateCreated ? ((com.arjuna.ats.jta.transaction.Transaction) transaction).getTxId() : null;
 	}
 
 	@Override
