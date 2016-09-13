@@ -2,5 +2,7 @@
 .classpath
 .settings/
 target/
+/tools/maven
+/tools/maven.zip
 .idea
 *.iml
