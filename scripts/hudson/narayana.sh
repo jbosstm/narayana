@@ -293,6 +293,7 @@ function osgi_tests {
   cd ${WORKSPACE}
   git clone https://github.com/arquillian/arquillian-container-osgi
   ./build.sh -f arquillian-container-osgi/pom.xml clean install -DskipTest
+  [ $? = 0 ] || fatal "OSGI Arquillian container OSGI build failed"
   ./build.sh -f osgi/jta/pom.xml -Parq-karaf-managed clean integration-test
   [ $? = 0 ] || fatal "OSGI Test failed"
 }
