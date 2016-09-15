@@ -20,213 +20,21 @@
 	<DOMAIN>fooapp</DOMAIN>
 	
 	<MACHINES>
-		<MACHINE id="myserv1" hostname="albany.eng.hst.ams2.redhat.com"
+		<MACHINE id="myserv1" ipAddress="127.0.0.1"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="1"
 			argLine =" -p 12341"/>
-		<MACHINE id="myserv2" hostname="albany.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2" 
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv3" ipAddress="127.0.0.1"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv4" ipAddress="127.0.0.1"
+		<MACHINE id="myserv2" ipAddress="127.0.0.1"
 			pathToExecutable="../cs"
 			workingDirectory="."
 			serverId="2"
 			argLine =" -p 12342"/>
-		<MACHINE id="myserv5" hostname="beacon.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv6" hostname="beacon.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv7" hostname="catskill"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv8" hostname="catskill"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv9" hostname="winxp08"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv10" hostname="winxp08"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv11" hostname="tarrytown.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv12" hostname="tarrytown.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv13" hostname="sol2"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv14" hostname="sol2"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv15" hostname="wicket"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv16" hostname="wicket"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv17" hostname="hoboken.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv18" hostname="hoboken.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv19" hostname="tenafly.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv20" hostname="tenafly.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv21" hostname="WIN-M7NQQLQOL1D"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv22" hostname="WIN-M7NQQLQOL1D"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv23" hostname="jaime.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv24" hostname="jaime.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv25" hostname="haverstraw.buildnet.ncl.jboss.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv26" hostname="haverstraw.buildnet.ncl.jboss.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv27" hostname="cersei.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv28" hostname="cersei.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv29" hostname="janei.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv30" hostname="janei.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv31" hostname="lancel.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="1"
-			argLine =" -p 12341"/>
-		<MACHINE id="myserv32" hostname="lancel.eng.hst.ams2.redhat.com"
-			pathToExecutable="../cs"
-			workingDirectory="."
-			serverId="2"
-			argLine =" -p 12342"/>
-		<MACHINE id="myserv33" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
-			workingDirectory="." argLine=" -p 12341" serverId="1" />
-		<MACHINE id="myserv34" hostname="brandon.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
-			workingDirectory="." argLine=" -p 12342" serverId="2" />
-		<MACHINE id="myserv35" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
-			workingDirectory="." argLine=" -p 12341" serverId="1" />
-		<MACHINE id="myserv36" hostname="sansa.eng.hst.ams2.redhat.com" pathToExecutable="../cs"
-			workingDirectory="." argLine=" -p 12342" serverId="2" />
 	</MACHINES>
 	<SERVERS>
 		<SERVER name="testsui">
 			<MACHINE-REF id="myserv1" />
 			<MACHINE-REF id="myserv2" />
-			<MACHINE-REF id="myserv3" />
-			<MACHINE-REF id="myserv4" />
-			<MACHINE-REF id="myserv5" />
-			<MACHINE-REF id="myserv6" />
-			<MACHINE-REF id="myserv7" />
-			<MACHINE-REF id="myserv8" />
-			<MACHINE-REF id="myserv9" />
-			<MACHINE-REF id="myserv10" />
-			<MACHINE-REF id="myserv11" />
-			<MACHINE-REF id="myserv12" />
-			<MACHINE-REF id="myserv13" />
-			<MACHINE-REF id="myserv14" />
-			<MACHINE-REF id="myserv15" />
-			<MACHINE-REF id="myserv16" />
-			<MACHINE-REF id="myserv17" />
-			<MACHINE-REF id="myserv18" />
-			<MACHINE-REF id="myserv19" />
-			<MACHINE-REF id="myserv20" />
-			<MACHINE-REF id="myserv21" />
-			<MACHINE-REF id="myserv22" />
-			<MACHINE-REF id="myserv23" />
-			<MACHINE-REF id="myserv24" />
-			<MACHINE-REF id="myserv25" />
-			<MACHINE-REF id="myserv26" />
-			<MACHINE-REF id="myserv27" />
-			<MACHINE-REF id="myserv28" />
-			<MACHINE-REF id="myserv29" />
-			<MACHINE-REF id="myserv30" />
-			<MACHINE-REF id="myserv31" />
-			<MACHINE-REF id="myserv32" />
-			<MACHINE-REF id="myserv33" />
-			<MACHINE-REF id="myserv34" />
-			<MACHINE-REF id="myserv35" />
-			<MACHINE-REF id="myserv36" />
 			<SERVICE_NAMES>
 				<SERVICE name='BAR' function_name='BAR' size="1">
 					<LIBRARY_NAME configuration="linux" value="../libtestsuite.so" />

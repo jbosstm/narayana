@@ -56,7 +56,7 @@ public class AtmiBrokerEnvXMLTest extends TestCase {
             for (int i = 0; i < localMachinesList.size(); i++) {
                 String hostname = InetAddress.getLocalHost().getHostName();
                 String elementHostname = localMachinesList.get(i).getHostname();
-                String ipAddress = InetAddress.getLocalHost().getHostAddress();
+                String ipAddress = InetAddress.getLoopbackAddress().getHostAddress();
                 String elementIpAddress = localMachinesList.get(i).getIpAddress();
                 if (elementIpAddress != null) {
                     assertTrue(elementIpAddress.equals(ipAddress));
