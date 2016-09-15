@@ -48,12 +48,13 @@ public class Server {
         List<Machine> toReturn = new ArrayList<Machine>();
         String hostname = InetAddress.getLocalHost().getHostName();
         String ipAddress = InetAddress.getLocalHost().getHostAddress();
-        log.info("Checking for host: " + hostname + " or ip: " + ipAddress);
+        String loopbackAddress = InetAddress.getLoopbackAddress().getHostAddress();
+        log.info("Checking for host: " + hostname + " or ip: " + ipAddress + " or loopback: " + loopbackAddress);
         Iterator<Machine> iterator = machines.iterator();
         while (iterator.hasNext()) {
             Machine next = iterator.next();
             log.debug("Checking against: " + next.getHostname() + " or ip: " + next.getIpAddress());
-            if (hostname.equals(next.getHostname()) || ipAddress.equals(next.getIpAddress())) {
+            if (hostname.equals(next.getHostname()) || ipAddress.equals(next.getIpAddress()) || loopbackAddress.equals(next.getIpAddress())) {
                 toReturn.add(next);
             }
         }
