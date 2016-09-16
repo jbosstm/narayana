@@ -434,13 +434,20 @@ function xts_tests {
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
     ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS/localjunit/pom.xml failed"
   else
     ./build.sh -f XTS/localjunit/unit/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit unit build failed"
     ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit disabled-context-propagation build failed"
     ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit WSTX11 build failed"
     ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
     ./build.sh -f XTS/localjunit/xtstest/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit xtstest build failed"
     ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    [ $? = 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
@@ -538,6 +545,7 @@ function qa_tests_once {
   # Download dependencies
   cd $WORKSPACE
   ./build.sh -f qa/pom.xml dependency:copy-dependencies
+  [ $? = 0 ] || fatal "Copy dependency failed"
   
   cd $WORKSPACE/qa
   unset orb
