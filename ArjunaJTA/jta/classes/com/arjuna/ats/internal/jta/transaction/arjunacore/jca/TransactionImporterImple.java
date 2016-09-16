@@ -271,7 +271,7 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid != null && xid.getFormatId() == XATxConverter.FORMAT_ID) {
 			XidImple toImport = new XidImple(xid);
 			XATxConverter.setSubordinateNodeName(toImport.getXID(), TxControl.getXANodeName());
-			return new XidImple(toImport);
+			return new SubordinateXidImple(toImport);
 		} else {
 			return new XidImple(xid);
 		}
