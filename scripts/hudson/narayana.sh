@@ -428,7 +428,7 @@ function xts_tests {
 
   cd $WORKSPACE
   ran_crt=1
-  set_ulimit 2048
+  set_ulimit unlimited
 
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
