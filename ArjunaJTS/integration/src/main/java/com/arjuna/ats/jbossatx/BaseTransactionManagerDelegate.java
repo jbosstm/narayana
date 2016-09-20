@@ -336,6 +336,11 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     // Bad things will probably happen if users ever use this key themselves
     private final String LOCKS_MAP = "__LOCKS_MAP";
 
+    // Using string LOCKS_MAP directly as object of synchronization is not recommended
+    // String literals are centrally interned and could also be locked on by a library,
+    // potentially having deadlocks or lock collisions
+    private static final Object locksMapLock = new Object();
+
     // locate and return the lock for a given TransactionLocal+Transaction tuple.
     // create it if it does not exist.
     private TransactionLocalLock findLock(final TransactionLocal local, final Transaction transaction) {
@@ -348,7 +353,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         // this is not a double-check locking anti-pattern, because locks
         // is a local variable and thus can not leak.
         if (locks == null) {
-            synchronized (LOCKS_MAP) {
+            synchronized (locksMapLock) {
                 // ensure there is a holder for lock storage on the given tx instance.
                 locks = (Map) transactionImple.getTxLocalResource(LOCKS_MAP);
                 if (locks == null) {
