@@ -61,8 +61,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgs>
-            <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
-            <arg>-addmods</arg>
+            <arg>--patch-module</arg>
+            <arg>java.corba=${java.corba.patch.jar}</arg>
+            <arg>--add-modules</arg>
             <arg>java.corba</arg>
           </compilerArgs>
           <excludes>
@@ -83,7 +84,7 @@
             </goals>
             <configuration combine.self="override">
               <systemProperties combine.children="append" />
-              <argLine>-Xpatch:java.corba=${java.corba.patch.jar} -addmods java.corba</argLine>
+              <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba</argLine>
               <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
             </configuration>
           </execution>
@@ -103,8 +104,9 @@
             <configuration>
               <tasks name="Generate idl stubs">
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
 
                   <arg value="-i"/>
@@ -136,8 +138,9 @@
                   <fileset dir="${project.build.directory}/generated-sources/idl/org/omg/CORBA" includes="**/*"/>
                 </delete>
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/main/idl"/>
@@ -166,8 +169,9 @@
                 </java>
 
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/main/idl"/>
@@ -206,8 +210,9 @@
             <configuration>
               <tasks name="Generate test idl stubs">
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/test/idl"/>
@@ -235,8 +240,9 @@
                   <arg value="${project.build.directory}/../../src/test/idl/orbtests.idl"/>
                 </java>
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/test/idl"/>
@@ -265,8 +271,9 @@
                 </java>
 
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/test/idl"/>

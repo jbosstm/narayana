@@ -31,7 +31,7 @@
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     <java.transaction.upgrade.name>narayana-jta-j9-module</java.transaction.upgrade.name>
     <java.transaction.upgrade.jar>${project.build.directory}/dependency/${java.transaction.upgrade.name}-${project.version}.jar</java.transaction.upgrade.jar>
-    <MAVEN_OPTS>-upgrademodulepath ${project.build.directory}/upgrademodulepath -addmods java.corba -XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</MAVEN_OPTS>
+    <MAVEN_OPTS>-upgrademodulepath ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</MAVEN_OPTS>
     <skipTests>true</skipTests>
   </properties>
 
@@ -215,45 +215,91 @@
               </execution>
             </executions>
           </plugin>
+
+          <!-- disable maven compiler in favour of the ant javac task
+            (when https://issues.apache.org/jira/browse/MCOMPILER-279 is fixed renable it)
+            -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <executions>
               <execution>
-                <phase>compile</phase>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
                 <id>default-compile</id>
-                <configuration combine.self="override">
-                  <compilerArgs>
-                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.PortableInterceptor=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.PortableServer=ALL-UNNAMED</arg>
-
-                  </compilerArgs>
-                  <excludes>
-                    <exclude>**/jacorb/**</exclude>
-                  </excludes>
-                </configuration>
+                <phase>none</phase>
               </execution>
               <execution>
                 <id>default-testCompile</id>
-                <configuration combine.self="override">
-                  <compilerArgs>
-                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.PortableInterceptor=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.PortableServer=ALL-UNNAMED</arg>
-                  </compilerArgs>
-                  <excludes>
-                    <exclude>**/jacorb/**</exclude>
-                  </excludes>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+              <execution>
+                <id>compile-j9</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks name="compile sources">
+                    <mkdir dir="${project.build.directory}/classes"/>
+                    <property name="compile_classpath" refid="maven.compile.classpath"/>
+                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                      excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**">
+                      <compilerarg value="--patch-module"/>
+                      <compilerarg value="java.corba=${java.corba.patch.jar}"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.portable=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.PortableInterceptor=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.PortableServer=ALL-UNNAMED"/>
+
+                      <src>
+                        <pathelement location="${project.build.sourceDirectory}"/>
+                      </src>
+                    </javac>
+                  </tasks>
+                </configuration>
+              </execution>
+              <execution>
+                <id>testCompile-j9</id>
+                <phase>testCompile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks name="compile test sources">
+                    <mkdir dir="${project.build.directory}/classes"/>
+                    <property name="compile_classpath" refid="maven.compile.classpath"/>
+                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                      excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**,**/GenericRecoveryCreatorUnitTest.java">
+                      <compilerarg value="--patch-module"/>
+                      <compilerarg value="java.corba=${java.corba.patch.jar}"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.portable=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.PortableInterceptor=ALL-UNNAMED"/>
+                      <compilerarg value="--add-exports"/>
+                      <compilerarg value="java.corba/org.omg.PortableServer=ALL-UNNAMED"/>
+
+                      <src>
+                        <pathelement location="${project.build.testSourceDirectory}"/>
+                      </src>
+                    </javac>
+                  </tasks>
                 </configuration>
               </execution>
             </executions>
@@ -285,16 +331,7 @@ com.sun.corba.se.spi.orb
 com.sun.corba.se.spi.ior
 com.sun.corba.se.impl.ior
 -->
-                  <argLine>-upgrademodulepath ${project.build.directory}/upgrademodulepath -addmods java.corba -XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</argLine>
-<!--
-                  <argLine>-addmods java.corba -Xpatch:java.corba=${java.corba.patch.jar} -XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableInterceptor=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableServer=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</argLine>
--->
-<!--
-                  <argLine>-addmods java.corba,java.transaction -XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableInterceptor=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableServer=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</argLine>
--->
-<!--
-                  <argLine>-addmods java.corba -Xpatch:java.corba=${java.corba.patch.jar} -XaddExports:java.corba/org.omg.CORBA=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableInterceptor=ALL-UNNAMED -XaddExports:java.corba/org.omg.PortableServer=ALL-UNNAMED -XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</argLine>
--->
+                  <argLine>-upgrademodulepath ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</argLine>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>

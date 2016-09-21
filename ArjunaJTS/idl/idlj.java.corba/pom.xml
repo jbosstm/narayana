@@ -40,8 +40,9 @@
             <configuration>
               <tasks name="Generate idl stubs">
                 <java fork="true" classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile" failonerror="true">
-                  <jvmarg value="-XaddExports:java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
-                  <jvmarg value="-addmods"/>
+                  <jvmarg value="--add-exports"/>
+                  <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                  <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
                   <arg value="${project.build.directory}/../../src/main/idl"/>

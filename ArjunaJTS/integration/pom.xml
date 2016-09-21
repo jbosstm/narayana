@@ -195,7 +195,7 @@
             <configuration>
               <showDeprecation>false</showDeprecation>
               <compilerArgs>
-                <arg>-addmods</arg>
+                <arg>--add-modules</arg>
                 <arg>java.base</arg>
               </compilerArgs>
             </configuration>

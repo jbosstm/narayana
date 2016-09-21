@@ -157,7 +157,7 @@
                 <id>default-compile</id>
                 <configuration>
                   <compilerArgs>
-                      <arg>-addmods</arg>
+                      <arg>--add-modules</arg>
                   <arg>java.xml.ws</arg>
                   </compilerArgs>
                 </configuration>
@@ -166,7 +166,7 @@
                 <id>default-testCompile</id>
                 <configuration>
                   <compilerArgs>
-                    <arg>-addmods</arg>
+                    <arg>--add-modules</arg>
                     <arg>java.xml.ws</arg>
                   </compilerArgs>
                 </configuration>
@@ -184,7 +184,7 @@
                     <goal>test</goal>
                   </goals>
                   <configuration combine.self="override">
-                    <argLine>-addmods java.xml.ws</argLine>
+                    <argLine>--add-modules java.xml.ws</argLine>
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                     <excludes>
                       <exclude>**/**</exclude>

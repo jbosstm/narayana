@@ -190,16 +190,24 @@
                 </goals>
                 <configuration combine.self="override">
                   <compilerArgs>
-                    <arg>-addmods</arg>
+                    <arg>--add-modules</arg>
                     <arg>java.corba</arg>
-                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                    <arg>--patch-module</arg>
+                    <arg>java.corba=${java.corba.patch.jar}</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/com.sun.corba.se=ALL-UNNAMED</arg>
+
+                    <!--
+                       we have to export everything instead of just what we need
+                       (https://bugs.openjdk.java.net/browse/JDK-8162401)
+                    <arg>java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
+                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+                    <arg>java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                     -->
                   </compilerArgs>
                   <excludes>
                     <exclude>**/jacorb/**</exclude>
@@ -214,17 +222,23 @@
                 </goals>
                 <configuration combine.self="override">
                   <compilerArgs>
-                    <arg>-addmods</arg>
+                    <arg>--add-modules</arg>
                     <arg>java.corba</arg>
-                    <arg>-Xpatch:java.corba=${java.corba.patch.jar}</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
-                    <arg>-XaddExports:java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                    <arg>--patch-module</arg>
+                    <arg>java.corba=${java.corba.patch.jar}</arg>
+                    <!--
+                       we have to export everything instead of just what we need
+                       (https://bugs.openjdk.java.net/browse/JDK-8162401)
+                    <arg>java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
+                    <arg>java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
+                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+                    <arg>java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
+                      -->
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/com.sun.corba.se=ALL-UNNAMED</arg>
                   </compilerArgs>
                   <testExcludes>
                     <exclude>**/PropertyInitTest.java</exclude>
@@ -246,7 +260,7 @@
                 </goals>
                 <configuration combine.self="override">
                   <systemProperties combine.children="append" />
-                  <argLine>-addmods java.corba</argLine>
+                  <argLine>--add-modules java.corba</argLine>
                   <excludes>
                     <!-- exclude tests which we don't want to run -->
                     <exclude>**/common/**</exclude>

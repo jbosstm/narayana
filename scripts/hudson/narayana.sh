@@ -226,7 +226,7 @@ function build_narayana {
 
   # jtax tests are skipped by default
   if [ $JAVA_VERSION = "9-ea" -a $NARAYANA_TESTS = 1 ]; then
-      MAVEN_OPTS="-upgrademodulepath target/upgrademodulepath -addmods java.corba -XaddExports:java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED -XaddExports:java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" ./build.sh -P${XPROF}${OBJECT_STORE_PROFILE} $ORBARG $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS -f ArjunaJTS/jtax/pom.xml -DskipTests=false test
+      MAVEN_OPTS="-upgrademodulepath target/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" ./build.sh -P${XPROF}${OBJECT_STORE_PROFILE} $ORBARG $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS -f ArjunaJTS/jtax/pom.xml -DskipTests=false test
     [ $? = 0 ] || fatal "narayana jtax build failed"
   fi
 

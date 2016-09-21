@@ -180,7 +180,7 @@
                 <jdk>[1.9,)</jdk>
             </activation>
             <properties>
-              <server.jvm.j9.args>-addmods java.xml.ws</server.jvm.j9.args>
+              <server.jvm.j9.args>--add-modules java.xml.ws</server.jvm.j9.args>
             </properties>
             <build>
                 <plugins>
@@ -196,7 +196,7 @@
                                 <configuration>
                                     <compilerArgs>
 <!--
-                                        <arg>-addmods</arg>
+                                        <arg>\-\-add-modules</arg>
                                         <arg>java.annotations.common,java.xml.ws</arg>
                                         <arg>ALL-SYSTEM,java.xml.ws</arg>
 -->
@@ -204,7 +204,7 @@
                                         <arg>-upgrademodulepath</arg>
                                         <arg>${project.build.directory}/../java.annotations.common-1.2.jar</arg>
 -->
-                                        <arg>-addmods</arg>
+                                        <arg>--add-modules</arg>
                                         <arg>java.xml.ws</arg>
                                     </compilerArgs>
                                 </configuration>

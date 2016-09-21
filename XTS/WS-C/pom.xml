@@ -137,7 +137,7 @@
                 <id>default-compile</id>
                 <configuration>
                   <compilerArgs>
-                      <arg>-addmods</arg>
+                      <arg>--add-modules</arg>
                   <arg>java.xml,java.xml.bind,java.xml.ws</arg>
                   </compilerArgs>
                 </configuration>

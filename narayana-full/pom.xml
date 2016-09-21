@@ -270,7 +270,21 @@
             <executions>
               <execution>
                 <id>javadoc</id>
+                <phase>none</phase>
+<!--
                 <phase>package</phase>
+
+TODO reenable javadoc. Maybe we just need a newer version of maven-javadoc-plugin
+I am getting lots of errors such as, for example:
+Exit code: 1 - javadoc: error - No source files for package com.arjuna.orbportability
+etc and
+[ERROR] Error occurred during initialization of VM, trying to use an empty MAVEN_OPTS...
+Error: JAVA_HOME is not defined correctly.
+  We cannot execute /usr/local/jdk-9/../bin/java
+[ERROR] MavenInvocationException: Error occurred during initialization of VM, try to reduce the Java heap size for the MAVEN_OPTS environnement variable using -Xms:<size> and -Xmx:<size>.
+
+etc
+-->
                 <goals>
                   <goal>javadoc</goal>
                 </goals>
@@ -320,7 +334,10 @@
             <executions>
               <execution>
                 <id>pack-javadoc</id>
+                <phase>none</phase>
+<!-- TODO renable
                 <phase>package</phase>
+-->
                 <configuration>
                   <target>
                     <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar"

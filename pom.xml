@@ -227,6 +227,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>${version.compiler.plugin}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -388,6 +389,7 @@
   </dependencies>
 
   <properties>
+    <version.compiler.plugin>3.5.1</version.compiler.plugin>
     <!-- IP stack configs. -->
     <testLogToFile>true</testLogToFile>
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>

@@ -68,7 +68,7 @@
                   </goals>
                   <configuration combine.self="override">
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <argLine>-Xpatch:java.corba=${java.corba.patch.jar} -addmods java.corba</argLine>
+                    <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba</argLine>
                     <systemPropertyVariables
                       combine.children="append">
                       <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>

@@ -305,7 +305,7 @@
                                 <id>default-compile</id>
                                 <configuration>
                                     <compilerArgs>
-                                        <arg>-addmods</arg>
+                                        <arg>--add-modules</arg>
                                         <arg>java.xml.ws</arg>
                                     </compilerArgs>
                                 </configuration>
@@ -314,7 +314,7 @@
                                 <id>default-testCompile</id>
                                 <configuration>
                                     <compilerArgs>
-                                        <arg>-addmods</arg>
+                                        <arg>--add-modules</arg>
                                         <arg>java.xml.ws</arg>
                                     </compilerArgs>
                                 </configuration>
