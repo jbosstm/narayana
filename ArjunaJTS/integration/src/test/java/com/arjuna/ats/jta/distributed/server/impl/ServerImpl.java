@@ -60,8 +60,6 @@ import com.arjuna.ats.jta.distributed.server.LocalServer;
 import com.arjuna.ats.jta.distributed.server.LookupProvider;
 import com.arjuna.ats.jta.distributed.server.RemoteServer;
 
-import static org.junit.Assert.assertTrue;
-
 public class ServerImpl implements LocalServer {
 
 	private String nodeName;
@@ -238,7 +236,7 @@ public class ServerImpl implements LocalServer {
 
 		if (transaction == null) {
 			TransactionImportResult transactionImportResult = extendedJBossXATerminator.importTransaction(toResume, remainingTimeout);
-			subordinateCreated = transactionImportResult.isSubordinateCreated();
+			subordinateCreated = transactionImportResult.isNewImportedTransaction();
 			transaction = transactionImportResult.getTransaction();
 		}
 

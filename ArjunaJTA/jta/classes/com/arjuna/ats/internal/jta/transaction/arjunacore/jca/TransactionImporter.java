@@ -59,7 +59,9 @@ public interface TransactionImporter
 	 * @throws javax.transaction.xa.XAException
 	 *             thrown if there are any errors.
 	 */
-    public TransactionImportResult importTransaction(Xid xid, int timeout) throws XAException;
+    public SubordinateTransaction importTransaction(Xid xid, int timeout) throws XAException;
+
+    public TransactionImportResult importRemoteTransaction(Xid xid, int timeout) throws XAException;
 
 	/**
 	 * Used to recover an imported transaction.

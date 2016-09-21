@@ -32,11 +32,15 @@
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -54,9 +58,13 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
+import com.arjuna.ats.jta.xa.XidImple;
+import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.TransactionImportResult;
 
 /**
  * The XATerminator implementation.
@@ -64,7 +72,7 @@ import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
  * @author mcl
  */
 
-public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions
+public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions, ExtendedJBossXATerminator
 {
 
     public void commit (Xid xid, boolean onePhase) throws XAException
@@ -425,7 +433,73 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             throw e;
         }
     }
-    
+
     private boolean _recoveryStarted = false;
+
+    // Extended methods for remoting
+
+    private static final Xid[] NO_XIDS = new Xid[0];
+
+    public Transaction getTransaction(Xid xid) throws XAException {
+        // first see if the xid is a root coordinator
+        return com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
+    }
+
+    public TransactionImportResult importTransaction(Xid xid, int timeoutIfNew) throws XAException {
+        return SubordinationManager.getTransactionImporter().importRemoteTransaction(xid, timeoutIfNew);
+    }
+
+    public SubordinateTransaction getImportedTransaction(Xid xid) throws XAException {
+        final TransactionImporter transactionImporter = SubordinationManager.getTransactionImporter();
+        return transactionImporter.getImportedTransaction(xid);
+    }
+
+    public Transaction getTransactionById(Object id) {
+        return com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction((Uid) id);
+    }
+
+    public Object getCurrentTransactionId() {
+        return com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction().get_uid();
+    }
+
+    public void removeImportedTransaction(Xid xid) throws XAException {
+        SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+    }
+
+    public Xid[] getXidsToRecoverForParentNode(boolean recoverInFlight, String parentNodeName, int recoveryFlags) throws XAException {
+        final Set<Xid> xidsToRecover = new HashSet<Xid>();
+        if (recoverInFlight) {
+            final TransactionImporter transactionImporter = SubordinationManager.getTransactionImporter();
+            if (transactionImporter instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporterImple) {
+                final Set<Xid> inFlightXids = ((com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporterImple) transactionImporter).getInflightXids(parentNodeName);
+                if (inFlightXids != null) {
+                    xidsToRecover.addAll(inFlightXids);
+                }
+            }
+        }
+        final javax.resource.spi.XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        if (xaTerminator instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple) {
+            final Xid[] inDoubtTransactions = ((com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple) xaTerminator).doRecover(null, parentNodeName);
+            if (inDoubtTransactions != null) {
+                xidsToRecover.addAll(Arrays.asList(inDoubtTransactions));
+            }
+        } else {
+            final Xid[] inDoubtTransactions = xaTerminator.recover(recoveryFlags);
+            if (inDoubtTransactions != null) {
+                xidsToRecover.addAll(Arrays.asList(inDoubtTransactions));
+            }
+        }
+        return xidsToRecover.toArray(NO_XIDS);
+    }
+
+    @Override
+    public Xid[] doRecover(Xid xid, String parentNodeName) throws XAException, NotSupportedException {
+        throw new NotSupportedException();
+    }
+
+    @Override
+    public boolean isRecoveryByNodeOrXidSupported() {
+        return false;
+    }
 
 }
