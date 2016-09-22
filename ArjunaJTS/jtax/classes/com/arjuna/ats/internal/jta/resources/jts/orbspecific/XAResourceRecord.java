@@ -226,7 +226,24 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 			if (endAssociation())
 			{
-				_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+				try {
+					_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+					_theTransaction.setXAResourceState(_theXAResource, TxInfo.NOT_ASSOCIATED);
+				} catch (XAException e1) {
+					switch (e1.errorCode)
+					{
+						case XAException.XA_RBROLLBACK:
+						case XAException.XA_RBCOMMFAIL:
+						case XAException.XA_RBDEADLOCK:
+						case XAException.XA_RBINTEGRITY:
+						case XAException.XA_RBOTHER:
+						case XAException.XA_RBPROTO:
+						case XAException.XA_RBTIMEOUT:
+						case XAException.XA_RBTRANSIENT:
+							_theTransaction.setXAResourceState(_theXAResource, TxInfo.NOT_ASSOCIATED);
+					}
+					throw e1;
+				}
 			}
 
 			if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
@@ -336,7 +353,24 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						if (endAssociation())
 						{
-							_theXAResource.end(_tranID, XAResource.TMFAIL);
+							try {
+								_theXAResource.end(_tranID, XAResource.TMFAIL);
+								_theTransaction.setXAResourceState(_theXAResource, TxInfo.FAILED);
+							} catch (XAException e1) {
+								switch (e1.errorCode)
+								{
+									case XAException.XA_RBROLLBACK:
+									case XAException.XA_RBCOMMFAIL:
+									case XAException.XA_RBDEADLOCK:
+									case XAException.XA_RBINTEGRITY:
+									case XAException.XA_RBOTHER:
+									case XAException.XA_RBPROTO:
+									case XAException.XA_RBTIMEOUT:
+									case XAException.XA_RBTRANSIENT:
+										_theTransaction.setXAResourceState(_theXAResource, TxInfo.FAILED);
+								}
+								throw e1;
+							}
 						}
 					}
 				}
@@ -717,7 +751,24 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                {
 	                    if (endAssociation())
 	                    {
-	                        _theXAResource.end(_tranID, XAResource.TMSUCCESS);
+							try {
+								_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+								_theTransaction.setXAResourceState(_theXAResource, TxInfo.NOT_ASSOCIATED);
+							} catch (XAException e1) {
+								switch (e1.errorCode)
+								{
+									case XAException.XA_RBROLLBACK:
+									case XAException.XA_RBCOMMFAIL:
+									case XAException.XA_RBDEADLOCK:
+									case XAException.XA_RBINTEGRITY:
+									case XAException.XA_RBOTHER:
+									case XAException.XA_RBPROTO:
+									case XAException.XA_RBTIMEOUT:
+									case XAException.XA_RBTRANSIENT:
+										_theTransaction.setXAResourceState(_theXAResource, TxInfo.NOT_ASSOCIATED);
+								}
+								throw e1;
+							}
 	                    }
 	                }
 	                catch (XAException e1)
