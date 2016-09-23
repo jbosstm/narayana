@@ -33,15 +33,16 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
-import java.util.Vector;
 
 import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -51,8 +52,6 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
@@ -63,6 +62,8 @@ import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
+import org.jboss.tm.ExtendedJBossXATerminator;
+import org.jboss.tm.TransactionImportResult;
 
 /**
  * The XATerminator implementation.
@@ -70,7 +71,7 @@ import com.arjuna.ats.jta.xa.XidImple;
  * @author mcl
  */
 
-public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions
+public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions, ExtendedJBossXATerminator
 {
     /**
      * Commit the transaction identified and hence any inflow-associated work.
@@ -475,6 +476,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         return indoubt;
     }
 
+    @Override
+    public boolean isRecoveryByNodeOrXidSupported() {
+        return true;
+    }
+
     /**
      * Rollback the imported transaction subordinate.
      * 
@@ -584,6 +590,61 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
     }
 
-    private boolean _recoveryStarted = false;
+	public Transaction getTransaction(Xid xid) throws XAException {
+		// first see if the xid is a root coordinator
+		return TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
+	}
 
+    public TransactionImportResult importTransaction(Xid xid, int timeoutIfNew) throws XAException {
+        return SubordinationManager.getTransactionImporter().importRemoteTransaction(xid, timeoutIfNew);
+    }
+
+    public SubordinateTransaction getImportedTransaction(Xid xid) throws XAException {
+        final TransactionImporter transactionImporter = SubordinationManager.getTransactionImporter();
+        return transactionImporter.getImportedTransaction(xid);
+    }
+
+    public Transaction getTransactionById(Object id) {
+        if (id instanceof Uid)
+            return TransactionImple.getTransaction((Uid) id);
+
+        return null;
+    }
+
+    public Object getCurrentTransactionId() {
+        return TransactionImple.getTransaction().get_uid();
+    }
+
+    public void removeImportedTransaction(Xid xid) throws XAException {
+        SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+    }
+
+    public Xid[] getXidsToRecoverForParentNode(boolean recoverInFlight, String parentNodeName, int recoveryFlags) throws XAException {
+        final Set<Xid> xidsToRecover = new HashSet<Xid>();
+        if (recoverInFlight) {
+            final TransactionImporter transactionImporter = SubordinationManager.getTransactionImporter();
+            if (transactionImporter instanceof TransactionImporterImple) {
+                final Set<Xid> inFlightXids = ((TransactionImporterImple) transactionImporter).getInflightXids(parentNodeName);
+                if (inFlightXids != null) {
+                    xidsToRecover.addAll(inFlightXids);
+                }
+            }
+        }
+        final javax.resource.spi.XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        if (xaTerminator instanceof XATerminatorImple) {
+            final Xid[] inDoubtTransactions = ((XATerminatorImple) xaTerminator).doRecover(null, parentNodeName);
+            if (inDoubtTransactions != null) {
+                xidsToRecover.addAll(Arrays.asList(inDoubtTransactions));
+            }
+        } else {
+            final Xid[] inDoubtTransactions = xaTerminator.recover(recoveryFlags);
+            if (inDoubtTransactions != null) {
+                xidsToRecover.addAll(Arrays.asList(inDoubtTransactions));
+            }
+        }
+        return xidsToRecover.toArray(NO_XIDS);
+    }
+
+    private boolean _recoveryStarted = false;
+    private static final Xid[] NO_XIDS = new Xid[0];
 }

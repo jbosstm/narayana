@@ -281,6 +281,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-transaction-spi</artifactId>
+            <version>${version.org.jboss.jboss-transaction-spi}</version>
+        </dependency>
+
     </dependencies>
 	<profiles>
 		<profile>

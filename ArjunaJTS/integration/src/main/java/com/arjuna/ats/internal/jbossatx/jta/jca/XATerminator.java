@@ -41,14 +41,13 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.WorkSynchronization;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
-
-import com.arjuna.ats.jta.xa.XidImple;
-import org.jboss.tm.ExtendedJBossXATerminator;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
+import org.jboss.tm.JBossXATerminator;
 
 /**
  * The implementation of JBossXATerminator using the purely local (ArjunaCore)
@@ -60,9 +59,9 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
  * @author mcl
  */
 
-public class XATerminator extends XATerminatorImple implements
-		ExtendedJBossXATerminator
+public class XATerminator extends XATerminatorImple implements JBossXATerminator
 {
+    private static final Xid[] NO_XIDS = new Xid[0];
 
 	/**
 	 * Register the unit of work with the specified transaction. The
@@ -237,23 +236,5 @@ public class XATerminator extends XATerminatorImple implements
         {
             throw new RuntimeException(xaException);
         }
-	}
-
-	@Override
-	public Transaction getTransaction(Xid xid) throws XAException {
-		// first see if the xid is a root coordinator
-		Transaction txn = TransactionImple.getTransaction(new XidImple(xid).getTransactionUid());
-
-		if (txn == null) {
-			/*
-			 * If it wasn't created locally check to see if it has been imported from
-			 * another server. Note that:
-			 * - this call may reload the transaction from disk
-			 * - will throw exceptions if it has already been aborted
-			 */
-			return SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
-		}
-
-		return txn;
 	}
 }
