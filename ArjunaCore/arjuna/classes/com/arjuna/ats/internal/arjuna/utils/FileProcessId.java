@@ -60,7 +60,7 @@ public int getpid ()
     {
 	if (FileProcessId.processId == 0)
 	{
-	    synchronized (FileProcessId.hexStart)
+	    synchronized (FileProcessId.lock)
 	    {
 		/*
 		 * All of this is just to ensure uniqueness!
@@ -123,5 +123,7 @@ public int getpid ()
 private static int processId = 0;
     
 private static final String hexStart = "0x";
+
+private static final Object lock = new Object();
     
 }
