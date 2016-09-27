@@ -39,9 +39,13 @@ public class list
 				"Oracle JDBC driver",
 				"IBM DB2 JDBC Universal Driver Architecture",
 				"MySQL Connector Java",
+				"MySQL-AB JDBC Driver",
 				"H2 JDBC Driver"}) {
 			ModifierFactory.putModifier(driver, -1, -1,
 					IsSameRMModifier.class.getName());
 		}
-    }
+
+		ModifierFactory.putModifier("PostgreSQL Native Driver", -1, -1,
+				SupportsMultipleConnectionsModifier.class.getName());
+	}
 }

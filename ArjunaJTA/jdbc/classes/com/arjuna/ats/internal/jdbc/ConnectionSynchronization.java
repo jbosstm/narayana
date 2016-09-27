@@ -31,11 +31,9 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import java.sql.Connection;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
 import javax.transaction.Synchronization;
-
-import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
 /**
  * A synchronization to close the database connection when the transaction
@@ -47,39 +45,29 @@ import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 public class ConnectionSynchronization implements Synchronization
 {
 
-    public ConnectionSynchronization (Connection conn, TransactionalDriverXAConnection rxac)
+    public ConnectionSynchronization (ConnectionImple conn)
     {
 	_theConnection = conn;
-	_recoveryConnection = rxac;
     }
 
     public void afterCompletion(int status)
     {
-	try
-	{
-	    if (_theConnection != null && !_theConnection.isClosed()) {
-	        _theConnection.close();
-	    }
-	}
-	catch (Exception ex)
-	{
-	}
-	try
-	{
-	    if (_recoveryConnection != null) {
-	        _recoveryConnection.closeCloseCurrentConnection();
-	    }
-	}
-	catch (Exception ex)
-	{
-	}
+		try
+		{
+			if (_theConnection != null) {
+				_theConnection.closeImpl();
+			}
+		}
+		catch (Exception ex)
+		{
+			jdbcLogger.i18NLogger.warn_not_closed(ex);
+		}
     }
 
     public void beforeCompletion()
     {
     }
 
-    private Connection _theConnection = null;
-    private TransactionalDriverXAConnection _recoveryConnection;
+    private ConnectionImple _theConnection = null;
 }
 

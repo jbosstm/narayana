@@ -62,19 +62,19 @@ public class IsSameRMModifier implements XAModifier, ConnectionModifier {
 	@Override
 	public XAConnection getConnection(XAConnection conn) throws SQLException,
 			NotImplementedException {
-		throw new NotImplementedException();
+		throw new NotImplementedException(); // NEVER CALLED
 	}
 
 	@Override
 	public boolean supportsMultipleConnections() throws SQLException,
 			NotImplementedException {
-		return true; // This is the default
+		return true; // This ensures connection close is delayed
 	}
 
 	@Override
 	public void setIsolationLevel(Connection conn, int level)
 			throws SQLException, NotImplementedException {
-		// The default implementation does not call this
+		// Non-modifier path does not call this
 	}
 
 	@Override
