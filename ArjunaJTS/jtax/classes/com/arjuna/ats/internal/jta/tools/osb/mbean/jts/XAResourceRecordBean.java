@@ -114,11 +114,21 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     }
 
     @Override
-    public String remove() throws MBeanException {
-        if (jtsXAResourceRecord != null && jtsXAResourceRecord.doRemove())
-            jtsXAResourceRecord = null;
+    public boolean forget() {
+ //       return jtsXAResourceRecord.forgetHeuristic();
+        return true;
+    }
 
-        return super.remove();
+    @Override
+    public String remove() throws MBeanException {
+        if (forget()) {
+            if (jtsXAResourceRecord != null && jtsXAResourceRecord.doRemove())
+                jtsXAResourceRecord = null;
+
+            return super.remove();
+        }
+
+        return "Operation in progress";
     }
 
     /**
@@ -127,6 +137,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     public class JTSXAResourceRecordWrapper extends com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord {
         XidImple xidImple;
         int heuristic;
+        AbstractRecord rec;
 
         public JTSXAResourceRecordWrapper(Uid uid) {
             super(uid);
@@ -146,6 +157,11 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
             }
         }
 
+        public JTSXAResourceRecordWrapper(AbstractRecord rec) {
+            this(rec.order());
+            this.rec = rec;
+        }
+
         public boolean restoreState(InputObjectState os) {
             InputObjectState copy = new InputObjectState(os);
             try {
@@ -155,5 +171,13 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
             return super.restoreState(os);
         }
+/*
+        @Override
+        public boolean forgetHeuristic() {
+            if (rec != null)
+                return rec.forgetHeuristic();
+
+            return super.forgetHeuristic();
+        }    */
     }
 }

@@ -55,4 +55,6 @@ public interface XAResourceMBean extends LogRecordWrapperMBean {
 	String getNodeName() ;
 	@MXBeanPropertyDescription("An internal representation of the heuristic state of this record")
 	int getHeuristicValue();
+	@MXBeanPropertyDescription("Attempt to contact the resource to inform it that it can now forget any heuristic decisions it made")
+	boolean forget();
 }

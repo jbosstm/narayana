@@ -24,8 +24,10 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.HeuristicInformation;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
@@ -43,6 +45,7 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 	protected AbstractRecord rec;
 	protected boolean activated;
 	protected ParticipantStatus listType;
+    protected boolean removed;
 
 	public LogRecordWrapper(Uid uid) {
 		super(null);
@@ -224,4 +227,25 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 	public String remove() throws MBeanException {
 		return remove(true);
 	}
+
+	public boolean isRemoved() {
+        return removed;
+    }
+
+    public boolean removeFromList(RecordList rl) {
+        if (rl != null && rl.size() > 0 && rec != null) {
+            boolean forgotten = rec.forgetHeuristic();
+            boolean removeAllowed = arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
+
+            if (forgotten || removeAllowed) {
+                // remove the transaction log for the record
+                if (rl.remove(rec)) {
+                    removed = true;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

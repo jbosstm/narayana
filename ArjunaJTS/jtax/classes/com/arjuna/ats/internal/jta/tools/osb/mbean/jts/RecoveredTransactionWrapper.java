@@ -105,12 +105,8 @@ public class RecoveredTransactionWrapper extends RecoveredTransaction implements
 
     @Override
     public void remove(LogRecordWrapper logRecordWrapper) {
-        RecordList rl = getRecords(logRecordWrapper.getListType());
-
-        if (rl != null && rl.size() > 0) {
-            if (rl.remove(logRecordWrapper.getRecord())) {
-                doUpdateState(); // rewrite the list
-            }
+        if (logRecordWrapper.removeFromList(getRecords(logRecordWrapper.getListType()))) {
+            doUpdateState(); // rewrite the list
         }
     }
 }

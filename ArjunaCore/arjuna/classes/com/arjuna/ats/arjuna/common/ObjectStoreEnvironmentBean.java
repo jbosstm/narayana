@@ -85,6 +85,9 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 	private volatile boolean createTable = true;
     
     private volatile boolean exposeAllLogRecordsAsMBeans = false;
+
+    private volatile boolean ignoreMBeanHeuristics = true;
+
     /**
      * Returns the maximum allowed size, in bytes, of the cache store's in-memory cache.
      *
@@ -780,6 +783,26 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public void setExposeAllLogRecordsAsMBeans(boolean exposeAllLogRecords) {
         this.exposeAllLogRecordsAsMBeans = exposeAllLogRecords;
+    }
+
+    /**
+     * Determine whether or not MBean operations that delete a transaction will delete participants that
+     * are still in a heuristic state
+     *
+     * @param ignoreMBeanHeuristics if true heuristic participants may only be deleted after the heuristic
+     *                                         has been cleared
+     */
+    public void setIgnoreMBeanHeuristics(boolean ignoreMBeanHeuristics) {
+        this.ignoreMBeanHeuristics = ignoreMBeanHeuristics;
+    }
+
+    /**
+     *
+     * @return whether or not MBean operations that delete a transaction will delete participants that
+     *         are still in a heuristic state
+     */
+    public boolean isIgnoreMBeanHeuristics() {
+        return ignoreMBeanHeuristics;
     }
 
     /**

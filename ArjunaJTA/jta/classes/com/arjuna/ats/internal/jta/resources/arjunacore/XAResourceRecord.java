@@ -791,7 +791,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 		removeConnection();
 
-		return true;
+		return _forgotten;
 	}
 
 	private void forget()
@@ -803,9 +803,11 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 			try
 			{
 				_theXAResource.forget(_tranID);
+				_forgotten = true;
 			}
 			catch (Exception e)
 			{
+				_forgotten = false;
 			}
 		}
 	}
@@ -1307,7 +1309,12 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
         return false;
     }
 
+	public boolean isForgotten() {
+		return _forgotten;
+	}
+
 	protected XAResource _theXAResource;
+	private boolean _forgotten;
 
 	private RecoverableXAConnection _recoveryObject;
 	private Xid _tranID;
