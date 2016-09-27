@@ -64,7 +64,7 @@ public class OSBTypeHandler {
 			Constructor<HeaderStateReader> constructor = cl.getConstructor();
 			return constructor.newInstance();
 		} catch (Throwable e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException
-			tsLogger.i18NLogger.info_osb_HeaderStateCtorFail(e);
+			tsLogger.i18NLogger.info_osb_HeaderStateCtorInfo(e.getMessage());
 			return new HeaderStateReader();
         }
     }

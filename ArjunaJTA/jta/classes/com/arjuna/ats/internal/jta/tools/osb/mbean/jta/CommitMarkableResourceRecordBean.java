@@ -19,6 +19,7 @@
  */
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
+import javax.management.MBeanException;
 import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
@@ -149,4 +150,23 @@ public class CommitMarkableResourceRecordBean extends LogRecordWrapper
     public int getHeuristicValue() {
         return heuristic;
     }
+
+	@Override
+	public boolean forget() {
+		if (rec instanceof CommitMarkableResourceRecord) {
+			CommitMarkableResourceRecord xarec = (CommitMarkableResourceRecord) rec;
+
+			return xarec.forgetHeuristic();
+		}
+
+		return false;
+	}
+
+	@Override
+	public String remove() throws MBeanException {
+		if (forget())
+			return super.remove();
+
+		return "Operation in progress";
+	}
 }

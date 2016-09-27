@@ -19,6 +19,7 @@
  */
 package com.arjuna.ats.internal.jta.tools.osb.mbean.jta;
 
+import javax.management.MBeanException;
 import javax.transaction.xa.XAResource;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -63,7 +64,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
     public XAResourceRecordBean(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
         super(parent, rec, listType);
         init();
-        xares = new JTAXAResourceRecordWrapper(rec.order());
+        xares = new JTAXAResourceRecordWrapper(rec);
         xidImple = xares.xidImple;
         heuristic = xares.heuristic;
     }
@@ -134,17 +135,40 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
         return heuristic;
     }
 
+    @Override
+    public boolean forget() {
+        return xares.forgetHeuristic();
+    }
+
+    @Override
+    public String remove() throws MBeanException {
+        return super.remove(); // note the remove should invoke the forget operation
+    }
+
     /**
      * Extension of an XAResource record for exposing the underlying XAResource which is protected
      */
-    public class JTAXAResourceRecordWrapper extends com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord {
+    class JTAXAResourceRecordWrapper extends com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord {
         XidImple xidImple = null;
         int heuristic = -1;
+        AbstractRecord rec;
+        XAResourceRecord xarec;
 
         public JTAXAResourceRecordWrapper(Uid uid) {
             super(uid);
 
             xidImple = new XidImple(getXid());
+        }
+
+        public JTAXAResourceRecordWrapper(AbstractRecord rec) {
+            this(rec.order());
+            this.rec = rec;
+            this.xarec = (XAResourceRecord) rec;
+        }
+
+        @Override
+        public boolean activate() {
+            return super.activate();
         }
 
         public boolean restore_state(InputObjectState os, int t) {
@@ -155,6 +179,16 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
             }
 
             return super.restore_state(os, t);
+        }
+
+        @Override
+        public boolean forgetHeuristic() {
+            if (xarec != null) {
+                xarec.forgetHeuristic();
+                return xarec.isForgotten();
+            }
+
+            return super.forgetHeuristic();
         }
     }
 

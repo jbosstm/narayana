@@ -1554,6 +1554,10 @@ public interface arjunaI18NLogger {
     @Message(id = 12388, value = "Encoding {0} is not supported", format = MESSAGE_FORMAT)
     public String get_encoding_not_supported(String encodingName);
 
+    @Message(id = 12389, value = "OSB: Error constructing record header reader: {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_osb_HeaderStateCtorInfo(String reason);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

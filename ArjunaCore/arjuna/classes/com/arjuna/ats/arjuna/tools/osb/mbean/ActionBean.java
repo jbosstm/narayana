@@ -21,7 +21,6 @@
  */
 package com.arjuna.ats.arjuna.tools.osb.mbean;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +36,7 @@ import java.util.Map;
 import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
@@ -140,20 +140,27 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
     public String remove() throws MBeanException {
         // first unregister each participant of this action
         Iterator<LogRecordWrapper> i = participants.iterator();
+        int removeCount = 0;
+        int participantCount = participants.size();
 
         while (i.hasNext()) {
             LogRecordWrapper w = i.next();
 
             w.remove(false);
 
+            if (w.isRemoved())
+                removeCount += 1;
+
             i.remove();
         }
 
         try {
-            if (!StoreManager.getRecoveryStore().remove_committed(getUid(), getType()))
-                return "Attempt to remove transaction failed";
+            if (removeCount == participantCount) {
+                if (!StoreManager.getRecoveryStore().remove_committed(getUid(), getType()))
+                    return "Attempt to remove transaction failed";
 
-            _uidWrapper.unregister();
+                _uidWrapper.unregister();
+            }
             return "Transaction successfully removed";
         } catch (ObjectStoreException e) {
             return "Unable to remove transaction: " + e.getMessage();
@@ -433,14 +440,28 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                 }
         }
 
+        public boolean removeRecords(RecordList rl, LogRecordWrapper logRecordWrapper) {
+            if (rl != null && rl.size() > 0) {
+                AbstractRecord ar = logRecordWrapper.getRecord();
+
+                boolean forgotten = ar.forgetHeuristic();
+                boolean removeAllowed = arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
+
+                if (forgotten || removeAllowed) {
+                    // remove the transaction log for the record
+                    if (rl.remove(ar)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         @Override
         public void remove(LogRecordWrapper logRecordWrapper) {
-            RecordList rl = getRecords(logRecordWrapper.getListType());
-
-            if (rl != null && rl.size() > 0) {
-                if (rl.remove(logRecordWrapper.getRecord())) {
-                    doUpdateState(); // rewrite the list
-                }
+            if (logRecordWrapper.removeFromList(getRecords(logRecordWrapper.getListType()))) {
+                doUpdateState(); // rewrite the list
             }
         }
 
