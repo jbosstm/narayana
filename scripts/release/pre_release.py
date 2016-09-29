@@ -100,7 +100,7 @@ def _get_last_commit_timestamp(file_name):
 
 
 def _get_configuration():
-    jenkins_host = os.getenv('JENKINS_HOST', 'albany.eng.hst.ams2.redhat.com')
+    jenkins_host = os.getenv('JENKINS_HOST', 'narayanaci1.eng.hst.ams2.redhat.com')
     jenkins_jobs = os.getenv('JENKINS_JOBS',
                              'narayana,narayana-catelyn,narayana-quickstarts,narayana-benchmarks').split(',')
     jira_host = os.getenv('JIRA_HOST', 'issues.jboss.org')

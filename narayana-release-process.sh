@@ -48,7 +48,6 @@ then
   git add pom.xml
   git commit -m "${WFLYISSUE} Upgrade Narayana to $CURRENT"
   git push --set-upstream jbosstm ${WFLYISSUE}
-  cd jboss-as
   git fetch jbosstm
   git checkout 5_BRANCH
   git reset --hard jbosstm/5_BRANCH
@@ -79,8 +78,8 @@ else
   git fetch upstream --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn" -Dawestruct.executable="awestruct" all
 fi
 echo "build and retrieve the centos54x64 blacktie binary on centos54x64 machine"
-ssh hudson@lancel.eng.hst.ams2.redhat.com -x "export JAVA_HOME=/usr/local/jdk1.8.0/ ; cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; git clone -b $WFLYISSUE  https://github.com/jbosstm/jboss-as.git; cd jboss-as;  ./build.sh install -DskipTests; cd .. ; ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
-scp hudson@lancel.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz ~/tmp/narayana/$CURRENT/
+ssh narayanaci1.eng.hst.ams2.redhat.com -x "export JAVA_HOME=/usr/local/jdk1.8.0/ ; mkdir tmp ; cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
+scp narayanaci1.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz ~/tmp/narayana/$CURRENT/
 scp ~/tmp/narayana/$CURRENT/blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
 echo "You need to execute the following commands on a Windows box"
 echo "cd %USERPROFILE%\tmp & del \S narayana & git clone https://github.com/jbosstm/narayana & cd narayana & git fetch origin --tags"
