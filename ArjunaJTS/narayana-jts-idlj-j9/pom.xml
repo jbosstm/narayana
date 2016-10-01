@@ -15,11 +15,11 @@
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
-    <version>5.3.5.Final-SNAPSHOT</version>
+    <version>5.3.6.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>narayana-jts-idlj-j9</artifactId>
+  <artifactId>narayana-jts-idlj</artifactId>
   <name>Narayana: ArjunaJTS narayana-jts-idlj-j9</name>
   <packaging>jar</packaging>
   <description>JTS uber jar with idlj stubs with Java SE 9</description>

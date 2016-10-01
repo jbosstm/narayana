@@ -45,7 +45,7 @@
 	<property name="org.jboss.jbossts.qa.src" location="src"/>
 	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
 	<property name="org.jboss.jbossts.qa.idl" location="idl"/>
-        <property name="jdk-9-upgrademodulepath" value="-upgrademodulepath ../ArjunaJTS/jtax/target/upgrademodulepath"/>
+        <property name="jdk-9-upgrademodulepath" value="--upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath"/>
 
 	<target name="setIdlProps">
         <if>

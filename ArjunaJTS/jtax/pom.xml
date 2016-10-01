@@ -31,7 +31,7 @@
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     <java.transaction.upgrade.name>narayana-jta-j9-module</java.transaction.upgrade.name>
     <java.transaction.upgrade.jar>${project.build.directory}/dependency/${java.transaction.upgrade.name}-${project.version}.jar</java.transaction.upgrade.jar>
-    <MAVEN_OPTS>-upgrademodulepath ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</MAVEN_OPTS>
+    <MAVEN_OPTS>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</MAVEN_OPTS>
     <skipTests>true</skipTests>
   </properties>
 
@@ -331,7 +331,7 @@ com.sun.corba.se.spi.orb
 com.sun.corba.se.spi.ior
 com.sun.corba.se.impl.ior
 -->
-                  <argLine>-upgrademodulepath ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</argLine>
+                  <argLine>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</argLine>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>
