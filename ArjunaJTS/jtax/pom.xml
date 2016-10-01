@@ -165,12 +165,12 @@
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
+          <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
+          <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
           <type>test-jar</type>
           <scope>test</scope>

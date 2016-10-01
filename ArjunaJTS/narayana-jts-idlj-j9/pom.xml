@@ -120,7 +120,7 @@
                   <include>org.jboss.narayana.jta:cdi</include>
                   <include>org.jboss.narayana.jts:orbportability</include>
                   <include>org.jboss.narayana.jts:jts</include>
-                  <include>org.jboss.narayana.jts:idlj-idl-j9</include>
+                  <include>org.jboss.narayana.jts:idlj-idl</include>
                   <include>org.jboss.narayana.jts:jtax</include>
                 </includes>
               </artifactSet>
@@ -238,7 +238,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>idlj-idl-j9</artifactId>
+      <artifactId>idlj-idl</artifactId>
       <version>${project.version}</version>
     </dependency>
 <!--
