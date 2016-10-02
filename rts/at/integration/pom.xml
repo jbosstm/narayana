@@ -351,8 +351,10 @@
                     <forkMode>always</forkMode>
                     <excludes>
   <!-- j9 TODO ExceptionInInitializerError  at org.jboss.narayana.rest.integration.test.integration.RecoveryIntegrationTestCase.<clinit>(RecoveryIntegrationTestCase.java:37) -->
+<!--
                       <exclude>**/BasicIntegrationTestCase.java</exclude>
                       <exclude>**/RecoveryIntegrationTestCase.java</exclude>
+-->
                     </excludes>
                   </configuration>
                 </execution>

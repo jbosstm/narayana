@@ -291,7 +291,9 @@
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                     <excludes>
                       <!-- j9 TODO ClassNotFoundException: org.jboss.logging.Logger -->
+<!--
                       <exclude>**/ClientIntegrationTest.java</exclude>
+-->
                     </excludes>
                   </configuration>
                 </execution>

@@ -486,6 +486,7 @@
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
 <!-- j9 TODO test Assertion failures -->
 <excludes>
+<!--
   <exclude>**/TestCommitMarkableResourceFailActivate.java</exclude>
   <exclude>**/TestCommitMarkableResourceFailAfterCommit.java</exclude>
   <exclude>**/TestCommitMarkableResourceFailAfterPrepare.java</exclude>
@@ -496,6 +497,7 @@
   <exclude>**/CrashAfterResourcesCommitTest.java</exclude>
   <exclude>**/XARecoveryModuleHelpersUnitTest.java</exclude>
   <exclude>**/CMRIntegrationTest.java</exclude>
+-->
 </excludes>
                   </configuration>
                 </execution>

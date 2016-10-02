@@ -311,7 +311,9 @@
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                     <!-- j9 TODO Deployment Cannot deploy: test.war -->
                     <excludes>
+<!--
                       <exclude>**/TestSPI.java</exclude>
+-->
                     </excludes>
                   </configuration>
                 </execution>

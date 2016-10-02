@@ -247,8 +247,10 @@
                     </systemPropertyVariables>
                     <excludes>
   <!-- j9 TODO org.jboss.arquillian.container.spi.client.container.LifecycleException: The java process starting the managed server exited unexpectedly with code [1] -->
+<!--
                       <exclude>**/InboundBridgeRecoveryTestCase.java</exclude>
                       <exclude>**/InboundBridgeRecoveryWithMultipleDeploymentsTestCase.java</exclude>
+-->
                     </excludes>
                   </configuration>
                 </execution>

@@ -58,7 +58,9 @@
                 <configuration>
                     <!-- j9 TODO check which profile is this failing in -->
                     <excludes>
+<!--
                       <exclude>org.jboss.narayana.compensations.integration.archive.EarArchiveTestLocal</exclude>
+-->
                     </excludes>
                     <skip>true</skip>
                 </configuration>

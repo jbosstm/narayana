@@ -78,7 +78,9 @@
                     </systemPropertyVariables>
                     <!-- j9 TODO all tests depend on byteman to kill the server https://issues.jboss.org/browse/BYTEMAN-324 -->
                     <excludes>
+<!--
                       <exclude>**/**</exclude>
+-->
                     </excludes>
                   </configuration>
                 </execution>

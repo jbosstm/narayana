@@ -396,6 +396,7 @@
                     <exclude>**/ibmorb/**</exclude>
 
                     <!-- j9 TODO -->
+<!--
                     <exclude>**/ServerControlWrapperUnitTest.java</exclude>
                     <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
                     <exclude>**/RecoveredServerTransactionUnitTest.java</exclude>
@@ -409,9 +410,12 @@
                     <exclude>**/ServerFactoryUnitTest.java</exclude>
                     <exclude>**/StrictInterpositionUnitTest.java</exclude>
                     <exclude>**/SynchTest.java</exclude>
+-->
                     <!-- j9 TODO org.omg.CORBA.BAD_INV_ORDER  -->
+<!--
                     <exclude>**/AsyncTest.java</exclude>
                     <exclude>**/TxUnitTest.java</exclude>
+-->
                     <!-- end j9 TODO -->
                   </excludes>
                   <reportsDirectory>${project.build.directory}/surefire-reports-j9</reportsDirectory>
