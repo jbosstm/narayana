@@ -150,9 +150,6 @@ public class ConnectionImpleTest {
         verify(connection, times(1)).close();
     }
 
-    /**
-     * This test currently fails because of https://issues.jboss.org/browse/JBTM-2676
-     */
     @Test
     public void closeConnectionInAfterCompletion() throws Exception {
         transactionManager.begin();
@@ -168,7 +165,7 @@ public class ConnectionImpleTest {
                 try {
                     connectionToTest.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    fail("Could not close the connection: " + e);
                 }
             }
         });
