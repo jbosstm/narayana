@@ -165,7 +165,7 @@ public class ATParticipantRecoveryModule implements XTSRecoveryModule
                         String participantRecordClazzName = inputState.unpackString();
                         try {
                             // create a participant engine instance and tell it to recover itself
-                            Class participantRecordClazz = Class.forName(participantRecordClazzName);
+                            Class<?> participantRecordClazz = Class.forName(participantRecordClazzName);
                             ATParticipantRecoveryRecord participantRecord = (ATParticipantRecoveryRecord)participantRecordClazz.newInstance();
                             participantRecord.restoreState(inputState);
                             // ok, now insert into recovery map if needed
@@ -198,9 +198,9 @@ public class ATParticipantRecoveryModule implements XTSRecoveryModule
         }
     }
 
-    private Vector processParticipants( InputObjectState uids )
+    private Vector<Uid> processParticipants( InputObjectState uids )
     {
-        Vector uidVector = new Vector() ;
+        Vector<Uid> uidVector = new Vector<>() ;
 
         if (RecoveryLogger.logger.isDebugEnabled()) {
             RecoveryLogger.logger.debug("processing " + _participantType
@@ -240,11 +240,11 @@ public class ATParticipantRecoveryModule implements XTSRecoveryModule
     {
         if (_participantUidVector != null) {
         // Process the Vector of transaction Uids
-        Enumeration participantUidEnum = _participantUidVector.elements() ;
+        Enumeration<Uid> participantUidEnum = _participantUidVector.elements() ;
 
         while ( participantUidEnum.hasMoreElements() )
         {
-            Uid currentUid = (Uid) participantUidEnum.nextElement();
+            Uid currentUid = participantUidEnum.nextElement();
 
             try
             {
@@ -270,7 +270,7 @@ public class ATParticipantRecoveryModule implements XTSRecoveryModule
 
     // Array of transactions found in the object store of the
     // ACCoordinator type.
-    private Vector _participantUidVector = null ;
+    private Vector<Uid> _participantUidVector = null ;
 
     // Reference to the Object Store.
     private static RecoveryStore _recoveryStore = null ;

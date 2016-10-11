@@ -21,6 +21,7 @@
 
 package org.jboss.jbossts.xts.recovery.coordinator.at;
 
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
@@ -37,8 +38,7 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord;
 
 class ParticipantMap implements RecordTypeMap
 {
-    @SuppressWarnings("unchecked")
-    public Class getRecordClass ()
+    public Class<? extends AbstractRecord> getRecordClass ()
     {
         return ParticipantRecord.class;
     }

@@ -28,7 +28,7 @@ public class ThreadUtil
     /**
      * The ID associated with the thread.
      */
-    private static final ThreadLocal THREAD_ID = new ThreadLocal() ;
+    private static final ThreadLocal<String> THREAD_ID = new ThreadLocal<>() ;
     /**
      * The thread id counter.
      */
@@ -50,10 +50,10 @@ public class ThreadUtil
      */
     public static String getThreadId(final Thread thread)
     {
-	final Object id = THREAD_ID.get() ;
+	final String id = THREAD_ID.get() ;
 	if (id != null)
 	{
-	    return (String)id ;
+	    return id ;
 	}
 	
 	final String newId = getNextId() ;

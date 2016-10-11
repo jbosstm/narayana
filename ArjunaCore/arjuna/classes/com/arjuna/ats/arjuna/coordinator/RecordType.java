@@ -178,8 +178,7 @@ public class RecordType
      * @return the <code>Class</code> representing this type.
      */
 
-    @SuppressWarnings("unchecked")
-    public static Class typeToClass (int rt)
+    public static Class<? extends AbstractRecord> typeToClass (int rt)
     {
         switch (rt)
         {
@@ -314,8 +313,7 @@ public class RecordType
      * @return the <code>int</code> value representing this Class.
      */
 
-    @SuppressWarnings("unchecked")
-    public static int classToType (Class cn)
+    public static int classToType (Class<?> cn)
     {
         if (LastResourceRecord.class.equals(cn))
             return LASTRESOURCE;

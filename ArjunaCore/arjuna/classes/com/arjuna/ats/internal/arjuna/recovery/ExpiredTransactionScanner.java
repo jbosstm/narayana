@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -57,7 +58,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 		if (_scanM == null)
 		{
-			_scanM = new Hashtable();
+			_scanM = new Hashtable<>();
 			initialScan = true;
 		}
 
@@ -91,7 +92,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 							if (!_scanM.contains(newUid))
 							{
 								if (_scanN == null)
-									_scanN = new Hashtable();
+									_scanN = new Hashtable<>();
 
 								_scanN.put(newUid, newUid);
 							}
@@ -162,8 +163,8 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 	private RecoveryStore _recoveryStore;
 
-	private Hashtable _scanM = null;
+	private Hashtable<Uid, Uid> _scanM = null;
 
-	private Hashtable _scanN = null;
+	private Hashtable<Uid, Uid> _scanN = null;
 
 }

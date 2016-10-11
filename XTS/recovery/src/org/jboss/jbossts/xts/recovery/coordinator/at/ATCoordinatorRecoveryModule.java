@@ -227,9 +227,9 @@ public class ATCoordinatorRecoveryModule implements XTSRecoveryModule
         return inFlight ;
     }
 
-    private Vector processTransactions( InputObjectState uids )
+    private Vector<Uid> processTransactions( InputObjectState uids )
     {
-        Vector uidVector = new Vector() ;
+        Vector<Uid> uidVector = new Vector<>() ;
 
         if (RecoveryLogger.logger.isDebugEnabled()) {
             RecoveryLogger.logger.debug("processing " + _transactionType
@@ -267,11 +267,11 @@ public class ATCoordinatorRecoveryModule implements XTSRecoveryModule
     private void processTransactionsStatus()
     {
         // Process the Vector of transaction Uids
-        Enumeration transactionUidEnum = _transactionUidVector.elements() ;
+        Enumeration<Uid> transactionUidEnum = _transactionUidVector.elements() ;
 
         while ( transactionUidEnum.hasMoreElements() )
         {
-            Uid currentUid = (Uid) transactionUidEnum.nextElement();
+            Uid currentUid = transactionUidEnum.nextElement();
 
             try
             {
@@ -294,7 +294,7 @@ public class ATCoordinatorRecoveryModule implements XTSRecoveryModule
 
     // Array of transactions found in the object store of the
     // ACCoordinator type.
-    private Vector _transactionUidVector = null ;
+    private Vector<Uid> _transactionUidVector = null ;
 
     // Reference to the Object Store.
     private static RecoveryStore _recoveryStore = null ;

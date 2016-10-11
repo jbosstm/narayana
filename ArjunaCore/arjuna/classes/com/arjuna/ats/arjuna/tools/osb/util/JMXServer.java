@@ -69,8 +69,8 @@ public class JMXServer
 		Class<?> c2;
 
 		try {
-			Class cl = Class.forName(JTS_INITIALISER_CNAME);
-			Constructor constructor = cl.getConstructor();
+			Class<?> cl = Class.forName(JTS_INITIALISER_CNAME);
+			Constructor<?> constructor = cl.getConstructor();
 			constructor.newInstance();
 			isJTS = true;
 		} catch (Exception e) { // ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException

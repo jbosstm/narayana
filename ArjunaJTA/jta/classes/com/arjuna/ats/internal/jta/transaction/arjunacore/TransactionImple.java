@@ -103,12 +103,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		_theTransaction.begin(timeout);
 
-		_resources = new Hashtable();
-		_duplicateResources = new Hashtable();
+		_resources = new Hashtable<>();
+		_duplicateResources = new Hashtable<>();
 		_suspendCount = 0;
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
 
-        _txLocalResources = Collections.synchronizedMap(new HashMap());
+        _txLocalResources = Collections.synchronizedMap(new HashMap<>());
     }
 
 	/**
@@ -481,7 +481,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				synchronized (this)
 				{
-					info = (TxInfo) _resources.get(xaRes);
+					info = _resources.get(xaRes);
 
 					if (info == null)
 					{
@@ -490,7 +490,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 * but may be in the duplicates.
 						 */
 
-						info = (TxInfo) _duplicateResources.get(xaRes);
+						info = _duplicateResources.get(xaRes);
 					}
 				}
 
@@ -847,7 +847,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			synchronized (this)
 			{
-				info = (TxInfo) _resources.get(xaRes);
+				info = _resources.get(xaRes);
 
 				if (info == null)
 					info = (TxInfo) _duplicateResources.get(xaRes);
@@ -1038,11 +1038,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (xaRes != null)
 		{
-			TxInfo info = (TxInfo) _resources.get(xaRes);
+			TxInfo info = _resources.get(xaRes);
 
 			if (info == null)
 			{
-				info = (TxInfo) _duplicateResources.get(xaRes);
+				info = _duplicateResources.get(xaRes);
 			}
 
 			if (info != null)
@@ -1160,9 +1160,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (_theTransaction != null)
 		{
-			_resources = new Hashtable();
-			_duplicateResources = new Hashtable();
-            _txLocalResources = Collections.synchronizedMap(new HashMap());
+			_resources = new Hashtable<>();
+			_duplicateResources = new Hashtable<>();
+            _txLocalResources = Collections.synchronizedMap(new HashMap<>());
 		}
 		else
 		{
@@ -1330,7 +1330,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (_suspendCount > 0)
 		{
-			Enumeration el = _resources.keys();
+			Enumeration<XAResource> el = _resources.keys();
 
 			/*
 			 * Loop over all registered resources. Those that are in a suspended
@@ -1353,8 +1353,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 * Get the XAResource in case we have to call end on it.
 						 */
 
-						XAResource xaRes = (XAResource) el.nextElement();
-						TxInfo info = (TxInfo) _resources.get(xaRes);
+						XAResource xaRes = el.nextElement();
+						TxInfo info = _resources.get(xaRes);
 
 						if (info.getState() == TxInfo.ASSOCIATION_SUSPENDED)
 						{
@@ -1394,8 +1394,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 * Get the XAResource in case we have to call end on it.
 						 */
 
-						XAResource xaRes = (XAResource) el.nextElement();
-						TxInfo info = (TxInfo) _duplicateResources.get(xaRes);
+						XAResource xaRes = el.nextElement();
+						TxInfo info =  _duplicateResources.get(xaRes);
 
 						if (info.getState() == TxInfo.ASSOCIATION_SUSPENDED)
 						{
@@ -1434,17 +1434,17 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		try
 		{
-			Enumeration el = _resources.keys();
+			Enumeration<XAResource> el = _resources.keys();
 
 			if (el != null)
 			{
 				while (el.hasMoreElements())
 				{
-					XAResource x = (XAResource) el.nextElement();
+					XAResource x = el.nextElement();
 
 					if (x.isSameRM(xaRes))
 					{
-						TxInfo info = (TxInfo) _resources.get(x);
+						TxInfo info = _resources.get(x);
 
 						if (info.thread() == t)
 							return true;
@@ -1458,11 +1458,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				while (el.hasMoreElements())
 				{
-					XAResource x = (XAResource) el.nextElement();
+					XAResource x = el.nextElement();
 
 					if (x.isSameRM(xaRes))
 					{
-						TxInfo info = (TxInfo) _resources.get(x);
+						TxInfo info =  _resources.get(x);
 
 						if (info.thread() == t)
 							return true;
@@ -1491,17 +1491,17 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			synchronized (this)
 			{
-				Enumeration el = _resources.keys();
+				Enumeration<XAResource> el = _resources.keys();
 
 				if (el != null)
 				{
 					while (el.hasMoreElements())
 					{
-						XAResource x = (XAResource) el.nextElement();
+						XAResource x = el.nextElement();
 
 						if (x.isSameRM(xaRes))
 						{
-							return (TxInfo) _resources.get(x);
+							return _resources.get(x);
 						}
 					}
 				}
@@ -1512,11 +1512,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					while (el.hasMoreElements())
 					{
-						XAResource x = (XAResource) el.nextElement();
+						XAResource x = el.nextElement();
 
 						if (x.isSameRM(xaRes))
 						{
-							return (TxInfo) _duplicateResources.get(x);
+							return _duplicateResources.get(x);
 						}
 					}
 				}
@@ -1628,27 +1628,27 @@ public class TransactionImple implements javax.transaction.Transaction,
         if (_theTransaction != null)
             return _theTransaction.getSynchronizations();
 
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
-	private Hashtable _resources;
+	private Hashtable<XAResource, TxInfo> _resources;
 
-	private Hashtable _duplicateResources;
+	private Hashtable<XAResource, TxInfo> _duplicateResources;
 
 	private int _suspendCount;
 
 	private final boolean _xaTransactionTimeoutEnabled;
 
-	private Map _txLocalResources;
+	private Map<Object, Object> _txLocalResources;
 
     private Throwable _rollbackOnlyCallerStacktrace;
     
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean()
             .isXaTransactionTimeoutEnabled();
 
-	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean()
+	private static final Class<?> LAST_RESOURCE_OPTIMISATION_INTERFACE = jtaPropertyManager.getJTAEnvironmentBean()
             .getLastResourceOptimisationInterface();
 
     protected static final XAResourceRecordWrappingPlugin _xaResourceRecordWrappingPlugin =
@@ -1664,7 +1664,7 @@ public class TransactionImple implements javax.transaction.Transaction,
         }
 	}
 
-	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
+	private static final ConcurrentHashMap<Uid, javax.transaction.Transaction> _transactions = new ConcurrentHashMap<>();
 	
 	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
 			.getDefaultInstance(JTAEnvironmentBean.class)

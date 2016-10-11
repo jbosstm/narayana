@@ -555,13 +555,13 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
     public final OutputObjectState getState (Uid objUid, int ft)
     {
-        LinkedList list = getList(objUid);
+        LinkedList<StoreElement> list = getList(objUid);
 
         synchronized (list)
         {
             for (int i = 0; i < list.size(); i++)
             {
-                StoreElement element = (StoreElement) list.get(i);
+                StoreElement element = list.get(i);
 
                 if ((element != null) && !element.removed && (element.objUid.equals(objUid)))
                 {
@@ -659,7 +659,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
     {
         synchronized (_workList)
         {
-            LinkedList list = getList();
+            LinkedList<StoreElement> list = getList();
 
             if (list != null)
             {
@@ -667,7 +667,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
             	{
 	                try
 	                {
-	                    _work = (StoreElement) list.removeLast();
+	                    _work = list.removeLast();
 	
 	                    _numberOfEntries--;
 	
@@ -775,7 +775,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
         }
     }
 
-    private final LinkedList getList ()
+    private final LinkedList<StoreElement> getList ()
     {
         for (int i = 0; i < HASH_SIZE; i++)
         {
@@ -786,14 +786,14 @@ class AsyncStore extends Thread // keep priority same as app. threads
         return null;
     }
 
-    private final LinkedList getList (Uid objUid)
+    private final LinkedList<StoreElement> getList (Uid objUid)
     {
         int index = objUid.hashCode() % HASH_SIZE;
 
         synchronized (_workList)
         {
             if (_workList[index] == null)
-                _workList[index] = new LinkedList();
+                _workList[index] = new LinkedList<>();
 
             return _workList[index];
         }
@@ -801,7 +801,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
     public Object _activeLock = new Object();
 
-    private LinkedList[] _workList = null;
+    private LinkedList<StoreElement>[] _workList = null;
 
     private int _numberOfEntries = 0;
 

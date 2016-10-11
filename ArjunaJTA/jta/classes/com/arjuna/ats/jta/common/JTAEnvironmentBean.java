@@ -85,7 +85,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile boolean xaTransactionTimeoutEnabled = true;
 
     private volatile String lastResourceOptimisationInterfaceClassName = "com.arjuna.ats.jta.resources.LastResourceCommitOptimisation";
-    private volatile Class lastResourceOptimisationInterface = null;
+    private volatile Class<?> lastResourceOptimisationInterface = null;
 
     private volatile String xaResourceRecordWrappingPluginClassName;
     private volatile XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
@@ -852,7 +852,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @return the LastResource marker interface.
      */
-    public Class getLastResourceOptimisationInterface()
+    public Class<?> getLastResourceOptimisationInterface()
     {
         if(lastResourceOptimisationInterface == null && lastResourceOptimisationInterfaceClassName != null) {
             synchronized(this) {
@@ -870,11 +870,11 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      *
      * @param clazz a marker interface Class, or null.
      */
-    public void setLastResourceOptimisationInterface(Class clazz)
+    public void setLastResourceOptimisationInterface(Class<?> clazz)
     {
         synchronized(this)
         {
-            Class oldClazz = this.lastResourceOptimisationInterface;
+            Class<?> oldClazz = this.lastResourceOptimisationInterface;
             lastResourceOptimisationInterface = clazz;
 
             if(clazz == null)

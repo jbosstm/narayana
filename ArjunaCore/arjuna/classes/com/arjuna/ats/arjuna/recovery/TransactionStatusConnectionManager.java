@@ -151,7 +151,7 @@ public class TransactionStatusConnectionManager
 
         if ( _tscTable.containsKey ( process_id ) )
         {
-            TransactionStatusConnector tsc = (TransactionStatusConnector) _tscTable.get( process_id ) ;
+            TransactionStatusConnector tsc = _tscTable.get( process_id ) ;
 
             if ( tsc.isDead() )
             {
@@ -178,7 +178,7 @@ public class TransactionStatusConnectionManager
 	boolean tsmis = false ;
 
 	InputObjectState uids = new InputObjectState() ;
-	Vector tsmiVector = new Vector() ;
+	Vector<Uid> tsmiVector = new Vector<>() ;
 
 	try
 	{
@@ -226,11 +226,11 @@ public class TransactionStatusConnectionManager
 
 	// for each TransactionStatusManager found, if their is
 	// not an entry in the local hash table for it then add it.
-	Enumeration tsmiEnum = tsmiVector.elements() ;
+	Enumeration<Uid> tsmiEnum = tsmiVector.elements() ;
 
 	while ( tsmiEnum.hasMoreElements() )
 	{
-	    Uid currentUid = (Uid) tsmiEnum.nextElement() ;
+	    Uid currentUid = tsmiEnum.nextElement() ;
 
 	    String process_id = currentUid.getHexPid();
 
@@ -259,7 +259,7 @@ public class TransactionStatusConnectionManager
     private static String _typeName = TransactionStatusManagerItem.typeName() ;
 
     // Table of process ids and their transaction status managers items.
-   private Hashtable _tscTable  = new Hashtable() ;
+   private Hashtable<String, TransactionStatusConnector> _tscTable  = new Hashtable<>() ;
 
     // Reference to object store.
     private static RecoveryStore _recoveryStore = null ;

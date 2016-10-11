@@ -207,7 +207,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      */
     public boolean setType(String osTypeClassName, String beanTypeClassName) {
         try {
-            Class cls = Class.forName(osTypeClassName);
+            Class<?> cls = Class.forName(osTypeClassName);
             StateManager sm = (StateManager) cls.getConstructor().newInstance();
             String typeName = canonicalType(sm.type());
 

@@ -153,11 +153,11 @@ public class ExpiredEntryMonitor extends Thread
     }
     else
 	{
-	    Enumeration scanners = _expiryScanners.elements();
+	    Enumeration<ExpiryScanner> scanners = _expiryScanners.elements();
 	    
 	    while ( scanners.hasMoreElements() )
 	    {
-		ExpiryScanner m = (ExpiryScanner)scanners.nextElement();
+		ExpiryScanner m = scanners.nextElement();
 
             // check for a shutdown request before starting a scan
             synchronized (this) {
@@ -237,7 +237,7 @@ public class ExpiredEntryMonitor extends Thread
 
     private static void loadScanners()
     {
-        _expiryScanners = new Vector();
+        _expiryScanners = new Vector<>();
 
         for(ExpiryScanner scanner : recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanners()) {
             if ( scanner.toBeUsed() ) {
@@ -260,7 +260,7 @@ public class ExpiredEntryMonitor extends Thread
     /**
      * list of scanners to be invoked by the monitor thread in order to check for expired log entries
      */
-    private static Vector _expiryScanners;
+    private static Vector<ExpiryScanner> _expiryScanners;
 
     /**
      * flag which guards processing of properties ensuirng it is only performed once
