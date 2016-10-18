@@ -636,9 +636,9 @@ public class SimpleIsolatedServers {
 			if (phase2CommitAborted.getCount() < 1) {
 				phase2CommitAborted.wait(50000);
 			}
-            if (phase2CommitAborted.getCount() < 1) {
-                fail("Servers were not aborted");
-            }
+			if (phase2CommitAborted.getCount() < 1) {
+				fail("Servers were not aborted");
+			}
 		}
 		reboot("1000");
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
@@ -650,6 +650,99 @@ public class SimpleIsolatedServers {
 		assertTrue("Rollback count at 1000: " + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 1);
 		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
 		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 2);
+	}
+
+	/**
+	 * Check that if transaction was in flight when a root crashed, when
+	 * recovered it can terminate it.
+	 *
+	 * recoverFor first greps the logs for any subordinates that are owned by
+	 * "parentNodeName" then it greps the list of currently running transactions
+	 * to see if any of them are owned by "parentNodeName" this is covered by
+	 * testRecoverInflightTransaction basically what can happen is:
+	 *
+	 * 1. TM1 starts tx 2. propagate to TM2 3. TM1 crashes 4. we need to
+	 * rollback TM2 as it is now orphaned the detail being that as TM2 hasn't
+	 * prepared we cant just grep the logs at TM2 as there wont be one
+	 */
+	@Test
+	@BMScript("leaverunningorphan")
+	public void testRecoverReapedInflightTransaction() throws Exception {
+		System.out.println("testRecoverInflightTransaction");
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
+		final CompletionCountLock phase2CommitAborted = new CompletionCountLock();
+		synchronized (phase2CommitAborted) {
+			Thread thread = new Thread(new Runnable() {
+			public void run() {
+				int startingTimeout = 2;
+				try {
+					LocalServer originalServer = getLocalServer("1000");
+					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+					Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
+					TransactionManager transactionManager = originalServer.getTransactionManager();
+					transactionManager.setTransactionTimeout(startingTimeout);
+					transactionManager.begin();
+					Transaction originalTransaction = transactionManager.getTransaction();
+					int remainingTimeout = (int) (originalServer.getTimeLeftBeforeTransactionTimeout() / 1000);
+					Xid currentXid = originalServer.getCurrentXid();
+					transactionManager.suspend();
+					DataReturnedFromRemoteServer performTransactionalWork = performTransactionalWork(
+							new LinkedList<String>(Arrays.asList(new String[] { "2000" })), remainingTimeout, currentXid, 2, false, false);
+					transactionManager.resume(originalTransaction);
+					XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", performTransactionalWork.getProxyRequired());
+					originalTransaction.enlistResource(proxyXAResource);
+					transactionManager.commit();
+					Thread.currentThread().setContextClassLoader(classLoader);
+				} catch (ExecuteException e) {
+					System.err.println("Should be a thread death but cest la vie");
+					synchronized (phase2CommitAborted) {
+						phase2CommitAborted.incrementCount();
+						phase2CommitAborted.notify();
+					}
+				} catch (LinkageError t) {
+					System.err.println("Should be a thread death but cest la vie");
+					synchronized (phase2CommitAborted) {
+						phase2CommitAborted.incrementCount();
+						phase2CommitAborted.notify();
+					}
+				} catch (Throwable t) {
+					System.err.println("Should be a thread death but cest la vie");
+					synchronized (phase2CommitAborted) {
+						phase2CommitAborted.incrementCount();
+						phase2CommitAborted.notify();
+					}
+				}
+			}
+		}, "Orphan-creator");
+		thread.start();
+			if (phase2CommitAborted.getCount() < 1) {
+				phase2CommitAborted.wait(50000);
+			}
+            if (phase2CommitAborted.getCount() < 1) {
+                fail("Servers were not aborted");
+            }
+		}
+
+		// Wait for reap on server 2
+		synchronized (completionCounter) {
+			while (completionCounter.getRollbackCount("2000") != 2) {
+				completionCounter.wait();
+			}
+		}
+
+		assertTrue("Expected 1, was: " + LookupProvider.getInstance().lookup("2000").getTransactionCount(), LookupProvider.getInstance().lookup("2000").getTransactionCount() == 1);
+		reboot("1000");
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
+		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
+		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
+		getLocalServer("1000").doRecoveryManagerScan(true);
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 0);
+		assertTrue("Rollback count at 1000: " + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 1);
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 0);
+		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 2);
+		assertTrue("Expected 0 transactions, was: " + LookupProvider.getInstance().lookup("2000").getTransactionCount(), LookupProvider.getInstance().lookup("2000").getTransactionCount() == 0);
 	}
 
 	/**
