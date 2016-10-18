@@ -1431,7 +1431,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		TransactionImple._transactions.put(tx.get_uid(), tx);
 	}
 
-	protected static final void removeTransaction (TransactionImple tx)
+	public static final void removeTransaction (TransactionImple tx)
 	{
 		TransactionImple._transactions.remove(tx.get_uid());
 	}
