@@ -39,4 +39,5 @@ public interface RemoteServer {
 
 	public Xid[] recoverFor(String localServerName) throws XAException;
 
+	public int getTransactionCount();
 }
