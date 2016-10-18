@@ -62,6 +62,9 @@ public class CompletionCounter {
 			integer = new Integer(integer.intValue() + 1);
 		}
 		rollbackCounter.put(nodeName, integer);
+		synchronized (this) {
+			notify();
+		}
 	}
 
 	public int getCommitCount(String nodeName) {

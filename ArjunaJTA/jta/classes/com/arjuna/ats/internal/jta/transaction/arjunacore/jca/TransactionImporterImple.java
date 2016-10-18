@@ -206,7 +206,22 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		_transactions.remove(new SubordinateXidImple(xid));
+		AtomicReference<TransactionImple> remove = _transactions.remove(new SubordinateXidImple(xid));
+		if (remove != null) {
+            synchronized (remove) {
+                TransactionImple transactionImple = remove.get();
+                while (transactionImple == null) {
+                    try {
+                        remove.wait();
+                        transactionImple = remove.get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new XAException(XAException.XAER_RMFAIL);
+                    }
+                }
+                TransactionImple.removeTransaction(transactionImple);
+            }
+		}
 	}
 	
 	public Set<Xid> getInflightXids(String parentNodeName) {
@@ -246,6 +261,17 @@ public class TransactionImporterImple implements TransactionImporter
 
 		TransactionImple txn = holder.get();
 
+		// Should only be called by the recovery system - this will replace the Transaction with one from disk
+		if (recoveredTransaction!= null) {
+			synchronized (holder) {
+				// now it's safe to add the imported transaction to the holder
+				recoveredTransaction.recordTransaction();
+				txn = recoveredTransaction;
+				holder.set(txn);
+				holder.notifyAll();
+			}
+		}
+
 		if (txn == null) {
 			// retry the get under a lock - this double check idiom is safe because AtomicReference is effectively
 			// a volatile so can be concurrently accessed by multiple threads
@@ -261,6 +287,7 @@ public class TransactionImporterImple implements TransactionImporter
 					}
 
 					holder.set(txn);
+					holder.notifyAll();
                     isNew = true;
 				}
 			}

@@ -28,6 +28,7 @@ import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporterImple;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.XATerminatorImple;
@@ -113,6 +114,17 @@ public class RemoteServerImpl implements RemoteServer {
 				toReturn.addAll(Arrays.asList(doRecover));
 			}
 			return toReturn.toArray(new Xid[0]);
+		} finally {
+			Thread.currentThread().setContextClassLoader(contextClassLoader);
+		}
+	}
+
+	@Override
+	public int getTransactionCount() {
+		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		try {
+			Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+			return TransactionImple.getTransactions().size();
 		} finally {
 			Thread.currentThread().setContextClassLoader(contextClassLoader);
 		}
