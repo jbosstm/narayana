@@ -26,7 +26,7 @@
   <description>Narayana: OSGi Transaction Service</description>
 
   <properties>
-    <version.org.jboss.arquillian.osgi.karaf>2.2.0-SNAPSHOT</version.org.jboss.arquillian.osgi.karaf>
+    <version.org.jboss.arquillian.osgi.karaf>2.2.0.Final</version.org.jboss.arquillian.osgi.karaf>
     <version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
     <version.org.jboss.arquillian.core>1.1.10.Final</version.org.jboss.arquillian.core>
     <version.shrinkwrap>1.1.2</version.shrinkwrap>
