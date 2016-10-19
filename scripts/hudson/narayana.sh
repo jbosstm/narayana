@@ -211,6 +211,24 @@ function kill_qa_suite_processes
 }
 
 function build_narayana {
+  echo "Checking if need SPI PR"
+  if [ -n "$SPI_BRANCH" ]; then
+    echo "Building SPI PR"
+    if [ -d jboss-transaction-spi ]; then
+      rm -rf jboss-transaction-spi
+    fi
+    git clone https://github.com/jbosstm/jboss-transaction-spi.git -o jbosstm
+    [ $? = 0 ] || fatal "git clone https://github.com/jbosstm/jboss-transaction-spi.git failed"
+    cd jboss-transaction-spi
+    git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+    [ $? = 0 ] || fatal "git fetch of pulls failed"
+    git checkout $SPI_BRANCH
+    [ $? = 0 ] || fatal "git fetch of pull branch failed"
+    cd ../
+    ./build.sh -f jboss-transaction-spi/pom.xml clean install
+    [ $? = 0 ] || fatal "Build of SPI failed"
+  fi
+  
   echo "Building Narayana"
   cd $WORKSPACE
 
