@@ -244,25 +244,16 @@ function build_narayana {
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
   [ $CODE_COVERAGE = 1 ] && NARAYANA_ARGS="${NARAYANA_ARGS} -pl !code-coverage"
 
-  XPROF="release,community"
   if [ $JAVA_VERSION = "9-ea" ]; then
     ORBARG="-Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
-    #XPROF=",arq" # j9 TODO arquillian based tests fail unless the arq profile is active
-    XPROF=release,community,arq
   elif [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
 
-  ./build.sh -P${XPROF}${OBJECT_STORE_PROFILE} $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   [ $? = 0 ] || fatal "narayana build failed"
-
-  # jtax tests are skipped by default
-  if [ $JAVA_VERSION = "9-ea" -a $NARAYANA_TESTS = 1 ]; then
-      MAVEN_OPTS="--upgrade-module-path target/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" ./build.sh -P${XPROF}${OBJECT_STORE_PROFILE} $ORBARG $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS -f ArjunaJTS/jtax/pom.xml -DskipTests=false test
-    [ $? = 0 ] || fatal "narayana jtax build failed"
-  fi
 
   return 0
 }
@@ -882,9 +873,6 @@ kill_qa_suite_processes $MainClassPatterns
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
-# TODO
-XNARAYANA_TESTS=$NARAYANA_TESTS
-NARAYANA_TESTS=0
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 if [ $AS_BUILD = 1 ];then
@@ -901,10 +889,7 @@ else
   fi
   init_jboss_home
 fi
-if [ $XNARAYANA_TESTS = 1 ]; then
-  NARAYANA_TESTS=1
-  build_narayana "$@"
-fi
+
 [ $BLACKTIE = 1 ] && blacktie "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
