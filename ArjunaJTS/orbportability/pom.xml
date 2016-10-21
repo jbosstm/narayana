@@ -259,6 +259,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration combine.self="override">
+                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <systemProperties combine.children="append" />
                   <argLine>--add-modules java.corba</argLine>
                   <excludes>

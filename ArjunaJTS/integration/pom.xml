@@ -200,7 +200,37 @@
               </compilerArgs>
             </configuration>
           </plugin>
-
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jts</groupId>
+                      <artifactId>${java.corba.patch.name}</artifactId>
+                      <version>${project.version}</version>
+                      <type>${project.packaging}</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.jboss.narayana.jta</groupId>
+                      <artifactId>narayana-jta-j9-module</artifactId>
+                      <version>${project.version}</version>
+                      <type>jar</type>
+                      <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -208,12 +238,24 @@
                  <execution>
                    <id>default-test</id>
                    <configuration combine.self="override">
-                     <argLine>-Xmx256m -Djava.util.logging.config.file=logging.properties</argLine>
+                     <reuseForks>false</reuseForks>
+                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                     <childDelegation>true</childDelegation>
+                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                     <argLine>--add-modules java.corba --upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED --add-exports-private=java.base/java.io=java.corba</argLine>
                      <useManifestOnlyJar>false</useManifestOnlyJar>
-                     <!-- TODO j9 -->
-                     <excludes>
-                       <exclude>**/SPIUnitTest.java</exclude>
-                     </excludes>
+                  <classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                  </classpathDependencyExcludes>
+                  <systemPropertyVariables
+                    combine.children="append">
+                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
+                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
+                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
+                  </systemPropertyVariables>
                    </configuration>
                  </execution>
                </executions>

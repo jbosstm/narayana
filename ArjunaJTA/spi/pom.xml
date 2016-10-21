@@ -208,6 +208,9 @@
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <excludes>
+                                <exclude>**/SPIUnitTest*</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -299,25 +302,16 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-test</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration combine.self="override">
-                    <forkMode>always</forkMode>
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <!-- j9 TODO Deployment Cannot deploy: test.war -->
-                    <excludes>
-<!--
-                      <exclude>**/TestSPI.java</exclude>
--->
-                    </excludes>
+                  <configuration combine.self="append">
+                      <argLine>--add-exports-private=java.base/java.io=ALL-UNNAMED</argLine>
+                      <systemPropertyVariables combine.children="append">
+                      <!--
+                           Used in arquillian.xml
+                      -->
+                           <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}</server.jvm.args>
+                           <node.address>127.0.0.1</node.address>
+                      </systemPropertyVariables>
                   </configuration>
-                </execution>
-              </executions>
             </plugin>
           </plugins>
         </build>

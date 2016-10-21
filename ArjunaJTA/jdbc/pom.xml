@@ -206,26 +206,17 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-test</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration combine.self="override">
+                  <configuration combine.self="append">
                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <!-- j9 TODO Table "TEST_TABLE" already exists and ClassNotFound oracle.jdbc.xa.client --> 
+                    <argLine>--add-exports-private=java.base/java.lang=ALL-UNNAMED</argLine>
                     <excludes>
-<!--
-                      <exclude>**/JDBC2Test.java</exclude>
-                      <exclude>**/JDBC3Test.java</exclude>
-                      <exclude>**/SimpleJdbcTest.java</exclude>
--->
+                      <exclude>**/utils/plugins/**</exclude>
+                      <exclude>**/DBPlugin.java</exclude>
+                      <exclude>**/*JNDISetup.java</exclude>
+                      <exclude>**/*SimpleJdbcTest.java</exclude>
+                    <exclude>**/*StableConnections.java</exclude>
                     </excludes>
                   </configuration>
-                </execution>
-              </executions>
             </plugin>
           </plugins>
         </build>
