@@ -32,7 +32,6 @@
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
     <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
-
   </properties>
 
   <build>
@@ -299,7 +298,7 @@
                     <mkdir dir="${project.build.directory}/classes"/>
                     <property name="compile_classpath" refid="maven.compile.classpath"/>
                     <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
-                      excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**">
+                      excludes="**/ibmorb/**,**/jacorb/**">
                       <compilerarg value="--add-modules"/>
                       <compilerarg value="java.corba"/>
                       <compilerarg value="--patch-module"/>
@@ -330,15 +329,16 @@
               </execution>
               <execution>
                 <id>testCompile-j9</id>
-                <phase>testCompile</phase>
+                <phase>test-compile</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
                 <configuration>
-                  <tasks name="compile sources">
-                    <mkdir dir="${project.build.directory}/classes"/>
+                  <tasks name="compile test sources">
+                    <mkdir dir="${project.build.directory}/test-classes"/>
                     <property name="compile_classpath" refid="maven.compile.classpath"/>
-                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                    <property name="test_classpath" refid="maven.test.classpath"/>
+                    <javac destdir="${project.build.directory}/test-classes" classpath="${compile_classpath}:${test_classpath}"
                       excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**,**/GenericRecoveryCreatorUnitTest.java">
                       <compilerarg value="--add-modules"/>
                       <compilerarg value="java.corba"/>
@@ -382,8 +382,12 @@
                   <goal>test</goal>
                 </goals>
                 <configuration combine.self="override">
+                  <skip>false</skip>
+                  <reuseForks>false</reuseForks>
+                  <childDelegation>true</childDelegation>
                   <systemProperties combine.children="append" />
-                  <argLine>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED</argLine>
+                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                  <argLine>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports-private=java.base/java.io=java.corba</argLine>
                   <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                   <excludes>
                     <exclude>**/common/**</exclude>
@@ -400,29 +404,6 @@
                     <exclude>**/JacORB*.java</exclude>
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/ibmorb/**</exclude>
-
-                    <!-- j9 TODO -->
-<!--
-                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
-                    <exclude>**/JavaIdlRecoveryUnitTest.java</exclude>
-                    <exclude>**/RecoveredServerTransactionUnitTest.java</exclude>
-                    <exclude>**/RecoveredTransactionUnitTest.java</exclude>
-
-                    <exclude>**/ArjunaInterpositionUnitTest.java</exclude>
-                    <exclude>**/ExplicitInterpositionUnitTest.java</exclude>
-                    <exclude>**/FactoryListUnitTest.java</exclude>
-                    <exclude>**/RestrictedInterpositionUnitTest.java</exclude>
-                    <exclude>**/ServerControlWrapperUnitTest.java</exclude>
-                    <exclude>**/ServerFactoryUnitTest.java</exclude>
-                    <exclude>**/StrictInterpositionUnitTest.java</exclude>
-                    <exclude>**/SynchTest.java</exclude>
--->
-                    <!-- j9 TODO org.omg.CORBA.BAD_INV_ORDER  -->
-<!--
-                    <exclude>**/AsyncTest.java</exclude>
-                    <exclude>**/TxUnitTest.java</exclude>
--->
-                    <!-- end j9 TODO -->
                   </excludes>
                   <reportsDirectory>${project.build.directory}/surefire-reports-j9</reportsDirectory>
                   <classpathDependencyExcludes>

@@ -31,8 +31,6 @@
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     <java.transaction.upgrade.name>narayana-jta-j9-module</java.transaction.upgrade.name>
     <java.transaction.upgrade.jar>${project.build.directory}/dependency/${java.transaction.upgrade.name}-${project.version}.jar</java.transaction.upgrade.jar>
-    <MAVEN_OPTS>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</MAVEN_OPTS>
-    <skipTests>true</skipTests>
   </properties>
 
   <build>
@@ -272,15 +270,16 @@
               </execution>
               <execution>
                 <id>testCompile-j9</id>
-                <phase>testCompile</phase>
+                <phase>test-compile</phase>
                 <goals>
                   <goal>run</goal>
                 </goals>
                 <configuration>
                   <tasks name="compile test sources">
-                    <mkdir dir="${project.build.directory}/classes"/>
+                    <mkdir dir="${project.build.directory}/test-classes"/>
                     <property name="compile_classpath" refid="maven.compile.classpath"/>
-                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                    <property name="test_classpath" refid="maven.test.classpath"/>
+                    <javac destdir="${project.build.directory}/test-classes" classpath="${compile_classpath}:${test_classpath}"
                       excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**,**/GenericRecoveryCreatorUnitTest.java">
                       <compilerarg value="--patch-module"/>
                       <compilerarg value="java.corba=${java.corba.patch.jar}"/>
@@ -315,9 +314,10 @@
                   <goal>test</goal>
                 </goals>
                 <configuration combine.self="override">
+                  <skip>false</skip>
+                  <reuseForks>false</reuseForks>
+                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <systemProperties combine.children="append" />
-                  <skipTests>${skipTests}</skipTests>
-                  <forkMode>pertest</forkMode>
 <!--
 <forkCount>1</forkCount>
 <reuseForks>false</reuseForks>
@@ -331,7 +331,7 @@ com.sun.corba.se.spi.orb
 com.sun.corba.se.spi.ior
 com.sun.corba.se.impl.ior
 -->
-                  <argLine>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</argLine>
+                  <argLine>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-modules java.corba --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED --add-exports-private=java.base/java.io=java.corba</argLine>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>
