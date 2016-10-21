@@ -10,8 +10,6 @@ if [ $# -lt 2 ]; then
 elif [ $# -gt 2 ]; then
   echo 1>&2 "$0: too many arguments: CURRENT NEXT (versions should end in .Final or similar)"
   exit 2
-else
-  WFLYISSUE=$4
 fi
 
 export CURRENT=$1
@@ -28,6 +26,12 @@ then
   echo Make sure you have the credentials in your .m2/settings.xml and ignore an error in the final module about missing javadocs
   echo Watch out for sed -i "" in the pre-release.sh as it is does not work on Cygwin
   read -p "Did the log before look OK?" ok
+  if [[ $ok == n* ]]
+  then
+    exit
+  else
+    ok=y
+  fi
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
 else
   set -e
