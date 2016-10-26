@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-import java.util.concurrent.ConcurrentMap;
-
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.buffer.Buffer;
-import org.vertx.java.core.net.NetSocket;
-import org.vertx.java.platform.Verticle;
-
-import com.arjuna.ats.arjuna.common.Uid;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
+import io.vertx.core.shareddata.LocalMap;
 import org.jboss.stm.Container;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.ObjectModel;
 
-public class ClientVerticle extends Verticle {
+public class ClientVerticle extends AbstractVerticle {
     public static String LEADER = "LEADER_SLOT";
+
+    public static void main(String[] args) {
+        Vertx vertx = Vertx.vertx();
+
+        vertx.deployVerticle(new ClientVerticle());
+    }
 
   public void start() {
 
-    ConcurrentMap<String, String> map = vertx.sharedData().getMap("demo.mymap");
+    LocalMap<String, String> map = vertx.sharedData().getLocalMap("demo.mymap");
 
     Container<Sample> theContainer = new Container<Sample>("Demo", Container.TYPE.PERSISTENT, Container.MODEL.SHARED);
     Sample obj1 = theContainer.create(new SampleLockable(10));
 
     map.put(LEADER, theContainer.getIdentifier(obj1).toString());
 
-    container.deployVerticle("SampleVerticle1.java");
+      vertx.deployVerticle(new SampleVerticle1());
 
-    // container.deployVerticle("SampleVerticle2.java", 4);
+      final int INSTANCE_CNT = 0;
+      for (int i = 0; i < INSTANCE_CNT; i++)
+          vertx.deployVerticle(new SampleVerticle2());
 
     System.out.println("Object name: "+theContainer.getIdentifier(obj1));
 

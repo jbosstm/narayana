@@ -29,8 +29,8 @@ import org.jboss.stm.Container;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
-import org.junit.Test;
-import static org.vertx.testtools.VertxAssert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Mark Little

@@ -11,13 +11,35 @@ tranasctions will be serialised correctly.
 All of the transactional additions are in the EchoClient.java so go take a look later. For now, follow
 these steps.
 
-First start the EchoServer using vertx run EchoServer.java then the EchoClient using vertx run EchoClient.java
+First make sure you have downloaded vertx (version 3) and added vertx to our PATH:
+  wget https://bintray.com/artifact/download/vertx/downloads/vert.x-3.3.3.zip
+  unzip vert.x-3.3.3.zip
+  export PATH=./vertx/bin:$PATH
+
+Next download the vertx and STM jar dependencies via maven:
+
+  mvn clean dependency:copy-dependencies
+
+Now start the EchoServer in the background using the build.sh script in this example directory:
+
+  ./build.sh EchoServer.java &
+
+If you aren't using a shell then run the vertx command directly using vertx EchoServer.java but this
+will require that you manually set up the classpath to contain the jar dependencies include the 
+jbossts-properties.xml configuration file for the version of JBossTS/Narayana we're using. You probably shouldn't try changing this file without understanding the implications.
+
+The script will check that vertx is on the PATH and that you have downloaded the jar dependencies.
 
 You should see the following output from the server:
 
-Succeeded in deploying verticle
+    Echo server is now listening
+    Succeeded in deploying verticle
 
-But the real action is at the client, where you should see something like:
+But the real action is at the client:
+
+  ./build.sh EchoClient.java
+
+where you should see something like:
 
 Object name: 0:ffffc0a8000f:e84e:5325d6d2:0
 ARJUNA012163: Starting service com.arjuna.ats.arjuna.recovery.ActionStatusService on port 59471 
@@ -140,7 +162,11 @@ hello39
 hello40
 
 As you can see, we are sharing the same transational integer and each client manages to increment it in isolation from the other. However, if
-you run two clients in the same shell (e.g., using the & to background the first in Unix) like vertx run EchoClient.java & vertx run EchoClient.java
+you run two clients in the same shell (e.g., using the & to background the first in Unix) like:
+
+  ./build.sh EchoClient.java &
+  ./build.sh EchoClient.java &
+
 you should see something like:
 
 Succeeded in deploying verticle 
@@ -242,7 +268,7 @@ instance, if we run 3 concurrent clients then one of the clients has attempted t
 locked, either with a read lock or a write lock. Because we're using transactions, the isolation property prevents any conflicting
 updates and forces the other client to abort the transaction. You may see something like:
 
-rorschach:echo marklittle$ vertx run EchoClient.java & vertx run EchoClient.java & vertx run EchoClient.java
+rorschach:echo marklittle$ ./build.sh EchoClient.java & ./build.sh EchoClient.java 
 [1] 26658
 [2] 26659
 Succeeded in deploying verticle 

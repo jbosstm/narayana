@@ -17,17 +17,17 @@ package integration.java;
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
 
-import org.junit.Test;
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.http.HttpClientResponse;
-import org.vertx.java.core.http.HttpServerRequest;
-import org.vertx.testtools.TestVerticle;
-import org.vertx.testtools.VertxAssert;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
-import static org.vertx.testtools.VertxAssert.*;
+import io.vertx.test.core.VertxTestBase;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
+
+import org.junit.Test;
 
 /**
  * Example Java integration test that deploys the module that this project builds.
@@ -37,25 +37,28 @@ import static org.vertx.testtools.VertxAssert.*;
  *
  * This test demonstrates how to do that.
  */
-public class ModuleIntegrationTest extends TestVerticle {
+public class ModuleIntegrationTest extends VertxTestBase {
+
+  private Logger logger = LoggerFactory.getLogger(ModuleIntegrationTest.class);
 
   @Test
+  //public void testPing(TestContext context) {
   public void testPing() {
-    container.logger().info("in testPing()");
-    vertx.eventBus().send("ping-address", "ping!", new Handler<Message<String>>() {
-      @Override
-      public void handle(Message<String> reply) {
-        assertEquals("pong! 12", reply.body());
-
-        /*
-        If we get here, the test is complete
-        You must always call `testComplete()` at the end. Remember that testing is *asynchronous* so
-        we cannot assume the test is complete by the time the test method has finished executing like
-        in standard synchronous tests
-        */
-        testComplete();
-      }
-    });
+TestContext context = null;
+      System.out.printf("in testPing()%n");
+      logger.info("in testPing()");
+      EventBus eb = vertx.eventBus();
+      eb.publish("ping-address", "ping!");
+      eb.consumer("ping-address", (Message<JsonObject> reply) -> {
+          context.assertEquals("pong! 12", reply.body());
+          /*
+          If we get here, the test is complete
+          You must always call `testComplete()` at the end. Remember that testing is *asynchronous* so
+          we cannot assume the test is complete by the time the test method has finished executing like
+          in standard synchronous tests
+          */
+          testComplete();
+      });
   }
 
   @Test
@@ -63,24 +66,4 @@ public class ModuleIntegrationTest extends TestVerticle {
     // Whatever
     testComplete();
   }
-
-
-  @Override
-  public void start() {
-    // Make sure we call initialize() - this sets up the assert stuff so assert functionality works correctly
-    initialize();
-    // Deploy the module - the System property `vertx.modulename` will contain the name of the module so you
-    // don't have to hardecode it in your tests
-    container.deployModule(System.getProperty("vertx.modulename"), new AsyncResultHandler<String>() {
-      @Override
-      public void handle(AsyncResult<String> asyncResult) {
-      // Deployment is asynchronous and this this handler will be called when it's complete (or failed)
-      assertTrue(asyncResult.succeeded());
-      assertNotNull("deploymentID should not be null", asyncResult.result());
-      // If deployed correctly then start the tests!
-      startTests();
-      }
-    });
-  }
-
 }

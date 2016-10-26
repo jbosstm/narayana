@@ -7,7 +7,13 @@ In this example we firs start by the shared data concept within Vert.x to share 
 object between Verticles (ClientVerticle and SampleVerticle1 initially). The STM instance is defined in
 Sample.java interface and SampleLockable class respectively.
 
-Start with: vertx run ClientVerticle.java
+First build a fat jar that contains all the classes need to run the example in a single jar:
+
+  mvn clean package
+
+followed by
+
+  java -jar target/stm-vertex-shared-5.3.6.Final-SNAPSHOT-fat.jar -Dcom.arjuna.ats.arjuna.common.propertiesFile=jbossts-properties.xml
 
 You should see output similar to:
 
@@ -32,11 +38,7 @@ SampleVerticle1 SUCCEEDED!
 
 Here we have the two verticles sharing the same transactional object (state).
 
-If you then uncomment the following line in ClientVerticle.java:
-
-    // container.deployVerticle("SampleVerticle2.java", 4);
-
-Rerun the same vertx command. Depending upon how each new verticle is executed in relation to
+To add more concurency change the value of INSTANCE_CNT in ClientVerticle.java from 0 to 4 and rerun the example fat jar. Depending upon how each new verticle is executed in relation to
 the others, you could see:
 
 Object name: 0:ffffc0a80011:d7e1:536e7ac5:0
