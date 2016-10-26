@@ -7,7 +7,7 @@ target
 jboss-as
 *.swp
 *~
-
 *.orig
 qa/ext/log4j.jar
 qa/ext/netty.jar
+.DS_Store
