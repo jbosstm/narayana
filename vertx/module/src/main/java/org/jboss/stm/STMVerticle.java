@@ -16,15 +16,14 @@ package org.jboss.stm;
  * limitations under the License.
  */
 
-import org.vertx.java.core.Handler;
-import org.vertx.java.platform.Verticle;
-import org.vertx.java.core.eventbus.Message;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 import org.jboss.stm.annotations.Transactional;
 import org.jboss.stm.annotations.ReadLock;
 import org.jboss.stm.annotations.State;
 import org.jboss.stm.annotations.WriteLock;
-import org.jboss.stm.Container;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
@@ -37,8 +36,9 @@ import com.arjuna.ats.arjuna.AtomicAction;
  * some tests/examples separate.
  */
 
-public class STMVerticle extends Verticle {
-    
+public class STMVerticle extends AbstractVerticle {
+    private Logger logger = LoggerFactory.getLogger(STMVerticle.class);
+
     public STMVerticle ()
     {
 	transactionalObject = theContainer.create(new SampleLockable(10));
@@ -115,24 +115,20 @@ public class STMVerticle extends Verticle {
 
     public void start() {
 
-    vertx.eventBus().registerHandler("ping-address", new Handler<Message<String>>() {
-      @Override
-      public void handle(Message<String> message) {
+        vertx.eventBus().consumer("ping-address", message -> {
+            //Now send some data
+            for (int i = 0; i < 10; i++) {
 
-          //Now send some data
-          for (int i = 0; i < 10; i++) {
-	      
-	      int value = STMVerticle.value();
+                int value = STMVerticle.value();
 
-	    message.reply("pong! "+value);
+                message.reply("pong! "+value);
 
-	    container.logger().info("Sent back pong "+value);
-	  }
-      }
-      });
+                logger.info("Sent back pong "+value);
+            }
+        });
 
-    container.logger().info("STMVerticle started");
-  }
+        logger.info("STMVerticle started");
+    }
 
     /*
      * Have a persistent container for this example, but it's likely recoverable and optimistic cc are better for Vert.x.

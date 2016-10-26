@@ -1,23 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
+  <!-- JBoss, Home of Professional Open Source.
+       Copyright 2016, Red Hat, Inc., and individual contributors
+       as indicated by the @author tags. See the copyright.txt file in the
+       distribution for a full listing of individual contributors.
+
+       This is free software; you can redistribute it and/or modify it
+       under the terms of the GNU Lesser General Public License as
+       published by the Free Software Foundation; either version 2.1 of
+       the License, or (at your option) any later version.
+
+       This software is distributed in the hope that it will be useful,
+       but WITHOUT ANY WARRANTY; without even the implied warranty of
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+       Lesser General Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public
+       License along with this software; if not, write to the Free
+       Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+       02110-1301 USA, or see the FSF site: http://www.fsf.org. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>org.jboss</groupId>
-  <artifactId>mod-stm</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>Project - mod-stm</name>
-  <url>http://maven.apache.org</url>
-
+<!--
   <parent>
      <groupId>org.sonatype.oss</groupId>
      <artifactId>oss-parent</artifactId>
      <version>7</version>
   </parent>
+-->
+  <parent>
+    <groupId>org.jboss.narayana.vertx</groupId>
+    <artifactId>narayana-vertx</artifactId>
+    <version>5.4.1.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>mod-stm</artifactId>
+  <packaging>jar</packaging>
+  <name>Project - mod-stm</name>
+  <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <vertx.version>3.3.3</vertx.version>
+    <narayana.version>${project.version}</narayana.version>
+    <jboss-logging.version>3.1.4.GA</jboss-logging.version>
 
     <!-- Set pullInDeps to true if you want any modules specified in the 'includes' and 'deploys' fields
     in your mod.json to be automatically pulled in during packaging and added inside your module. Doing this means your
@@ -36,15 +63,12 @@
     <mods.directory>target/mods</mods.directory>
 
     <!--Dependency versions-->
-    <vertx.version>2.1M3</vertx.version>
-    <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
     <junit.version>4.11</junit.version>
 
     <!--Plugin versions-->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
     <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
-    <maven.vertx.plugin.version>2.0.3-final</maven.vertx.plugin.version>
     <maven.surefire.plugin.version>2.14</maven.surefire.plugin.version>
     <maven.failsafe.plugin.version>2.14</maven.failsafe.plugin.version>
     <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
@@ -59,121 +83,70 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-dependencies</artifactId>
+        <version>${vertx.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.stm</groupId>
+      <artifactId>stm</artifactId>
+      <version>${narayana.version}</version>
+    </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!--Vertx provided dependencies-->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>${vertx.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-platform</artifactId>
-      <version>${vertx.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-hazelcast</artifactId>
-      <version>${vertx.version}</version>
       <scope>provided</scope>
     </dependency>
     <!--Test dependencies-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>testtools</artifactId>
-      <version>${vertx.testtools.version}</version>
+      <artifactId>vertx-core</artifactId>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>arjunacore</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>txoj</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-unit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
-      <version>3.1.4.GA</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.stm</groupId>
       <artifactId>stm</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
     </dependency>
-
-    <!-- Add any other dependencies that you want packaged into your module (in the lib dir) here
-    as 'compile' dependencies. Here is an example
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <version>1.3</version>
-      <scope>compile</scope>
-    </dependency>
-    -->
-
   </dependencies>
 
   <build>
     <plugins>
-
-      <!-- The vert.x Maven plugin -->
-      <plugin>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-maven-plugin</artifactId>
-        <version>${maven.vertx.plugin.version}</version>
-        <!--
-        You can specify extra config to the plugin as required here
-        <configuration>
-           <configFile>/path/to/MyVerticle.conf</configFile>
-           <instances>1</instances>
-           <classpath>src/main/resources/:src/test/resources/:target/classes/:target/test-classes/</classpath>
-        </configuration>
-        -->
-        <!-- Make sure that the plugin uses the vert.x versions from this pom.xml not from its own pom.xml -->
-        <dependencies>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-platform</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-hazelcast</artifactId>
-            <version>${vertx.version}</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>PullInDeps</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>pullInDeps</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
       <!-- Other plugins required by the build -->
       <plugin>
@@ -181,12 +154,13 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
 	<artifactId>maven-clean-plugin</artifactId>
+        <version>${maven.clean.plugin.version}</version>
 	<configuration>
 	  <filesets>
 	    <fileset>

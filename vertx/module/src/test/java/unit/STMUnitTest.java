@@ -21,9 +21,8 @@ import org.junit.Test;
  */
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import org.junit.Test;
 
-import static org.vertx.testtools.VertxAssert.*;
+import static org.junit.Assert.assertTrue;
 
 public class STMUnitTest {
 

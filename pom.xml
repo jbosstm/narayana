@@ -489,6 +489,7 @@
     <module>narayana-full</module>
     <module>code-coverage</module>
     <module>tomcat</module>
+    <module>vertx</module>
   </modules>
   <profiles>
     <profile>

@@ -19,14 +19,8 @@ import org.junit.Test;
  *
  */
 
-import org.jboss.stm.Container;
 import org.jboss.stm.annotations.Optimistic;
 import org.jboss.stm.annotations.Transactional;
-
-import com.arjuna.ats.arjuna.AtomicAction;
-
-import org.junit.Test;
-import static org.vertx.testtools.VertxAssert.*;
 
 /**
  * @author Mark Little
