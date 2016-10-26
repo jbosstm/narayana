@@ -1,5 +1,7 @@
 # Vert.x STM Module
 
+TODO Are modules still relevant in Vert.x 3?
+
 A module that exposes the Narayana STM implementation for Vert.x applications.
 
 Documentation is a bit light at the moment, but the following links provide some background.

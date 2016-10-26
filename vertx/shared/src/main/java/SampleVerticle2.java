@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-import org.vertx.java.platform.Verticle;
-import java.util.concurrent.ConcurrentMap;
-
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.AtomicAction;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.shareddata.LocalMap;
 import org.jboss.stm.Container;
 
-public class SampleVerticle1 extends Verticle {
+public class SampleVerticle2 extends AbstractVerticle {
 
   public void start()
   {
-      ConcurrentMap<String, String> map = vertx.sharedData().getMap("demo.mymap");
-      Container<Sample> theContainer = new Container<Sample>("Demo", Container.TYPE.PERSISTENT, Container.MODEL.SHARED);
+      LocalMap<String, String> map = vertx.sharedData().getLocalMap("demo.mymap");
+      Container<Sample> theContainer = new Container<>("Demo", Container.TYPE.PERSISTENT, Container.MODEL.SHARED);
       String uidName = map.get(ClientVerticle.LEADER);
       Sample obj1 = theContainer.clone(new SampleLockable(10), new Uid(uidName));
       AtomicAction A = new AtomicAction();
@@ -41,8 +40,22 @@ public class SampleVerticle1 extends Verticle {
 	  initialValue = obj1.value();
 
 	  obj1.increment();
+      }
+      catch (final Throwable ex)
+      {
+	  ex.printStackTrace();
 
-	  value = obj1.value();
+	  shouldCommit = false;
+      }
+
+      try
+      {
+	  if (shouldCommit)
+	  {
+	      obj1.increment();
+
+	      value = obj1.value();
+	  }
       }
       catch (final Throwable ex)
       {
@@ -59,11 +72,11 @@ public class SampleVerticle1 extends Verticle {
 	  value = -1;
       }
 
-      System.err.println("SampleVerticle1 initialised state with: "+value);
+      System.err.println("SampleVerticle2 initialised state with: "+value);
 
-      if (value == initialValue + 1)
-	  System.err.println("SampleVerticle1 SUCCEEDED!");
+      if (value == initialValue +2)
+	  System.err.println("SampleVerticle2 SUCCEEDED!");
       else
-	  System.err.println("SampleVerticle1 FAILED!");
+	  System.err.println("SampleVerticle2 FAILED!");
   }
 }

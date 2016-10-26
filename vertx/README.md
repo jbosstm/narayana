@@ -1,60 +1,40 @@
 TransactionalVert.x
 ===================
 
-Start by adding the contents of lib and etc directories to your classpath. These are here for convenience and you should always take the most recent versions from maven.
+The vertx sub-project is a port of Mark Little's TransactionalVert.x repo <sup>[1](#history)</sup>. It shows how to use the narayana STM implementation in a Vert.x 3 environment. Integrating STM into Vert.x enables the sharing of objects between verticles in the same Vert.x instance that a safe with respect to concurrent transactional updates.
 
-Don't forget to install and set up Vert.x!
+Take a look at each the README.md files in each sub-directory to see how to use STM for Vert.x:
 
-It's based on the already shipping Echo example in Vert.x. However, in this case rather than just
-sending a stream of numbers between client and server, we maintain the existing number within a
-transactional object. This object can be shared between multiple instances of the EchoClient and the
-tranasctions will be serialised correctly.
+# docs
 
-All of the transactional additions are in the EchoClient.java
+  Contains the STM guide
 
-If you are running this for the first time then leave as is.
+# module 
 
-If you are running this more than once and want clients to share the STM objects between
-address spaces then go into the ObjectStore dir and look for the Uid that represents the state
-you want to share. Then uncomment the Uid line  and replace the Uid in quotes with the Uid
-you have selected. Uncomment the other obj1 creation line and comment out the original. Then run as
-many EchoClients as you want. Depending upon timing and the number of clients, you will likely
-see warnings from the system that the state could not be read or written. But consistency remains.
+  STM packaged as a Vert.x module
 
-If you want to see how this might work then just go with the example state in the ObjectStore
-shipped as part of this example and uncomment the lines.
-=======
-Next go into each example directory and see the corresponding readme.
+# echo
 
-Note, this was built against Vert.x 2.x and would definitely need revisiting for later versions of Vert.x. The module directory contains a Vert.x module for STM - will need updating too for more recent versions of Vert.x.
+  A server verticle which echos back whatever client verticles send.
+  This example requires an install of Vert.x. Refer to the README.md file for instructions.
+  The jars needed to run the example need to be downloaded and a maven pom is provided to
+  perform the download.
 
-Also started to look at some async API changes within Narayana (https://github.com/jbosstm/narayana/blob/master/STM/src/main/java/org/jboss/stm/async/Transaction.java)
+# shared
 
---
+  An example that shows how to safely share data between verticles. 
+  There is a variable called INSTANCE\_CNT in ClientVerticle.java that you can change to introduce
+  greater concurrency in order to highlight lock contention.
 
-Maven artifacts equivalent to lib ...
+# raw 
 
-      <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>arjunacore</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.arjunacore</groupId>
-      <artifactId>txoj</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <version>3.1.4.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.stm</groupId>
-      <artifactId>stm</artifactId>
-      <version>5.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
+  This is not a Vert.x example, rather it is a demonstrator of the locking issues that can occur when usint TxOJ (the api on which STM is built).
+  NOTE: This does not belon here and will be removed in a subsequent commit.
+  NOTE: This example runs without any issues (ie it does not show any lock contention issues) so I need
+        to investigate why that is.
+
+TODO: We have started to look at some async API changes within Narayana (https://github.com/jbosstm/narayana/blob/master/STM/src/main/java/org/jboss/stm/async/Transaction.java) to better conform to the asynchronous model demanded by Vert.x
+
+
+
+<a name="githistory">1</a>: To see a history of the commits Mark made to the original rep use the --follow option: git log --follow vertx

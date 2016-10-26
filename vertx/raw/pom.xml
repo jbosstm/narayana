@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- JBoss, Home of Professional Open Source.
+       Copyright 2016, Red Hat, Inc., and individual contributors
+       as indicated by the @author tags. See the copyright.txt file in the
+       distribution for a full listing of individual contributors.
+
+       This is free software; you can redistribute it and/or modify it
+       under the terms of the GNU Lesser General Public License as
+       published by the Free Software Foundation; either version 2.1 of
+       the License, or (at your option) any later version.
+
+       This software is distributed in the hope that it will be useful,
+       but WITHOUT ANY WARRANTY; without even the implied warranty of
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+       Lesser General Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public
+       License along with this software; if not, write to the Free
+       Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+       02110-1301 USA, or see the FSF site: http://www.fsf.org. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.jboss.narayana.vertx</groupId>
+  <artifactId>stm-error-demo</artifactId>
+  <version>5.4.1.Final-SNAPSHOT</version>
+
+  <properties>
+    <!-- the main class -->
+    <exec.mainClass>SharedHammer</exec.mainClass>
+    <narayana.version>${project.version}</narayana.version>
+    <vertx.version>3.3.3</vertx.version>
+    <jboss-logging.version>3.1.4.GA</jboss-logging.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.stm</groupId>
+      <artifactId>stm</artifactId>
+      <version>${narayana.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- We specify the Maven compiler plugin as we need to set it to Java 1.8 -->
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <!--
+    You only need the part below if you want to build your application into a fat executable jar.
+    This is a jar that contains all the dependencies required to run it, so you can just run it with
+    java -jar
+    -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>${exec.mainClass}</Main-Class>
+                  </manifestEntries>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
+                </transformer>
+              </transformers>
+              <artifactSet>
+              </artifactSet>
+              <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <execution>
+            <!-- run the application using the fat jar -->
+            <id>run-app</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>target/${project.artifactId}-${project.version}-fat.jar</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
