@@ -594,7 +594,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RETRY:
 						case XAException.XAER_RMFAIL:
 							removeConnection = false;
-						    _committed = true;  // remember for recovery later.
+						    // Since JBTM-2710 this is not right because it will mean that commit is not reattempted _committed = true;  // remember for recovery later.
 							throw new UNKNOWN();  // will cause log to be rewritten.
 						case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 						default:
