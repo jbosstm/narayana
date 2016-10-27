@@ -365,14 +365,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				// CommitMarkableRecoveryModule is
 				// between phases and the XID
 				// has not been GC'd
-                try {
-                    committed = commitMarkableResourceRecoveryModule.wasCommitted(
-                            commitMarkableJndiName, xid);
-                } catch (ObjectStoreException e) {
-                    String resInfo = connectableResource == null ? "" : connectableResource.toString();
-                    jtaLogger.i18NLogger.warn_resources_arjunacore_restorecrstateerror(
-                        resInfo, XAHelper.xidToString(xid), e);
-                }
+                committed = commitMarkableResourceRecoveryModule.wasCommitted(commitMarkableJndiName, xid);
             }
 			productName = os.unpackString();
 			productVersion = os.unpackString();

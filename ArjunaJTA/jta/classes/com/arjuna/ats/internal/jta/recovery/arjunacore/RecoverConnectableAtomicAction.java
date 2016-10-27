@@ -42,6 +42,7 @@ public class RecoverConnectableAtomicAction extends AtomicAction {
 	private String recoveringAs;
 	private Xid xid;
 	private boolean hasCompleted;
+    private boolean wasCommitted;
 
 	public RecoverConnectableAtomicAction(String type, Uid rcvUid, InputObjectState os)
 			throws ObjectStoreException, IOException {
@@ -60,6 +61,9 @@ public class RecoverConnectableAtomicAction extends AtomicAction {
 			jndiName = os.unpackString();
 			xid = XidImple.unpack(os);
 			hasCompleted = os.unpackBoolean();
+            if (hasCompleted) {
+                wasCommitted = os.unpackBoolean();
+            }
 		}
 	}
 
@@ -90,4 +94,8 @@ public class RecoverConnectableAtomicAction extends AtomicAction {
 		}
 		deactivate();
 	}
+
+    public boolean wasConfirmedCommitted() {
+        return wasCommitted;
+    }
 }
