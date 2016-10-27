@@ -100,13 +100,6 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
     }
 
-    @Override
-    public void stop() {
-        super.stop();
-
-        ORB.getInstance(ORB_NAME).shutdown();
-    }
-
     /**
      * Set whether the transaction propagation context manager should propagate a
      * full PropagationContext (JTS) or just a cut-down version (for JTA).

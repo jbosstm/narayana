@@ -61,4 +61,11 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
         ORBManager.setORB(orb);
         ORBManager.setPOA(oa);
     }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        ORB.getInstance(TransactionManagerService.ORB_NAME).shutdown();
+    }
 }
