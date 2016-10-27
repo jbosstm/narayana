@@ -539,14 +539,9 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 	@Override
 	public boolean forgetHeuristic() {
-		XAResourceWrapper xaResourceWrapper = ((XAResourceWrapper) connectableResource);
-		try {
-			xaResourceWrapper.forget(xid);
-			return true;
-		} catch (XAException e) {
-			return false;
-		}
-	}
+        // This is a no-op for CMR resources
+        return true;
+    }
 
 	public int getHeuristic() {
 		return heuristic;
