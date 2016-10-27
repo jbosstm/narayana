@@ -66,6 +66,196 @@ import java.util.function.Supplier;
 public class XATerminatorImpleUnitTest extends TestBase
 {
     @Test
+    public void testXARetry () throws Exception
+    {
+        XidImple xid = new XidImple(new Uid());
+        TransactionImporter imp = SubordinationManager.getTransactionImporter();
+
+        SubordinateTransaction subordinateTransaction = imp.importTransaction(xid);
+
+        XATerminatorImple xa = new XATerminatorImple();
+        subordinateTransaction.enlistResource(new XAResource() {
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+
+            }
+
+            @Override
+            public void end(Xid xid, int i) throws XAException {
+
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaResource) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public Xid[] recover(int i) throws XAException {
+                return new Xid[0];
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int i) throws XAException {
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int i) throws XAException {
+
+            }
+        });
+
+        subordinateTransaction.enlistResource(new XAResource() {
+            boolean firstAttempt = true;
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+                if (firstAttempt) {
+                    try {
+                        failedResourceXid = xid;
+                        throw new XAException(XAException.XA_RETRY);
+                    } finally {
+                        firstAttempt = false;
+                    }
+                }
+            }
+
+            @Override
+            public void end(Xid xid, int i) throws XAException {
+
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaResource) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public Xid[] recover(int i) throws XAException {
+                return new Xid[0];
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int i) throws XAException {
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int i) throws XAException {
+
+            }
+        });
+
+        assertEquals(xa.prepare(xid), XAResource.XA_OK);
+
+        try
+        {
+            xa.commit(xid, false);
+            fail();
+        }
+        catch (final XAException ex)
+        {
+            assertTrue(ex.errorCode == ex.XAER_RMFAIL);
+        }
+        Implementationsx.initialise();
+        xa.recover(XAResource.TMSTARTRSCAN);
+        try {
+            xa.commit(xid, false);
+        } finally {
+            xa.recover(XAResource.TMENDRSCAN);
+        }
+
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[] {
+                        new TestXAResource()  {
+                            public Xid[] recover(int var) throws XAException {
+                                if (var == XAResource.TMSTARTRSCAN) {
+                                    if (failedResourceXid != null) {
+                                        return new Xid[]{failedResourceXid};
+                                    }
+                                }
+                                return new Xid[0];
+                            }
+                            @Override
+                            public void commit(Xid xid, boolean b) throws XAException {
+                                failedResourceXid = null;
+                            }
+
+                            @Override
+                            public int prepare(Xid xid) throws XAException {
+                                return 0;
+                            }
+
+                            @Override
+                            public void rollback(Xid xid) throws XAException {
+                                fail("Resource was rolled back");
+                            }
+                        }
+                };
+            }
+        });
+        xaRecoveryModule.periodicWorkFirstPass();
+        Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
+        safetyIntervalMillis.setAccessible(true);
+        Object o1 = safetyIntervalMillis.get(null);
+        safetyIntervalMillis.set(null, 0);
+        try {
+            xaRecoveryModule.periodicWorkSecondPass();
+        } finally {
+            safetyIntervalMillis.set(null, o1);
+        }
+        assertNull(failedResourceXid);
+    }
+
+    @Test
     public void testPrepareCommit () throws Exception
     {
         XidImple xid = new XidImple(new Uid());
