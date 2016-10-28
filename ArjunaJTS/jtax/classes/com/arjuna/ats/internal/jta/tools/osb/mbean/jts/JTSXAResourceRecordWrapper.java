@@ -25,7 +25,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.mbean.OSEntryBean;
 import com.arjuna.ats.arjuna.tools.osb.mbean.UidWrapper;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceImple;
-import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XARecoveryResourceMBean;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
@@ -41,7 +40,8 @@ import java.io.IOException;
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
-public class JTSXAResourceRecordWrapper extends OSEntryBean implements XARecoveryResourceMBean {
+public class JTSXAResourceRecordWrapper extends OSEntryBean implements JTSXAResourceRecordWrapperMBean {
+    private final XARecoveryResourceWrapper record;
     int heuristic;
     boolean committed;
     XidImple xidImple;
@@ -65,12 +65,17 @@ public class JTSXAResourceRecordWrapper extends OSEntryBean implements XARecover
                 return false;
             }
         }
+
+        public void updateHeuristic(int h) {
+            heuristic = h;
+            updateState(heuristic);
+        }
     }
 
     public JTSXAResourceRecordWrapper(UidWrapper wrapper) {
         super(wrapper);
         // initialise heuristic and  xidImple
-        new XARecoveryResourceWrapper(wrapper);
+        record = new XARecoveryResourceWrapper(wrapper);
     }
 
     public byte[] getGlobalTransactionId() {
@@ -91,6 +96,11 @@ public class JTSXAResourceRecordWrapper extends OSEntryBean implements XARecover
 
     public int getHeuristicValue() {
         return heuristic;
+    }
+
+    public void clearHeuristic() {
+        heuristic = 0;
+        record.updateHeuristic(heuristic);
     }
 
 /*    public boolean isCommitted() {

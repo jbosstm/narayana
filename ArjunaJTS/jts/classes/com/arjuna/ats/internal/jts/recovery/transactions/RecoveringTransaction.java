@@ -51,7 +51,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  * Some are present in all the base types
  */
 
-interface RecoveringTransaction
+public interface RecoveringTransaction
 {
     /** only in Recovered{Server}Transaction */
     public void replayPhase2();

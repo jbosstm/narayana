@@ -53,6 +53,10 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     private static final String SUBORDINATE_AA_TYPE =
             "StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA";
 
+
+    private static final String SUBORDINATE_ATI_TYPE =
+            "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction/JCA";
+
     private static OSBTypeHandler[] defaultOsbTypes = {
             new OSBTypeHandler(
                     true,
@@ -80,11 +84,17 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     private static OSBTypeHandler[] defaultJTSOsbTypes = {
             new OSBTypeHandler(
                     true,
-                    false,
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
                     "CosTransactions/XAResourceRecord",
                     null
+            ),
+            new OSBTypeHandler(
+                    false,
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JCAServerTransactionWrapper",
+                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
+                    SUBORDINATE_ATI_TYPE,
+                    "com.hp.mwtests.ts.jta.jts.tools.JCAServerTransactionHeaderReader"
             ),
             new OSBTypeHandler(
                     true,
@@ -331,18 +341,30 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     public void viewSubordinateAtomicActions(boolean enable) {
-        OSBTypeHandler osbType = osbTypeMap.get(SUBORDINATE_AA_TYPE);
 
-        if (osbType == null)
-            return;
+        List<String> records = new ArrayList<>();
 
-        osbType.setEnabled(enable);
+        OSBTypeHandler subordinateAA = osbTypeMap.get(SUBORDINATE_AA_TYPE);
+
+        if (subordinateAA != null) {
+            subordinateAA.setEnabled(enable);
+            records.add(subordinateAA.getRecordClass());
+        }
+
+        OSBTypeHandler subordinateATI = osbTypeMap.get(SUBORDINATE_ATI_TYPE);
+
+        if (subordinateATI != null) {
+            subordinateATI.setEnabled(enable);
+            records.add(subordinateATI.getRecordClass());
+        }
+
+
 
         if (!enable) {
             for (List<UidWrapper> uids : registeredMBeans.values()) {
                 for (Iterator<UidWrapper> i = uids.iterator(); i.hasNext(); ) {
                     UidWrapper w = i.next();
-                    if (osbType.getRecordClass().equals(w.getClassName())) {
+                    if (records.contains(w.getClassName())) {
                         i.remove();
                         w.unregister();
                     }

@@ -1339,7 +1339,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return _valid;
 	}
 
-	private final boolean updateState(int h)
+	protected final boolean updateState(int h)
 	{
 		setObjectStore();
 

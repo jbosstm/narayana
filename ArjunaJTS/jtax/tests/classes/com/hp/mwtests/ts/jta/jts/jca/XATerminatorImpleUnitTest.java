@@ -31,31 +31,44 @@
 
 package com.hp.mwtests.ts.jta.jts.jca;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
+import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
+import com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore;
+import com.arjuna.ats.internal.jta.Implementationsx;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
+import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
+import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.Implementations;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jts.extensions.AtomicTransaction;
+import com.hp.mwtests.ts.jta.jts.TestXAResource;
+import com.hp.mwtests.ts.jta.jts.common.TestBase;
+import org.junit.Test;
 
+import javax.management.ObjectName;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-
-import com.arjuna.ats.internal.jta.Implementationsx;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
-import com.arjuna.ats.internal.jts.Implementations;
-import org.junit.Test;
-
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
-import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
-import com.arjuna.ats.jta.xa.XidImple;
-import com.hp.mwtests.ts.jta.jts.common.TestBase;
-
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -63,8 +76,174 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class XATerminatorImpleUnitTest extends TestBase
 {
+    private Xid failedResourceXid;
+
+    @Test
+    public void testXARMERR () throws Exception {
+        Uid uid = new Uid();
+        XidImple xid = new XidImple(uid);
+        TransactionImporter imp = SubordinationManager.getTransactionImporter();
+
+        SubordinateTransaction subordinateTransaction = imp.importTransaction(xid);
+        // This is required because it JTS records are stored with a dynamic _savingUid
+        // Normally they are recovered using XATerminator but for this test I would like to stick to testing
+        // transaction importer
+        Field field = TransactionImple.class.getDeclaredField("_theTransaction");
+        field.setAccessible(true);
+        Object o = field.get(subordinateTransaction);
+        field = AtomicTransaction.class.getDeclaredField("_theAction");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ControlWrapper.class.getDeclaredField("_controlImpl");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ControlImple.class.getDeclaredField("_transactionHandle");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ServerTransaction.class.getDeclaredField("_savingUid");
+        field.setAccessible(true);
+        Uid savingUid = (Uid) field.get(o);
+
+        subordinateTransaction.enlistResource(new TestXAResource() {
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+                this.xid = null;
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                fail("Resource was rolled back");
+            }
+        });
+
+        subordinateTransaction.enlistResource(new TestXAResource() {
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+                throw new XAException(XAException.XA_HEURHAZ);
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                failedResourceXid = xid;
+                return 0;
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+                fail("Resource was rolled back");
+            }
+        });
+
+        XATerminatorImple xa = new XATerminatorImple();
+        xa.prepare(xid);
+        try {
+            xa.commit(xid, false);
+            fail();
+        } catch (final XAException ex) {
+            assertTrue(ex.errorCode == ex.XA_HEURMIX);
+        }
+        try {
+            xa.commit(xid, false);
+        } catch (XAException e) {
+            assertTrue(e.errorCode == XAException.XA_RETRY);
+        }
+
+        ObjStoreBrowser osb = new ObjStoreBrowser();
+        osb.viewSubordinateAtomicActions(true);
+        osb.setExposeAllRecordsAsMBeans(true);
+        osb.start();
+        osb.probe();
+
+        Set<ObjectName> participants = JMXServer.getAgent().queryNames("jboss.jta:type=ObjectStore,itype=" + com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction.getType().substring(1) +",uid="+savingUid.stringForm().replaceAll(":", "_")+",puid=*", null);
+        assertEquals(1, participants.size());
+        JMXServer.getAgent().getServer().invoke(participants.iterator().next(), "clearHeuristic", null, null);
+        xa.recover(XAResource.TMSTARTRSCAN);
+        xa.recover(XAResource.TMENDRSCAN);
+
+
+
+        Set<ObjectName> xaResourceRecords = JMXServer.getAgent().queryNames("jboss.jta:type=ObjectStore,itype=" + XAResourceRecord.typeName().substring(1) +",uid=*", null);
+        for (ObjectName xaResourceRecord : xaResourceRecords) {
+
+            Object getGlobalTransactionId = JMXServer.getAgent().getServer().getAttribute(xaResourceRecord, "GlobalTransactionId");
+            Object getBranchQualifier = JMXServer.getAgent().getServer().getAttribute(xaResourceRecord, "BranchQualifier");
+
+            if (Arrays.equals(failedResourceXid.getGlobalTransactionId(), (byte[]) getGlobalTransactionId) && Arrays.equals(failedResourceXid.getBranchQualifier(), (byte[]) getBranchQualifier)) {
+
+                Object getHeuristicValue = JMXServer.getAgent().getServer().getAttribute(xaResourceRecord, "HeuristicValue");
+                assertTrue(getHeuristicValue.equals(new Integer(6)));
+                JMXServer.getAgent().getServer().invoke(xaResourceRecord, "clearHeuristic", null, null);
+            }
+
+        }
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[] {
+                        new TestXAResource()  {
+                            public Xid[] recover(int var) throws XAException {
+                                if (var == XAResource.TMSTARTRSCAN) {
+                                    if (failedResourceXid != null) {
+                                        return new Xid[]{failedResourceXid};
+                                    }
+                                }
+                                return new Xid[0];
+                            }
+                            @Override
+                            public void commit(Xid xid, boolean b) throws XAException {
+                                failedResourceXid = null;
+                            }
+
+                            @Override
+                            public int prepare(Xid xid) throws XAException {
+                                return 0;
+                            }
+
+                            @Override
+                            public void rollback(Xid xid) throws XAException {
+                                fail("Resource was rolled back");
+                            }
+                        }
+                };
+            }
+        });
+        xaRecoveryModule.periodicWorkFirstPass();
+        Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
+        safetyIntervalMillis.setAccessible(true);
+        Object o1 = safetyIntervalMillis.get(null);
+        safetyIntervalMillis.set(null, 0);
+        try {
+            xaRecoveryModule.periodicWorkSecondPass();
+        } finally {
+            safetyIntervalMillis.set(null, o1);
+        }
+
+        xa.recover(XAResource.TMSTARTRSCAN);
+        try {
+            xa.commit(xid, false);
+        } finally {
+            xa.recover(XAResource.TMENDRSCAN);
+        }
+        assertNull(failedResourceXid);
+    }
     @Test
     public void testXARetry () throws Exception
     {
