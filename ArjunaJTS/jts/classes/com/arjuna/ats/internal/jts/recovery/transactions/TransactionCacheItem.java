@@ -86,7 +86,15 @@ class TransactionCacheItem
 		} 
 	    }
 	}
-	else if (_type.equals(ServerTransaction.typeName()))
+    else if (_type.equals(ServerTransaction.typeName() + "/JCA"))
+    {
+        try {
+            _transaction = (RecoveringTransaction) Class.forName("com.arjuna.ats.internal.jta.recovery.jts.jca.coordinator.RecoveredServerTransaction").getConstructor(new Class[] {Uid.class, String.class}).newInstance(new Object[] {_uid, _type});
+        } catch (Exception e){
+            return false;
+        }
+    }
+    else if (_type.equals(ServerTransaction.typeName()))
 	{
 	    _transaction = new RecoveredServerTransaction(_uid);
 	    if ( firstLoad && _transaction.getRecoveryStatus() == RecoveryStatus.ACTIVATE_FAILED) {

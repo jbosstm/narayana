@@ -31,6 +31,9 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Inactive;
 import org.omg.CosTransactions.NotPrepared;
@@ -225,6 +228,14 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 	     */
 
 	    String tranType = ( (id._isServerTransaction) ? ServerTransaction.typeName() : ArjunaTransactionImple.typeName() );
+
+        try {
+            if (id._isServerTransaction && (StoreManager.getRecoveryStore().currentState(id._actionUid, ServerTransaction.typeName() + "/JCA") != StateStatus.OS_UNKNOWN)) {
+                tranType = tranType + "/JCA";
+            }
+        } catch (ObjectStoreException e) {
+            // Can't read store
+        }
 
 	    com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransactionReplayer replayer = new com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransactionReplayer(id._actionUid, tranType);
 

@@ -85,10 +85,11 @@ import com.hp.mwtests.ts.jta.jts.common.TestBase;
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
 public class JTSObjStoreBrowserTest extends TestBase {
-	private RecoveryManager rcm;
-	private RecoveryDriver rd;
+	private XARecoveryModule xarm;
+    private AtomicActionRecoveryModule aarm;
 
-	@BeforeClass
+    @BeforeClass
+
 	public static void initOrb() throws InvalidName {
 		int recoveryOrbPort = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
 		final Properties p = new Properties();
@@ -113,28 +114,23 @@ public class JTSObjStoreBrowserTest extends TestBase {
 	}
 
 	@Before
-	public void setUp () throws Exception
+	public void beforeTest () throws Exception
 	{
-		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
-		rcm = RecoveryManager.manager();
-		rcm.addModule(new XARecoveryModule());
-		rcm.addModule(new AtomicActionRecoveryModule());
-		rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(),
-				recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress(), 100000);
+        xarm = new XARecoveryModule();
+        aarm = new AtomicActionRecoveryModule();
+
+        recoveryManager.addModule(xarm);
+		recoveryManager.addModule(aarm);
 	}
 
 	@After
-	public void tearDown () throws Exception
+	public void afterTest () throws Exception
 	{
-		rcm.removeAllModules(false);
-		rcm.terminate(false);
-		Field f = RecoveryManager.class.getDeclaredField("_recoveryManager");
-        f.setAccessible(true);
-        f.set(rcm, null);
-        
+        recoveryManager.removeModule(aarm, false);
+        recoveryManager.removeModule(xarm, false);
 	}
 
 
@@ -347,7 +343,7 @@ public class JTSObjStoreBrowserTest extends TestBase {
 			* prompt the recovery manager to have a go at replaying the record that was
 			* moved off the heuristic list and back onto the prepared list
 			*/
-			rd.synchronousScan();
+			recoveryManager.scan();
 		}
 
 		// another probe should no longer find the record that got the heuristic

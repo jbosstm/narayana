@@ -76,8 +76,13 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		try
 		{
 			ServerTransaction tx = (ServerTransaction) super._theAction.getImple().getImplHandle();
-			
-			return tx.getXid();
+
+            // could be null if activation failed.
+            if (tx != null) {
+                return tx.getXid();
+            } else {
+                return null;
+            }
 		}
 		catch (Exception ex)
 		{
