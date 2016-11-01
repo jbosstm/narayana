@@ -157,6 +157,14 @@ public interface jbossatxI18NLogger {
     @LogMessage(level = WARN)
     public void warn_AppServerJDBCXARecovery_deprecation();
 
+	@Message(id = 32034, value = "Suspending transaction recovery manager", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	void info_jta_RecoveryManagerService_suspend();
+
+	@Message(id = 32035, value = "Resuming transaction recovery manager", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	void info_jta_RecoveryManagerService_resume();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
