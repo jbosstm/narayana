@@ -942,13 +942,13 @@ CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoveryBACoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,
-     uid : Uid = coordinator.identifier(),
+     coordinatorId : CoordinatorId = coordinator.identifier(),
      status : int = coordinator.status()
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("replaying commit for prepared transaction " + uid),
-   traceln("log", "replaying commit for prepared transaction " + uid)
+DO debug("replaying commit for prepared transaction " + coordinatorId),
+   traceln("log", "replaying commit for prepared transaction " + coordinatorId)
 ENDRULE
 
 #######################################################################
@@ -961,13 +961,13 @@ CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverySubordinateBACoordin
 METHOD replayPhase2
 AT ENTRY
 BIND coordinator = $0,
-     uid : Uid = coordinator.identifier(),
+     coordinatorId : CoordinatorId = coordinator.identifier(),
      status : int = coordinator.status()
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("reinstated prepared subordinate transaction " + uid),
-   traceln("log", "reinstated prepared subordinate transaction " + uid)
+DO debug("reinstated prepared subordinate transaction " + coordinatorId),
+   traceln("log", "reinstated prepared subordinate transaction " + coordinatorId)
 ENDRULE
 
 #######################################################################

@@ -487,7 +487,7 @@ RULE trace coordinator completion complete
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD complete
 AFTER SYNCHRONIZE
-BIND engine:CoordinatorEngine = $0,
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
@@ -504,7 +504,7 @@ RULE trace participant completion completed
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD completed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:ParticipantCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
@@ -521,7 +521,7 @@ RULE trace coordinator completion completed
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD completed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
@@ -538,7 +538,7 @@ RULE trace participant completion exit
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD exit(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:ParticipantCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
@@ -555,7 +555,7 @@ RULE trace coordinator completion exit
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD exit(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
@@ -612,7 +612,7 @@ RULE trace participant completion close
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD close
 AFTER SYNCHRONIZE
-BIND engine:CoordinatorEngine = $0,
+BIND engine:ParticipantCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
@@ -630,7 +630,7 @@ RULE trace coordinator completion close
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD close
 AFTER SYNCHRONIZE
-BIND engine:CoordinatorEngine = $0,
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
@@ -647,7 +647,7 @@ RULE trace participant completion closed
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD closed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:ParticipantCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
@@ -664,7 +664,7 @@ RULE trace coordinator completion closed
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD closed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
-BIND engine:CoordinatorEngine = $0,
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
@@ -683,13 +683,13 @@ CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoveryBACoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,
-     uid : Uid = coordinator.identifier(),
+     coordinatorId : CoordinatorId = coordinator.identifier(),
      status : int = coordinator.status()
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("replaying close for prepared activity " + uid),
-   traceln("log", "replaying close for prepared activity " + uid)
+DO debug("replaying close for prepared activity " + coordinatorId),
+   traceln("log", "replaying close for prepared activity " + coordinatorId)
 ENDRULE
 
 #######################################################################
