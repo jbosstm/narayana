@@ -35,9 +35,9 @@ then
   read -p "Enter WFLY issue: " WFLYISSUE
   if [ ! -d "jboss-as" ]
   then
-    (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add wildfly git@github.com:wildfly/wildfly.git)
+    (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream-wildfly git@github.com:wildfly/wildfly.git)
   fi
-  (cd jboss-as; git fetch wildfly; git checkout -b ${WFLYISSUE}; git reset --hard wildfly/master)
+  (cd jboss-as; git fetch upstream-wildfly; git checkout -b ${WFLYISSUE}; git reset --hard upstream-wildfly/master)
   cd jboss-as
   if [[ $(uname) == CYGWIN* ]]
   then
