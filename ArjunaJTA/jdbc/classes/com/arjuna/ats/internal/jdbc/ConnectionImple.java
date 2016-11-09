@@ -295,7 +295,8 @@ public class ConnectionImple implements Connection
 	 */
 	public void close() throws SQLException
 	{
-		boolean delayClose = false;
+        boolean delayClose = false;
+
 	    try
 	    {
 	        /*
@@ -318,17 +319,18 @@ public class ConnectionImple implements Connection
 	            {
 	                XAResource xares = _transactionalDriverXAConnectionConnection.getResource();
 
-	                if (!tx.delistResource(xares, XAResource.TMSUCCESS))
+	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(xares, XAResource.TMSUCCESS)) ||
+                            (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(xares, XAResource.TMFAIL)))
 	                    throw new SQLException(
 	                            jdbcLogger.i18NLogger.get_delisterror());
 
-	                getModifier();
+                    if (tx.getStatus() == Status.STATUS_ACTIVE) {
+                        getModifier();
 
-	                if (_theModifier == null)
-	                {
-                        jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
+                        if (_theModifier == null) {
+                            jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
 
-	                    // no indication about connections, so assume close immediately
+                            // no indication about connections, so assume close immediately
 
 	                    /*
 	                     * Don't return just yet. Drop through bottom of these clauses and
@@ -338,26 +340,24 @@ public class ConnectionImple implements Connection
 	                     * 
 	                     * JBTM-789.
 	                     */
-	                }
-	                else
-	                {
-	                    if (((ConnectionModifier) _theModifier).supportsMultipleConnections())
-	                    {
+                        } else {
+                            if (((ConnectionModifier) _theModifier).supportsMultipleConnections()) {
 	                        /*
 	                         * We can't close the connection until the transaction has
 	                         * terminated, so register a Synchronization here.
 	                         */
 
-                            jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
+                                jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
 
-	                        delayClose = true;
-	                    }
-	                }
+                                delayClose = true;
+                            }
+                        }
 
-	                if (delayClose)
-	                {
-						tx.registerSynchronization(new ConnectionSynchronization(this));
-	                }
+                        if (delayClose)
+                        {
+                            tx.registerSynchronization(new ConnectionSynchronization(this));
+                        }
+                    }
 	            }
 	            else
 	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
