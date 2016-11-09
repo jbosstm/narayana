@@ -53,9 +53,9 @@ then
   git reset --hard jbosstm/5_BRANCH
   if [[ $(uname) == CYGWIN* ]]
   then
-    sed -i "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml
+    sed -i "s/narayana>.*/narayana>$NEXT/g" pom.xml
   else
-    sed -i $SED_EXTRA_ARG "s/narayana>$CURRENT/narayana>$NEXT/g" pom.xml
+    sed -i $SED_EXTRA_ARG "s/narayana>.*/narayana>$NEXT/g" pom.xml
   fi
   git add pom.xml
   git commit -m "Update to latest version of Narayana"
