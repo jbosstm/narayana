@@ -63,6 +63,7 @@ then
   cd ..
 fi
 set +e
+git fetch upstream --tags
 git tag | grep $CURRENT
 if [[ $? != 0 ]]
 then
