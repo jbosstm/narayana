@@ -53,14 +53,14 @@ then
   git reset --hard jbosstm/5_BRANCH
   if [[ $(uname) == CYGWIN* ]]
   then
-    sed -i "s/narayana>.*/narayana>$NEXT/g" pom.xml
+    sed -i "s/narayana>.*</narayana>$NEXT</g" pom.xml
   else
-    sed -i $SED_EXTRA_ARG "s/narayana>.*/narayana>$NEXT/g" pom.xml
+    sed -i $SED_EXTRA_ARG "s/narayana>.*</narayana>$NEXT</g" pom.xml
   fi
   git add pom.xml
   git commit -m "Update to latest version of Narayana"
   git push
-  cd ..
+  cd -
 fi
 set +e
 git fetch upstream --tags
@@ -72,14 +72,23 @@ then
 else
   set -e
 fi
-if [[ $(uname) == CYGWIN* ]]
-then
-  git fetch upstream --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn.cmd" -Dawestruct.executable="awestruct.bat" all
-else
-  git fetch upstream --tags; git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" ant -f build-release-pkgs.xml -Dmvn.executable="tools/maven/bin/mvn" -Dawestruct.executable="awestruct" all
-fi
+
+git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" 
+cd ~/tmp/narayana/$CURRENT/sources/narayana/
+git checkout $CURRENT
+mvn clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/
+mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/ -Prelease
+mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
+mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
+git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
+cd -
+cd ~/tmp/narayana/$CURRENT/sources/documentation/
+git checkout $CURRENT
+mvn clean install -Prelease
+cd -
+ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
 echo "build and retrieve the centos54x64 blacktie binary on centos54x64 machine"
-ssh narayanaci1.eng.hst.ams2.redhat.com -x "export JAVA_HOME=/usr/local/jdk1.8.0/ ; mkdir tmp ; cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
+ssh narayanaci1.eng.hst.ams2.redhat.com -x "export JAVA_HOME=/usr/lib/jvm/java-1.8.0/ ; mkdir tmp ; cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
 scp narayanaci1.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz ~/tmp/narayana/$CURRENT/
 scp ~/tmp/narayana/$CURRENT/blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
 echo "You need to execute the following commands on a Windows box"

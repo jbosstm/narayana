@@ -59,8 +59,7 @@
   <description>
         package Narayana binary + src files for upload to website and other repos.
     </description>
-  <property name="mvn.executable" value="tools/maven/bin/mvn.bat"/>
-  <property name="awestruct.executable" value="awestruct.bat"/>
+  <property name="awestruct.executable" value="awestruct"/>
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm"/>
   <!-- The tag as it appears under svnbase -->
@@ -80,8 +79,8 @@
   <target name="fail">
     <fail message="you must specify a target"/>
   </target>
-  <target name="all" depends="dist,downloads,docs,web"/>
-  <target name="dist-init" unless="dist-init">
+  <target name="all" depends="init,downloads,web"/>
+  <target name="init">
     <tstamp/>
     <fail message="You must set a workdir">
       <condition>
@@ -90,47 +89,13 @@
         </not>
       </condition>
     </fail>
-    <fail message="You cannot perform a build without a clone in ${workdir}/sources/narayana/">
+    <fail message="You cannot perform a build without a clone in ${workdir}/sources/*/">
       <condition>
         <not>
-          <available file="${workdir}/sources/narayana/" type="dir"/>
+          <available file="${workdir}/sources/" type="dir"/>
         </not>
       </condition>
     </fail>
-    <!-- pull the source code from git -->
-    <exec executable="git" dir="${workdir}/sources/narayana/">
-      <arg value="checkout"/>
-      <arg value="${tag}"/>
-    </exec>
-  </target>
-  <target name="dist" depends="dist-init" description="build the end-user release bundles (src and binary)">
-    <!-- Clean all generated artefacts -->
-    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
-      <arg line="clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/"/>
-    </exec>
-    <!-- package the full source release (all src tree) -->
-    <delete file="${workdir}/narayana-full-${tag}-src.zip"/>
-    <zip basedir="${workdir}/sources/narayana/" destfile="${workdir}/narayana-full-${tag}-src.zip" includes="**"/>
-    <!-- build the binary releases -->
-    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
-      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=${user.dir}/ext/ -Prelease"/>
-    </exec>
-    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
-      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml"/>
-    </exec>
-    <exec dir="${workdir}/sources/narayana/" executable="${mvn.executable}" failonerror="true">
-      <arg line="clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am"/>
-    </exec>
-  </target>
-  <!-- copy the release into the downloads dir tree (http://www.jboss.org/jbosstm web site content) -->
-  <target name="docs">
-    <exec executable="git" dir="${workdir}/sources/documentation/">
-      <arg value="checkout"/>
-      <arg value="${tag}"/>
-    </exec>
-    <exec dir="${workdir}/sources/documentation/" executable="${mvn.executable}" failonerror="true">
-      <arg line="install -Prelease"/>
-    </exec>
   </target> 
   <target name="downloads" description="copy release bundles to Narayana web site storage">
     <delete dir="${workdir}/downloads/"/>
