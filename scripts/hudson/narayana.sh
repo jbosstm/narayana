@@ -275,8 +275,8 @@ function build_as {
     git checkout 5_BRANCH
     [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
-    [ $? = 0 ] || fatal "git fetch https://github.com/mmusgrov/jboss-as.git failed"
-    git reset --hard mmusgrov/5_BRANCH
+    [ $? = 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
+    git reset --hard jbosstm/5_BRANCH
     [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
     [ $? > 1 ] || fatal "git clean failed"
@@ -284,15 +284,15 @@ function build_as {
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of AS7"
-    git clone https://github.com/mmusgrov/jboss-as.git -o mmusgrov
-    [ $? = 0 ] || fatal "git clone https://github.com/mmusgrov/jboss-as.git failed"
+    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
+    [ $? = 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
 
     git remote add upstream https://github.com/wildfly/wildfly.git
   fi
 
-  [ -z "$AS_BRANCH" ] || git fetch mmusgrov +refs/pull/*/head:refs/remotes/mmusgrov/pull/*/head
+  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
   [ $? = 0 ] || fatal "git fetch of pulls failed"
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
