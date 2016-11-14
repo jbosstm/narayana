@@ -33,16 +33,37 @@
       </plugin>
     </plugins>
   </build>
-  <modules>
-    <module>jta</module>
-    <module>cdi</module>
-    <module>jdbc</module>
-    <module>spi</module>
-    <module>jms</module>
-    <module>narayana-jta</module>
-    <module>jta-module</module>
-  </modules>
   <profiles>
+      <profile>
+        <id>modularizedJdk</id>
+        <activation>
+          <jdk>9</jdk>
+        </activation>
+        <modules>
+            <module>jta</module>
+          <module>cdi</module>
+          <module>jdbc</module>
+          <module>spi</module>
+          <module>jms</module>
+          <module>narayana-jta</module>
+          <module>jta-module</module>
+        </modules>
+      </profile>
+      <profile>
+        <!-- the unmodularized jdk skips the jdk-9 jta-module -->
+        <id>unmodularizedJdk</id>
+        <activation>
+          <jdk>[1.5,1.9)</jdk>
+        </activation>
+        <modules>
+            <module>jta</module>
+          <module>cdi</module>
+          <module>jdbc</module>
+          <module>spi</module>
+          <module>jms</module>
+          <module>narayana-jta</module>
+        </modules>
+      </profile>
       <profile>
           <id>release</id>
           <build>

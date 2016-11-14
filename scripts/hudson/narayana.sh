@@ -348,7 +348,7 @@ function build_as {
     git remote add upstream git://github.com/wildfly/wildfly.git
   fi
 
-  [ -z "$AS_BRANCH" ] || git fetch mmusgrov +refs/pull/*/head:refs/remotes/mmusgrov/pull/*/head
+  [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
   [ $? = 0 ] || fatal "git fetch of pulls failed"
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
