@@ -196,30 +196,5 @@
               </plugins>
           </build>
       </profile>
-      <profile>
-        <id>j9</id>
-        <activation>
-          <jdk>[1.9,)</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration combine.self="append">
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <argLine>--add-exports-private=java.base/java.lang=ALL-UNNAMED</argLine>
-                    <excludes>
-                      <exclude>**/utils/plugins/**</exclude>
-                      <exclude>**/DBPlugin.java</exclude>
-                      <exclude>**/*JNDISetup.java</exclude>
-                      <exclude>**/*SimpleJdbcTest.java</exclude>
-                    <exclude>**/*StableConnections.java</exclude>
-                    </excludes>
-                  </configuration>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
   </profiles>
 </project>

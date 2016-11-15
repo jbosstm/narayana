@@ -45,16 +45,7 @@ fi
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	if [ $JAVA_VERSION = "9-ea" ]; then
-		MAVEN_OPTS="$MAVEN_OPTS -Xmx2048M"
-		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.util=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.lang.reflect=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.text=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.desktop/java.awt.font=ALL-UNNAMED"
-	else
-		MAVEN_OPTS="$MAVEN_OPTS -Xmx512M"
-	fi
+	MAVEN_OPTS="$MAVEN_OPTS -Xmx512M"
 	export MAVEN_OPTS
 fi
 

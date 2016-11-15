@@ -328,28 +328,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-        <id>j9</id>
-        <activation>
-          <jdk>[1.9,)</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration combine.self="append">
-                  <argLine>--add-exports-private=java.base/java.io=ALL-UNNAMED --add-exports-private=java.base/java.lang=ALL-UNNAMED</argLine>
-              </configuration>
-            </plugin>
-          </plugins>
-        </build>
-        <properties>
-            <server.jvm.args>
-                ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
-            </server.jvm.args>
-        </properties>
       </profile>
     </profiles>
 </project>

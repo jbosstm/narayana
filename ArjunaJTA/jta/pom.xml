@@ -382,7 +382,6 @@
                 </plugins>
             </build>
         </profile>
-
 	<profile>
 		<id>commitMarkableResourcePerf</id>
 		<dependencies>
@@ -458,35 +457,5 @@
         </plugins>
       </build>
     </profile>
-      <profile>
-        <id>j9</id>
-        <activation>
-          <jdk>[1.9,)</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration combine.self="append">
-                  <argLine>--add-exports-private=java.base/java.io=ALL-UNNAMED</argLine>
-                  <excludes>
-                    <!-- j9 TODO seemed to appear after commit a0a8312
-                         (which should have been unrelated) - go back and check -->
-                    <exclude>com.hp.mwtests.ts.jta.recovery.CrashRecoveryCommitReturnsXA_RETRY</exclude>
-                    <exclude>com.hp.mwtests.ts.jta.recovery.CrashRecoveryCommitReturnsXA_RETRYHeuristicRollback</exclude>
-                    <!-- exclude tests that run in the arquillian profile -->
-                    <exclude>**/integration/*IntegrationTest.java</exclude>
-                  </excludes>
-              </configuration>
-            </plugin>
-          </plugins>
-        </build>
-        <properties>
-            <server.jvm.args>
-                ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
-            </server.jvm.args>
-        </properties>
-      </profile>
   </profiles>
 </project>

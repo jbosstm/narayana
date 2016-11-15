@@ -40,10 +40,6 @@
         <ipv6.server.jvm.args>-Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1]
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
-        <server.jvm.j9.args/>
-        <server.jvm.args>
-            ${server.jvm.j9.args} ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
-        </server.jvm.args>
     </properties>
 
     <build>
@@ -56,12 +52,6 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- j9 TODO check which profile is this failing in -->
-                    <excludes>
-<!--
-                      <exclude>org.jboss.narayana.compensations.integration.archive.EarArchiveTestLocal</exclude>
--->
-                    </excludes>
                     <skip>true</skip>
                 </configuration>
             </plugin>
@@ -186,7 +176,7 @@
                 <jdk>[1.9,)</jdk>
             </activation>
             <properties>
-              <server.jvm.j9.args>--add-modules java.xml.ws</server.jvm.j9.args>
+              <jvm.args.jdk9>--add-modules java.xml.ws</jvm.args.jdk9>
             </properties>
             <build>
                 <plugins>
