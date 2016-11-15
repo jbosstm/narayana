@@ -30,8 +30,7 @@
     <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
-    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
-    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+    <modular.jdk.args>--add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED</modular.jdk.args>
   </properties>
 
   <build>
@@ -378,14 +377,8 @@
                 <goals>
                   <goal>test</goal>
                 </goals>
-                <configuration combine.self="override">
+                <configuration>
                   <skip>false</skip>
-                  <reuseForks>false</reuseForks>
-                  <childDelegation>true</childDelegation>
-                  <systemProperties combine.children="append" />
-                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                  <argLine>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports-private=java.base/java.io=java.corba</argLine>
-                  <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/exceptions/**</exclude>
@@ -406,14 +399,9 @@
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
-					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
-					<classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
-                  <systemPropertyVariables combine.children="append">
-                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
-                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
-                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
-                  </systemPropertyVariables>
                 </configuration>
               </execution>
             </executions>
