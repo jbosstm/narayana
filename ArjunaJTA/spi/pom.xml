@@ -292,29 +292,5 @@
                 </plugins>
             </build>
         </profile>
-      <profile>
-        <id>j9</id>
-        <activation>
-          <jdk>[1.9,)</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-                  <configuration combine.self="append">
-                      <argLine>--add-exports-private=java.base/java.io=ALL-UNNAMED</argLine>
-                      <systemPropertyVariables combine.children="append">
-                      <!--
-                           Used in arquillian.xml
-                      -->
-                           <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}</server.jvm.args>
-                           <node.address>127.0.0.1</node.address>
-                      </systemPropertyVariables>
-                  </configuration>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
     </profiles>
 </project>

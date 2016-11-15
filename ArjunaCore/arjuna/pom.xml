@@ -160,59 +160,6 @@
   </dependencies>
 
   <profiles>
-      <profile>
-        <id>j9</id>
-        <activation>
-          <jdk>[1.9,)</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-test</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration combine.self="override">
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <forkMode>pertest</forkMode>
-                    <childDelegation>true</childDelegation>
-                    <!-- j9 TODO -->
-                    <excludes>
-                      <!-- ReaperTestCase.testReaper:140 expected:<1> but was:<2> -->
-                      <exclude>**/ReaperTestCase.java</exclude>
-                    </excludes>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-   <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-enforcer-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>enforce-versions</id>
-          <goals>
-            <goal>enforce</goal>
-          </goals>
-          <configuration>
-            <rules>
-              <requireJavaVersion>
-                <version>1.9</version>
-              </requireJavaVersion>
-            </rules>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
-
-          </plugins>
-        </build>
-      </profile>
     <profile>
 	  <!-- always run this test configuraton unless the ibmorb profile is active -->
       <id>not-ibmorb</id>
