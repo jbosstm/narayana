@@ -25,8 +25,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
-    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
   </properties>
 
   <build>
@@ -59,8 +58,11 @@
         <executions>
           <execution>
             <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals> 
             <configuration>
-              <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M -Djava.util.logging.config.file=logging.properties</argLine>
               <useManifestOnlyJar>false</useManifestOnlyJar>
             </configuration>
           </execution>
@@ -237,25 +239,18 @@
                <executions>
                  <execution>
                    <id>default-test</id>
-                   <configuration combine.self="override">
-                     <reuseForks>false</reuseForks>
-                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                     <childDelegation>true</childDelegation>
-                     <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                     <argLine>--add-modules java.corba --upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED --add-exports-private=java.base/java.io=java.corba</argLine>
+                   <phase>test</phase>
+                   <goals>
+                     <goal>test</goal>
+                   </goals> 
+                   <configuration>
                      <useManifestOnlyJar>false</useManifestOnlyJar>
-                  <classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
-                  </classpathDependencyExcludes>
-                  <systemPropertyVariables
-                    combine.children="append">
-                    <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
-                    <OrbPortabilityEnvironmentBean.poaImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.poaImpleClassName>
-                    <OrbPortabilityEnvironmentBean.orbDataClassName>com.arjuna.orbportability.internal.orbspecific.versions.javaidl_1_4</OrbPortabilityEnvironmentBean.orbDataClassName>
-                  </systemPropertyVariables>
+                     <classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
+                       <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
+                     </classpathDependencyExcludes>
                    </configuration>
                  </execution>
                </executions>

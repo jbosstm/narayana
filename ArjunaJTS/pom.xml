@@ -27,6 +27,7 @@
   <properties>
     <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+    <modular.jdk.args/>
   </properties>
   <build>
     <plugins>
@@ -55,20 +56,18 @@
         </modules>
         <build>
           <plugins>
-            <plugin>
+           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <executions>
                 <execution>
-<!-- TODO move j9 specific config from child modules to here -->
                   <id>default-test</id>
                   <phase>test</phase>
                   <goals>
                     <goal>test</goal>
                   </goals>
-                  <configuration combine.self="override">
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba</argLine>
+                  <configuration>
+                    <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba ${modular.jdk.args}</argLine>
                     <systemPropertyVariables
                       combine.children="append">
                       <OrbPortabilityEnvironmentBean.orbImpleClassName>com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4</OrbPortabilityEnvironmentBean.orbImpleClassName>
