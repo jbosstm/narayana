@@ -20,7 +20,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>idlj-idl</artifactId>
+  <artifactId>idlj-idl-j9</artifactId>
   <name>Narayana: ArjunaJTS idl idlj-j9</name>
   <description>Narayana: ArjunaJTS idl idlj-j9</description>
   <packaging>jar</packaging>
