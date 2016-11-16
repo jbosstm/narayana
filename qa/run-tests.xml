@@ -61,6 +61,10 @@
   <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
   <property name="profile" value=""/>
 
+  <condition property="jts.xargs" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" else="">
+    <equals arg1="${ant.java.version}" arg2="1.9"/>
+  </condition>
+
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="scratch">
     <junit-tests tests="defaulttimeout"/>
@@ -79,29 +83,29 @@
   <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
   <target name="express">
     <!-- currenttests01 : 36 tests, 3 minutes -->
-    <junit-tests tests="currenttests01"/>
+    <junit-tests tests="currenttests01" additional.elements="${jts.xargs}"/>
     <!-- jtatests01 : 6 tests, 1 minute -->
-    <junit-tests tests="jtatests01"/>
+    <junit-tests tests="jtatests01" additional.elements="${jts.xargs}"/>
     <!-- otsserver : 20 tests, 7 minutes -->
-    <junit-tests tests="otsserver"/>
+    <junit-tests tests="otsserver" additional.elements="${jts.xargs}"/>
     <!-- rawresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources01_1"/>
+    <junit-tests tests="rawresources01_1" additional.elements="${jts.xargs}"/>
     <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources02_1"/>
+    <junit-tests tests="rawresources02_1" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_1"/>
+    <junit-tests tests="rawsubtransactionawareresources01_1" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_1"/>
+    <junit-tests tests="rawsubtransactionawareresources02_1" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery01"/>
+    <junit-tests tests="crashrecovery01" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
-    <junit-tests tests="crashrecovery02_1"/>
+    <junit-tests tests="crashrecovery02_1" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <junit-tests tests="crashrecovery03"/>
+    <junit-tests tests="crashrecovery03" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <junit-tests tests="crashrecovery06"/>
+    <junit-tests tests="crashrecovery06" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery12 : 7 tests, 5 minutes -->
-    <junit-tests tests="crashrecovery12"/>
+    <junit-tests tests="crashrecovery12" additional.elements="${jts.xargs}"/>
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="ci-tests" depends="junit-testsuite,junit-jts-testsuite,junit-jdbc-ncl-testsuite">
@@ -143,65 +147,65 @@
   </target>
   <target name="junit-jts-testsuite">
     <!-- currenttests01 : 36 tests, 2 minutes -->
-    <junit-tests tests="currenttests01"/>
+    <junit-tests tests="currenttests01" additional.elements="${jts.xargs}"/>
     <!-- jtatests01 : 6 tests, 1 minute -->
-    <junit-tests tests="otsserver"/>
+    <junit-tests tests="otsserver" additional.elements="${jts.xargs}"/>
     <!-- jtsremote : 9 tests, 3 minutes -->
-    <junit-tests tests="jtsremote"/>
+    <junit-tests tests="jtsremote" additional.elements="${jts.xargs}"/>
     <!-- defaulttimeout : 2 tests, 2 minutes -->
-    <junit-tests tests="rawresources01_1"/>
+    <junit-tests tests="rawresources01_1" additional.elements="${jts.xargs}"/>
     <!-- rawresources01_2 : 147 tests, 7 minutes -->
-    <junit-tests tests="rawresources01_2"/>
+    <junit-tests tests="rawresources01_2" additional.elements="${jts.xargs}"/>
     <!-- rawresources01_2b : 147 tests, 6 minutes -->
-    <junit-tests tests="rawresources01_2b"/>
+    <junit-tests tests="rawresources01_2b" additional.elements="${jts.xargs}"/>
     <!-- rawresources01_3 : 150 tests, 8 minutes -->
-    <junit-tests tests="rawresources01_3"/>
+    <junit-tests tests="rawresources01_3" additional.elements="${jts.xargs}"/>
     <!-- rawresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawresources02_1"/>
+    <junit-tests tests="rawresources02_1" additional.elements="${jts.xargs}"/>
     <!-- rawresources02_2 : 147 tests, 7 minutes -->
-    <junit-tests tests="rawresources02_2"/>
+    <junit-tests tests="rawresources02_2" additional.elements="${jts.xargs}"/>
     <!-- rawresources02_2 : 147 tests, 6 minutes -->
-    <junit-tests tests="rawresources02_2b"/>
+    <junit-tests tests="rawresources02_2b" additional.elements="${jts.xargs}"/>
     <!-- rawresources02_3 : 150 tests, 8 minutes -->
-    <junit-tests tests="rawresources02_3"/>
+    <junit-tests tests="rawresources02_3" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_1"/>
+    <junit-tests tests="rawsubtransactionawareresources01_1" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources01_2 : 10 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources01_2"/>
+    <junit-tests tests="rawsubtransactionawareresources01_2" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources01_3 : 25 tests, 2 minutes -->
-    <junit-tests tests="rawsubtransactionawareresources01_3"/>
+    <junit-tests tests="rawsubtransactionawareresources01_3" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_1"/>
+    <junit-tests tests="rawsubtransactionawareresources02_1" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources02_2 : 10 tests, 1 minute -->
-    <junit-tests tests="rawsubtransactionawareresources02_2"/>
+    <junit-tests tests="rawsubtransactionawareresources02_2" additional.elements="${jts.xargs}"/>
     <!-- rawsubtransactionawareresources02_3 : 25 tests, 2 minutes -->
-    <junit-tests tests="rawsubtransactionawareresources02_3"/>
+    <junit-tests tests="rawsubtransactionawareresources02_3" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery01 : 24 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery01"/>
+    <junit-tests tests="crashrecovery01" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery02_1 : 5 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery02_1"/>
+    <junit-tests tests="crashrecovery02_1" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery02_2 : 50 tests, 12 minutes -->
-    <junit-tests tests="crashrecovery02_2"/>
+    <junit-tests tests="crashrecovery02_2" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery03 : 1 tests, 1 minute -->
-    <junit-tests tests="crashrecovery03"/>
+    <junit-tests tests="crashrecovery03" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery04 : 48 tests, 6 minutes -->
-    <junit-tests tests="crashrecovery04"/>
+    <junit-tests tests="crashrecovery04" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
-    <junit-tests tests="crashrecovery05_1"/>
+    <junit-tests tests="crashrecovery05_1" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
-    <junit-tests tests="crashrecovery05_2"/>
+    <junit-tests tests="crashrecovery05_2" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery06 : 2 tests, 1 minute -->
-    <junit-tests tests="crashrecovery06"/>
+    <junit-tests tests="crashrecovery06" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery07 : 16 tests, 4 minutes -->
-    <junit-tests tests="crashrecovery07"/>
+    <junit-tests tests="crashrecovery07" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery08 : 32 tests, 15 minutes -->
-    <junit-tests tests="crashrecovery08"/>
+    <junit-tests tests="crashrecovery08" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery09 : 6 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery09"/>
+    <junit-tests tests="crashrecovery09" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery10 : 6 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery10"/>
+    <junit-tests tests="crashrecovery10" additional.elements="${jts.xargs}"/>
     <!-- crashrecovery12 : 7 tests, 2 minutes -->
-    <junit-tests tests="crashrecovery12"/>
+    <junit-tests tests="crashrecovery12" additional.elements="${jts.xargs}"/>
   </target>
 
   <target name="has-testoutput-output">
@@ -219,7 +223,9 @@
   <property name="test.timeout" value=""/>
   <target name="onetest">
     <echo message="Running a single test group ${test.name}"/>
-    <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}"/>
+    <echo message="jdk version: ${ant.java.version}"/>
+    <echo message="jts xargs: ${jts.xargs}"/>
+    <junit-tests tests="${test.name}" methods="${test.methods}" test.timeout="${test.timeout}" additional.elements="${jts.xargs}"/>
     <fail if="failed-tests" message="${test.name} - some tests failed"/>
   </target>
 

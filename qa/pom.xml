@@ -180,11 +180,6 @@
 	</build>
 
 	<dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>narayana-jts-idlj</artifactId>
-          <version>${project.version}</version>
-        </dependency>
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
@@ -233,6 +228,32 @@
 	</dependencies>
 
   <profiles>
+    <profile>
+      <id>modularizedJdk</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>narayana-jts-idlj-j9</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>unmodularizedJdk</id>
+      <activation>
+        <jdk>[5,9)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>narayana-jts-idlj</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
 	<profile>
 		<id>postgresql</id>
 		<dependencies>

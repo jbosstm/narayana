@@ -100,7 +100,7 @@ public abstract class AbstractTestCase {
         }
 
         try {
-            txSupport.getTransactionInfo();
+            txSupport.txStatus(); //getTransactionInfo();
             Assert.fail("Failed to rollback the transaction.");
         } catch (HttpResponseException e) {
             // Expected if transaction was rolled back.
