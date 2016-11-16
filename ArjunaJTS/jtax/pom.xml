@@ -28,6 +28,9 @@
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
     <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
     <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
+
+    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
   </properties>
 
   <build>
@@ -156,15 +159,18 @@
       <activation>
         <jdk>[1.9,)</jdk>
       </activation>
+      <properties>
+        <version.compiler.plugin>3.6.0</version.compiler.plugin>
+      </properties>
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
+          <artifactId>idlj-idl-j9</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
+          <artifactId>idlj-idl-j9</artifactId>
           <version>${project.version}</version>
           <type>test-jar</type>
           <scope>test</scope>
@@ -185,7 +191,7 @@
             <executions>
               <execution>
                 <id>copy-dependencies</id>
-                <phase>compile</phase>
+                <phase>initialize</phase>
                 <goals>
                   <goal>copy</goal>
                 </goals>
@@ -213,6 +219,7 @@
           <!-- disable maven compiler in favour of the ant javac task
             (when https://issues.apache.org/jira/browse/MCOMPILER-279 is fixed renable it)
             -->
+<!--
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -227,7 +234,7 @@
               </execution>
             </executions>
           </plugin>
-
+-->
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.8</version>
@@ -242,8 +249,19 @@
                   <tasks name="compile sources">
                     <mkdir dir="${project.build.directory}/classes"/>
                     <property name="compile_classpath" refid="maven.compile.classpath"/>
-                    <javac destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
+                    <javac verbose="yes" destdir="${project.build.directory}/classes" classpath="${compile_classpath}"
                       excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**">
+<!--
+                    <arg>-upgrade-module-path</arg>
+                    <arg>${project.build.directory}/upgrademodulepath</arg>
+                    <arg>-add-modules</arg>
+                    <arg>java.corba,java.transaction</arg>
+-->
+                      <compilerarg value="--upgrade-module-path"/>
+                      <compilerarg value="${project.build.directory}/upgrademodulepath"/>
+
+                      <compilerarg value="--add-modules"/>
+                      <compilerarg value="java.corba"/>
                       <compilerarg value="--patch-module"/>
                       <compilerarg value="java.corba=${java.corba.patch.jar}"/>
                       <compilerarg value="--add-exports"/>
@@ -256,7 +274,6 @@
                       <compilerarg value="java.corba/org.omg.PortableInterceptor=ALL-UNNAMED"/>
                       <compilerarg value="--add-exports"/>
                       <compilerarg value="java.corba/org.omg.PortableServer=ALL-UNNAMED"/>
-
                       <src>
                         <pathelement location="${project.build.sourceDirectory}"/>
                       </src>
@@ -277,6 +294,11 @@
                     <property name="test_classpath" refid="maven.test.classpath"/>
                     <javac destdir="${project.build.directory}/test-classes" classpath="${compile_classpath}:${test_classpath}"
                       excludes="**/javaidl/**,**/ibmorb/**,**/jacorb/**,**/GenericRecoveryCreatorUnitTest.java">
+                      <compilerarg value="--add-modules"/>
+                      <compilerarg value="java.corba"/>
+                      <compilerarg value="--upgrade-module-path"/>
+                      <compilerarg value="${project.build.directory}/upgrademodulepath"/>
+
                       <compilerarg value="--patch-module"/>
                       <compilerarg value="java.corba=${java.corba.patch.jar}"/>
                       <compilerarg value="--add-exports"/>
@@ -295,6 +317,77 @@
                       </src>
                     </javac>
                   </tasks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${version.compiler.plugin}</version>
+            <executions>
+              <execution>
+                <phase>none</phase>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <id>default-compile</id>
+                <configuration>
+                  <!-- fork is needed so compiler args can be used -->
+                  <fork>true</fork>
+                  <compilerArgs>
+                    <arg>--upgrade-module-path</arg>
+                    <arg>${project.build.directory}/upgrademodulepath</arg>
+                    <arg>--add-modules</arg>
+                    <arg>java.corba,java.transaction</arg>
+
+<!--
+                    <arg>-upgrade-module-path</arg>
+                    <arg>${project.build.directory}/upgrademodulepath</arg>
+                    <arg>-add-modules</arg>
+                    <arg>java.corba,java.transaction</arg>
+                    <arg>-add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+-->
+<!--
+                    <arg>-patch-module</arg>
+                    <arg>java.corba=${java.corba.patch.jar}</arg>
+                    <arg>-add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA=ALL-UNNAMED</arg>
+                    <arg>-add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED</arg>
+                    <arg>-add-exports</arg>
+                    <arg>java.corba/org.omg.PortableInterceptor=ALL-UNNAMED</arg>
+                    <arg>-add-exports</arg>
+                    <arg>java.corba/org.omg.PortableServer=ALL-UNNAMED</arg>
+-->
+                  </compilerArgs>
+                  <excludes>
+                    <exclude>**/jacorb/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>none</phase>
+                <configuration>
+                  <compilerArgs>
+                    <arg>--patch-module</arg>
+                    <arg>java.corba=${java.corba.patch.jar}</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA=ALL-UNNAMED</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/org.omg.CORBA.ORBPackage=ALL-UNNAMED</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/org.omg.PortableInterceptor=ALL-UNNAMED</arg>
+                    <arg>--add-exports</arg>
+                    <arg>java.corba/org.omg.PortableServer=ALL-UNNAMED</arg>
+                  </compilerArgs>
+                  <excludes>
+                    <exclude>**/jacorb/**</exclude>
+                  </excludes>
                 </configuration>
               </execution>
             </executions>
