@@ -19,7 +19,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>narayana-jts-idlj</artifactId>
+  <artifactId>narayana-jts-idlj-j9</artifactId>
   <name>Narayana: ArjunaJTS narayana-jts-idlj-j9</name>
   <packaging>jar</packaging>
   <description>JTS uber jar with idlj stubs with Java SE 9</description>
@@ -98,35 +98,6 @@
             <exclude>**/*.*</exclude>
           </excludes>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes>
-                  <include>org.jboss.narayana:common</include>
-                  <include>org.jboss.narayana.arjunacore:arjuna</include>
-                  <include>org.jboss.narayana.arjunacore:txoj</include>
-                  <include>org.jboss.narayana.jta:jta</include>
-                  <include>org.jboss.narayana.jta:jdbc</include>
-                  <include>org.jboss.narayana.jta:cdi</include>
-                  <include>org.jboss.narayana.jts:orbportability</include>
-                  <include>org.jboss.narayana.jts:jts</include>
-                  <include>org.jboss.narayana.jts:idlj-idl</include>
-                  <include>org.jboss.narayana.jts:jtax</include>
-                </includes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
@@ -363,6 +334,84 @@
           <scope>provided</scope>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>modularizedJdk</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                  <artifactSet>
+                    <includes>
+                      <include>org.jboss.narayana:common</include>
+                      <include>org.jboss.narayana.arjunacore:arjuna</include>
+                      <include>org.jboss.narayana.arjunacore:txoj</include>
+                      <include>org.jboss.narayana.jta:jta</include>
+                      <include>org.jboss.narayana.jta:jdbc</include>
+                      <include>org.jboss.narayana.jta:cdi</include>
+                      <include>org.jboss.narayana.jts:orbportability</include>
+                      <include>org.jboss.narayana.jts:jts</include>
+                      <include>org.jboss.narayana.jts:idlj-idl-j9</include>
+                      <include>org.jboss.narayana.jts:jtax</include>
+                    </includes>
+                  </artifactSet>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>unmodularizedJdk</id>
+      <activation>
+        <jdk>[1.5,1.9)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+                <configuration>
+                  <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                  <artifactSet>
+                    <includes>
+                      <include>org.jboss.narayana:common</include>
+                      <include>org.jboss.narayana.arjunacore:arjuna</include>
+                      <include>org.jboss.narayana.arjunacore:txoj</include>
+                      <include>org.jboss.narayana.jta:jta</include>
+                      <include>org.jboss.narayana.jta:jdbc</include>
+                      <include>org.jboss.narayana.jta:cdi</include>
+                      <include>org.jboss.narayana.jts:orbportability</include>
+                      <include>org.jboss.narayana.jts:jts</include>
+                      <include>org.jboss.narayana.jts:idlj-idl</include>
+                      <include>org.jboss.narayana.jts:jtax</include>
+                    </includes>
+                  </artifactSet>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

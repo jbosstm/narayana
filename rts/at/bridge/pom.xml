@@ -39,8 +39,10 @@
             -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
+        <modular.jdk.args/>
+        <modular.jdk.props/>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
+            ${modular.jdk.args} ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
         </server.jvm.args>
     </properties>
 
@@ -201,6 +203,16 @@
       <activation>
         <jdk>[1.9,)</jdk>
       </activation>
+      <properties>
+        <!-- j9 TODO: a couple of the rest bridge tests a failing with
+           java.lang.NoClassDefFoundError: javax/xml/bind/JAXBContext
+        <modular.jdk.args>-add-modules=java.xml,java.xml.bind,java.xml.ws</modular.jdk.args>
+        <modular.jdk.args>-add-modules java.se.ee</modular.jdk.args>
+           but the following does not resolve it. Instead I changed the way the test looks
+           up rts transaction status
+           -->
+        <modular.jdk.args>--add-modules java.xml.bind</modular.jdk.args>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -211,8 +223,8 @@
                 <id>default-compile</id>
                 <configuration>
                   <compilerArgs>
-                      <arg>--add-modules</arg>
-                  <arg>java.xml.ws</arg>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml.ws</arg>
                   </compilerArgs>
                 </configuration>
               </execution>
