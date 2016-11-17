@@ -143,18 +143,8 @@
 			<scope>provided</scope>
 		</dependency>
         <dependency>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>narayana-jts-jacorb</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jacorb</groupId>
-            <artifactId>jacorb</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -219,6 +209,8 @@
     </dependencies>
     <properties>
         <test.output.type>shared</test.output.type>
+        <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+        <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch}-${project.version}.jar</java.corba.patch.jar>
     </properties>
     <profiles>
         <profile>
@@ -243,6 +235,87 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <dependencies>
+               <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>narayana-jts-idlj-j9</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.10</version>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.jboss.narayana.jts</groupId>
+                                            <artifactId>${java.corba.patch.name}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>${project.packaging}</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.jboss.narayana.jta</groupId>
+                                            <artifactId>narayana-jta-j9-module</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                            <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>1.9</source>
+                            <target>1.9</target>
+                            <compilerArgs>
+                                <arg>--patch-module</arg>
+                                <arg>java.corba=${java.corba.patch.jar}</arg>
+                                <arg>--add-modules</arg>
+                                <arg>java.corba</arg>
+                                <arg>--upgrade-module-path</arg>
+                                <arg>${project.build.directory}/upgrademodulepath</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <jvm.args.jdk9>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --upgrade-module-path ${project.build.directory}/upgrademodulepath</jvm.args.jdk9>
+            </properties>
+        </profile>
+        <profile>
+            <id>jts-jacorb</id>
+            <activation>
+                <property>
+                    <name>!jacorb-disabled</name>
+                </property>
+            </activation>
+            <dependencies>
+               <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>narayana-jts-jacorb</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
