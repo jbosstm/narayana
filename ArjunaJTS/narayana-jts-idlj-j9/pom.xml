@@ -207,11 +207,6 @@
           </exclusion>
         </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>idlj-idl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 <!--
     <dependency>
       <groupId>tanukisoft</groupId>
@@ -340,6 +335,13 @@
       <activation>
         <jdk>9</jdk>
       </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-j9</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -379,6 +381,13 @@
       <activation>
         <jdk>[1.5,1.9)</jdk>
       </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>

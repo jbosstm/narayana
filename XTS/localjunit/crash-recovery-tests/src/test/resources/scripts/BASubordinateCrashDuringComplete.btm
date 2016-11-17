@@ -1015,7 +1015,7 @@ CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoveryBACoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,
-     coordinatorId : CoordinatorId = coordinator.identifier(),
+     uid : CoordinatorId = coordinator.identifier(),
      status : int = coordinator.status()
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
@@ -1035,7 +1035,7 @@ CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverySubordinateBACoordin
 METHOD replayPhase2
 AT ENTRY
 BIND coordinator = $0,
-     coordinatorId : CoordinatorId = coordinator.identifier(),
+     uid : CoordinatorId = coordinator.identifier(),
      status : int = coordinator.status()
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
