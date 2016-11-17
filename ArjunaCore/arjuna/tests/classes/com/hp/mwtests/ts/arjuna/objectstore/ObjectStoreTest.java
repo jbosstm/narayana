@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import org.junit.Test;
@@ -701,22 +703,35 @@ public class ObjectStoreTest
         Uid u1 = new Uid();
         Uid u2 = new Uid();
         
-        StoreManager.getTxLog().write_committed(u1, "foo", new OutputObjectState());
-        StoreManager.getTxLog().write_committed(u2, "foo", new OutputObjectState());
+        assertTrue(StoreManager.getTxLog().write_committed(u1, "foo", new OutputObjectState()));
+        assertTrue(StoreManager.getTxLog().write_committed(u2, "foo", new OutputObjectState()));
         
         ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), "foo");
 
         // iteration ordering is not guaranteed.
 
-        Uid x = iter.iterate();
-        assertTrue(x.notEquals(Uid.nullUid()));
-        assertTrue(x.equals(u1) || x.equals(u2));
+        List<Uid> uids = new ArrayList<Uid>();
+        do {
+            Uid uid = iter.iterate();
+            if (uid.equals(Uid.nullUid())) {
+                break;
+            }
+            uids.add(uid);
+        } while (true);
 
-        Uid y = iter.iterate();
-        assertTrue(y.notEquals(Uid.nullUid()));
-        assertTrue(y.equals(u1) || y.equals(u2));
-
-        assertTrue(iter.iterate().equals(Uid.nullUid()));
+        boolean foundU1 = false;
+        boolean foundU2 = false;
+        StringBuffer listOfUids = new StringBuffer("u1:"+u1.stringForm()+"u2:"+u2.stringForm());
+        for (Uid uid: uids) {
+            if (u1.equals(uid)) {
+                foundU1 = true;
+            } else if (u2.equals(uid)) {
+                foundU2 = true;
+            }
+            listOfUids.append("1:"+uid.toString());
+        }
+        assertTrue("U1 search " + listOfUids.toString(), foundU1);
+        assertTrue("U2 search " + listOfUids.toString(), foundU2);
     }
 
     private static final boolean validate(ObjectStore objStore)
