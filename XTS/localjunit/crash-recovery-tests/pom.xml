@@ -80,38 +80,5 @@
                 </plugins>
             </build>
         </profile>
-      <profile>
-        <id>modularizedJdk</id>
-        <activation>
-          <jdk>9</jdk>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-test</id>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                  <configuration combine.self="override">
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
-                    <!-- j9 TODO Table "TEST_TABLE" already exists and ClassNotFound oracle.jdbc.xa.client --> 
-                    <excludes>
-                      <exclude>**/TestBACrashDuringCommit.java</exclude>
-                      <exclude>**/TestATSubordinateCrashDuringCommit.java</exclude>
-                      <exclude>**/TestBASubordinateCrashDuringCommit.java</exclude>
-                      <exclude>**/TestBASubordinateCrashDuringCommit.java</exclude>
-                    </excludes>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
     </profiles>
 </project>

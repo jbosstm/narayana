@@ -240,17 +240,9 @@
 			<artifactId>blacktie-admin-services</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>narayana-jts-jacorb</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.1_spec</artifactId>
         </dependency>
-		<dependency>
-			<groupId>jacorb</groupId>
-			<artifactId>jacorb</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
