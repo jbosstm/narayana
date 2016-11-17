@@ -44,9 +44,11 @@ import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.LockMode;
 import com.arjuna.ats.txoj.LockResult;
 import com.hp.mwtests.ts.jts.exceptions.TestException;
+import org.jboss.logging.Logger;
 
 public class AtomicObject extends LockManager
 {
+	public static final Logger logger = Logger.getLogger("AtomicObject");
 
     public AtomicObject ()
     {
@@ -60,7 +62,7 @@ public class AtomicObject extends LockManager
 	{
 	    current.begin();
 
-	    if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+	    if (setlock(new Lock(LockMode.WRITE), 5) == LockResult.GRANTED)
 	    {
 		_value = 0;
 
@@ -71,7 +73,7 @@ public class AtomicObject extends LockManager
 	}
 	catch (Exception e)
 	{
-	    System.out.println("AtomicObject "+e);
+	    logger.info("AtomicObject "+e);
 	}
     }
 
@@ -95,7 +97,7 @@ public class AtomicObject extends LockManager
 	{
 	    current.begin();
 
-	    if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+	    if (setlock(new Lock(LockMode.WRITE), 5) == LockResult.GRANTED)
 	    {
 		_value = _value + value;
 
@@ -107,8 +109,8 @@ public class AtomicObject extends LockManager
 	}
 	catch (Exception e)
 	{
-	    System.out.println(e);
-	    e.printStackTrace();
+	    logger.info(e);
+	    logger.warn(e.getMessage(), e);;
 
 	    res = false;
 	}
@@ -125,7 +127,7 @@ public class AtomicObject extends LockManager
 	{
 	    current.begin();
 
-	    if (setlock(new Lock(LockMode.WRITE), 0) == LockResult.GRANTED)
+	    if (setlock(new Lock(LockMode.WRITE), 5) == LockResult.GRANTED)
 	    {
 		_value = value;
 
@@ -137,8 +139,8 @@ public class AtomicObject extends LockManager
 	}
 	catch (Exception e)
 	{
-	    System.out.println(e);
-	    e.printStackTrace();
+	    logger.info(e);
+	    logger.warn(e.getMessage(), e);
 
 	    res = false;
 	}
@@ -146,38 +148,24 @@ public class AtomicObject extends LockManager
 	return res;
     }
 
-    public synchronized int get () throws TestException
-    {
-	boolean res = false;
-	CurrentImple current = OTSImpleManager.current();    
-	int value = -1;
+    public synchronized int get () throws TestException {
+        CurrentImple current = OTSImpleManager.current();
+        int value = -1;
 
-	try
-	{
-	    current.begin();
+        try {
+            current.begin();
 
-	    if (setlock(new Lock(LockMode.READ), 0) == LockResult.GRANTED)
-	    {
-		value = _value;
-
-		current.commit(false);
-		res = true;
-	    }
-	    else
-		current.rollback();
-	}
-	catch (Exception e)
-	{
-	    System.out.println(e);
-	    e.printStackTrace();
-
-	    res = false;
-	}
-
-	if (!res)
-	    throw new TestException();
-	else
-	    return value;
+            if (setlock(new Lock(LockMode.READ), 5) == LockResult.GRANTED) {
+                value = _value;
+                current.commit(false);
+                return value;
+            } else {
+                current.rollback();
+                throw new TestException("Could not setlock");
+            }
+        } catch (Exception e) {
+            throw new TestException(e);
+        }
     }
 
     public boolean save_state (OutputObjectState os, int t)

@@ -31,10 +31,13 @@
 
 package com.hp.mwtests.ts.jts.utils;
 
+import org.jboss.logging.Logger;
+
 import java.util.Random;
 
 public class Util
 {
+    public static final Logger logger = Logger.getLogger("Util");
 
     public static void indent (char thr, int level)
     {
@@ -52,16 +55,21 @@ public class Util
 	    System.out.print(" ");
     }    
     
-    public static void lowProbYield ()
-    {
-	while ((rand.nextInt() % 2) != 0)
-	    Thread.yield();
+    public static void lowProbYield () {
+        while ((rand.nextInt() % 2) != 0) {
+            logger.trace("low Yielding");
+            Thread.yield();
+            logger.trace("Yielded");
+        }
     }
     
     public static void highProbYield ()
     {
-	while ((rand.nextInt() % 4) != 0)
-	    Thread.yield();
+	while ((rand.nextInt() % 4) != 0) {
+        logger.trace("high Yielding");
+        Thread.yield();
+        logger.trace("Yielded");
+    }
     }
     
     public static Random rand = new Random();

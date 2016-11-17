@@ -196,6 +196,12 @@
       <scope>test</scope>
       <version>${version.org.jboss.byteman}</version>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+      <version>${version.log4j}</version>
+    </dependency>
   </dependencies>
 
   <profiles>
