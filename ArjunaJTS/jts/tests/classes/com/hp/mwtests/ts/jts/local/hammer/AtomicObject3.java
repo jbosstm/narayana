@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.jboss.logging.Logger;
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -47,6 +48,8 @@ import com.hp.mwtests.ts.jts.orbspecific.resources.ThreadObject3b;
 
 public class AtomicObject3
 {
+    public static final Logger logger = Logger.getLogger("AtomicObject3");
+
     private final static int START_VALUE_1 = 10;
     private final static int START_VALUE_2 = 101;
     private final static int EXPECTED_VALUE = START_VALUE_1 + START_VALUE_2;
@@ -72,8 +75,8 @@ public class AtomicObject3
         AtomicWorker3.atomicObject_1 = new AtomicObject();
         AtomicWorker3.atomicObject_2 = new AtomicObject();
 
-        System.out.println(AtomicWorker3.atomicObject_1.get_uid());
-        System.out.println(AtomicWorker3.atomicObject_2.get_uid());
+        logger.info(AtomicWorker3.atomicObject_1.get_uid());
+        logger.info(AtomicWorker3.atomicObject_2.get_uid());
 
         assertTrue( AtomicWorker3.atomicObject_1.set(START_VALUE_1) );
 
@@ -107,7 +110,7 @@ public class AtomicObject3
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.err);
+            logger.warn(e.getMessage(), e);
             fail();
         }
 
