@@ -41,6 +41,14 @@ import javax.interceptor.InvocationContext;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 197)
 public class CompensationInterceptorNever extends CompensationInterceptorBase {
 
+    /**
+     * Request must not be invoked inside a transaction.
+     *
+     * @param ic
+     * @return
+     * @throws TransactionalException if there is an active transaction.
+     * @throws Exception if request has failed.
+     */
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 
