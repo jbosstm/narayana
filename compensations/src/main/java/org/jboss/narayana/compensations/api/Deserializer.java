@@ -33,8 +33,21 @@ import java.util.Optional;
  */
 public interface Deserializer {
 
+    /**
+     * Method used to check if the object of specified class can be deserialized by this deserializer.
+     *
+     * @param className class name of the object which needs to be deserialized.
+     * @return {@code true} if object can be deserialized and {@code false} otherwise.
+     */
     boolean canDeserialize(String className);
 
+    /**
+     * Deserialize an object of the specified type.
+     *
+     * @param objectInputStream input stream containing serialized object.
+     * @param clazz type of the serialized object.
+     * @return {@link Optional} containing a deserialized object or empty if something went wrong.
+     */
     <T> Optional<T> deserialize(ObjectInputStream objectInputStream, Class<T> clazz);
 
 }
