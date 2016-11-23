@@ -145,11 +145,6 @@ function init_test_options {
     get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
 }
 
-function set_ulimit {
-    ulimit -u $1
-    ulimit -a
-}
-
 function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
@@ -337,7 +332,6 @@ function rts_tests {
 
 function blacktie {
   echo "#0. BlackTie"
-  ulimit -c unlimited
   if [ -z "${JBOSSAS_IP_ADDR+x}" ]; then
     echo JBOSSAS_IP_ADDR not set
     JBOSSAS_IP_ADDR=localhost
@@ -376,7 +370,7 @@ function blacktie {
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     sleep 5
   fi
 
@@ -430,7 +424,6 @@ function xts_tests {
 
   cd $WORKSPACE
   ran_crt=1
-  set_ulimit 2048
 
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
@@ -752,6 +745,11 @@ function generate_code_coverage_report {
   ./build.sh -pl code-coverage $CODE_COVERAGE_ARGS "$@" clean install
   [ $? = 0 ] || fatal "Code coverage report generation failed"
 }
+
+ulimit -a
+ulimit -u unlimited
+ulimit -c unlimited
+ulimit -a
 
 check_if_pull_closed
 

@@ -390,7 +390,7 @@
                         -javaagent:${project.build.directory}/lib/byteman.jar=listener:true
     </jvm.args.byteman>
     <jvm.args.jacoco>-javaagent:${project.build.directory}/lib/jacocoagent.jar=destfile=${project.build.directory}/coverage-reports/jacoco-ut.exec,includes=*,append=true,output=file</jvm.args.jacoco>
-    <jvm.args.memory>-Xms64m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
+    <jvm.args.memory>-Xms1024m -Xmx1024m -XX:MaxPermSize=512m</jvm.args.memory>
     <jvm.args.debug></jvm.args.debug>
     <jvm.args.other>-server</jvm.args.other>
     
