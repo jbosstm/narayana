@@ -242,7 +242,7 @@ public class ThreadActionData
 
 					if (act != null)
                     {
-						act.removeChildThread(ThreadUtil.removeThreadId(t));
+						act.removeChildThread(ThreadUtil.getThreadId(t));
                     }
 				}
 			}
