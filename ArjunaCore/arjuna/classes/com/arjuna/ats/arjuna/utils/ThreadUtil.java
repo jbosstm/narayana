@@ -20,8 +20,7 @@
  */
 package com.arjuna.ats.arjuna.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -32,7 +31,7 @@ public class ThreadUtil
     /**
      * The ID associated with the thread.
      */
-    private static final Map<Thread,String> THREAD_ID = new HashMap<Thread,String>() ;
+    private static final WeakHashMap<Thread,String> THREAD_ID = new WeakHashMap<Thread,String>() ;
     /**
      * The thread id counter.
      */
@@ -63,16 +62,6 @@ public class ThreadUtil
 	final String newId = getNextId() ;
 	THREAD_ID.put(thread,newId) ;
 	return newId ;
-    }
-    
-    /**
-     * As the association is stored in a map callers need to ensure they remove from the thread when the threadID is no longer required.
-     * 
-     * @param thread The thread to remove from the map
-     * @return The ID that matched the thread
-     */
-    public static String removeThreadId(final Thread thread) {
-        return THREAD_ID.remove(thread);
     }
     
     /**
