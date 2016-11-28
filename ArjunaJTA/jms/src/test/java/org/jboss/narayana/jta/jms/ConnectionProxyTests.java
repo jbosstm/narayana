@@ -141,7 +141,7 @@ public class ConnectionProxyTests {
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
 
         List<Synchronization> synchronizations = new ArrayList<>(1);
-        doAnswer(i -> synchronizations.add(i.getArgumentAt(0, Synchronization.class))).when(transactionHelperMock)
+        doAnswer(i -> synchronizations.add(i.getArgument(0))).when(transactionHelperMock)
                 .registerSynchronization(any(Synchronization.class));
 
         Connection connection = new ConnectionProxy(xaConnectionMock, transactionHelperMock);

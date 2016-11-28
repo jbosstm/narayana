@@ -708,6 +708,9 @@ function qa_tests_once {
     # if called with the sun or ibm orbs then only run the jtsremote tests
     [ $orbtype != "jacorb" ] && target="ci-jts-tests"
 
+    # TODO for now make sure we run all tests with jdk-9
+    [ $JAVA_VERSION = "9-ea" ] && target="ci-tests"
+
     # QA_TARGET overrides the previous settings
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
@@ -716,8 +719,8 @@ function qa_tests_once {
     [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
+      ok=0
       if [[ -n "$QA_STRESS" ]] ; then
-        ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
           ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
@@ -726,8 +729,13 @@ function qa_tests_once {
           fi
         done
       else
-        ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
-        ok=$?
+        for testgroup in $QA_TESTGROUP; do
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          if [ $? -ne 0 ]; then
+            echo "test group $testgroup failed"
+            ok=1;
+          fi
+        done
       fi
     else
       ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage
