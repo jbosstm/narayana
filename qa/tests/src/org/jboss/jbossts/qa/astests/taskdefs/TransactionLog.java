@@ -61,7 +61,7 @@ public class TransactionLog
             {
                 Class c = Class.forName(impleType);
                 
-                recoveryStore = (RecoveryStore) c.newInstance();
+                recoveryStore = (RecoveryStore) c.getDeclaredConstructor().newInstance();
             }
             catch (final Throwable ex)
             {

@@ -157,12 +157,12 @@ public class EnvironmentBeanTest
 
         } else if(field.getType().equals(Long.TYPE)) {
 
-            inputValue = new Long(1001);
+            inputValue = Long.valueOf(1001);
             setter.invoke(bean, new Object[] {inputValue});
 
         } else if(field.getType().equals(Integer.TYPE)) {
 
-            inputValue = new Integer(1001);
+            inputValue = Integer.valueOf(1001);
             setter.invoke(bean, new Object[] {inputValue});
 
         } else if(field.getType().toString().startsWith("interface ")) {
