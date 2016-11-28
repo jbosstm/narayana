@@ -79,12 +79,12 @@ public abstract class JDBCImple_driver {
 			pstmt = connection
 					.prepareStatement("DELETE FROM "
 							+ tableName
-							+ " WHERE UidString = ? AND TypeName = ? AND StateType = " + StateStatus.OS_COMMITTED);
+							+ " WHERE TypeName = ? AND UidString = ? AND StateType = " + StateStatus.OS_COMMITTED);
 
-			pstmt.setString(1, objUid.stringForm());
-			pstmt.setString(2, typeName);
+			pstmt.setString(1, typeName);
+            pstmt.setString(2, objUid.stringForm());
 
-			int rowcount = pstmt.executeUpdate();
+            int rowcount = pstmt.executeUpdate();
 			if (rowcount > 0) {
 				tsLogger.i18NLogger
 						.trace_JDBCImple_previouslycommitteddeleted(rowcount);
@@ -94,11 +94,11 @@ public abstract class JDBCImple_driver {
 			pstmt2 = connection
 					.prepareStatement("UPDATE "
 							+ tableName
-							+ " SET StateType = " + StateStatus.OS_COMMITTED + " WHERE UidString = ? AND TypeName = ? AND StateType = "
+							+ " SET StateType = " + StateStatus.OS_COMMITTED + " WHERE TypeName = ? AND UidString = ? AND StateType = "
 							+ StateStatus.OS_UNCOMMITTED);
 
-			pstmt2.setString(1, objUid.stringForm());
-			pstmt2.setString(2, typeName);
+            pstmt2.setString(1, typeName);
+			pstmt2.setString(2, objUid.stringForm());
 
 			int rowcount2 = pstmt2.executeUpdate();
 			if (rowcount2 > 0) {
@@ -152,10 +152,10 @@ public abstract class JDBCImple_driver {
 			pstmt = connection
 					.prepareStatement("UPDATE "
 							+ tableName
-							+ " SET Hidden = 1 WHERE UidString = ? AND TypeName = ? AND Hidden = 0");
+							+ " SET Hidden = 1 WHERE TypeName = ? AND UidString = ?");
 
-			pstmt.setString(1, objUid.stringForm());
-			pstmt.setString(2, typeName);
+            pstmt.setString(1, typeName);
+			pstmt.setString(2, objUid.stringForm());
 
 			int rowcount = pstmt.executeUpdate();
 			connection.commit();
@@ -198,10 +198,10 @@ public abstract class JDBCImple_driver {
 			pstmt = connection
 					.prepareStatement("UPDATE "
 							+ tableName
-							+ " SET Hidden = 0 WHERE UidString = ? AND TypeName = ? AND Hidden = 1");
+							+ " SET Hidden = 0 WHERE TypeName = ? AND UidString = ?");
 
-			pstmt.setString(1, objUid.stringForm());
-			pstmt.setString(2, typeName);
+            pstmt.setString(1, typeName);
+			pstmt.setString(2, objUid.stringForm());
 
 			int rowcount = pstmt.executeUpdate();
 			connection.commit();
@@ -252,10 +252,10 @@ public abstract class JDBCImple_driver {
 			pstmt = connection
 					.prepareStatement("SELECT StateType, Hidden FROM "
 							+ tableName
-							+ " WHERE UidString = ? AND TypeName = ?");
+							+ " WHERE TypeName = ? AND UidString = ?");
 
-			pstmt.setString(1, objUid.stringForm());
-			pstmt.setString(2, typeName);
+            pstmt.setString(1, typeName);
+			pstmt.setString(2, objUid.stringForm());
 
 			rs = pstmt.executeQuery();
 
@@ -491,10 +491,10 @@ public abstract class JDBCImple_driver {
 					pstmt = connection
 							.prepareStatement("DELETE FROM "
 									+ tableName
-									+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+									+ " WHERE TypeName = ? AND UidString = ? AND StateType = ?");
 
-					pstmt.setString(1, objUid.stringForm());
-					pstmt.setString(2, typeName);
+                    pstmt.setString(1, typeName);
+					pstmt.setString(2, objUid.stringForm());
 					pstmt.setInt(3, stateType);
 
 					if (pstmt.executeUpdate() > 0) {
@@ -551,9 +551,9 @@ public abstract class JDBCImple_driver {
 				pstmt = connection
 						.prepareStatement("SELECT ObjectState FROM "
 								+ tableName
-								+ " WHERE UidString = ? AND TypeName = ? AND StateType = ?");
-				pstmt.setString(1, objUid.stringForm());
-				pstmt.setString(2, typeName);
+								+ " WHERE TypeName = ? AND UidString = ? AND StateType = ?");
+                pstmt.setString(1, typeName);
+                pstmt.setString(2, objUid.stringForm());
 				pstmt.setInt(3, stateType);
 
 				rs = pstmt.executeQuery();
@@ -628,13 +628,13 @@ public abstract class JDBCImple_driver {
 						.prepareStatement(
 								"SELECT ObjectState, UidString, StateType, TypeName FROM "
 										+ tableName
-										+ " WHERE UidString = ? AND StateType = ? AND TypeName = ? FOR UPDATE",
+										+ " WHERE TypeName = ? AND UidString = ? AND StateType = ?",
 								ResultSet.TYPE_FORWARD_ONLY,
 								ResultSet.CONCUR_UPDATABLE);
 
-				pstmt.setString(1, objUid.stringForm());
-				pstmt.setInt(2, stateType);
-				pstmt.setString(3, typeName);
+                pstmt.setString(1, typeName);
+				pstmt.setString(2, objUid.stringForm());
+				pstmt.setInt(3, stateType);
 
 				rs = pstmt.executeQuery();
 
@@ -642,12 +642,12 @@ public abstract class JDBCImple_driver {
 				    PreparedStatement pstmt2 = connection
                         .prepareStatement("UPDATE " + tableName +
                             " SET ObjectState = ?" +
-                           " WHERE StateType=? AND TypeName=? AND UidString=?");
+                           " WHERE TypeName=? AND UidString=? AND StateType=?");
                     try {
                         pstmt2.setBytes(1, b);
-                        pstmt2.setInt(2, stateType);
-                        pstmt2.setString(3, typeName);
-                        pstmt2.setString(4, objUid.stringForm());
+                        pstmt2.setString(2, typeName);
+                        pstmt2.setString(3, objUid.stringForm());
+                        pstmt2.setInt(4, stateType);
                         int executeUpdate = pstmt2.executeUpdate();
                         if (executeUpdate != 0) {
                             result = true;
@@ -662,11 +662,11 @@ public abstract class JDBCImple_driver {
 					PreparedStatement pstmt2 = connection
 							.prepareStatement("INSERT INTO "
 									+ tableName
-									+ " (StateType,Hidden,TypeName,UidString,ObjectState) VALUES (?,0,?,?,?)");
+									+ " (TypeName,UidString,StateType,Hidden,ObjectState) VALUES (?,?,?,0,?)");
 					try {
-    					pstmt2.setInt(1, stateType);
-    					pstmt2.setString(2, typeName);
-    					pstmt2.setString(3, objUid.stringForm());
+    					pstmt2.setString(1, typeName);
+    					pstmt2.setString(2, objUid.stringForm());
+                        pstmt2.setInt(3, stateType);
     					pstmt2.setBytes(4, b);
     
     					int executeUpdate = pstmt2.executeUpdate();
