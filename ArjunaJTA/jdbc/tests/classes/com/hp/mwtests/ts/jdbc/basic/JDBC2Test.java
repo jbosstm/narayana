@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jdbc.basic;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
@@ -268,7 +269,7 @@ public class JDBC2Test
 
             tx.begin();
 
-            assertFalse(conn.isClosed());
+            assertTrue(conn.isClosed());
 
             if (!reuseconn)
             {
@@ -327,5 +328,31 @@ public class JDBC2Test
         catch (Exception e)
         {
         }
+    }
+
+    @Test
+    public void testCloseUnused() throws Exception {
+        assertFalse(conn.isClosed());
+
+        conn.close();
+
+        assertTrue(conn.isClosed());
+    }
+
+    @Test
+    public void testCloseUsed() throws Exception {
+        javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
+
+        assertFalse(conn.isClosed());
+
+        tx.begin();
+        conn.createStatement().close();
+
+        assertFalse(conn.isClosed());
+
+        conn.close();
+        tx.commit();
+
+        assertTrue(conn.isClosed());
     }
 }
