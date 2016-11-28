@@ -386,7 +386,7 @@ public class ConnectionImple implements Connection
 	void closeImpl() throws SQLException {
 		try {
 			ConnectionManager.remove(this);
-			if (!_theConnection.isClosed()) {
+			if (_theConnection != null && !_theConnection.isClosed()) {
 				_theConnection.close();
 			}
 			if (_transactionalDriverXAConnectionConnection != null) {
@@ -405,7 +405,9 @@ public class ConnectionImple implements Connection
 		 * bound it to a different transaction.
 		 */
 
-		if (_theConnection == null)
+		if (_transactionalDriverXAConnectionConnection == null)
+			return true; // closeImpl was explicitly called
+		else if (_theConnection == null)
 			return false; // not opened yet. // TODO why don't we return true here
 		else
 			return _theConnection.isClosed();
