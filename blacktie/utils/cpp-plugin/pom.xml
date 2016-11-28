@@ -19,7 +19,7 @@
     <parent>
        <groupId>org.jboss.narayana.blacktie</groupId>
        <artifactId>blacktie-all</artifactId>
-       <version>5.4.1.Final-SNAPSHOT</version>
+       <version>5.5.1.Final-SNAPSHOT</version>
        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

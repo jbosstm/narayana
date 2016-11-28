@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-idl</artifactId>
-    <version>5.4.1.Final-SNAPSHOT</version>
+    <version>5.5.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

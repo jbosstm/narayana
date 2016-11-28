@@ -245,7 +245,7 @@
 				 classpathref="jts.classpath"/>
 
 		    <idl-build-list inproperty="idl.buildlist">
-            <element src="${org.jboss.jbossts.qa.ts.home}/${jts.build.dir}/idl/src/test/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
+            <element src="${org.jboss.jbossts.qa.ts.home}/../../ArjunaJTS/idl/src/test/idl/TestModule.idl" package="com.hp.mwtests.ts.jts"
                      mappings="CosTransactions=org.omg;TestModule=com.hp.mwtests.ts.jts;CORBA=org.omg"/>
         </idl-build-list>
 
