@@ -165,7 +165,7 @@ public class PerformanceFramework
             System.out.println("Threads from "+getMinimumNumberOfThreads()+" to "+getMaximumNumberOfThreads());
             for (int threadCount=getMinimumNumberOfThreads();threadCount<=getMaximumNumberOfThreads();threadCount++)
             {
-                PerformanceTest perfTest = (PerformanceTest)Thread.currentThread().getContextClassLoader().loadClass( classname ).newInstance();
+                PerformanceTest perfTest = (PerformanceTest)Thread.currentThread().getContextClassLoader().loadClass( classname ).getDeclaredConstructor().newInstance();
                 perfTest.setServiceConfigs( configs );
                 perfTest.setParameters( _args );
 

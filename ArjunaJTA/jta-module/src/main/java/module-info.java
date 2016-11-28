@@ -1,5 +1,5 @@
 module java.transaction { 
-  requires public java.rmi;
-  requires public java.sql;
+  requires transitive java.rmi;
+  requires transitive java.sql;
   exports javax.transaction; 
 }

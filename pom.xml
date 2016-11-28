@@ -502,7 +502,7 @@
     <version.org.jboss.jboss-transaction-spi>7.6.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
-    <version.org.mockito>1.10.19</version.org.mockito>
+    <version.org.mockito>2.5.3</version.org.mockito>
     <version.org.wildfly.checkstyle-config>1.0.6.Final</version.org.wildfly.checkstyle-config>
     <version.com.github.docker-java>3.0.14</version.com.github.docker-java>
 

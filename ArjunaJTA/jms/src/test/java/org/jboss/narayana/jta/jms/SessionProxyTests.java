@@ -68,7 +68,7 @@ public class SessionProxyTests {
         when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
 
         List<Synchronization> synchronizations = new ArrayList<>(1);
-        doAnswer(i -> synchronizations.add(i.getArgumentAt(0, Synchronization.class))).when(transactionHelperMock)
+        doAnswer(i -> synchronizations.add(i.getArgument(0))).when(transactionHelperMock)
                 .registerSynchronization(any(Synchronization.class));
 
         session.close();

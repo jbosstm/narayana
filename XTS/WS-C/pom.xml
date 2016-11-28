@@ -38,6 +38,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>ws-c11</id>
@@ -156,8 +157,10 @@
                 <id>default-compile</id>
                 <configuration>
                   <compilerArgs>
-                      <arg>--add-modules</arg>
-                  <arg>java.xml,java.xml.bind,java.xml.ws</arg>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml,java.xml.bind,java.xml.ws</arg>
+                    <arg>--add-opens</arg>
+                    <arg>java.base/java.util=ALL-UNNAMED,java.base/java.lang.reflect=ALL-UNNAMED,java.base/java.text=ALL-UNNAMED,java.desktop/java.awt.font=ALL-UNNAMED</arg>
                   </compilerArgs>
                 </configuration>
               </execution>
