@@ -58,20 +58,14 @@ import com.hp.mwtests.ts.arjuna.resources.CrashRecord;
 @Deprecated // in order to provide a better separation between public and internal classes.
 public class ObjStoreBrowserTest {
 	private RecoveryManagerImple rcm;
-	private RecoveryDriver rd;
 
 	@Before
 	public void setUp () throws Exception
 	{
-		// enable socket based recovery
-		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryListener(true);
-		recoveryPropertyManager.getRecoveryEnvironmentBean().setPeriodicRecoveryPeriod(1);
 		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
-		rcm = new RecoveryManagerImple(true);
+		rcm = new RecoveryManagerImple(false);
 		rcm.addModule(new AtomicActionRecoveryModule());
-		rd = new RecoveryDriver(RecoveryManager.getRecoveryManagerPort(),
-				recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress(), 100000);
 	}
 
 	@After
@@ -144,9 +138,8 @@ public class ObjStoreBrowserTest {
 	@Test
 	public void aaReplayTest() throws Exception {
 		// TODO windows
-		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
 		aaTest(true);
-		}
+
 	}
 	
 	/**
@@ -157,9 +150,7 @@ public class ObjStoreBrowserTest {
 	@Test
 	public void aaRemoveTest() throws Exception {
 		// TODO windows
-		if (System.getProperty("os.name").toLowerCase().indexOf("windows") == -1) {
 		aaTest(false);
-		}
 	}
 
 	public void aaTest(boolean replay) throws Exception {
@@ -227,8 +218,7 @@ public class ObjStoreBrowserTest {
 			* prompt the recovery manager to replay the record that was
 			* moved off the heuristic list and back onto the prepared list
 			*/
-			rd.synchronousScan();
-			Thread.sleep(1000); // odd without the delay running under Jacoco fails
+			rcm.scan();
 		}
 
 		/*
