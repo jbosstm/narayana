@@ -570,7 +570,7 @@ function add_qa_xargs {
   XARGS=
   IFS=' ' read -ra ADDR <<< "$1"
   for j in "${ADDR[@]}"; do
-    XARGS="${XARGS}COMMAND_LINE_$i=$j"
+    XARGS="${XARGS}COMMAND_LINE_$i=$j\n"
     let i=i+1
   done
 
@@ -596,7 +596,7 @@ function qa_tests_once {
     [ $CODE_COVERAGE = 1 ] && codeCoverage=true
   done
 
-  git checkout TaskImpl.properties
+  cp TaskImpl.properties.template TaskImpl.properties
 
   # check to see which orb we are running against:
   if [ x$orb = x"openjdk" ]; then

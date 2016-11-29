@@ -53,11 +53,15 @@ the script for an up to date list. For short(ish) smoke testing try
 
 This will test the product as built and placed in the ../install directory by the initial product build.
 The test framework runs in an environment defined by the run-tests.xml script, but the test tasks i.e.
-clients, servers etc, run in an environment dictated by the ./TaskImpl.properties file. Edit that file
-as required for your system e.g. location of desired jvm and such.
+clients, servers etc, run in an environment dictated by the ./TaskImpl.properties file. 
+
+To create that file, copy TaskImpl.properties.template and name it TaskImpl.properties. Proceed to edit 
+the new file as required for your system e.g. location of desired jvm and such.
 
 To debug the test framework, see debug jvm arg in the run-test.xml junit-tests task.
-To debug spawned processes, edit TaskImpl.properties to set debug command line args.
+To debug spawned processes, edit TaskImpl.properties to set debug command line args. You can also
+enable a robust debugging mode by setting a system property tasks.remote.debug. This is set in the junit
+process and will set debugging ports up incrementing from port 5000 for the first spawned process.
 
 For jdbc tests, ensure the required drivers are present (see build.xml get.drivers target)
 and create a suitable config/jdbc_profiles/<name_of_testnode_host>/ file by copying the existing

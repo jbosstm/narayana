@@ -796,6 +796,14 @@ public class TaskImpl implements Task
                     if("Failed".equals(line)) {
                         printedFailed = true;
                     }
+                    if (line.startsWith("java.lang.OutOfMemoryError"))
+                    {
+                        throw new Exception("Test out of memory");
+                    }
+                    if (line.startsWith("Error occurred during initialization of VM"))
+                    {
+                        throw new Exception("Test out of memory");
+                    }
                     Date date = new Date();
                     out.println(simpleDateFormat.format(date)+" "+prefix + line);
                 }
@@ -807,12 +815,12 @@ public class TaskImpl implements Task
                     printedReady.notify();
                 }
                 
-                // if the process is explicitly destroyed we can see an IOException because the output
-                // stream gets closed under the call to readLine(). shutdown is set befofe destroy
-                // is called so only trace the exception if we are not shut down
-                if (shutdown.get()) {
-                    return;
-                }
+//                // if the process is explicitly destroyed we can see an IOException because the output
+//                // stream gets closed under the call to readLine(). shutdown is set befofe destroy
+//                // is called so only trace the exception if we are not shut down
+//                if (shutdown.get()) {
+//                    return;
+//                }
                 out.printf("%s TaskReaderThread : exception before shutdown %s%n", getTaskPrefix(), e.getMessage());
                 System.out.printf("%s TaskReaderThread : exception before shutdown %s%n", getTaskPrefix(), e.getMessage());
                 e.printStackTrace(out);
@@ -827,6 +835,9 @@ public class TaskImpl implements Task
 
         public void shutdown() {
             shutdown.set(true);
+            synchronized (printedReady) {
+                printedReady.notifyAll();
+            }
         }
     }
     /**
