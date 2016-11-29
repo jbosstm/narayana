@@ -167,6 +167,14 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- Tomcat module javadocs -->
+    <dependency>
+      <groupId>org.jboss.narayana.tomcat</groupId>
+      <artifactId>tomcat-jta</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -319,6 +327,10 @@
                     <group>
                       <title>Compensations</title>
                       <packages>org.jboss.narayana.compensations*</packages>
+                    </group>
+                    <group>
+                      <title>Tomcat JTA</title>
+                      <packages>org.jboss.narayana.tomcat.jta</packages>
                     </group>
                   </groups>
                 </configuration>
