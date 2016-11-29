@@ -121,57 +121,57 @@ public class TestGroup_txcore_recovery extends TestGroupBase
 
 	@Test public void Recovery_Crash_StateManager_Test001()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001b.class, "100", "1", "1", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001a.class, "100", "1", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test002()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001b.class, "100", "2", "1", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001a.class, "100", "2", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test003()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001b.class, "100", "5", "1", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001a.class, "100", "5", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test004()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001b.class, "100", "10", "1", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client001a.class, "100", "10", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test005()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002b.class, "100", "1", "3", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002a.class, "100", "1", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test006()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002b.class, "100", "2", "3", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002a.class, "100", "2", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test007()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002b.class, "100", "5", "3", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002a.class, "100", "5", "$(1)");
 	}
 
 	@Test public void Recovery_Crash_StateManager_Test008()
 	{
-        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002b.class, "100", "10", "3", "0", "$(1)");
+        startServer(com.arjuna.ats.arjuna.recovery.RecoveryManager.class, "-test");
         startAndWaitForClientWithFixedStoreDir(org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client.Client002a.class, "100", "10", "$(1)");
 	}
 
