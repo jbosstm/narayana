@@ -181,7 +181,7 @@ public class TestGroupBase
             additionalCommandLineElements.add("-DObjectStoreBaseDir="+objectStoreBaseDir.getCanonicalPath());
             additionalCommandLineElements.add("-DRecoveryEnvironmentBean.recoveryListener=true"); // JBTM-810
 
-            if (false) {
+            if (new Boolean(System.getProperty("tasks.remote.debug")).booleanValue()) {
 				additionalCommandLineElements.add("-Xdebug");
 				additionalCommandLineElements.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + port++);
 			}

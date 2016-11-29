@@ -85,14 +85,6 @@ COMMAND_LINE_15=-Dio.narayana.perf.failonregression=false
 NEXT_COMMAND_LINE_ARG=COMMAND_LINE_16
 
 #
-# enable these to debug spawned processes. You may need to pause the test
-# framework in a debugger too, or it may spawn multiple procs on the same
-# debug port.
-#
-#COMMAND_LINE_(CURRENTMAX+1)=-Xdebug
-#COMMAND_LINE_(NEWMAX+1)=-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006
-
-#
 # for tests run with profile hornetq enable this when you want to use AIO
 # put here path to directory where libHornetQAIO.so resides
 #COMMAND_LINE_(NEXTMAX+1)=-Djava.library.path=/path/to/dir/
