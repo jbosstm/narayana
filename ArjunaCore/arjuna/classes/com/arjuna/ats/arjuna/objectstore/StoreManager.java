@@ -48,8 +48,6 @@ public class StoreManager
         StoreManager.communicationStore = communicationStore;
     }
 
-    // should these values be null after stop?
-    
     public static final void shutdown() {
         if(actionStore != null) {
             actionStore.stop();
@@ -60,6 +58,9 @@ public class StoreManager
         if(communicationStore != null) {
             communicationStore.stop();
         }
+        actionStore = null;
+        stateStore = null;
+        communicationStore = null;
     }
 
     public static final RecoveryStore getRecoveryStore ()
