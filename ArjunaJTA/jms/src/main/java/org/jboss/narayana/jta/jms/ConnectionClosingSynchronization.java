@@ -28,12 +28,17 @@ import javax.jms.JMSException;
 import javax.transaction.Synchronization;
 
 /**
+ * Synchronization to close JMS connection at the end of the transaction.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class ConnectionClosingSynchronization implements Synchronization {
 
     private final Connection connection;
 
+    /**
+     * @param connection connection to be closed.
+     */
     public ConnectionClosingSynchronization(Connection connection) {
         this.connection = connection;
     }
@@ -43,6 +48,11 @@ public class ConnectionClosingSynchronization implements Synchronization {
         // Nothing to do
     }
 
+    /**
+     * Close the connection despite the status of the transaction.
+     *
+     * @param status
+     */
     @Override
     public void afterCompletion(int status) {
         if (jtaLogger.logger.isTraceEnabled()) {

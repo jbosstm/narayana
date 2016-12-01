@@ -39,11 +39,21 @@ public class ConnectionFactoryProxy implements ConnectionFactory {
 
     private final TransactionHelper transactionHelper;
 
+    /**
+     * @param xaConnectionFactory factory to get XA connection instances.
+     * @param transactionHelper utility to make transaction resources registration easier.
+     */
     public ConnectionFactoryProxy(XAConnectionFactory xaConnectionFactory, TransactionHelper transactionHelper) {
         this.xaConnectionFactory = xaConnectionFactory;
         this.transactionHelper = transactionHelper;
     }
 
+    /**
+     * Get XA connection from the provided factory and wrap it with {@link ConnectionProxy}.
+     *
+     * @return XA connection wrapped with {@link ConnectionProxy}.
+     * @throws JMSException if failure occurred creating XA connection.
+     */
     @Override
     public Connection createConnection() throws JMSException {
         Connection connection = new ConnectionProxy(xaConnectionFactory.createXAConnection(), transactionHelper);
@@ -55,6 +65,14 @@ public class ConnectionFactoryProxy implements ConnectionFactory {
         return connection;
     }
 
+    /**
+     * Get XA connection from the provided factory with credentials and wrap it with {@link ConnectionProxy}.
+     * 
+     * @param userName
+     * @param password
+     * @return XA connection wrapped with {@link ConnectionProxy}.
+     * @throws JMSException if failure occurred creating XA connection.
+     */
     @Override
     public Connection createConnection(String userName, String password) throws JMSException {
         Connection connection = new ConnectionProxy(xaConnectionFactory.createXAConnection(userName, password),
