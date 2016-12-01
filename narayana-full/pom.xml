@@ -175,6 +175,20 @@
       <scope>compile</scope>
     </dependency>
 
+    <!-- JMS module javadocs -->
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.jms</groupId>
+      <artifactId>jboss-jms-api_1.1_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec}</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -306,7 +320,7 @@
                   <groups>
                     <group>
                       <title>Core</title>
-                      <packages>com.arjuna.ats.arjuna*:com.arjuna.ats.jdbc*:com.arjuna.ats.txoj*:com.arjuna.common*</packages>
+                      <packages>com.arjuna.ats.arjuna*:com.arjuna.ats.jdbc*:com.arjuna.ats.txoj*:com.arjuna.common*:org.jboss.narayana.jta.jms</packages>
                     </group>
                     <group>
                       <title>JTA</title>
