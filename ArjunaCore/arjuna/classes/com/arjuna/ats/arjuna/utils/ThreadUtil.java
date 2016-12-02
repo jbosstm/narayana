@@ -51,7 +51,7 @@ public class ThreadUtil
      * @param thread The thread.
      * @return The thread id
      */
-    public static String getThreadId(final Thread thread)
+    public static synchronized String getThreadId(final Thread thread)
     {
 	final String id = THREAD_ID.get(thread) ;
 	if (id != null)
