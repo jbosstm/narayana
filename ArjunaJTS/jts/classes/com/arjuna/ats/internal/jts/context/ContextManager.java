@@ -296,7 +296,7 @@ public class ContextManager
 
     public final void purgeActions ()
     {
-        purgeActions(ThreadUtil.getThreadId(Thread.currentThread()));
+        purgeActions(ThreadUtil.removeThreadId(Thread.currentThread()));
     }
 
     /**
