@@ -843,10 +843,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	                    throw new org.omg.CosTransactions.HeuristicHazard();
 	                case XAException.XA_HEURCOM:
-	                    handleForget() ;
+	                    try {
+	                        handleForget() ;
+	                    } catch (SystemException ignore) {
+	                    }
 	                    break;
 	                case XAException.XA_HEURRB:
-	                       handleForget() ;
+	                       try {
+	                           handleForget() ;
+	                       } catch (SystemException ignore) {
+	                       }
 	                       throw new TRANSACTION_ROLLEDBACK();
 	                case XAException.XA_RBROLLBACK:
 	                case XAException.XA_RBCOMMFAIL:
@@ -906,28 +912,35 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void forget() throws org.omg.CORBA.SystemException
 	{
 		if (jtaxLogger.logger.isTraceEnabled()) {
-            jtaxLogger.logger.trace("XAResourceRecord.forget for " + _tranID);
-        }
+		    jtaxLogger.logger.trace("XAResourceRecord.forget for " + _tranID +
+		        " _forgotten=" + _forgotten);
+		}
 
-		handleForget() ;
+                if (!_forgotten) {
+                    handleForget();
 
-		destroyState();
+                    destroyState();
 
-		removeConnection();
+                    removeConnection();
+                }
 	}
 
-	private void handleForget()
+	private void handleForget() throws org.omg.CORBA.SystemException
 	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
-		    _heuristic = TwoPhaseOutcome.FINISH_OK;
-		    
 			try
 			{
 				_theXAResource.forget(_tranID);
+				_heuristic = TwoPhaseOutcome.FINISH_OK;
+				_forgotten = true;
 			}
 			catch (Exception e)
 			{
+				jtaLogger.i18NLogger.warn_recovery_forgetfailed(
+				    "XAResourceRecord forget failed:", e);
+
+				throw new UNKNOWN(e.getMessage()); // log will be rewritten
 			}
 		}
 	}
@@ -1544,6 +1557,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private org.omg.CosTransactions.RecoveryCoordinator _recoveryCoordinator;
 	private TransactionImple _theTransaction;
 	boolean _doEnd = true;
+	private boolean _forgotten;
 
 	// cached variables
 
