@@ -37,7 +37,7 @@
 #include "ServiceDispatcher.h"
 
 std::vector<int> sessionIds;
-SynchronizableObject lock;
+SynchronizableObject sessionIdsLock;
 
 long DISCON = 0x00000003;
 
@@ -842,12 +842,12 @@ int tpconnect(char * svc, char* idata, long ilen, long flags) {
 }
 
 void tpgetanyCallback(int sessionId, bool remove) {
-	lock.lock();
+	sessionIdsLock.lock();
 	if (!remove) {
 		LOG4CXX_TRACE(loggerXATMI, (char*) "tpgetanyCallback adding: "
 				<< sessionId);
 		sessionIds.push_back(sessionId);
-		lock.notify();
+		sessionIdsLock.notify();
 	} else {
 		LOG4CXX_TRACE(loggerXATMI, (char*) "tpgetanyCallback removing: "
 				<< sessionId);
@@ -862,7 +862,7 @@ void tpgetanyCallback(int sessionId, bool remove) {
 			}
 		}
 	}
-	lock.unlock();
+	sessionIdsLock.unlock();
 }
 
 int tpgetrply(int *id, char ** odata, long *olen, long flags) {
@@ -884,11 +884,11 @@ int tpgetrply(int *id, char ** odata, long *olen, long flags) {
 	} else {
 		if (clientinit() != -1) {
 			if (flags & TPGETANY) {
-				lock.lock();
+				sessionIdsLock.lock();
 				if (sessionIds.size() == 0) {
 					long timeout = determineTimeout(flags);
 					if (timeout >= 0) {
-						lock.wait(timeout);
+						sessionIdsLock.wait(timeout);
 					}
 				}
 				if (sessionIds.size() == 0) {
@@ -899,6 +899,7 @@ int tpgetrply(int *id, char ** odata, long *olen, long flags) {
 					*id = sessionIds.front();
 					sessionIds.erase(sessionIds.begin());
 				}
+				sessionIdsLock.unlock();
 			}
 			if (tperrno == 0 && id && olen) {
 				Session* session = ptrAtmiBrokerClient->getSession(*id);
@@ -916,9 +917,6 @@ int tpgetrply(int *id, char ** odata, long *olen, long flags) {
 				}
 			} else {
 				setSpecific(TPE_KEY, TSS_TPEINVAL);
-			}
-			if (flags & TPGETANY) {
-				lock.unlock();
 			}
 		}
 	}
