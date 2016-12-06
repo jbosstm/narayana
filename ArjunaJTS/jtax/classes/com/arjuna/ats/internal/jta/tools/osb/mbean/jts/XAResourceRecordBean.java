@@ -26,6 +26,7 @@ import java.io.IOException;
 import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean;
@@ -115,8 +116,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
     @Override
     public boolean forget() {
- //       return jtsXAResourceRecord.forgetHeuristic();
-        return true;
+       return xares.forgetHeuristic();
     }
 
     @Override
@@ -124,6 +124,9 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
         if (forget()) {
             if (jtsXAResourceRecord != null && jtsXAResourceRecord.doRemove())
                 jtsXAResourceRecord = null;
+
+            // resource#forget succeeded so now it is ok to remove the inlined ExtendedResourceRecord
+            forgetRec = true;
 
             return super.remove();
         }
@@ -171,13 +174,17 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
             return super.restoreState(os);
         }
-/*
-        @Override
+
         public boolean forgetHeuristic() {
             if (rec != null)
                 return rec.forgetHeuristic();
 
-            return super.forgetHeuristic();
-        }    */
+            try {
+                forget();
+                return true;
+            } catch (org.omg.CORBA.SystemException e) {
+                return arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
+            }
+        }
     }
 }

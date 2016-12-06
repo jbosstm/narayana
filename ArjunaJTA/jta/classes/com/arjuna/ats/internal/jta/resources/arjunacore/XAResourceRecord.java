@@ -840,6 +840,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 		forget();
 
+ 		// remove the connection regardless of whether or not the forget operation failed
 		removeConnection();
 
 		return _forgotten;
@@ -849,15 +850,17 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
-		    _heuristic = TwoPhaseOutcome.FINISH_OK;
-		    
 			try
 			{
 				_theXAResource.forget(_tranID);
+				// only update the heuristic state if forget succeeded
+				_heuristic = TwoPhaseOutcome.FINISH_OK;
 				_forgotten = true;
 			}
 			catch (Exception e)
 			{
+				jtaLogger.i18NLogger.warn_recovery_forgetfailed(
+					"XAResourceRecord forget failed:", e);
 				_forgotten = false;
 			}
 		}
