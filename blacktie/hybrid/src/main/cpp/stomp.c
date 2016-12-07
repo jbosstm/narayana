@@ -157,7 +157,7 @@ apr_status_t stomp_read_line(stomp_connection *connection, char **data, int* len
    apr_size_t bytesRead=0;
    char *p;
 
-   btlogger_trace("stomp_read_line");
+   btlogger_trace("stomp_read_line: remote %d local %d", connection->remote_sa->port, connection->local_sa->port);
    rc = apr_pool_create(&tpool, pool);
    if( rc != APR_SUCCESS ) {
       btlogger_warn("stomp_read_line could not apr_pool_create returning %d", rc);

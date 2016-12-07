@@ -79,6 +79,7 @@ public class TcpTransport implements Runnable {
         }
         marshaller.marshal(command, dataOut);
         dataOut.flush();
+        log.debug("Flushed message to server side: remote - " + socket.getPort() + " local - " + socket.getLocalPort());
     }
 
     /**
