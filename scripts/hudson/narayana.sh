@@ -245,18 +245,12 @@ function build_as {
     echo "Updating existing checkout of AS7"
     cd jboss-as
 
-    git remote | grep upstream
-    if [ $? -ne 0 ]; then
-      git remote add upstream https://github.com/wildfly/wildfly.git
-    fi
-    #Abort any partially complete rebase
-    git rebase --abort
-    git checkout 5_BRANCH
-    [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
+    git checkout 5_2_BRANCH
+    [ $? = 0 ] || fatal "git checkout 5_2_BRANCH failed"
     git fetch
     [ $? = 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
+    git reset --hard jbosstm/5_2_BRANCH
+    [ $? = 0 ] || fatal "git reset 5_2_BRANCH failed"
     git clean -f -d -x
     [ $? > 1 ] || fatal "git clean failed"
     git rebase --abort
@@ -268,20 +262,14 @@ function build_as {
 
     cd jboss-as
 
-    git remote add upstream https://github.com/wildfly/wildfly.git
-  fi
+    git checkout 5_2_BRANCH
+
+fi
 
   [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
   [ $? = 0 ] || fatal "git fetch of pulls failed"
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
-
-  git fetch upstream
-  echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/master)
-
-  git pull --rebase --ff-only upstream master
-  [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true
