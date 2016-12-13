@@ -84,6 +84,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     private static OSBTypeHandler[] defaultJTSOsbTypes = {
             new OSBTypeHandler(
                     true,
+                    false, // by default do not probe for this type
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSXAResourceRecordWrapper",
                     "CosTransactions/XAResourceRecord",
