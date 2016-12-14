@@ -789,7 +789,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      * Determine whether or not MBean operations that delete a transaction will delete participants that
      * are still in a heuristic state
      *
-     * @param ignoreMBeanHeuristics if true heuristic participants may only be deleted after the heuristic
+     * @param ignoreMBeanHeuristics if false heuristic participants may only be deleted after the heuristic
      *                                         has been cleared
      */
     public void setIgnoreMBeanHeuristics(boolean ignoreMBeanHeuristics) {
