@@ -159,6 +159,23 @@
                         </warning>
                     </listitem>
                 </varlistentry>
+                <varlistentry>
+                    <term>Delete a transaction participant.</term>
+                    <listitem>
+                        <para>
+Each transaction log participant supports a <code>:delete</code> operation which will delete the participant log that represents the participant:
+                        </para>
+                        <screen>
+/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>0\:ffff7f000001\:-f30b80c\:58480e0a\:2c</replaceable>:delete
+                        </screen>
+                        <warning>
+                            <para>
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this delete operation is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will fail. The system administrator may override this behaviour by setting a system property:
+<screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value true.
+                            </para>
+                        </warning>
+                    </listitem>
+                </varlistentry>
                 <varlistentry id="recover_transaction">
                     <term>Recover a transaction.</term>
                     <listitem>
@@ -369,22 +386,9 @@
                                 resolve in-doubt transactions. In addition, if multiple users share the same object store, they must understand that it
                                 is not an exclusive resource,
                             </para>
-                        </warning>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Delete a transaction participant.</term>
-                    <listitem>
-                        <para>
-Each transaction log participant supports a <code>:delete</code> operation which will delete the participant log that represents the participant:
-                        </para>
-                        <screen>
-/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>0\:ffff7f000001\:-f30b80c\:58480e0a\:2c</replaceable>:delete
-                        </screen>
-                        <warning>
                             <para>
-Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this delete operation is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will fail. The system administrator may override this behaviour by setting a system property:
-<screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to value true.
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this remove operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will fail. The system administrator may override this behaviour by setting a system property:
+                                <screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value true.
                             </para>
                         </warning>
                     </listitem>
