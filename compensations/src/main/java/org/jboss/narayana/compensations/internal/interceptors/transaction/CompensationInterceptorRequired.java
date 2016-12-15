@@ -39,15 +39,6 @@ import javax.interceptor.InvocationContext;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 197)
 public class CompensationInterceptorRequired extends CompensationInterceptorBase {
 
-    /**
-     * Request must be invoked inside a transaction.
-     *
-     * If there is no active transaction, a new transaction must be created.
-     *
-     * @param ic
-     * @return
-     * @throws Exception if request has failed.
-     */
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 

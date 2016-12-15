@@ -34,16 +34,7 @@ import java.lang.reflect.Method;
  */
 public abstract class ParticipantInterceptor {
 
-    /**
-     * Request has handler to be enlisted to the transaction.
-     * 
-     * After request processing transaction coordinator must be notified about the participant completion or exist from the
-     * transaction.
-     *
-     * @param ic
-     * @return
-     * @throws Exception
-     */
+
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
 

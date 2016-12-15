@@ -29,11 +29,6 @@ package org.jboss.narayana.compensations.api;
  */
 public interface DeserializersContainer {
 
-    /**
-     * Add deserializer to the container.
-     *
-     * @param deserializer a deserializer to be added to the container.
-     */
     void addDeserializer(Deserializer deserializer);
 
 }

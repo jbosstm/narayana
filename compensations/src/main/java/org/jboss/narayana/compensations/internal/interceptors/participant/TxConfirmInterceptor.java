@@ -42,13 +42,6 @@ import java.lang.reflect.Method;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 198)
 public class TxConfirmInterceptor extends ParticipantInterceptor {
 
-    /**
-     * This request has a confirmation handler attached which has to be enlisted to the transaction.
-     *
-     * @param ic
-     * @return
-     * @throws Exception
-     */
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
 

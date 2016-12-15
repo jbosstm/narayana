@@ -31,13 +31,6 @@ public class LocalBAController implements BAController {
         this.compensationContextStateManager = compensationContextStateManager;
     }
 
-    /**
-     * Start a new local compensating transaction.
-     *
-     * This also creates a new compensation context attached to this transaction.
-     *
-     * @throws Exception
-     */
     @Override
     public void beginBusinessActivity() throws Exception {
         CoordinatorManagerFactory.coordinatorManager().begin("Sagas11HLS");
@@ -45,16 +38,6 @@ public class LocalBAController implements BAController {
         compensationContextStateManager.activate(getCurrentTransaction().getId());
     }
 
-    /**
-     * Close current local compensating transaction.
-     *
-     * First compensation context is deactivate, because application shouldn't access it any more.
-     *
-     * Then local transaction manager is told to close the transaction. And once that's done compensation context of this
-     * transaction is destroyed.
-     *
-     * @throws Exception
-     */
     @Override
     public void closeBusinessActivity() throws Exception {
         CurrentTransaction currentTransaction = getCurrentTransaction();
@@ -63,16 +46,6 @@ public class LocalBAController implements BAController {
         compensationContextStateManager.remove(currentTransaction.getId());
     }
 
-    /**
-     * Cancel current local compensating transaction.
-     *
-     * First compensation context is deactivate, because application shouldn't access it any more.
-     *
-     * Then local transaction manager is told to cancel the transaction. And once that's done compensation context of this
-     * transaction is destroyed.
-     *
-     * @throws Exception
-     */
     @Override
     public void cancelBusinessActivity() throws Exception {
         CurrentTransaction currentTransaction = getCurrentTransaction();
@@ -108,24 +81,11 @@ public class LocalBAController implements BAController {
         }
     }
 
-    /**
-     * Deactivate compensation context and suspend current local compensating transaction.
-     *
-     * @return suspended transaction information to be used when resuming.
-     * @throws Exception
-     */
     public CurrentTransaction suspend() throws Exception {
         compensationContextStateManager.deactivate();
         return new LocalCurrentTransaction(CoordinatorManagerFactory.coordinatorManager().suspend());
     }
 
-    /**
-     * Resume a local compensating transaction and activate its compensation context.
-     * 
-     * @param currentTransaction {@link CurrentTransaction} containing information of the transaction to be resumed.
-     * @throws Exception if delegate class provided in {@link CurrentTransaction} is not of local transaction or failure
-     *         occurred when resuming transaction.
-     */
     public void resume(CurrentTransaction currentTransaction) throws Exception {
         if (currentTransaction.getDelegateClass() != ActivityHierarchy.class) {
             throw new Exception("Invalid current transaction type: " + currentTransaction);
@@ -134,10 +94,7 @@ public class LocalBAController implements BAController {
         compensationContextStateManager.activate(currentTransaction.getId());
     }
 
-    /**
-     * @return information of a currently running local transaction or {@code null} if transaction is not running.
-     * @throws Exception
-     */
+
     @Override
     public CurrentTransaction getCurrentTransaction() throws Exception {
         ActivityHierarchy context = CoordinatorManagerFactory.coordinatorManager().currentActivity();
