@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2015, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,28 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.compensations.integration.beanManager;
 
-import org.jboss.narayana.compensations.internal.BeanManagerUtil;
-import org.junit.Assert;
-import org.junit.Test;
+package org.jboss.narayana.compensations.internal;
 
+
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
 
-/**
- * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
- */
-public abstract class BeanManagerTest {
+public class CompensationScopedExtension implements Extension {
 
-    @Test
-    public void shouldGetBeanManager() {
-        Assert.assertNotNull(BeanManagerUtil.getBeanManager());
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
+
+        event.addContext(new CompensationContext());
     }
-
-    @Test
-    public void shouldCreateBean() {
-        Assert.assertNotNull(BeanManagerUtil.createBeanInstance(DummyBean.class, getBeanManager()));
-    }
-
-    protected abstract BeanManager getBeanManager();
 }

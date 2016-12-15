@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2015, Red Hat, Inc., and individual contributors
+ * Copyright 2013, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,28 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.narayana.compensations.integration.beanManager;
 
-import org.jboss.narayana.compensations.internal.BeanManagerUtil;
-import org.junit.Assert;
-import org.junit.Test;
+package org.jboss.narayana.compensations.internal;
 
-import javax.enterprise.inject.spi.BeanManager;
+import org.jboss.narayana.compensations.api.CancelOnFailure;
+import org.jboss.narayana.compensations.api.CompensationManager;
+
+import javax.annotation.Priority;
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 
 /**
- * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ * @author paul.robinson@redhat.com 25/04/2013
  */
-public abstract class BeanManagerTest {
+@CancelOnFailure
+@Interceptor
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 199)
+public class CancelOnFailureInterceptor {
 
-    @Test
-    public void shouldGetBeanManager() {
-        Assert.assertNotNull(BeanManagerUtil.getBeanManager());
+    @Inject
+    CompensationManager compensationManager;
+
+    @AroundInvoke
+    public Object intercept(InvocationContext ic) throws Exception {
+
+        try {
+            return ic.proceed();
+        } catch (RuntimeException e) {
+            compensationManager.setCompensateOnly();
+            throw e;
+        }
     }
-
-    @Test
-    public void shouldCreateBean() {
-        Assert.assertNotNull(BeanManagerUtil.createBeanInstance(DummyBean.class, getBeanManager()));
-    }
-
-    protected abstract BeanManager getBeanManager();
 }

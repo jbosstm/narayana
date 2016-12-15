@@ -25,7 +25,6 @@ package org.jboss.narayana.compensations.functional.compensationScoped;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.functional.common.DummyData;
 import org.jboss.narayana.compensations.internal.BAController;
-import org.jboss.narayana.compensations.internal.CurrentTransaction;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -97,14 +96,14 @@ public abstract class CompensationScopedTest {
         getBAController().beginBusinessActivity();
         dummyData.setValue("1");
         Assert.assertEquals("1", dummyData.getValue());
-        CurrentTransaction txContext1 = getBAController().suspend();
+        Object txContext1 = getBAController().suspend();
 
         assertContextUnavailable();
 
         getBAController().beginBusinessActivity();
         dummyData.setValue("2");
         Assert.assertEquals("2", dummyData.getValue());
-        CurrentTransaction txContext2 = getBAController().suspend();
+        Object txContext2 = getBAController().suspend();
 
         assertContextUnavailable();
 

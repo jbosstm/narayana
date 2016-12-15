@@ -5,6 +5,7 @@ import com.arjuna.webservices11.wsat.server.ParticipantInitialisation;
 import com.arjuna.webservices11.wsba.server.CoordinatorCompletionParticipantInitialisation;
 import com.arjuna.webservices11.wsba.server.ParticipantCompletionParticipantInitialisation;
 import com.arjuna.wst11.messaging.deploy.WSTParticipantInitialisation;
+import org.jboss.jbossts.xts.recovery.participant.ParticipantRecoveryInitialisation;
 
 /**
  * A class used to perform all 1.1 participant side initialisation
@@ -29,10 +30,18 @@ public class ParticipantSideInitialisation implements XTSInitialisation
         // run WSTX startup code
 
         WSTXInitialisation.startup();
+
+        // run recovery startup code
+
+        ParticipantRecoveryInitialisation.startup();
     }
 
     public void shutdown() throws Exception
     {
+        // run recovery shutdown code
+
+        ParticipantRecoveryInitialisation.shutdown();
+
         // run WSTX shutdown code
 
         WSTXInitialisation.shutdown();

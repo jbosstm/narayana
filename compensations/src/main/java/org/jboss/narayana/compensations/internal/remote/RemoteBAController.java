@@ -1,6 +1,5 @@
 package org.jboss.narayana.compensations.internal.remote;
 
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.BusinessActivityManager;
 import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
@@ -15,55 +14,42 @@ import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionCompensatedException;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.internal.BAController;
-import org.jboss.narayana.compensations.internal.context.CompensationContextStateManager;
-import org.jboss.narayana.compensations.internal.recovery.DeserializerHelper;
-import org.jboss.narayana.compensations.internal.utils.BeanManagerUtil;
+import org.jboss.narayana.compensations.internal.BeanManagerUtil;
 import org.jboss.narayana.compensations.internal.CompensationManagerImpl;
 import org.jboss.narayana.compensations.internal.CompensationManagerState;
-import org.jboss.narayana.compensations.internal.CurrentTransaction;
 import org.jboss.narayana.compensations.internal.ParticipantManager;
 
 import java.util.UUID;
 
 /**
- * @author paul.robinson@redhat.com
- * @author gytis@redhat.com
+ * @author paul.robinson@redhat.com 19/04/2014
  */
 public class RemoteBAController implements BAController {
 
-    private final CompensationContextStateManager compensationContextStateManager;
-
-    public RemoteBAController(CompensationContextStateManager compensationContextStateManager) {
-        this.compensationContextStateManager = compensationContextStateManager;
-    }
-
     @Override
-    public void beginBusinessActivity() throws Exception {
+    public void beginBusinessActivity() throws WrongStateException, SystemException {
+
         UserBusinessActivityFactory.userBusinessActivity().begin();
         CompensationManagerImpl.resume(new CompensationManagerState());
-        compensationContextStateManager.activate(getCurrentTransaction().getId());
     }
 
     @Override
-    public void closeBusinessActivity() throws Exception {
-        CurrentTransaction currentTransaction = getCurrentTransaction();
-        compensationContextStateManager.deactivate();
+    public void closeBusinessActivity() throws WrongStateException, UnknownTransactionException, TransactionRolledBackException, SystemException {
+
         UserBusinessActivityFactory.userBusinessActivity().close();
         CompensationManagerImpl.suspend();
-        compensationContextStateManager.remove(currentTransaction.getId());
     }
 
     @Override
-    public void cancelBusinessActivity() throws Exception {
-        CurrentTransaction currentTransaction = getCurrentTransaction();
-        compensationContextStateManager.deactivate();
+    public void cancelBusinessActivity() throws WrongStateException, UnknownTransactionException, SystemException {
+
         UserBusinessActivityFactory.userBusinessActivity().cancel();
         CompensationManagerImpl.suspend();
-        compensationContextStateManager.remove(currentTransaction.getId());
     }
 
     @Override
-    public void completeBusinessActivity(final boolean isException) throws Exception {
+    public void completeBusinessActivity(final boolean isException) throws WrongStateException, UnknownTransactionException, SystemException {
+
         if (CompensationManagerImpl.isCompensateOnly() && !isException) {
             cancelBusinessActivity();
             throw new TransactionCompensatedException("Transaction was marked as 'compensate only'");
@@ -79,7 +65,9 @@ public class RemoteBAController implements BAController {
     }
 
     public boolean isBARunning() {
+
         try {
+
             BusinessActivityManager businessActivityManager = BusinessActivityManagerFactory.businessActivityManager();
             if (businessActivityManager == null) {
                 return false;
@@ -90,27 +78,21 @@ public class RemoteBAController implements BAController {
         }
     }
 
-    public CurrentTransaction suspend() throws Exception {
-        compensationContextStateManager.deactivate();
-        return new RemoteCurrentTransaction(BusinessActivityManagerFactory.businessActivityManager().suspend());
+    public Object suspend() throws Exception {
+
+        return BusinessActivityManagerFactory.businessActivityManager().suspend();
     }
 
-    public void resume(CurrentTransaction currentTransaction) throws Exception {
-        if (currentTransaction.getDelegateClass() != TxContext.class) {
-            throw new Exception("Invalid current transaction type: " + currentTransaction);
-        }
-        BusinessActivityManagerFactory.businessActivityManager().resume((TxContext) currentTransaction.getDelegate());
-        compensationContextStateManager.activate(currentTransaction.getId());
+    public void resume(Object context) throws Exception {
+
+        BusinessActivityManagerFactory.businessActivityManager().resume((TxContext) context);
     }
 
 
     @Override
-    public CurrentTransaction getCurrentTransaction() throws Exception {
-        TxContext context = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
-        if (context == null) {
-            return null;
-        }
-        return new RemoteCurrentTransaction(context);
+    public Object getCurrentTransaction() throws Exception {
+
+        return BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
     }
 
     @Override
@@ -129,16 +111,12 @@ public class RemoteBAController implements BAController {
     public ParticipantManager enlist(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
             TransactionLoggedHandler transactionLoggedHandler) throws Exception {
 
-        String participantId = new Uid().stringForm();
-        CurrentTransaction currentTransaction = getCurrentTransaction();
         RemoteParticipant participant = new RemoteParticipant(compensationHandler, confirmationHandler,
-                transactionLoggedHandler, currentTransaction, participantId, compensationContextStateManager,
-                new DeserializerHelper());
+                transactionLoggedHandler, getCurrentTransaction());
         BAParticipantManager baParticipantManager = BusinessActivityManagerFactory.businessActivityManager()
                 .enlistForBusinessAgreementWithParticipantCompletion(participant, String.valueOf(UUID.randomUUID()));
 
-        return new RemoteParticipantManager(baParticipantManager, participantId, currentTransaction,
-                compensationContextStateManager);
+        return new RemoteParticipantManager(baParticipantManager);
     }
 
     private <T> T instantiate(Class<T> clazz) {

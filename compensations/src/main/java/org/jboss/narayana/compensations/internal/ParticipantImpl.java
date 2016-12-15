@@ -22,41 +22,25 @@
 
 package org.jboss.narayana.compensations.internal;
 
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;
-import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.ConfirmCompletedParticipant;
-import org.jboss.logging.Logger;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
-import org.jboss.narayana.compensations.internal.context.CompensationContextStateManager;
-import org.jboss.narayana.compensations.internal.recovery.DeserializerHelper;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author paul.robinson@redhat.com 22/03/2013
  */
-public class ParticipantImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant,
-        PersistableParticipant {
+public class ParticipantImpl implements BusinessAgreementWithParticipantCompletionParticipant, ConfirmCompletedParticipant {
 
-    private static final Logger LOGGER = Logger.getLogger(ParticipantImpl.class);
-
-    private final ClassLoader applicationClassloader; // TODO do we need to persist it for recovery?
-
-    private final CompensationContextStateManager compensationContextStateManager;
-
-    private final DeserializerHelper deserializerHelper;
+    private static final Map<Object, AtomicInteger> PARTICIPANT_COUNTERS = new HashMap<>();
 
     private CompensationHandler compensationHandler;
 
@@ -64,36 +48,28 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
 
     private TransactionLoggedHandler transactionLoggedHandler;
 
-    private String currentTransactionId;
+    private ClassLoader applicationClassloader;
 
-    private String participantId;
-
-    public ParticipantImpl(CompensationContextStateManager compensationContextStateManager,
-            DeserializerHelper deserializerHelper) {
-        this.compensationContextStateManager = compensationContextStateManager;
-        this.deserializerHelper = deserializerHelper;
-        this.applicationClassloader = Thread.currentThread().getContextClassLoader(); // TODO is this ok?
-    }
+    private Object currentTX;
 
     public ParticipantImpl(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
-            TransactionLoggedHandler transactionLoggedHandler, String currentTransactionId, String participantId,
-            CompensationContextStateManager compensationContextStateManager, DeserializerHelper deserializerHelper) {
+            TransactionLoggedHandler transactionLoggedHandler, Object currentTX) {
 
         this.compensationHandler = compensationHandler;
         this.confirmationHandler = confirmationHandler;
         this.transactionLoggedHandler = transactionLoggedHandler;
-        this.currentTransactionId = currentTransactionId;
-        this.participantId = participantId;
-        this.compensationContextStateManager = compensationContextStateManager;
-        this.deserializerHelper = deserializerHelper;
-        this.applicationClassloader = Thread.currentThread().getContextClassLoader();
+        this.currentTX = currentTX;
 
-        compensationContextStateManager.getCurrent().attachParticipant(participantId);
+        applicationClassloader = Thread.currentThread().getContextClassLoader();
+
+        incrementParticipantsCounter();
     }
 
     @Override
     public void confirmCompleted(boolean confirmed) {
+
         if (transactionLoggedHandler != null) {
+
             ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(applicationClassloader);
 
@@ -105,44 +81,53 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
 
     @Override
     public void close() throws WrongStateException, SystemException {
+
         if (confirmationHandler != null) {
+
             ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(applicationClassloader);
-            compensationContextStateManager.activate(currentTransactionId);
+            CompensationContext.setTxContextToExtend(currentTX);
+
             confirmationHandler.confirm();
-            compensationContextStateManager.deactivate();
+
             Thread.currentThread().setContextClassLoader(origClassLoader);
         }
-        compensationContextStateManager.get(currentTransactionId).ifPresent(state -> state.detachParticipant(participantId));
-        compensationContextStateManager.persist(currentTransactionId);
+
+        decrementParticipantsCounter();
     }
 
     @Override
     public void cancel() throws FaultedException, WrongStateException, SystemException {
-        // TODO: Do nothing?
+        //TODO: Do nothing?
     }
 
     @Override
     public void compensate() throws FaultedException, WrongStateException, SystemException {
-        if (compensationHandler != null) {
-            ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(applicationClassloader);
-            compensationContextStateManager.activate(currentTransactionId);
-            compensationHandler.compensate();
-            compensationContextStateManager.deactivate();
-            Thread.currentThread().setContextClassLoader(origClassLoader);
+
+        try {
+            if (compensationHandler != null) {
+
+                ClassLoader origClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(applicationClassloader);
+                CompensationContext.setTxContextToExtend(currentTX);
+
+                compensationHandler.compensate();
+
+                Thread.currentThread().setContextClassLoader(origClassLoader);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        compensationContextStateManager.get(currentTransactionId).ifPresent(state -> state.detachParticipant(participantId));
-        compensationContextStateManager.persist(currentTransactionId);
+
+        decrementParticipantsCounter();
     }
 
     @Override
     public String status() throws SystemException {
-        // TODO: what to do here?
+        //TODO: what to do here?
         return null;
     }
 
-    @Deprecated
     @Override
     public void unknown() throws SystemException {
 
@@ -153,80 +138,38 @@ public class ParticipantImpl implements BusinessAgreementWithParticipantCompleti
 
     }
 
-    @Override
-    public boolean saveState(OutputObjectState state) {
-        LOGGER.tracef("Persisting state: '%s'", this);
+    /**
+     * Increments the counter of the Compensations participants in the transaction.
+     */
+    private void incrementParticipantsCounter() {
 
-        try {
-            state.packString(currentTransactionId);
-            state.packString(participantId);
-            packHandler(state, compensationHandler);
-            packHandler(state, confirmationHandler);
-        } catch (IOException e) {
-            LOGGER.warnf(e, "Failed to persist state");
-            return false;
-        }
+        synchronized (PARTICIPANT_COUNTERS) {
+            final AtomicInteger counter = PARTICIPANT_COUNTERS.get(currentTX);
 
-        return true;
-    }
-
-    @Override
-    public boolean restoreState(InputObjectState state) {
-        try {
-            currentTransactionId = state.unpackString();
-            participantId = state.unpackString();
-            compensationHandler = unpackHandler(state, CompensationHandler.class);
-            confirmationHandler = unpackHandler(state, ConfirmationHandler.class);
-        } catch (IOException e) {
-            LOGGER.warnf(e, "Failed to restore state");
-            return false;
-        }
-
-        LOGGER.tracef("Restored state: '%s'", this);
-
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ParticipantImpl{currentTransactionId='" + currentTransactionId + "', compensationHandler=" + compensationHandler
-                + ", confirmationHandler=" + confirmationHandler + ", transactionLoggedHandler=" + transactionLoggedHandler
-                + ", applicationClassloader=" + applicationClassloader + "}";
-    }
-
-    private <T> boolean isHandlerPersistable(T handler) {
-        return handler != null && handler instanceof Serializable;
-    }
-
-    private <T> void packHandler(OutputObjectState state, T handler) throws IOException {
-        if (!isHandlerPersistable(handler)) {
-            LOGGER.warnf("Ignoring a non-serializable handler %s", handler);
-            state.packBoolean(false);
-            return;
-        }
-
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
-            objectStream.writeObject(handler);
-            state.packBoolean(true);
-            state.packString(handler.getClass().getName());
-            state.packBytes(outputStream.toByteArray());
-        }
-
-        LOGGER.tracef("Persisted handler: '%s'", handler);
-    }
-
-    private <T> T unpackHandler(InputObjectState state, Class<T> clazz) throws IOException {
-        if (!state.unpackBoolean()) {
-            return null;
-        }
-
-        String className = state.unpackString();
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(state.unpackBytes());
-                ObjectInputStream objectStream = new ObjectInputStream(inputStream)) {
-            return deserializerHelper.deserialize(objectStream, className, clazz)
-                    .orElseThrow(() -> new IOException("Handler could not be deserialized by any deserializer"));
+            if (counter == null) {
+                PARTICIPANT_COUNTERS.put(currentTX, new AtomicInteger(1));
+            } else {
+                counter.incrementAndGet();
+            }
         }
     }
 
+    /**
+     * Decrements the counter of the Compensations participants in the transaction.
+     * CompensationContext of the current transaction is destroyed once the counter reaches 0.
+     */
+    private void decrementParticipantsCounter() {
+
+        synchronized (PARTICIPANT_COUNTERS) {
+            final AtomicInteger counter = PARTICIPANT_COUNTERS.get(currentTX);
+
+            if (counter == null || counter.decrementAndGet() > 0) {
+                return;
+            }
+
+            PARTICIPANT_COUNTERS.remove(currentTX);
+        }
+
+        CompensationContext.close(currentTX);
+    }
 }

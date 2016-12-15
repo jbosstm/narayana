@@ -23,7 +23,7 @@ package org.jboss.narayana.compensations.integration.beanManager;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.narayana.compensations.internal.utils.BeanManagerUtil;
+import org.jboss.narayana.compensations.internal.BeanManagerUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
