@@ -47,8 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class responsible for configuring and initializing Narayana JTA services for the servlet container.
- *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class NarayanaJtaServletContextListener implements ServletContextListener {
@@ -66,23 +64,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
     private static final List<String> DEFAULT_EXPIRY_SCANNERS = Arrays
             .asList(ExpiredTransactionStatusManagerScanner.class.getName());
 
-    /**
-     * Initialize and start Narayana JTA services.
-     * <p>
-     * During the setup node identifier, recovery modules, orphan filters, and expiry scanners are setup. Configuration file
-     * will be used to get initial values. If one doesn't exist, following defaults will be used:
-     * <p>
-     * <ul>
-     * <li>Node identifier: "1"
-     * <li>Recovery modules: {@link AtomicActionRecoveryModule}, {@link XARecoveryModule}
-     * <li>Orphan filters: {@link JTATransactionLogXAResourceOrphanFilter}, {@link JTANodeNameXAResourceOrphanFilter}
-     * <li>Expiry scanners: {@link ExpiredTransactionStatusManagerScanner}
-     * </ul>
-     * <p>
-     * After setup recovery manager, transaction status manager, and transaction reaper are started.
-     * 
-     * @param servletContextEvent
-     */
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         LOGGER.fine("Initializing Narayana");
@@ -95,12 +76,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
         TransactionReaper.instantiate();
     }
 
-    /**
-     * First, stop recovery manager, transaction status manager, and transaction reaper. Then, remove transactional driver from
-     * jdbc driver manager's list.
-     * 
-     * @param servletContextEvent
-     */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         LOGGER.fine("Disabling Narayana");
@@ -116,9 +91,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
         });
     }
 
-    /**
-     * If node identifier wasn't set byt property manager, then set default.
-     */
     private void initNodeIdentifier() {
         if (arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier() == null) {
             LOGGER.warning("Node identifier was not set. Setting it to the default value: " + DEFAULT_NODE_IDENTIFIER);
@@ -133,9 +105,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
                 .setXaRecoveryNodes(Collections.singletonList(arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier()));
     }
 
-    /**
-     * If recovery modules were not set by property manager, then set defaults.
-     */
     private void initRecoveryModules() {
         if (!recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModuleClassNames().isEmpty()) {
             return;
@@ -145,9 +114,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
         recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryModuleClassNames(DEFAULT_RECOVERY_MODULES);
     }
 
-    /**
-     * If orphan filters were not set by property manager, then set defaults.
-     */
     private void initOrphanFilters() {
         if (!jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilterClassNames().isEmpty()) {
             return;
@@ -157,9 +123,6 @@ public class NarayanaJtaServletContextListener implements ServletContextListener
         jtaPropertyManager.getJTAEnvironmentBean().setXaResourceOrphanFilterClassNames(DEFAULT_ORPHAN_FILTERS);
     }
 
-    /**
-     * If expiry scanners were not set by property manager, then set defaults.
-     */
     private void initExpiryScanners() {
         if (!recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScannerClassNames().isEmpty()) {
             return;
