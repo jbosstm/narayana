@@ -23,38 +23,17 @@
 package org.jboss.narayana.compensations.internal;
 
 /**
- * Compensating transaction participant management interface.
- *
  * @author paul.robinson@redhat.com 22/03/2013
  */
 public interface BAParticipant {
 
-    /**
-     * Notify the participant of a compensatable work completion.
-     *
-     * @param confirmed if compensatable work was completed successfully or not.
-     */
+
     void confirmCompleted(boolean confirmed);
 
-    /**
-     * Notify the participant about the completion of a compensatable transaction.
-     *
-     * @throws Exception if participant failed to close.
-     */
     void close() throws Exception;
 
-    /**
-     * Notify the participant about the cancellation of a compensatable transaction.
-     *
-     * @throws Exception if participant failed to cancel.
-     */
     void cancel() throws Exception;
 
-    /**
-     * Notify the participant about the compensation of a compensatable transaction.
-     *
-     * @throws Exception if participant failed to compensate.
-     */
     void compensate() throws Exception;
 
 }

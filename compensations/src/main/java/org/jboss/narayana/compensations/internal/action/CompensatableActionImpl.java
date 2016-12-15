@@ -32,7 +32,6 @@ import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.EnlistException;
 import org.jboss.narayana.compensations.internal.BAControllerFactory;
 import org.jboss.narayana.compensations.internal.ParticipantManager;
-import org.jboss.narayana.compensations.internal.interceptors.participant.ParticipantInterceptor;
 
 import javax.inject.Inject;
 import java.util.HashSet;
@@ -70,17 +69,6 @@ public class CompensatableActionImpl implements CompensatableAction {
         return this;
     }
 
-    /**
-     * Execute all registered compensatable actions.
-     * 
-     * For each compensatable action enlist it's handlers to the transaction and then move on to execute the action.
-     * 
-     * If the action was successful notify coordinator about the completion. Or about the exit if it wasn't successful.
-     * {@link RuntimeException} thrown by action execution indicates a failure which makes handler participants to exit the
-     * transaction (this is based on the same logic implemented by {@link ParticipantInterceptor}).
-     * 
-     * @throws EnlistException if enlistment of handler participants has failed.
-     */
     @Override
     @Compensatable
     public void execute() throws EnlistException {
@@ -98,14 +86,6 @@ public class CompensatableActionImpl implements CompensatableAction {
         workList.clear();
     }
 
-    /**
-     * Enlist each available handler as a separate participant to the transaction (compensations framework interceptors enlist
-     * separate participant for each handler, so using the same login in here).
-     * 
-     * @param workInfo container with handlers to be enlisted.
-     * @return set of participant managers to notify coordinator about participant state.
-     * @throws EnlistException if participant enlistment failed.
-     */
     private Set<ParticipantManager> enlistHandlers(WorkInfo workInfo) throws EnlistException {
         Set<ParticipantManager> managers = new HashSet<>();
 
@@ -131,11 +111,6 @@ public class CompensatableActionImpl implements CompensatableAction {
         return managers;
     }
 
-    /**
-     * Notify each manager about the participant's completion.
-     *
-     * @param managers set of participant managers.
-     */
     private void complete(Set<ParticipantManager> managers) {
         managers.forEach(pm -> {
             try {
@@ -146,11 +121,6 @@ public class CompensatableActionImpl implements CompensatableAction {
         });
     }
 
-    /**
-     * Notify each manager about participant's exist.
-     *
-     * @param managers set of participant managers.
-     */
     private void exit(Set<ParticipantManager> managers) {
         managers.forEach(pm -> {
             try {
@@ -161,9 +131,6 @@ public class CompensatableActionImpl implements CompensatableAction {
         });
     }
 
-    /**
-     * Compensatable work and handlers container to keep method declarations cleaner.
-     */
     private static class WorkInfo {
 
         private CompensatableWork compensatableWork;

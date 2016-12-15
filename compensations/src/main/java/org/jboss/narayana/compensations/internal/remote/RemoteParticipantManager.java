@@ -32,14 +32,6 @@ public class RemoteParticipantManager implements ParticipantManager {
         this.compensationContextStateManager = compensationContextStateManager;
     }
 
-    /**
-     * Detach participant from the compensation context and tell compensation context manager to update its recovery record.
-     * Then notify remote transaction coordinator that participant has exited the transaction.
-     * 
-     * @throws WrongStateException
-     * @throws UnknownTransactionException
-     * @throws SystemException
-     */
     @Override
     public void exit() throws WrongStateException, UnknownTransactionException, SystemException {
         compensationContextStateManager.getCurrent().detachParticipant(participantId);
@@ -47,14 +39,6 @@ public class RemoteParticipantManager implements ParticipantManager {
         baParticipantManager.exit();
     }
 
-    /**
-     * Tell compensation context manager to update its recovery record. And then notify remote transaction coordinator that
-     * participant has completed.
-     * 
-     * @throws WrongStateException
-     * @throws UnknownTransactionException
-     * @throws SystemException
-     */
     @Override
     public void completed() throws WrongStateException, UnknownTransactionException, SystemException {
         compensationContextStateManager.persist(currentTransaction.getId());

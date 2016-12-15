@@ -53,14 +53,6 @@ public class DeserializersContainerImpl implements DeserializersContainer {
         return INSTANCE;
     }
 
-    /**
-     * Add deserializer to the container.
-     * 
-     * After deserializer is added, tell the compensation context manager to restore it's resources, because there might be
-     * records in the recovery store which were not deserialized before.
-     * 
-     * @param deserializer a deserializer to be added to the container.
-     */
     @Override
     public void addDeserializer(Deserializer deserializer) {
         LOGGER.tracef("Add deserializer deserializer='%s'", deserializer);
@@ -68,11 +60,6 @@ public class DeserializersContainerImpl implements DeserializersContainer {
         compensationContextStateManager.restore();
     }
 
-    /**
-     * Get all registered deserializers.
-     *
-     * @return
-     */
     public Set<Deserializer> getDeserializers() {
         LOGGER.tracef("Get deserializers='%s'", deserializers);
         return Collections.unmodifiableSet(deserializers);

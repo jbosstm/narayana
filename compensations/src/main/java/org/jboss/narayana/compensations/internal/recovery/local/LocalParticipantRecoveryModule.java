@@ -27,7 +27,6 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
-import org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule;
 import org.jboss.logging.Logger;
 import org.jboss.narayana.compensations.api.CompensationsRecoveryException;
 import org.jboss.narayana.compensations.internal.utils.RecoveryHelper;
@@ -36,13 +35,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Recovery module responsible for recovering local participants from the scenario when system crash happens after participant
- * has completed (and wrote its recovery record) but before transaction coordinator was told to complete (and before wrote its
- * recovery record).
- * 
- * In remote compensating transaction scenario this functionality is provided by XTS. However, local Sagas implementation
- * doesn't provide it.
- * 
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LocalParticipantRecoveryModule implements RecoveryModule {
@@ -51,15 +43,9 @@ public class LocalParticipantRecoveryModule implements RecoveryModule {
 
     private final Set<Uid> firstPassUids = new HashSet<>();
 
-    /**
-     * Recovery helper to persist/restore {@link LocalParticipantRecord} records.
-     */
     private final RecoveryHelper localParticipantRecoveryHelper = new RecoveryHelper(StoreManager.getRecoveryStore(),
             LocalParticipantRecord.getType());
 
-    /**
-     * Recovery helper to persist/restore {@link BACoordinator} records.
-     */
     private final RecoveryHelper baCoordinatorRecoveryHelper = new RecoveryHelper(StoreManager.getRecoveryStore(),
             new BACoordinator().type());
 
@@ -102,8 +88,8 @@ public class LocalParticipantRecoveryModule implements RecoveryModule {
     }
 
     /**
-     * Check if the provided participant should be compensated. Look for the BACoordinator record with the coordinator id from
-     * the participant. If such record exists, recovery should be done by the {@link BACoordinatorRecoveryModule}.
+     * Method checks if the provided participant should be compensated. I looks for the BACoordinator record with the
+     * coordinator id from the participant. If such record exists, recovery should be done by the BACoordinatorRecoveryModule.
      * 
      * @param participantRecord
      * @return
@@ -114,7 +100,6 @@ public class LocalParticipantRecoveryModule implements RecoveryModule {
             return !baCoordinatorRecoveryHelper.getAllUidsWithException(e -> new CompensationsRecoveryException("Ignore"))
                     .contains(coordinatorId);
         } catch (CompensationsRecoveryException e) {
-            // If failure occurs when getting uids, we shouldn't compensate just in case BACoordinator record actually exists.
             return false;
         }
     }

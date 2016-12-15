@@ -23,8 +23,6 @@
 package org.jboss.narayana.compensations.internal;
 
 /**
- * Object responsible for holding compensation manager state.
- *
  * @author paul.robinson@redhat.com 24/04/2013
  */
 public class CompensationManagerState {

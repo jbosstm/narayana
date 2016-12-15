@@ -40,9 +40,6 @@ public class CompensationContext implements AlterableContext {
 
     private final CompensationContextStateManager compensationContextStateManager;
 
-    /**
-     * @param compensationContextStateManager state manager responsible for holding all contexts and their beans.
-     */
     public CompensationContext(CompensationContextStateManager compensationContextStateManager) {
         this.compensationContextStateManager = compensationContextStateManager;
     }
@@ -52,14 +49,6 @@ public class CompensationContext implements AlterableContext {
         return CompensationScoped.class;
     }
 
-    /**
-     * Get bean from the state manager. If bean doesn't exist it is created and added to the state manager's resources
-     * container.
-     * 
-     * @param contextual
-     * @param creationalContext
-     * @return bean instance of the requested type or {@code null} if bean couldn't be created.
-     */
     @Override
     public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
         if (contextual == null) {
@@ -84,33 +73,16 @@ public class CompensationContext implements AlterableContext {
         return null;
     }
 
-    /**
-     * Get bean from the state manager. If bean doesn't exist it is created and added to the state manager's resources
-     * container.
-     *
-     * @param contextual
-     * @return bean instance of the requested type or {@code null} if bean couldn't be created.
-     */
     @Override
     public <T> T get(Contextual<T> contextual) {
         return get(contextual, null);
     }
 
-    /**
-     * Is compensation context active on this thread.
-     *
-     * @return
-     */
     @Override
     public boolean isActive() {
         return compensationContextStateManager.isActive();
     }
 
-    /**
-     * Remove bean from the state manager's resources container.
-     *
-     * @param contextual
-     */
     @Override
     public void destroy(Contextual<?> contextual) {
         if (contextual instanceof PassivationCapable) {

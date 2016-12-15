@@ -23,8 +23,6 @@
 package org.jboss.narayana.compensations.api;
 
 /**
- * Exception thrown in case of the recovery failure.
- *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class CompensationsRecoveryException extends Exception {

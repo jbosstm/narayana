@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 /**
  * When applied at method level, states that the compensation-based transaction must cancel, if a RuntimeException
  * (or subclass of) is thrown from that particular method.
- * <p>
+ * <p/>
  * When applied at class level, states that the compensation-based transaction must cancel, if a RuntimeException
  * (or subclass of) is thrown from any business method of the class.
  *

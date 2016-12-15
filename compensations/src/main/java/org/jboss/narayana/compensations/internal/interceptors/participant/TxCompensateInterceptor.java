@@ -42,13 +42,6 @@ import java.lang.reflect.Method;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 198)
 public class TxCompensateInterceptor extends ParticipantInterceptor {
 
-    /**
-     * This request has a compensation handler attached which has be be enlisted to the transaction.
-     *
-     * @param ic
-     * @return
-     * @throws Exception
-     */
     @AroundInvoke
     public Object intercept(InvocationContext ic) throws Exception {
 

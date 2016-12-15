@@ -22,8 +22,6 @@
 package org.jboss.narayana.compensations.api;
 
 /**
- * General exception used by @Compensatable interceptor to wrap actual cause of the problem.
- *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class TransactionalException extends RuntimeException {

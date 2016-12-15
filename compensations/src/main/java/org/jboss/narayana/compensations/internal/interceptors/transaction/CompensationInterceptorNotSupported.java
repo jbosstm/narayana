@@ -42,13 +42,6 @@ import javax.interceptor.InvocationContext;
 @Priority(Interceptor.Priority.PLATFORM_BEFORE + 197)
 public class CompensationInterceptorNotSupported extends CompensationInterceptorBase {
 
-    /**
-     * If there is an active transaction is must be suspended before executing the request.
-     *
-     * @param ic
-     * @return
-     * @throws Exception if request has failed.
-     */
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
 
