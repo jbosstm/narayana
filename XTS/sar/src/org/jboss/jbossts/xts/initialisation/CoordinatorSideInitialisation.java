@@ -12,6 +12,7 @@ import com.arjuna.webservices11.wscoor.server.ActivationCoordinatorInitialisatio
 import com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorInitialisation;
 import com.arjuna.wsc11.messaging.deploy.CoordinationInitialisation;
 import com.arjuna.wst11.messaging.deploy.WSTCoordinatorInitialisation;
+import org.jboss.jbossts.xts.recovery.coordinator.CoordinatorRecoveryInitialisation;
 
 /**
  * A class used to perform all 1.1 coordinator side initialisation
@@ -44,10 +45,18 @@ public class CoordinatorSideInitialisation implements XTSInitialisation
         WSCFInitialisation.startup();
 
         // there is no WSTX coordinator startup
+
+        // run recovery startup code
+
+        CoordinatorRecoveryInitialisation.startup();
     }
 
     public void shutdown() throws Exception
     {
+        // run recovery shutdown code
+
+        CoordinatorRecoveryInitialisation.shutdown();
+
         // there is no WSTX coordinator shutdown
 
         // run WSCF shutdown code

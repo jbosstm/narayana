@@ -22,18 +22,43 @@
 
 package org.jboss.narayana.compensations.internal;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+import java.lang.reflect.Method;
+
 /**
- * @author paul.robinson@redhat.com 22/03/2013
+ * @author paul.robinson@redhat.com 25/04/2013
  */
-public interface BAParticipant {
+public abstract class ParticipantInterceptor {
 
 
-    public void confirmCompleted(boolean confirmed);
+    @AroundInvoke
+    public Object intercept(InvocationContext ic) throws Exception {
 
-    public void close() throws Exception;
+        if (!BAControllerFactory.getInstance().isBARunning()) {
+            return ic.proceed();
+        }
 
-    public void cancel() throws Exception;
+        ParticipantManager participantManager = enlistParticipant(ic.getMethod());
 
-    public void compensate() throws Exception;
+        Object result;
+        try {
+
+
+            result = ic.proceed();
+            participantManager.completed();
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            participantManager.exit();
+            throw e;
+        } catch (Exception e) {
+            participantManager.completed();
+            throw e;
+        }
+        return result;
+    }
+
+    protected abstract ParticipantManager enlistParticipant(Method method) throws Exception;
 
 }

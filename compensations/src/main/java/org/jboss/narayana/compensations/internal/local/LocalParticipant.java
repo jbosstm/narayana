@@ -24,141 +24,102 @@ package org.jboss.narayana.compensations.internal.local;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
 import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.wst.FaultedException;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.WrongStateException;
-import org.jboss.logging.Logger;
 import org.jboss.narayana.compensations.api.CompensationHandler;
-import org.jboss.narayana.compensations.api.CompensationsRecoveryException;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.TransactionLoggedHandler;
 import org.jboss.narayana.compensations.internal.BAParticipant;
-import org.jboss.narayana.compensations.internal.CurrentTransaction;
 import org.jboss.narayana.compensations.internal.ParticipantImpl;
-import org.jboss.narayana.compensations.internal.context.CompensationContextStateManager;
-import org.jboss.narayana.compensations.internal.recovery.DeserializerHelper;
-import org.jboss.narayana.compensations.internal.recovery.local.LocalParticipantRecord;
-
-import java.io.IOException;
 
 /**
- * @author paul.robinson@redhat.com
- * @author gytis@redhat.com
+ * @author paul.robinson@redhat.com 22/03/2013
  */
 public class LocalParticipant implements BAParticipant, Participant {
-
-    private static final Logger LOGGER = Logger.getLogger(LocalParticipant.class);
 
     private ParticipantImpl participant;
 
     private String participantId;
 
-    private String coordinatorId;
-
-    // Needed for recovery
-    public LocalParticipant() {
-
-    }
-
     public LocalParticipant(CompensationHandler compensationHandler, ConfirmationHandler confirmationHandler,
-            TransactionLoggedHandler transactionLoggedHandler, CurrentTransaction currentTransaction, String participantId,
-            String coordinatorId, CompensationContextStateManager compensationContextStateManager,
-            DeserializerHelper deserializerHelper) {
+            TransactionLoggedHandler transactionLoggedHandler, Object currentTX, String participantId) {
+
+        participant = new ParticipantImpl(compensationHandler, confirmationHandler, transactionLoggedHandler, currentTX);
         this.participantId = participantId;
-        this.coordinatorId = coordinatorId;
-        this.participant = new ParticipantImpl(compensationHandler, confirmationHandler, transactionLoggedHandler,
-                currentTransaction.getId(), participantId, compensationContextStateManager, deserializerHelper);
     }
 
     @Override
     public void confirmCompleted(boolean confirmed) {
+
         participant.confirmCompleted(confirmed);
     }
 
     @Override
     public void close() throws InvalidParticipantException {
+
         try {
             participant.close();
-            LocalParticipantRecord.getInstance(this).remove();
-        } catch (WrongStateException | SystemException | CompensationsRecoveryException e) {
+        } catch (com.arjuna.wst.WrongStateException e) {
+            throw new InvalidParticipantException("Error closing participant: " + e.getMessage());
+        } catch (com.arjuna.wst.SystemException e) {
             throw new InvalidParticipantException("Error closing participant: " + e.getMessage());
         }
     }
 
     @Override
     public void cancel() throws InvalidParticipantException {
+
         try {
             participant.cancel();
-        } catch (FaultedException | WrongStateException | SystemException e) {
+        } catch (FaultedException e) {
+            throw new InvalidParticipantException("Error cancelling participant: " + e.getMessage());
+        } catch (com.arjuna.wst.WrongStateException e) {
+            throw new InvalidParticipantException("Error cancelling participant: " + e.getMessage());
+        } catch (com.arjuna.wst.SystemException e) {
             throw new InvalidParticipantException("Error cancelling participant: " + e.getMessage());
         }
     }
 
     @Override
     public void compensate() throws CompensateFailedException {
+
         try {
             participant.compensate();
-            LocalParticipantRecord.getInstance(this).remove();
-        } catch (FaultedException | WrongStateException | SystemException | CompensationsRecoveryException e) {
+        } catch (FaultedException e) {
+            throw new CompensateFailedException("Error compensating participant: " + e.getMessage());
+        } catch (com.arjuna.wst.WrongStateException e) {
+            throw new CompensateFailedException("Error compensating participant: " + e.getMessage());
+        } catch (com.arjuna.wst.SystemException e) {
             throw new CompensateFailedException("Error compensating participant: " + e.getMessage());
         }
     }
 
     @Override
-    public void forget() {
+    public void forget() throws InvalidParticipantException, WrongStateException, SystemException {
         //TODO: garbage collect if required
     }
 
     @Override
-    public String id() {
+    public String id() throws SystemException {
+
         return participantId;
     }
 
-    public String getCoordinatorId() {
-        return coordinatorId;
-    }
-
     @Override
-    public boolean save_state(OutputObjectState state) {
-        LOGGER.tracef("Persisting state: '%s'", this);
-        try {
-            state.packString(participantId);
-            state.packString(coordinatorId);
-        } catch (IOException e) {
-            LOGGER.warnf(e, "Failed to persist state");
-            return false;
-        }
+    public boolean save_state(OutputObjectState os) {
 
-        return participant.saveState(state);
-    }
-
-    @Override
-    public boolean restore_state(InputObjectState state) {
-        try {
-            participantId = state.unpackString();
-            coordinatorId = state.unpackString();
-        } catch (IOException e) {
-            LOGGER.warnf(e, "Failed to restore state");
-            return false;
-        }
-
-        participant = new ParticipantImpl(CompensationContextStateManager.getInstance(), new DeserializerHelper());
-        if (!participant.restoreState(state)) {
-            return false;
-        }
-
-        LOGGER.tracef("Restored state: '%s'", this);
-
+        //TODO: save state
         return true;
     }
 
     @Override
-    public String toString() {
-        return "LocalParticipant{participantId=" + participantId + ", coordinatorId=" + coordinatorId + ", participant="
-                + participant + "}";
-    }
+    public boolean restore_state(InputObjectState os) {
 
+        //TODO: restore state
+        return true;
+    }
 }

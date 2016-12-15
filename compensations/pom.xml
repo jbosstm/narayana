@@ -55,9 +55,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*UnitTest.java</include>
-                    </includes>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -172,55 +170,6 @@
             <version>${version.org.jboss.arquillian.core}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman</artifactId>
-            <version>${version.org.jboss.byteman}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman-submit</artifactId>
-            <version>${version.org.jboss.byteman}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.byteman</groupId>
-            <artifactId>byteman-bmunit</artifactId>
-            <version>${version.org.jboss.byteman}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>${version.javax.ws.rs-api}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${version.org.jboss.resteasy}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-            <version>${version.org.jboss.resteasy}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${version.org.mockito}</version>
-            <scope>test</scope>
-            <exclusions>
-                <!-- JUnit already comes with Hamcrest -->
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 
     <profiles>
@@ -244,8 +193,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
-                                <project.build.directory>${project.build.directory}</project.build.directory>
                                 <!--
                                     Used in arquillian.xml
                                 -->
@@ -253,38 +202,10 @@
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*TestLocal.java</include>
+                            </includes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*UnitTest.java</include>
-                                        <include>**/*TestLocal.java</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/recovery/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>recovery-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-manual</arquillian.launch>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/recovery/*TestLocal.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -309,8 +230,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
-                                <project.build.directory>${project.build.directory}</project.build.directory>
                                 <!--
                                     Used in arquillian.xml
                                 -->
@@ -318,38 +239,10 @@
                                 <node.address>127.0.0.1</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*TestRemote.java</include>
+                            </includes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*UnitTest.java</include>
-                                        <include>**/*TestRemote.java</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/recovery/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>recovery-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-manual</arquillian.launch>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/recovery/*TestRemote.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -377,7 +270,6 @@
                             <skip>false</skip>
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
-                                <project.build.directory>${project.build.directory}</project.build.directory>
                                 <!--
                                     Used in arquillian.xml
                                 -->
@@ -385,38 +277,10 @@
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*TestLocal.java</include>
+                            </includes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*UnitTest.java</include>
-                                        <include>**/*TestLocal.java</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/recovery/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>recovery-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-manual</arquillian.launch>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/recovery/*TestLocal.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -444,7 +308,6 @@
                             <skip>false</skip>
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
-                                <project.build.directory>${project.build.directory}</project.build.directory>
                                 <!--
                                     Used in arquillian.xml
                                 -->
@@ -452,38 +315,10 @@
                                 <node.address>[::1]</node.address>
                                 <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
+                            <includes>
+                                <include>**/*TestRemote.java</include>
+                            </includes>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*UnitTest.java</include>
-                                        <include>**/*TestRemote.java</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/recovery/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>recovery-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables combine.children="append">
-                                        <arquillian.launch>jboss-manual</arquillian.launch>
-                                    </systemPropertyVariables>
-                                    <includes>
-                                        <include>**/recovery/*TestRemote.java</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -500,7 +335,6 @@
                         <configuration>
                             <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
-                                <project.build.directory>${project.build.directory}</project.build.directory>
                                 <!--
                                     Used in arquillian.xml
                                 -->
@@ -508,23 +342,6 @@
                                 <server.config>standalone.xml</server.config>
                             </systemPropertyVariables>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*UnitTest.java</include>
-                                        <include>**/*TestLocal.java</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/recovery/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
