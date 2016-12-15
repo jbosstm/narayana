@@ -46,8 +46,6 @@ import javax.transaction.Synchronization;
 import java.io.Serializable;
 
 /**
- * Proxy session to wrap around provided {@link XASession}.
- *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class SessionProxy implements Session {
@@ -56,21 +54,11 @@ public class SessionProxy implements Session {
 
     private final TransactionHelper transactionHelper;
 
-    /**
-     * @param xaSession XA session that needs to be proxied.
-     * @param transactionHelper utility to make transaction resources registration easier.
-     */
     public SessionProxy(XASession xaSession, TransactionHelper transactionHelper) {
         this.xaSession = xaSession;
         this.transactionHelper = transactionHelper;
     }
 
-    /**
-     * Simply close proxied session if there is no active transaction. Or if transaction exists, delist session's XA resource
-     * and register {@link SessionClosingSynchronization}.
-     * 
-     * @throws JMSException
-     */
     @Override
     public void close() throws JMSException {
         if (transactionHelper.isTransactionAvailable()) {

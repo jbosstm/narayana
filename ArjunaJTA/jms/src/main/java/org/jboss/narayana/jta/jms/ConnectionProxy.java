@@ -47,22 +47,11 @@ public class ConnectionProxy implements Connection {
 
     private final TransactionHelper transactionHelper;
 
-    /**
-     * @param xaConnection XA connection which needs to be proxied.
-     * @param transactionHelper utility to make transaction resources registration easier.
-     */
     public ConnectionProxy(XAConnection xaConnection, TransactionHelper transactionHelper) {
         this.xaConnection = xaConnection;
         this.transactionHelper = transactionHelper;
     }
 
-    /**
-     * Simply create a session with an XA connection if there is no active transaction. Or create a proxied session and register
-     * it with an active transaction.
-     *
-     * @see SessionProxy
-     * @see Connection#createSession(boolean, int)
-     */
     @Override
     public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
         if (transactionHelper.isTransactionAvailable()) {
@@ -72,12 +61,6 @@ public class ConnectionProxy implements Connection {
         return xaConnection.createSession(transacted, acknowledgeMode);
     }
 
-    /**
-     * Simply close the proxied connection if there is no active transaction. Or register a
-     * {@link ConnectionClosingSynchronization} if active transaction exists.
-     * 
-     * @throws JMSException if transaction status check, synchronization registration, or connection closing has failed.
-     */
     @Override
     public void close() throws JMSException {
         if (transactionHelper.isTransactionAvailable()) {
@@ -92,106 +75,53 @@ public class ConnectionProxy implements Connection {
         }
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#getClientID()
-     */
     @Override
     public String getClientID() throws JMSException {
         return xaConnection.getClientID();
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#setClientID(String)
-     */
     @Override
     public void setClientID(String clientID) throws JMSException {
         xaConnection.setClientID(clientID);
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#getMetaData()
-     */
     @Override
     public ConnectionMetaData getMetaData() throws JMSException {
         return xaConnection.getMetaData();
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#getExceptionListener()
-     */
     @Override
     public ExceptionListener getExceptionListener() throws JMSException {
         return xaConnection.getExceptionListener();
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#setExceptionListener(ExceptionListener)
-     */
     @Override
     public void setExceptionListener(ExceptionListener listener) throws JMSException {
         xaConnection.setExceptionListener(listener);
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#start()
-     */
     @Override
     public void start() throws JMSException {
         xaConnection.start();
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#stop()
-     */
     @Override
     public void stop() throws JMSException {
         xaConnection.stop();
     }
 
-    /**
-     * Delegate to {@link #xaConnection}
-     *
-     * @see Connection#createConnectionConsumer(Destination, String, ServerSessionPool, int)
-     */
     @Override
     public ConnectionConsumer createConnectionConsumer(Destination destination, String messageSelector,
             ServerSessionPool sessionPool, int maxMessages) throws JMSException {
         return xaConnection.createConnectionConsumer(destination, messageSelector, sessionPool, maxMessages);
     }
 
-    /**
-     * Delegate to {@link #xaConnection}.
-     *
-     * @see Connection#createDurableConnectionConsumer(Topic, String, String, ServerSessionPool, int)
-     */
     @Override
     public ConnectionConsumer createDurableConnectionConsumer(Topic topic, String subscriptionName, String messageSelector,
             ServerSessionPool sessionPool, int maxMessages) throws JMSException {
         return xaConnection.createDurableConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
     }
 
-    /**
-     * Create a proxied XA session and enlist its XA resource to the transaction.
-     * <p>
-     * If session's XA resource cannot be enlisted to the transaction, session is closed.
-     *
-     * @return XA session wrapped with {@link SessionProxy}.
-     * @throws JMSException if failure occurred creating XA session or registering its XA resource.
-     */
     private Session createAndRegisterSession() throws JMSException {
         XASession xaSession = xaConnection.createXASession();
         Session session = new SessionProxy(xaSession, transactionHelper);

@@ -28,17 +28,12 @@ import javax.jms.Session;
 import javax.transaction.Synchronization;
 
 /**
- * Synchronization to close JMS session at the end of the transaction.
- *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class SessionClosingSynchronization implements Synchronization {
 
     private final Session session;
 
-    /**
-     * @param session session to be closed.
-     */
     public SessionClosingSynchronization(Session session) {
         this.session = session;
     }
@@ -48,11 +43,6 @@ public class SessionClosingSynchronization implements Synchronization {
         // Nothing to do
     }
 
-    /**
-     * Close the session despite the status of the transaction.
-     *
-     * @param status
-     */
     @Override
     public void afterCompletion(int status) {
         if (jtaLogger.logger.isTraceEnabled()) {
