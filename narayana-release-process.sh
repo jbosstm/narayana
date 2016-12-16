@@ -69,6 +69,7 @@ if [[ $? != 0 ]]
 then
   set -e
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
+  git fetch upstream --tags
 else
   set -e
 fi
@@ -87,11 +88,11 @@ git checkout $CURRENT
 mvn clean install -Prelease
 cd -
 ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
-echo "build and retrieve the centos54x64 blacktie binary on centos54x64 machine"
-ssh narayanaci1.eng.hst.ams2.redhat.com -x "export JAVA_HOME=/usr/lib/jvm/java-1.8.0/ ; mkdir tmp ; cd tmp ; rm -rf narayana ; git clone https://github.com/jbosstm/narayana.git ; cd narayana ; git fetch origin --tags ; git checkout $CURRENT ; ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install -DskipTests ; ./build.sh -f blacktie/pom.xml clean install -DskipTests"
-scp narayanaci1.eng.hst.ams2.redhat.com:tmp/narayana/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz ~/tmp/narayana/$CURRENT/
-scp ~/tmp/narayana/$CURRENT/blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
-echo "You need to execute the following commands on a Windows box"
-echo "cd %USERPROFILE%\tmp & del \S narayana & git clone https://github.com/jbosstm/narayana & cd narayana & git fetch origin --tags"
-echo "set CURRENT="
-echo 'set NOPAUSE=true & git checkout %CURRENT% & call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" & build.bat -f blacktie\wildfly-blacktie\pom.xml clean install -DskipTests & build.bat -f blacktie\pom.xml clean install -DskipTests & cd blacktie\blacktie\target & rsync -P --protocol=28 --chmod=ugo=rwX blacktie-%CURRENT%-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/%CURRENT%/binary/blacktie-%CURRENT%-vc9x32-bin.zip'
+
+echo "build and retrieve the centos54x64 and vc9x32 binaries from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/"
+echo "Press enter when the artifacts are available"
+read
+wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
+wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
+scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
+scp blacktie-${CURRENT}-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/

@@ -120,9 +120,9 @@
         <include name="XA.idl"/>
       </fileset>
     </copy>
-    <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
-    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-xatmi-api"/>
-    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-nbf-api"/>
+    <copy file="narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
+    <copy file="blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-xatmi-api"/>
+    <copy file="blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-nbf-api"/>
     <exec executable="bash" dir="${workdir}" failonerror="true">
       <arg value="-c"/>
       <arg value="rsync --chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r downloads/* jbosstm@filemgmt.jboss.org:${downloads.dir}/${tag}" />
