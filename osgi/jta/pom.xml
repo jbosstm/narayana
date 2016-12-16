@@ -15,7 +15,7 @@
    <parent>
 	   <groupId>org.jboss.narayana.osgi</groupId>
 	   <artifactId>narayana-osgi-parent</artifactId>
-	   <version>5.5.0.Final</version>
+	   <version>5.5.1.Final-SNAPSHOT</version>
 	   <relativePath>../pom.xml</relativePath>
    </parent>
 
