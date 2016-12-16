@@ -107,7 +107,7 @@
                             <code>read-resource</code>
                             CLI command on this element
                             to see the participants of the transaction. Participants are
-                            identified by their JNDI names.
+                            identified by their JNDI names (or some other unique identifier if the JNDI name is not available).
                         </para>
                         <screen>/subsystem=transactions/log-store=log-store/transactions=<replaceable>0\:ffff7f000001\:-b66efc2\:4f9e6f8f\:9</replaceable>/participants=<replaceable>java\:\/JmsXA</replaceable>:read-resource</screen>
                         <para>
@@ -121,7 +121,7 @@
        "eis-product-name" => "HornetQ",
        "eis-product-version" => "2.0",
        "jndi-name" => "java:/JmsXA",
-       "status" => "HEURISTIC",
+       "status" => "HEURISTIC_HAZARD",
        "type" => "/StateManager/AbstractRecord/XAResourceRecord"
    }
 }
@@ -130,9 +130,9 @@
                         </para>
                         <para>
                             The outcome status shown here is in a
-                            <code>HEURISTIC</code>
+                            <code>HEURISTIC_HAZARD</code>
                             state and is eligible for recovery. Refer to
-                            <xref linkend="recover_transaction" />
+                            <xref linkend="recover_transaction_participant" />
                             for more details.
                         </para>
                     </listitem>
@@ -170,36 +170,32 @@ Each transaction log participant supports a <code>:delete</code> operation which
                         </screen>
                         <warning>
                             <para>
-Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this delete operation is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will fail. The system administrator may override this behaviour by setting a system property:
-<screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value true.
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this delete operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will still succeed. The system administrator may override this behaviour by setting a system property:
+                                <screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value false.
                             </para>
                         </warning>
                     </listitem>
                 </varlistentry>
-                <varlistentry id="recover_transaction">
-                    <term>Recover a transaction.</term>
+                <varlistentry id="recover_transaction_participant">
+                    <term>Recover a transaction participant.</term>
                     <listitem>
                         <para>
-                            Each transaction log supports recovery via the
+                            Each transaction participant log may support recovery via the
                             <code>:recover</code>
-                            CLI command.
+                            CLI command if it is in a heuristic state.
                         </para>
                         <itemizedlist>
                             <title>Recovery of Heuristic Transactions and Participants</title>
                             <listitem>
                                 <para>
-                                    If the transaction's status is
-                                    <literal>HEURISTIC</literal>
-                                    , the recovery operation changes the state to
+                                    If the transaction participant's status is
+                                    <literal>HEURISTIC</literal> or
+                                    <literal>HEURISTIC_HAZARD</literal> or
+                                    <literal>HEURISTIC_MIXED</literal>
+                                    then the recover operation changes the state to
                                     <literal>PREPARE</literal>
                                     and
-                                    triggers a recovery attempt.
-                                </para>
-                            </listitem>
-                            <listitem>
-                                <para>
-                                    If one of the transaction participants is in a heuristic state, the recovery
-                                    operation tries to replay the
+                                    triggers a recovery attempt by replaying the
                                     <code>commit</code>
                                     operation.
                                     If successful, the participant is removed from the transaction log. You
@@ -356,22 +352,22 @@ Normally you would leave participant log management to the transaction log that 
        "eis-product-name" => "HornetQ",
        "eis-product-version" => "2.0",
        "jndi-name" => "java:/JmsXA",
-       "status" => "HEURISTIC",
+       "status" => "HEURISTIC_HAZARD",
        "type" => "/StateManager/AbstractRecord/XAResourceRecord"
                         </screen>
 
                         </para>
                         <para>
                             The status attribute shown in this example is in a
-                            <code>HEURISTIC</code>
+                            <code>HEURISTIC_HAZARD</code>
                             state and is eligible for recovery. Refer to
-                            <xref linkend="recover_transaction_jmx" />
+                            <xref linkend="recover_transaction_participant_jmx" />
                             for more details.
                         </para>
                     </listitem>
                 </varlistentry>
                 <varlistentry>
-                    <term>Delete a transaction.</term>
+                    <term>Delete a transaction or transaction participant.</term>
                     <listitem>
                         <para>
                             MBeans for transaction logs and participants contain a <code>remove</code> operation. Invoke
@@ -387,27 +383,29 @@ Normally you would leave participant log management to the transaction log that 
                                 is not an exclusive resource,
                             </para>
                             <para>
-Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this remove operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will fail. The system administrator may override this behaviour by setting a system property:
-                                <screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value true.
+Normally you would leave participant log management to the transaction log that owns it or to the recovery system. However, this remove operation for participant logs is provided for those cases where you know it is safe to do so and, in the case of heuristically completed XA resources, you wish to trigger a forget call so that the XA resource vendors' logs are cleaned correctly. By default, if this forget call fails then the delete operation will still succeed. The system administrator may override this behaviour by setting a system property:
+                                <screen>ObjectStoreEnvironmentBean.ignoreMBeanHeuristics</screen> to the value false.
                             </para>
                         </warning>
                     </listitem>
                 </varlistentry>
-                <varlistentry id="recover_transaction_jmx">
+                <varlistentry id="recover_transaction_participant_jmx">
                     <term>Recover a transaction.</term>
                     <listitem>
                         <para>
-                            Transaction participants supports recovery via the
+                            Transaction participants support recovery via the
                             <code>clearHeuristic</code>
                             operation.
                         </para>
                         <itemizedlist>
-                            <title>Recovery of Heuristic Transactions and Participants</title>
+                            <title>Recovery of Heuristic Participants</title>
                             <listitem>
                                 <para>
-                                    If the transaction's status is
-                                    <literal>HEURISTIC</literal>
-                                    , the clearHeuristic operation changes the state to
+                                    If the transaction participant's status is
+                                    <literal>HEURISTIC</literal> or
+                                    <literal>HEURISTIC_HAZARD</literal> or
+                                    <literal>HEURISTIC_MIXED</literal>
+                                    then the clearHeuristic operation changes the state to
                                     <literal>PREPARED</literal>.
                                 </para>
                             </listitem>
