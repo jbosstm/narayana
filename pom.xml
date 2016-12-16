@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.narayana</groupId>
   <artifactId>narayana-all</artifactId>
-  <version>5.4.1.Final-SNAPSHOT</version>
+  <version>5.5.0.Final</version>
   <packaging>pom</packaging>
   <url>http://www.jboss.org/jbosstm/</url>
   <name>Narayana: all</name>
