@@ -35,6 +35,8 @@ import org.jboss.narayana.compensations.internal.remote.RemoteParticipant;
 import java.io.ObjectInputStream;
 
 /**
+ * XTS business activity recovery module to recreate {@link RemoteParticipant} objects.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class RemoteParticipantRecoveryModule implements XTSBARecoveryModule {

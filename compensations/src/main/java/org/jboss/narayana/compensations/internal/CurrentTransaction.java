@@ -24,16 +24,34 @@ package org.jboss.narayana.compensations.internal;
 
 
 /**
- * A common interface to describe current compensating transaction.
+ * A common interface to pass around current transaction information.
+ * 
+ * Because underline implementations have different ways of passing transaction information around, having a wrapper makes the
+ * compensation framework code a bit cleaner.
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public interface CurrentTransaction {
 
+    /**
+     * Get id of the current compensating transaction.
+     * 
+     * @return id of the current transaction.
+     */
     String getId();
 
+    /**
+     * Get class of the actual compensating transaction implementation.
+     * 
+     * @return compensating transaction implementation class.
+     */
     Class<?> getDelegateClass();
 
+    /**
+     * Get underlying compensating transaction object.
+     *
+     * @return 
+     */
     Object getDelegate();
 
 }
