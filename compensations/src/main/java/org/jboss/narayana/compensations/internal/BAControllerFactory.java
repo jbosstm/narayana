@@ -1,6 +1,7 @@
 package org.jboss.narayana.compensations.internal;
 
 import com.arjuna.mw.wscf.protocols.ProtocolRegistry;
+import org.jboss.narayana.compensations.internal.context.CompensationContextStateManager;
 import org.jboss.narayana.compensations.internal.local.LocalBAController;
 import org.jboss.narayana.compensations.internal.remote.RemoteBAController;
 
@@ -24,13 +25,13 @@ public class BAControllerFactory {
 
     public static BAController getRemoteInstance() {
 
-        return new RemoteBAController();
+        return new RemoteBAController(CompensationContextStateManager.getInstance());
     }
 
     public static BAController getLocalInstance() {
 
         ProtocolRegistry.sharedManager().initialise();
-        return new LocalBAController();
+        return new LocalBAController(CompensationContextStateManager.getInstance());
     }
 
     public static boolean isLocalTransactionRunning() {
