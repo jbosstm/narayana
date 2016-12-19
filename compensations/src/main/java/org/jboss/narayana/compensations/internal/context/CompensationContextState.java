@@ -48,21 +48,41 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CompensationContextState {
 
+    /**
+     * Record type to use when persisting context state to the recovery store.
+     */
     private static final String RECORD_TYPE = "/Compensations/Context";
 
     private static final Logger LOGGER = Logger.getLogger(CompensationContextState.class);
 
+    /**
+     * Beans registered to this context.
+     */
     private final Map<String, Object> resources = new ConcurrentHashMap<>();
 
+    /**
+     * Participants attached to this context.
+     */
     private final Set<String> participants = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Utility to make beans deserialization easier.
+     */
     private final DeserializerHelper deserializerHelper;
 
+    /**
+     * Id of this context. It is also used for persistence.
+     */
     private Uid id;
 
+    /**
+     * Transaction id to which this context belongs.
+     */
     private String transactionId;
 
     /**
+     * Used during recovery.
+     *
      * @param deserializerHelper Helper to deserialize resources.
      */
     public CompensationContextState(DeserializerHelper deserializerHelper) {
@@ -103,8 +123,10 @@ public class CompensationContextState {
     }
 
     /**
+     * Get resource registered to this context.
+     *
      * @param id String id of the resource.
-     * @return Object of the resource of null, if such resource wasn't found.
+     * @return Resource object if it was found, or {@code null} if it wasn't.
      */
     public Object getResource(String id) {
         Objects.requireNonNull(id, "Id cannot be null");
@@ -238,6 +260,13 @@ public class CompensationContextState {
         return result;
     }
 
+    /**
+     * For each resource persist its id, class name, and its instance serialized to a byte array.
+     * 
+     * @param state output state to persist resources to.
+     * @param resources resources to persist.
+     * @throws IOException if failure occurred when serializing resource.
+     */
     private void persistResources(OutputObjectState state, Map<String, Object> resources) throws IOException {
         state.packInt(resources.size());
         for (Map.Entry<String, Object> entry : resources.entrySet()) {
@@ -251,6 +280,16 @@ public class CompensationContextState {
         }
     }
 
+    /**
+     * Deserialize resources from the {@link InputObjectState}.
+     * 
+     * We need to use client's class loader to deserialize resources. Therefore, we're using {@link DeserializerHelper} to try
+     * to deserialize resources with deserializers registered by the client.
+     * 
+     * @param state state to deserialize resources from.
+     * @return map of deserialized resources.
+     * @throws IOException if at least one of the resource couldn't be deserialized.
+     */
     private Map<String, Object> restoreResources(InputObjectState state) throws IOException {
         int count = state.unpackInt();
         Map<String, Object> resources = new HashMap<>(count);
@@ -267,6 +306,13 @@ public class CompensationContextState {
         return resources;
     }
 
+    /**
+     * Persist all participant ids.
+     *
+     * @param state state to persist participant ids to.
+     * @param participants set of participant ids.
+     * @throws IOException if failure occurred when persisting participant id.
+     */
     private void persistParticipants(OutputObjectState state, Set<String> participants) throws IOException {
         state.packInt(participants.size());
         for (String participantId : participants) {
@@ -274,6 +320,13 @@ public class CompensationContextState {
         }
     }
 
+    /**
+     * Deserialize participant ids.
+     *
+     * @param state state to deserialize participant ids from.
+     * @return set of participant ids.
+     * @throws IOException if failure occurred when deserializing participant id.
+     */
     private Set<String> restoreParticipants(InputObjectState state) throws IOException {
         int count = state.unpackInt();
         Set<String> participants = new HashSet<>(count);

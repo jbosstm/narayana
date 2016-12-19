@@ -32,6 +32,10 @@ public class CompensationManagerImpl implements CompensationManager {
 
     private static final ThreadLocal<CompensationManagerState> compensationManagerStateThreadLocal = new ThreadLocal<CompensationManagerState>();
 
+    /**
+     * Mark the transaction as "compensate only". This ensures that the compensation-based transaction will be cancelled and any
+     * completed work compensated.
+     */
     @Override
     public void setCompensateOnly() {
 
@@ -39,6 +43,11 @@ public class CompensationManagerImpl implements CompensationManager {
         compensationManagerState.setCompensateOnly(true);
     }
 
+    /**
+     * Check if compensating transaction was marked as compensate-only.
+     *
+     * @return {@code true} if the transaction was marked as compensate-only and {@code false} otherwise.
+     */
     public static boolean isCompensateOnly() {
 
         if (compensationManagerStateThreadLocal.get() == null) {
@@ -47,11 +56,21 @@ public class CompensationManagerImpl implements CompensationManager {
         return compensationManagerStateThreadLocal.get().isCompensateOnly();
     }
 
+    /**
+     * Resume compensation manager by associating it with the current thread.
+     *
+     * @param compensationManagerState state of the compensation manager.
+     */
     public static void resume(CompensationManagerState compensationManagerState) {
 
         compensationManagerStateThreadLocal.set(compensationManagerState);
     }
 
+    /**
+     * Suspend compensation manager by disassociating it from the current thread.
+     *
+     * @return state of the suspended compensation manager.
+     */
     public static CompensationManagerState suspend() {
 
         CompensationManagerState result = compensationManagerStateThreadLocal.get();

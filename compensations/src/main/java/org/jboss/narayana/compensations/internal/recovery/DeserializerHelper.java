@@ -29,12 +29,24 @@ import java.io.ObjectInputStream;
 import java.util.Optional;
 
 /**
+ * Utility class to work with user registered deserializers.
+ * 
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class DeserializerHelper {
 
     private static final Logger LOGGER = Logger.getLogger(DeserializerHelper.class);
 
+    /**
+     * Find a user registered deserializer capable to deserialize objects of the requested type. If such deserializer can be
+     * found, then use it to deserialize an object from the provided input stream.
+     * 
+     * @param objectInputStream stream to deserialize an object from.
+     * @param className object's class name.
+     * @param clazz object's class
+     * @return {@link Optional} with the deserialized object if required deserializer was found. Or an empty {@link Optional} if
+     *         the deserializer wasn't found.
+     */
     public <T> Optional<T> deserialize(ObjectInputStream objectInputStream, String className, Class<T> clazz) {
         for (Deserializer deserializer : DeserializersContainerImpl.getInstance().getDeserializers()) {
             if (!deserializer.canDeserialize(className)) {

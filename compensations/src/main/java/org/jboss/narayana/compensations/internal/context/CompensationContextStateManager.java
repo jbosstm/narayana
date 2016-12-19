@@ -49,16 +49,36 @@ public class CompensationContextStateManager {
             new RecoveryHelper(StoreManager.getRecoveryStore(), CompensationContextState.getRecordType()),
             new DeserializerHelper());
 
+    /**
+     * Ids of all the registered context states. It was introduced to make filtering during the recovery more efficient, because
+     * only new states are added during the recovery (see {@code restore} method).
+     */
     private final Set<Uid> stateIds = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Contexts container indexed with transaction id to which context is attached.
+     */
     private final Map<String, CompensationContextState> states = new ConcurrentHashMap<>();
 
+    /**
+     * Context state attached to the current thread.
+     */
     private final ThreadLocal<CompensationContextState> currentState = new ThreadLocal<>();
 
+    /**
+     * Utility to make it easier to persist/recover resources to/from recovery store.
+     */
     private final RecoveryHelper recoveryHelper;
 
+    /**
+     * Utility to make it easier to deserialize resources using user registered deserializers.
+     */
     private final DeserializerHelper deserializerHelper;
 
+    /**
+     * @param recoveryHelper recover helper to use for persistence and recovery.
+     * @param deserializerHelper deserializer helper to use when recreating resources during the recovery.
+     */
     CompensationContextStateManager(RecoveryHelper recoveryHelper, DeserializerHelper deserializerHelper) {
         Objects.requireNonNull(recoveryHelper, "Recovery helper cannot be null");
         Objects.requireNonNull(deserializerHelper, "Deserializer helper cannot be null");
@@ -66,6 +86,11 @@ public class CompensationContextStateManager {
         this.deserializerHelper = deserializerHelper;
     }
 
+    /**
+     * Get a singleton instance of {@link CompensationContextStateManager}.
+     * 
+     * @return
+     */
     public static CompensationContextStateManager getInstance() {
         return INSTANCE;
     }
@@ -74,7 +99,7 @@ public class CompensationContextStateManager {
      * Attaches compensation context state to the current thread. If the state for the specified transaction id doesn't exit a
      * new one is created.
      * 
-     * @param transactionId String id of the transaction to which state is associated.
+     * @param transactionId {@code String} id of the transaction to which state is associated.
      */
     public void activate(String transactionId) {
         Objects.requireNonNull(transactionId, "Transaction id cannot be null");
@@ -104,7 +129,8 @@ public class CompensationContextStateManager {
      * Get compensation context state of the specific transaction.
      *
      * @param transactionId String id of the transaction to which state is associated.
-     * @return
+     * @return {@link Optional} containing {@link CompensationContextState} transaction context was found, or an empty
+     *         {@link Optional} if context wasn't found.
      */
     public Optional<CompensationContextState> get(String transactionId) {
         Objects.requireNonNull(transactionId, "Transaction id cannot be null");
@@ -127,6 +153,11 @@ public class CompensationContextStateManager {
     /**
      * Persist compensation context state to the recovery store.
      *
+     * If the requested context exists it is serialized to the newly created {@link OutputObjectState} and persisted using
+     * {@code recoveryHelper}.
+     *
+     * If persistence fails, only a warning message is logged.
+     * 
      * @param transactionId String id of the transaction to which state is associated.
      */
     public void persist(String transactionId) {
@@ -146,6 +177,8 @@ public class CompensationContextStateManager {
 
     /**
      * Remove compensation context state.
+     *
+     * If requested context exists, it is removed from the contexts container as well as from the recovery store.
      *
      * @param transactionId String id of the transaction to which state is associated.
      */
@@ -168,12 +201,26 @@ public class CompensationContextStateManager {
                 .filter(record -> !stateIds.contains(record.stateUid())).forEach(this::restoreState);
     }
 
+    /**
+     * Initiate new compensation context state and add it to the contexts container.
+     *
+     * @param transactionId transaction id to which context is associated.
+     */
     private void newState(String transactionId) {
         CompensationContextState state = new CompensationContextState(new Uid(), transactionId, deserializerHelper);
         states.put(transactionId, state);
         stateIds.add(state.getId());
     }
 
+    /**
+     * Restore compensation context state from the {@link InputObjectState}.
+     *
+     * If deserialization is successful, context is added to the contexts container.
+     *
+     * If deserialization fails, only a warning message is logged.
+     *
+     * @param record record to deserialize context state from.
+     */
     private void restoreState(InputObjectState record) {
         CompensationContextState state = new CompensationContextState(deserializerHelper);
         if (state.restore(record)) {

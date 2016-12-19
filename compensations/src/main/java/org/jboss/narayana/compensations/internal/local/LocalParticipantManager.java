@@ -31,6 +31,8 @@ import org.jboss.narayana.compensations.internal.recovery.local.LocalParticipant
 import javax.xml.namespace.QName;
 
 /**
+ * Manager used to notify local transaction coordinator about local participant actions.
+ * 
  * @author paul.robinson@redhat.com 19/04/2014
  * @author gytis@redhat.com
  */
@@ -42,6 +44,11 @@ public class LocalParticipantManager implements ParticipantManager {
 
     private final CompensationContextStateManager compensationContextStateManager;
 
+    /**
+     * @param participant participant to be managed.
+     * @param transaction transaction to which participant is enlisted.
+     * @param compensationContextStateManager context state manager instance.
+     */
     public LocalParticipantManager(LocalParticipant participant, CurrentTransaction transaction,
             CompensationContextStateManager compensationContextStateManager) {
         this.participant = participant;
@@ -49,6 +56,12 @@ public class LocalParticipantManager implements ParticipantManager {
         this.compensationContextStateManager = compensationContextStateManager;
     }
 
+    /**
+     * Detach participant from the compensation context and tell compensation context manager to update its recovery record.
+     * Then delist participant from the transaction.
+     * 
+     * @throws Exception
+     */
     @Override
     public void exit() throws Exception {
         compensationContextStateManager.getCurrent().detachParticipant(participant.id());
@@ -56,6 +69,12 @@ public class LocalParticipantManager implements ParticipantManager {
         CoordinatorManagerFactory.coordinatorManager().delistParticipant(participant.id());
     }
 
+    /**
+     * Tell compensation context manager and local participant to persist their recovery records. And then notify local
+     * transaction coordinator that participant has completed.
+     *
+     * @throws Exception
+     */
     @Override
     public void completed() throws Exception {
         compensationContextStateManager.persist(transaction.getId());

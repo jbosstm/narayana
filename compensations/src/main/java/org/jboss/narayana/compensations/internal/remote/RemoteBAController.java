@@ -37,6 +37,13 @@ public class RemoteBAController implements BAController {
         this.compensationContextStateManager = compensationContextStateManager;
     }
 
+    /**
+     * Start a new remote compensating transaction.
+     *
+     * This also creates a new compensation context attached to this transaction.
+     *
+     * @throws Exception
+     */
     @Override
     public void beginBusinessActivity() throws Exception {
         UserBusinessActivityFactory.userBusinessActivity().begin();
@@ -44,6 +51,16 @@ public class RemoteBAController implements BAController {
         compensationContextStateManager.activate(getCurrentTransaction().getId());
     }
 
+    /**
+     * Close current remote compensating transaction.
+     * 
+     * First compensation context is deactivate, because application shouldn't access it any more.
+     * 
+     * Then remote transaction manager is told to close the transaction. And once that's done compensation context of this
+     * transaction is destroyed.
+     * 
+     * @throws Exception
+     */
     @Override
     public void closeBusinessActivity() throws Exception {
         CurrentTransaction currentTransaction = getCurrentTransaction();
@@ -53,6 +70,16 @@ public class RemoteBAController implements BAController {
         compensationContextStateManager.remove(currentTransaction.getId());
     }
 
+    /**
+     * Cancel current remote compensating transaction.
+     *
+     * First compensation context is deactivate, because application shouldn't access it any more.
+     *
+     * Then remote transaction manager is told to cancel the transaction. And once that's done compensation context of this
+     * transaction is destroyed.
+     *
+     * @throws Exception
+     */
     @Override
     public void cancelBusinessActivity() throws Exception {
         CurrentTransaction currentTransaction = getCurrentTransaction();
@@ -90,11 +117,23 @@ public class RemoteBAController implements BAController {
         }
     }
 
+    /**
+     * Deactivate compensation context and suspend current remote compensating transaction.
+     *
+     * @return
+     * @throws Exception
+     */
     public CurrentTransaction suspend() throws Exception {
         compensationContextStateManager.deactivate();
         return new RemoteCurrentTransaction(BusinessActivityManagerFactory.businessActivityManager().suspend());
     }
 
+    /**
+     * Resume a remote compensating transaction and activate its compensation context.
+     *
+     * @param currentTransaction {@link CurrentTransaction} containing information of the transaction to be resumed.
+     * @throws Exception
+     */
     public void resume(CurrentTransaction currentTransaction) throws Exception {
         if (currentTransaction.getDelegateClass() != TxContext.class) {
             throw new Exception("Invalid current transaction type: " + currentTransaction);
