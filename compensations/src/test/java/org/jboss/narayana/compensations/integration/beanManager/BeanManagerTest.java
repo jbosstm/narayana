@@ -21,7 +21,7 @@
  */
 package org.jboss.narayana.compensations.integration.beanManager;
 
-import org.jboss.narayana.compensations.internal.BeanManagerUtil;
+import org.jboss.narayana.compensations.internal.utils.BeanManagerUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
