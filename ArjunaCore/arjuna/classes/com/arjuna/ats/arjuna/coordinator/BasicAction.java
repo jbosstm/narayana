@@ -2728,6 +2728,7 @@ public class BasicAction extends StateManager
                               * Prepare on this record failed - we are in trouble.
                               * Add the record back onto the pendingList and return.
                               */
+                    addDeferredThrowables(record, deferredThrowables);
 
                     record = insertRecord(pendingList, record);
 
