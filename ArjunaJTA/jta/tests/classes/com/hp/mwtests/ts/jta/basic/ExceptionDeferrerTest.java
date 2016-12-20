@@ -23,6 +23,37 @@ import com.hp.mwtests.ts.jta.common.TestResource;
  */
 public class ExceptionDeferrerTest {
 
+    @Test
+    public void testCheckDeferredPrepareRollbackException () throws Exception
+    {
+        ThreadActionData.purgeActions();
+
+        TransactionImple tx = new TransactionImple(0);
+
+
+        tx.enlistResource(new FailureXAResource());
+
+        try
+        {
+            tx.enlistResource(new FailureXAResource(FailLocation.prepare, FailType.rollback));
+        }
+        catch (final RollbackException ex)
+        {
+            fail();
+        }
+
+        try
+        {
+            tx.commit();
+
+            fail();
+        }
+        catch (final RollbackException ex)
+        {
+            assertEquals(XAException.XAER_INVAL, ((XAException) ex.getSuppressed()[0]).errorCode);
+        }
+    }
+
    @Test
    public void testCheckDeferredRollbackException () throws Exception
    {
