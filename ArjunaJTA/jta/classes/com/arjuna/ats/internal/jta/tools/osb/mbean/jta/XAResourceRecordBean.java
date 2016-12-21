@@ -79,7 +79,6 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
     public boolean activate() {
         boolean ok = super.activate();
-        XAResource xares = (XAResource) rec.value();
 
         className = rec.getClass().getName();
 
@@ -91,11 +90,13 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
             jndiName = xarec.getJndiName();
         }
 
-        if (xares != null) {
-            className = xares.getClass().getName();
+        if (rec.value() != null) {
+            XAResource xar = (XAResource) rec.value();
+
+            className = xar.getClass().getName();
 
             try {
-                timeout = xares.getTransactionTimeout();
+                timeout = xar.getTransactionTimeout();
             } catch (Exception e) {
             }
         }
@@ -164,6 +165,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
             this(rec.order());
             this.rec = rec;
             this.xarec = (XAResourceRecord) rec;
+            heuristic = ((XAResourceRecord) rec).getHeuristic();
         }
 
         @Override
