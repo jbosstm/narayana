@@ -39,9 +39,7 @@ import javax.naming.InitialContext;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import javax.transaction.Transaction;
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -341,6 +339,10 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	if (_theModifier != null)
 	    _dbName = _theModifier.initialise(_dbName);
     }
+
+	public XADataSource xaDataSource () {
+		return _theDataSource;
+	}
     
     private final void createDataSource () throws SQLException
     {
