@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jdbc;
 
+import javax.sql.XADataSource;
 import javax.transaction.Transaction;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
@@ -38,16 +39,18 @@ import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 interface ConnectionControl
 {
 
-    public String user ();
-    public String password ();
+    String user ();
+    String password ();
 
-    public String url ();
-    public String dynamicClass ();
+    String url ();
+    String dynamicClass ();
 
-    public String dataSourceName ();
+    String dataSourceName ();
 
-    public Transaction transaction ();
+    Transaction transaction ();
 
-    public void setModifier (ConnectionModifier cm);
+    void setModifier (ConnectionModifier cm);
+
+    XADataSource xaDataSource ();
     
 }

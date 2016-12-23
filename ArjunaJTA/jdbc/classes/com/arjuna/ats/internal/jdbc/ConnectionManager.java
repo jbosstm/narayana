@@ -56,13 +56,15 @@ public class ConnectionManager
      */
     public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
     {
-        String user = info.getProperty(TransactionalDriver.userName);
-        String passwd = info.getProperty(TransactionalDriver.password);
-        String dynamic = info.getProperty(TransactionalDriver.dynamicClass);
+        String user = info.getProperty(TransactionalDriver.userName, "");
+        String passwd = info.getProperty(TransactionalDriver.password, "");
+        String dynamic = info.getProperty(TransactionalDriver.dynamicClass, "");
         String poolConnections = info.getProperty(TransactionalDriver.poolConnections, "true");
-        
-        if (dynamic == null)
-            dynamic = "";
+        Object xaDataSource = info.get(TransactionalDriver.XADataSource);
+
+        if (dbUrl == null) {
+            dbUrl = "";
+        }
 
         boolean poolingEnabled = "true".equalsIgnoreCase(poolConnections);
         
@@ -88,10 +90,11 @@ public class ConnectionManager
 
                 /* Check transaction and database connection. */
                 if ((tx1 != null && tx1.equals(tx2))
-                        && connControl.url().equals(dbUrl)
-                        && connControl.user().equals(user)
-                        && connControl.password().equals(passwd)
-                        && connControl.dynamicClass().equals(dynamic))
+                        && dbUrl.equals(connControl.url())
+                        && user.equals(connControl.user())
+                        && passwd.equals(connControl.password())
+                        && dynamic.equals(connControl.dynamicClass())
+                        && (xaDataSource == null || xaDataSource.equals(connControl.xaDataSource()))) // equal ProvidedXADataSourceConnection instances should have the same data source
                 {
                     try
                     {

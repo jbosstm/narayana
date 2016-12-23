@@ -331,6 +331,10 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 	    _dbName = _theModifier.initialise(_dbName);
     }
 
+	public XADataSource xaDataSource () {
+		return _theDataSource;
+	}
+
     private final void createConnection () throws SQLException
     {
 	if (jdbcLogger.logger.isTraceEnabled()) {
