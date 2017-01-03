@@ -1,10 +1,7 @@
-.classpath
-.project
+build
 dbdrivers
 dist
-idl-compiler.*
-build
-TEST-*
-ext/netty-all.jar
+ext/log4j.jar
+ext/netty.jar
 testoutput/
-transaction.log
+TaskImpl.properties
