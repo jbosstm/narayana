@@ -188,4 +188,15 @@
             <scope>test</scope>
         </dependency>
 	</dependencies>
+    <profiles>
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <properties>
+                <jvm.args.jdk9>--add-opens java.base/java.io=ALL-UNNAMED</jvm.args.jdk9>
+            </properties>
+        </profile>
+    </profiles>
 </project>
