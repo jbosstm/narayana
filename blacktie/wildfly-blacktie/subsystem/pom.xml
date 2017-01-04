@@ -126,7 +126,7 @@
                 <jdk>[1.9,)</jdk>
             </activation>
             <properties>
-                <jvm.args.jdk9>--add-exports java.xml/com.sun.xml.internal.stream=ALL-UNNAMED</jvm.args.jdk9>
+                <jvm.args.jdk9>--add-exports java.xml/com.sun.xml.internal.stream=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED</jvm.args.jdk9>
             </properties>
         </profile>
     </profiles>
