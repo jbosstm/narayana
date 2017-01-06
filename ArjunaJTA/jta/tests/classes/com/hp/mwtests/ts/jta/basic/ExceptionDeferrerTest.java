@@ -54,6 +54,38 @@ public class ExceptionDeferrerTest {
         }
     }
 
+    @Test
+    public void testCheckDeferredPrepareInitCause () throws Exception
+    {
+        ThreadActionData.purgeActions();
+
+        TransactionImple tx = new TransactionImple(0);
+
+
+        tx.enlistResource(new FailureXAResource());
+
+        try
+        {
+            tx.enlistResource(new FailureXAResource(FailLocation.prepare, FailType.message));
+        }
+        catch (final RollbackException ex)
+        {
+            fail();
+        }
+
+        try
+        {
+            tx.commit();
+
+            fail();
+        }
+        catch (final RollbackException ex)
+        {
+            assertEquals(XAException.XA_RBROLLBACK, ((XAException) ex.getSuppressed()[0]).errorCode);
+            assertEquals("test message", ((XAException) ex.getSuppressed()[0]).getCause().getMessage());
+        }
+    }
+
    @Test
    public void testCheckDeferredRollbackException () throws Exception
    {

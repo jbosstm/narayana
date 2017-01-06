@@ -45,6 +45,9 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -158,5 +161,85 @@ public class SubordinateTxUnitTest
         saa.doCommit();
         SubordinateAtomicAction saa3 = new SubordinateAtomicAction(saa.get_uid(), true);
         assertTrue(saa3.getXid() == null); // Since the SAA was committed the transaction log record will have been removed so the xid returned from getXid() should no longer be available and the intention is the SAA creator would disregard this instance
+    }
+
+
+    @Test
+    public void testSAADeferred() throws Exception {
+        SubordinateAtomicAction saa = new SubordinateAtomicAction();
+
+        saa.add(new XAResourceRecord(null, new XAResource() {
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+
+            }
+
+            @Override
+            public void end(Xid xid, int i) throws XAException {
+
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaResource) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                XAException xae = new XAException (XAException.XAER_INVAL);
+                xae.initCause(new Throwable("test message"));
+                throw xae;
+            }
+
+            @Override
+            public Xid[] recover(int i) throws XAException {
+                return new Xid[0];
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int i) throws XAException {
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int i) throws XAException {
+
+            }
+        }, new XidImple(new Xid() {
+
+            @Override
+            public int getFormatId() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getGlobalTransactionId() {
+                return new byte[0];
+            }
+
+            @Override
+            public byte[] getBranchQualifier() {
+                return new byte[0];
+            }
+        }), null));
+
+        saa.doPrepare();
+        List<Throwable> deferredThrowables = saa.getDeferredThrowables();
+        assertEquals("test message", deferredThrowables.get(0).getCause().getMessage());
     }
 }
