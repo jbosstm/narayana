@@ -27,7 +27,7 @@ import javax.transaction.xa.Xid;
 public class FailureXAResource implements XAResource
 {
     public enum FailLocation { none, prepare, commit, rollback, end, prepare_and_rollback };
-    public enum FailType { normal, timeout, heurcom, nota, inval, proto, rmfail, rollback, XA_RBCOMMFAIL };
+    public enum FailType { normal, timeout, heurcom, nota, inval, proto, rmfail, rollback, XA_RBCOMMFAIL, message };
     
     public FailureXAResource ()
     {
@@ -105,8 +105,15 @@ public class FailureXAResource implements XAResource
 
     public int prepare(Xid xid) throws XAException
     {
-        if ((_locale == FailLocation.prepare) || (_locale == FailLocation.prepare_and_rollback))
-            throw new XAException(XAException.XAER_INVAL);
+        if ((_locale == FailLocation.prepare) || (_locale == FailLocation.prepare_and_rollback)) {
+            if (_type == FailType.heurcom.message) {
+                XAException xae = new XAException(XAException.XA_RBROLLBACK);
+                xae.initCause(new Throwable("test message"));
+                throw xae;
+            } else {
+                throw new XAException(XAException.XAER_INVAL);
+            }
+        }
         
         return XA_OK;
     }
