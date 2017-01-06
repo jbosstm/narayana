@@ -571,9 +571,9 @@ EOF
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
 }
 
-function enable_qa_trace {
+function set_qa_log_level {
 echo "creating file $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml"
-cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
+cat << EOF > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
@@ -581,7 +581,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
 
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.err"/>
-        <param name="Threshold" value="TRACE"/>
+        <param name="Threshold" value="$1"/>
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
@@ -591,7 +591,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
     <appender name="file" class="org.apache.log4j.FileAppender">
         <param name="File" value="logs/test.log"/>
         <param name="Append" value="false"/>
-        <param name="Threshold" value="TRACE"/>
+        <param name="Threshold" value="$1"/>
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
@@ -599,7 +599,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
     </appender>
 
     <category name="com.arjuna">
-        <level value="TRACE"/>
+        <level value="$1"/>
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </category>
@@ -694,7 +694,8 @@ function qa_tests_once {
   if [ $JAVA_VERSION = "9-ea" ]; then
     orbtype="${orbtype}-j9"
   fi
-  [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" get.drivers dist ||
+  ant get.drivers
+  [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
   [ $? = 0 ] || fatal "qa build failed"
@@ -722,7 +723,11 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target (QA_TESTMETHODS is a list of method names in QA_TESTGROUP to be executed)
-    [ $QA_TRACE ] && enable_qa_trace
+    if [ $QA_TRACE = 1 ]; then
+        set_qa_log_level TRACE
+    else
+        set_qa_log_level INFO
+    fi
     [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
@@ -863,7 +868,7 @@ init_test_options
 
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
-[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/jenkins/dbdrivers"
 
 # Note: set QA_TARGET if you want to override the QA test ant target
 
