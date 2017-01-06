@@ -15,7 +15,7 @@
     <appender name="file" class="org.apache.log4j.FileAppender">
         <param name="File" value="logs/test.log"/>
         <param name="Append" value="false"/>
-        <param name="Threshold" value="TRACE"/>
+        <param name="Threshold" value="INFO"/>
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %p - %m%n"/>
@@ -23,13 +23,13 @@
     </appender>
 
     <category name="org.jboss.resteasy">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </category>
 
     <category name="org.jboss.jbossts.rts">
-        <level value="TRACE"/>
+        <level value="INFO"/>
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </category>

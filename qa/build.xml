@@ -74,7 +74,9 @@
     <available file="${driver.home}" property="have.dbdrivers" value="true"/>
   </target>
   <target name="clean-dbdrivers" unless="dbdrivers.cleaned">
+<!-- TODO
     <delete dir="${driver.home}"/>
+-->
     <property name="dbdrivers.cleaned" value="true"/>
   </target>
   <target name="clean" depends="clean-tests,clean-dbdrivers"/>
