@@ -60,20 +60,20 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
 
     public XAResourceRecordBean(UidWrapper w) {
         super(w.getUid());
-        init();
+        init(null);
     }
     public XAResourceRecordBean(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
         super(parent, rec, listType);
-        init();
+        init(rec);
     }
 
-	private void init() {
+	private void init(AbstractRecord rec) {
 		jndiName = getUid().stringForm();
 		className = "unavailable";
 		eisProductName = "unavailable";
 		eisProductVersion = "unavailable";
 		timeout = 0;
-        xares = new JTSXAResourceRecordWrapper(getUid());
+        xares = new JTSXAResourceRecordWrapper(rec, getUid());
         xidImple = xares.xidImple;
         heuristic = xares.heuristic;
 	}
@@ -131,7 +131,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
             return super.remove();
         }
 
-        return "Operation in progress";
+        return "Operation failed";
     }
 
     /**
@@ -142,10 +142,12 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
         int heuristic;
         AbstractRecord rec;
 
-        public JTSXAResourceRecordWrapper(Uid uid) {
+        public JTSXAResourceRecordWrapper(AbstractRecord rec, Uid uid) {
             super(uid);
 
             xidImple = new XidImple(getXid());
+
+            this.rec = rec;
 
             if (_theXAResource != null) {
                 XAResourceRecordBean.this.className = _theXAResource.getClass().getName();
@@ -161,7 +163,7 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
         }
 
         public JTSXAResourceRecordWrapper(AbstractRecord rec) {
-            this(rec.order());
+            this(rec, rec.order());
             this.rec = rec;
         }
 
@@ -176,15 +178,16 @@ public class XAResourceRecordBean extends LogRecordWrapper implements XAResource
         }
 
         public boolean forgetHeuristic() {
-            if (rec != null)
-                return rec.forgetHeuristic();
-
             try {
-                forget();
-                return true;
-            } catch (org.omg.CORBA.SystemException e) {
-                return arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
+                if (!isForgotten())
+                    forget();
+            } catch (org.omg.CORBA.SystemException ignore) {
             }
+
+            if (isForgotten() || (rec != null && rec.forgetHeuristic()))
+                return true;
+
+            return arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
         }
     }
 }
