@@ -2724,11 +2724,12 @@ public class BasicAction extends StateManager
                         }
                     }
 
+                    addDeferredThrowables(record, deferredThrowables);
+
                     /*
                               * Prepare on this record failed - we are in trouble.
                               * Add the record back onto the pendingList and return.
                               */
-                    addDeferredThrowables(record, deferredThrowables);
 
                     record = insertRecord(pendingList, record);
 
@@ -2751,6 +2752,8 @@ public class BasicAction extends StateManager
 
                     if (reportHeuristics)
                         updateHeuristic(p, false);
+
+                    addDeferredThrowables(record, deferredThrowables);
 
                     /*
                     * Don't add to the prepared list. We process heuristics

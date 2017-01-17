@@ -86,6 +86,29 @@ public class ExceptionDeferrerTest {
         }
     }
 
+    @Test
+    public void testCheckDeferredPrepareHeuristic() throws Exception {
+        ThreadActionData.purgeActions();
+
+        TransactionImple tx = new TransactionImple(0);
+
+        tx.enlistResource(new FailureXAResource());
+
+        try {
+            tx.enlistResource(new FailureXAResource(FailLocation.prepare, FailType.XA_HEURHAZ));
+        } catch (final RollbackException ex) {
+            fail();
+        }
+
+        try {
+            tx.commit();
+
+            fail();
+        } catch (final HeuristicMixedException ex) {
+            assertEquals(XAException.XA_HEURHAZ, ((XAException) ex.getSuppressed()[0]).errorCode);
+        }
+    }
+
    @Test
    public void testCheckDeferredRollbackException () throws Exception
    {
