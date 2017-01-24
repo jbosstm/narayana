@@ -222,14 +222,13 @@
 
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
+          <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
+          <artifactId>idlj-idl-tests</artifactId>
           <version>${project.version}</version>
-          <type>test-jar</type>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -284,7 +283,7 @@
             <version>1.8</version>
             <executions>
               <execution>
-                <id>compile-j9</id>
+                <id>default-compile</id>
                 <phase>compile</phase>
                 <goals>
                   <goal>run</goal>
@@ -379,6 +378,7 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
+                  <argLine>--add-modules java.corba</argLine>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/exceptions/**</exclude>
@@ -497,6 +497,7 @@
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-tests</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
@@ -524,9 +525,8 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
+          <artifactId>idlj-idl-tests</artifactId>
           <version>${project.version}</version>
-          <type>test-jar</type>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -634,9 +634,8 @@
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
+          <artifactId>idlj-idl-tests</artifactId>
           <version>${project.version}</version>
-          <type>test-jar</type>
           <scope>test</scope>
         </dependency>
         <dependency>

@@ -20,8 +20,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-idl</artifactId>
-  <name>Narayana: ArjunaJTS idl</name>
-  <description>Narayana: ArjunaJTS idl</description>
+  <name>Narayana: ArjunaJTS idl parent</name>
+  <description>Narayana: ArjunaJTS idl parent</description>
   <packaging>pom</packaging>
 
   <build>
@@ -45,8 +45,7 @@
         <jdk>[1.9,)</jdk>
       </activation>
       <modules>
-        <module>idlj.java.corba</module>
-        <module>idlj-j9</module>
+        <module>idlj</module>
       </modules>
     </profile>
     <profile>

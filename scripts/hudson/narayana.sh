@@ -246,7 +246,6 @@ function build_narayana {
 
   if [ $JAVA_VERSION = "9-ea" ]; then
     ORBARG="-Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
-    export MAVEN_OPTS="--add-modules java.corba $MAVEN_OPTS"
   elif [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
@@ -692,7 +691,7 @@ function qa_tests_once {
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
   if [ $JAVA_VERSION = "9-ea" ]; then
-    orbtype="${orbtype}-j9"
+    orbtype="${orbtype}"
   fi
   ant get.drivers
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||

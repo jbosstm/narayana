@@ -52,7 +52,7 @@
           <jdk>[1.9,)</jdk>
         </activation>
         <modules>
-            <module>narayana-jts-idlj-j9</module>
+            <module>narayana-jts-idlj</module>
         </modules>
         <build>
           <plugins>

@@ -14,8 +14,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
-    <artifactId>narayana-idl</artifactId>
-    <version>5.5.1.Final-SNAPSHOT</version>
+    <artifactId>idlj-idl-parent</artifactId>
+    <version>5.5.2.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -26,6 +26,8 @@
   <packaging>jar</packaging>
 
   <properties>
+    <maven.compiler.source>9</maven.compiler.source>
+    <maven.compiler.target>9</maven.compiler.target>
     <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch}-${project.version}.jar</java.corba.patch.jar>
   </properties>
