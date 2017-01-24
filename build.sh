@@ -38,10 +38,6 @@ ROOT="/"
 # Ignore user's MAVEN_HOME if it is set
 M2_HOME=""
 MAVEN_HOME=""
-if [ -z "$JAVA_VERSION" ]
-then
-	JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
-fi
 
 if [ -z "$MAVEN_OPTS" ]
 then
@@ -53,7 +49,7 @@ then
 		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.text=ALL-UNNAMED"
 		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.desktop/java.awt.font=ALL-UNNAMED"
 	else
-		MAVEN_OPTS="$MAVEN_OPTS -Xmx640M"
+		MAVEN_OPTS="$MAVEN_OPTS -Xmx640M -XX:MaxPermSize=256m"
 	fi
 	export MAVEN_OPTS
 fi
