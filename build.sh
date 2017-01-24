@@ -38,10 +38,6 @@ ROOT="/"
 # Ignore user's MAVEN_HOME if it is set
 M2_HOME=""
 MAVEN_HOME=""
-if [ -z "$JAVA_VERSION" ]
-then
-	JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
-fi
 
 if [ -z "$MAVEN_OPTS" ]
 then

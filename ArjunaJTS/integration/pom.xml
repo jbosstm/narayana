@@ -89,6 +89,11 @@
     </plugins>
   </build>
   <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl</artifactId>
+          <version>${project.version}</version>
+        </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
@@ -184,10 +189,41 @@
   <profiles>
 
     <profile>
+      <id>not-j9</id>
+      <activation>
+        <jdk>[1.7,1.9)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <!-- TODO do the other profiles generate an idlj-idl-tests artifact -->
+          <artifactId>idlj-idl-tests</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
       <id>j9</id>
       <activation>
         <jdk>[1.9,)</jdk>
       </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>${java.corba.patch.name}</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-tests</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
 
       <build>
         <plugins>
@@ -257,25 +293,6 @@
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-j9</artifactId>
-          <version>${project.version}</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>${java.corba.patch.name}</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-      </dependencies>
     </profile>
 
     <profile>

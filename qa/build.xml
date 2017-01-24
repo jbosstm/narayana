@@ -22,7 +22,7 @@
 <project name="JBossTS QA Suite Distribution" default="dist">
   <property environment="env"/>
   <property name="driver.home" value="dbdrivers"/>
-  <property name="orbtype" value="jacorb"/>
+  <property name="orbtype" value="idlj"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="5.9.1.Final-SNAPSHOT"/>

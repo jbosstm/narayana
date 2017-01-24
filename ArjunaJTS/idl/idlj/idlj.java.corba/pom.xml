@@ -14,8 +14,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
-    <artifactId>narayana-idl</artifactId>
-    <version>5.5.1.Final-SNAPSHOT</version>
+    <artifactId>idlj-idl-parent</artifactId>
+    <version>5.5.2.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -24,6 +24,13 @@
   <name>Narayana: ArjunaJTS patch java.corba module</name>
   <description>Narayana: ArjunaJTS patch of java.corba module</description>
   <packaging>jar</packaging>
+
+    <profiles>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
 
   <build>
     <plugins>
@@ -45,7 +52,7 @@
                   <jvmarg value="--add-modules"/>
                   <jvmarg value="java.corba"/>
                   <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl"/>
+                  <arg value="${project.build.directory}/../../../src/main/idl"/>
                   <arg value="-td"/>
                   <arg value="${project.build.directory}/generated-sources/idl"/>
                   <arg value="-pkgPrefix"/>
@@ -53,7 +60,7 @@
                   <arg value="org.omg"/>
                   <arg value="-fallTIE"/>
                   <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
+                  <arg value="${project.build.directory}/../../../src/main/idl/omg"/>
                   <arg value="-i"/>
                   <arg value="${env.JAVA_HOME}/lib"/>
                   <arg value="-i"/>
@@ -61,7 +68,7 @@
                   <arg value="-d"/>
                   <arg value="ORB_CURRENT_SUPPORT=1"/>
                   <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg/CosTransactions.idl"/>
+                  <arg value="${project.build.directory}/../../../src/main/idl/omg/CosTransactions.idl"/>
                 </java>
                 <mkdir dir="${project.build.directory}/classes"/>
                 <javac destdir="${project.build.directory}/classes">
@@ -110,4 +117,6 @@
       </plugin>
     </plugins>
   </build>
+    </profile>
+    </profiles>
 </project>

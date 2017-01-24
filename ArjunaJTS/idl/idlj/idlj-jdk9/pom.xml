@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JBoss, Home of Professional Open Source Copyright 2012, Red Hat Middleware 
+	LLC, and others contributors as indicated by the @authors tag. All rights 
+	reserved. See the copyright.txt in the distribution for a full listing of 
+	individual contributors. This copyrighted material is made available to anyone 
+	wishing to use, modify, copy, or redistribute it subject to the terms and 
+	conditions of the GNU Lesser General Public License, v. 2.1. This program 
+	is distributed in the hope that it will be useful, but WITHOUT A WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License, v.2.1 
+	along with this distribution; if not, write to the Free Software Foundation, 
+	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>idlj-idl-parent</artifactId>
+        <version>5.5.2.Final-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>idlj-idl-jdk9</artifactId>
+    <name>Narayana: ArjunaJTS idl idlj stubs with jdk9</name>
+    <description>Narayana: ArjunaJTS idl idlj stub compilation with jdk9</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>9</maven.compiler.source>
+        <maven.compiler.target>9</maven.compiler.target>
+        <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+        <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>${java.corba.patch.name}</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- generate a test jar containing test CORBA stubs for use by the jts tests -->
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/omg/CORBA/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration combine.self="override">
+                            <skipTests>true</skipTests>
+                            <systemProperties combine.children="append" />
+                            <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba</argLine>
+                            <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>
+                                    ${project.build.directory}/generated-sources/idl
+                                </source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>
+                                    ${project.build.directory}/generated-test-sources/idl
+                                </source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>--patch-module</arg>
+                                <arg>java.corba=${java.corba.patch.jar}</arg>
+                                <arg>--add-modules</arg>
+                                <arg>java.corba</arg>
+                                <arg>--add-exports</arg>
+<arg>java.corba/com.sun.corba.se=ALL-UNNAMED,java.corba/javax.rmi.CORBA.Stub=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <excludes>
+                                <exclude>**/jacorb/**</exclude>
+                                <exclude>**/ibmorb/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>generate-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+
+
+                                    <tasks name="Generate idl stubs">
+                                        <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+                                        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="XA"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="ArjunaOTS"/>
+                                            <arg value="com.arjuna"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/lib"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.main.src}/omg/CosTransactions.idl"/>
+                                        </java>
+                                        <delete>
+                                            <fileset dir="${project.build.directory}/generated-sources/idl/org/omg/CORBA" includes="**/*"/>
+                                        </delete>
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="XA"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="ArjunaOTS"/>
+                                            <arg value="com.arjuna"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/lib"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.main.src}/omg/XA.idl"/>
+                                        </java>
+
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="XA"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="ArjunaOTS"/>
+                                            <arg value="com.arjuna"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/lib"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.main.src}/arjuna/ArjunaOTS.idl"/>
+                                        </java>
+                                    </tasks>
+
+                                    <!--              <target>
+                                                      <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+                                                      <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+                                                      <ant antfile="${project.build.directory}/../../src/main/ant/gen-stubs-jdk9.xml">
+                                                      <target name="gen-main-src"/>
+                                                    </ant>
+                                                  </target>-->
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-test-sources</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+                                        <property name="idl.test.src" location="${project.build.directory}/../../../src/test/idl"/>
+                                        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.test.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="TestModule"/>
+                                            <arg value="com.hp.mwtests.ts.jts"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="orbtests"/>
+                                            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-i"/>
+                                            <arg value="${jdk.lib.dir}"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.test.src}/orbtests.idl"/>
+                                        </java>../../src/main/idl/omg/
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.test.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="TestModule"/>
+                                            <arg value="com.hp.mwtests.ts.jts"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="orbtests"/>
+                                            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-i"/>
+                                            <arg value="${jdk.lib.dir}"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.test.src}/test.idl"/>
+                                        </java>
+                                        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+                                            <jvmarg value="&#45;&#45;add-exports"/>
+                                            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+                                            <jvmarg value="&#45;&#45;add-modules"/>
+                                            <jvmarg value="java.corba"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.test.src}"/>
+                                            <arg value="-td"/>
+                                            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="TestModule"/>
+                                            <arg value="com.hp.mwtests.ts.jts"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="CosTransactions"/>
+                                            <arg value="org.omg"/>
+                                            <arg value="-pkgPrefix"/>
+                                            <arg value="orbtests"/>
+                                            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="-i"/>
+                                            <arg value="${idl.main.src}/omg"/>
+                                            <arg value="-i"/>
+                                            <arg value="${env.JAVA_HOME}/include"/>
+                                            <arg value="-i"/>
+                                            <arg value="${jdk.lib.dir}"/>
+                                            <arg value="-d"/>
+                                            <arg value="ORB_CURRENT_SUPPORT=1"/>
+                                            <arg value="-fallTIE"/>
+                                            <arg value="${idl.test.src}/TestModule.idl"/>
+                                        </java>
+                                    </tasks>
+                                    <!--              <tasks>
+                                                      <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+                                                      <property name="idl.test.src" location="${project.build.directory}/../../../src/test/idl"/>
+                                                      <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+                                                    <ant antfile="${project.build.directory}/../../src/main/ant/gen-stubs-jdk9.xml" target="gen-test-src"/>
+                                                  </tasks>-->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>not-j9</id>
+            <activation>
+                <jdk>[1.7,1.9)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgs>
+
+                            </compilerArgs>
+                            <excludes>
+                                <exclude>**/jacorb/**</exclude>
+                                <exclude>**/ibmorb/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
