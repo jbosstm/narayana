@@ -20,7 +20,7 @@ If you are building with master branch, please replace references to "5.5.2.Fina
 # Installing Blacktie into JBoss AS
 
 1. Install a WildFly build
-Download from https://ci.jboss.org/hudson/job/WildFly-latest-master/ and unzip
+Download 10.1.0.Final from http://wildfly.org/downloads/ and unzip
 
 2. Install the BlackTie subsystem into WildFly
 unzip wildfly-blacktie-build-${VERSION}-bin.zip into ${WILDFLY_LOCATION}

@@ -8,6 +8,8 @@ jboss-as
 *.swp
 *~
 
+wildfly-*.zip
+
 *.orig
 qa/ext/log4j.jar
 qa/ext/netty.jar

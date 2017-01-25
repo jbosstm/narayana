@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>restat-bridge</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
