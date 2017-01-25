@@ -113,7 +113,7 @@ function init_test_options {
         export JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
         comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "PERF" ]] && [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
         comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
@@ -378,21 +378,22 @@ function blacktie {
 
   ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
-  rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
-  cp -rp ${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} -d $PWD/blacktie
+  rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  [ ! -e wildfly-${WILDFLY_MASTER_VERSION}.zip ] && (wget http://download.jboss.org/wildfly/${WILDFLY_MASTER_VERSION}/wildfly-${WILDFLY_MASTER_VERSION}.zip || fatal "Could not download wildfly")
+  unzip wildfly-${WILDFLY_MASTER_VERSION}.zip -d blacktie/
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.5.2.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.5.2.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
-  ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} initializeJBoss
+  ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
   if [ "$?" != "0" ]; then
 	  fatal "Failed to init JBoss: $BUILD_URL"
   fi
-  chmod u+x $WORKSPACE/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}/bin/standalone.sh
+  chmod u+x $WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     sleep 5
   fi
 

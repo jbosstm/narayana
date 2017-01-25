@@ -1,42 +1,19 @@
 if not defined WORKSPACE (call:fail_build & exit -1)
 
-call:comment_on_pull "Started testing this pull request with BLACKTIE profile on Windows: %BUILD_URL%"
-
-call:build_spi_pr
-
-call build.bat clean install %* || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
-
-echo "Cloning AS"
-rmdir /S /Q jboss-as
-git clone https://github.com/jbosstm/jboss-as.git
-if %ERRORLEVEL% NEQ 0 exit -1
-cd jboss-as
-git remote add upstream https://github.com/wildfly/wildfly.git
-if defined AS_BRANCH git fetch origin +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head & git checkout %AS_BRANCH%
-git pull --rebase --ff-only -s recursive -Xtheirs upstream master
-if %ERRORLEVEL% NEQ 0 exit -1
-for /f "usebackq delims=<,> tokens=3" %%i in (`gawk "/wildfly-parent/ {getline;print;}" pom.xml`) do @set WILDFLY_VERSION_FROM_JBOSS_AS=%%i
-echo "AS version is %WILDFLY_VERSION_FROM_JBOSS_AS%"
-
-echo "Building AS"
-set MAVEN_OPTS="-Xmx768M"
-call build.bat clean install "-DskipTests" "-Drelease=true" || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - AS Failed %BUILD_URL%" & exit -1)
-cd ..\
-
-echo "Building Blacktie Subsystem"
-call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install %* || (call:comment_on_pull "BLACKTIE profile tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" & exit -1)
-
-echo "Building BlackTie
-cd blacktie
-rmdir wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% /s /q
-mkdir wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%
-xcopy ..\jboss-as\build\target\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% /S
-set JBOSS_HOME=%CD%\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%\
-unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.5.2.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
-cd ..\
-
 set NOPAUSE=true
+@echo off
 
+call:comment_on_pull "Started testing this pull request on Windows: %BUILD_URL%"
+
+IF NOT [%NOTMAIN%] == [] (call:build_spi_pr
+call build.bat clean install %* || (call:comment_on_pull "Tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
+)
+IF NOT [%NOTBT%] == [] (for /f "usebackq delims=<,> tokens=3" %%i in (`findstr "version.org.wildfly.wildfly-parent" blacktie\pom.xml`) do @set WILDFLY_MASTER_VERSION=%%i
+if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
+)
+IF NOT [%NOTBT%] == [] (set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_MASTER_VERSION%
+)
+IF NOT [%NOTBT%] == [] (echo "set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION% set JBOSSAS_IP_ADDR=%JBOSSAS_IP_ADDR%"
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
 tasklist
@@ -48,16 +25,21 @@ taskkill /F /IM cs.exe
 wmic Path win32_process Where "Caption Like '%java.exe%' AND CommandLine Like '%standalone%'" Call Terminate
 tasklist
 
-if not defined JBOSSAS_IP_ADDR echo "JBOSSAS_IP_ADDR not set" & for /f "delims=" %%a in ('hostname') do @set JBOSSAS_IP_ADDR=%%a
+echo "Building Blacktie Subsystem"
+call build.bat -f blacktie\wildfly-blacktie\pom.xml clean install %* || (call:comment_on_pull "Tests failed on Windows - Build Blacktie Subsystem Failed %BUILD_URL%" & exit -1)
+
+echo "Installing app server"
+cd blacktie
+rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
+IF NOT EXIST wildfly-%WILDFLY_MASTER_VERSION%.zip wget http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip
+if %ERRORLEVEL% NEQ 0 (call:comment_on_pull "Pull failed on Windows - could not download http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip" & exit -1)
+unzip wildfly-%WILDFLY_MASTER_VERSION%
+unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.5.2.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
+cd ..\
 
 rem INITIALIZE JBOSS
-for /f "usebackq delims=<,> tokens=3" %%i in (`findstr "version.org.wildfly.wildfly-parent" blacktie\pom.xml`) do @set WILDFLY_MASTER_VERSION=%%i
-echo "Set WILDFLY_MASTER_VERSION=%WILDFLY_MASTER_VERSION%"
-if not "%WILDFLY_MASTER_VERSION%" == "%WILDFLY_VERSION_FROM_JBOSS_AS%" (echo "WARN: May need to upgrade the version.org.wildfly.wildfly-parent in the narayana\blacktie pom.xml to %WILDFLY_VRESION_FROM_JBOSS_AS% - Check AS Version Failed %BUILD_URL%")
 
-call ant -f blacktie\scripts\hudson\initializeJBoss.xml -DJBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS% initializeJBoss -debug || (call:fail_build & exit -1)
-
-set JBOSS_HOME=%WORKSPACE%\blacktie\wildfly-%WILDFLY_VERSION_FROM_JBOSS_AS%
+call ant -f blacktie\scripts\hudson\initializeJBoss.xml -DJBOSS_HOME=%JBOSS_HOME% initializeJBoss -debug || (call:fail_build & exit -1)
 
 rem START JBOSS
 rem set JAVA_OPTS="%JAVA_OPTS% -Xmx1024m -XX:MaxPermSize=512m"
@@ -70,9 +52,11 @@ call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS
 tasklist & FOR /F "usebackq tokens=5" %%i in (`"netstat -ano|findstr 9990.*LISTENING"`) DO taskkill /F /PID %%i
+)
+
 echo "Finished build"
 
-call:comment_on_pull "BLACKTIE profile tests passed on Windows - Job complete %BUILD_URL%"
+call:comment_on_pull "Tests passed on Windows - Job complete %BUILD_URL%"
 
 rem ------------------------------------------------------
 rem -                 Functions below                    -
