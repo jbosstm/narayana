@@ -41,8 +41,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class EarArchiveTestLocal {
 
-    private TestServiceClient client = new TestServiceClient("compensations-ejb");
-
     @Deployment(name = "client")
     public static WebArchive getClientDeployment() {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, "client.war")
@@ -74,6 +72,7 @@ public class EarArchiveTestLocal {
     @OperateOnDeployment("client")
     public void test() {
         ParticipantCompletionCoordinatorRules.setParticipantCount(1);
+        TestServiceClient client = new TestServiceClient("compensations-ejb");
         int invocationsCounterBefore = client.getConfirmationHandlerInvocationsCounter();
         client.compensatableMethod();
         Assert.assertEquals(invocationsCounterBefore + 1, client.getConfirmationHandlerInvocationsCounter());
