@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>idlj-idl-parent</artifactId>
-    <version>5.5.2.Final-SNAPSHOT</version>
+    <version>5.5.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -91,6 +91,44 @@
   </build>
 
   <profiles>
+        <profile>
+            <id>not-j9</id>
+            <activation>
+                <jdk>[1.7,1.9)</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>idlj-idl-jdk8</artifactId>
+                    <type>test-jar</type>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+              <plugins>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-shade-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <phase>package</phase>
+                      <goals>
+                        <goal>shade</goal>
+                      </goals>
+                      <configuration>
+                        <artifactSet>
+                          <includes>
+                            <include>org.jboss.narayana.jts:idlj-idl</include>
+                            <include>org.jboss.narayana.jts:idlj-idl-jdk8:test-jar</include>
+                          </includes>
+                        </artifactSet>
+                      </configuration>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </build>
+        </profile>
     <profile>
       <id>j9</id>
       <activation>
