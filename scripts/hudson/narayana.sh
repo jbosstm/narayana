@@ -898,21 +898,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-if [ $AS_BUILD = 1 ];then
-  build_as "$@"
-else
-  echo "Step 1: JBOSS_HOME=$JBOSS_HOME"
-  if [ "x$JBOSS_HOME" == "x" ]; then echo 
-    echo "Step 2: JBOSS_HOME=$JBOSS_HOME"
-    if [ -d ${WORKSPACE}/jboss-as ]; then
-      WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-      export JBOSS_HOME="${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}"
-      echo "Step 3: JBOSS_HOME=$JBOSS_HOME"
-    fi
-  fi
-  init_jboss_home
-fi
-
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $BLACKTIE = 1 ] && blacktie "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"

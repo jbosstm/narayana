@@ -64,6 +64,7 @@
             </goals> 
             <configuration>
               <useManifestOnlyJar>false</useManifestOnlyJar>
+              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
@@ -93,6 +94,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
+      <scope>provided</scope>
         </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
