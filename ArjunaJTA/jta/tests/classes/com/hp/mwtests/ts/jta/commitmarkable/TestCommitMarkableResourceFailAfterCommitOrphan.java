@@ -151,14 +151,12 @@ public class TestCommitMarkableResourceFailAfterCommitOrphan extends TestCommitM
         Thread preCrash = new Thread(new Runnable() {
 
             public void run() {
-
-                try {
+                try (Connection localJDBCConnection = dataSource.getConnection()) {
                     javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                             .transactionManager();
 
                     tm.begin();
 
-                    Connection localJDBCConnection = dataSource.getConnection();
                     localJDBCConnection.setAutoCommit(false);
                     cmrResource = new JDBCConnectableResource(
                             localJDBCConnection);
