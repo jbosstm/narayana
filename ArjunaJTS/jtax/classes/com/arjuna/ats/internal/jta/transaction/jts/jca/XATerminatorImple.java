@@ -469,7 +469,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
     }
 
     public Object getCurrentTransactionId() {
-        return com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction().get_uid();
+        com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple transaction =
+            com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.getTransaction();
+        if (transaction == null)
+            return null;
+
+        return transaction.get_uid();
     }
 
     public void removeImportedTransaction(Xid xid) throws XAException {
