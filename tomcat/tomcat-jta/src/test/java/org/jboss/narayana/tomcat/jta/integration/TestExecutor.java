@@ -150,8 +150,9 @@ public class TestExecutor {
 
     private boolean doesEntryExist(String entry) throws SQLException, NamingException {
         String query = "SELECT COUNT(*) FROM test WHERE value='" + entry + "'";
-        Connection connection = getTransactionalDataSource().getConnection();
-        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery(query)) {
+        try (Connection connection = getTransactionalDataSource().getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet result = statement.executeQuery(query)) {
             return result.next() && result.getInt(1) > 0;
         } catch (SQLException e) {
             return false;
@@ -160,8 +161,8 @@ public class TestExecutor {
 
     private void writeToTheDatabase(String entry) throws NamingException, SQLException {
         String query = "INSERT INTO test VALUES ('" + entry + "')";
-        Connection connection = getTransactionalDataSource().getConnection();
-        try (Statement statement = connection.createStatement()) {
+        try (Connection connection = getTransactionalDataSource().getConnection();
+                Statement statement = connection.createStatement()) {
             statement.execute(query);
         }
     }
