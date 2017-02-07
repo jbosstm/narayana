@@ -392,7 +392,7 @@
     <jvm.args.jacoco>-javaagent:${project.build.directory}/lib/jacocoagent.jar=destfile=${project.build.directory}/coverage-reports/jacoco-ut.exec,includes=*,append=true,output=file</jvm.args.jacoco>
     <jvm.args.memory>-Xms1024m -Xmx1024m -XX:MaxPermSize=512m -XX:ParallelGCThreads=2</jvm.args.memory>
     <jvm.args.debug></jvm.args.debug>
-    <jvm.args.other>-server</jvm.args.other>
+    <jvm.args.other>-server -Djboss.node.name=localhost</jvm.args.other>
     
     <!-- External dependencies versions -->
     <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.1</version.org.codehaus.mojo.findbugs-maven-plugin>
