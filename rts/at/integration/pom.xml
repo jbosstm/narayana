@@ -30,7 +30,7 @@
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
+            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
         </server.jvm.args>
     </properties>
 
@@ -328,6 +328,15 @@
                     </plugin>
                 </plugins>
             </build>
-      </profile>
+        </profile>
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <properties>
+                <jvm.args.jdk9>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.jdk9>
+            </properties>
+        </profile>
     </profiles>
 </project>
