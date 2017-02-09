@@ -1020,8 +1020,8 @@ BIND coordinator = $0,
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("replaying commit for prepared transaction " + coordinatorId),
-   traceln("log", "replaying commit for prepared transaction " + coordinatorId),
+DO debug("replaying commit for prepared transaction " + uid),
+   traceln("log", "replaying commit for prepared transaction " + uid),
    createCountDown("exit countdown", 1)
 ENDRULE
 
@@ -1040,8 +1040,8 @@ BIND coordinator = $0,
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("reinstated prepared subordinate transaction " + coordinatorId),
-   traceln("log", "reinstated prepared subordinate transaction " + coordinatorId)
+DO debug("reinstated prepared subordinate transaction " + uid),
+   traceln("log", "reinstated prepared subordinate transaction " + uid)
 ENDRULE
 
 #######################################################################

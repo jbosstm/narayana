@@ -17,9 +17,19 @@
     <maven.deploy.skip>true</maven.deploy.skip>
     <narayana.home.url>http://narayana.io/</narayana.home.url>
     <copyright.years>2014</copyright.years>
+    <surefire.reports.directory>surefire-reports</surefire.reports.directory>
   </properties>
 
   <profiles>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <properties>
+        <surefire.reports.directory>surefire-j9-reports</surefire.reports.directory>
+      </properties>
+    </profile>
     <profile>
       <id>codeCoverage</id>
       <dependencies>
@@ -240,34 +250,38 @@
                     <echo message="JUnit report"/>
                     <mkdir dir="${project.build.directory}/junit"/>
                     <junitreport todir="${project.build.directory}/junit">
-                      <fileset dir="../ArjunaCore/arjuna/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaCore/txoj/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaCore/arjuna/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaCore/txoj/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../rts/at/tx/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../rts/at/integration/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../rts/at/bridge/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../common/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../STM/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../rts/at/tx/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../rts/at/integration/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../rts/at/bridge/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../common/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../STM/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../ArjunaJTA/jta/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/jdbc/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/cdi/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTA/jms/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../tools/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/jta/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/jdbc/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/cdi/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTA/jms/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../tools/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../ArjunaJTS/jts/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTS/orbportability/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../ArjunaJTS/jtax/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/jts/target/jacorb-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/jts/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/jts/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/orbportability/target/jacorb-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/orbportability/target/idlj-openjdk-surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../ArjunaJTS/jtax/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../XTS/localjunit/disabled-context-propagation/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../XTS/localjunit/unit/target/surefire-reports" includes="**/*.xml"/>
-                      <fileset dir="../XTS/localjunit/WSTX11-interop/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../XTS/localjunit/disabled-context-propagation/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../XTS/localjunit/unit/target/${surefire.reports.directory}" includes="**/*.xml"/>
+                      <fileset dir="../XTS/localjunit/WSTX11-interop/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../txbridge/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../txbridge/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../compensations/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../compensations/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
-                      <fileset dir="../txframework/target/surefire-reports" includes="**/*.xml"/>
+                      <fileset dir="../txframework/target/${surefire.reports.directory}" includes="**/*.xml"/>
 
                       <report format="noframes" styledir="xsl" todir="${project.build.directory}/junit">
                         <param name="narayana.url" expression="${narayana.home.url}"/>

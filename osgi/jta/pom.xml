@@ -30,6 +30,7 @@
 
    <properties>
 	   <maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
+           <version.org.jboss.spec.javax.transaction>1.0.0.Final</version.org.jboss.spec.javax.transaction>
 	   <karaf.home>${project.build.directory}/apache-karaf-minimal-${version.apache.karaf}</karaf.home>
    </properties>
 

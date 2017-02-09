@@ -64,6 +64,7 @@
             </goals> 
             <configuration>
               <useManifestOnlyJar>false</useManifestOnlyJar>
+              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
@@ -93,6 +94,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl</artifactId>
           <version>${project.version}</version>
+      <scope>provided</scope>
         </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -216,6 +218,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>${java.corba.patch.name}</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -241,7 +244,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.10</version>
             <executions>
               <execution>
                 <id>copy-dependencies</id>
@@ -258,9 +260,9 @@
                       <type>${project.packaging}</type>
                     </artifactItem>
                     <artifactItem>
-                      <groupId>org.jboss.narayana.jta</groupId>
-                      <artifactId>narayana-jta-j9-module</artifactId>
-                      <version>${project.version}</version>
+                      <groupId>org.jboss.spec.javax.transaction</groupId>
+                      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                      <version>${version.org.jboss.spec.javax.transaction}</version>
                       <type>jar</type>
                       <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
                     </artifactItem>
