@@ -94,6 +94,7 @@
         <profile>
             <id>tck</id>
             <activation>
+                <jdk>[1.7,1.9)</jdk>
                 <property>
                     <name>!skipTests</name>
                 </property>

@@ -77,7 +77,7 @@ public class IsolatableServersClassLoader extends ClassLoader {
 				throw new AssertionError();
 			}
 		}
-		this.ucp = new URLClassPath(urls.toArray(new URL[]{}));
+		this.ucp = new URLClassLoader(urls.toArray(new URL[]{}));
 	}
 
 	@Override

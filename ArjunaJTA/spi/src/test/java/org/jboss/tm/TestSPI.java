@@ -55,7 +55,6 @@ public class TestSPI {
     }
 
     @Test
-    @org.junit.Ignore("j9 TODO Deployment Cannot deploy: test.war")
     public void testTimeouts() throws Exception {
         Transaction oldTxn = null;
         final int SLEEP = 5;

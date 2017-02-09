@@ -20,7 +20,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-jacorb</artifactId>
-  <name>Narayana: ArjuntaJTS narayana-jts-jacorb</name>
+  <name>Narayana: ArjunaJTS narayana-jts-jacorb</name>
   <packaging>jar</packaging>
   <description>JTS uber jar with jacorb stubs</description>
   <build>
@@ -284,6 +284,24 @@
 
   <profiles> 
     <profile>
+        <id>release-9</id>
+        <build>
+          <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
         <id>release</id>
         <build>
           <plugins>
@@ -312,6 +330,7 @@
             <configuration>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>*.internal.*</excludePackageNames>
+              <failOnError>false</failOnError>
             </configuration>
           </plugin>
         </plugins>

@@ -200,16 +200,16 @@ function init_test_options {
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
     [ $QA_TESTS ] || QA_TESTS=0 # QA test suite
-    [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
-    [ $OPENJDK_ORB ] || OPENJDK_ORB=1 # Run QA test suite against the openjdk orb
-    [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
+    [ $SUN_ORB ] || SUN_ORB=0 # Run QA test suite against the Sun orb
+    [ $OPENJDK_ORB ] || OPENJDK_ORB=0 # Run QA test suite against the openjdk orb
+    [ $JAC_ORB ] || JAC_ORB=0 # Run QA test suite against JacORB
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
 
     get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
 
-    JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
+    JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
 }
 
 function comment_on_pull
@@ -303,15 +303,19 @@ function build_narayana {
 
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  if [ $JAVA_VERSION = "9-ea" ]; then
-    ORBARG="-Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
-  elif [ $IBM_ORB = 1 ]; then
+  if [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
-  ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    MAVEN_OPTS="--add-modules java.xml.bind,java.xml.ws" ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  else
+    ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  fi
+
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -381,7 +385,7 @@ function build_as {
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
   fi
   [ $? = 0 ] || fatal "AS build failed"
-  
+
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
@@ -426,7 +430,11 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  else
+    MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  fi
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -465,9 +473,6 @@ function blacktie {
   WILDFLY_MASTER_VERSION=`grep 'version.org.wildfly.wildfly-parent' blacktie/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
   [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || echo "WARN: May need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
-  if [ $JAVA_VERSION = "9-ea" ]; then
-    ORBARG="-Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
-  fi
 
   ./build.sh -f blacktie/wildfly-blacktie/pom.xml -B clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
@@ -486,8 +491,11 @@ function blacktie {
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    if [ $JAVA_VERSION = "9-ea" ]; then
-      JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    if [ $JAVA_VERSION = "9.0.4" ]; then
+      # replace the openjdk-orb with the 8.0.8.Final
+      wget https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Final/openjdk-orb-8.0.8.Final.jar -O blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/openjdk-orb-8.0.8.Final.jar
+      sed -i s/8.0.6.Final/8.0.8.Final/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
+      JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     else
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     fi
@@ -496,6 +504,12 @@ function blacktie {
 
   # BUILD BLACKTIE
   ./build.sh -f blacktie/pom.xml -B clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  else
+    ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  fi
+
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
@@ -550,6 +564,10 @@ function xts_tests {
   sed -e 's#<[^<]*async-registration[^>]*>##g' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e 's#\(<subsystem.*xts.*\)#\1\n            <async-registration enabled="true"/>#' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
 
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    export MAVEN_OPTS="--add-modules java.xml.ws"
+  fi
+
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
@@ -564,21 +582,17 @@ function xts_tests {
     [ $? = 0 ] || fatal "XTS localjunit WSTX11 build failed"
     ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
-    ./build.sh -f XTS/localjunit/xtstest/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/xtstest/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit xtstest build failed"
-    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
-  [ -z ${BYTEMAN_DISABLED+x} ] && ran_crt=0
-
-echo "TODO: BYTEMAN_DISABLED=$BYTEMAN_DISABLED - disabling logs"
-ran_crt=0
   if [ $ran_crt = 1 ]; then
     if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
       (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-      if [[ $? != 0 && $ISIBM != 0 ]]; then
+      if [[ $? != 0 && $ISIBM != 0 && -z $CODE_COVERAGE_ARGS ]]; then
         fatal "Simplify CRASH RECOVERY logs failed"
       fi
     fi
@@ -626,10 +640,10 @@ EOT
     rm -rf narayana-tomcat
     git clone https://github.com/jbosstm/narayana-tomcat.git
     echo "Executing Narayana Tomcat tests"
-    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
-    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
     rm -r ${CATALINA_HOME}
@@ -735,7 +749,11 @@ function qa_tests_once {
 
   if [ $orbtype = "openjdk" ]; then
     openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
-    EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    if [ $JAVA_VERSION = "9.0.4" ]; then
+        EXTRA_QA_SYSTEM_PROPERTIES="--patch-module java.corba=$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    else
+        EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    fi
     orbtype="idlj"
   fi
 
@@ -755,7 +773,7 @@ function qa_tests_once {
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  if [ $JAVA_VERSION = "9-ea" ]; then
+  if [ $JAVA_VERSION = "9.0.4" ]; then
     orbtype="${orbtype}"
   fi
   ant get.drivers
@@ -780,9 +798,6 @@ function qa_tests_once {
     # if called with the sun or ibm orbs then only run the jtsremote tests
     [ $orbtype != "jacorb" ] && target="ci-jts-tests"
 
-    # TODO for now make sure we run all tests with jdk-9
-    [ $JAVA_VERSION = "9-ea" ] && target="ci-tests"
-
     # QA_TARGET overrides the previous settings
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
@@ -799,14 +814,14 @@ function qa_tests_once {
       if [[ -n "$QA_STRESS" ]] ; then
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
         for testgroup in $QA_TESTGROUP; do
-          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
           if [ $? -ne 0 ]; then
             echo "test group $testgroup failed"
             ok=1;
@@ -814,7 +829,7 @@ function qa_tests_once {
         done
       fi
     else
-      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage
+      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype
       ok=$?
     fi
 
@@ -841,11 +856,17 @@ function qa_tests {
   ok2=0;
   ok3=0;
   ok4=0;
+
+  # disable the qa tests with the openjdk_orb class loading issues https://issues.jboss.org/browse/WFLY-9569
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    OPENJDK_ORB=0
+  fi
+
   if [ $IBM_ORB = 1 ]; then
     qa_tests_once "orb=ibmorb" "$@" # run qa against the Sun orb
     ok3=$?
   else
-    if [ $JAVA_VERSION = "9-ea" -o $SUN_ORB = 1 ]; then
+    if [ $SUN_ORB = 1 ]; then
       qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
       ok2=$?
     fi
@@ -976,21 +997,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-if [ $AS_BUILD = 1 ];then
-  build_as "$@"
-else
-  echo "Step 1: JBOSS_HOME=$JBOSS_HOME"
-  if [ "x$JBOSS_HOME" == "x" ]; then echo 
-    echo "Step 2: JBOSS_HOME=$JBOSS_HOME"
-    if [ -d ${WORKSPACE}/jboss-as ]; then
-      WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-      export JBOSS_HOME="${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}"
-      echo "Step 3: JBOSS_HOME=$JBOSS_HOME"
-    fi
-  fi
-  init_jboss_home
-fi
-
+[ $AS_BUILD = 1 ] && build_as "$@"
 [ $BLACKTIE = 1 ] && blacktie "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"

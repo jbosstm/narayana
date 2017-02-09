@@ -232,6 +232,24 @@
   </dependencies>
   <profiles>
     <profile>
+        <id>release-9</id>
+        <build>
+          <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
         <id>release</id>
         <build>
           <plugins>
@@ -258,9 +276,30 @@
               </execution>
             </executions>
             <configuration>
-              <skip>true</skip>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>org.*:com.arjuna.services.*:com.arjuna.webservices*:com.arjuna.mwlabs.*:com.arjuna.webservices11*:com.arjuna.schemas:com.arjuna.mw.wstx</excludePackageNames>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalJOptions>
+                <additionalJOption>--add-modules</additionalJOption>
+                <additionalJOption>java.xml.bind</additionalJOption>
+                <additionalJOption>--add-modules</additionalJOption>
+                <additionalJOption>java.xml.ws</additionalJOption>
+              </additionalJOptions>
             </configuration>
           </plugin>
         </plugins>
