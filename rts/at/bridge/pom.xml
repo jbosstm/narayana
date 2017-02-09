@@ -42,7 +42,7 @@
         <modular.jdk.args/>
         <modular.jdk.props/>
         <server.jvm.args>
-            ${modular.jdk.args} ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug}
+            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
         </server.jvm.args>
     </properties>
 
@@ -211,7 +211,7 @@
            but the following does not resolve it. Instead I changed the way the test looks
            up rts transaction status
            -->
-        <modular.jdk.args>--add-modules java.xml.bind</modular.jdk.args>
+        <jvm.args.jdk9>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.jdk9>
       </properties>
       <build>
         <plugins>
