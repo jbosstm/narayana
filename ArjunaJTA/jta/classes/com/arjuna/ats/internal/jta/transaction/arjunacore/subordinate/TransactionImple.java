@@ -76,30 +76,6 @@ public class TransactionImple extends
 	}
 
 	/**
-	 * Overloads Object.equals()
-	 */
-
-	public boolean equals (Object obj)
-	{
-		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("TransactionImple.equals");
-        }
-
-		if (obj == null)
-			return false;
-
-		if (obj == this)
-			return true;
-
-		if (obj instanceof TransactionImple)
-		{
-			return super.equals(obj);
-		}
-
-		return false;
-	}
-
-	/**
 	 * This is a subordinate transaction, so any attempt to commit it or roll it
 	 * back directly, should fail.
 	 */
