@@ -35,7 +35,6 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
-import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 public class TransactionImple extends
@@ -79,41 +78,6 @@ public class TransactionImple extends
 		TransactionImple.putTransaction(this);
 	}
 	
-	/**
-	 * Overloads Object.equals()
-	 */
-
-	public boolean equals (Object obj)
-	{
-		if (jtaxLogger.logger.isTraceEnabled()) {
-            jtaxLogger.logger.trace("TransactionImple.equals");
-        }
-
-		if (obj == null)
-			return false;
-
-		if (obj == this)
-			return true;
-
-		if (obj instanceof TransactionImple)
-		{
-			return super.equals(obj);
-		}
-
-		return false;
-	}
-
-	public String toString ()
-	{
-		if (super._theTransaction == null)
-			return "TransactionImple < jca-subordinate, NoTransaction >";
-		else
-		{
-			return "TransactionImple < jca-subordinate, "
-					+ super._theTransaction + " >";
-		}
-	}
-
 	/**
 	 * If this is an imported transaction (via JCA) then this will be the Xid
 	 * we are pretending to be. Otherwise, it will be null.
