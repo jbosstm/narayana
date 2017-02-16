@@ -48,18 +48,8 @@ then
   git add pom.xml
   git commit -m "${WFLYISSUE} Upgrade Narayana to $CURRENT"
   git push --set-upstream jbosstm ${WFLYISSUE}
-  git fetch jbosstm
   git checkout 5_BRANCH
   git reset --hard jbosstm/5_BRANCH
-  if [[ $(uname) == CYGWIN* ]]
-  then
-    sed -i "s/narayana>.*</narayana>$NEXT</g" pom.xml
-  else
-    sed -i $SED_EXTRA_ARG "s/narayana>.*</narayana>$NEXT</g" pom.xml
-  fi
-  git add pom.xml
-  git commit -m "Update to latest version of Narayana"
-  git push
   cd -
 fi
 set +e
