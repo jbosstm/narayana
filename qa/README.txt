@@ -39,24 +39,24 @@ From July 2009, JBossTS no longer uses the DTF framework for running QA tests. I
 tests have been converted to junit4 and use a small scaffold to spawn the java processes
 as required. This allows better use of existing tool support e.g. junit ant integration, hudson.
 
-requires: jdk (1.6+), ant (1.7+), database drivers (for jdbc tests only, see build.xml)
+requires: jdk (1.9+), ant (1.9.6+), database drivers (for jdbc tests only, see build.xml)
 
-build the product:
-  cd jbossts_checkout_from_svn; ant jts
-This will build the qa tests, although you can also do that manually with
-  cd qa; ant
+To build the qa tests:
+  cd qa
+  ant
+
+The test framework runs in an environment defined by the run-tests.xml script, but the test tasks i.e.
+clients, servers etc, run in an environment dictated by the ./TaskImpl.properties file. 
+
+To create that file, copy TaskImpl.properties.template and name it TaskImpl.properties. Proceed to edit 
+the new file as required for your system e.g. location of desired jvm and such.
 
 The tests are executed by the run-tests.xml ant script. There are various test groups, see
 the script for an up to date list. For short(ish) smoke testing try
 
   ant -f run-test.xml express
 
-This will test the product as built and placed in the ../install directory by the initial product build.
-The test framework runs in an environment defined by the run-tests.xml script, but the test tasks i.e.
-clients, servers etc, run in an environment dictated by the ./TaskImpl.properties file. 
-
-To create that file, copy TaskImpl.properties.template and name it TaskImpl.properties. Proceed to edit 
-the new file as required for your system e.g. location of desired jvm and such.
+This will test the product as built by the initial product build.
 
 To debug the test framework, see debug jvm arg in the run-test.xml junit-tests task.
 To debug spawned processes, edit TaskImpl.properties to set debug command line args. You can also
@@ -71,3 +71,10 @@ and '<testnode_hostname>2'. This allows for testing of transactions with two res
 need table creation privs plus the usual CRUD. The actual tables will be created automatically when the
 tests run.
 
+# Running a single test
+There is a way to run specific QA tests. In the run-tests.xml there is a target "onetest" - it runs a 
+single test based on various system properties.
+
+  cd qa/
+  ant
+  ant -f run-tests.xml onetest -Dtest.name=rawresources01_1 -Dtest.methods=RawResources01_1_Test001
