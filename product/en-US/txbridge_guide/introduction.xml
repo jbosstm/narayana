@@ -30,7 +30,7 @@
             Web Services applications, ACID transaction management and interoperable context
             propagation is provided for by the WS-AT standard. &PRODUCT;
             XTS provides an implementation of
-            both the 1.0 and 1.2 versions of this standard. Bridging is provided only on the more recent
+            both the 1.1 and 1.2 versions of this standard. Bridging is provided only on the more recent
             version. At the time of writing the standard covers only the web services API and protocol,
             not the Java API through which the protocol may be driven. Therefore, XTS provides a custom
             Java API to users, with characteristics broadly similar to the JTA.
