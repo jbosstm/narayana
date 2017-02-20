@@ -12,22 +12,25 @@ if [[ $ENVOK == n* ]]
 then
   exit
 fi
-if [ $# -lt 3 ]; then
-  echo 1>&2 "$0: not enough arguments: CURRENT_VERSION_IN_WFLY CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
-  grep 5.2.10.Final pom.xml
+
+if [ $# -eq 0 ]; then
+  . scripts/pre-release-vars.sh
+  CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
+  NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
+  NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
+elif [ $# -lt 2 ]; then
+  echo 1>&2 "$0: not enough arguments: CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
   exit 2
-elif [ $# -gt 4 ]; then
-  echo 1>&2 "$0: too many arguments: CURRENT_VERSION_IN_WFLY CURRENT NEXT (versions should end in .Final or similar)"
-  grep 5.2.10.Final pom.xml
+elif [ $# -gt 3 ]; then
+  echo 1>&2 "$0: too many arguments: CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
   exit 2
 else
-  WFLYISSUE=$4
+  CURRENT=$1
+  NEXT=$2
+  WFLYISSUE=$3
 fi
 
 set -e
-export CURRENT_VERSION_IN_WFLY=$1
-export CURRENT=$2
-export NEXT=$3
 if [ -z "$WFLYISSUE" ]
 then
   JENKINS_JOBS=narayana,narayana-catelyn,narayana-codeCoverage,narayana-documentation,narayana-hqstore,narayana-ibm-jdk,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py
@@ -39,6 +42,7 @@ then
   fi
   (cd jboss-as; git fetch upstream-wildfly; git checkout -b ${WFLYISSUE}; git reset --hard upstream-wildfly/master)
   cd jboss-as
+  CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   if [[ $(uname) == CYGWIN* ]]
   then
     sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
