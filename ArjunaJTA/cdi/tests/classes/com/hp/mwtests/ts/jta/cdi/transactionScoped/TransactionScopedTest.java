@@ -32,8 +32,10 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.inject.Inject;
+import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -44,7 +46,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -54,8 +55,6 @@ import static org.junit.Assert.assertTrue;
 public class TransactionScopedTest {
     @Inject
     UserTransaction userTransaction;
-
-    TransactionManager transactionManager;
 
     @Inject
     TestCDITransactionScopeBean testTxAssociationChangeBean;
@@ -90,8 +89,7 @@ public class TransactionScopedTest {
 
     //Based on test case from JTA 1.2 spec
     private void testTxAssociationChange() throws Exception {
-
-        transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager(new InitialContext());
 
         addTimestamp("begin1");
         userTransaction.begin(); //tx1 begun
