@@ -32,6 +32,8 @@ import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 
@@ -54,8 +56,8 @@ public class TestServiceImpl {
     }
 
     @WebMethod(exclude = true)
-    public void enlistSynchronization(int count) {
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+    public void enlistSynchronization(int count) throws NamingException {
+        TransactionManager tm = getTransactionManager();
         try {
             for (int i = 0; i < count; i++) {
                 TestSynchronization testSynchronization = new TestSynchronization();
@@ -67,8 +69,8 @@ public class TestServiceImpl {
     }
 
     @WebMethod(exclude = true)
-    public void enlistXAResource(int count) {
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+    public void enlistXAResource(int count) throws NamingException {
+        TransactionManager tm = getTransactionManager();
         try {
             for (int i = 0; i < count; i++) {
                 TestXAResource testXAResource = new TestXAResource();
@@ -77,5 +79,9 @@ public class TestServiceImpl {
         } catch (Exception e) {
             log.error("could not enlist", e);
         }
+    }
+
+    private TransactionManager getTransactionManager() throws NamingException {
+        return com.arjuna.ats.jta.TransactionManager.transactionManager(new InitialContext());
     }
 }
