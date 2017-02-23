@@ -29,6 +29,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
+import org.jboss.tm.usertx.UserTransactionOperationsProvider;
+import org.jboss.tm.usertx.client.ServerVMClientUserTransactionOperationsProvider;
+
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
@@ -109,6 +112,10 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	private Map<String, Boolean> performImmediateCleanupOfCommitMarkableResourceBranchesMap = new HashMap<String, Boolean>();
 
 	private Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>();
+
+	private static final String defaultTransactionOperationsProviderClassName = ServerVMClientUserTransactionOperationsProvider.class.getName(); 
+	private volatile String userTransactionOperationsProviderClassName = defaultTransactionOperationsProviderClassName;
+	private volatile UserTransactionOperationsProvider userTransactionOperationsProvider = null;
 
 	/**
      * Returns true if subtransactions are allowed.
@@ -1225,4 +1232,59 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 			boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches) {
 		this.notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches;
 	}
+
+    /**
+     * <p>
+     * Setting of class name that defines {@link UserTransactionOperationsProvider}.
+     * The provider is later used to get more info about {@link UserTransaction}.
+     * <p>
+     * When null is set then default provider implementation is used which is
+     * {@code #defaultTransactionOperationsProviderClassName}.
+     * 
+     *
+     * @param providerClassName  class name implementing {@link UserTransactionOperationsProvider}
+     */
+    public void setUserTransactionOperationsProviderClassName(String providerClassName) {
+        synchronized (this) {
+            if (!userTransactionOperationsProviderClassName.equals(providerClassName)) {
+                userTransactionOperationsProvider = null;
+            }
+
+            if(providerClassName == null) {
+                this.userTransactionOperationsProviderClassName = defaultTransactionOperationsProviderClassName;
+            } else {
+                userTransactionOperationsProviderClassName = providerClassName;
+            }
+        }
+    }
+
+    /**
+     * Get class name that is used as {@link UserTransactionOperationsProvider}
+     *
+     * @return class name implementing {@link UserTransactionOperationsProvider}
+     */
+    public String getUserTransactionOperationsProviderClassName() {
+        return this.userTransactionOperationsProviderClassName;
+    }
+
+    /**
+     * Returning singleton instance of {@link UserTransactionOperationsProvider} instantiated based
+     * based on name specified by {@link #setUserTransactionOperationsProviderClassName(String)}.<br>
+     * When class name is redefined during runtime there should be instantiated new provider.
+     *
+     * @return instance of class implementing {@link UserTransactionOperationsProvider}
+     */
+    public UserTransactionOperationsProvider getUserTransactionOperationsProvider() {
+
+        if(userTransactionOperationsProvider == null && userTransactionOperationsProviderClassName != null) {
+            synchronized(this) {
+                if(userTransactionOperationsProvider == null && userTransactionOperationsProviderClassName != null) {
+                    userTransactionOperationsProvider = ClassloadingUtility.loadAndInstantiateClass(UserTransactionOperationsProvider.class,
+                        userTransactionOperationsProviderClassName, null);
+                }
+            }
+        }
+
+        return userTransactionOperationsProvider;
+    }
 }

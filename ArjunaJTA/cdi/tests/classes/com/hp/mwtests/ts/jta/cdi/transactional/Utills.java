@@ -1,7 +1,11 @@
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -9,6 +13,7 @@ import javax.transaction.TransactionManager;
  * @author paul.robinson@redhat.com 08/05/2013
  */
 public class Utills {
+    private static final Logger LOGGER = Logger.getLogger(Utills.class);
 
 
     public static void assertTransactionActive(boolean expectActive) throws Exception {
@@ -37,7 +42,14 @@ public class Utills {
     }
 
     public static TransactionManager getTransactionManager() {
-        return com.arjuna.ats.jta.TransactionManager.transactionManager();
+        try {
+            return com.arjuna.ats.jta.TransactionManager.transactionManager(new InitialContext());
+        } catch (NamingException ne) {
+            String errorMsg = String.format("failure to lookup transaction manager at '%s'",
+                jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
+            LOGGER.error(errorMsg, ne);
+            throw new RuntimeException(errorMsg, ne);
+        }
     }
 
     public static Transaction getCurrentTransaction() throws Exception {

@@ -26,8 +26,6 @@ package com.arjuna.ats.jta.cdi.transactional;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
-import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
-
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Intercepted;
 import javax.enterprise.inject.spi.Bean;
@@ -39,6 +37,8 @@ import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
+
+import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -178,14 +178,16 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
     protected boolean setUserTransactionAvailable(boolean available) {
 
-        boolean previousUserTransactionAvailability = ServerVMClientUserTransaction.isAvailable();
-        ServerVMClientUserTransaction.setAvailability(available);
+        UserTransactionOperationsProvider userTransactionProvider =
+            jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider();
+        boolean previousUserTransactionAvailability = userTransactionProvider.getAvailability();
+        userTransactionProvider.setAvailability(available);
         return previousUserTransactionAvailability;
     }
 
     protected void resetUserTransactionAvailability(boolean previousUserTransactionAvailability) {
-
-        ServerVMClientUserTransaction.setAvailability(previousUserTransactionAvailability);
+        jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider()
+            .setAvailability(previousUserTransactionAvailability);
     }
 
     protected TransactionManager getTransactionManager() {
