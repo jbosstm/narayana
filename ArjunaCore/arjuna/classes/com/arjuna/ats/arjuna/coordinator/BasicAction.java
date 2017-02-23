@@ -259,8 +259,10 @@ public class BasicAction extends StateManager
                 * If we are active then change status. Otherwise it may be an error so check status.
                 */
 
-            if (actionStatus == ActionStatus.RUNNING)
-                actionStatus = ActionStatus.ABORT_ONLY;
+            synchronized (this) {
+                if (actionStatus == ActionStatus.RUNNING)
+                    actionStatus = ActionStatus.ABORT_ONLY;
+            }
 
             /*
                 * Since the reason to call this method is to make sure the transaction
@@ -3730,7 +3732,7 @@ public class BasicAction extends StateManager
 
     /* Atomic action status variables */
 
-    private int actionStatus;
+    private volatile int actionStatus;
     private int actionType;
     private BasicAction parentAction;
     private AbstractRecord recordBeingHandled;
