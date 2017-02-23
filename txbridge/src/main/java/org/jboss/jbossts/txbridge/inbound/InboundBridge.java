@@ -24,13 +24,16 @@
 package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.TransactionManager;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.Transaction;
 
@@ -47,6 +50,8 @@ public class InboundBridge
      */
     private final Xid xid;
 
+    private final InitialContext ctx;
+
     /**
      * Create a new InboundBridge to manage the given subordinate JTA transaction.
      *
@@ -61,6 +66,12 @@ public class InboundBridge
         this.xid = xid;
 
         getTransaction(); // ensures transaction is initialized
+
+        try {
+            ctx = new InitialContext();
+        } catch (NamingException ne) {
+            throw new IllegalStateException("Can't intialize intial context");
+        }
     }
 
     /**
@@ -77,7 +88,7 @@ public class InboundBridge
 
         Transaction tx = getTransaction();
 
-        TransactionManager.transactionManager().resume(tx);
+        TransactionManager.transactionManager(ctx).resume(tx);
     }
 
     /**
@@ -92,7 +103,7 @@ public class InboundBridge
     {
         txbridgeLogger.logger.trace("InboundBridge.stop("+xid+")");
 
-        TransactionManager.transactionManager().suspend();
+        TransactionManager.transactionManager(ctx).suspend();
     }
 
     public void setRollbackOnly() throws XAException, SystemException
@@ -112,7 +123,8 @@ public class InboundBridge
     private Transaction getTransaction()
             throws XAException, SystemException
     {
-        Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        Transaction tx = jtaPropertyManager.getJTAEnvironmentBean()
+            .getSubordinateTransactionImporter().getTransaction(xid);
 
         switch (tx.getStatus())
         {

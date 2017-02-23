@@ -27,6 +27,7 @@ import com.arjuna.wst.UnknownTransactionException;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -47,7 +48,12 @@ import java.util.List;
  * Provides method call mapping between JTA parent coordinator and WS-AT subordinate transaction.
  *
  * @author jonathan.halliday@redhat.com, 2009-02-10
+ *
+ * @deprecated this {@link XAResource} is meant only for internal use in Narayana TM. It's not expected
+ *   to be used outside of the transaction manager. You can expect moving this class to a different
+ *   package or hiding it as a private class.
  */
+@Deprecated
 public class BridgeXAResource implements XAResource, Serializable
 {
     // Design note: Given the way JBossTS is designed, we could subclass AbstractRecord rather than
@@ -58,7 +64,7 @@ public class BridgeXAResource implements XAResource, Serializable
 
     private transient volatile BridgeWrapper bridgeWrapper;
 
-    private volatile Uid externalTxId; // JTA i.e. parent id
+    private transient final Transaction externalTxId; // JTA i.e. parent id
 
     private volatile String bridgeWrapperId; // XTS i.e. subordinate.
 
@@ -67,16 +73,33 @@ public class BridgeXAResource implements XAResource, Serializable
     /**
      * Create a new XAResource which wraps the subordinate WS-AT transaction.
      *
-     * @param externalTxId the parent JTA transaction identifier.
+     * @param externalTxId the parent JTA transaction.
      * @param bridgeWrapper the control for the subordinate WS-AT transaction.
      */
-    public BridgeXAResource(Uid externalTxId, BridgeWrapper bridgeWrapper)
+    public BridgeXAResource(Transaction externalTxId, BridgeWrapper bridgeWrapper)
     {
         txbridgeLogger.logger.trace("BridgeXARresource.<ctor>(TxId="+externalTxId+", BridgeWrapper="+bridgeWrapper+")");
 
         this.externalTxId = externalTxId;
         this.bridgeWrapper = bridgeWrapper;
         bridgeWrapperId = bridgeWrapper.getIdentifier();
+    }
+
+    /**
+     * <p>
+     * Having this constructor for backwards compatibility reasons.
+     * <p>
+     * Create a new XAResource which wraps the subordinate WS-AT transaction.
+     *
+     * @param externalTxId the parent JTA transaction identifier.
+     * @param bridgeWrapper the control for the subordinate WS-AT transaction.
+     *
+     * @deprecated use {@link #BridgeXAResource(Transaction, BridgeWrapper)}
+     *   this method throws {@link UnsupportedOperationException}
+     */
+    @Deprecated
+    public BridgeXAResource(Uid externalTxId, BridgeWrapper bridgeWrapper) {
+        throw new  java.lang.UnsupportedOperationException();
     }
 
     /**
@@ -87,10 +110,9 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        txbridgeLogger.logger.trace("BridgeXAResource.writeObject() for tx id="+externalTxId);
+        txbridgeLogger.logger.trace("BridgeXAResource.writeObject() for bridge wrapper id=" + bridgeWrapperId);
 
         //out.defaultWriteObject();
-        out.writeObject(externalTxId);
         out.writeObject(bridgeWrapperId);
     }
 
@@ -107,7 +129,6 @@ public class BridgeXAResource implements XAResource, Serializable
         txbridgeLogger.logger.trace("BridgeXAResource.readObject()");
 
         //in.defaultReadObject();
-        externalTxId = (Uid)in.readObject();
         bridgeWrapperId = (String)in.readObject();
 
         // this readObject method executes only when a log is being read at recovery time:
