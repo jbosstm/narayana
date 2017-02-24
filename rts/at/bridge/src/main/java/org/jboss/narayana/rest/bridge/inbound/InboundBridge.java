@@ -33,6 +33,8 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import org.jboss.logging.Logger;
 
@@ -88,22 +90,29 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
         enlist(this);
     }
 
+
     public void start() {
+        start(true);
+    }
+
+    public void start(boolean resume) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("InboundBridge.start " + this);
         }
 
-        final Transaction transaction = getTransaction();
+        final Transaction transaction = getTransaction(resume);
 
         if (!isTransactionGoodToResume(transaction)) {
             throw new InboundBridgeException("Transaction is not in an active state.");
         }
 
-        try {
-            TransactionManager.transactionManager(new InitialContext()).resume(transaction);
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            throw new InboundBridgeException("Failed to start the bridge.", e);
+        if (resume) {
+            try {
+                TransactionManager.transactionManager(new InitialContext()).resume(transaction);
+            } catch (Exception e) {
+                LOG.warn(e.getMessage(), e);
+                throw new InboundBridgeException("Failed to start the bridge.", e);
+            }
         }
     }
 
@@ -194,7 +203,7 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
     }
 
     private void enlist(final InboundBridge inboundBridge) {
-        final Transaction transaction = getTransaction();
+        final Transaction transaction = getTransaction(true);
 
         if (!isTransactionGoodToEnlist(transaction)) {
             throw new InboundBridgeException("Transaction is not in an active state.");
@@ -213,12 +222,15 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
      *
      * @return
      */
-    private Transaction getTransaction() {
+    private Transaction getTransaction(boolean useContainerToLookup) {
         final Transaction transaction;
 
         try {
-            transaction = jtaPropertyManager.getJTAEnvironmentBean()
-                .getSubordinateTransactionImporter().getTransaction(xid);
+            if (useContainerToLookup) {
+                transaction = jtaPropertyManager.getJTAEnvironmentBean().getSubordinateTransactionImporter().getTransaction(xid);
+            } else {
+                transaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
+            }
         } catch (XAException e) {
             LOG.warn(e.getMessage(), e);
             throw new InboundBridgeException("Failed to import transaction.", e);
@@ -353,5 +365,4 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
             LOG.trace("InboundBridge.start: xid=" + xid + ", i=" + i);
         }
     }
-
 }

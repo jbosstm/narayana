@@ -57,7 +57,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
             LOG.trace("InboundBridgeParticipant.prepare: xid=" + xid);
         }
 
-        startBridge();
+        startBridge(true);
 
         final Vote outcome = prepareSubordinate();
 
@@ -80,7 +80,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
             LOG.trace("InboundBridgeParticipant.commit: xid=" + xid);
         }
 
-        startBridge();
+        startBridge(false);
 
         try {
             commitSubordinate();
@@ -95,7 +95,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
             LOG.trace("InboundBridgeParticipant.commitOnePhase: xid=" + xid);
         }
 
-        startBridge();
+        startBridge(false);
 
         final Vote outcome = prepareSubordinate();
 
@@ -119,7 +119,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
             LOG.trace("InboundBridgeParticipant.rollback: xid=" + xid);
         }
 
-        startBridge();
+        startBridge(false);
 
         try {
             rollbackSubordinate();
@@ -128,11 +128,11 @@ public class InboundBridgeParticipant implements Participant, Serializable {
         }
     }
 
-    private void startBridge() {
+    private void startBridge(boolean resume) {
         final InboundBridge inboundBridge = getInboundBridge();
 
         if (inboundBridge != null) {
-            inboundBridge.start();
+            inboundBridge.start(resume);
         } else {
             throw new ParticipantException("Inbound bridge is not available.");
         }
