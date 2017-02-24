@@ -29,6 +29,9 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+
 /**
  * i18n log messages for the jtax module.
  *
@@ -262,6 +265,10 @@ public interface jtaxI18NLogger {
 
 	@Message(id = 24059, value = "Inflow recovery is not supported for JTS mode", format = MESSAGE_FORMAT)
 	String get_not_supported();
+
+	@Message(id = 24060, value = "Could not end XA resource {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_could_not_end_xar(XAResource xar, @Cause() XAException e1);
 
     /*
         Allocate new messages directly above this notice.

@@ -1032,6 +1032,60 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 	}
 
+	public void endAssociation(Xid _tranID, XAResource _theXAResource, int xaState, int txInfoState) throws XAException {
+		int txInfo = getXAResourceState(_theXAResource);
+		XAException toThrow = null;
+		if ((txInfo != TxInfo.NOT_ASSOCIATED) && (txInfo != TxInfo.FAILED)) {
+			try {
+				doEnd(_tranID, _theXAResource, xaState, txInfoState);
+			} catch (XAException e) {
+				if (toThrow == null) {
+					toThrow = e;
+				} else {
+					_theTransaction.getDeferredThrowables().add(e);
+				}
+			}
+		}
+		for (Object resource : _duplicateResources.keySet()) {
+			XAResource dupXar = (XAResource) resource;
+			if (_theXAResource.isSameRM(dupXar)) {
+				try {
+					doEnd(_tranID, dupXar, xaState, txInfoState);
+				} catch (XAException e) {
+					if (toThrow == null) {
+						toThrow = e;
+					} else {
+						_theTransaction.getDeferredThrowables().add(e);
+					}
+				}
+			}
+		}
+		if (toThrow != null) {
+			throw toThrow;
+		}
+	}
+
+	private void doEnd(Xid _tranID, XAResource xar, int xaState, int txInfoState) throws XAException {
+		try {
+			xar.end(_tranID, xaState);
+			setXAResourceState(xar, txInfoState);
+		} catch (XAException e1) {
+			switch (e1.errorCode) {
+				case XAException.XA_RBROLLBACK:
+				case XAException.XA_RBCOMMFAIL:
+				case XAException.XA_RBDEADLOCK:
+				case XAException.XA_RBINTEGRITY:
+				case XAException.XA_RBOTHER:
+				case XAException.XA_RBPROTO:
+				case XAException.XA_RBTIMEOUT:
+				case XAException.XA_RBTRANSIENT:
+					setXAResourceState(xar, txInfoState);
+			}
+			jtaLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+			throw e1;
+		}
+	}
+
 	public int getXAResourceState(XAResource xaRes)
 	{
 		int state = TxInfo.UNKNOWN;
@@ -1669,5 +1723,4 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
 			.getDefaultInstance(JTAEnvironmentBean.class)
 			.getCommitMarkableResourceJNDINames();
-
 }
