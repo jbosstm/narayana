@@ -21,6 +21,7 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.common;
 
+import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
@@ -66,7 +67,7 @@ public class AdvancedInboundBridgeResource {
         try {
             loggingXAResource = new LoggingXAResource();
 
-            Transaction t = TransactionManager.transactionManager().getTransaction();
+            Transaction t = TransactionManager.transactionManager(new InitialContext()).getTransaction();
             t.enlistResource(loggingXAResource);
 
         } catch (Exception e) {
