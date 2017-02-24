@@ -31,10 +31,12 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -1111,6 +1113,58 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			return "TransactionImple < jts, " + _theTransaction.get_uid()
 					+ " >";
+		}
+	}
+
+	public void endAssociation(Xid _tranID, XAResource _theXAResource, int xaState, int txInfoState) throws XAException {
+		int txInfo = getXAResourceState(_theXAResource);
+		XAException toThrow = null;
+		if ((txInfo != TxInfo.NOT_ASSOCIATED) && (txInfo != TxInfo.FAILED)) {
+			try {
+				doEnd(_tranID, _theXAResource, xaState, txInfoState);
+			} catch (XAException e) {
+				if (toThrow == null) {
+					toThrow = e;
+				}
+				// Could add suppressed but this is not sent back via IDL so not doing
+			}
+		}
+		for (Object resource : _duplicateResources.keySet()) {
+			XAResource dupXar = (XAResource) resource;
+			if (_theXAResource.isSameRM(dupXar)) {
+				try {
+					doEnd(_tranID, dupXar, xaState, txInfoState);
+				} catch (XAException e) {
+					if (toThrow == null) {
+						toThrow = e;
+					}
+					// Could add suppressed but this is not sent back via IDL so not doing
+				}
+			}
+		}
+		if (toThrow != null) {
+			throw toThrow;
+		}
+	}
+
+	private void doEnd(Xid _tranID, XAResource xar, int xaState, int txInfoState) throws XAException {
+		try {
+			xar.end(_tranID, xaState);
+			setXAResourceState(xar, txInfoState);
+		} catch (XAException e1) {
+			switch (e1.errorCode) {
+				case XAException.XA_RBROLLBACK:
+				case XAException.XA_RBCOMMFAIL:
+				case XAException.XA_RBDEADLOCK:
+				case XAException.XA_RBINTEGRITY:
+				case XAException.XA_RBOTHER:
+				case XAException.XA_RBPROTO:
+				case XAException.XA_RBTIMEOUT:
+				case XAException.XA_RBTRANSIENT:
+					setXAResourceState(xar, txInfoState);
+			}
+			jtaxLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
+			throw e1;
 		}
 	}
 

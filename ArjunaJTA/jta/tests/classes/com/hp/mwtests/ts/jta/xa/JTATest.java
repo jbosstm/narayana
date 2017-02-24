@@ -31,6 +31,7 @@
 
 package com.hp.mwtests.ts.jta.xa;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -47,12 +48,144 @@ import org.junit.Test;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class JTATest {
 
     private XAException exception;
     protected boolean resource1Rollback;
     protected boolean resource2Rollback;
-    
+
+    @Test
+    public void testDuplicateXAREndCalled() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        AtomicBoolean endCalled = new AtomicBoolean(false);
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 1;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                try {
+                    Class<? extends XAResource> aClass = xares.getClass();
+                    Field field = aClass.getField("id");
+                    int other = field.getInt(xares);
+                    if (other == 1) {
+                        return true;
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    fail("Unexpected XAR");
+                }
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+                super.start(xid, flags);
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 1;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                try {
+                    Field field = xares.getClass().getField("id");
+                    int other = field.getInt(xares);
+                    if (other == 1) {
+                        return true;
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    fail("Unexpected XAR");
+                }
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+                super.start(xid, flags);
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                endCalled.set(true);
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 2;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return false;
+            }
+        }));
+        tm.commit();
+
+        assertTrue(endCalled.get());
+    }
+
+    @Test
+    public void testDuplicateXAREndCalledFailure() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+        XAException rmFail = new XAException(XAException.XAER_RMFAIL);
+        XAException rbRollback = new XAException(XAException.XA_RBROLLBACK);
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return true;
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return true;
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                throw rmFail;
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return true;
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                throw rbRollback;
+            }
+        }));
+        try {
+            tm.commit();
+            fail("Committed");
+        } catch (RollbackException e) {
+            assertTrue(Arrays.asList(e.getSuppressed()).contains(rmFail));
+            assertTrue(Arrays.asList(e.getSuppressed()).contains(rbRollback));
+        }
+    }
+
     @Test
     public void testRMFAILcommit1PC() throws Exception
     {

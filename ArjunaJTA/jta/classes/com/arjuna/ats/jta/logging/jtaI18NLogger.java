@@ -32,6 +32,9 @@ import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+
 /**
  * i18n log messages for the jta module.
  *
@@ -516,6 +519,10 @@ public interface jtaI18NLogger {
 	@Message(id = 16128, value = "Failed to delist XA resource", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_failed_to_delist_xa_resource(@Cause() Exception e);
+
+	@Message(id = 16129, value = "Could not end XA resource {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_could_not_end_xar(XAResource xar, @Cause() XAException e1);
 
     /*
         Allocate new messages directly above this notice.

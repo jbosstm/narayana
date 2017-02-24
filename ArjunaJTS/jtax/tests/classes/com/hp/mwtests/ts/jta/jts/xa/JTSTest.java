@@ -34,10 +34,15 @@ package com.hp.mwtests.ts.jta.jts.xa;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.hp.mwtests.ts.jta.xa.JTATest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +54,9 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JTSTest {
     private ORB myORB;
@@ -77,7 +85,120 @@ public class JTSTest {
 //            myORB.shutdown();
         }
     }
-    
+
+    @Test
+    public void testDuplicateXAREndCalled() throws javax.transaction.SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        AtomicBoolean endCalled = new AtomicBoolean(false);
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 1;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                try {
+                    Class<? extends XAResource> aClass = xares.getClass();
+                    Field field = aClass.getField("id");
+                    int other = field.getInt(xares);
+                    if (other == 1) {
+                        return true;
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    fail("Unexpected XAR");
+                }
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+                super.start(xid, flags);
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 1;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                try {
+                    Field field = xares.getClass().getField("id");
+                    int other = field.getInt(xares);
+                    if (other == 1) {
+                        return true;
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    fail("Unexpected XAR");
+                }
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int flags) throws XAException {
+                super.start(xid, flags);
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                endCalled.set(true);
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            public int id = 2;
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return false;
+            }
+        }));
+        tm.commit();
+
+        assertTrue(endCalled.get());
+    }
+
+    @Test
+    public void testDuplicateXAREndCalledFailure() throws javax.transaction.SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tm.begin();
+
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
+
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return true;
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                super.end(xid, flags);
+            }
+        }));
+        assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
+            @Override
+            public boolean isSameRM(XAResource xares) throws XAException {
+                return true;
+            }
+
+            @Override
+            public void end(Xid xid, int flags) throws XAException {
+                throw new XAException(XAException.XA_RBROLLBACK);
+            }
+        }));
+        try {
+            tm.commit();
+            fail("Committed");
+        } catch (RollbackException e) {
+        }
+    }
+
     @Test
     public void testRMFAILcommit1PC() throws Exception
     {
@@ -231,4 +352,60 @@ public class JTSTest {
 		}
 
 	}
+
+    private abstract class SimpleXAResource implements XAResource {
+
+        @Override
+        public void start(Xid xid, int flags) throws XAException {
+
+        }
+
+        @Override
+        public boolean setTransactionTimeout(int seconds) throws XAException {
+
+            return false;
+        }
+
+        @Override
+        public void rollback(Xid xid) throws XAException {
+        }
+
+        @Override
+        public Xid[] recover(int flag) throws XAException {
+
+            return null;
+        }
+
+        @Override
+        public int prepare(Xid xid) throws XAException {
+            return XAResource.XA_OK;
+        }
+
+        @Override
+        public boolean isSameRM(XAResource xares) throws XAException {
+
+            return false;
+        }
+
+        @Override
+        public int getTransactionTimeout() throws XAException {
+
+            return 0;
+        }
+
+        @Override
+        public void forget(Xid xid) throws XAException {
+
+        }
+
+        @Override
+        public void end(Xid xid, int flags) throws XAException {
+
+        }
+
+        @Override
+        public void commit(Xid xid, boolean onePhase) throws XAException {
+
+        }
+    }
 }
