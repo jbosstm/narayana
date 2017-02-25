@@ -27,6 +27,8 @@ import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.wst.SystemException;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.Transaction;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;
@@ -110,8 +112,8 @@ public class OptionalJaxWSTxInboundBridgeHandler implements Handler {
         Transaction transaction = null;
 
         try {
-            transaction = TransactionManager.transactionManager().getTransaction();
-        } catch (javax.transaction.SystemException e) {
+            transaction = TransactionManager.transactionManager(new InitialContext()).getTransaction();
+        } catch (javax.transaction.SystemException | NamingException ignore) {
         }
 
         return transaction != null;
