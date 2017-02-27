@@ -377,6 +377,15 @@ public class TransactionalImplTest {
         testTransactionalBean.invokeWithNeverUseUserTransaction();
     }
 
+    /**
+     * <p>
+     * Expecting {@link IllegalStateException} as the bean's method calls
+     * {@link UserTransaction#getStatus()}. That's not permitted by JTA spec 1.2
+     * <p>
+     * <code> If an attempt is made to call any method of the UserTransaction interface from within the scope of a bean
+     * or method annotated with @Transactional and a Transactional.TxType other than NOT_SUPPORTED or NEVER,
+     * an IllegalStateException must be thrown</code>
+     */
     @Test(expected = IllegalStateException.class)
     public void testUseUserTransactionInRequiresNew() throws Exception {
 
