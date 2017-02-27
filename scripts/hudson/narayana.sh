@@ -283,11 +283,10 @@ function build_as {
 
   git fetch upstream
   echo "This is the JBoss-AS commit"
-  #echo $(git rev-parse upstream/master)
-  git log -2
-  
-  #git pull --rebase --ff-only upstream master
-  #[ $? = 0 ] || fatal "git rebase failed"
+  echo $(git rev-parse upstream/master)
+
+  git pull --rebase --ff-only upstream master
+  [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.3.Final-SNAPSHOT
