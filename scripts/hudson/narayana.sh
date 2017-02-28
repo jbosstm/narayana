@@ -80,8 +80,13 @@ function init_test_options {
     elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
         comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
         export TOMCAT_TESTS=1
+    elif [[ $PROFILE == "RTS" ]] && [[ ! $PULL_DESCRIPTION == *!RTS* ]]; then
+        comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
+        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "JACOCO" ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
