@@ -27,6 +27,7 @@ import com.arjuna.wst.UnknownTransactionException;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
 
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -58,7 +59,7 @@ public class BridgeXAResource implements XAResource, Serializable
 
     private transient volatile BridgeWrapper bridgeWrapper;
 
-    private volatile Uid externalTxId; // JTA i.e. parent id
+    private transient final Transaction externalTxId; // JTA i.e. parent id
 
     private volatile String bridgeWrapperId; // XTS i.e. subordinate.
 
@@ -70,7 +71,7 @@ public class BridgeXAResource implements XAResource, Serializable
      * @param externalTxId the parent JTA transaction identifier.
      * @param bridgeWrapper the control for the subordinate WS-AT transaction.
      */
-    public BridgeXAResource(Uid externalTxId, BridgeWrapper bridgeWrapper)
+    public BridgeXAResource(Transaction externalTxId, BridgeWrapper bridgeWrapper)
     {
         txbridgeLogger.logger.trace("BridgeXARresource.<ctor>(TxId="+externalTxId+", BridgeWrapper="+bridgeWrapper+")");
 
@@ -87,10 +88,9 @@ public class BridgeXAResource implements XAResource, Serializable
      */
     private void writeObject(ObjectOutputStream out) throws IOException
     {
-        txbridgeLogger.logger.trace("BridgeXAResource.writeObject() for tx id="+externalTxId);
+        txbridgeLogger.logger.trace("BridgeXAResource.writeObject()");
 
         //out.defaultWriteObject();
-        out.writeObject(externalTxId);
         out.writeObject(bridgeWrapperId);
     }
 
@@ -107,7 +107,6 @@ public class BridgeXAResource implements XAResource, Serializable
         txbridgeLogger.logger.trace("BridgeXAResource.readObject()");
 
         //in.defaultReadObject();
-        externalTxId = (Uid)in.readObject();
         bridgeWrapperId = (String)in.readObject();
 
         // this readObject method executes only when a log is being read at recovery time:

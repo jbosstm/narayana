@@ -24,6 +24,8 @@ package org.jboss.jbossts.txbridge.outbound;
 
 import java.util.Iterator;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.xml.soap.Name;
@@ -109,9 +111,9 @@ public abstract class AbstractJTAOverWSATHandler<C extends MessageContext> imple
         boolean isJTATransaction = false;
 
         try {
-            final Transaction transaction = TransactionManager.transactionManager().getTransaction();
+            final Transaction transaction = TransactionManager.transactionManager(new InitialContext()).getTransaction();
             isJTATransaction = transaction != null;
-        } catch (SystemException e) {
+        } catch (SystemException | NamingException ignore) {
         }
 
         return isJTATransaction;
