@@ -30,6 +30,10 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.Status;
 
+import org.jboss.tm.listener.AssociatingEventType;
+import org.jboss.tm.listener.BasicEventType;
+import org.jboss.tm.listener.EventFilter;
+import org.jboss.tm.listener.LifecycleEventType;
 import org.jboss.tm.listener.TransactionTypeNotSupported;
 import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionLocalDelegate;
@@ -43,9 +47,8 @@ import org.jboss.tm.listener.EventType;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Delegate for JBoss TransactionManager/TransactionLocalDelegate.
@@ -85,7 +88,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
         SecurityException, IllegalStateException, SystemException
     {
-        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+        notifyAssociationListeners(getTransaction(), BasicEventType.DISASSOCIATING);
         transactionManager.commit() ;
     }
 
@@ -119,8 +122,9 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         if (transaction == null) {
             suspend(); // This is what AtomicAction does
         } else {
+            notifyAssociationListeners(transaction, AssociatingEventType.ASSOCIATING);
             transactionManager.resume(transaction) ;
-            notifyAssociationListeners(transaction, EnumSet.of(EventType.ASSOCIATED));
+            notifyAssociationListeners(transaction, BasicEventType.ASSOCIATED);
         }
     }
 
@@ -130,7 +134,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     public void rollback()
         throws IllegalStateException, SecurityException, SystemException
     {
-        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+        notifyAssociationListeners(getTransaction(), BasicEventType.DISASSOCIATING);
         transactionManager.rollback() ;
     }
 
@@ -160,24 +164,38 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     @Override
     public void addListener (Transaction transaction, TransactionListener listener, EnumSet<EventType> types) throws TransactionTypeNotSupported
     {
+        addListener(transaction, listener, new EventFilter(types));
+    }
+
+    @Override
+    public void addListener (Transaction transaction, TransactionListener listener, EventFilter filter) throws TransactionTypeNotSupported
+    {
         if (transaction == null)
             throw new NullPointerException(); // we could interpret this as meaning register for all transactions
 
         if (!(transaction instanceof com.arjuna.ats.jta.transaction.Transaction))
             throw new TransactionTypeNotSupported("Unsupported transaction type");
 
-        Collection<TransactionListener> listeners = getListeners(transaction, true);
+        ConcurrentHashMap<TransactionListener, EventFilter> listeners = getListeners(transaction, true);
 
-        if (listeners != null) {
-            listeners.add(listener);
+        assert listeners != null;
 
+        EventFilter prev = listeners.get(listener);
+
+        if (prev != null)
+            filter.add(prev);
+
+        listeners.put(listener, filter);
+
+        try {
             // if transaction is already associated with the current thread notify this listener
-            try {
-                if (transaction.equals(getTransaction()) && types.contains(EventType.ASSOCIATED))
+            if (transaction.equals(getTransaction()) && filter.matches(BasicEventType.ASSOCIATED)) {
+                if (prev == null || !prev.matches(BasicEventType.ASSOCIATED)) {
                     listener.onEvent(new TransactionEvent(transaction, EnumSet.of(EventType.ASSOCIATED)));
-            } catch (SystemException e) {
-                // no transaction associated so do not trigger the ASSOCIATED callback
+                }
             }
+        } catch (SystemException e) {
+            // no transaction associated so do not trigger the ASSOCIATED callback
         }
     }
 
@@ -189,24 +207,27 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws SystemException
     {
         if (getStatus() != Status.STATUS_NO_TRANSACTION)
-            notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+            notifyAssociationListeners(getTransaction(), BasicEventType.DISASSOCIATING);
 
         return transactionManager.suspend();
     }
 
     // TransactionListener implementation methods.
     // return all the event listeners associated with this thread
-    private Collection<TransactionListener> getListeners(Transaction transaction, boolean create)
+    private ConcurrentHashMap<TransactionListener, EventFilter> getListeners(Transaction transaction, boolean create)
     {
         com.arjuna.ats.jta.transaction.Transaction txn = (com.arjuna.ats.jta.transaction.Transaction) transaction;
         Object resource;
+
+        if (!create)
+            return (ConcurrentHashMap<TransactionListener, EventFilter>) txn.getTxLocalResource(LISTENER_MAP_KEY);
 
         // protect against two concurrent listener registrations both trying to create the initial resource entry
         synchronized (transaction) {
             resource = txn.getTxLocalResource(LISTENER_MAP_KEY);
 
             if (resource == null && create) {
-                Collection<TransactionListener> listeners = new ConcurrentLinkedQueue<>();
+                ConcurrentHashMap<TransactionListener, EventFilter> listeners = new ConcurrentHashMap<>();
 
                 txn.putTxLocalResource(LISTENER_MAP_KEY, listeners);
 
@@ -214,24 +235,28 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
             }
         }
 
-        if (resource != null && !(resource instanceof ConcurrentLinkedQueue)) {
+        if (resource != null && !(resource instanceof ConcurrentHashMap)) {
             // another container subsystem has inadvertently used our key
             throw new IllegalStateException("Invalid transaction local resource associated with key");
         }
 
-        return (Collection<TransactionListener>) resource;
+        return (ConcurrentHashMap<TransactionListener, EventFilter>) resource;
     }
 
     // notify any listeners for this transaction that there has been an event
-    private void notifyAssociationListeners(Transaction transaction, EnumSet<EventType> reasons)
+    private void notifyAssociationListeners(Transaction transaction, LifecycleEventType reason)
     {
         if (transaction != null) {
-            Collection<TransactionListener> listeners = getListeners(transaction, false);
-            TransactionEvent event = new TransactionEvent(transaction, reasons);
+            ConcurrentHashMap<TransactionListener, EventFilter> listeners = getListeners(transaction, false);
 
             if (listeners != null) {
-                for (TransactionListener s : listeners)
-                    s.onEvent(event);
+                TransactionEvent event = new TransactionEvent(transaction, reason);
+
+                for (Map.Entry<TransactionListener, EventFilter> e : listeners.entrySet()) {
+                    if (e.getValue().matches(reason)) {
+                        e.getKey().onEvent(event);
+                    }
+                }
             }
         }
     }
