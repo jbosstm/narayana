@@ -260,6 +260,9 @@ public interface jtaxI18NLogger {
     @LogMessage(level = WARN)
     public void warn_could_not_load_class_will_wait_for_bottom_up(@Cause() ClassNotFoundException cnfe);
 
+	@Message(id = 24059, value = "Inflow recovery is not supported for JTS mode", format = MESSAGE_FORMAT)
+	String get_not_supported();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

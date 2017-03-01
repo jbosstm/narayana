@@ -1153,7 +1153,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * Creates if does not exist and adds to our internal mapping table.
 	 */
 
-	static final TransactionImple getTransaction ()
+	public static final TransactionImple getTransaction ()
 	{
 		TransactionImple tx = null;
 
@@ -1208,6 +1208,21 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		return tx;
 	}
+
+       public static final TransactionImple getTransaction(Uid id)
+       {
+            try
+            {
+                if (id != null)
+                    return (TransactionImple) _transactions.get(id);
+                else
+                    return null;
+            }
+            catch (Exception e)
+            {
+                return new TransactionImple(null);
+            }
+        }
 
 	public final void shutdown ()
 	{
