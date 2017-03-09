@@ -294,7 +294,7 @@ function build_as {
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.4.Final-SNAPSHOT
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.4.Final-SNAPSHOT -Dversion.org.wildfly.transaction.client=1.0.0.Beta18
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger

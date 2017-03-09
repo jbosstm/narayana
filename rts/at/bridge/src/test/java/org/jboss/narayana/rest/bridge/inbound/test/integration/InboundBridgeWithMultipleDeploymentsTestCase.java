@@ -97,28 +97,32 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
         JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
         JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
-        if (firstLoggingXAResourceInvocations.length() == 5) {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(1));
+        if (firstLoggingXAResourceInvocations.length() == 6) {
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", firstLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.prepare", firstLoggingXAResourceInvocations.get(4));
+            Assert.assertEquals("LoggingXAResource.commit", firstLoggingXAResourceInvocations.get(5));
+
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", secondLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(4));
+        } else {
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", firstLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(1));
             Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(2));
             Assert.assertEquals("LoggingXAResource.prepare", firstLoggingXAResourceInvocations.get(3));
             Assert.assertEquals("LoggingXAResource.commit", firstLoggingXAResourceInvocations.get(4));
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(3));
-        } else {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.prepare", firstLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.commit", firstLoggingXAResourceInvocations.get(3));
-
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(3));
-            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(4));
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", secondLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(4));
+            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(5));
         }
     }
 
@@ -133,24 +137,28 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
         JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
         JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
-        if (firstLoggingXAResourceInvocations.length() == 4) {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(1));
+        if (firstLoggingXAResourceInvocations.length() == 5) {
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", firstLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.rollback", firstLoggingXAResourceInvocations.get(4));
+
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", secondLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(3));
+        } else {
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", firstLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(1));
             Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(2));
             Assert.assertEquals("LoggingXAResource.rollback", firstLoggingXAResourceInvocations.get(3));
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(2));
-        } else {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.rollback", firstLoggingXAResourceInvocations.get(2));
-
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.setTransactionTimeout", secondLoggingXAResourceInvocations.get(0));
+            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(1));
+            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(2));
+            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(3));
+            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(4));
         }
     }
 
