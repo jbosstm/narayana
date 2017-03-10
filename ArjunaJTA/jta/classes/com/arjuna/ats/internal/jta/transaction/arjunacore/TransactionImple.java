@@ -1039,11 +1039,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			try {
 				doEnd(_tranID, _theXAResource, xaState, txInfoState);
 			} catch (XAException e) {
-				if (toThrow == null) {
-					toThrow = e;
-				} else {
-					_theTransaction.getDeferredThrowables().add(e);
-				}
+				toThrow = e;
 			}
 		}
 		for (Object resource : _duplicateResources.keySet()) {
@@ -1052,10 +1048,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 				try {
 					doEnd(_tranID, dupXar, xaState, txInfoState);
 				} catch (XAException e) {
-					if (toThrow == null) {
-						toThrow = e;
-					} else {
-						_theTransaction.getDeferredThrowables().add(e);
+					// Some resource managers (e.g. Artemis) will not allow xa_end on duplicate xa resources as per JTA 1.2
+					if (e.errorCode != XAException.XAER_PROTO || STRICTJTA12DUPLICATEXAENDPROTOERR) {
+						if (toThrow == null) {
+							toThrow = e;
+						} else {
+							_theTransaction.getDeferredThrowables().add(e);
+						}
 					}
 				}
 			}
@@ -1723,4 +1722,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
 			.getDefaultInstance(JTAEnvironmentBean.class)
 			.getCommitMarkableResourceJNDINames();
+
+	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
 }
