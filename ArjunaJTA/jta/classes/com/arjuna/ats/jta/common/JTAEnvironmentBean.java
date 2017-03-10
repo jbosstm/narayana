@@ -117,6 +117,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	private volatile String userTransactionOperationsProviderClassName = defaultTransactionOperationsProviderClassName;
 	private volatile UserTransactionOperationsProvider userTransactionOperationsProvider = null;
 
+	private boolean strictJTA12DuplicateXAENDPROTOErr = false;
+
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -1286,5 +1288,26 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         }
 
         return userTransactionOperationsProvider;
+    }
+
+    /**
+     * Returns true if we would treat XAER_PROTO out of duplicate xar as an error.
+     *
+     * Default: false.
+     *
+     * @return true if we treat XAER_PROTO out of duplicate xar as errors
+     */
+
+    public boolean isStrictJTA12DuplicateXAENDPROTOErr() {
+        return strictJTA12DuplicateXAENDPROTOErr;
+    }
+
+    /**
+     * Sets if to not allow non-JTA 1.2 XAR to return XAER_PROTO out of duplicate XAR xa_end calls
+     *
+     * @param strictJTA12DuplicateXAENDPROTOErr true to enable, false to disable.
+     */
+    public void setStrictJTA12DuplicateXAENDPROTOErr(boolean strictJTA12DuplicateXAENDPROTOErr) {
+        this.strictJTA12DuplicateXAENDPROTOErr = strictJTA12DuplicateXAENDPROTOErr;
     }
 }
