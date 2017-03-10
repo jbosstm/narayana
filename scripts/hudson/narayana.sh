@@ -66,6 +66,8 @@ function init_test_options {
     [ $IBM_ORB ] || IBM_ORB=0
 
     PULL_DESCRIPTION=$(get_pull_description)
+    
+    AS_TESTS=0
 
     if ! get_pull_xargs "$PULL_DESCRIPTION" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
@@ -82,6 +84,11 @@ function init_test_options {
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
         export TOMCAT_TESTS=1
+    elif [[ $PROFILE == "AS_TESTS" ]] && [[ ! $PULL_DESCRIPTION == *!AS_TESTS* ]]; then
+        comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
+        export AS_BUILD=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+        export TOMCAT_TESTS=0
     elif [[ $PROFILE == "RTS" ]] && [[ ! $PULL_DESCRIPTION == *!RTS* ]]; then
         comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
@@ -294,7 +301,13 @@ function build_as {
   [ $? = 0 ] || fatal "git rebase failed"
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.5.Final-SNAPSHOT
+  if [ $AS_TESTS = 1 ]; then
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
+    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.5.Final-SNAPSHOT
+    ./build.sh -f testsuite/pom.xml -DallTests=true
+  else
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.5.Final-SNAPSHOT
+  fi
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
