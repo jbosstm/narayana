@@ -42,7 +42,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.hp.mwtests.ts.jta.xa.JTATest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +96,6 @@ public class JTSTest {
         AtomicBoolean endCalled = new AtomicBoolean(false);
 
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 1;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -124,7 +122,6 @@ public class JTSTest {
             }
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 1;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -151,7 +148,6 @@ public class JTSTest {
             }
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 2;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 return false;

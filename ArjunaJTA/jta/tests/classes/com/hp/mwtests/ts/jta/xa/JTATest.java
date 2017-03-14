@@ -46,8 +46,6 @@ import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,7 +67,6 @@ public class JTATest {
         AtomicBoolean endCalled = new AtomicBoolean(false);
 
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 1;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -96,7 +93,6 @@ public class JTATest {
             }
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 1;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 try {
@@ -123,7 +119,6 @@ public class JTATest {
             }
         }));
         assertTrue(theTransaction.enlistResource(new SimpleXAResource() {
-            public int id = 2;
             @Override
             public boolean isSameRM(XAResource xares) throws XAException {
                 return false;
