@@ -186,24 +186,6 @@
 
   <profiles>
     <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>narayana-jts-idlj</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
       <id>jts-jacorb</id>
       <activation>
         <property>
