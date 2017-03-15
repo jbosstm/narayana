@@ -20,7 +20,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-jts-jacorb</artifactId>
-  <name>Narayana: ArjuntaJTS narayana-jts-jacorb</name>
+  <name>Narayana: ArjunaJTS narayana-jts-jacorb</name>
   <packaging>jar</packaging>
   <description>JTS uber jar with jacorb stubs</description>
   <build>
