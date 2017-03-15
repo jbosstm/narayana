@@ -54,7 +54,7 @@ public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAc
 			prop.setProperty("user", JDBCProfileStore.databaseUser(dbName));
 			prop.setProperty("password", JDBCProfileStore.databasePassword(dbName));
 			Class driverClass = Class.forName(JDBCProfileStore.driver(dbName, 0));
-			DriverManager.registerDriver((java.sql.Driver) driverClass.newInstance());
+			DriverManager.registerDriver((java.sql.Driver) driverClass.getDeclaredConstructor().newInstance());
 			Connection conn = DriverManager.getConnection(JDBCProfileStore.databaseURL(dbName), prop);
 			conn.setAutoCommit(false);
 			return conn;

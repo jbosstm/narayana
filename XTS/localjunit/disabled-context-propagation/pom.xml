@@ -40,7 +40,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-antrun-plugin}</version>
                 <executions>
                     <execution>
                         <id>create-disabled-context-propagation-configuration</id>

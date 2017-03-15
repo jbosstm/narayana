@@ -214,19 +214,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>jar-without-classifier</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**</exclude>
-                            </excludes>
-                            <forceCreation>true</forceCreation>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>jar-with-classifier</id>
                         <phase>package</phase>
                         <goals>

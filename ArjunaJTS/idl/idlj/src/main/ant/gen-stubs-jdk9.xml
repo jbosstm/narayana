@@ -1,0 +1,206 @@
+<project name="Narayana IDL stubs for jdk8">
+
+
+
+    <target name="gen-main-src">
+        <property name="jdk.inc.dir" value="${java.home}/../include"/> <!-- ${env.JAVA_HOME}/include -->
+        <property name="jdk.lib.dir" value="${java.home}/../lib"/>
+        <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+
+            <arg value="-i"/>
+            <arg value="${idl.main.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="XA"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="ArjunaOTS"/>
+            <arg value="com.arjuna"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.main.src}/omg/CosTransactions.idl"/>
+        </java>
+        <delete>
+            <fileset dir="${project.build.directory}/generated-sources/idl/org/omg/CORBA" includes="**/*"/>
+        </delete>
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="XA"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="ArjunaOTS"/>
+            <arg value="com.arjuna"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.main.src}/omg/XA.idl"/>
+        </java>
+
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="XA"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="ArjunaOTS"/>
+            <arg value="com.arjuna"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.main.src}/arjuna/ArjunaOTS.idl"/>
+        </java>
+    </target>
+
+    <target name="gen-test-src">
+        <property name="jdk.inc.dir" value="${java.home}/../include"/> <!-- ${env.JAVA_HOME}/include -->
+        <property name="jdk.lib.dir" value="${java.home}/../lib"/>
+        <property name="idl.compiler.class" value="com.sun.tools.corba.se.idl.toJavaPortable.Compile"/>
+        <property name="idl.test.src" location="${project.build.directory}/../../../src/test/idl"/>
+        <property name="idl.main.src" location="${project.build.directory}/../../../src/main/idl"/>
+
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+            <arg value="-i"/>
+            <arg value="${idl.test.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="TestModule"/>
+            <arg value="com.hp.mwtests.ts.jts"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="orbtests"/>
+            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.test.src}/orbtests.idl"/>
+        </java>
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+            <arg value="-i"/>
+            <arg value="${idl.test.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="TestModule"/>
+            <arg value="com.hp.mwtests.ts.jts"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="orbtests"/>
+            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.test.src}/test.idl"/>
+        </java>
+        <java fork="true" classname="${idl.compiler.class}" failonerror="true">
+            <jvmarg value="--add-exports"/>
+            <jvmarg value="java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="java.corba"/>
+            <arg value="-i"/>
+            <arg value="${idl.test.src}"/>
+            <arg value="-td"/>
+            <arg value="${project.build.directory}/generated-test-sources/idl"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="TestModule"/>
+            <arg value="com.hp.mwtests.ts.jts"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="CosTransactions"/>
+            <arg value="org.omg"/>
+            <arg value="-pkgPrefix"/>
+            <arg value="orbtests"/>
+            <arg value="com.hp.mwtests.orbportability.orbspecific"/>
+            <arg value="-fallTIE"/>
+            <arg value="-i"/>
+            <arg value="${idl.main.src}/omg"/>
+            <arg value="-i"/>
+            <arg value="${jdk.inc.dir}"/>
+            <arg value="-i"/>
+            <arg value="${jdk.lib.dir}"/>
+            <arg value="-d"/>
+            <arg value="ORB_CURRENT_SUPPORT=1"/>
+            <arg value="-fallTIE"/>
+            <arg value="${idl.test.src}/TestModule.idl"/>
+        </java>
+    </target>
+</project>

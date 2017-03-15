@@ -38,13 +38,23 @@ ROOT="/"
 # Ignore user's MAVEN_HOME if it is set
 M2_HOME=""
 MAVEN_HOME=""
+if [ -z "$JAVA_VERSION" ]
+then
+	JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
+fi
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	MAVEN_OPTS="$MAVEN_OPTS -Xmx512M -XX:MaxPermSize=256m"
+	MAVEN_OPTS="$MAVEN_OPTS -Xmx512M"
 	export MAVEN_OPTS
 fi
 
+JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
+if [ $JAVA_VERSION = "9-ea" ]; then
+	MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED"
+else
+	MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS" 
+fi
 
 #  Default search path for maven.
 MAVEN_SEARCH_PATH="\
@@ -54,7 +64,7 @@ MAVEN_SEARCH_PATH="\
     maven"
 
 #  Default arguments
-MVN_OPTIONS="-s tools/maven/conf/settings.xml $BPA"
+MVN_OPTIONS="-B -s tools/maven/conf/settings.xml $BPA"
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"

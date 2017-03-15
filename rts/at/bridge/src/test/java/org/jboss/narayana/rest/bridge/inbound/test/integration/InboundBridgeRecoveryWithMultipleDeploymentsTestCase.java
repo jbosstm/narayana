@@ -107,7 +107,7 @@ public class InboundBridgeRecoveryWithMultipleDeploymentsTestCase extends Abstra
 
         restartContainer(VM_ARGUMENTS);
 
-        TransactionStatusElement status;
+        Object status;
         int cycles = 0;
 
         do {
@@ -117,7 +117,7 @@ public class InboundBridgeRecoveryWithMultipleDeploymentsTestCase extends Abstra
                 // Updates coordinator's active transactions list
                 txSupport.getTransactions();
                 // After successful recovery transaction is removed and 404 is returned.
-                status = txSupport.getTransactionInfo().getStatus();
+                status = txSupport.txStatus(); //getTransactionInfo().getStatus();
             } catch (HttpResponseException e) {
             }
         } while (status != null && cycles++ < RECOVERY_WAIT_CYCLES);

@@ -64,7 +64,7 @@ public class ServerIORStore
 		{
 			String iorStoreClassname = System.getProperty(IOR_STORE_PLUGIN_CLASSNAME, DEFAULT_IOR_STORE_PLUGIN_CLASSNAME);
 
-			_iorStore = (ServerIORStorePlugin) Class.forName(iorStoreClassname).newInstance();
+			_iorStore = (ServerIORStorePlugin) Class.forName(iorStoreClassname).getDeclaredConstructor().newInstance();
 
 			_iorStore.initialise();
 		}
