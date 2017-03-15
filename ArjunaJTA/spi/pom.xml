@@ -208,9 +208,6 @@
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <excludes>
-                                <exclude>**/SPIUnitTest*</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
