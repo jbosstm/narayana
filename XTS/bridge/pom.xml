@@ -48,6 +48,7 @@
               <goal>jar</goal>
             </goals>
             <configuration>
+              <classifier>impl</classifier>
               <forceCreation>true</forceCreation>
               <excludes>
                 <exclude>org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class</exclude>

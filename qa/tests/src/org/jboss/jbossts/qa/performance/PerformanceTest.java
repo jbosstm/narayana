@@ -88,7 +88,7 @@ public abstract class PerformanceTest
     {
         try
         {
-            wrapper = (TxWrapper) Class.forName(wrapperClass).newInstance();
+            wrapper = (TxWrapper) Class.forName(wrapperClass).getDeclaredConstructor().newInstance();
         }
         catch (Exception e)
         {

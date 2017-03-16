@@ -25,6 +25,39 @@
   <description>JTS uber jar with idlj stubs</description>
   <build>
     <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                <artifactSet>
+                  <includes>
+                    <include>org.jboss.narayana:common</include>
+                    <include>org.jboss.narayana.arjunacore:arjuna</include>
+                    <include>org.jboss.narayana.arjunacore:txoj</include>
+                    <include>org.jboss.narayana.jta:jta</include>
+                    <include>org.jboss.narayana.jta:jdbc</include>
+                    <include>org.jboss.narayana.jta:jms</include>
+                    <include>org.jboss.narayana.jta:cdi</include>
+                    <include>org.jboss.narayana.jts:orbportability</include>
+                    <include>org.jboss.narayana.jts:jts</include>
+                    <include>org.jboss.narayana.jts:idlj-idl</include>
+                    <include>org.jboss.narayana.jts:idlj-idl-jdk8</include>
+                    <include>org.jboss.narayana.jts:idlj-idl-jdk9</include>
+                    <include>org.jboss.narayana.jts:idlj-idl-tests</include>
+                    <include>org.jboss.narayana.jts:jtax</include>
+                  </includes>
+                </artifactSet>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       <plugin>
         <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
@@ -76,41 +109,11 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/*.*</exclude>
-              </excludes>
-            </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes>
-                  <include>org.jboss.narayana:common</include>
-                  <include>org.jboss.narayana.arjunacore:arjuna</include>
-                  <include>org.jboss.narayana.arjunacore:txoj</include>
-                  <include>org.jboss.narayana.jta:jta</include>
-                  <include>org.jboss.narayana.jta:jdbc</include>
-                  <include>org.jboss.narayana.jta:jms</include>
-                  <include>org.jboss.narayana.jta:cdi</include>
-                  <include>org.jboss.narayana.jts:orbportability</include>
-                  <include>org.jboss.narayana.jts:jts</include>
-                  <include>org.jboss.narayana.jts:idlj-idl</include>
-                  <include>org.jboss.narayana.jts:jtax</include>
-                </includes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/*.*</exclude>
+          </excludes>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -391,5 +394,31 @@
     </dependency>
   </dependencies>
       </profile>
+    <profile>
+      <id>not-j9</id>
+      <activation>
+        <jdk>[1.7,1.9)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-jdk8</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>    
+  </profile>
+  <profile>
+    <id>j9</id>
+    <activation>
+      <jdk>[1.9,)</jdk>
+    </activation>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>idlj-idl-jdk9</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+    </profile>
   </profiles>
 </project>

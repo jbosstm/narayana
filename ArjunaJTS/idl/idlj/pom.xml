@@ -20,260 +20,35 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>idlj-idl</artifactId>
-  <name>Narayana: ArjunaJTS idl idlj</name>
-  <description>Narayana: ArjunaJTS idl idlj</description>
-  <packaging>jar</packaging>
+  <artifactId>idlj-idl-parent</artifactId>
+  <name>Narayana: ArjunaJTS idl idlj parent</name>
+  <description>Narayana: ArjunaJTS idl idlj parent</description>
+  <packaging>pom</packaging>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-       <executions>
-        <execution>
-          <!-- generate a test jar containing test CORBA stubs for use by the jts tests -->
-          <goals>
-             <goal>test-jar</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>
-        <excludes>
-          <exclude>org/omg/CORBA/*</exclude>
-        </excludes>
-      </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks name="Generate idl stubs">
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="XA"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="ArjunaOTS"/>
-                  <arg value="com.arjuna"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg/CosTransactions.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="XA"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="ArjunaOTS"/>
-                  <arg value="com.arjuna"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg/XA.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="XA"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="ArjunaOTS"/>
-                  <arg value="com.arjuna"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/arjuna/ArjunaOTS.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-              </tasks>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-test-sources</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks name="Generate test idl stubs">
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/test/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-test-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="TestModule"/>
-                  <arg value="com.hp.mwtests.ts.jts"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="orbtests"/>
-                  <arg value="com.hp.mwtests.orbportability.orbspecific"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/test/idl/orbtests.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/test/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-test-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="TestModule"/>
-                  <arg value="com.hp.mwtests.ts.jts"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="orbtests"/>
-                  <arg value="com.hp.mwtests.orbportability.orbspecific"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/test/idl/test.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-
-                <java classname="com.sun.tools.corba.se.idl.toJavaPortable.Compile">
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/test/idl"/>
-                  <arg value="-td"/>
-                  <arg value="${project.build.directory}/generated-test-sources/idl"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="TestModule"/>
-                  <arg value="com.hp.mwtests.ts.jts"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="CosTransactions"/>
-                  <arg value="org.omg"/>
-                  <arg value="-pkgPrefix"/>
-                  <arg value="orbtests"/>
-                  <arg value="com.hp.mwtests.orbportability.orbspecific"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="-i"/>
-                  <arg value="${project.build.directory}/../../src/main/idl/omg"/>
-                  <arg value="-i"/>
-                  <arg value="${env.JAVA_HOME}/lib"/>
-                  <arg value="-d"/>
-                  <arg value="ORB_CURRENT_SUPPORT=1"/>
-                  <arg value="-fallTIE"/>
-                  <arg value="${project.build.directory}/../../src/test/idl/TestModule.idl"/>
-                  <classpath>
-                    <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-                  </classpath>
-                </java>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>add-source</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>add-source</goal>
-              </goals>
-              <configuration>
-                <sources>
-                  <source>
-                    ${project.build.directory}/generated-sources/idl
-                  </source>
-                </sources>
-              </configuration>
-            </execution>
-            <execution>
-              <id>add-test-source</id>
-              <phase>generate-test-sources</phase>
-              <goals>
-                <goal>add-test-source</goal>
-              </goals>
-              <configuration>
-                <sources>
-                  <source>
-                    ${project.build.directory}/generated-test-sources/idl
-                  </source>
-                </sources>
-              </configuration>
-            </execution>
-          </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <profile>
+      <id>not-j9</id>
+      <activation>
+        <jdk>[1.7,1.9)</jdk>
+      </activation>
+      <modules>
+        <module>idlj-jdk8</module>
+        <module>idlj</module>
+        <module>idlj-tests</module>
+      </modules>
+  </profile>
+  <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <modules>
+        <module>idlj.java.corba</module>
+        <module>idlj-jdk8</module>
+        <module>idlj-jdk9</module>
+        <module>idlj</module>
+        <module>idlj-tests</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

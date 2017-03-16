@@ -70,7 +70,7 @@ public class ServerBindingConfig
         System.out.println("\tBinding File: " + bindingXml);
         System.out.println("\tBinding Name: " + bindingName);
 
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.getDeclaredConstructor().newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setValidating(false);
 
@@ -135,7 +135,7 @@ public class ServerBindingConfig
     public static void printDocument(Document document, String fname){
         try{
 
-            TransformerFactory tf = TransformerFactory.newInstance();
+            TransformerFactory tf = TransformerFactory.getDeclaredConstructor().newInstance();
             Transformer transformer = tf.newTransformer();
             DOMSource source = new DOMSource(document);
             StreamResult result;
@@ -156,7 +156,7 @@ public class ServerBindingConfig
     private static Document getDocument(String xmlFile)
     {
         Document doc = null;
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.getDeclaredConstructor().newInstance();
 
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setValidating(false);
