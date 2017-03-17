@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>idlj-idl-parent</artifactId>
-        <version>5.6.0.Final-SNAPSHOT</version>
+        <version>5.6.2.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -28,17 +28,7 @@
     <properties>
         <maven.compiler.source>9</maven.compiler.source>
         <maven.compiler.target>9</maven.compiler.target>
-        <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
-        <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>${java.corba.patch.name}</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -72,9 +62,6 @@
                         </goals>
                         <configuration combine.self="override">
                             <skipTests>true</skipTests>
-                            <systemProperties combine.children="append" />
-                            <argLine>--patch-module java.corba=${java.corba.patch.jar} --add-modules java.corba</argLine>
-                            <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -129,12 +116,10 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
                             <compilerArgs>
-                                <arg>--patch-module</arg>
-                                <arg>java.corba=${java.corba.patch.jar}</arg>
                                 <arg>--add-modules</arg>
                                 <arg>java.corba</arg>
                                 <arg>--add-exports</arg>
-<arg>java.corba/com.sun.corba.se=ALL-UNNAMED,java.corba/javax.rmi.CORBA.Stub=ALL-UNNAMED</arg>
+                                <arg>java.corba/com.sun.corba.se=ALL-UNNAMED,java.corba/javax.rmi.CORBA.Stub=ALL-UNNAMED</arg>
                             </compilerArgs>
                             <excludes>
                                 <exclude>**/jacorb/**</exclude>

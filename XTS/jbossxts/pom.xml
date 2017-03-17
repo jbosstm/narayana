@@ -265,5 +265,27 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalJOptions>
+                <additionalJOption>--add-modules</additionalJOption>
+                <additionalJOption>java.xml.bind</additionalJOption>
+                <additionalJOption>--add-modules</additionalJOption>
+                <additionalJOption>java.xml.ws</additionalJOption>
+              </additionalJOptions>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

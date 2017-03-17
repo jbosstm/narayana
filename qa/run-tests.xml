@@ -62,7 +62,16 @@
   <property name="profile" value=""/>
 
   <condition property="modular.jdk.args" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" else="">
-    <equals arg1="${ant.java.version}" arg2="1.9"/>
+    <and>
+        <equals arg1="${ant.java.version}" arg2="1.9"/>
+        <equals arg1="${orbtype}" arg2="idlj"/>
+    </and>
+  </condition>
+  <condition property="modular.jdk.args" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --patch-module java.corba=../ArjunaJTS/jtax/target/java9-jacorb/jacorb-omgapi-3.7.jar --add-exports java.corba/org.omg.CORBA_2_5=ALL-UNNAMED --add-exports=java.corba/org.omg.CONV_FRAME=ALL-UNNAMED --add-exports=java.corba/org.omg.CSIIOP=ALL-UNNAMED --add-exports=java.corba/org.omg.ETF=ALL-UNNAMED --add-exports=java.corba/org.omg.GIOP=ALL-UNNAMED --add-exports=java.corba/org.omg.PortableGroup=ALL-UNNAMED --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED" else="">
+    <and>
+        <equals arg1="${ant.java.version}" arg2="1.9"/>
+        <equals arg1="${orbtype}" arg2="jacorb"/>
+    </and>
   </condition>
 
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
