@@ -736,10 +736,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
             }
         }
 
-        synchronized (_workList) {
-            // Must have the lock to write to _work
-            _work = null;
-        }
+        _work = null;
     }
 
     /**
