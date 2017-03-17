@@ -550,7 +550,7 @@
                 <childDelegation>true</childDelegation>
                 <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                 <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                <argLine>${jvm.args.jdk9}</argLine>
+                <argLine>-Djdk.attach.allowAttachSelf=true ${jvm.args.jdk9}</argLine>
               </configuration>
             </plugin>
             <plugin>

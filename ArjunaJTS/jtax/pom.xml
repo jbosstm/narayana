@@ -190,6 +190,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>${java.corba.patch.name}</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jacorb</groupId>

@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.jboss.narayana.jts</groupId>
         <artifactId>idlj-idl-parent</artifactId>
-        <version>5.6.0.Final-SNAPSHOT</version>
+        <version>5.6.2.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -24,11 +24,6 @@
     <name>Narayana: ArjunaJTS idl idlj stubs with jdk8</name>
     <description>Narayana: ArjunaJTS idl idlj stub compilation with jdk8</description>
     <packaging>jar</packaging>
-
-    <properties>
-        <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
-        <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
-    </properties>
 
     <build>
         <plugins>
@@ -105,14 +100,6 @@
               <maven.compiler.source>1.8</maven.compiler.source>
                 <maven.compiler.target>1.8</maven.compiler.target>
             </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.narayana.jts</groupId>
-                    <artifactId>${java.corba.patch.name}</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
 
             <build>
               <plugins>
