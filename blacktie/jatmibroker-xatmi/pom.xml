@@ -137,11 +137,21 @@
             <artifactId>jboss-transaction-api_1.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>narayana-jts-jacorb</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>jacorb</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
@@ -241,13 +251,6 @@
             <activation>
                 <jdk>[1.9,)</jdk>
             </activation>
-            <dependencies>
-               <dependency>
-                    <groupId>org.jboss.narayana.jts</groupId>
-                    <artifactId>narayana-jts-idlj</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -263,10 +266,12 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>org.jboss.narayana.jts</groupId>
-                                            <artifactId>${java.corba.patch.name}</artifactId>
-                                            <version>${project.version}</version>
-                                            <type>${project.packaging}</type>
+                                            <groupId>org.jacorb</groupId>
+                                            <artifactId>jacorb-omgapi</artifactId>
+                                            <version>${version.org.jacorb.jacorb}</version>
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.basedir}/target/java9-jacorb</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.jboss.narayana.jta</groupId>
@@ -286,40 +291,34 @@
                             <source>1.9</source>
                             <target>1.9</target>
                             <compilerArgs>
-                                <arg>--patch-module</arg>
-                                <arg>java.corba=${java.corba.patch.jar}</arg>
                                 <arg>--add-modules</arg>
                                 <arg>java.corba</arg>
+                                <arg>--patch-module</arg>
+                                <arg>java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar</arg>
                                 <arg>--upgrade-module-path</arg>
                                 <arg>${project.build.directory}/upgrademodulepath</arg>
+                                <arg>--add-exports</arg>
+                                <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
                             </compilerArgs>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
             <properties>
-                <jvm.args.jdk9>--add-modules java.corba --patch-module java.corba=${java.corba.patch.jar} --upgrade-module-path ${project.build.directory}/upgrademodulepath</jvm.args.jdk9>
+                <jvm.jdk9.args>
+                  --add-modules java.corba
+                  --patch-module java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar
+                  --upgrade-module-path ${project.build.directory}/upgrademodulepath
+                  --add-exports=java.corba/org.omg.CORBA_2_5=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.CONV_FRAME=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.CSIIOP=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.ETF=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.GIOP=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.PortableGroup=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED
+                </jvm.jdk9.args>
+                <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
             </properties>
-        </profile>
-        <profile>
-            <id>jts-jacorb</id>
-            <activation>
-                <property>
-                    <name>!jacorb-disabled</name>
-                </property>
-            </activation>
-            <dependencies>
-               <dependency>
-                    <groupId>org.jboss.narayana.jts</groupId>
-                    <artifactId>narayana-jts-jacorb</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                  <groupId>jacorb</groupId>
-                  <artifactId>jacorb</artifactId>
-                  <scope>provided</scope>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 </project>

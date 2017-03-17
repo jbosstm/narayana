@@ -224,6 +224,7 @@
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>${java.corba.patch.name}</artifactId>
           <version>${project.version}</version>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.jacorb</groupId>
@@ -399,7 +400,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <argLine>${jacorb.jdk9.args}</argLine>
+                  <argLine>-Djdk.attach.allowAttachSelf=true ${jacorb.jdk9.args}</argLine>
                   <reportsDirectory>${project.build.directory}/jacorb-surefire-reports</reportsDirectory>
                   <excludes>
                     <exclude>**/exceptions/**</exclude>
@@ -572,7 +573,7 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/ibmorb/**</exclude>
                   </excludes>
-                  <argLine>${idlj.jdk9.args}</argLine>
+                  <argLine>-Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args}</argLine>
                   <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
@@ -748,7 +749,7 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/ibmorb/**</exclude>
                   </excludes>
-                  <argLine>${idlj.jdk9.args} ${idlj.boot.args}</argLine>
+                  <argLine>-Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args} ${idlj.boot.args}</argLine>
                   <reportsDirectory>${project.build.directory}/idlj-openjdk-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>

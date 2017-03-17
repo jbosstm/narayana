@@ -176,13 +176,8 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.narayana.jts</groupId>
-                <artifactId>narayana-jts-idlj</artifactId>
-                <version>5.3.3.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.narayana.jts</groupId>
                 <artifactId>narayana-jts-jacorb</artifactId>
-                <version>${project.version}</version>
+                <version>5.3.3.Final</version>
             </dependency>
             <dependency>
                 <groupId>cppunit.contrib</groupId>

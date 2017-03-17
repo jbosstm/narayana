@@ -377,6 +377,13 @@ function build_as {
     rm -rf .git
   fi
 
+  if [ $JAVA_VERSION = "9-ea" ]; then
+     # build openjdk-orb with fixing the reflect issue
+     build_openjdk_orb
+     # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
+     sed -i s/8.0.7.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
+  fi
+
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
@@ -804,14 +811,14 @@ function qa_tests_once {
       if [[ -n "$QA_STRESS" ]] ; then
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
         for testgroup in $QA_TESTGROUP; do
-          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
           if [ $? -ne 0 ]; then
             echo "test group $testgroup failed"
             ok=1;
@@ -819,7 +826,7 @@ function qa_tests_once {
         done
       fi
     else
-      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage
+      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype
       ok=$?
     fi
 

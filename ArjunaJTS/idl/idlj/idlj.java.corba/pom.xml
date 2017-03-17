@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>idlj-idl-parent</artifactId>
-    <version>5.6.0.Final-SNAPSHOT</version>
+    <version>5.6.2.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -71,9 +71,8 @@
                 </java>
                 <mkdir dir="${project.build.directory}/classes"/>
                 <javac destdir="${project.build.directory}/classes">
-                   <compilerarg value="-Xmodule:java.corba"/>
+                   <compilerarg value="--add-modules=java.corba"/>
                    <src>
-                      <pathelement location="${project.build.directory}/generated-sources/idl/org/omg/CORBA"/>
                       <!-- include the following in the module patch since without it we get:
                         "error: org.omg.CosTransactions.XXX is not visible because
                                package org.omg.CosTransactions is not visible"
