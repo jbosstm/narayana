@@ -552,7 +552,24 @@
             </executions>
             <inherited>false</inherited>
           </plugin>
-          </plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>aggregate</id>
+                <goals>
+                  <goal>aggregate-jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <detectOfflineLinks>false</detectOfflineLinks>
+                  <excludePackageNames>*.internal.*:*.impl.*:org.oasis_open:org.xmlsoap:org.jboss.jbossts.xts11:org.jboss.jbossts.xts:*.wstf.*:*.txinterop.*:com.arjuna.services.*:com.arjuna.webservices*:com.arjuna.mwlabs.*:com.arjuna.webservices11*:com.arjuna.schemas:com.arjuna.mw.wstx:com.arjuna.qa</excludePackageNames>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
       <profile>
