@@ -777,6 +777,31 @@ function hw_spec {
   fi
 }
 
+function hw_spec {
+  if [ -x /usr/sbin/system_profiler ]; then
+    echo "sw_vers:"; sw_vers
+    echo "system_profiler:"; /usr/sbin/system_profiler
+  else
+    set -o xtrace
+
+    echo "uname -a"; uname -a
+    echo "redhat release:"; cat /etc/redhat-release
+    echo "java version:"; java -version
+    echo "free:"; free -m
+    echo "cpuinfo:"; cat /proc/cpuinfo
+    echo "meminfo:"; cat /proc/meminfo
+    echo "devices:"; cat /proc/devices
+    echo "scsi:"; cat /proc/scsi/scsi
+    echo "partitions:"; cat /proc/partitions
+
+    echo "lspci:"; lspci
+    echo "lsusb:"; lsusb
+    echo "lsblk:"; lsblk
+    echo "df:"; df
+    echo "mount:"; mount | column -t | grep ext
+  fi
+}
+
 function perf_tests {
   $WORKSPACE/scripts/hudson/benchmark.sh "$@"
   res=$?
