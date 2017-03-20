@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class BasicObject extends StateManager
 {
 
@@ -89,7 +91,7 @@ public class BasicObject extends StateManager
         }
         finally
         {
-            getMutex().unlock();
+            unlockMutex();
         }
     }
 
@@ -143,6 +145,35 @@ public class BasicObject extends StateManager
         return super.restore_state(os, type);
     }
 
+    protected final boolean lockMutex ()
+    {
+        try
+        {
+            mutex.lock();
+            
+            return true;
+        }
+        catch (final Throwable ex)
+        {
+            return false;
+        }
+    }
+
+    protected final boolean unlockMutex ()
+    {
+        try
+        {
+            mutex.unlock();
+            
+            return true;
+        }
+        catch (final Throwable ex)
+        {
+            return false;
+        }
+    }
+
     private int state;
     private byte[] moreState = {'a', 'b', 'c', 'd'};
+    protected ReentrantLock mutex = new ReentrantLock();
 }

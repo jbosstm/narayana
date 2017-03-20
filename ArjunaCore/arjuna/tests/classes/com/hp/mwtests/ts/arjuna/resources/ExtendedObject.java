@@ -40,6 +40,8 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class ExtendedObject extends StateManager
 {
 
@@ -74,12 +76,21 @@ public class ExtendedObject extends StateManager
     
     public boolean lock ()
     {
-        return super.tryLockMutex();
+        return mutex.tryLock();
     }
     
     public boolean unlock ()
     {
-        return super.unlockMutex();
+        try
+        {
+            mutex.unlock();
+            
+            return true;
+        }
+        catch (final Throwable ex)
+        {
+            return false;
+        }
     }
 
     public boolean remember (BasicAction act)
@@ -172,4 +183,5 @@ public class ExtendedObject extends StateManager
 
     private int state;
     private byte[] moreState = {'a', 'b', 'c', 'd'};
+   private ReentrantLock mutex = new ReentrantLock();
 }
