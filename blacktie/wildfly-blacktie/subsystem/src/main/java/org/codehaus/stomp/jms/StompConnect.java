@@ -57,15 +57,7 @@ public class StompConnect {
     }
 
     public void assignProtocolConverter(TcpTransport transport) throws NamingException {
-        ConnectionFactory factory = getConnectionFactory();
-        if (factory == null) {
-            throw new IllegalArgumentException("No ConnectionFactory is configured!");
-        }
-        XAConnectionFactory xaFactory = getXAConnectionFactory();
-        if (xaFactory == null) {
-            throw new IllegalArgumentException("No XAConnectionFactory is configured!");
-        }
-        new ProtocolConverter(initialContext, factory, xaFactory, transport);
+        new ProtocolConverter(initialContext, this, transport);
     }
 
     // Properties
