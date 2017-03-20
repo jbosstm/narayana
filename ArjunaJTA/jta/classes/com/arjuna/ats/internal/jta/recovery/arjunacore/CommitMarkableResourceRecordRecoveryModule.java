@@ -42,7 +42,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -82,8 +81,6 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	private InitialContext context;
 
-	private List<String> jndiNamesToContact = new ArrayList<String>();
-
 	private Map<Xid, String> committedXidsToJndiNames = new HashMap<Xid, String>();
 
 	private List<String> queriedResourceManagers = new ArrayList<String>();
@@ -118,10 +115,6 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	public CommitMarkableResourceRecordRecoveryModule() throws NamingException,
 			ObjectStoreException {
 		context = new InitialContext();
-		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-				.getDefaultInstance(JTAEnvironmentBean.class);
-		jndiNamesToContact.addAll(jtaEnvironmentBean
-				.getCommitMarkableResourceJNDINames());
 
 		List<String> xaRecoveryNodes = jtaEnvironmentBean.getXaRecoveryNodes();
 		if (xaRecoveryNodes.size() == 0) {
@@ -201,7 +194,8 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 		// CommitMarkableResourceRecord to find out what transactions have
 		// committed
 		try {
-			Iterator<String> iterator = jndiNamesToContact.iterator();
+			Iterator<String> iterator = jtaEnvironmentBean
+	                .getCommitMarkableResourceJNDINames().iterator();
 			while (iterator.hasNext()) {
 				String jndiName = iterator.next();
 				try {
