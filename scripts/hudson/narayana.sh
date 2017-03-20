@@ -196,6 +196,43 @@ function check_if_pull_closed
     fi
 }
 
+function get_pull_configuration {
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+
+    if [ "$PULL_NUMBER" != "" ]
+    then
+        DESCRIPTION=$(curl -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep \"body\":)
+        if [[ $DESCRIPTION =~ "!MAIN" ]]
+        then
+            NARAYANA_TESTS=0
+        fi
+        if [[ $DESCRIPTION =~ "!XTS" ]]
+        then
+            XTS_TESTS=0
+            XTS_AS_TESTS=0
+            TXF_TESTS=0
+            txbridge=0
+        fi
+        if [[ $DESCRIPTION =~ "!RTS" ]]
+        then
+            RTS_TESTS=0
+            RTS_AS_TESTS=0
+        fi
+        if [[ $DESCRIPTION =~ "!BLACKTIE" ]]
+        then
+            BLACKTIE=0
+        fi
+        if [[ $DESCRIPTION =~ "!QA_JTS_JACORB" ]]
+        then
+            JAC_ORB=0
+        fi
+        if [[ $DESCRIPTION =~ "!QA_JTS_JDKORB" ]]
+        then
+            SUN_ORB=0
+        fi
+    fi
+}
+
 function kill_qa_suite_processes
 {
   # list java processes including main class
@@ -844,6 +881,9 @@ kill_qa_suite_processes $MainClassPatterns
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
+
+# Check which tests should be skipped based on the pull request's description.
+get_pull_configuration
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
