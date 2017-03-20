@@ -36,10 +36,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
@@ -103,9 +103,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		_theTransaction.begin(timeout);
 
-		_resources = new Hashtable();
-		_duplicateResources = new Hashtable();
-		_suspendCount = 0;
+		_resources = Collections.synchronizedMap(new HashMap<XAResource, TxInfo>());
+		_duplicateResources = null;
+		_suspendCount = new AtomicInteger(0);
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
 
         _txLocalResources = Collections.synchronizedMap(new HashMap());
@@ -490,7 +490,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 * but may be in the duplicates.
 						 */
 
-						info = (TxInfo) _duplicateResources.get(xaRes);
+                                                if (_duplicateResources != null)
+                                                    info = (TxInfo) _duplicateResources.get(xaRes);
 					}
 				}
 
@@ -514,10 +515,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 						info.setState(TxInfo.ASSOCIATED);
 
-						synchronized (this)
-						{
-							_suspendCount--;
-						}
+                                                _suspendCount.decrementAndGet();
 
 						return true; // already registered resource with this
 						// transaction!
@@ -754,6 +752,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				 * Add to duplicate resources list so we can keep track of it
 				 * (particularly if we later have to delist).
 				 */
+                                if (_duplicateResources == null)
+                                    _duplicateResources = Collections.synchronizedMap(new HashMap<XAResource, TxInfo>());
 
 				_duplicateResources.put(xaRes, new TxInfo(xid));
 
@@ -847,10 +847,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			synchronized (this)
 			{
-				info = (TxInfo) _resources.get(xaRes);
+				info = _resources.get(xaRes);
 
-				if (info == null)
-					info = (TxInfo) _duplicateResources.get(xaRes);
+				if (info == null && _duplicateResources != null)
+					info = _duplicateResources.get(xaRes);
 			}
 
 			if (info == null)
@@ -904,10 +904,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 							xaRes.end(info.xid(), XAResource.TMSUSPEND);
 							info.setState(TxInfo.ASSOCIATION_SUSPENDED);
 
-							synchronized (this)
-							{
-								_suspendCount++;
-							}
+                                                        _suspendCount.incrementAndGet();
 						}
 						else
 						{
@@ -930,10 +927,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 						xaRes.end(info.xid(), XAResource.TMSUCCESS);
 						info.setState(TxInfo.NOT_ASSOCIATED);
 
-						synchronized (this)
-						{
-							_suspendCount--;
-						}
+						_suspendCount.decrementAndGet();
 					}
 					else
 					{
@@ -950,10 +944,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 							xaRes.end(info.xid(), XAResource.TMFAIL);
 							info.setState(TxInfo.FAILED);
 
-							synchronized (this)
-							{
-								_suspendCount--;
-							}
+							_suspendCount.decrementAndGet();
 						}
 					}
 				}
@@ -1091,11 +1082,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (xaRes != null)
 		{
-			TxInfo info = (TxInfo) _resources.get(xaRes);
+			TxInfo info = _resources.get(xaRes);
 
-			if (info == null)
+			if (info == null && _duplicateResources != null)
 			{
-				info = (TxInfo) _duplicateResources.get(xaRes);
+				info = _duplicateResources.get(xaRes);
 			}
 
 			if (info != null)
@@ -1213,8 +1204,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (_theTransaction != null)
 		{
-			_resources = new Hashtable();
-			_duplicateResources = new Hashtable();
+                        _resources = Collections.synchronizedMap(new HashMap<XAResource, TxInfo>());
+			_duplicateResources = null;
             _txLocalResources = Collections.synchronizedMap(new HashMap());
 		}
 		else
@@ -1223,7 +1214,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			_duplicateResources = null;
 		}
 
-		_suspendCount = 0;
+		_suspendCount = new AtomicInteger(0);
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
 	}
 
@@ -1381,10 +1372,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		boolean result = true;
 
-		if (_suspendCount > 0)
+		if (_suspendCount.get() > 0)
 		{
-			Enumeration el = _resources.keys();
-
 			/*
 			 * Loop over all registered resources. Those that are in a suspended
 			 * state must have end called on them. If this fails, then we will
@@ -1392,48 +1381,43 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * the list to try to end any other suspended resources.
 			 */
 
-			if (el != null)
-			{
-				try
-				{
-					/*
-					 * Would it gain us much to just loop for _suspendCount?
-					 */
+                         try
+                         {
+                            /*
+                             * Would it gain us much to just loop for _suspendCount?
+                             */
 
-					while (el.hasMoreElements())
-					{
-						/*
-						 * Get the XAResource in case we have to call end on it.
-						 */
+                            for (Map.Entry<XAResource, TxInfo> entry : _resources.entrySet())
+			    {
+                               /*
+                                * Get the XAResource in case we have to call end on it.
+                                */
 
-						XAResource xaRes = (XAResource) el.nextElement();
-						TxInfo info = (TxInfo) _resources.get(xaRes);
+                               XAResource xaRes = entry.getKey();
+                               TxInfo info = entry.getValue();
 
-						if (info.getState() == TxInfo.ASSOCIATION_SUSPENDED)
-						{
-							if (XAUtils.mustEndSuspendedRMs(xaRes))
-								xaRes.start(info.xid(), XAResource.TMRESUME);
+                               if (info.getState() == TxInfo.ASSOCIATION_SUSPENDED)
+                               {
+                                  if (XAUtils.mustEndSuspendedRMs(xaRes))
+                                     xaRes.start(info.xid(), XAResource.TMRESUME);
 
-							xaRes.end(info.xid(), XAResource.TMSUCCESS);
-							info.setState(TxInfo.NOT_ASSOCIATED);
-						}
-					}
-				}
-				catch (XAException ex)
-				{
-                    jtaLogger.i18NLogger.warn_transaction_arjunacore_xaenderror(ex);
+                                  xaRes.end(info.xid(), XAResource.TMSUCCESS);
+                                  info.setState(TxInfo.NOT_ASSOCIATED);
+                               }
+                            }
+                         }
+                         catch (XAException ex)
+                         {
+                            jtaLogger.i18NLogger.warn_transaction_arjunacore_xaenderror(ex);
 
-					result = false;
-				}
-			}
+                            result = false;
+                         }
 
 			/*
 			 * need to do the same for all duplicated resources
 			 */
 
-			el = _duplicateResources.keys();
-
-			if (el != null)
+			if (_duplicateResources != null)
 			{
 				try
 				{
@@ -1441,14 +1425,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 					 * Would it gain us much to just loop for _suspendCount?
 					 */
 
-					while (el.hasMoreElements())
+					for (Map.Entry<XAResource, TxInfo> entry : _duplicateResources.entrySet())
 					{
 						/*
 						 * Get the XAResource in case we have to call end on it.
 						 */
 
-						XAResource xaRes = (XAResource) el.nextElement();
-						TxInfo info = (TxInfo) _duplicateResources.get(xaRes);
+						XAResource xaRes = entry.getKey();
+						TxInfo info = entry.getValue();
 
 						if (info.getState() == TxInfo.ASSOCIATION_SUSPENDED)
 						{
@@ -1468,7 +1452,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 			}
 
-			_suspendCount = 0;
+			_suspendCount.set(0);
 		}
 
 		return result;
@@ -1487,35 +1471,28 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		try
 		{
-			Enumeration el = _resources.keys();
+                        for (Map.Entry<XAResource, TxInfo> entry : _resources.entrySet())
+                        {
+                           XAResource x = entry.getKey();
 
-			if (el != null)
+                           if (x.isSameRM(xaRes))
+                           {
+                              TxInfo info = entry.getValue();
+
+                              if (info.thread() == t)
+                                 return true;
+                           }
+                        }
+
+			if (_duplicateResources != null)
 			{
-				while (el.hasMoreElements())
+                                for (Map.Entry<XAResource, TxInfo> entry : _duplicateResources.entrySet())
 				{
-					XAResource x = (XAResource) el.nextElement();
+					XAResource x = entry.getKey();
 
 					if (x.isSameRM(xaRes))
 					{
-						TxInfo info = (TxInfo) _resources.get(x);
-
-						if (info.thread() == t)
-							return true;
-					}
-				}
-			}
-
-			el = _duplicateResources.keys();
-
-			if (el != null)
-			{
-				while (el.hasMoreElements())
-				{
-					XAResource x = (XAResource) el.nextElement();
-
-					if (x.isSameRM(xaRes))
-					{
-						TxInfo info = (TxInfo) _resources.get(x);
+						TxInfo info = entry.getValue();
 
 						if (info.thread() == t)
 							return true;
@@ -1544,32 +1521,25 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			synchronized (this)
 			{
-				Enumeration el = _resources.keys();
+                                for (Map.Entry<XAResource, TxInfo> entry : _resources.entrySet())
+                                {
+                                    XAResource x = entry.getKey();
 
-				if (el != null)
+                                    if (x.isSameRM(xaRes))
+                                    {
+                                       return entry.getValue();
+                                    }
+                                }
+
+				if (_duplicateResources != null)
 				{
-					while (el.hasMoreElements())
+                                        for (Map.Entry<XAResource, TxInfo> entry : _duplicateResources.entrySet())
 					{
-						XAResource x = (XAResource) el.nextElement();
+						XAResource x = entry.getKey();
 
 						if (x.isSameRM(xaRes))
 						{
-							return (TxInfo) _resources.get(x);
-						}
-					}
-				}
-
-				el = _duplicateResources.keys();
-
-				if (el != null)
-				{
-					while (el.hasMoreElements())
-					{
-						XAResource x = (XAResource) el.nextElement();
-
-						if (x.isSameRM(xaRes))
-						{
-							return (TxInfo) _duplicateResources.get(x);
+							return entry.getValue();
 						}
 					}
 				}
@@ -1686,11 +1656,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
-	private Hashtable _resources;
+        private Map<XAResource, TxInfo> _resources;
 
-	private Hashtable _duplicateResources;
+	private Map<XAResource, TxInfo> _duplicateResources;
 
-	private int _suspendCount;
+	private AtomicInteger _suspendCount;
 
 	private final boolean _xaTransactionTimeoutEnabled;
 
