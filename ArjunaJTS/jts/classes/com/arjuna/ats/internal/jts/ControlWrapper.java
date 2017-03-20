@@ -240,8 +240,11 @@ public class ControlWrapper implements Reapable
 	{
 		try
 		{
-			if (_controlImpl != null)
-				_controlImpl.getImplHandle().commit(report_heuristics);
+			if (_controlImpl != null) {
+				synchronized(_controlImpl) {
+					_controlImpl.getImplHandle().commit(report_heuristics);
+				}
+			}
 			else
 			{
 				Terminator t = null;
@@ -279,8 +282,11 @@ public class ControlWrapper implements Reapable
 	{
 		try
 		{
-			if (_controlImpl != null)
-				_controlImpl.getImplHandle().rollback();
+			if (_controlImpl != null) {
+				synchronized (_controlImpl) {
+					_controlImpl.getImplHandle().rollback();
+				}
+			}
 			else
 			{
 				Terminator t = null;
