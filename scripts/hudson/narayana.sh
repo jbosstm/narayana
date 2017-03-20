@@ -7,6 +7,41 @@ function fatal {
       comment_on_pull "$PROFILE profile tests failed ($BUILD_URL): $1"
   fi
 
+
+#rm -f buildlog.txt
+#ssh $LOG_HOST -x tail -100 jobs/$JOB_NAME/builds/$BUILD_NUMBER/log > buildlog.txt
+#if [ "$COMMENT_ON_PULL" = "" ]
+#then 
+# echo "Not a pull"
+#else 
+#  PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+#  if [ "$PULL_NUMBER" != "" ]
+#  then
+#        curl -d @buildlog.txt -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
+#  else
+#        echo "Not a pull request, so not commenting"
+#  fi
+#fi
+#rm buildlog.txt
+
+TAIL_BUILD_LOG=`ssh $LOG_HOST -x tail -100 jobs/$JOB_NAME/builds/$BUILD_NUMBER/log`
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//\\/\\\\} # \ 
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//\//\\\/} # / 
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//\'/\\\'} # ' (not strictly needed ?)
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//\"/\\\"} # " 
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//   /\\t} # \t (tab)
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//
+/\\\n} # \n (newline)
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//^M/\\\r} # \r (carriage return)
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//^L/\\\f} # \f (form feed)
+TAIL_BUILD_LOG=${TAIL_BUILD_LOG//^H/\\\b} # \b (backspace)
+
+echo HERE
+echo $TAIL_BUILD_LOG
+echo HERE2
+
+comment_on_pull "Failure ($BUILD_URL) due to: $TAIL_BUILD_LOG"
+
   echo "$1"
   exit 1
 }
@@ -844,6 +879,8 @@ kill_qa_suite_processes $MainClassPatterns
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
+
+fatal "Testing for failure"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
