@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts;
 
+import com.arjuna.ats.jts.common.jtsPropertyManager;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.Control;
@@ -315,7 +316,7 @@ public class OTSManager
 	com.arjuna.ats.internal.jts.ORBManager.setPOA(thePoa);
     }
     
-    public static final int serviceId = 0xDEADBEEF;
+    public static final int serviceId = jtsPropertyManager.getJTSEnvironmentBean().getTransactionServiceId(); //0;//0xDEADBEEF;
 
     private static int _localSlotId = -1;
     private static int _receivedSlotId = -1;
