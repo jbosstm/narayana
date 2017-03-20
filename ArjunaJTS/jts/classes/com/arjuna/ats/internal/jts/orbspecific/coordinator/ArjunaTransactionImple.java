@@ -339,8 +339,10 @@ public class ArjunaTransactionImple extends
 		}
 
 		int outcome = super.status();
-
-		if ((outcome == ActionStatus.RUNNING)
+        if(outcome == ActionStatus.ABORTED){
+            throw new TRANSACTION_ROLLEDBACK();
+        }
+        else if ((outcome == ActionStatus.RUNNING)
 				|| (outcome == ActionStatus.ABORT_ONLY)) // have we already been
 														 // committed?
 		{
@@ -439,7 +441,10 @@ public class ArjunaTransactionImple extends
 
 		int status = super.status();
 
-		if ((status == ActionStatus.RUNNING)
+		if(status == ActionStatus.ABORTED){
+            throw new TRANSACTION_ROLLEDBACK();
+        }
+		else if ((status == ActionStatus.RUNNING)
 				|| (status == ActionStatus.ABORT_ONLY)) // already aborted?
 		{
 
