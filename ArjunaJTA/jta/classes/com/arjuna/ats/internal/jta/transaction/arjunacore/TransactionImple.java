@@ -470,7 +470,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * was for that registration.
 			 */
 
-			TxInfo info = null;
+			TxInfo info = isNewRM(xaRes);
 
 			/*
 			 * Have we seen this specific resource instance before? Do this
@@ -479,21 +479,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			try
 			{
-				synchronized (this)
-				{
-					info = (TxInfo) _resources.get(xaRes);
-
-					if (info == null)
-					{
-						/*
-						 * Null info means it's not in the main resources list,
-						 * but may be in the duplicates.
-						 */
-
-						info = (TxInfo) _duplicateResources.get(xaRes);
-					}
-				}
-
 				if (info != null)
 				{
 					switch (info.getState())
