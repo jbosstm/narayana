@@ -238,7 +238,7 @@ public class CoordinatorTest extends BaseTest {
     }
     
     @Test
-    public void testTimeoutCleanup() throws InterruptedException {
+    public void testTimeout() throws InterruptedException {
         TxSupport txn = new TxSupport();
         int txnCount = txn.txCount();
         txn.startTx(1000);
@@ -247,7 +247,10 @@ public class CoordinatorTest extends BaseTest {
         // Let the txn timeout
         Thread.sleep(2000);
         
-        Assert.assertEquals(txnCount, txn.txCount());
+        String txStatus = txn.txStatus();
+        Assert.assertEquals(txStatus, "txstatus=TransactionRollbackOnly");
+        String commitTx = txn.commitTx();
+        Assert.assertEquals(commitTx, "txstatus=TransactionRolledBack");
     }
 
     @Test

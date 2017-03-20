@@ -140,7 +140,7 @@ ENDRULE
 RULE pause transaction reaper worker 3
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
 METHOD doCancellations
-AT CALL cancel
+AT CALL preventCommit
 BIND NOTHING
 IF isRendezvous("reaperworker3", 2)
 DO debug("reaperworker3"),

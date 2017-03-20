@@ -126,20 +126,11 @@ public class TimeoutClient
 
             System.out.println("\ncommitting nested action.");
 
-            try
-            {
-                current.commit(true);
-                TestUtility.fail("commit worked");
-            }
-            catch (TRANSACTION_ROLLEDBACK  e1)
-            {
-                System.out.println("Caught TransactionRolledBack");
-            }
-            catch (INVALID_TRANSACTION  e1)	/* For JacORB */
-            {
-                System.out.println("Caught InvalidTransaction");
-            }
-
+            // Although the tx has timed out, the subordinate is still allowed to complete
+            // This has early detection implications but as the parent transaction rolls back
+            // are no data-integrity issues
+            current.commit(true);
+            
             System.out.println("\ncommitting top-level action");
 
             try
