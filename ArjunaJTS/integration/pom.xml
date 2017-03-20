@@ -53,6 +53,7 @@
         <configuration>
           <argLine>-Xmx256m -XX:PermSize=256M -XX:MaxPermSize=256M -Djava.util.logging.config.file=logging.properties</argLine>
           <useManifestOnlyJar>false</useManifestOnlyJar>
+	  <redirectTestOutputToFile>false</redirectTestOutputToFile>
         </configuration>
       </plugin>
       <plugin>
