@@ -28,20 +28,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
+import javax.transaction.*;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -105,6 +103,70 @@ public class JmsIntegrationTests extends AbstractIntegrationTests {
 
         assertNull(messageConsumer.receiveNoWait());
         verify(xaResourceMock, times(1)).rollback(any(Xid.class));
+    }
+
+    @Test
+    public void testAsyncCommit() throws Exception {
+        when(xaResourceMock.prepare(any(Xid.class))).thenReturn(XAResource.XA_OK);
+
+        Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+        MessageConsumer messageConsumer = session.createConsumer(queue);
+        messageConsumer.setMessageListener(new MessageListener() {
+            @Override @Transactional
+            public void onMessage(Message message) {
+                try {
+                    TransactionManager.transactionManager().getTransaction().enlistResource(xaResourceMock);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        sendMessage();
+
+        // Adding timeout, wait until transaction has ended
+        verify(xaResourceMock, timeout(1_000L).times(1)).prepare(any(Xid.class));
+        verify(xaResourceMock, timeout(100L).times(1)).commit(any(Xid.class), anyBoolean());
+
+        // Assert that the message is no more in the queue
+        messageConsumer.setMessageListener(null);
+        Message receivedMessage = messageConsumer.receiveNoWait();
+        assertNull(receivedMessage);
+    }
+
+    @Test
+    public void testAsyncRollback() throws Exception {
+        Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+        MessageConsumer messageConsumer = session.createConsumer(queue);
+        messageConsumer.setMessageListener(new MessageListener() {
+            @Override @Transactional
+            public void onMessage(Message message) {
+                try {
+                    TransactionManager.transactionManager().getTransaction().enlistResource(xaResourceMock);
+                    // Disable listener to avoid onMessage on redelivery
+                    messageConsumer.setMessageListener(null);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                throw new RuntimeException("Fail - should imply a rollback");
+            }
+        });
+
+        sendMessage();
+
+        verify(xaResourceMock, timeout(1_000L).times(1)).rollback(any(Xid.class));
+
+        // Assert that the message has been put back in the queue
+        Message receivedMessage = messageConsumer.receiveNoWait();
+        assertNotNull(receivedMessage);
+    }
+
+    private void sendMessage() throws NotSupportedException, SystemException, JMSException, RollbackException, HeuristicMixedException, HeuristicRollbackException {
+        TransactionManager.transactionManager().begin();
+        Session sendSession = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+        TextMessage originalMessage = sendSession.createTextMessage("Test " + new Date());
+        sendSession.createProducer(queue).send(originalMessage);
+        TransactionManager.transactionManager().commit();
     }
 
 }
