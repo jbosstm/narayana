@@ -34,9 +34,11 @@ package com.arjuna.ats.arjuna.coordinator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -605,7 +607,7 @@ public class BasicAction extends StateManager
             if (actionStatus <= ActionStatus.ABORTING)
             {
                 if (_childThreads == null)
-                    _childThreads = new Hashtable<String, Thread>();
+                   _childThreads = Collections.synchronizedMap(new HashMap<String, Thread>());
 
                 _childThreads.put(ThreadUtil.getThreadId(t), t); // makes sure so we don't get
                 // duplicates
@@ -708,7 +710,7 @@ public class BasicAction extends StateManager
             if (actionStatus <= ActionStatus.ABORTING)
             {
                 if (_childActions == null)
-                    _childActions = new Hashtable<BasicAction, BasicAction>();
+                    _childActions = Collections.synchronizedMap(new HashMap<BasicAction, BasicAction>());
 
                 _childActions.put(act, act);
                 result = true;
@@ -3382,7 +3384,7 @@ public class BasicAction extends StateManager
         if ((_childThreads != null) && (_childThreads.size() > 0))
         {
             if ((_childThreads.size() != 1)
-                    || ((_childThreads.size() == 1) && (!_childThreads.contains(Thread.currentThread())))) {
+                    || ((_childThreads.size() == 1) && (!_childThreads.containsValue(Thread.currentThread())))) {
                 /*
                      * More than one thread or the one thread is not the current
                      * thread
@@ -3420,7 +3422,6 @@ public class BasicAction extends StateManager
         {
             problem = true;
 
-            Enumeration<BasicAction> iter = _childActions.elements();
             BasicAction child = null;
             boolean printError = true;
 
@@ -3433,10 +3434,9 @@ public class BasicAction extends StateManager
                 * because BasicAction is not responsible for action tracking.
                 */
 
-            while (iter.hasMoreElements())
+            for (BasicAction v : _childActions.values())
             {
-                child = iter.nextElement();
-
+                child = v;
                 if (child.status() != ActionStatus.ABORTED) {
                     if (printError) {
                         if (isCommit) {
@@ -3454,8 +3454,6 @@ public class BasicAction extends StateManager
                     child = null;
                 }
             }
-
-            iter = null;
 
             if (isCommit) {
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_62(((child != null ? child.get_uid().toString() : "null")));
@@ -3492,13 +3490,8 @@ public class BasicAction extends StateManager
                 * action.
                 */
 
-            Enumeration<Thread> iter = _childThreads.elements();
-            Thread t = null;
-
-            while (iter.hasMoreElements())
+            for (Thread t : _childThreads.values())
             {
-                t = iter.nextElement();
-
                 if (tsLogger.logger.isTraceEnabled()) {
                     tsLogger.logger.trace("BasicAction::removeAllChildThreads () action "+get_uid()+" removing "+t);
                 }
@@ -3747,8 +3740,8 @@ public class BasicAction extends StateManager
       * provide an explicit means of registering threads with an action.
       */
 
-    private Hashtable<String, Thread> _childThreads;
-    private Hashtable<BasicAction, BasicAction> _childActions;
+    private Map<String, Thread> _childThreads;
+    private Map<BasicAction, BasicAction> _childActions;
 
     private BasicActionFinalizer finalizerObject;
     private static final boolean finalizeBasicActions = arjPropertyManager.getCoordinatorEnvironmentBean().isFinalizeBasicActions();

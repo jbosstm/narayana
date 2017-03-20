@@ -20,7 +20,7 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
@@ -39,7 +39,7 @@ public class DummyCheckedAction extends CheckedAction implements CheckedActionFa
         return instance;
     }
 
-    public void check (boolean isCommit, Uid actUid, Hashtable list)
+    public void check (boolean isCommit, Uid actUid, Map list)
     {
         _instanceCalled = true;
     }
