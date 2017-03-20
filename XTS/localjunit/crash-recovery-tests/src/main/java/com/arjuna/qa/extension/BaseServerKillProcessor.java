@@ -122,7 +122,9 @@ public abstract class BaseServerKillProcessor implements ServerKillProcessor {
         String scriptName = config.get("scriptName");
 
         String dir = "target" + File.separator + "surefire-reports" + File.separator + "processes";
-        runShellCommand("mkdir " + dir);
+        if(!new File(dir).exists()) {
+            runShellCommand("mkdir " + dir);
+        }
 
         String logFile = dir + File.separator + scriptName + ":" + testClass + "_" + processLogId++ + ".txt";
         runShellCommand(getProcessesCmd() + " > " + logFile);
