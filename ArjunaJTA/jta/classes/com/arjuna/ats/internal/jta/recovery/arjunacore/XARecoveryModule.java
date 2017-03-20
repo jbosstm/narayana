@@ -576,6 +576,10 @@ public class XARecoveryModule implements RecoveryModule
             {
                 jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
             }
+            catch (NoClassDefFoundError e)
+            {
+                jtaLogger.i18NLogger.warn_recovery_getxaresource(e);
+            }
         }
 
         return xaresources;
