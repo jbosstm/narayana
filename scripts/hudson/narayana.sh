@@ -267,7 +267,7 @@ fi
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.2.23.Final-SNAPSHOT
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.2.23.Final-SNAPSHOT -Dversion.org.jboss.jboss-transaction-spi=7.3.0.SP1
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
