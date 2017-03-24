@@ -65,7 +65,7 @@ public class InboundBridgeRecoveryWithMultipleDeploymentsTestCase extends Abstra
     private static final String BYTEMAN_ARGUMENTS = "-Dorg.jboss.byteman.verbose"
             + " -Djboss.modules.system.pkgs=org.jboss.byteman"
             + " -Dorg.jboss.byteman.transform.all"
-            + " -javaagent:../lib/byteman.jar=script:scripts/@BMScript@.btm,boot:../lib/byteman.jar,listener:true";
+            + " -javaagent:../lib/byteman.jar=script:scripts/@BMScript@.btm,listener:true";
 
     @Deployment(name = FIRST_DEPLOYMENT_NAME, testable = false, managed = false)
     public static WebArchive createFirstTestArchive() {
