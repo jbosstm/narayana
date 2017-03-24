@@ -37,7 +37,7 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
     private static final String VM_ARGUMENTS = System.getProperty("server.jvm.args").trim()
             + " -Dcom.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod=" + RECOVERY_PERIOD;
 
-    private static final String BYTEMAN_ARGUMENTS = "-Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:lib/byteman.jar=script:scripts/@BMScript@.btm,boot:lib/byteman.jar,listener:true";
+    private static final String BYTEMAN_ARGUMENTS = "-Dorg.jboss.byteman.verbose -Djboss.modules.system.pkgs=org.jboss.byteman -Dorg.jboss.byteman.transform.all -javaagent:lib/byteman.jar=script:scripts/@BMScript@.btm,listener:true";
 
     @Deployment(name = DEPLOYMENT_NAME, managed = false, testable = false)
     public static WebArchive getDeployment() {
