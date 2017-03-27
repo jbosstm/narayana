@@ -591,6 +591,9 @@ protected boolean registerResource (Coordinator theCoordinator)
 
 	if (theCoordinator != null)
 	{
+	    if (resourceRefRegistered)
+		return true;
+
 	    try
 	    {
 		/*
@@ -599,6 +602,8 @@ protected boolean registerResource (Coordinator theCoordinator)
 		 */
 
 		RecoveryCoordinator recoveryCoord = theCoordinator.register_resource(_resourceRef);
+
+		resourceRefRegistered = true;
 
 		if (!_theControl.isWrapper())
 		{
@@ -650,5 +655,5 @@ public boolean isTransactionInactive() {
 protected org.omg.CosTransactions.ResourcePOATie _theResource;
 protected Resource                               _resourceRef;
 private boolean transactionInactive;
-
+private boolean resourceRefRegistered;
 }

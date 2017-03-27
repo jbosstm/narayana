@@ -258,6 +258,9 @@ public class Utility
 
 	byte[] nodeName = TxControl.getXANodeName().getBytes(StandardCharsets.UTF_8);
 
+        if (Boolean.getBoolean("GLASSFISH-21532-WORKAROUND"))
+           nodeName = new byte[0]; // TODO patch glassfish instead
+
 	otid.formatID = 0;
 	otid.tid = new byte[b.length+nodeName.length];
 	otid.bqual_length = nodeName.length;

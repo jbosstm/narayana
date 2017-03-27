@@ -55,6 +55,15 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.commitTransactionRetryLimit")
     private volatile int commitedTransactionRetryLimit = 3;
 
+    private volatile int transactionServiceId = 0xDEADBEEF;
+
+    public int getTransactionServiceId() {
+        return transactionServiceId;
+    }
+
+    public void setTransactionServiceId(int transactionServiceId) {
+        this.transactionServiceId = transactionServiceId;
+    }
 
     /**
      * Returns if an external transaction manager process should be used.
