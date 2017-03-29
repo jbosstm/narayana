@@ -49,7 +49,7 @@ extern bool setSpecific(int key, void* threadData) {
 	    apr_thread_mutex_create(&mutex, 0, mutex_pool);
 	  }
           apr_thread_mutex_lock(mutex);
-          tls_pools.insert(std::make_pair<apr_os_thread_t, apr_pool_t*>(os_th,tls_pool));
+          tls_pools.insert(std::make_pair(os_th,tls_pool));
 	  apr_thread_mutex_unlock(mutex);
 
         }
