@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca;
 
+import java.util.List;
+
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -117,5 +119,22 @@ public class TransactionImple extends
     public boolean activated() {
         return true; // TODO: more sensible implementation.
     }
-	
+
+    /**
+     * JTS implementation does not work with deferred throwables
+     * as ORB protocol does not support adding a deferred throwable
+     * under the base throwable.
+     */
+    public List<Throwable> getDeferredThrowables() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Method {@link #getDeferredThrowables()} will throw {@link UnsupportedOperationException}.
+     *
+     * @return false
+     */
+    public boolean supportsDeferredThrowables() {
+        return false;
+    }
 }
