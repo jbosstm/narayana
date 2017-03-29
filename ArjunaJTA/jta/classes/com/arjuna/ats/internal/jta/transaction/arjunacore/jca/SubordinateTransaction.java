@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
+import java.util.List;
+
 import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -113,4 +115,14 @@ public interface SubordinateTransaction extends ImportedTransaction
     public Xid baseXid();
 
     public Uid get_uid();
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<Throwable> getDeferredThrowables();
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean supportsDeferredThrowables();
 }
