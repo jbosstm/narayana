@@ -267,12 +267,12 @@ function build_as {
     fi
     #Abort any partially complete rebase
     git rebase --abort
-    git checkout 5_BRANCH
-    [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
+    git checkout 5_5_BRANCH
+    [ $? = 0 ] || fatal "git checkout 5_5_BRANCH failed"
     git fetch
     [ $? = 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
+    git reset --hard jbosstm/5_5_BRANCH
+    [ $? = 0 ] || fatal "git reset 5_5_BRANCH failed"
     git clean -f -d -x
     [ $? > 1 ] || fatal "git clean failed"
     git rebase --abort
