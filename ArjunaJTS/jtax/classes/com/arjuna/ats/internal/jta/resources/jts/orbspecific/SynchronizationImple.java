@@ -90,6 +90,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	    }
 	    catch (Exception e)
 	    {
+		jtaxLogger.logger.trace("SynchronizationImple.before_completion failed - toString: " + _theSynch, e);
 		throw new UNKNOWN();
 	    }
 	    finally
@@ -122,7 +123,7 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	    }
 	    catch (Exception e)
 	    {
-		e.printStackTrace();
+		jtaxLogger.logger.trace("SynchronizationImple.after_completion failed - toString: " + _theSynch, e);
 
 		if (_theReference != null)
 		    ORBManager.getPOA().shutdownObject(_thePOATie);
