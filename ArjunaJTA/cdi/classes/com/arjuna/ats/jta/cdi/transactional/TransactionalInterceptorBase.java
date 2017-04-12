@@ -23,6 +23,8 @@
 package com.arjuna.ats.jta.cdi.transactional;
 
 
+import static java.security.AccessController.doPrivileged;
+
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
@@ -42,6 +44,7 @@ import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.security.PrivilegedAction;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013
@@ -181,13 +184,16 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         UserTransactionOperationsProvider userTransactionProvider =
             jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider();
         boolean previousUserTransactionAvailability = userTransactionProvider.getAvailability();
-        userTransactionProvider.setAvailability(available);
+
+        setAvailability(userTransactionProvider, available);
+
         return previousUserTransactionAvailability;
     }
 
     protected void resetUserTransactionAvailability(boolean previousUserTransactionAvailability) {
-        jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider()
-            .setAvailability(previousUserTransactionAvailability);
+        UserTransactionOperationsProvider userTransactionProvider =
+            jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider();
+        setAvailability(userTransactionProvider, previousUserTransactionAvailability);
     }
 
     protected TransactionManager getTransactionManager() {
@@ -201,5 +207,16 @@ public abstract class TransactionalInterceptorBase implements Serializable {
             }
         }
         return transactionManager;
+    }
+
+    private void setAvailability(UserTransactionOperationsProvider userTransactionProvider, boolean available) {
+        if (System.getSecurityManager() == null) {
+            userTransactionProvider.setAvailability(available);
+        } else {
+            doPrivileged((PrivilegedAction<Object>) () -> {
+                userTransactionProvider.setAvailability(available);
+                return null;
+            });
+        }
     }
 }
