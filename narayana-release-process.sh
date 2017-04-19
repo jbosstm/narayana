@@ -1,5 +1,5 @@
 #!/bin/bash
-read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo. Do you have these?" ENVOK
+read -p "You will need: jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
   exit
@@ -44,5 +44,5 @@ then
   git checkout $CURRENT
   git clean -f -d
   # Add -x (this will delete all files (e.g. IDE, new features) not under source control)
-  mvn clean deploy -Prelease -DskipTests
+  mvn clean deploy -Prelease -Dmaven.javadoc.skip=true -DskipTests -pl :narayana-jts-idlj,:jbossxts,:narayana-jts-integration,:byteman_support,:jbosstxbridge -am
 fi
