@@ -4,16 +4,23 @@ if [[ $ENVOK == n* ]]
 then
   exit
 fi
-if [ $# -lt 2 ]; then
+
+if [ $# -eq 0 ]; then
+  . scripts/pre-release-vars.sh
+  CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
+  NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
+  NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
+elif [ $# -lt 2 ]; then
   echo 1>&2 "$0: not enough arguments: CURRENT NEXT (versions should end in .Final or similar)"
   exit 2
 elif [ $# -gt 2 ]; then
   echo 1>&2 "$0: too many arguments: CURRENT NEXT (versions should end in .Final or similar)"
   exit 2
+else
+  CURRENT=$1
+  NEXT=$2
 fi
 
-export CURRENT=$1
-export NEXT=$2
 set +e
 git fetch upstream --tags
 git tag | grep $CURRENT
