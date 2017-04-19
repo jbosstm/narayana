@@ -44,7 +44,7 @@ then
   git checkout $CURRENT
   git clean -f -d
   # Add -x (this will delete all files (e.g. IDE, new features) not under source control)
-  mvn clean deploy -Prelease,all -Dmaven.javadoc.skip=true -DskipTests -pl :jbossjts-jacorb,:jbossxts,:jbossjts-integration,:byteman_support,:jbosstxbridge -am
+  tools/maven/bin/mvn clean deploy -Prelease,all -Dmaven.javadoc.skip=true -DskipTests -pl :jbossjts-jacorb,:jbossxts,:jbossjts-integration,:byteman_support,:jbosstxbridge -am
 
   echo "Go to https://repository.jboss.org/nexus/index.html#welcome
   Go to Staging Repositories
