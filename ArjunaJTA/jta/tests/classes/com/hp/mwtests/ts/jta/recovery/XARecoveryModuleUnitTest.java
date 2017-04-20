@@ -41,12 +41,15 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
+import org.jboss.tm.XAResourceWrapper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -73,6 +76,8 @@ import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
 
 public class XARecoveryModuleUnitTest
 {
+    private boolean rolledback;
+
     @Test
     public void testNull ()
     {
@@ -372,6 +377,139 @@ public class XARecoveryModuleUnitTest
         assertEquals(recoverCalled, 5);
         xarm.periodicWorkSecondPass();
         assertEquals(recoverCalled, 6);
+    }
+
+    @Test
+    public void testRecoverPassFailure() throws Exception {
+        int orphanSafetyInterval = jtaPropertyManager.getJTAEnvironmentBean().getOrphanSafetyInterval();
+        List<String> xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
+        jtaPropertyManager.getJTAEnvironmentBean().setOrphanSafetyInterval(0);
+        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(Arrays.asList(new String[]{NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES}));
+        XARecoveryModule xarm = new XARecoveryModule();
+        xarm.addXAResourceOrphanFilter(new JTANodeNameXAResourceOrphanFilter());
+        xarm.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            XAResource[] xares = new XAResource[]{new XAResourceWrapper() {
+                @Override
+                public XAResource getResource() {
+                    return null;
+                }
+
+                @Override
+                public String getProductName() {
+                    return null;
+                }
+
+                @Override
+                public String getProductVersion() {
+                    return null;
+                }
+
+                @Override
+                public String getJndiName() {
+                    return "test";
+                }
+
+                int count = 0;
+                Xid xid = new XidImple(new Uid());
+
+                @Override
+                public void commit(Xid xid, boolean b) throws XAException {
+
+                }
+
+                @Override
+                public void end(Xid xid, int i) throws XAException {
+
+                }
+
+                @Override
+                public void forget(Xid xid) throws XAException {
+
+                }
+
+                @Override
+                public int getTransactionTimeout() throws XAException {
+                    return 0;
+                }
+
+                @Override
+                public boolean isSameRM(XAResource xaResource) throws XAException {
+                    return false;
+                }
+
+                @Override
+                public int prepare(Xid xid) throws XAException {
+                    return 0;
+                }
+
+                @Override
+                public Xid[] recover(int i) throws XAException {
+                    count++;
+                    if (count == 1 || count == 5) {
+                        return new Xid[]{xid};
+                    } else if (count > 5) {
+                        return new Xid[0];
+                    } else {
+                        throw new XAException();
+                    }
+                }
+
+                @Override
+                public void rollback(Xid xid) throws XAException {
+                    if (count == 1) { // This comes from the first end scan
+                        throw new XAException(XAException.XA_RETRY);
+                    }
+                    rolledback = true;
+                }
+
+                @Override
+                public boolean setTransactionTimeout(int i) throws XAException {
+                    return false;
+                }
+
+                @Override
+                public void start(Xid xid, int i) throws XAException {
+
+                }
+            }
+            };
+
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return xares;
+            }
+        });
+
+
+        // The first two recovery cycles do nothing with the resource (because phase two is getting the exception)
+        // When count reaches 6 it sees that the xid has gone and presumes abort so calls rollback and hence assertTrue(rolledback) passes
+
+        // 1st pass: returns one xid (count is 1)
+        xarm.periodicWorkFirstPass();
+        // 2nd pass: throws an exception (count is 2)
+        xarm.periodicWorkSecondPass();
+        assertTrue(xarm.getContactedJndiNames().contains("test"));
+        assertFalse(rolledback);
+        // 1st pass: throws an exception (count is 3)
+        xarm.periodicWorkFirstPass();
+        // 2nd pass: throws an exception (count is 4)
+        xarm.periodicWorkSecondPass();
+        assertFalse(xarm.getContactedJndiNames().contains("test"));
+        assertFalse(rolledback);
+        // 1st pass: returns an empty list of xids (count is 5)
+        xarm.periodicWorkFirstPass();
+        // 2nd pass: returns an empty list of xids (count is 6)
+        xarm.periodicWorkSecondPass();
+        assertTrue(xarm.getContactedJndiNames().contains("test"));
+        assertTrue(rolledback);
+
+        jtaPropertyManager.getJTAEnvironmentBean().setOrphanSafetyInterval(orphanSafetyInterval);
+        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
     }
 
     class DummyXAResourceOrphanFilter implements XAResourceOrphanFilter
