@@ -20,7 +20,7 @@ function get_pull_description {
 }
 
 function init_test_options {
-    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.7.Final-SNAPSHOT"
+    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.43.Final-SNAPSHOT"
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
     PULL_DESCRIPTION=$(get_pull_description)
@@ -146,7 +146,7 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true
+  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.43.Final-SNAPSHOT
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
