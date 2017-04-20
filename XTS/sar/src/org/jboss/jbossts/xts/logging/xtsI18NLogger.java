@@ -55,4 +55,7 @@ public interface xtsI18NLogger
     @LogMessage(level = ERROR)
     public void error_XTSService_4(String arg0, @Cause() Throwable arg1);
 
+    @Message(id = 47005, value = "Rejecting call because it is not part of any XTS transaction", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_XTSService_5();
 }
