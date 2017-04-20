@@ -145,20 +145,20 @@ public class StoreManager
     {
         ObjectStoreEnvironmentBean storeEnvBean = BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, name);
         String storeType = storeEnvBean.getObjectStoreType();
-        ObjectStoreAPI store;
 
         try
         {
-            store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name);
+            ObjectStoreAPI store = ClassloadingUtility.loadAndInstantiateClass(ObjectStoreAPI.class, storeType, name);
+
+            store.start();
+
+            return store;
+
         }
         catch (final Throwable ex)
         {
             throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
         }
-
-        store.start();
-
-        return store;
     }
 
     public static ObjectStoreAPI getTxOJStore() {
