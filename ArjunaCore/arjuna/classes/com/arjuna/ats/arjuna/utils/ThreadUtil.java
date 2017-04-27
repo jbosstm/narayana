@@ -20,9 +20,6 @@
  */
 package com.arjuna.ats.arjuna.utils;
 
-import java.util.WeakHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Provides utilities to manage thread ids.
  */
@@ -31,11 +28,11 @@ public class ThreadUtil
     /**
      * The ID associated with the thread.
      */
-    private static final WeakHashMap<Thread,String> THREAD_ID = new WeakHashMap<Thread,String>() ;
+    private static final ThreadLocal THREAD_ID = new ThreadLocal() ;
     /**
      * The thread id counter.
      */
-    private static AtomicLong id = new AtomicLong();
+    private static long id ;
     
     /**
      * Get the string ID for the current thread.
@@ -51,16 +48,16 @@ public class ThreadUtil
      * @param thread The thread.
      * @return The thread id
      */
-    public static synchronized String getThreadId(final Thread thread)
+    public static String getThreadId(final Thread thread)
     {
-	final String id = THREAD_ID.get(thread) ;
+	final Object id = THREAD_ID.get() ;
 	if (id != null)
 	{
-	    return id ;
+	    return (String)id ;
 	}
 	
 	final String newId = getNextId() ;
-	THREAD_ID.put(thread,newId) ;
+	THREAD_ID.set(newId) ;
 	return newId ;
     }
     
@@ -68,8 +65,8 @@ public class ThreadUtil
      * Get the next thread id to use.
      * @return The next thread id.
      */
-    private static String getNextId()
+    private static synchronized String getNextId()
     {
-	return Long.toHexString(id.incrementAndGet()) ;
+	return "TSThread:" + Long.toHexString(++id) ;
     }
 }
