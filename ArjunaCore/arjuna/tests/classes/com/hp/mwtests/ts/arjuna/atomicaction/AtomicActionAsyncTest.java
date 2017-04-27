@@ -53,6 +53,7 @@ public class AtomicActionAsyncTest extends AtomicActionTestBase
         AtomicActionTestBase.init(false);
         arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncAfterSynchronization(true);
         super.testCompletionWithFailures();
+        AtomicActionTestBase.init(true);
     }
 
     @Test
