@@ -406,6 +406,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
     protected boolean asyncAfterCompletion(int myStatus, boolean report_heuristics) {
         boolean problem = false;
 
+		if (synchronizationCompletionService == null) {
+			synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
+		}
+		if (runningSynchronizations == null) {
+			runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
+		}
+
         // note there is no need to synchronize on _synchs since synchronizations cannot be registered once
         // the action has started to commit
         for (Iterator<SynchronizationRecord> i =_synchs.iterator(); i.hasNext(); ) {
