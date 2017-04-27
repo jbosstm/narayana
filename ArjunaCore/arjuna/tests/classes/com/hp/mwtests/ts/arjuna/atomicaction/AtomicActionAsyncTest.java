@@ -49,6 +49,13 @@ public class AtomicActionAsyncTest extends AtomicActionTestBase
     }
 
     @Test
+    public void testCompletionWithFailuresAsyncAfterCompletion() throws Exception {
+        AtomicActionTestBase.init(false);
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAsyncAfterSynchronization(true);
+        super.testCompletionWithFailures();
+    }
+
+    @Test
     @Override
     public void testPrepareWithLRRSuccess() {
         super.testPrepareWithLRRSuccess();
