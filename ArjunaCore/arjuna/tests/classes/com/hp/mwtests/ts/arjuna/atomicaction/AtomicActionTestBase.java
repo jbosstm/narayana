@@ -50,7 +50,7 @@ public class AtomicActionTestBase
 
     protected void testAbort () throws Exception
     {
-        executeTest(true, ActionStatus.COMMITTED, null, new BasicRecord(), new BasicRecord());
+        executeTest(false, ActionStatus.ABORTED, null, new BasicRecord(), new BasicRecord());
     }
 
     protected void testPrepareWithLRRSuccess()
