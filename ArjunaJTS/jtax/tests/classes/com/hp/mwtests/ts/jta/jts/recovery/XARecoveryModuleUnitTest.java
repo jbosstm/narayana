@@ -36,20 +36,28 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.SubordinateAtomicTransaction;
+import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.ts.jta.common.RecoveryXAResource;
+import com.hp.mwtests.ts.jta.recovery.TestXAResourceWrapper;
 
 public class XARecoveryModuleUnitTest
 {
@@ -87,6 +95,29 @@ public class XARecoveryModuleUnitTest
         }
     }
     
+    /**
+     * Test which uses method {@link TransactionImple#enlistResource(XAResource, Object[])} could be used
+     * with empty object array and still works.
+     */
+    @Test
+    public void testEmptyResourceEnlistmentParams() throws Exception {
+        final Uid uid = new Uid();
+        final Xid xid = XidUtils.getXid(uid, true);
+        SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        TransactionImple subordinateTransactionImple = (TransactionImple) subordinateTransaction;
+
+        TestXAResourceWrapper xar = new TestXAResourceWrapper("narayana", "narayana", "java:/test1");
+
+        subordinateTransactionImple.enlistResource(xar, new Object[]{});
+
+        int statusPrepare = subordinateTransaction.doPrepare();
+        subordinateTransaction.doCommit();
+
+        assertEquals("transaction should be prepared", TwoPhaseOutcome.PREPARE_OK, statusPrepare);
+        assertEquals("XAResource can't be rolled-back", 0, xar.rollbackCount());
+        assertEquals("XAResource has to be committed", 1, xar.commitCount());
+    }
+
     @Before
     public void setUp () throws Exception
     {
