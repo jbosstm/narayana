@@ -546,7 +546,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (params != null)
 		{
-			if (params.length >= XAMODIFIER + 1)
+			if (params.length > XAMODIFIER)
 			{
 				if (params[XAMODIFIER] instanceof XAModifier)
 				{
@@ -861,6 +861,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * the resouce. So, for safety mark the transaction as rollback
 			 * only.
 			 */
+
+			jtaxLogger.i18NLogger.warn_could_not_enlist_xar(xaRes, params, e);
 
 			markRollbackOnly();
 

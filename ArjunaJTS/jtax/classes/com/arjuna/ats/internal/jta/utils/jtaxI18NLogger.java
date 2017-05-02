@@ -270,6 +270,10 @@ public interface jtaxI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_could_not_end_xar(XAResource xar, @Cause() XAException e1);
 
+	@Message(id = 24061, value = "Could not enlist XA resource {0} with params {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_could_not_enlist_xar(XAResource xar, Object[] params, @Cause() Exception e1);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
