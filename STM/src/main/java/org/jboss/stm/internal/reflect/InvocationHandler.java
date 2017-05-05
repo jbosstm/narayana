@@ -21,10 +21,12 @@
 
 package org.jboss.stm.internal.reflect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.arjuna.ats.txoj.logging.txojLogger;
 import org.jboss.stm.LockException;
 import org.jboss.stm.TransactionException;
 import org.jboss.stm.annotations.LockFree;
@@ -400,8 +402,18 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                             }
                         }
                     }
-    
-                    return method.invoke(_theObject, args);
+
+                    try {
+                        return method.invoke(_theObject, args);
+                    } catch (InvocationTargetException e) {
+                        if (txojLogger.logger.isTraceEnabled()) {
+                            Throwable ae = e.getCause() != null ? e.getCause() : e;
+                            txojLogger.logger.tracef("STM InvocationHandler::invoke application method %s threw exception %s",
+                                    method.getName(), ae.getMessage());
+                        }
+
+                        throw e.getCause() != null ? e.getCause() : e;
+                    }
                 }
                 finally
                 {
