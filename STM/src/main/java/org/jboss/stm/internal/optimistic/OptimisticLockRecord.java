@@ -135,7 +135,7 @@ class OptimisticLockRecord extends LockRecord
     {       
         boolean stateOK = checkState();
         
-        if (stateOK)
+        if (!stateOK)
         {
             txojLogger.i18NLogger.warn_OptimisticLockRecord_2((LockManager) value());
         }
