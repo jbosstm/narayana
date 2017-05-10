@@ -449,14 +449,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-        if (jtaxLogger.logger.isTraceEnabled()) {
-            jtaxLogger.logger.trace("TransactionImple.registerSynchronization - Class: " + sync.getClass() + " HashCode: " + sync.hashCode() + " toString: " + sync);
-        }
-
 		if (sync == null)
 			throw new javax.transaction.SystemException(
                     "TransactionImple.registerSynchronization - "
                             + jtaxLogger.i18NLogger.get_jtax_transaction_jts_nullparam());
+
+		if (jtaxLogger.logger.isTraceEnabled()) {
+			jtaxLogger.logger.trace("TransactionImple.registerSynchronization - Class: " + sync.getClass() + " HashCode: " + sync.hashCode() + " toString: " + sync);
+		}
 
         registerSynchronizationImple(new ManagedSynchronizationImple(sync));
 	}
