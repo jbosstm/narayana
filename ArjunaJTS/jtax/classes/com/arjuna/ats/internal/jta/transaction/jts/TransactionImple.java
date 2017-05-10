@@ -755,6 +755,8 @@ public class TransactionImple implements javax.transaction.Transaction,
                                 // we therefore have a mess which we must now clean up by ensuring the start is undone:
                                 xaResourceRecord.rollback();
                                 markRollbackOnly();
+                                jtaxLogger.logger.debug("Can't set recovery coordinator for xa resource record: " + xaResourceRecord
+                                    + ", " + e.getClass().getName() + ": " + e.getMessage(), e);
                                 return false;
                             }
                             _resources.put(xaRes, new TxInfo(xid));
@@ -1754,7 +1756,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		Xid jtaXid = baseXid();
 
-		if (jtaXid != null)
+		// if Xid is from Narayana (format corresponds with Narayana JTS xid we allow Xid to be edited)
+		if (jtaXid != null && jtaXid.getFormatId() != com.arjuna.ats.jts.extensions.Arjuna.XID())
 			return jtaXid;
 
 		try
