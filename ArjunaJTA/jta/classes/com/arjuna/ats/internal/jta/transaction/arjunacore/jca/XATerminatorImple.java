@@ -408,7 +408,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 						if (parentNodeName != null) {
 							SubordinateAtomicAction saa = new SubordinateAtomicAction(uid, true);
 							XidImple loadedXid = (XidImple) saa.getXid();
-							if (loadedXid != null && loadedXid.getFormatId() == XATxConverter.FORMAT_ID) {
+							if (loadedXid != null && (loadedXid.getFormatId() == XATxConverter.FORMAT_ID)) {
 								String loadedXidSubordinateNodeName = XATxConverter.getSubordinateNodeName(loadedXid.getXID());
                                 if ((loadedXidSubordinateNodeName == null && loadedXidSubordinateNodeName == TxControl.getXANodeName())
                                         || loadedXidSubordinateNodeName.equals(TxControl.getXANodeName())) {

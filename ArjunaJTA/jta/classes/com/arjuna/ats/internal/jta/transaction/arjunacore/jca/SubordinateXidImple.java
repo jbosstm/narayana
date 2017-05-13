@@ -37,7 +37,7 @@ public class SubordinateXidImple extends XidImple {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (_theXid.formatID != XATxConverter.FORMAT_ID) {
+		if (!XATxConverter.isNodeNameFormatId(_theXid.formatID)) {
 			return super.equals(obj);
 		}
 		boolean toReturn = false;
@@ -60,7 +60,7 @@ public class SubordinateXidImple extends XidImple {
 		if (xid == null) {
 			return 0;
 		}
-		if (_theXid.formatID != XATxConverter.FORMAT_ID) {
+		if (!XATxConverter.isNodeNameFormatId(_theXid.formatID)) {
 			return super.getHash(xid);
 		}
 		return generateHash(xid.formatID, xid.data, 0, xid.gtrid_length);

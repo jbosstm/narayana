@@ -144,7 +144,7 @@ public class XID implements Serializable
 	{
         // controversial and not too robust. see JBTM-297 before messing with this.
 
-        if(formatID == XATxConverter.FORMAT_ID) {
+        if(formatID == XATxConverter.FORMAT_ID || formatID == 131072) {
             // it's one of ours, we know how to inspect it:
             return XATxConverter.getXIDString(this);
         }
