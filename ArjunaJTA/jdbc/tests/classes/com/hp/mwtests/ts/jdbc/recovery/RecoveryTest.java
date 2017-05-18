@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jdbc.recovery;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,10 +41,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import org.h2.Driver;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.byteman.agent.Transformer;
@@ -61,7 +65,7 @@ import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 @RunWith(BMUnitRunner.class)
 public class RecoveryTest {
 	@Test
-	@BMRule(name = "throw exception", targetClass = "org.h2.jdbcx.JdbcXAConnection", targetMethod = "commit", action = "throw new javax.transaction.xa.XAException(javax.transaction.xa.XAException.XAER_RMFAIL)", targetLocation = "AT ENTRY")
+	@BMRule(name = "throw exception", targetClass = "org.h2.jdbcx.JdbcXAConnection", targetMethod = "commit", action = "throw new java.lang.Error()", targetLocation = "AT ENTRY")
 	public void test() throws Exception {
 		String url = "jdbc:arjuna:";
 		Properties p = System.getProperties();
@@ -73,7 +77,7 @@ public class RecoveryTest {
 		Properties dbProperties = new Properties();
 
 		final JdbcDataSource ds = new JdbcDataSource();
-		ds.setURL("jdbc:h2:./h2/foo");// mem:test;DB_CLOSE_DELAY=-1");
+		ds.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
 		dbProperties.put(TransactionalDriver.XADataSource, ds);
 
 		// 0. Setup tables
@@ -98,20 +102,40 @@ public class RecoveryTest {
 
 		// 1. Leave a Xid in the DB
 		{
+      // We need to do this in a different thread as otherwise the transaction would still be associated with the connection due to the java.lang.Error
+      // RMFAIL on it's own will cause H2 to close connection and that seems to discard the indoubt transactions
+			Thread thread = new Thread(() -> {
+				try {
+					Uid[] uid = new Uid[1];
+					Connection conn = DriverManager.getConnection(url, dbProperties);
+					TransactionManager tx = com.arjuna.ats.jta.TransactionManager
+							.transactionManager();
 
-			Connection conn = DriverManager.getConnection(url, dbProperties);
-			javax.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager
-					.transactionManager();
+					tx.begin();
+					tx.getTransaction().enlistResource(new DummyXAResource() {
+						@Override
+						public void start(Xid arg0, int arg1) throws XAException {
+							uid[0] = new Uid(arg0.getGlobalTransactionId());
+						}
+					});
 
-			tx.begin();
-			tx.getTransaction().enlistResource(new DummyXAResource());
+					Statement stmtx = conn.createStatement(); // will be a tx-statement
 
-			Statement stmtx = conn.createStatement(); // will be a tx-statement
+					stmtx.executeUpdate("INSERT INTO test_table (a, b) VALUES (1,2)");
 
-			stmtx.executeUpdate("INSERT INTO test_table (a, b) VALUES (1,2)");
-
-			tx.commit();
-			// conn.close();
+					try {
+						tx.commit();
+					} catch (Error e) {
+						// expected
+						ActionManager.manager().remove(uid[0]);
+					}
+					// conn.close();
+				} catch (Throwable t) {
+					fail();
+				}
+			});
+			thread.start();
+			thread.join();
 		}
 
 		// 2. Check its not in the DB already
