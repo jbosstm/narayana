@@ -126,7 +126,8 @@ public class ConnectionImple implements Connection
 		 */
 
 		_theModifier = null;
-		_theConnection = null;
+
+		getConnection();
 	}
 
 	public ConnectionImple(String dbName, String user, String passwd)
@@ -164,7 +165,8 @@ public class ConnectionImple implements Connection
 		 */
 
 		_theModifier = null;
-		_theConnection = null;
+
+		getConnection();
 	}
 
 	public Statement createStatement() throws SQLException
@@ -293,9 +295,7 @@ public class ConnectionImple implements Connection
 	/*
 	 * This needs to be reworked in light of experience and requirements.
 	 */
-	public void close() throws SQLException
-	{
-        boolean delayClose = false;
+	public void close() throws SQLException {
 
 	    try
 	    {
@@ -323,41 +323,6 @@ public class ConnectionImple implements Connection
                             (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(xares, XAResource.TMFAIL)))
 	                    throw new SQLException(
 	                            jdbcLogger.i18NLogger.get_delisterror());
-
-                    if (tx.getStatus() == Status.STATUS_ACTIVE) {
-                        getModifier();
-
-                        if (_theModifier == null) {
-                            jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
-
-                            // no indication about connections, so assume close immediately
-
-	                    /*
-	                     * Don't return just yet. Drop through bottom of these clauses and
-	                     * close _theConnection and _recoveryConnection.
-	                     * 
-	                     * delayClose is false at this point.
-	                     * 
-	                     * JBTM-789.
-	                     */
-                        } else {
-                            if (((ConnectionModifier) _theModifier).supportsMultipleConnections()) {
-	                        /*
-	                         * We can't close the connection until the transaction has
-	                         * terminated, so register a Synchronization here.
-	                         */
-
-                                jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
-
-                                delayClose = true;
-                            }
-                        }
-
-                        if (delayClose)
-                        {
-                            tx.registerSynchronization(new ConnectionSynchronization(this));
-                        }
-                    }
 	            }
 	            else
 	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
@@ -384,17 +349,12 @@ public class ConnectionImple implements Connection
 	}
 
 	void closeImpl() throws SQLException {
-		try {
-			ConnectionManager.remove(this);
-			if (_theConnection != null && !_theConnection.isClosed()) {
-				_theConnection.close();
-			}
-			if (_transactionalDriverXAConnectionConnection != null) {
-				_transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
-			}
-		} finally {
-			_theConnection = null;
-			_transactionalDriverXAConnectionConnection = null;
+		ConnectionManager.remove(this);
+		if (_theConnection != null && !_theConnection.isClosed()) {
+			_theConnection.close();
+		}
+		if (_transactionalDriverXAConnectionConnection != null) {
+			_transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
 		}
 	}
 
@@ -1006,12 +966,36 @@ public class ConnectionImple implements Connection
 					throw new SQLException(
 							"ConnectionImple.registerDatabase - "
 									+ jdbcLogger.i18NLogger.get_enlistfailed());
-				}
+				} else {
+					getModifier();
 
-				params = null;
-				xares = null;
-				tx = null;
-				tm = null;
+					if (_theModifier == null) {
+						jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
+
+						// no indication about connections, so assume close immediately
+
+	                    /*
+						 * Don't return just yet. Drop through bottom of these clauses and
+	                     * close _theConnection and _recoveryConnection.
+	                     *
+	                     * delayClose is false at this point.
+	                     *
+	                     * JBTM-789.
+	                     */
+					} else {
+						if (((ConnectionModifier) _theModifier).supportsMultipleConnections()) {
+	                        /*
+	                         * We can't close the connection until the transaction has
+	                         * terminated, so register a Synchronization here.
+	                         */
+
+							jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
+
+							delayClose = true;
+							tx.registerSynchronization(new ConnectionSynchronization(this));
+						}
+					}
+				}
 			}
 			catch (RollbackException e1)
 			{
@@ -1110,4 +1094,5 @@ public class ConnectionImple implements Connection
 
 	private static final int _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
 
+	private boolean delayClose = false;
 }
