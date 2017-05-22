@@ -296,6 +296,7 @@ public class ConnectionImple implements Connection
 	 * This needs to be reworked in light of experience and requirements.
 	 */
 	public void close() throws SQLException {
+		jdbcLogger.logger.trace("Connection closed: " + this);
 
 	    try
 	    {
@@ -317,10 +318,8 @@ public class ConnectionImple implements Connection
 	        {
 	            if (_transactionalDriverXAConnectionConnection.validTransaction(tx))
 	            {
-	                XAResource xares = _transactionalDriverXAConnectionConnection.getResource();
-
-	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(xares, XAResource.TMSUCCESS)) ||
-                            (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(xares, XAResource.TMFAIL)))
+	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMSUCCESS)) ||
+                            (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMFAIL)))
 	                    throw new SQLException(
 	                            jdbcLogger.i18NLogger.get_delisterror());
 	            }
@@ -343,18 +342,23 @@ public class ConnectionImple implements Connection
 	        throw sqlException;
 	    } finally {
 			if (!delayClose) {
-				closeImpl();
+				closeImpl(true);
+			} else {
+				closeCalled = true;
 			}
 		}
 	}
 
-	void closeImpl() throws SQLException {
+	void closeImpl(boolean needsClose) throws SQLException {
+		jdbcLogger.logger.trace("Connection closeImpl: " + this);
 		ConnectionManager.remove(this);
-		if (_theConnection != null && !_theConnection.isClosed()) {
-			_theConnection.close();
-		}
-		if (_transactionalDriverXAConnectionConnection != null) {
-			_transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
+		if (closeCalled || needsClose) {
+			if (_theConnection != null && !_theConnection.isClosed()) {
+				_theConnection.close();
+			}
+			if (_transactionalDriverXAConnectionConnection != null) {
+				_transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
+			}
 		}
 	}
 
@@ -811,7 +815,7 @@ public class ConnectionImple implements Connection
 	{
 		try
 		{
-			closeImpl();
+			closeImpl(true);
 		}
 		catch (Exception ex)
 		{
@@ -820,6 +824,7 @@ public class ConnectionImple implements Connection
 
 	final java.sql.Connection getConnection() throws SQLException
 	{
+		closeCalled = false;
 		if (_theConnection != null && !_theConnection.isClosed())
 			return _theConnection;
 
@@ -903,6 +908,7 @@ public class ConnectionImple implements Connection
             jdbcLogger.logger.trace("ConnectionImple.registerDatabase ()");
         }
 
+        boolean needsClose = _theConnection == null;
 		Connection theConnection = getConnection();
 
 		if (theConnection != null)
@@ -915,8 +921,12 @@ public class ConnectionImple implements Connection
 						.transactionManager();
 				javax.transaction.Transaction tx = tm.getTransaction();
 
-				if (tx == null)
+				if (tx == null) {
+					delayClose = false;
+
 					return;
+				}
+
 
 				/*
 				 * Already enlisted with this transaction?
@@ -992,7 +1002,7 @@ public class ConnectionImple implements Connection
 							jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
 
 							delayClose = true;
-							tx.registerSynchronization(new ConnectionSynchronization(this));
+							tx.registerSynchronization(new ConnectionSynchronization(this, needsClose));
 						}
 					}
 				}
@@ -1095,4 +1105,6 @@ public class ConnectionImple implements Connection
 	private static final int _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
 
 	private boolean delayClose = false;
+
+	private boolean closeCalled;
 }
