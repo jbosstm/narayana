@@ -246,7 +246,8 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
             if (_theConnection != null)
             {
                 _theConnection.close();
-                _theConnection = null;
+				_theConnection = null;
+				reset();
             }
         }
     }
