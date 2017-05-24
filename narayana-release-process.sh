@@ -18,6 +18,12 @@ if [ $# -eq 0 ]; then
   CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
   NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
   NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
+elif [ $# -eq 1 ]; then
+  . scripts/pre-release-vars.sh
+  CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
+  NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
+  NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
+  WFLYISSUE=$1
 elif [ $# -lt 2 ]; then
   echo 1>&2 "$0: not enough arguments: CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
   exit 2
