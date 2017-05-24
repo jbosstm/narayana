@@ -33,6 +33,15 @@
     <artifactId>tomcat-all</artifactId>
     <packaging>pom</packaging>
     <name>Narayana: Tomcat integration</name>
+    <build>
+      <plugins>
+        <plugin>
+          <inherited>false</inherited>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+        </plugin>
+      </plugins>
+    </build>
     <modules>
         <module>tomcat-jta</module>
     </modules>
