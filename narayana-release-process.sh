@@ -38,9 +38,9 @@ then
   read -p "Enter WFLY issue: " WFLYISSUE
   if [ ! -d "jboss-as" ]
   then
-    (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream-wildfly git@github.com:wildfly/wildfly.git)
+    (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
   fi
-  (cd jboss-as; git fetch upstream-wildfly; git checkout -b ${WFLYISSUE}; git reset --hard upstream-wildfly/master)
+  (cd jboss-as; git fetch upstream; git checkout -b ${WFLYISSUE}; git reset --hard upstream/master)
   cd jboss-as
   CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   if [[ $(uname) == CYGWIN* ]]
