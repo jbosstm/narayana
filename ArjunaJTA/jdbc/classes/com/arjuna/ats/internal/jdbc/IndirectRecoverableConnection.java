@@ -379,7 +379,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	    if (_theDataSource == null)
 		createDataSource();
 
-	    if ((_user == null) && (_passwd == null))
+	    if ((_user == null || _user.isEmpty()) && (_passwd == null || _passwd.isEmpty()))
 		_theConnection = _theDataSource.getXAConnection();
 	    else
 		_theConnection = _theDataSource.getXAConnection(_user, _passwd);
