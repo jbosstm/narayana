@@ -270,7 +270,7 @@ public class ProvidedXADataSourceConnection implements ConnectionControl, Transa
 
 	    try
 	    {
-		if ((_user == null) && (_passwd == null))
+		if ((_user == null || _user.isEmpty()) && (_passwd == null || _passwd.isEmpty()))
 		{
 		    if (jdbcLogger.logger.isTraceEnabled()) {
                 jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection with no user");
