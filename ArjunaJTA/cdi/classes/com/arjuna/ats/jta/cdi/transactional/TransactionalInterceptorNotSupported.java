@@ -43,7 +43,7 @@ public class TransactionalInterceptorNotSupported extends TransactionalIntercept
     }
 
     @AroundInvoke
-    public Object intercept(InvocationContext ic) throws Exception {
+    public Object intercept(InvocationContext ic) throws Throwable {
         return super.intercept(ic);
     }
 

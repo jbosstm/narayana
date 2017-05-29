@@ -69,7 +69,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         this.userTransactionAvailable = userTransactionAvailable;
     }
 
-    public Object intercept(InvocationContext ic) throws Exception {
+    public Object intercept(InvocationContext ic) throws Throwable {
 
         final TransactionManager tm = getTransactionManager();
         final Transaction tx = tm.getTransaction();
@@ -82,7 +82,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         }
     }
 
-    protected abstract Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception;
+    protected abstract Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Throwable;
 
     private Transactional getTransactional(InvocationContext ic) {
 
@@ -111,14 +111,14 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         throw new RuntimeException(jtaLogger.i18NLogger.get_expected_transactional_annotation());
     }
 
-    protected Object invokeInOurTx(InvocationContext ic, TransactionManager tm) throws Exception {
+    protected Object invokeInOurTx(InvocationContext ic, TransactionManager tm) throws Throwable {
 
         tm.begin();
         Transaction tx = tm.getTransaction();
 
         try {
             return ic.proceed();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handleException(ic, e, tx);
         } finally {
             endTransaction(tm, tx);
@@ -126,11 +126,11 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         throw new RuntimeException("UNREACHABLE");
     }
 
-    protected Object invokeInCallerTx(InvocationContext ic, Transaction tx) throws Exception {
+    protected Object invokeInCallerTx(InvocationContext ic, Transaction tx) throws Throwable {
 
         try {
             return ic.proceed();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handleException(ic, e, tx);
         }
         throw new RuntimeException("UNREACHABLE");
@@ -141,26 +141,25 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         return ic.proceed();
     }
 
-    protected void handleException(InvocationContext ic, Exception e, Transaction tx) throws Exception {
+    protected void handleException(InvocationContext ic, Throwable e, Transaction tx) throws Throwable {
 
         Transactional transactional = getTransactional(ic);
 
-        for (Class dontRollbackOnClass : transactional.dontRollbackOn()) {
+        for (Class<?> dontRollbackOnClass : transactional.dontRollbackOn()) {
             if (dontRollbackOnClass.isAssignableFrom(e.getClass())) {
                 throw e;
             }
         }
 
-        for (Class rollbackOnClass : transactional.rollbackOn()) {
+        for (Class<?> rollbackOnClass : transactional.rollbackOn()) {
             if (rollbackOnClass.isAssignableFrom(e.getClass())) {
                 tx.setRollbackOnly();
                 throw e;
             }
         }
 
-        if (e instanceof RuntimeException) {
+        if (transactional.rollbackOn().length == 0) {
             tx.setRollbackOnly();
-            throw e;
         }
 
         throw e;

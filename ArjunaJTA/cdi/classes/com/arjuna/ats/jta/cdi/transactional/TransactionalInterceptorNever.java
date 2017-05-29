@@ -47,7 +47,7 @@ public class TransactionalInterceptorNever extends TransactionalInterceptorBase 
     }
 
     @AroundInvoke
-    public Object intercept(InvocationContext ic) throws Exception {
+    public Object intercept(InvocationContext ic) throws Throwable {
         return super.intercept(ic);
     }
 
