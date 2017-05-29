@@ -360,7 +360,7 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 		    _theDataSource = _dynamicConnection.getDataSource(_dbName);
 		}
 
-		if ((_user == null) && (_passwd == null))
+		if ((_user == null || _user.isEmpty()) && (_passwd == null || _passwd.isEmpty()))
 		{
 		    if (jdbcLogger.logger.isTraceEnabled()) {
                 jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection with no user");
