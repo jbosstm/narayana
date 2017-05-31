@@ -211,6 +211,11 @@ public class XARecoveryModule implements RecoveryModule
 
 	public synchronized void periodicWorkSecondPass()
 	{
+	    if (getScanState() == ScanStates.IDLE) {
+	        // a call to getNewXAResource must have already ran the second pass so it is safe to return
+			return;
+		}
+
         setScanState(ScanStates.SECOND_PASS);
 
 		if (jtaLogger.logger.isDebugEnabled())
