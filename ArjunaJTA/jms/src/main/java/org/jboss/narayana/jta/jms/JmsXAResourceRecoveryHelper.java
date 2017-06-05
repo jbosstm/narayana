@@ -21,10 +21,7 @@
  */
 package org.jboss.narayana.jta.jms;
 
-import javax.jms.JMSException;
-import javax.jms.XAConnection;
 import javax.jms.XAConnectionFactory;
-import javax.jms.XASession;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -37,26 +34,18 @@ import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
  */
 public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XAResource {
 
-    private final XAConnectionFactory xaConnectionFactory;
-
-    private final String user;
-
-    private final String pass;
-
-    private XAConnection xaConnection;
-
-    private XASession xaSession;
-
-    private XAResource delegate;
+    private final ConnectionManager connectionManager;
 
     public JmsXAResourceRecoveryHelper(XAConnectionFactory xaConnectionFactory) {
         this(xaConnectionFactory, null, null);
     }
 
     public JmsXAResourceRecoveryHelper(XAConnectionFactory xaConnectionFactory, String user, String pass) {
-        this.xaConnectionFactory = xaConnectionFactory;
-        this.user = user;
-        this.pass = pass;
+        this(new ConnectionManager(xaConnectionFactory, user, pass));
+    }
+
+    public JmsXAResourceRecoveryHelper(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
     }
 
     /**
@@ -82,31 +71,31 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public XAResource[] getXAResources() {
-        if (connect()) {
-            if (jtaLogger.logger.isTraceEnabled()) {
-                jtaLogger.logger.trace("Returning XA resource: " + this);
+        if (!connectionManager.isConnected()) {
+            try {
+                connectionManager.connect();
+            } catch (XAException ignored) {
+                return new XAResource[0];
             }
-
-            return new XAResource[] { this };
         }
 
-        return new XAResource[0];
+        return new XAResource[] { this };
     }
 
     /**
      * Delegates XAResource#recover call to the connected JMS resource. If provided argument is XAResource.TMENDRSCAN, then JMS
      * connection will be closed at the end of the call.
      *
-     * @param i
+     * @param flag
      * @throws XAException
      */
     @Override
-    public Xid[] recover(int i) throws XAException {
+    public Xid[] recover(int flag) throws XAException {
         try {
-            return delegate.recover(i);
+            return connectionManager.connectAndApply(delegate -> delegate.recover(flag));
         } finally {
-            if (i == XAResource.TMENDRSCAN) {
-                disconnect();
+            if (flag == XAResource.TMENDRSCAN) {
+                connectionManager.disconnect();
             }
         }
     }
@@ -115,24 +104,24 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      * Delegates XAResource#start call to the connected JMS resource.
      *
      * @param xid
-     * @param i
+     * @param flag
      * @throws XAException
      */
     @Override
-    public void start(Xid xid, int i) throws XAException {
-        delegate.start(xid, i);
+    public void start(Xid xid, int flag) throws XAException {
+        connectionManager.connectAndAccept(delegate -> delegate.start(xid, flag));
     }
 
     /**
      * Delegates XAResource#end call to the connected JMS resource.
      *
      * @param xid
-     * @param i
+     * @param flag
      * @throws XAException
      */
     @Override
-    public void end(Xid xid, int i) throws XAException {
-        delegate.end(xid, i);
+    public void end(Xid xid, int flag) throws XAException {
+        connectionManager.connectAndAccept(delegate -> delegate.end(xid, flag));
     }
 
     /**
@@ -144,7 +133,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public int prepare(Xid xid) throws XAException {
-        return delegate.prepare(xid);
+        return connectionManager.connectAndApply(delegate -> delegate.prepare(xid));
     }
 
     /**
@@ -155,8 +144,8 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      * @throws XAException
      */
     @Override
-    public void commit(Xid xid, boolean b) throws XAException {
-        delegate.commit(xid, b);
+    public void commit(Xid xid, boolean onePhase) throws XAException {
+        connectionManager.connectAndAccept(delegate -> delegate.commit(xid, onePhase));
     }
 
     /**
@@ -167,7 +156,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public void rollback(Xid xid) throws XAException {
-        delegate.rollback(xid);
+        connectionManager.connectAndAccept(delegate -> delegate.rollback(xid));
     }
 
     /**
@@ -179,7 +168,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public boolean isSameRM(XAResource xaResource) throws XAException {
-        return delegate.isSameRM(xaResource);
+        return connectionManager.connectAndApply(delegate -> delegate.isSameRM(xaResource));
     }
 
     /**
@@ -190,7 +179,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public void forget(Xid xid) throws XAException {
-        delegate.forget(xid);
+        connectionManager.connectAndAccept(delegate -> delegate.forget(xid));
     }
 
     /**
@@ -201,56 +190,19 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      */
     @Override
     public int getTransactionTimeout() throws XAException {
-        return delegate.getTransactionTimeout();
+        return connectionManager.connectAndApply(XAResource::getTransactionTimeout);
     }
 
     /**
      * Delegates XAResource#setTransactionTimeout call to the connected JMS resource.
      *
-     * @param i
+     * @param seconds
      * @return True if transaction timeout was set, or false if wasn't.
      * @throws XAException
      */
     @Override
-    public boolean setTransactionTimeout(int i) throws XAException {
-        return delegate.setTransactionTimeout(i);
-    }
-
-    private boolean connect() {
-        if (delegate != null) {
-            return true;
-        }
-
-        try {
-            xaConnection = createXAConnection();
-            xaSession = xaConnection.createXASession();
-            delegate = xaSession.getXAResource();
-        } catch (JMSException e) {
-            jtaLogger.i18NLogger.warn_failed_to_create_jms_connection(e);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void disconnect() {
-        try {
-            xaConnection.close();
-        } catch (JMSException e) {
-            jtaLogger.i18NLogger.warn_failed_to_close_jms_connection(xaConnection.toString(), e);
-        } finally {
-            xaConnection = null;
-            xaSession = null;
-            delegate = null;
-        }
-    }
-
-    private XAConnection createXAConnection() throws JMSException {
-        if (user == null && pass == null) {
-            return xaConnectionFactory.createXAConnection();
-        }
-
-        return xaConnectionFactory.createXAConnection(user, pass);
+    public boolean setTransactionTimeout(int seconds) throws XAException {
+        return connectionManager.connectAndApply(delegate -> delegate.setTransactionTimeout(seconds));
     }
 
 }

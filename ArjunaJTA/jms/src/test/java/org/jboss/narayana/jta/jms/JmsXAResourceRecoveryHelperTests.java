@@ -27,16 +27,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.jms.JMSException;
-import javax.jms.XAConnection;
-import javax.jms.XAConnectionFactory;
-import javax.jms.XASession;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,153 +46,123 @@ import static org.mockito.Mockito.when;
 public class JmsXAResourceRecoveryHelperTests {
 
     @Mock
-    private XAConnectionFactory xaConnectionFactoryMock;
-
-    @Mock
-    private XAConnection xaConnectionMock;
-
-    @Mock
-    private XASession xaSessionMock;
-
-    @Mock
-    private XAResource xaResourceMock;
+    private ConnectionManager connectionManager;
 
     private JmsXAResourceRecoveryHelper recoveryHelper;
 
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        when(xaConnectionFactoryMock.createXAConnection()).thenReturn(xaConnectionMock);
-        when(xaConnectionMock.createXASession()).thenReturn(xaSessionMock);
-        when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
 
-        recoveryHelper = new JmsXAResourceRecoveryHelper(xaConnectionFactoryMock);
+        recoveryHelper = new JmsXAResourceRecoveryHelper(connectionManager);
     }
 
     @Test
-    public void shouldCreateConnectionAndGetXAResource() throws JMSException {
-        when(xaConnectionFactoryMock.createXAConnection(anyString(), anyString())).thenReturn(xaConnectionMock);
-        recoveryHelper = new JmsXAResourceRecoveryHelper(xaConnectionFactoryMock, "username", "password");
+    public void shouldCreateConnectionAndGetXAResource() throws XAException {
+        when(connectionManager.isConnected()).thenReturn(false);
 
         XAResource[] xaResources = recoveryHelper.getXAResources();
 
         assertEquals(1, xaResources.length);
         assertThat(xaResources[0], sameInstance(recoveryHelper));
-        verify(xaConnectionFactoryMock, times(1)).createXAConnection("username", "password");
-        verify(xaConnectionMock, times(1)).createXASession();
-        verify(xaSessionMock, times(1)).getXAResource();
+        verify(connectionManager, times(1)).isConnected();
+        verify(connectionManager, times(1)).connect();
     }
 
     @Test
-    public void shouldCreateConnectionWithCredentialsAndGetXAResource() throws JMSException {
+    public void shouldGetXAResourceWithoutConnecting() throws XAException {
+        when(connectionManager.isConnected()).thenReturn(true);
+
         XAResource[] xaResources = recoveryHelper.getXAResources();
 
         assertEquals(1, xaResources.length);
         assertThat(xaResources[0], sameInstance(recoveryHelper));
-        verify(xaConnectionFactoryMock, times(1)).createXAConnection();
-        verify(xaConnectionMock, times(1)).createXASession();
-        verify(xaSessionMock, times(1)).getXAResource();
+        verify(connectionManager, times(1)).isConnected();
+        verify(connectionManager, times(0)).connect();
     }
 
     @Test
-    public void shouldFailToCreateConnectionAndNotGetXAResource() throws JMSException {
-        when(xaConnectionMock.createXASession()).thenThrow(new JMSException("Test exception"));
+    public void shouldFailToCreateConnectionAndNotGetXAResource() throws XAException{
+        when(connectionManager.isConnected()).thenReturn(false);
+        doThrow(new XAException("test")).when(connectionManager).connect();
 
         XAResource[] xaResources = recoveryHelper.getXAResources();
 
         assertEquals(0, xaResources.length);
-        verify(xaConnectionFactoryMock, times(1)).createXAConnection();
-        verify(xaConnectionMock, times(1)).createXASession();
-        verify(xaSessionMock, times(0)).getXAResource();
+        verify(connectionManager, times(1)).isConnected();
+        verify(connectionManager, times(1)).connect();
     }
 
     @Test
     public void shouldDelegateRecoverCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.recover(XAResource.TMSTARTRSCAN);
-
-        verify(xaResourceMock, times(1)).recover(XAResource.TMSTARTRSCAN);
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
+        verify(connectionManager, times(0)).disconnect();
     }
 
     @Test
     public void shouldDelegateRecoverCallAndCloseConnection() throws XAException, JMSException {
-        recoveryHelper.getXAResources();
         recoveryHelper.recover(XAResource.TMENDRSCAN);
-
-        verify(xaResourceMock, times(1)).recover(XAResource.TMENDRSCAN);
-        verify(xaConnectionMock, times(1)).close();
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
+        verify(connectionManager, times(1)).disconnect();
     }
 
     @Test
     public void shouldDelegateStartCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.start(null, 0);
-
-        verify(xaResourceMock, times(1)).start(null, 0);
+        verify(connectionManager, times(1)).connectAndAccept(anyObject());
     }
 
     @Test
     public void shouldDelegateEndCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.end(null, 0);
-
-        verify(xaResourceMock, times(1)).end(null, 0);
+        verify(connectionManager, times(1)).connectAndAccept(anyObject());
     }
 
     @Test
     public void shouldDelegatePrepareCall() throws XAException {
-        recoveryHelper.getXAResources();
-        recoveryHelper.prepare(null);
-
-        verify(xaResourceMock, times(1)).prepare(null);
+        when(connectionManager.connectAndApply(anyObject())).thenReturn(10);
+        assertEquals(10, recoveryHelper.prepare(null));
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
     }
 
     @Test
     public void shouldDelegateCommitCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.commit(null, true);
-
-        verify(xaResourceMock, times(1)).commit(null, true);
+        verify(connectionManager, times(1)).connectAndAccept(anyObject());
     }
 
     @Test
     public void shouldDelegateRollbackCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.rollback(null);
-
-        verify(xaResourceMock, times(1)).rollback(null);
+        verify(connectionManager, times(1)).connectAndAccept(anyObject());
     }
 
     @Test
     public void shouldDelegateIsSameRMCall() throws XAException {
-        recoveryHelper.getXAResources();
-        recoveryHelper.isSameRM(null);
-
-        verify(xaResourceMock, times(1)).isSameRM(null);
+        when(connectionManager.connectAndApply(anyObject())).thenReturn(true);
+        assertTrue(recoveryHelper.isSameRM(null));
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
     }
 
     @Test
     public void shouldDelegateForgetCall() throws XAException {
-        recoveryHelper.getXAResources();
         recoveryHelper.forget(null);
-
-        verify(xaResourceMock, times(1)).forget(null);
+        verify(connectionManager, times(1)).connectAndAccept(anyObject());
     }
 
     @Test
     public void shouldDelegateGetTransactionTimeoutCall() throws XAException {
-        recoveryHelper.getXAResources();
-        recoveryHelper.getTransactionTimeout();
-
-        verify(xaResourceMock, times(1)).getTransactionTimeout();
+        when(connectionManager.connectAndApply(anyObject())).thenReturn(10);
+        assertEquals(10, recoveryHelper.getTransactionTimeout());
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
     }
 
     @Test
     public void shouldDelegateSetTransactionTimeoutCall() throws XAException {
-        recoveryHelper.getXAResources();
-        recoveryHelper.setTransactionTimeout(0);
-
-        verify(xaResourceMock, times(1)).setTransactionTimeout(0);
+        when(connectionManager.connectAndApply(anyObject())).thenReturn(true);
+        assertTrue(recoveryHelper.setTransactionTimeout(0));
+        verify(connectionManager, times(1)).connectAndApply(anyObject());
     }
 
 }
