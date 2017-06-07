@@ -47,12 +47,12 @@ public class TransactionalInterceptorMandatory extends TransactionalInterceptorB
     }
 
     @AroundInvoke
-    public Object intercept(InvocationContext ic) throws Exception {
+    public Object intercept(InvocationContext ic) throws Throwable {
         return super.intercept(ic);
     }
 
     @Override
-    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
+    protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Throwable {
         if (tx == null) {
             throw new TransactionalException(jtaLogger.i18NLogger.get_tx_required(), new TransactionRequiredException());
         }
