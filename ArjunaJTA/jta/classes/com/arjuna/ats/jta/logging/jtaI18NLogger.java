@@ -25,15 +25,18 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
-
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * i18n log messages for the jta module.
@@ -424,8 +427,8 @@ public interface jtaI18NLogger {
 	@Message(id = 16100, value = "Xid unset", format = MESSAGE_FORMAT)
 	public String get_xa_xidunset();
 
-	@Message(id = 16101, value = "Could not pack XidImple.", format = MESSAGE_FORMAT)
-	public String get_xid_packerror();
+	@Message(id = 16101, value = "Could not pack XidImple {0}", format = MESSAGE_FORMAT)
+	public String get_xid_packerror(Xid xid);
 
     @Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
    	public String get_transaction_arjunacore_inactive(Uid arg0);
@@ -523,6 +526,14 @@ public interface jtaI18NLogger {
 	@Message(id = 16129, value = "Could not end XA resource {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_could_not_end_xar(XAResource xar, @Cause() XAException e1);
+
+	@Message(id = 16130, value = "Can't packt into output object state {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cant_pack_into_output_object_state(OutputObjectState os, @Cause() Exception e);
+
+	@Message(id = 16131, value = "Can't create a new instance of Xid of uid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cant_pack_into_output_object_state(Uid id, boolean branch, Integer eisName, @Cause() Exception e);
 
     /*
         Allocate new messages directly above this notice.

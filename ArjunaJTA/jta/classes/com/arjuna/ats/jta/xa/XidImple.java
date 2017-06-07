@@ -89,10 +89,10 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 	public XidImple(Uid id, boolean branch, Integer eisName) {
 		try {
-			_theXid = XATxConverter.getXid(id, branch, eisName);
+			_theXid = XATxConverter.getJtaXid(id, branch, eisName);
 		} catch (Exception e) {
 			_theXid = null;
-			e.printStackTrace();
+			jtaLogger.i18NLogger.warn_cant_pack_into_output_object_state(id, branch, eisName, e);
 
 			// abort or throw exception?
 		}
@@ -249,7 +249,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 			result = true;
 		} catch (Exception e) {
-			e.printStackTrace();
+		    jtaLogger.i18NLogger.warn_cant_pack_into_output_object_state(os, e);
 
 			result = false;
 		}
@@ -273,6 +273,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 			result = true;
 		} catch (Exception e) {
+		    jtaLogger.logger.debug("Can't unpack from input object state " + os, e);
 			result = false;
 		}
 
@@ -287,7 +288,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 			os.packBoolean(true);
 
 			if (!x.packInto(os))
-				throw new IOException(jtaLogger.i18NLogger.get_xid_packerror());
+				throw new IOException(jtaLogger.i18NLogger.get_xid_packerror(xid));
 		} else {
 			os.packBoolean(false);
 
@@ -319,6 +320,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 				return x;
 			} catch (Exception e) {
+			    jtaLogger.logger.debug("Can't unpack input object state " + os, e);
 				IOException ioException = new IOException(e.toString());
 				ioException.initCause(e);
 				throw ioException;

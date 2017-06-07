@@ -1453,8 +1453,8 @@ public interface arjunaI18NLogger {
 //    public void warn_recovery_ExpiredEntryMonitor_6(@Cause() Throwable arg0);
 
     @Message(id = 12361, value = "Error constructing mbean", format = MESSAGE_FORMAT)
-    @LogMessage(level = INFO)
-    public void info_osb_MBeanCtorFail(@Cause() Throwable arg0);
+    @LogMessage(level = WARN)
+    public void warn_osb_MBeanCtorFail(@Cause() Throwable arg0);
 
     @Message(id = 12362, value = "Failed to create StateManagerWrapper", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)

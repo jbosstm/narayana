@@ -237,6 +237,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (WrongTransaction wt)
 			{
+                jtaxLogger.i18NLogger.warn_get_jtax_transaction_jts_wrongstatetx(_theTransaction, wt);
                 InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
                         jtaxLogger.i18NLogger.get_jtax_transaction_jts_wrongstatetx());
                 inactiveTransactionException.initCause(wt);

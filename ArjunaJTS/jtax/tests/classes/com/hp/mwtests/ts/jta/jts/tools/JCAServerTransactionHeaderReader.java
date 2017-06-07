@@ -49,8 +49,10 @@ public class JCAServerTransactionHeaderReader extends ServerTransactionHeaderRea
     protected HeaderState unpackHeader(InputObjectState os) throws IOException {
         wasInvoked = true;
 
-        if (os.unpackBoolean())
+        if (os.unpackBoolean()) {
             new XidImple().unpackFrom(os);
+            String parentNodeName = os.unpackString();
+        }
 
         return super.unpackHeader(os);
     }

@@ -54,8 +54,9 @@ public class XATxConverter
 	private static XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin =
             jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
     public static final int FORMAT_ID = 131077; // different from JTS ones.
+    public static final int JTS_FORMAT_ID = 131072;
 
-    static XID getXid (Uid uid, boolean branch, Integer eisName) throws IllegalStateException
+    static XID getJtaXid (Uid uid, boolean branch, Integer eisName) throws IllegalStateException
     {
         if (branch)
             return getXid(uid, new Uid(), FORMAT_ID, eisName);
@@ -151,10 +152,7 @@ public class XATxConverter
     }
 
 	public static String getNodeName(XID xid) {
-		// Arjuna.XID()
-		// don't check the formatId - it may differ e.g. JTA vs. JTS.
-		if (xid.formatID != FORMAT_ID && xid.formatID != 131072
-				&& xid.formatID != 131080) {
+		if (!isNodeNameFormatId(xid.formatID)) {
 			return null;
 		}
 
@@ -169,7 +167,7 @@ public class XATxConverter
 	}
 
 	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
-		if (theXid == null || theXid.formatID != FORMAT_ID) {
+		if (theXid == null || !isNodeNameFormatId(theXid.formatID)) {
 			return;
 		}
 		int length = 0;
@@ -188,9 +186,7 @@ public class XATxConverter
 		theXid.bqual_length = Uid.UID_SIZE+4+4+length;
 	}
 	public static String getSubordinateNodeName(XID xid) {
-		// Arjuna.XID()
-		// don't check the formatId - it may differ e.g. JTA vs. JTS.
-		if (xid.formatID != FORMAT_ID) {
+		if (!isNodeNameFormatId(xid.formatID)) {
 			return null;
 		}
 
@@ -296,5 +292,9 @@ public class XATxConverter
         stringBuilder.append(" >");
 
         return stringBuilder.toString();
+    }
+
+    public static boolean isNodeNameFormatId(int xidFormatId) {
+        return xidFormatId == FORMAT_ID || xidFormatId == JTS_FORMAT_ID;
     }
 }

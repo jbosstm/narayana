@@ -45,18 +45,19 @@ public class TestXAResource implements XAResource {
 	}
 
 	public int prepare(Xid xid) throws XAException {
+		System.out.println("prepared, xid: " + xid);
 		this.xid = xid;
 		return XA_OK;
 	}
 
 	public void commit(Xid id, boolean onePhase) throws XAException {
-		System.out.println("committed");
+		System.out.println("committed, xid: " + xid + ", onephase: " + onePhase);
 		xid = null;
 		commitCount++;
 	}
 
 	public void rollback(Xid xid) throws XAException {
-		System.out.println("rolled back");
+		System.out.println("rolled back, xid: " + xid);
 		xid = null;
 		rollbackCount++;
 	}

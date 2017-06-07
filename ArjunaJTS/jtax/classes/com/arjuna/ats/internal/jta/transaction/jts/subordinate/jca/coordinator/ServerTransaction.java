@@ -36,9 +36,17 @@ import java.io.IOException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.Header;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
+import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * This looks like an Transaction, but is only created for importing
@@ -62,13 +70,43 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		super(actUid, null);
 		
 		// convert to internal format (makes saving/restoring easier)
-		
-		_theXid = new XidImple(xid);
+
+		if (xid != null && xid.getFormatId() == com.arjuna.ats.jts.extensions.Arjuna.XID()) {
+			XidImple toImport = new XidImple(xid);
+			XID toCheck = toImport.getXID();
+			_parentNodeName = XATxConverter.getSubordinateNodeName(toCheck);
+			if (_parentNodeName == null) {
+				_parentNodeName = XATxConverter.getNodeName(toCheck);
+			}
+			XATxConverter.setSubordinateNodeName(toImport.getXID(), TxControl.getXANodeName());
+			_theXid = new XidImple(toImport);
+		} else {
+			_theXid = new XidImple(xid);
+		}
 	}
 
 	public ServerTransaction (Uid actId)
 	{
 		super(actId);
+
+		try {
+			InputObjectState os = StoreManager.getParticipantStore().read_committed(objectUid, type());
+			if (os == null) {
+			    // This will have been logged by the ObjectStore during ShadowingStore::read_state as an INFO if there was no content
+				return;
+			}
+
+			if (os.unpackBoolean()) {  // have you got a xid
+				_theXid = new XidImple();
+
+				((XidImple) _theXid).unpackFrom(os);
+				_parentNodeName = os.unpackString();
+			}
+		} catch (Exception e) {
+			jtaxLogger.i18NLogger.warn_cant_read_nodename_from_objectstore(actId, e);
+			_theXid = null;
+			return;
+		}
 		
 		if (!activate())  // if this fails we'll retry recovery periodically.\
 		{
@@ -79,6 +117,11 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	public final Xid getXid ()
 	{
 		return _theXid;
+	}
+
+	public String getParentNodeName()
+	{
+		return _parentNodeName;
 	}
 	
 	public String type ()
@@ -100,9 +143,11 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	{
 		try
 		{
+
 			if (_theXid != null) {
 				os.packBoolean(true);
 				_theXid.packInto(os);
+				os.packString(_parentNodeName);
 			} else {
 				os.packBoolean(false);
 			}
@@ -111,7 +156,7 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			jtaxLogger.i18NLogger.warn_cant_save_state(os, ot, e);
 		}
 
 		return false;
@@ -122,26 +167,29 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		try
 		{
 			_theXid = null;
-			
+
 			boolean haveXid = os.unpackBoolean();
 
 			if (haveXid)
 			{
 				_theXid = new XidImple();
-				
+
 				_theXid.unpackFrom(os);
+				_parentNodeName = os.unpackString();
+
 			}
 			
 			return super.restore_state(os, ot);
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_cant_restore_state(os, ot, ex);
 		}
 
 		return false;
 	}
 
 	private XidImple _theXid;
+	private String _parentNodeName;
 	
 }

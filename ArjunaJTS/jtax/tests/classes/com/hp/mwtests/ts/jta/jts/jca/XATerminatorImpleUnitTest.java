@@ -46,6 +46,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManag
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
+import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
@@ -88,7 +89,7 @@ public class XATerminatorImpleUnitTest extends TestBase
     @Test
     public void testXARMERR () throws Exception {
         Uid uid = new Uid();
-        XidImple xid = new XidImple(uid);
+        Xid xid = XidUtils.getXid(uid, true);
         TransactionImporter imp = SubordinationManager.getTransactionImporter();
 
         SubordinateTransaction subordinateTransaction = imp.importTransaction(xid);

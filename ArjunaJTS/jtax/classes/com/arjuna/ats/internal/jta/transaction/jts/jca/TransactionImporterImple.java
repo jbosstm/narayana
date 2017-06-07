@@ -39,10 +39,15 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateXidImple;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jts.extensions.Arjuna;
+
 import org.jboss.tm.TransactionImportResult;
 
 public class TransactionImporterImple implements TransactionImporter
@@ -87,7 +92,7 @@ public class TransactionImporterImple implements TransactionImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		return addImportedTransaction(null, new SubordinateXidImple(xid), xid, timeout);
+		return addImportedTransaction(null, convertXid(xid), xid, timeout);
 	}
 
 	public SubordinateTransaction recoverTransaction (Uid actId) throws XAException
@@ -235,6 +240,17 @@ public class TransactionImporterImple implements TransactionImporter
 
 		return new TransactionImportResult(txn, isNew);
 	}
+
+    private XidImple convertXid(Xid xid)
+    {
+        if (xid != null && xid.getFormatId() == Arjuna.XID()) {
+            XidImple toImport = new XidImple(xid);
+            XATxConverter.setSubordinateNodeName(toImport.getXID(), TxControl.getXANodeName());
+            return new SubordinateXidImple(toImport);
+        } else {
+            return new SubordinateXidImple(xid);
+        }
+    }
 
 	private static ConcurrentHashMap<Xid, AtomicReference<SubordinateTransaction>> _transactions = new ConcurrentHashMap<>();
 }
