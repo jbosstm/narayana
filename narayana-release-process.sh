@@ -13,6 +13,10 @@ then
   exit
 fi
 
+command -v mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting."; exit 1; }
+command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
+command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct but it's not installed.  Aborting."; exit 1; }
+
 if [ $# -eq 0 ]; then
   . scripts/pre-release-vars.sh
   CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
