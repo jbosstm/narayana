@@ -113,6 +113,8 @@ public class RecordType
 
     public static final int RESTAT_RECORD = 165;
 
+    public static final int LRA_RECORD = 166;
+
     public static final int JTA_RECORD = 171;
 
     public static final int JTAX_RECORD = 172;

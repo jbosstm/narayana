@@ -1,0 +1,89 @@
+A JAX-RS implementation of the specification should be achievable via a set of CDI annotations. The service developer annotates resources to specify how LRAs should be controlled:
+
+Controlling the lifecyle of an LRA
+
+@LRA - the Type element of the LRA annotation indicates whether a bean method is to be executed within a compensatable transaction context. Supported types are:
+REQUIRED: a new LRA is started if none is present and ended when the method finishes
+REQUIRES_NEW: if there is already an LRA it is suspended an new one is started. When the method finishes any preexisting LRA is resumed, otherwise the new one is ended).
+MANDATORY: if there is no LRA present the method is not called and a PRECONDITION_FAILED status code is generated
+SUPPORTS: if there is already an LRA present the bean method will be called with it as the LRA context
+NOT_SUPPORTED: if there is already an LRA it is suspended (and resumed after the method finishes)
+NEVER: if there is already an LRA present the method is not called and a PRECONDITION_FAILED status code is generated
+
+The bean writer can also specify which http status codes returned by a bean method will cancel the LRA using the cancelOn or cancelOnFamily type elements which
+are arrays of HTTP status codes or status families.
+
+If an annotation causes an LRA to be started it will be ended when the bean method finishes. This behaviour can be overridden by setting the longRunning element to true.
+
+If there is an LRA present when a bean method is invoked it will still be active when the method finishes. This behaviour can be overridden by setting the terminal element to true.
+
+When an LRA is present it should be made available to the business logic via request and response headers (with the name "X-lra")
+
+Example:
+
+    @POST
+    @Path("/book")
+    @Produces(MediaType.APPLICATION_JSON)
+    // longRunning because we want the LRA to be associated with a booking until the user confirms the booking
+    @LRA(
+         value = LRA.Type.REQUIRED,
+         cancelOn = {Response.Status.INTERNAL_SERVER_ERROR} // cancel on a 500 code
+         cancelOnFamily = {Response.Status.Family.CLIENT_ERROR}, // cancel on any 4xx code
+         longRunning = true) // longRunning because we want the LRA to be associated with a booking until the user confirms the booking
+    public Response bookTrip(...) { ... }
+
+    @PUT
+    @Path("/complete")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @LRA(
+         LRA.Type.SUPPORTS,
+         terminal = true) // the confirmation should trigger the closing of the LRA started in the bookTrip bean method
+    public Booking confirmTrip(Booking booking) throws BookingException { ... }
+
+Compensating Activities
+
+Participants join LRAs using the @Compensate and @Complete annotations. When a bean method executes in the context of an LRA any methods
+in the bean class that are annotated with @Compensate, @Complete and @Status will be used to as the compensator and all three must be present.
+If an annotation is present on multilple methods an arbitrary one is chosen. When the LRA is closed the method annotated with @Complete will be invoked.
+Similarly if the @Compensate method will be invoked if the LRA is cancelled. For example
+
+@POST
+    @Path("/compensate")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Compensate
+    public Response compensateWork(@HeaderParam("X-lra") String lraId) { /* compensate for whatever activity the business logic has associated with lraId */}
+
+Nesting LRAs
+
+An activity can be scoped within an existing LRA using the @NestedLRA annotation. Invoking a method marked with this annotation will start a new LRA whose outcome
+depends upon whether the enclosing LRA is closed or canceled. If the nested LRA is closed but the outer LRA is canceled then the compensators registered with the
+nested LRA will be told to compensate. In the PoC there is no annotation to cancel a closed nested LRA so the demo uses an @Injected LRAClient bean (which encapsulates
+the spec API) to cancel the nested LRA (which then triggers the compensator that was registered with the @NestedLRA annoation).
+
+Timing out LRAs and Compensators
+
+The ability to compensate may be a transient capability of a service so compensators (and LRAs) can be timed out after wich the compensate is called (or LRA cancelled).
+To set such a time limit use the @TimeLimit annotation, for example:
+
+    @GET
+    @Path("/doitASAP")
+    @Produces(MediaType.APPLICATION_JSON)
+    @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
+    @LRA(value = LRA.Type.REQUIRED)
+    public Response theClockIsTicking(@HeaderParam(LRA_HTTP_HEADER) String lraId) {...}
+
+Leaving an LRA
+
+If a bean method annotated with @Leave is annotated in the context of a LRA then if the bean class has registered a compensator with the active
+ LRA it will be removed from the LRA (will not be asked to complete or compensate when the LRA is ended).
+
+Reporting the status of a compensator
+
+Compensators must provide a method for reporting the status of the compensator by annotating one of the methods with the @Status annotation.
+
+It is the responsibility of the service writer to return (as a String) a valid status value from the enum:
+
+ class enum CompensatorStatus {Compensating, Compensated, FailedToCompensate, Completing, Completed, FailedToComplete}
+
+If the compensator is in none of these states it should report the error using a BAD_REQUEST HTTP status code.
