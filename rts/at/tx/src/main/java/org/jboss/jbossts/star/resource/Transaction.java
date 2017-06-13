@@ -128,13 +128,17 @@ public class Transaction extends AtomicAction
         return recoveryUrl;
     }
 
+    protected RESTRecord getParticipantRecord(String txId, String coordinatorUrl, String participantUrl, String terminateUrl, String recoveryUrlBase) {
+        return new RESTRecord(txId, coordinatorUrl, participantUrl, terminateUrl);
+    }
+
     public String enlistParticipant(String coordinatorUrl, String participantUrl, String recoveryUrlBase,
                                     String terminateUrl) {
         if (findParticipant(participantUrl) != null)
             return null;    // already enlisted
 
         String txId = get_uid().fileStringForm();
-        RESTRecord p = new RESTRecord(txId, coordinatorUrl, participantUrl, terminateUrl);
+        RESTRecord p = getParticipantRecord(txId, coordinatorUrl, participantUrl, terminateUrl, recoveryUrlBase);
         String coordinatorId = p.get_uid().fileStringForm();
 
         recoveryUrl = recoveryUrlBase + txId + '/' + coordinatorId;
@@ -164,6 +168,7 @@ public class Transaction extends AtomicAction
 
         return null;
     }
+
     /**
      * Determine whether a participant is enlisted in this transaction and the commitment
      * is not running.
@@ -177,12 +182,7 @@ public class Transaction extends AtomicAction
     }
 
     public boolean forgetParticipant(String participantUrl) {
-        RESTRecord rr = findParticipant(participantUrl);
-
-        if (rr != null)
-            return pendingList.remove(rr);
-
-        return false;
+        return pendingList.remove(findParticipant(participantUrl));
     }
 
     public void getParticipants(Collection<String> enlistmentIds)
@@ -234,7 +234,7 @@ public class Transaction extends AtomicAction
     }
 
 
-    private RESTRecord findParticipant(String participantUrl) {
+    protected RESTRecord findParticipant(String participantUrl) {
         if (pendingList != null) {
             RecordListIterator i = new RecordListIterator(pendingList);
             AbstractRecord r;
@@ -323,7 +323,8 @@ public class Transaction extends AtomicAction
             }
         }
 
-        if (failedList == null || failedList.size() == 0) {
+        // for REST-AT tell the coordinator to clean up
+        if (coordinator != null && (failedList == null || failedList.size() == 0)) {
             coordinator.removeTxState(arjunaStatus, this, enlistmentIds);
         }
 

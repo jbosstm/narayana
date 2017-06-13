@@ -1,0 +1,3 @@
+org.jboss.narayana.rts.lra.filter.ClientLRAResponseFilter
+org.jboss.narayana.rts.lra.filter.ClientLRARequestFilter
+
