@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>rest-lra-parent</artifactId>
+        <version>5.6.0.Final-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>lra-test</artifactId>
+    <name>LRA Test</name>
+    <description>LRA Test</description>
+    <packaging>war</packaging>
+
+    <properties>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <swarm.http.port>8081</swarm.http.port>
+        <lra.http.host>localhost</lra.http.host>
+        <lra.http.port>8080</lra.http.port>
+        <service.http.port>${swarm.http.port}</service.http.port>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.swarm</groupId>
+                <artifactId>bom</artifactId>
+                <version>${version.wildfly-swarm}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <finalName>lra-test</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.swarm</groupId>
+                <artifactId>wildfly-swarm-plugin</artifactId>
+                <version>${version.wildfly-swarm}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <environment>
+                        <swarm.http.port>${swarm.http.port}</swarm.http.port>
+                    </environment>
+                    <properties>
+                        <lra.http.host>${lra.http.host}</lra.http.host>
+                        <lra.http.port>${lra.http.port}</lra.http.port>
+                        <service.http.port>${service.http.port}</service.http.port>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- WildFly Swarm Fractions -->
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>microprofile</artifactId>
+        </dependency>
+
+         <!-- LRA JAXRS filters -->
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-filters</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- JAXRS 2 Client API implementation -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${version.resteasy-client}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
