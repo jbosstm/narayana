@@ -26,12 +26,16 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
+import javax.transaction.xa.Xid;
+
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 
 /**
  * i18n log messages for the jts module.
@@ -1073,6 +1077,14 @@ public interface jtsI18NLogger {
 	@Message(id = 22263, value = "rollback for {0} was already rolled back", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
 	public void info_rollback_aborted_transaction(String arg0);
+
+	@Message(id = 22264, value = "can't read subordinate uid from object store {0} on input object state {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_fail_to_read_subordinate_uid(RecoveryStore recstore, InputObjectState states, @Cause() Exception e);
+
+	@Message(id = 22265, value = "failure on processing doRecover for xid {0} and parent node name {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_fail_to_dorecover(Xid xid, String parentNodeName, @Cause() Exception e);
 
     /*
         Allocate new messages directly above this notice.
