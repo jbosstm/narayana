@@ -59,6 +59,7 @@ import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
+import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.SubordinateAtomicTransaction;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.internal.jta.utils.jtaxLogger;
@@ -66,6 +67,8 @@ import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 import com.arjuna.ats.jta.xa.XidImple;
 import org.jboss.tm.ExtendedJBossXATerminator;
 import org.jboss.tm.TransactionImportResult;
+import com.arjuna.ats.jts.extensions.Arjuna;
+import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
  * The XATerminator implementation.
@@ -273,74 +276,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
 
         // if we are here, then check the object store
-
-        Xid[] indoubt = null;
-
-        try
-        {
-            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
-            InputObjectState states = new InputObjectState();
-
-            // only look in the JCA section of the object store
-
-            if (recoveryStore.allObjUids(ServerTransaction.getType(), states)
-                    && (states.notempty()))
-            {
-                Stack values = new Stack();
-                boolean finished = false;
-
-                do
-                {
-                    Uid uid = null;
-
-                    try
-                    {
-                        uid = UidHelper.unpackFrom(states);
-                    }
-                    catch (IOException ex)
-                    {
-                        ex.printStackTrace();
-
-                        finished = true;
-                    }
-
-                    if (uid.notEquals(Uid.nullUid()))
-                    {
-                        Transaction tx = SubordinationManager
-                                .getTransactionImporter().recoverTransaction(
-                                        uid);
-
-                        values.push(tx);
-                    }
-                    else
-                        finished = true;
-
-                }
-                while (!finished);
-
-                if (values.size() > 0)
-                {
-                    int index = 0;
-
-                    indoubt = new Xid[values.size()];
-
-                    while (!values.empty())
-                    {
-                        TransactionImple id = (TransactionImple) values.pop();
-
-                        indoubt[index] = id.baseXid();
-
-                        index++;
-                    }
-                }
-            }
+        try {
+            return doRecover(null, null);
+        } catch (NotSupportedException nse) {
+            throw new IllegalStateException(nse);
         }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
-        return indoubt;
     }
 
     public void rollback (Xid xid) throws XAException
@@ -506,9 +446,87 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         return xidsToRecover.toArray(NO_XIDS);
     }
 
+    /**
+     * <p>
+     * Recovering /JCA section of object store.
+     * The filtering functionality on xid or parentNodeName is not permitted and throws {@link NotSupportedException}.<br>
+     * Expected to be called only with null parameters <code>doRecover(null, null)</code>
+     *
+     * @param xid has to be null
+     * @param parentNodeName  has to be null
+     * @return array of subordinate recovered xids
+     * @throws XAException  if recovery operation fails for the XA protocol reason
+     * @throws NotSupportedException  if not null params are passes as method parameters
+     */
     @Override
     public Xid[] doRecover(Xid xid, String parentNodeName) throws XAException, NotSupportedException {
-        throw new NotSupportedException();
+        if(xid != null || parentNodeName != null)
+            throw new NotSupportedException("doRecover method works only with null arguments");
+
+        Xid[] indoubt = null;
+        try
+        {
+            RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
+            InputObjectState states = new InputObjectState();
+
+            // only look in the JCA section of the object store
+            if (recoveryStore.allObjUids(ServerTransaction.getType(), states) && (states.notempty()))
+            {
+                Stack<Transaction> values = new Stack<Transaction>();
+                boolean finished = false;
+
+                do
+                {
+                    Uid uid = null;
+
+                    try
+                    {
+                        uid = UidHelper.unpackFrom(states);
+                    }
+                    catch (IOException ex)
+                    {
+                        jtsLogger.i18NLogger.info_fail_to_read_subordinate_uid(recoveryStore, states, ex);
+
+                        finished = true;
+                    }
+
+                    if (uid.notEquals(Uid.nullUid()))
+                    {
+                        Transaction tx = SubordinationManager.getTransactionImporter().recoverTransaction(uid);
+
+                        if (tx != null)
+                            values.push(tx);
+                    }
+                    else
+                        finished = true;
+
+                }
+                while (!finished);
+
+                if (values.size() > 0)
+                {
+                    int index = 0;
+
+                    indoubt = new Xid[values.size()];
+
+                    while (!values.empty())
+                    {
+                        TransactionImple id = (TransactionImple) values.pop();
+
+                        indoubt[index] = id.baseXid();
+
+                        index++;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            jtsLogger.i18NLogger.info_fail_to_dorecover(xid, parentNodeName, ex);
+        }
+
+        return indoubt;
+
     }
 
     @Override

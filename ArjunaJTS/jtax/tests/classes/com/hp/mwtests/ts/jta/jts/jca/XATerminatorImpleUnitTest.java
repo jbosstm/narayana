@@ -46,6 +46,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManag
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
+import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
@@ -55,6 +56,8 @@ import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jts.extensions.AtomicTransaction;
 import com.hp.mwtests.ts.jta.jts.TestXAResource;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.management.ObjectName;
@@ -244,6 +247,7 @@ public class XATerminatorImpleUnitTest extends TestBase
         }
         assertNull(failedResourceXid);
     }
+
     @Test
     public void testXARetry () throws Exception
     {
@@ -704,6 +708,37 @@ public class XATerminatorImpleUnitTest extends TestBase
         assertTrue(xar2.rollbackCalled());
         xa.recover(XAResource.TMENDRSCAN);
 
+    }
+
+    @Test
+    public void testDoRecover () throws Exception {
+        Implementations.initialise();
+        Implementationsx.initialise();
+
+        Xid xid1 = XidUtils.getXid(new Uid(), false);
+        Xid xid2 = XidUtils.getXid(new Uid(), false);
+
+        TransactionImporter imp = SubordinationManager.getTransactionImporter();
+
+        SubordinateTransaction subTxn1 = imp.importTransaction(xid1);
+        SubordinateTransaction subTxn2 = imp.importTransaction(xid2);
+
+        XATerminatorImple xaTerminator = new XATerminatorImple();
+        subTxn1.enlistResource(new XAResourceImple(XAResource.XA_OK));
+        subTxn2.enlistResource(new XAResourceImple(XAResource.XA_OK));
+
+        try {
+            subTxn1.doPrepare();
+            subTxn2.doPrepare();
+
+            Xid[] xidsAll = xaTerminator.doRecover(null, null);
+
+            Assert.assertNotNull("expecting some unfinished transactions to be returned but they are null", xidsAll);
+            Assert.assertTrue("expecting some unfinished transactions to be returned but there is none", xidsAll.length > 1);
+        } finally {
+            subTxn1.doCommit();
+            subTxn2.doCommit();
+        }
     }
 
     private class XAResourceImple implements XAResource {
