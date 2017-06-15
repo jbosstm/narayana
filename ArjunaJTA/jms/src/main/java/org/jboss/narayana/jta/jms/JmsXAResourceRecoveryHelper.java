@@ -140,7 +140,7 @@ public class JmsXAResourceRecoveryHelper implements XAResourceRecoveryHelper, XA
      * Delegates XAResource#commit call to the connected JMS resource.
      *
      * @param xid
-     * @param b
+     * @param onePhase
      * @throws XAException
      */
     @Override
