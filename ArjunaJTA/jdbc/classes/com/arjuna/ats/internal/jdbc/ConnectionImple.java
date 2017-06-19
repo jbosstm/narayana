@@ -62,6 +62,7 @@ import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
 import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.ats.jta.xa.XAModifier;
 
@@ -1002,7 +1003,7 @@ public class ConnectionImple implements Connection
 							jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
 
 							delayClose = true;
-							tx.registerSynchronization(new ConnectionSynchronization(this, needsClose));
+							jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistry().registerInterposedSynchronization(new ConnectionSynchronization(this, needsClose));
 						}
 					}
 				}
