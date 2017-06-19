@@ -186,8 +186,10 @@ public class TransactionCache
     /**
      * Replays phase 2 of a transaction.
      */
-    public static void replayPhase2 (Uid actionUid, String theType)
+    public static ReplayPhaseReturnStatus replayPhase2 (Uid actionUid, String theType)
     {
+    ReplayPhaseReturnStatus returnStatus = ReplayPhaseReturnStatus.STANDARD_PROCESSING;
+
 	TransactionCacheItem cacheItem = get (actionUid, theType);
 
 	if (cacheItem != null)
@@ -244,6 +246,7 @@ public class TransactionCache
                 jtsLogger.i18NLogger.info_recovery_transactions_TransactionCache_4(actionUid);
 			    theTransaction.removeOldStoreEntry();
 			    cacheItem.updateType();
+			    returnStatus = ReplayPhaseReturnStatus.ASSUME_COMPLETED;
 			}
 
 		    }
@@ -266,6 +269,7 @@ public class TransactionCache
 		}
 	    }
 	}
+	return returnStatus;
     }
 
     // get an item that is already known - or nothing
@@ -310,6 +314,10 @@ public class TransactionCache
             jtsLogger.logger.debug("TransactionCache.remove "+theUid+": removed transaction from cache");
         }
 	}
+    }
+
+    public static enum ReplayPhaseReturnStatus {
+        STANDARD_PROCESSING, ASSUME_COMPLETED
     }
     
     private static final Hashtable _theCache = new Hashtable();
