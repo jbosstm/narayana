@@ -33,11 +33,18 @@ package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca;
 
 import java.util.List;
 
+import javax.transaction.HeuristicCommitException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
+import com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache;
 
 public class TransactionImple extends
 		com.arjuna.ats.internal.jta.transaction.jts.subordinate.TransactionImple implements SubordinateTransaction
@@ -137,4 +144,16 @@ public class TransactionImple extends
     public boolean supportsDeferredThrowables() {
         return false;
     }
+
+	@Override
+	public boolean doCommit() throws IllegalStateException, HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException, SystemException {
+		if (getStatus() == Status.STATUS_COMMITTING || getStatus() == Status.STATUS_COMMITTED) {
+			TransactionCache.ReplayPhaseReturnStatus replayStatus = TransactionCache.replayPhase2(get_uid(), ServerTransaction.getType());
+			// if the status declares the txn being committed we try to replay to handle assumed completed state
+			// returning true if moved under assumed completed, otherwise false declaring we haven't finished yet
+			return replayStatus == TransactionCache.ReplayPhaseReturnStatus.ASSUME_COMPLETED;
+		} else {
+			return super.doCommit();
+		}
+	}
 }
