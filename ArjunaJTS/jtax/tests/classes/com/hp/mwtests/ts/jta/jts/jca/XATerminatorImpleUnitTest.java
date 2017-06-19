@@ -32,11 +32,10 @@
 package com.hp.mwtests.ts.jta.jts.jca;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
+import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
-import com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore;
 import com.arjuna.ats.internal.jta.Implementationsx;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
@@ -51,8 +50,10 @@ import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
+import com.arjuna.ats.internal.jts.recovery.transactions.AssumedCompleteServerTransaction;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.extensions.AtomicTransaction;
 import com.hp.mwtests.ts.jta.jts.TestXAResource;
 import com.hp.mwtests.ts.jta.jts.common.TestBase;
@@ -66,11 +67,11 @@ import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
@@ -81,6 +82,7 @@ import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -95,24 +97,7 @@ public class XATerminatorImpleUnitTest extends TestBase
         TransactionImporter imp = SubordinationManager.getTransactionImporter();
 
         SubordinateTransaction subordinateTransaction = imp.importTransaction(xid);
-        // This is required because it JTS records are stored with a dynamic _savingUid
-        // Normally they are recovered using XATerminator but for this test I would like to stick to testing
-        // transaction importer
-        Field field = TransactionImple.class.getDeclaredField("_theTransaction");
-        field.setAccessible(true);
-        Object o = field.get(subordinateTransaction);
-        field = AtomicTransaction.class.getDeclaredField("_theAction");
-        field.setAccessible(true);
-        o = field.get(o);
-        field = ControlWrapper.class.getDeclaredField("_controlImpl");
-        field.setAccessible(true);
-        o = field.get(o);
-        field = ControlImple.class.getDeclaredField("_transactionHandle");
-        field.setAccessible(true);
-        o = field.get(o);
-        field = ServerTransaction.class.getDeclaredField("_savingUid");
-        field.setAccessible(true);
-        Uid savingUid = (Uid) field.get(o);
+        Uid savingUid = getImportedSubordinateTransactionUid(subordinateTransaction);
 
         subordinateTransaction.enlistResource(new TestXAResource() {
             @Override
@@ -153,14 +138,14 @@ public class XATerminatorImpleUnitTest extends TestBase
         xa.prepare(xid);
         try {
             xa.commit(xid, false);
-            fail();
+            fail("Expecting heuristic mixed exception being thrown on commit");
         } catch (final XAException ex) {
-            assertTrue(ex.errorCode == ex.XA_HEURMIX);
+            assertEquals(XAException.XA_HEURMIX, ex.errorCode);
         }
         try {
             xa.commit(xid, false);
         } catch (XAException e) {
-            assertTrue(e.errorCode == XAException.XA_RETRY);
+            assertEquals(XAException.XA_RETRY, e.errorCode);
         }
 
         ObjStoreBrowser osb = new ObjStoreBrowser();
@@ -242,6 +227,10 @@ public class XATerminatorImpleUnitTest extends TestBase
         xa.recover(XAResource.TMSTARTRSCAN);
         try {
             xa.commit(xid, false);
+            Assert.fail("Expecting XAException being thrown indicating more recover to be called");
+        } catch (XAException expected) {
+            Assert.assertTrue("On commit XAException error code indicating more recover call is expected but it's " + expected.errorCode,
+                XAException.XA_RETRY == expected.errorCode || XAException.XAER_RMFAIL == expected.errorCode);
         } finally {
             xa.recover(XAResource.TMENDRSCAN);
         }
@@ -321,6 +310,11 @@ public class XATerminatorImpleUnitTest extends TestBase
                         firstAttempt = false;
                     }
                 }
+                if (failedResourceXid != null) {
+                    failedResourceXid = null;
+                } else {
+                    throw new XAException(XAException.XAER_PROTO);
+                }
             }
 
             @Override
@@ -374,66 +368,24 @@ public class XATerminatorImpleUnitTest extends TestBase
         try
         {
             xa.commit(xid, false);
-            fail();
+            fail("Expecting XATerminator throwing XAException as commit should fail"
+                + " as TestXAResource was instructed to throw an exception");
         }
         catch (final XAException ex)
         {
-            assertTrue(ex.errorCode == ex.XAER_RMFAIL);
+            assertEquals("XATerminator commit should throw XAER_RMFAIL when commit fails",
+                XAException.XAER_RMFAIL, ex.errorCode);
         }
         Implementationsx.initialise();
         xa.recover(XAResource.TMSTARTRSCAN);
+        assertNotNull(failedResourceXid);
         try {
             xa.commit(xid, false);
+        } catch (XAException expected) {
+            Assert.assertTrue("On commit XAException error code indicating more recover call is expected but it's " + expected.errorCode,
+                XAException.XA_RETRY == expected.errorCode || XAException.XAER_RMFAIL == expected.errorCode);
         } finally {
             xa.recover(XAResource.TMENDRSCAN);
-        }
-
-        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
-        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
-            @Override
-            public boolean initialise(String p) throws Exception {
-                return false;
-            }
-
-            @Override
-            public XAResource[] getXAResources() throws Exception {
-                return new XAResource[] {
-                        new TestXAResource()  {
-                            public Xid[] recover(int var) throws XAException {
-                                if (var == XAResource.TMSTARTRSCAN) {
-                                    if (failedResourceXid != null) {
-                                        return new Xid[]{failedResourceXid};
-                                    }
-                                }
-                                return new Xid[0];
-                            }
-                            @Override
-                            public void commit(Xid xid, boolean b) throws XAException {
-                                failedResourceXid = null;
-                            }
-
-                            @Override
-                            public int prepare(Xid xid) throws XAException {
-                                return 0;
-                            }
-
-                            @Override
-                            public void rollback(Xid xid) throws XAException {
-                                fail("Resource was rolled back");
-                            }
-                        }
-                };
-            }
-        });
-        xaRecoveryModule.periodicWorkFirstPass();
-        Field safetyIntervalMillis = RecoveryXids.class.getDeclaredField("safetyIntervalMillis");
-        safetyIntervalMillis.setAccessible(true);
-        Object o1 = safetyIntervalMillis.get(null);
-        safetyIntervalMillis.set(null, 0);
-        try {
-            xaRecoveryModule.periodicWorkSecondPass();
-        } finally {
-            safetyIntervalMillis.set(null, o1);
         }
         assertNull(failedResourceXid);
     }
@@ -741,6 +693,75 @@ public class XATerminatorImpleUnitTest extends TestBase
         }
     }
 
+    @Test
+    public void testMoveToAssumedComplete() throws Exception {
+        Implementations.initialise();
+        Implementationsx.initialise();
+
+        Uid uid = new Uid();
+        Xid xid = XidUtils.getXid(uid, false);
+
+        XATerminatorImple xaTerminator = new XATerminatorImple();
+        TransactionImporter importer = SubordinationManager.getTransactionImporter();
+        SubordinateTransaction subordinateTransaction = importer.importTransaction(xid);
+
+        Uid subordinateTransactionUid = getImportedSubordinateTransactionUid(subordinateTransaction);
+
+        com.hp.mwtests.ts.jta.subordinate.TestXAResource xares = new com.hp.mwtests.ts.jta.subordinate.TestXAResource();
+        xares.setCommitException(new XAException(XAException.XAER_RMFAIL));
+        subordinateTransaction.enlistResource(xares);
+        subordinateTransaction.doPrepare();
+        boolean commitFailed = subordinateTransaction.doCommit();
+        Assert.assertFalse("Commit should fail as XAResource defined XAException on commit being thrown", commitFailed);
+
+        int assumedCompletedRetryOriginalValue = jtsPropertyManager.getJTSEnvironmentBean().getCommitedTransactionRetryLimit();
+        jtsPropertyManager.getJTSEnvironmentBean().setCommitedTransactionRetryLimit(1);
+        try {
+            SubordinateTransaction recoveredTxn = importer.recoverTransaction(subordinateTransactionUid);
+            Xid xidRecovered = recoveredTxn.baseXid();
+            Assert.assertEquals("recovered subordinate xid should be equal to imported one", xid, xidRecovered);
+
+            Runnable runCommitExpectingException = () -> {
+                try {
+                    xaTerminator.recover(XAResource.TMSTARTRSCAN); // importing transaction
+                    xaTerminator.recover(XAResource.TMENDRSCAN);
+                    xaTerminator.commit(xid, false); // try to commit the imported transaction
+                    Assert.fail("XAException is expected to be thrown as txn was not yet moved to assumed complete state");
+                } catch (XAException expected) {
+                    Assert.assertTrue("Commit expect to throw exception indicating that othe commit call is expected, but error code is " + expected.errorCode,
+                        XAException.XA_RETRY == expected.errorCode || XAException.XAER_RMFAIL == expected.errorCode);
+                }
+            };
+            runCommitExpectingException.run(); // replay first
+            runCommitExpectingException.run(); // assume completed check first time
+
+            xaTerminator.recover(XAResource.TMSTARTRSCAN); // importing transaction
+            xaTerminator.recover(XAResource.TMENDRSCAN);
+            xaTerminator.commit(xid, false); // moving to assumed completed state
+        } finally {
+            jtsPropertyManager.getJTSEnvironmentBean().setCommitedTransactionRetryLimit(assumedCompletedRetryOriginalValue);
+        }
+
+        try {
+            importer.recoverTransaction(subordinateTransactionUid);
+            Assert.fail("Transaction '" + subordinateTransaction + "' should fail to recover as it should be moved "
+                + "to category AssumedCompleteServerTrasactions");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        ObjectStoreIterator objectStoreIterator = new ObjectStoreIterator(StoreManager.getRecoveryStore(),
+            AssumedCompleteServerTransaction.typeName());
+
+        List<Uid> assumedCompletedUids = new ArrayList<Uid>();
+        Uid iteratedUid = objectStoreIterator.iterate();
+        while(Uid.nullUid().notEquals(iteratedUid)) {
+            assumedCompletedUids.add(iteratedUid);
+            iteratedUid = objectStoreIterator.iterate();
+        }
+        Assert.assertTrue("the subordinate transaction has to be moved under assumed completed in object store",
+            assumedCompletedUids.contains(subordinateTransactionUid));
+    }
+
     private class XAResourceImple implements XAResource {
 
         private int commitException = 0;
@@ -805,5 +826,29 @@ public class XATerminatorImpleUnitTest extends TestBase
         public void start(Xid xid, int i) throws XAException {
 
         }
+    }
+
+    /**
+     * This is required because it JTS records are stored with a dynamic _savingUid
+     * Normally they are recovered using XATerminator but for this test I would like to stick to testing
+     * transaction importer
+     */
+    private Uid getImportedSubordinateTransactionUid(SubordinateTransaction subordinateTransaction) throws Exception {
+        Field field = TransactionImple.class.getDeclaredField("_theTransaction");
+        field.setAccessible(true);
+        Object o = field.get(subordinateTransaction);
+        field = AtomicTransaction.class.getDeclaredField("_theAction");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ControlWrapper.class.getDeclaredField("_controlImpl");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ControlImple.class.getDeclaredField("_transactionHandle");
+        field.setAccessible(true);
+        o = field.get(o);
+        field = ServerTransaction.class.getDeclaredField("_savingUid");
+        field.setAccessible(true);
+        Uid subordinateTransactionUid = (Uid) field.get(o);
+        return subordinateTransactionUid;
     }
 }
