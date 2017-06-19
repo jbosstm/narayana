@@ -302,10 +302,10 @@ function build_narayana {
 
   if [ $JAVA_VERSION = "9-ea" ]; then
     # build openjdk-orb with fixing the reflect issue
-    build_openjdk_orb
+#    build_openjdk_orb
 
     # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-    sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
+#    sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
   elif [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
@@ -318,12 +318,12 @@ function build_narayana {
   return 0
 }
 
-function build_openjdk_orb {
-    rm -rf openjdk-orb
-    git clone -b jdk-9 https://github.com/zhfeng/openjdk-orb.git
-    MAVEN_OPTS="--add-modules java.corba --add-exports java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED" ./build.sh -f openjdk-orb/pom.xml clean install -DskipTests
-    [ $? = 0 ] || fatal "openjdk-orb build failed"
-}
+#function build_openjdk_orb {
+#    rm -rf openjdk-orb
+#    git clone -b jdk-9 https://github.com/zhfeng/openjdk-orb.git
+#    MAVEN_OPTS="--add-modules java.corba --add-exports java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED" ./build.sh -f openjdk-orb/pom.xml clean install -DskipTests
+#    [ $? = 0 ] || fatal "openjdk-orb build failed"
+#}
 
 function build_as {
   echo "Building AS"
@@ -377,12 +377,12 @@ function build_as {
     rm -rf .git
   fi
 
-  if [ $JAVA_VERSION = "9-ea" ]; then
-     # build openjdk-orb with fixing the reflect issue
-     build_openjdk_orb
+#  if [ $JAVA_VERSION = "9-ea" ]; then
+#     # build openjdk-orb with fixing the reflect issue
+ #    build_openjdk_orb
      # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-     sed -i s/8.0.7.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
-  fi
+#     sed -i s/8.0.7.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
+#  fi
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
@@ -500,11 +500,11 @@ function blacktie {
     # START JBOSS
     if [ $JAVA_VERSION = "9-ea" ]; then
       # build openjdk-orb with fixing the reflect issue
-      build_openjdk_orb
+      #build_openjdk_orb
 
       # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-      cp openjdk-orb/target/openjdk-orb-8.0.8.Beta1-SNAPSHOT.jar blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/
-      sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
+      #cp openjdk-orb/target/openjdk-orb-8.0.8.Beta1-SNAPSHOT.jar blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/
+      #sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
 
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     else
