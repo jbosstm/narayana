@@ -306,7 +306,7 @@ function build_as {
     JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.6.2.Final-SNAPSHOT
     [ $? = 0 ] || fatal "AS build failed"
 
-    ./build.sh -f testsuite/pom.xml -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=5.6.2.Final-SNAPSHOT
+    ./build.sh -f testsuite/pom.xml -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=5.6.2.Final-SNAPSHOT -fae
     [ $? = 0 ] || fatal "AS testsuite build failed"
   else
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.6.2.Final-SNAPSHOT
