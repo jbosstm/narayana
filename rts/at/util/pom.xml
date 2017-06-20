@@ -173,6 +173,7 @@
             </executions>
             <configuration>
               <detectOfflineLinks>false</detectOfflineLinks>
+              <failOnError>false</failOnError>
             </configuration>
           </plugin>
         </plugins>
