@@ -278,13 +278,7 @@ function build_narayana {
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
   [ $CODE_COVERAGE = 1 ] && NARAYANA_ARGS="${NARAYANA_ARGS} -pl !code-coverage"
 
-  if [ $JAVA_VERSION = "9-ea" ]; then
-    # build openjdk-orb with fixing the reflect issue
-#    build_openjdk_orb
-
-    # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-#    sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
-  elif [ $IBM_ORB = 1 ]; then
+  if [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
@@ -354,12 +348,12 @@ function build_as {
     rm -rf .git
   fi
 
-#  if [ $JAVA_VERSION = "9-ea" ]; then
-#     # build openjdk-orb with fixing the reflect issue
- #    build_openjdk_orb
-     # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-#     sed -i s/8.0.7.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
-#  fi
+  if [ $JAVA_VERSION = "9-ea" ]; then
+     # build openjdk-orb with fixing the reflect issue
+     # build_openjdk_orb
+     # replace the openjdk-orb with the 8.0.8.Beta1
+     sed -i s/8.0.7.Final/8.0.8.Beta1/g pom.xml
+  fi
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
@@ -386,7 +380,7 @@ function build_as {
     fi
   fi
   [ $? = 0 ] || fatal "AS build failed"
-  
+
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
@@ -496,9 +490,9 @@ function blacktie {
       # build openjdk-orb with fixing the reflect issue
       #build_openjdk_orb
 
-      # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-      #cp openjdk-orb/target/openjdk-orb-8.0.8.Beta1-SNAPSHOT.jar blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/
-      #sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
+      # replace the openjdk-orb with the 8.0.8.Beta1
+      wget https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Beta1/openjdk-orb-8.0.8.Beta1.jar -O blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/openjdk-orb-8.0.8.Beta1.jar
+      sed -i s/8.0.6.Final/8.0.8.Beta1/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
 
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     else
