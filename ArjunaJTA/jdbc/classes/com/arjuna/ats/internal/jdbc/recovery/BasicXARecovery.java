@@ -32,6 +32,8 @@
 package com.arjuna.ats.internal.jdbc.recovery;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.transaction.xa.XAResource;
@@ -202,7 +204,9 @@ public class BasicXARecovery implements XAResourceRecovery
 			if (dc != null)
 				dbProperties.put(TransactionalDriver.dynamicClass, dc);
 
-			return new JDBC2RecoveryConnection(theURL, dbProperties);
+			JDBC2RecoveryConnection connection = new JDBC2RecoveryConnection(theURL, dbProperties);
+			connections.add(connection);
+			return connection;
 		}
 		else
 			return null;
@@ -225,5 +229,7 @@ public class BasicXARecovery implements XAResourceRecovery
 	private static final String dynamicClassTag = "_DatabaseDynamicClass";
 
 	private static final char BREAKCHARACTER = ';'; // delimiter for parameters
+
+	private List<JDBC2RecoveryConnection> connections = new ArrayList<>();
 
 }
