@@ -312,6 +312,7 @@
             <configuration>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>*.internal.*</excludePackageNames>
+              <failOnError>false</failOnError>
             </configuration>
           </plugin>
         </plugins>
