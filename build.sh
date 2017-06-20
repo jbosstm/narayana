@@ -38,31 +38,22 @@ ROOT="/"
 # Ignore user's MAVEN_HOME if it is set
 M2_HOME=""
 MAVEN_HOME=""
-if [ -z "$JAVA_VERSION" ]
-then
-	JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
+
+JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
+
+if [ $JAVA_VERSION = "9" ]; then
+  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
+  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
 fi
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	if [ $JAVA_VERSION = "9-ea" ]; then
+	if [ $JAVA_VERSION = "9" ]; then
 		MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m"
-		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.util=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.lang.reflect=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.text=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.desktop/java.awt.font=ALL-UNNAMED"
 	else
     MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
 	fi
 	export MAVEN_OPTS
-fi
-
-JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
-if [ $JAVA_VERSION = "9-ea" ]; then
-	MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED"
-else
-	MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS" 
 fi
 
 #  Default search path for maven.

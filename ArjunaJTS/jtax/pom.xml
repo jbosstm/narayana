@@ -204,6 +204,18 @@
           <version>${version.org.jacorb.jacorb}</version>
           <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-jdk9</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <artifactId>idlj-idl-jdk9</artifactId>
+          <version>${project.version}</version>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>

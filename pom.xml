@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>22</version>
+    <version>25</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -462,7 +462,7 @@
     <version.org.jacorb.jacorb>2.3.2-jbossorg-5</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb-idl-compiler>2.3.1</version.org.jacorb.jacorb-idl-compiler>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
-    <version.org.jboss.openjdk-orb>8.0.8.Beta1</version.org.jboss.openjdk-orb>
+    <version.org.jboss.openjdk-orb>8.0.8.Final</version.org.jboss.openjdk-orb>
     <version.javax.annotation>1.2</version.javax.annotation>
     <version.javax.enterprise>1.1</version.javax.enterprise>
     <version.javax.inject>1</version.javax.inject>

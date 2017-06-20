@@ -144,6 +144,24 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+        <id>release-9</id>
+        <build>
+          <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
       <profile>
           <id>release</id>
           <build>
@@ -173,6 +191,7 @@
             </executions>
             <configuration>
               <detectOfflineLinks>false</detectOfflineLinks>
+              <failOnError>false</failOnError>
             </configuration>
           </plugin>
         </plugins>
