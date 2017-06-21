@@ -95,7 +95,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JCAServerTransactionWrapper",
                     "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JTSActionBean",
                     SUBORDINATE_ATI_TYPE,
-                    "com.arjuna.ats.internal.jta.tools.osb.mbean.jts.JCAServerTransactionHeaderReader"
+                    "com.hp.mwtests.ts.jta.jts.tools.JCAServerTransactionHeaderReader"
             ),
             new OSBTypeHandler(
                     true,

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.arjuna.ats.internal.jta.tools.osb.mbean.jts;
+package com.hp.mwtests.ts.jta.jts.tools;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.tools.osb.mbean.HeaderState;
@@ -31,11 +31,11 @@ import java.io.IOException;
 /**
  * Header reader for {@link com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction}
  * records.
- *
+ * 
  * @author Mike Musgrove
  */
 /**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to
+ * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
