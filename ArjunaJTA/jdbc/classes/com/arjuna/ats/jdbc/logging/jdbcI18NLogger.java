@@ -177,6 +177,9 @@ public interface jdbcI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_not_closed(@Cause() Throwable arg0);
 
+	@Message(id = 17039, value = "BasicXARecovery did not have enough connection configuration", format = MESSAGE_FORMAT)
+	String insufficientConnectionInformation();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

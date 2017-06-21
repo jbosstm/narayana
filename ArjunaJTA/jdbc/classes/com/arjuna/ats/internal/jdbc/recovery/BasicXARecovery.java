@@ -152,64 +152,61 @@ public class BasicXARecovery implements XAResourceRecovery
 		return true;
 	}
 
-	public synchronized XAResource getXAResource () throws SQLException
-	{
-		JDBC2RecoveryConnection conn = null;
-
-		if (hasMoreResources())
-		{
-			connectionIndex++;
-
-			conn = getConnection();
-
-			if (conn == null)
-			{
-                jdbcLogger.i18NLogger.warn_recovery_basic_xarec("BasicXARecovery.getConnection -");
-			}
+	public synchronized XAResource getXAResource () throws SQLException {
+		if (connections == null) {
+			connections = new JDBC2RecoveryConnection[numberOfConnections];
 		}
-
-		return conn.recoveryConnection().getConnection().getXAResource();
+		try {
+			return getConnection().recoveryConnection().getResource();
+		} finally {
+			connectionIndex++;
+		}
 	}
 
 	public synchronized boolean hasMoreResources ()
 	{
-		if (connectionIndex == numberOfConnections)
+		if (connectionIndex == numberOfConnections) {
+			// Reset the connection position
+			connectionIndex = 0;
 			return false;
-		else
+		} else
 			return true;
 	}
 
 	private final JDBC2RecoveryConnection getConnection ()
 			throws SQLException
 	{
-		String number = new String("" + connectionIndex);
-		String url = new String(dbTag + number + urlTag);
-		String password = new String(dbTag + number + passwordTag);
-		String user = new String(dbTag + number + userTag);
-		String dynamicClass = new String(dbTag + number + dynamicClassTag);
+		if (connections[connectionIndex] == null) {
+			String number = new String(""+ (connectionIndex + 1));
+			String url = new String(dbTag + number + urlTag);
+			String password = new String(dbTag + number + passwordTag);
+			String user = new String(dbTag + number + userTag);
+			String dynamicClass = new String(dbTag + number + dynamicClassTag);
 
-		Properties dbProperties = new Properties();
+			Properties dbProperties = new Properties();
 
-		String theUser = props.getProperty(user);
-		String thePassword = props.getProperty(password);
-        String theURL = props.getProperty(url);
+			String theUser = props.getProperty(user);
+			String thePassword = props.getProperty(password);
+			String theURL = props.getProperty(url);
 
-		if (theUser != null)
-		{
-			dbProperties.put(TransactionalDriver.userName, theUser);
-			dbProperties.put(TransactionalDriver.password, thePassword);
+			if (theUser != null) {
+				dbProperties.put(TransactionalDriver.userName, theUser);
+				dbProperties.put(TransactionalDriver.password, thePassword);
 
-			String dc = props.getProperty(dynamicClass);
+				String dc = props.getProperty(dynamicClass);
 
-			if (dc != null)
-				dbProperties.put(TransactionalDriver.dynamicClass, dc);
+				if (dc != null)
+					dbProperties.put(TransactionalDriver.dynamicClass, dc);
 
-			JDBC2RecoveryConnection connection = new JDBC2RecoveryConnection(theURL, dbProperties);
-			connections.add(connection);
-			return connection;
+				JDBC2RecoveryConnection connection = new JDBC2RecoveryConnection(theURL, dbProperties);
+				connections[connectionIndex] = connection;
+				return connection;
+			} else {
+				jdbcLogger.i18NLogger.warn_recovery_basic_xarec("BasicXARecovery.getConnection -");
+				throw new SQLException(jdbcLogger.i18NLogger.insufficientConnectionInformation());
+			}
 		}
-		else
-			return null;
+		return connections[connectionIndex];
 	}
 
 	private int numberOfConnections;
@@ -230,6 +227,6 @@ public class BasicXARecovery implements XAResourceRecovery
 
 	private static final char BREAKCHARACTER = ';'; // delimiter for parameters
 
-	private List<JDBC2RecoveryConnection> connections = new ArrayList<>();
+	private JDBC2RecoveryConnection[] connections;
 
 }
