@@ -148,7 +148,6 @@
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.jboss.logging</groupId>
