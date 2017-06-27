@@ -71,6 +71,19 @@ git fetch upstream --tags
 git tag | grep $CURRENT
 if [[ $? != 0 ]]
 then
+  set +e
+  git status | grep "nothing to commit, working directory is clean"
+  if [[ $? != 0 ]]
+  then
+    git status
+    exit
+  fi
+  git status | grep "ahead"
+  if [[ $? != 0 ]]
+  then
+    git status
+    exit
+  fi
   set -e
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
   git fetch upstream --tags
