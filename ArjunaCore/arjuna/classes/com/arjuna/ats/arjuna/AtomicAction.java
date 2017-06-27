@@ -391,6 +391,6 @@ public class AtomicAction extends TwoPhaseCoordinator
 		return true;
 	}
 
-	private int _timeout = NO_TIMEOUT;
+	protected int _timeout = NO_TIMEOUT;
 
 }
