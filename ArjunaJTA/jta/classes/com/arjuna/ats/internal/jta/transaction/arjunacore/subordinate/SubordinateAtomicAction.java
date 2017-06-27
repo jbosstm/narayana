@@ -58,6 +58,8 @@ public class SubordinateAtomicAction extends
 
 		start();
 
+		_timeout = timeout;
+
 		// if it has a non-negative timeout, add it to the reaper.
 
 		if (timeout > AtomicAction.NO_TIMEOUT)
