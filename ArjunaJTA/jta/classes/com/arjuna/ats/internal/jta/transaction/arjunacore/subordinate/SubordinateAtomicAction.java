@@ -50,11 +50,13 @@ public class SubordinateAtomicAction extends
 	public SubordinateAtomicAction ()
 	{
 		this(AtomicAction.NO_TIMEOUT);
+		subordinate = true;
 	}
 
 	public SubordinateAtomicAction (int timeout)
 	{
 		super();
+		subordinate = true;
 
 		start();
 
