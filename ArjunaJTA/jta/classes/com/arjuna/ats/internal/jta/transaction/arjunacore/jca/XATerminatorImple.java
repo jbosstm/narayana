@@ -241,6 +241,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
             switch (tx.doPrepare())
             {
+            case TwoPhaseOutcome.PREPARE_ONE_PHASE_COMMITTED:
+                // Should never happen Would be great if there was heuristic commit :(
+                SubordinationManager.getTransactionImporter()
+                        .removeImportedTransaction(xid);
+                jtaLogger.i18NLogger.fatalSubordinate1PCDuringPrepare(xid);
+                throw new XAException(XAException.XAER_RMERR);
             case TwoPhaseOutcome.PREPARE_READONLY:
                 SubordinationManager.getTransactionImporter()
                         .removeImportedTransaction(xid);

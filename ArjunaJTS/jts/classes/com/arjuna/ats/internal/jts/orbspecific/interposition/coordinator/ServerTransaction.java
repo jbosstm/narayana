@@ -90,6 +90,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 		super(actUid, myParent, parentImpl);
 
+		dynamic1PC = false;
+
 		if (jtsLogger.logger.isTraceEnabled()) {
             jtsLogger.logger.trace("ServerTransaction::ServerTransaction ( "
                     + actUid

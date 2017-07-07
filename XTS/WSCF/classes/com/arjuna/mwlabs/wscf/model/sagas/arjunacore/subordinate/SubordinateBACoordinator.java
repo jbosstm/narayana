@@ -112,6 +112,7 @@ public class SubordinateBACoordinator extends BACoordinator
 	public SubordinateBACoordinator()
 	{
 		super();
+        dynamic1PC = false;
         activated = true;
 	}
 
@@ -122,6 +123,7 @@ public class SubordinateBACoordinator extends BACoordinator
 	public SubordinateBACoordinator(Uid recovery)
 	{
 		super(recovery);
+        dynamic1PC = false;
         activated = false;
 	}
 

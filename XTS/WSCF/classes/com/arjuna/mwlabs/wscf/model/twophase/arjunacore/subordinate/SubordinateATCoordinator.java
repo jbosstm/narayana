@@ -70,6 +70,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	public SubordinateATCoordinator()
 	{
 		super();
+		dynamic1PC = false;
         activated = true;
         isReadonly = false;
 	}
@@ -80,6 +81,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	public SubordinateATCoordinator(String subordinateType)
 	{
 		super();
+        dynamic1PC = false;
         activated = true;
         isReadonly = false;
         this.subordinateType = subordinateType;
@@ -92,6 +94,7 @@ public class SubordinateATCoordinator extends ATCoordinator
 	public SubordinateATCoordinator(Uid recovery)
 	{
 		super(recovery);
+        dynamic1PC = false;
         activated = false;
         isReadonly = false;
         subordinateType = null;

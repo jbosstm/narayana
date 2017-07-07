@@ -859,6 +859,72 @@ public class SimpleIsolatedServers {
 	}
 
 	@Test
+	public void testDisabledDynamic1PC() throws Exception {
+		System.out.println("testDisabledDynamic1PC");
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		Transaction originalTransaction;
+		int remainingTimeout;
+		Xid toMigrate;
+		final boolean [] resource1prepared = new boolean[1];
+		{
+			LocalServer originalServer = getLocalServer("1000");
+			Thread.currentThread().setContextClassLoader(originalServer.getClassLoader());
+			TransactionManager transactionManager = originalServer.getTransactionManager();
+			transactionManager.setTransactionTimeout(0);
+			transactionManager.begin();
+			originalTransaction = transactionManager.getTransaction();
+			remainingTimeout = (int) (originalServer.getTimeLeftBeforeTransactionTimeout() / 1000);
+			toMigrate = originalServer.getCurrentXid();
+			transactionManager.suspend();
+		}
+
+		Xid requiresProxyAtPreviousServer = null;
+		{
+			LocalServer currentServer = getLocalServer("2000");
+
+			Thread.currentThread().setContextClassLoader(currentServer.getClassLoader());
+
+			currentServer.locateOrImportTransactionThenResumeIt(remainingTimeout, toMigrate);
+
+			// Perform work on the migrated transaction
+			{
+				TransactionManager transactionManager = currentServer.getTransactionManager();
+				Transaction transaction = transactionManager.getTransaction();
+				transaction.enlistResource(new TestResource(currentServer.getNodeName(), true));
+				transaction.enlistResource(new TestResource(currentServer.getNodeName(), false) {
+					@Override
+					public synchronized void commit(Xid id, boolean onePhase) throws XAException {
+						assertTrue(resource1prepared[0]);
+						super.commit(id, onePhase);
+					}
+				});
+			}
+		}
+
+		{
+			LocalServer originalServer = getLocalServer("1000");
+			TransactionManager transactionManager = originalServer.getTransactionManager();
+			transactionManager.resume(originalTransaction);
+			XAResource proxyXAResource = originalServer.generateProxyXAResource("2000", requiresProxyAtPreviousServer);
+			originalTransaction.enlistResource(proxyXAResource);
+			originalTransaction.enlistResource(new TestResource(originalServer.getNodeName(), false) {
+				@Override
+				public synchronized int prepare(Xid xid) throws XAException, Error {
+					resource1prepared[0] = true;
+					return super.prepare(xid);
+				}
+			});
+			transactionManager.commit();
+		}
+		Thread.currentThread().setContextClassLoader(classLoader);
+
+		assertTrue("" + completionCounter.getCommitCount("1000"), completionCounter.getCommitCount("1000") == 2);
+		assertTrue("" + completionCounter.getCommitCount("2000"), completionCounter.getCommitCount("2000") == 1);
+		assertTrue("" + completionCounter.getRollbackCount("2000"), completionCounter.getRollbackCount("2000") == 0);
+		assertTrue("" + completionCounter.getRollbackCount("1000"), completionCounter.getRollbackCount("1000") == 0);
+	}
+
+	@Test
 	public void testOnePhaseCommit() throws Exception {
 		System.out.println("testOnePhaseCommit");
 		LocalServer originalServer = getLocalServer("1000");

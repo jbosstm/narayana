@@ -60,6 +60,8 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	public ServerTransaction (Uid actUid, Xid xid)
 	{
 		super(actUid, null);
+
+		dynamic1PC = false;
 		
 		// convert to internal format (makes saving/restoring easier)
 		

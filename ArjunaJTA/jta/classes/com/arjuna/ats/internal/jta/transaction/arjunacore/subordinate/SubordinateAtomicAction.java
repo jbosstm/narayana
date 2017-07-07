@@ -55,6 +55,7 @@ public class SubordinateAtomicAction extends
 	public SubordinateAtomicAction (int timeout)
 	{
 		super();
+		dynamic1PC = false;
 
 		start();
 
