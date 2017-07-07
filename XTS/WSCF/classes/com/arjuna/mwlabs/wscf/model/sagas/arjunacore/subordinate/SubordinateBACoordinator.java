@@ -112,6 +112,7 @@ public class SubordinateBACoordinator extends BACoordinator
 	public SubordinateBACoordinator()
 	{
 		super();
+        subordinate = true;
         activated = true;
 	}
 
@@ -122,6 +123,7 @@ public class SubordinateBACoordinator extends BACoordinator
 	public SubordinateBACoordinator(Uid recovery)
 	{
 		super(recovery);
+        subordinate = true;
         activated = false;
 	}
 

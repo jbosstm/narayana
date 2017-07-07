@@ -90,6 +90,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 	{
 		super(actUid, myParent, parentImpl);
 
+		subordinate = true;
+
 		if (jtsLogger.logger.isTraceEnabled()) {
             jtsLogger.logger.trace("ServerTransaction::ServerTransaction ( "
                     + actUid

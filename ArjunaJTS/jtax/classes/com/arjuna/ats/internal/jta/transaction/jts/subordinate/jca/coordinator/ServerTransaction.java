@@ -60,6 +60,8 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	public ServerTransaction (Uid actUid, Xid xid)
 	{
 		super(actUid, null);
+
+		subordinate = true;
 		
 		// convert to internal format (makes saving/restoring easier)
 		
@@ -69,6 +71,8 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	public ServerTransaction (Uid actId)
 	{
 		super(actId);
+
+		subordinate = true;
 		
 		if (!activate())  // if this fails we'll retry recovery periodically.\
 		{
