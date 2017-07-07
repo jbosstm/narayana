@@ -38,6 +38,7 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ import java.util.logging.Logger;
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
+@WebListener
 public class NarayanaJtaServletContextListener implements ServletContextListener {
 
     private static final Logger LOGGER = Logger.getLogger(NarayanaJtaServletContextListener.class.getSimpleName());
