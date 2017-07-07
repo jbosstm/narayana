@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.FATAL;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
@@ -34,6 +35,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /**
  * i18n log messages for the jta module.
@@ -523,6 +525,11 @@ public interface jtaI18NLogger {
 	@Message(id = 16129, value = "Could not end XA resource {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_could_not_end_xar(XAResource xar, @Cause() XAException e1);
+
+	@Message(id = 16130, value = "Subordinate transaction was committed during prepare, this will look like a rollback {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = FATAL)
+	public void fatalSubordinate1PCDuringPrepare(Xid xid);
+
 
     /*
         Allocate new messages directly above this notice.
