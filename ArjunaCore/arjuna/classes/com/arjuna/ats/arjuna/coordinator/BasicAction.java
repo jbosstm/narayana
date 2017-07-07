@@ -2605,7 +2605,7 @@ public class BasicAction extends StateManager
              * intentions list.
              */
             
-            if (keepGoing && TxControl.dynamic1PC)
+            if (!subordinate && keepGoing && TxControl.dynamic1PC)
             {
                 /*
                  * If N-1 returned read-only and 1 record left then exit prepare now and force
@@ -3732,6 +3732,8 @@ public class BasicAction extends StateManager
 
     //    private Mutex _lock = new Mutex(); // TODO
     private List<Throwable> deferredThrowables = new ArrayList<>();
+
+    protected boolean subordinate;
     
 }
 

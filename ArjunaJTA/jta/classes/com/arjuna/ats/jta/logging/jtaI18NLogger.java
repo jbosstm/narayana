@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.FATAL;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
@@ -31,6 +32,8 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
+
+import javax.transaction.xa.Xid;
 
 /**
  * i18n log messages for the jta module.
@@ -469,6 +472,10 @@ public interface jtaI18NLogger {
     @Message(id = 16115, value = "Could not access object store to check for log so will leave record alone", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_could_not_access_object_store(@Cause() Exception e);
+
+	@Message(id = 16130, value = "Subordinate transaction was committed during prepare, this will look like a rollback {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = FATAL)
+	public void fatalSubordinate1PCDuringPrepare(Xid xid);
 
     /*
         Allocate new messages directly above this notice.
