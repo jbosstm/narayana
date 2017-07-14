@@ -40,11 +40,42 @@ else
   WFLYISSUE=$3
 fi
 
-set -e
+set +e
+git fetch upstream --tags
+git tag | grep $CURRENT
+if [[ $? != 0 ]]
+then
+  JENKINS_JOBS=narayana,narayana-catelyn,narayana-codeCoverage,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py  
+  set +e
+  git status | grep "nothing to commit"
+  if [[ $? != 130 ]]
+  then
+    git status
+    exit
+  fi
+  git status | grep "ahead"
+  if [[ $? != 1 ]]
+  then
+    git status
+    exit
+  fi
+  git log -n 5
+  read -p "Did the log before look OK?" ok
+  if [[ $ok == n* ]]
+  then
+    exit
+  fi
+  set -e 
+  (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
+  git fetch upstream --tags
+  ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
+else
+  set -e
+fi
+
 if [ -z "$WFLYISSUE" ]
 then
-  JENKINS_JOBS=narayana,narayana-catelyn,narayana-codeCoverage,narayana-documentation,narayana-hqstore,narayana-ibm-jdk,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py
-  ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
+  ./scripts/release/update_upstream.py -s WFLY -n $CURRENT
   read -p "Enter WFLY issue: " WFLYISSUE
   if [ ! -d "jboss-as" ]
   then
@@ -66,45 +97,21 @@ then
   git reset --hard jbosstm/5_BRANCH
   cd -
 fi
-set +e
-git fetch upstream --tags
-git tag | grep $CURRENT
-if [[ $? != 0 ]]
-then
-  set +e
-  git status | grep "nothing to commit, working directory is clean"
-  if [[ $? != 0 ]]
-  then
-    git status
-    exit
-  fi
-  git status | grep "ahead"
-  if [[ $? != 0 ]]
-  then
-    git status
-    exit
-  fi
-  set -e
-  (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
-  git fetch upstream --tags
-else
-  set -e
-fi
 
-git checkout $CURRENT; MAVEN_OPTS="-XX:MaxPermSize=512m" 
+cd ~/tmp/narayana/$CURRENT/sources/documentation/
+git checkout $CURRENT
+mvn clean install -Prelease
+cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
+MAVEN_OPTS="-XX:MaxPermSize=512m" 
 mvn clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/ -Prelease
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-cd -
-cd ~/tmp/narayana/$CURRENT/sources/documentation/
-git checkout $CURRENT
-mvn clean install -Prelease
-cd -
 ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
+cd -
 
 echo "build and retrieve the centos54x64 and vc9x32 binaries from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/"
 echo "Press enter when the artifacts are available"
