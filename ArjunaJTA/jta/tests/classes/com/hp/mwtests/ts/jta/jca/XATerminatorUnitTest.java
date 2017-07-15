@@ -647,6 +647,19 @@ public class XATerminatorUnitTest
             Transaction suspend = tm.suspend();
         }
 
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[] {toCommit};
+            }
+        });
+        RecoveryManager.manager().addModule(xaRecoveryModule);
         xaTerminator.doRecover(null, null);
 
         {
@@ -655,6 +668,7 @@ public class XATerminatorUnitTest
             subordinateTransaction.doCommit();
             tm.suspend();
         }
+        RecoveryManager.manager().removeModule(xaRecoveryModule, false);
 
         assertTrue(toCommit.wasCommitted());
 
@@ -737,8 +751,9 @@ public class XATerminatorUnitTest
         public void commit(Xid xid, boolean b) throws XAException {
             committed = true;
             if (commitException < 0) {
-                this.xid = xid;
                 throw new XAException(commitException);
+            } else {
+                this.xid = null;
             }
         }
 
@@ -768,6 +783,7 @@ public class XATerminatorUnitTest
 
         @Override
         public int prepare(Xid xid) throws XAException {
+            this.xid = xid;
             return prepareFlag;
         }
 
@@ -785,6 +801,7 @@ public class XATerminatorUnitTest
 
         @Override
         public void rollback(Xid xid) throws XAException {
+            this.xid = null;
             rollbackCalled = true;
         }
 
