@@ -37,6 +37,28 @@ public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
 
     private volatile Hashtable jndiProperties = new Hashtable();
 
+    public boolean defaultIsSameRMOverride;
+
+    /**
+     * Returns whether to override multiple connections for all drivers.
+     *
+     * Equivalent deprecated property: com.arjuna.ats.jdbc.defaultIsSameRMOverride"
+     *
+     * @return whether to try to reuse connection for all drivers.
+     */
+    public boolean getDefaultIsSameRMOverride() {
+        return defaultIsSameRMOverride;
+    }
+
+    /**
+     * Configure so all drivers attempt to support multiple connections.
+     *
+     * @param defaultIsSameRMOverride whether to try to reuse connection for all drivers.
+     */
+    public void setDefaultIsSameRMOverride(boolean defaultIsSameRMOverride) {
+        this.defaultIsSameRMOverride = defaultIsSameRMOverride;
+    }
+
     /**
      * Returns the default isolation level for tansactional database operations.
      *

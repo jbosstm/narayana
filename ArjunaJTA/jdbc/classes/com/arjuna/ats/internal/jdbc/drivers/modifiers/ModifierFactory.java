@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 
 /**
@@ -52,7 +53,7 @@ import com.arjuna.common.internal.util.ClassloadingUtility;
 public class ModifierFactory
 {
 
-    public static synchronized void putModifier (String dbName, int major, int minor, String modclass)
+	public static synchronized void putModifier (String dbName, int major, int minor, String modclass)
     {
         ConnectionModifier connectionModifier = ClassloadingUtility.loadAndInstantiateClass(ConnectionModifier.class, modclass, null);
         if(connectionModifier != null) {
@@ -92,8 +93,12 @@ public class ModifierFactory
 	if (driverMatch != null)
 		return _modifiers.get(driverMatch);
 
-	return null;
-    }    
+	return defaultIsSameRMOverride ? isSameRMModifier : null;
+    }
+
+    private static ConnectionModifier isSameRMModifier = new IsSameRMModifier();
+
+	private static boolean defaultIsSameRMOverride = jdbcPropertyManager.getJDBCEnvironmentBean().getDefaultIsSameRMOverride();
 
     private static Hashtable<String,ConnectionModifier> _modifiers = new Hashtable<String,ConnectionModifier>();
     
