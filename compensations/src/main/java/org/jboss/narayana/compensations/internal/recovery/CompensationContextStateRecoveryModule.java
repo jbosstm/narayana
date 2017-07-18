@@ -28,7 +28,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import org.jboss.logging.Logger;
 import org.jboss.narayana.compensations.internal.context.CompensationContextState;
 import org.jboss.narayana.compensations.internal.context.CompensationContextStateManager;
-import org.jboss.narayana.compensations.internal.recovery.local.LocalParticipantRecoveryModule;
 import org.jboss.narayana.compensations.internal.utils.RecoveryHelper;
 
 import java.util.HashSet;
@@ -44,7 +43,7 @@ import java.util.Set;
  */
 public class CompensationContextStateRecoveryModule implements RecoveryModule {
 
-    private static final Logger LOGGER = Logger.getLogger(LocalParticipantRecoveryModule.class);
+    private static final Logger LOGGER = Logger.getLogger(CompensationContextStateRecoveryModule.class);
 
     private final Set<Uid> firstPassUids = new HashSet<>();
 

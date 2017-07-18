@@ -38,8 +38,8 @@ public class RecoveryInitialisation implements XTSInitialisation {
 
     @Override
     public void shutdown() {
-        ParticipantRecoveryInitialisation.shutdown();
-        CoordinatorRecoveryInitialisation.shutdown();
+        ParticipantRecoveryInitialisation.shutdown(false);
+        CoordinatorRecoveryInitialisation.shutdown(false);
     }
 
 }
