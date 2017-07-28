@@ -119,6 +119,67 @@ public class CoordinatorTest extends BaseTest {
         Assert.assertEquals(pVal, "v2");
     }
 
+    @Test
+    public void test1PCCommitUnaware() throws Exception
+    {
+        TxSupport txn = new TxSupport();
+        String pUrl = PURL;
+        String pid = null;
+        String pVal;
+
+        pid = modifyResource(txn, pUrl, pid, "p1", "v1");
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("intial value for key " + pid + " was set now checking it" , pVal, "v1");
+
+        txn.startTx();
+        pid = enlistResource(txn, pUrl + "?pId=" + pid + "&twoPhaseAware=false");
+
+        modifyResource(txn, pUrl, pid, "p1", "v2");
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("transaction in run for key " + pid + " we should see already a new value", pVal, "v2");
+
+        txn.commitTx();
+
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("transaction wrote for key " + pid + " but read value is different", pVal, "v2");
+
+        String commitCount = getResourceProperty(txn, pUrl, pid, "commitCnt");
+        Assert.assertEquals("one phase executed thus two-phase commit count expected being 0", "0", commitCount);
+        String onePhaseCommitCount = getResourceProperty(txn, pUrl, pid, "commitOnePhaseCnt");
+        Assert.assertEquals("one phase executed thus one-phase commit count expected being 1", "1", onePhaseCommitCount);
+    }
+
+
+    @Test
+    public void test1PCCommitUnawareWithoutOnePhase() throws Exception
+    {
+        TxSupport txn = new TxSupport();
+        String pUrl = PURL;
+        String pid = null;
+        String pVal;
+
+        pid = modifyResource(txn, pUrl, pid, "p1", "v1");
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("intial value for key " + pid + " was set now checking it" , pVal, "v1");
+
+        txn.startTx();
+        pid = enlistResource(txn, pUrl + "?pId=" + pid + "&twoPhaseAware=false&isUnawareTwoPhaseParticipantOnePhase=false");
+
+        modifyResource(txn, pUrl, pid, "p1", "v2");
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("transaction in run for key " + pid + " we should see already a new value", pVal, "v2");
+
+        txn.commitTx();
+
+        pVal = getResourceProperty(txn, pUrl, pid, "p1");
+        Assert.assertEquals("transaction wrote for key " + pid + " but read value is different", pVal, "v2");
+
+        String commitCount = getResourceProperty(txn, pUrl, pid, "commitCnt");
+        Assert.assertEquals("one phase executed without 1pc support thus two-phase commit count expected being 1", "1", commitCount);
+        String onePhaseCommitCount = getResourceProperty(txn, pUrl, pid, "commitOnePhaseCnt");
+        Assert.assertEquals("one phase executed without 1pc support thus one-phase commit count expected being 0", "0", onePhaseCommitCount);
+    }
+
     // 2PC commit
     @Test
     public void test2PC() throws Exception

@@ -111,26 +111,37 @@ public class OptionalSpecTest extends BaseTest {
     public void testTransactionStatistics() throws Exception {
         TxSupport txn = new TxSupport();
 
+        TransactionStatisticsElement statsBeforeCommit = txn.getTransactionStatistics();
+
         txn.startTx();
 
         /*
-        262Performing a GET on the /transaction-manager URI returns a list of all transaction -coordinator
-        263URIs known to the coordinator (active and in recovery). The returned response MAY include a
-        264link header with rel attribute "statistics" linking to a resource that contains statistical information
-        265such as the number of transactions that have committed and aborted. The link MAY contain a
+         From REST-AT spec:
+          Performing a GET on the /transaction-manager URI returns a list of all transaction -coordinator
+          URIs known to the coordinator (active and in recovery). The returned response MAY include a
+          link header with rel attribute "statistics" linking to a resource that contains statistical information
+          such as the number of transactions that have committed and aborted. The link MAY contain
+          a media type hint with value “application/txstatusext+xml”.
         */
-        TransactionStatisticsElement stats1 = txn.getTransactionStatistics();
+        TransactionStatisticsElement statsDuringCommit = txn.getTransactionStatistics();
 
         txn.commitTx();
 
-        TransactionStatisticsElement stats2 = txn.getTransactionStatistics();
+        TransactionStatisticsElement statsAfterCommit = txn.getTransactionStatistics();
 
         // although stats are optional this implementation supports them
-        if (stats1 != null) {
-            Assert.assertEquals(stats1.getRolledback(), stats2.getRolledback());
-            Assert.assertEquals(stats1.getActive(), stats2.getActive() + 1);
-            Assert.assertEquals(stats1.getPrepared(), stats2.getPrepared());
-            Assert.assertEquals(stats1.getCommitted(), stats2.getCommitted() - 1);
+        if (statsDuringCommit != null) {
+            Assert.assertEquals("there should be the same number of currently active txns before txn start and after it",
+                statsBeforeCommit.getActive(), statsAfterCommit.getActive());
+            Assert.assertEquals("rolled-back before and after has to match", statsDuringCommit.getRolledback(), statsAfterCommit.getRolledback());
+            Assert.assertEquals("there should be one active transaction during txn processing and no-one after processing ends",
+                statsDuringCommit.getActive(), statsAfterCommit.getActive() + 1);
+            Assert.assertEquals("prepared before and after has to match",
+                statsBeforeCommit.getPrepared(), statsAfterCommit.getPrepared());
+            Assert.assertEquals("prepared during txn processing does not change (changes at commit time and changes back after commit)",
+                statsDuringCommit.getPrepared(), statsAfterCommit.getPrepared());
+            Assert.assertEquals("transaction got committed that should be recorded",
+                statsDuringCommit.getCommitted() + 1, statsAfterCommit.getCommitted());
         } else {
             log.warn("Not testing transaction statistics (reason not supported)");
         }
