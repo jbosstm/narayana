@@ -69,8 +69,10 @@ public class Coordinator
 
     private static Map<String, RecoveringTransaction> recoveringTransactions = getRecoveringTransactions(transactions);
 
+    // active and prepared signalized how many transactions are currently active and/or prepared
     private static final AtomicInteger active = new AtomicInteger(0);
     private static final AtomicInteger prepared = new AtomicInteger(0);
+    // commited and aborted makes a sum of how many transactions were committed/aborted till now 
     private static final AtomicInteger committed = new AtomicInteger(0);
     private static final AtomicInteger aborted = new AtomicInteger(0);
 
@@ -157,7 +159,7 @@ public class Coordinator
     @Path(TxSupport.TX_SEGMENT + TxLinkNames.STATISTICS)
     @Produces(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE)
     public TransactionStatisticsElement getTransactionStatistics() {
-        // for prepared we could go through every transaction and get its status
+        // TODO: for prepared we could go through every transaction and get its status
         return new TransactionStatisticsElement(
                 active.get(), prepared.get(), committed.get(), aborted.get());
     }

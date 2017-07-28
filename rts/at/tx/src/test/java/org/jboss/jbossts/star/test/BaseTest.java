@@ -362,7 +362,7 @@ public class BaseTest {
         int commitCnt = 0;
         int prepareCnt = 0;
         int rollbackCnt = 0;
-        int commmitOnePhaseCnt = 0;
+        int commitOnePhaseCnt = 0;
 
         Work(String id, String tid, String uri, String pLinks, String enlistUrl, String recoveryUrl, String fault) {
             this.id = id;
@@ -401,10 +401,10 @@ public class BaseTest {
         static Map<String, Work> faults = new HashMap<String, Work> ();
 
         public Work makeWork(TxSupport txn, String baseURI, String id, String txId, String enlistUrl,
-                             boolean twoPhaseAware, boolean isVolatile, String recoveryUrl, String fault) {
+                             boolean twoPhaseAware, boolean isVolatile, String recoveryUrl, String fault, boolean isUnawareParticipantOnePhase) {
             String linkHeader = twoPhaseAware ?
                     txn.makeTwoPhaseAwareParticipantLinkHeader(baseURI, isVolatile, id, txId) :
-                    txn.makeTwoPhaseUnAwareParticipantLinkHeader(baseURI, isVolatile, id, txId, true);
+                    txn.makeTwoPhaseUnAwareParticipantLinkHeader(baseURI, isVolatile, id, txId, isUnawareParticipantOnePhase);
 
             return new Work(id, txId, baseURI + '/' + id, linkHeader, enlistUrl, recoveryUrl, fault);
         }
@@ -415,7 +415,7 @@ public class BaseTest {
 
             faults.remove(work.id);
             work = makeWork(txn, PURL, nid, work.tid, work.enlistUrl,
-                    twoPhaseAware, isVolatile, work.recoveryUrl, work.fault);
+                    twoPhaseAware, isVolatile, work.recoveryUrl, work.fault, true);
             faults.put(nid, work);
             // if register is true then tell the transaction manager about the new location - otherwise the old
             // URIs will be used for transaction termination. This is used to test that the coordinator uses
@@ -453,7 +453,7 @@ public class BaseTest {
                 if (value.length() != 0) {
                     if (work == null){
                         work = makeWork(new TxSupport(), TxSupport.extractUri(info), String.valueOf(++pid),
-                                null, null, isTwoPhaseAware, isVolatile, null, null);
+                                null, null, isTwoPhaseAware, isVolatile, null, null, true);
                         work.oldState.put(name, value);
                         faults.put(work.id, work);
                         return work.id;
@@ -471,8 +471,8 @@ public class BaseTest {
                         res = String.valueOf(work.prepareCnt);
                     else if ("rollbackCnt".equals(name))
                         res = String.valueOf(work.rollbackCnt);
-                    else if ("commmitOnePhaseCnt".equals(name))
-                        res = String.valueOf(work.commmitOnePhaseCnt);
+                    else if ("commitOnePhaseCnt".equals(name))
+                        res = String.valueOf(work.commitOnePhaseCnt);
                     else if (work.inTxn())
                         res = work.newState.get(name);
                     else
@@ -502,12 +502,14 @@ public class BaseTest {
                              @QueryParam("fault") @DefaultValue("")String fault,
                              @QueryParam("twoPhaseAware") @DefaultValue("true")String twoPhaseAware,
                              @QueryParam("isVolatile") @DefaultValue("false")String isVolatile,
+                             @QueryParam("isUnawareTwoPhaseParticipantOnePhase") @DefaultValue("true") String isUnawareOnePhase,
                              String enlistUrl) throws IOException {
             Work work = faults.get(pId);
             TxSupport txn = new TxSupport();
             String txId = enlistUrl.substring(enlistUrl.lastIndexOf('/') + 1);
             boolean isTwoPhaseAware = "true".equals(twoPhaseAware);
             boolean isVolatileParticipant = "true".equals(isVolatile);
+            boolean isUnawareParticipantOnePhase = "true".equals(isUnawareOnePhase);
             String vRegistration = null; // URI for registering with the volatile phase
             String vParticipantLink = null;  // URI for handling pre and post 2PC phases
             String path = TxSupport.extractUri(info);
@@ -516,10 +518,10 @@ public class BaseTest {
                 int id = ++pid;
 
                 work = makeWork(txn, path, String.valueOf(id), txId, enlistUrl,
-                        isTwoPhaseAware, isVolatileParticipant, null, fault);
+                        isTwoPhaseAware, isVolatileParticipant, null, fault, isUnawareParticipantOnePhase);
             } else {
                 Work newWork = makeWork(txn, path, work.id, txId, enlistUrl,
-                        isTwoPhaseAware, isVolatileParticipant, null, fault);
+                        isTwoPhaseAware, isVolatileParticipant, null, fault, isUnawareParticipantOnePhase);
                 newWork.oldState = work.oldState;
                 newWork.newState = work.newState;
                 work = newWork;
@@ -565,9 +567,10 @@ public class BaseTest {
                              @QueryParam("fault") @DefaultValue("")String fault,
                              @QueryParam("twoPhaseAware") @DefaultValue("true")String twoPhaseAware,
                              @QueryParam("isVolatile") @DefaultValue("false")String isVolatile,
+                             @QueryParam("isUnawareTwoPhaseParticipantOnePhase") @DefaultValue("true") String isUnawareOnePhase,
                              String enlistUrl) throws IOException {
 
-            return enlist(info, pId, fault, twoPhaseAware, isVolatile, enlistUrl);
+            return enlist(info, pId, fault, twoPhaseAware, isVolatile, isUnawareOnePhase, enlistUrl);
         }
 
         @SuppressWarnings({"UnusedDeclaration"})
@@ -741,7 +744,7 @@ public class BaseTest {
         public Response commmitOnePhase(@PathParam("pId") @DefaultValue("")String pId, @PathParam("tId") @DefaultValue("")String tId, String content) {
             Work work = faults.get(pId);
             if (work != null)
-                work.commmitOnePhaseCnt += 1;
+                work.commitOnePhaseCnt += 1;
             return terminate(pId, tId, TxStatusMediaType.TX_COMMITTED_ONE_PHASE);
         }
 

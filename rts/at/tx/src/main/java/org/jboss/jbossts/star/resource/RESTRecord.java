@@ -324,14 +324,18 @@ public class RESTRecord extends AbstractRecord
         if (txId == null)
             return TwoPhaseOutcome.FINISH_ERROR;
 
+        // if unaware two phase commit participant is enlisted without support of 1PC then on phase uri is null
+        String commitUri = (nextState == TxStatus.TransactionCommittedOnePhase && this.commitOnePhaseURI != null)
+            ? this.commitOnePhaseURI : this.commitURI;
+
         try
         {
             if (log.isTraceEnabled())
-                log.tracef("committing %s", this.commitURI);
+                log.tracef("committing %s", commitUri);
 
             if (!TxStatus.TransactionReadOnly.equals(status)) {
                 txs = new TxSupport();
-                String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, this.commitURI, "PUT",
+                String body = txs.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, commitUri, "PUT",
                         TxMediaType.TX_STATUS_MEDIA_TYPE, TxSupport.toStatusContent(nextState.name()));
 
                 if (body.isEmpty()) {
@@ -347,7 +351,7 @@ public class RESTRecord extends AbstractRecord
             }
 
             if (log.isTraceEnabled())
-                log.tracef("COMMIT OK at commitURI: %s", this.commitURI);
+                log.tracef("COMMIT OK at commitURI: %s", commitUri);
         }
         catch (HttpResponseException e)
         {
