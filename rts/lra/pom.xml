@@ -26,6 +26,7 @@
         <xversion.resteasy-client>3.0.14.Final</xversion.resteasy-client>
         <version.resteasy-client>3.1.3.Final</version.resteasy-client>
         <version.json.api>1.1</version.json.api>
+        <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
 
         <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
         <version.jaxrs-api>2.0</version.jaxrs-api>

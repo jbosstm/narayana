@@ -59,16 +59,18 @@
             <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
-        <!-- JAXRS 2 Client API implementation -->
+        <!-- JAXRS 2 Client API -->
         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${version.resteasy-client}</version>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+            <version>${version.jaxrs.api}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.8.9</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

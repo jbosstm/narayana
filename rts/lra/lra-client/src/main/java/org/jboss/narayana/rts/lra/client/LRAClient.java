@@ -343,10 +343,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
     }
 
     @Override
-    public void joinLRA(URL lraId, Long timelimit, String compensatorUrl) throws GenericLRAException {
+    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl) throws GenericLRAException {
         lraTrace(String.format("joining LRA with compensator %s", compensatorUrl), lraId);
 
-        enlistCompensator(lraId, timelimit, "",
+        return enlistCompensator(lraId, timelimit, "",
                 String.format("%s/compensate", compensatorUrl),
                 String.format("%s/complete", compensatorUrl),
                 String.format("%s/leave", compensatorUrl),
@@ -460,8 +460,9 @@ public class LRAClient implements LRAClientAPI, Closeable {
         Annotation resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
         String resourcePath = resourcePathAnnotation == null ? "/" : ((Path) resourcePathAnnotation).value();
 
-        String uriPrefix = String.format("%s:%s%s",
-                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1));
+        final String uriPrefix = String.format("%s:%s%s",
+                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1))
+                .replaceAll("/$", "");
 
         final int[] validCnt = {0};
 
