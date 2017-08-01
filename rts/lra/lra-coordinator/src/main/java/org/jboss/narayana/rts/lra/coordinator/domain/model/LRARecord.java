@@ -51,14 +51,13 @@ import java.util.concurrent.TimeUnit;
 
 import static org.jboss.narayana.rts.lra.client.LRAClient.LRA_HTTP_HEADER;
 
-public class LRARecord extends AbstractRecord implements Comparable {
+public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private URL coordinatorURI;
     private String participantPath;
 
     private URL completeURI;
     private URL compensateURI;
     private URL statusURI;
-    private URL leaveURI;
     private URL forgetURI;
 
     private boolean isCompelete;
@@ -89,7 +88,6 @@ public class LRARecord extends AbstractRecord implements Comparable {
             } else {
                 this.compensateURI = new URL(String.format("%s/compensate", linkURI));
                 this.completeURI = new URL(String.format("%s/complete", linkURI));
-                this.leaveURI = new URL(String.format("%s/leave", linkURI));
                 this.statusURI = new URL(String.format("%s/status", linkURI));
                 this.forgetURI = new URL(String.format("%s/forget", linkURI));
             }
@@ -138,8 +136,6 @@ public class LRARecord extends AbstractRecord implements Comparable {
                 completeURI = new URL(uri);
             else if ("status".equals(rel))
                 statusURI = new URL(uri);
-            else if ("leave".equals(rel))
-                leaveURI = new URL(uri);
             else if ("forget".equals(rel))
                 forgetURI = new URL(uri);
 
@@ -284,7 +280,6 @@ public class LRARecord extends AbstractRecord implements Comparable {
                 os.packString(completeURI.toString());
                 os.packString(compensateURI.toString());
                 os.packString(statusURI.toString());
-                os.packString(leaveURI.toString());
 
                 os.packBoolean(isCompelete);
                 os.packBoolean(isCompensated);
@@ -306,7 +301,6 @@ public class LRARecord extends AbstractRecord implements Comparable {
                 completeURI = new URL(os.unpackString());
                 compensateURI = new URL(os.unpackString());
                 statusURI = new URL(os.unpackString());
-                leaveURI = new URL(os.unpackString());
 
                 isCompelete = os.unpackBoolean();
                 isCompensated = os.unpackBoolean();
@@ -394,8 +388,7 @@ public class LRARecord extends AbstractRecord implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        AbstractRecord other = (AbstractRecord) o;
+    public int compareTo(AbstractRecord other) {
 
         if (lessThan(other))
             return -1;
