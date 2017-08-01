@@ -171,9 +171,12 @@ public interface LRAClientAPI {
      *                     the work that was done within the scope of the LRA.
      *                     Performing a POST on URL/complete will cause the compensator to tidy up and
      *                  it can forget this LRA.  (optional)
+     *
+     * @return a recovery URL for this enlistment
+     *
      * @throws GenericLRAException Comms error
      */
-    void joinLRA(URL lraId, Long timelimit, String body) throws GenericLRAException;
+    String joinLRA(URL lraId, Long timelimit, String body) throws GenericLRAException;
 
     /**
      * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String)} but the various compensator urls
@@ -187,6 +190,9 @@ public interface LRAClientAPI {
      * @param completeUrl Performing a POST on this URL  will cause the participant to tidy up and it can forget this transaction.
      * @param leaveUrl Performing a PUT on this URL with cause the compensator to leave the LRA
      * @param statusUrl Performing a GET on this URL will return the status of the compensator {@see joinLRA}
+     *
+     * @return a recovery URL for this enlistment
+     *
      * @throws GenericLRAException
      */
     String joinLRA(URL lraId, Long timelimit, String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericLRAException;

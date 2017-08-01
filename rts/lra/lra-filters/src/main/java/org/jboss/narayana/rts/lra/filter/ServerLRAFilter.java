@@ -131,17 +131,18 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 containerRequestContext.setProperty(CANCEL_ON_PROP, cancel0n);
         }
 
-        if (type == null) {
-            Current.clearContext(headers);
-
-            return; // not transactional
-        }
-
         boolean enlist = true;
         boolean endAnnotation = method.isAnnotationPresent(Complete.class)
                 || method.isAnnotationPresent(Compensate.class)
                 || method.isAnnotationPresent(Leave.class)
                 || method.isAnnotationPresent(Forget.class);
+
+        if (type == null) {
+            if(!endAnnotation)
+                Current.clearContext(headers);
+
+            return; // not transactional
+        }
 
         if (headers.containsKey(LRA_HTTP_HEADER))
             incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER)); // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
