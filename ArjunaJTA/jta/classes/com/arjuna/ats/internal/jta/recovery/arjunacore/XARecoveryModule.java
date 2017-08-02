@@ -148,6 +148,7 @@ public class XARecoveryModule implements RecoveryModule
 		// then we get deadlock on the secondpass
 		if (getScanState() == ScanStates.BETWEEN_PASSES) {
 			periodicWorkSecondPass();
+			endState = ScanStates.BETWEEN_PASSES; // Ensure if originally we are between periodic recovery scans we continue in that state and leave XAResource in STARTRSCAN
 		}
 
 		setScanState(ScanStates.FIRST_PASS); // synchronized uses a reentrant lock
