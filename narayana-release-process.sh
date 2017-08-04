@@ -48,7 +48,7 @@ then
   JENKINS_JOBS=narayana,narayana-catelyn,narayana-codeCoverage,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py  
   set +e
   git status | grep "nothing to commit"
-  if [[ $? != 130 ]]
+  if [[ $? != 0 ]]
   then
     git status
     exit
