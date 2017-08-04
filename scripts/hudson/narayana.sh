@@ -59,7 +59,7 @@ function get_pull_xargs {
 function init_test_options {
     is_ibm
     ISIBM=$?
-    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.5.30.Final-SNAPSHOT"
+    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.5.30.Final"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
@@ -303,10 +303,10 @@ function build_as {
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
-    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.30.Final-SNAPSHOT
+    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.30.Final
     ./build.sh -f testsuite/pom.xml -DallTests=true
   else
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.30.Final-SNAPSHOT
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.30.Final
   fi
   [ $? = 0 ] || fatal "AS build failed"
   
@@ -400,7 +400,7 @@ function blacktie {
   [ ! -e wildfly-${WILDFLY_MASTER_VERSION}.zip ] && (wget http://download.jboss.org/wildfly/${WILDFLY_MASTER_VERSION}/wildfly-${WILDFLY_MASTER_VERSION}.zip || fatal "Could not download wildfly")
   unzip wildfly-${WILDFLY_MASTER_VERSION}.zip -d blacktie/
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.5.30.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.5.30.Final-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
   ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
