@@ -12,68 +12,25 @@
 
     <artifactId>lra-filters</artifactId>
     <name>LRA Participant Filters</name> 
-    <version>5.6.0.Final-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom</artifactId>
-                <version>${version.wildfly-swarm}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.1.11.Final</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-container-test-api</artifactId>
-                <version>1.1.11.Final</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <build>
-        <finalName>lra-filters</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId>
-                <version>${version.wildfly-swarm}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        <!-- WildFly Swarm Fractions -->
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>microprofile</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-annotations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-client</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-annotations</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version.cdi-api}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
