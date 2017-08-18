@@ -875,8 +875,8 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
 kill_qa_suite_processes $MainClassPatterns
 
-export MEM_SIZE=512m
-export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
+export MEM_SIZE=640m
+[ $MAVEN_OPTS ] || export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
 

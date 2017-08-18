@@ -5,14 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-lra-parent</artifactId>
-        <version>5.6.0.Final-SNAPSHOT</version>
+        <artifactId>lra-parent</artifactId>
+        <version>5.6.5.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>lra-coordinator</artifactId>
     <name>LRA Coordinator</name>
-    <version>5.6.0.Final-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
@@ -23,33 +22,14 @@
         <swarm.http.port>8080</swarm.http.port>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom</artifactId>
-                <version>${version.wildfly-swarm}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.1.12.Final</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-container-test-api</artifactId>
-                <version>1.1.12.Final</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <finalName>lra-coordinator</finalName>
         <plugins>
+          <plugin>
+            <inherited>false</inherited>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+          </plugin>
             <plugin>
                 <groupId>org.wildfly.swarm</groupId>
                 <artifactId>wildfly-swarm-plugin</artifactId>
@@ -70,37 +50,13 @@
                     </properties>
                 </configuration>
             </plugin>
-
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <!-- tests are run using the failsafe plugin -->
-                    <skip>true</skip>
-                    <systemPropertyVariables>
-                        <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
-                    </systemPropertyVariables>
+                    <skipITs>true</skipITs>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>failsafe-maven-plugin</artifactId>
-                <version>2.4.3-alpha-1</version>
-                <configuration>
-                    <systemProperties>
-                        <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
-                    </systemProperties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
@@ -116,7 +72,6 @@
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>swagger</artifactId>
-            <version>${version.wildfly-swarm}</version>
         </dependency>
 
         <dependency>
@@ -130,30 +85,45 @@
             <version>${narayana.version}</version>
         </dependency>
 
+        <!-- For swarm plugin to run -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.4</version>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
+        <!-- Testing -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
             <version>${version.resteasy-client}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>arquillian</artifactId>
-            <version>${version.wildfly-swarm}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-install-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>default-install</id>
+                      <phase>install</phase>
+                    </execution>
+                  </executions>
+                  <inherited>false</inherited>
+                </plugin>
+              </plugins>
+          </build>
+      </profile>
+    </profiles>
 </project>
