@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-lra-parent</artifactId>
-        <version>5.6.0.Final-SNAPSHOT</version>
+        <artifactId>lra-parent</artifactId>
+        <version>5.6.5.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -20,21 +20,14 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <swarm.http.port>8081</swarm.http.port>
         <lra.http.host>localhost</lra.http.host>
-        <lra.http.port>8080</lra.http.port>
+        <lra.http.port>8082</lra.http.port>
         <service.http.port>${swarm.http.port}</service.http.port>
+
+        <swarm.debug.params></swarm.debug.params>
+        <swarm.logging.params></swarm.logging.params>
+        <swarm.debug.port>8787</swarm.debug.port>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom</artifactId>
-                <version>${version.wildfly-swarm}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <finalName>lra-test</finalName>
         <plugins>
@@ -60,6 +53,16 @@
                     </properties>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables combine.children="append">
+                        <swarm.debug.params>${swarm.debug.params}</swarm.debug.params>
+                        <swarm.logging.params>${swarm.logging.params}</swarm.logging.params>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -75,14 +78,114 @@
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-filters</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson}</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- JAXRS 2 Client API implementation -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
             <version>${version.resteasy-client}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>arquillian</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>debug.swarm.tests</id>
+            <activation>
+                <property>
+                    <name>debug</name>
+                </property>
+            </activation>
+            <properties>
+                <swarm.debug.params>-Xrunjdwp:transport=dt_socket,address=${swarm.debug.port},server=y,suspend=y</swarm.debug.params>
+            </properties>
+        </profile>
+        <profile>
+            <id>trace.swarm</id>
+            <activation>
+                <property>
+                    <name>trace</name>
+                </property>
+            </activation>
+            <properties>
+                <swarm.logging.params>-Dswarm.logging=TRACE</swarm.logging.params>
+            </properties>
+        </profile>
+        <profile>
+            <id>start.lra.coodinator.before.it.tests</id>
+            <activation>
+                <property>
+                    <name>!no.lra.coordinator</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="runtime_classpath" refid="maven.runtime.classpath"/>
+                                        <java jar="../lra-coordinator/target/lra-coordinator-swarm.jar" spawn="true" fork="true" >
+ +                                          <sysproperty key="swarm.http.port" value="${lra.http.port}"/>
+ +                                      </java>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <exec executable="${JAVA_HOME}/bin/jps">
+                                            <arg value="-l" />
+                                            <redirector outputproperty="process.pid">
+                                                <outputfilterchain>
+                                                    <linecontains>
+                                                        <contains value="lra-coordinator-swarm.jar" />
+                                                    </linecontains>
+                                                    <replaceregex pattern=" .*lra-coordinator-swarm.jar" replace="" flags="i"/>
+                                                </outputfilterchain>
+                                            </redirector>
+                                        </exec>
+                                        <exec executable="taskkill" osfamily="winnt">
+                                            <arg value="/F" />
+                                            <arg value="/PID" />
+                                            <arg value="${process.pid}" />
+                                        </exec>
+                                        <exec executable="kill" osfamily="unix">
+                                            <arg value="-15" />
+                                            <arg value="${process.pid}" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

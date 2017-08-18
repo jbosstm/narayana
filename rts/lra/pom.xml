@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015 Red Hat, Inc. and/or its affiliates.
+  ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
   -->
@@ -10,51 +10,55 @@
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>rest-tx</artifactId>
-        <version>5.6.0.Final-SNAPSHOT</version>
+        <version>5.6.5.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>rest-lra-parent</artifactId>
-    <name>REST-LRA: Parent</name>
-    <description>REST-LRA: Parent</description>
+    <artifactId>lra-parent</artifactId>
+    <name>LRA Parent</name>
+    <description>LRA Parent</description>
     <packaging>pom</packaging>
 
     <properties>
-        <skipTests>true</skipTests>
-        <version.wildfly-swarm>2017.2.0</version.wildfly-swarm>
-        <!-- Impportant: the resteasy client version must match the one used by wildfly.swarm -->
-        <xversion.resteasy-client>3.0.14.Final</xversion.resteasy-client>
+        <version.wildfly-swarm>2017.8.1</version.wildfly-swarm>
         <version.resteasy-client>3.1.3.Final</version.resteasy-client>
         <version.json.api>1.1</version.json.api>
         <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
+        <version.jackson>2.8.9</version.jackson>
 
         <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
         <version.jaxrs-api>2.0</version.jaxrs-api>
-        <version.cdi-api>1.0-SP1</version.cdi-api>
+        <version.cdi-api>1.2</version.cdi-api>
         <version.junit>4.12</version.junit>
+        <version.arquillian>1.1.12.Final</version.arquillian>
 
         <version.narayana>${project.version}</version.narayana>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <test.logs.to.file>false</test.logs.to.file>
     </properties>
 
-    <build>
-        <finalName>lra-test</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- tests are run using the failsafe plugin -->
-                    <skip>${skipTests}</skip>
-                    <systemPropertyVariables>
-                        <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.swarm</groupId>
+                <artifactId>bom-all</artifactId>
+                <version>${version.wildfly-swarm}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.arquillian}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- for Intellij -->
@@ -64,7 +68,60 @@
             <version>1.0.3.Final</version>
             <scope>provided</scope>
         </dependency>
+        <!-- for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+              <inherited>false</inherited>
+              <groupId>org.sonatype.plugins</groupId>
+              <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
+                    <systemProperties>
+                        <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
+                    </systemProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Running only integration tests with failsafe plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <modules>
         <module>lra-client</module>
@@ -72,5 +129,27 @@
         <module>lra-coordinator</module>
         <module>lra-filters</module>
         <module>lra-test</module>
+        <module>lra-cdi-rest</module>
     </modules>
+
+    <profiles>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-install-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>default-install</id>
+                      <phase>install</phase>
+                    </execution>
+                  </executions>
+                  <inherited>false</inherited>
+                </plugin>
+              </plugins>
+          </build>
+      </profile>
+    </profiles>
 </project>
