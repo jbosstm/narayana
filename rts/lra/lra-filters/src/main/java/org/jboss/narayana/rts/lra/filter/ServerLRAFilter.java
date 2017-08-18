@@ -21,6 +21,7 @@
  */
 package org.jboss.narayana.rts.lra.filter;
 
+import org.jboss.narayana.rts.lra.annotation.Forget;
 import org.jboss.narayana.rts.lra.annotation.LRA;
 import org.jboss.narayana.rts.lra.annotation.Compensate;
 import org.jboss.narayana.rts.lra.annotation.Complete;
@@ -139,7 +140,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         boolean enlist = true;
         boolean endAnnotation = method.isAnnotationPresent(Complete.class)
                 || method.isAnnotationPresent(Compensate.class)
-                || method.isAnnotationPresent(Leave.class);
+                || method.isAnnotationPresent(Leave.class)
+                || method.isAnnotationPresent(Forget.class);
 
         if (headers.containsKey(LRA_HTTP_HEADER))
             incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER)); // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
@@ -394,7 +396,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     /**
-     * Checks for Complete, Compensate and Status annotations and returns the JAX-RS paths of the methods
+     * Checks for Complete, Compensate, Leave, Forget and Status annotations and returns the JAX-RS paths of the methods
      * they are associated with
      */
     private Map<String, String> getTerminationUris(Class<?> compensatorClass) {
@@ -408,6 +410,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 checkMethod(paths, COMPENSATE, (Path) pathAnnotation, method.getAnnotation(Compensate.class));
                 checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class));
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class));
+                checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Forget.class));
             }
 
             // TODO do we need to tell the coordinaor which HTTP verb the annotations are using
