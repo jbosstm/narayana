@@ -6,10 +6,11 @@ package org.jboss.narayana.rts.lra.annotation;
  * the {@link Status} annotation.
  */
 public enum CompensatorStatus {
-    Compensating, // the Compensator is currently compensating for the jfdi.
-    Compensated, //  the Compensator has successfully compensated for the jfdi.
-    FailedToCompensate, //  the Compensator was not able to compensate for the jfdi. It must maintain information about the work it was to compensate until the org.jboss.narayana.rts.lra.coordinator sends it a forget message.
+    Compensating, // the Compensator is currently compensating for the LRA.
+    Compensated, //  the Compensator has successfully compensated for the LRA.
+    FailedToCompensate, //  the Compensator was not able to compensate for the LRA (and must remember
+                        // it could not compensate until such time that it receives a forget message).
     Completing, //  the Compensator is tidying up after being told to complete.
-    Completed, //  the org.jboss.narayana.rts.lra.coordinator/participant has confirmed.
+    Completed, //  the Compensator has confirmed.
     FailedToComplete, //  the Compensator was unable to tidy-up.
 }

@@ -55,41 +55,14 @@
         </plugins>
     </build>
 
-    <!--    <properties>
-            <version.arquillian>1.1.11.Final</version.arquillian>
-
-            <maven.min.version>3.2.1</maven.min.version>
-        </properties>
-
-        <build>
-            <finalName>${project.artifactId}</finalName>
-        </build>
-
-        <dependencies>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>arquillian</artifactId>
-                <version>${version.wildfly-swarm}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>-->
-
     <dependencies>
-        <!--        <dependency>
-                    <groupId>org.jboss.spec.javax.ws.rs</groupId>
-                    <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-                    <version>1.0.1.Beta1</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-client-all</artifactId>
-                    <version>11.0.0.Alpha1-SNAPSHOT</version>
-                </dependency>
-                <dependency>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-annotations</artifactId>
-                    <version>RELEASE</version>
-                </dependency>-->
+        <!-- for Intellij -->
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-all-7.0</artifactId>
+            <version>1.0.3.Final</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <modules>
