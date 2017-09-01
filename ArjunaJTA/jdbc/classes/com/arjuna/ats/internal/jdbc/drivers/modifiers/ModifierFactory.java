@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 
 /**
@@ -85,15 +86,19 @@ public class ModifierFactory
 	    if (s.equalsIgnoreCase(dbName + "_-1_-1"))
 		driverMatch = s;
 	}
+	ConnectionModifier modifier = defaultIsSameRMOverride ? isSameRMModifier : null;
 
-	if (exactMatch != null)
-		return _modifiers.get(exactMatch);
-	if (majorMatch != null)
-		return _modifiers.get(majorMatch);
 	if (driverMatch != null)
-		return _modifiers.get(driverMatch);
+		modifier = _modifiers.get(driverMatch);
+	if (majorMatch != null)
+		modifier = _modifiers.get(majorMatch);
+	if (exactMatch != null)
+		modifier = _modifiers.get(exactMatch);
 
-	return defaultIsSameRMOverride ? isSameRMModifier : null;
+	if (jdbcLogger.logger.isTraceEnabled()) {
+		jdbcLogger.logger.tracef("ConnectionModifier for: %s for %s %d/%d (defaultIsSameRMOverride was %b)", modifier == null? null : modifier.getClass().getName(), dbName, major, minor ,defaultIsSameRMOverride);
+	}
+	return modifier;
     }
 
     private static ConnectionModifier isSameRMModifier = new IsSameRMModifier();
