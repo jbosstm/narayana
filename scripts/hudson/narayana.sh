@@ -75,100 +75,130 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
         export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
-    elif [[ $PROFILE == "NO_TEST" ]] || [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
+    elif  [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
-    elif [[ $PROFILE == "MAIN" ]] && [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
-        comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
-        export TOMCAT_TESTS=1
-    elif [[ $PROFILE == "AS_TESTS" ]] && [[ ! $PULL_DESCRIPTION == *!AS_TESTS* ]]; then
-        comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-        export AS_BUILD=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-        export TOMCAT_TESTS=0
-    elif [[ $PROFILE == "RTS" ]] && [[ ! $PULL_DESCRIPTION == *!RTS* ]]; then
-        comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-        export TOMCAT_TESTS=0
+    elif [[ $PROFILE == "MAIN" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
+          comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
+          export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+          export TOMCAT_TESTS=1
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "AS_TESTS" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!AS_TESTS* ]]; then
+          comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
+          export AS_BUILD=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "RTS" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!RTS* ]]; then
+          comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
+          export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
     elif [[ $PROFILE == "JACOCO" ]]; then
         export COMMENT_ON_PULL=""
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
         export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
-    elif [[ $PROFILE == "XTS" ]] && [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
-        comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
-    elif [[ $PROFILE == "QA_JTA" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTA* ]]; then
-        comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-        export TOMCAT_TESTS=0
-    elif [[ $PROFILE == "QA_JTS_JACORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
-        comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-        export TOMCAT_TESTS=0
-    elif [[ $PROFILE == "QA_JTS_JDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
-        comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-        export TOMCAT_TESTS=0
-    elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]] && [[ ! $PULL_DESCRIPTION == *!QA_JTS_OPENJDKORB* ]]; then
-        comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
-        export JTA_AS_TESTS=0 TOMCAT_TESTS=0
-    elif [[ $PROFILE == "BLACKTIE" ]] && [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
-        comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
-    elif [[ $PROFILE == "PERF" ]] && [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
-        comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
-        export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
-        export TOMCAT_TESTS=0
-    elif [[ $PROFILE == "NONE" ]]; then
-        echo "Not using any PROFILE (will use the environment for config variables)."
-    elif [[ -z $PROFILE ]]; then
-        comment_on_pull "Started testing this pull request: $BUILD_URL"
-        # if the following env variables have not been set initialize them to their defaults
-        [ $NARAYANA_TESTS ] || NARAYANA_TESTS=1	# run the narayana surefire tests
-        [ $NARAYANA_BUILD ] || NARAYANA_BUILD=1 # build narayana
-        [ $AS_BUILD ] || AS_BUILD=1 # git clone and build a fresh copy of the AS
-        [ $BLACKTIE ] || BLACKTIE=1 # Build BlackTie
-        [ $OSGI_TESTS ] || OSGI_TESTS=1 # OSGI tests
-        [ $TXF_TESTS ] || TXF_TESTS=1 # compensations tests
-        [ $XTS_TESTS ] || XTS_TESTS=1 # XTS tests
-        [ $XTS_AS_TESTS ] || XTS_AS_TESTS=1 # XTS tests
-        [ $RTS_AS_TESTS ] || RTS_AS_TESTS=1 # RTS tests
-        [ $RTS_TESTS ] || RTS_TESTS=1 # REST-AT Test
-        [ $TOMCAT_TESTS ] || TOMCAT_TESTS=1 # Narayana Tomcat tests
-        [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=1 # JTA CDI Tests
-        [ $JTA_AS_TESTS ] || JTA_AS_TESTS=1 # JTA AS tests
-        [ $QA_TESTS ] || QA_TESTS=1 # QA test suite
-        [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
-        [ $OPENJDK_ORB ] || OPENJDK_ORB=1 # Run QA test suite against the openjdk orb
-        [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
-        [ $txbridge ] || txbridge=1 # bridge tests
-        [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
+    elif [[ $PROFILE == "XTS" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
+          comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
+          export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "QA_JTA" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!QA_JTA* ]]; then
+          comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "QA_JTS_JACORB" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
+          comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "QA_JTS_JDKORB" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
+          comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_OPENJDKORB* ]]; then
+          comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
+          export JTA_AS_TESTS=0 TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "BLACKTIE" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
+          comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "PERF" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
+          comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
     else
-        export COMMENT_ON_PULL=""
-        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
+        comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
     fi
-
-    get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
+    [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
+    [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
+    [ $AS_BUILD ] || AS_BUILD=0 # git clone and build a fresh copy of the AS
+    [ $BLACKTIE ] || BLACKTIE=0 # Build BlackTie
+    [ $OSGI_TESTS ] || OSGI_TESTS=0 # OSGI tests
+    [ $TXF_TESTS ] || TXF_TESTS=0 # compensations tests
+    [ $XTS_TESTS ] || XTS_TESTS=0 # XTS tests
+    [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
+    [ $RTS_AS_TESTS ] || RTS_AS_TESTS=0 # RTS tests
+    [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
+    [ $TOMCAT_TESTS ] || TOMCAT_TESTS=0 # Narayana Tomcat tests
+    [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
+    [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
+    [ $QA_TESTS ] || QA_TESTS=0 # QA test suite
+    [ $SUN_ORB ] || SUN_ORB=1 # Run QA test suite against the Sun orb
+    [ $OPENJDK_ORB ] || OPENJDK_ORB=1 # Run QA test suite against the openjdk orb
+    [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
+    [ $txbridge ] || txbridge=0 # bridge tests
+    [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
 }
 
 function comment_on_pull
 {
-    if [ "$COMMENT_ON_PULL" = "" ]; then return; fi
+    if [ "$COMMENT_ON_PULL" = "" ]; then echo $1; return; fi
 
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
@@ -841,6 +871,11 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 #Make sure no processes from a previous test suite run is still running
 MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
 kill_qa_suite_processes $MainClassPatterns
+
+export MEM_SIZE=512m
+export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
+export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
+export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
