@@ -108,6 +108,8 @@ public class TestExecutor {
                 getTransactionManager().commit();
                 return Response.serverError().entity("Commit failure was expected").build();
             } catch (Throwable ignored) {
+                RecoveryManager.manager().scan();
+                RecoveryManager.manager().scan();
             }
 
             return getRecoveryTestResponse(testEntry);
@@ -122,16 +124,8 @@ public class TestExecutor {
     }
 
     private Response getRecoveryTestResponse(String testEntry) throws SQLException, NamingException {
-        for (int i = 0; i < 3; i++) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
-
-            if (didRecoveryHappen(testEntry)) {
-                return Response.noContent().build();
-            }
+        if (didRecoveryHappen(testEntry)) {
+            return Response.noContent().build();
         }
 
         return Response.serverError().entity("Recovery failed").build();
