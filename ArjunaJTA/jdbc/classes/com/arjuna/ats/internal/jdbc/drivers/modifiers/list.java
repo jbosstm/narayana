@@ -41,7 +41,8 @@ public class list
 				"MySQL Connector Java",
 				"MySQL-AB JDBC Driver",
 				"MariaDB connector/J",
-				"H2 JDBC Driver"}) {
+				"H2 JDBC Driver",
+				"IBM Data Server Driver for JDBC and SQLJ"}) {
 			ModifierFactory.putModifier(driver, -1, -1,
 					IsSameRMModifier.class.getName());
 		}
