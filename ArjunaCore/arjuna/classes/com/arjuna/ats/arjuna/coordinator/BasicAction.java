@@ -3144,11 +3144,6 @@ public class BasicAction extends StateManager
 
         if (p == TwoPhaseOutcome.FINISH_OK)
         {
-            // only count the first heuristic.
-
-            if (TxStats.enabled())
-                TxStats.getInstance().incrementHeuristics();
-
             if (commit)
             {
                 if (heuristicDecision == TwoPhaseOutcome.PREPARE_OK)
@@ -3167,6 +3162,9 @@ public class BasicAction extends StateManager
             }
 
             // leave HAZARD and MIXED alone
+        } else {
+            if (TxStats.enabled())
+                TxStats.getInstance().incrementHeuristics();
         }
 
         /*
