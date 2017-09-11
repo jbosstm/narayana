@@ -41,7 +41,7 @@ MAVEN_HOME=""
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	MAVEN_OPTS="$MAVEN_OPTS -Xmx512M -XX:MaxPermSize=256m"
+	MAVEN_OPTS="$MAVEN_OPTS -Xmx640M -XX:MaxPermSize=256m"
 	export MAVEN_OPTS
 fi
 
