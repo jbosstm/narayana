@@ -111,7 +111,7 @@ function init_test_options {
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
         export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
-        export MAVEN_OPTS="-Xms1024m -Xmx1024m"
+        [ -z ${MAVEN_OPTS+x} ] || export MAVEN_OPTS="-Xms2048m -Xmx2048m"
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
