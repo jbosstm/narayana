@@ -22,6 +22,19 @@
 
 package com.arjuna.ats.jta.cdi;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessManagedBean;
+import javax.transaction.TransactionScoped;
+
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorMandatory;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNever;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNotSupported;
@@ -29,17 +42,12 @@ import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequired;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequiresNew;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorSupports;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
-import javax.transaction.TransactionScoped;
-
 /**
  * @author paul.robinson@redhat.com 01/05/2013
  */
 public class TransactionExtension implements Extension {
+
+    private Map<Bean<?>, AnnotatedType<?>> beanToAnnotatedTypeMapping = new HashMap<>();
 
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
 
@@ -56,5 +64,17 @@ public class TransactionExtension implements Extension {
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequired.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequiresNew.class));
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorSupports.class));
+    }
+
+    /**
+     * Gathering information about managed bean to obtain mapping bean to annotated type.
+     * This is needed later when handling Stereotypes in TransactionalInterceptorBase.
+     */
+    public void processManagedBean(@Observes ProcessManagedBean<?> pmb) {
+        beanToAnnotatedTypeMapping.put(pmb.getBean(), pmb.getAnnotatedBeanClass());
+    }
+
+    public Map<Bean<?>, AnnotatedType<?>> getBeanToAnnotatedTypeMapping() {
+        return beanToAnnotatedTypeMapping;
     }
 }
