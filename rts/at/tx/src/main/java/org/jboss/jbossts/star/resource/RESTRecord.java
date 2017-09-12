@@ -38,7 +38,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 /**
  * Log record for driving participants through 2PC and recovery
  */
-public class RESTRecord extends AbstractRecord
+public class RESTRecord extends AbstractRecord implements Comparable
 {
     protected final static Logger log = Logger.getLogger(RESTRecord.class);
     private String participantURI;
@@ -108,7 +108,7 @@ public class RESTRecord extends AbstractRecord
         return recoveryURI;
     }
 
-    String getParticipantURI()
+    protected String getParticipantURI()
     {
         return participantURI;
     }
@@ -633,5 +633,23 @@ public class RESTRecord extends AbstractRecord
         }
 
         fault = Fault.none;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        AbstractRecord other = (AbstractRecord) o;
+
+        if (lessThan(other))
+            return -1;
+
+        if (greaterThan(other))
+            return 1;
+
+        return 0;
+    }
+
+    public String httpRequest(int[] expect, String url, String method, String mediaType, String content,
+                              Map<String, String> linkHeaders, Map<String, String> reqHeaders) {
+        return new TxSupport().httpRequest(expect, url, method, mediaType, content, linkHeaders, reqHeaders);
     }
 }
