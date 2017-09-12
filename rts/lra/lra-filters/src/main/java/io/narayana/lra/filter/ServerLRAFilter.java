@@ -271,7 +271,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
             try {
-                recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"));
+                recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
             } catch (IllegalLRAStateException e) {
                 lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
                 throw e;

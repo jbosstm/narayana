@@ -39,6 +39,7 @@ import io.narayana.lra.client.LRAClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -58,6 +59,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -372,6 +374,7 @@ public class Coordinator {
                     + " - HTTP PUT on the reference will overwrite the old compensator URL with the new one supplied."
             )
     } )
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     // TODO don't use headers to pass the LRA context to the coordinator (follow the spec instead via joinLRAViaBody())
     public Response joinLRAViaHeader(
             @ApiParam( value = "The identifier of the LRA that the compensator wishes to join", required = true )
@@ -387,8 +390,9 @@ public class Coordinator {
                     + " The application or coordinator may use this information to control the lifecycle of a LRA.",
                     required = true )
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") long timeLimit,
-            String compensatorUrl) throws NotFoundException {
-        return joinLRA(toURL(lraId), timeLimit, compensatorUrl, linkHeader);
+            @ApiParam( value = "compensator data that will be passed back to the compensator when LRA is terminated" )
+            byte[] userData) throws NotFoundException {
+        return joinLRA(toURL(lraId), timeLimit, null, linkHeader);
     }
 
     @PUT

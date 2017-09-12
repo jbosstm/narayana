@@ -337,26 +337,32 @@ public class LRAClient implements LRAClientAPI, Closeable {
      *
      * @throws GenericLRAException if the LRA coordinator failed to enlist the participant
      */
-    public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader) throws GenericLRAException {
+    public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader, byte[] compensatorData) throws GenericLRAException {
         lraTrace(String.format("joining LRA with compensator link: %s", linkHeader), lraUrl);
-        return enlistCompensator(lraUrl, timelimit, linkHeader);
+        return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
     }
 
     @Override
-    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl) throws GenericLRAException {
+    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl, byte[] compensatorData) throws GenericLRAException {
         lraTrace(String.format("joining LRA with compensator %s", compensatorUrl), lraId);
 
         return enlistCompensator(lraId, timelimit, "",
                 String.format("%s/compensate", compensatorUrl),
                 String.format("%s/complete", compensatorUrl),
+                String.format("%s/forget",compensatorUrl),
                 String.format("%s/leave", compensatorUrl),
-                String.format("%s/status", compensatorUrl));
+                String.format("%s/status", compensatorUrl),
+                compensatorData);
     }
 
     @Override
     public String joinLRA(URL lraId, Long timelimit,
-                          String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericLRAException {
-        return enlistCompensator(lraId, timelimit, "", compensateUrl, completeUrl, leaveUrl, statusUrl);
+                          URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
+                          byte[] compensatorData) throws GenericLRAException {
+        return enlistCompensator(lraId, timelimit, "",
+                compensateUrl.toExternalForm(), completeUrl.toExternalForm(),
+                forgetUrl.toExternalForm(), leaveUrl.toExternalForm(), statusUrl.toExternalForm(),
+                compensatorData);
     }
 
     @Override
@@ -542,7 +548,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
     }
 
     private String enlistCompensator(URL lraUrl, long timelimit, String uriPrefix,
-                                     String compensateUrl, String completeUrl, String leaveUrl, String statusUrl ) {
+                                     String compensateUrl, String completeUrl, String forgetUrl, String leaveUrl, String statusUrl,
+                                     byte[] compensatorData) {
         validateURL(completeUrl, false, "Invalid complete URL: %s");
         validateURL(compensateUrl, false, "Invalid compensate URL: %s");
         validateURL(leaveUrl, true, "Invalid status URL: %s");
@@ -561,10 +568,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
         terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, uriPrefix, k, v)); // or use Collectors.joining(",")
 
-        return enlistCompensator(lraUrl, timelimit, linkHeaderValue.toString());
+        return enlistCompensator(lraUrl, timelimit, linkHeaderValue.toString(), compensatorData);
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader) {
+    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader, byte[] compensatorData) {
         // register with the coordinator
         // put the lra id in an http header
         Response response = null;

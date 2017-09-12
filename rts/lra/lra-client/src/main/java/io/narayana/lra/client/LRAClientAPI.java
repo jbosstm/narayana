@@ -176,10 +176,10 @@ public interface LRAClientAPI {
      *
      * @throws GenericLRAException Comms error
      */
-    String joinLRA(URL lraId, Long timelimit, String body) throws GenericLRAException;
+    String joinLRA(URL lraId, Long timelimit, String body, byte[] compensatorData) throws GenericLRAException;
 
     /**
-     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String)} but the various compensator urls
+     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, byte[])} but the various compensator urls
      * are passed in explicitly
      *
      * @param lraId The unique identifier of the LRA (required)
@@ -195,7 +195,9 @@ public interface LRAClientAPI {
      *
      * @throws GenericLRAException
      */
-    String joinLRA(URL lraId, Long timelimit, String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericLRAException;
+    String joinLRA(URL lraId, Long timelimit,
+                   URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
+                   byte[] compensatorData) throws GenericLRAException;
 
     /**
      * A Compensator can resign from the LRA at any time prior to the completion of an activity
