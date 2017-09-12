@@ -28,8 +28,13 @@ import static java.security.AccessController.doPrivileged;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Intercepted;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
@@ -45,6 +50,7 @@ import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.security.PrivilegedAction;
+import com.arjuna.ats.jta.cdi.TransactionExtension;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013
@@ -56,6 +62,9 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
     @Inject
     transient javax.enterprise.inject.spi.BeanManager beanManager;
+
+    @Inject
+    private TransactionExtension extension;
 
     @Inject
     @Intercepted
@@ -84,31 +93,76 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
     protected abstract Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception;
 
+    /**
+     * <p>
+     * Looking for the {@link Transactional} annotation first on the method, second on the class.
+     * <p>
+     * Method handles CDI types to cover cases where extensions are used.
+     * In case of EE container uses reflection.
+     *
+     * @param ic  invocation context of the interceptor
+     * @return instance of {@link Transactional} annotation or null
+     */
     private Transactional getTransactional(InvocationContext ic) {
-
-        Transactional transactional = ic.getMethod().getAnnotation(Transactional.class);
-        if (transactional != null) {
-            return transactional;
-        }
-
-        Class<?> targetClass = ic.getTarget().getClass();
-        transactional = targetClass.getAnnotation(Transactional.class);
-        if (transactional != null) {
-            return transactional;
-        }
-
-        // see if the target is a stereotype
-        for (Annotation annotation : interceptedBean.getBeanClass().getAnnotations()) {
-            if (beanManager.isStereotype(annotation.annotationType())) {
-                for (Annotation stereotyped : beanManager.getStereotypeDefinition(annotation.annotationType())) {
-                    if (stereotyped.annotationType().equals(Transactional.class)) {
-                        return (Transactional) stereotyped;
-                    }
+        if(interceptedBean != null) { // not-null for CDI
+            // getting annotated type and method corresponding of the intercepted bean and method
+            AnnotatedType<?> currentAnnotatedType = extension.getBeanToAnnotatedTypeMapping().get(interceptedBean);
+            AnnotatedMethod<?> currentAnnotatedMethod = null;
+            for(AnnotatedMethod<?> methodInSearch: currentAnnotatedType.getMethods()) {
+                if(methodInSearch.getJavaMember().equals(ic.getMethod())) {
+                    currentAnnotatedMethod = methodInSearch;
+                    break;
                 }
+            }
+    
+            // check existence of the stereotype on method
+            Transactional transactionalMethod = getTransactionalAnnotationRecursive(currentAnnotatedMethod.getAnnotations());
+            if(transactionalMethod != null) return transactionalMethod;
+            // stereotype recursive search, covering ones added by an extension too
+            Transactional transactionalExtension = getTransactionalAnnotationRecursive(currentAnnotatedType.getAnnotations());
+            if(transactionalExtension != null) return transactionalExtension;
+            // stereotypes already merged to one chunk by BeanAttributes.getStereotypes()
+            for(Class<? extends Annotation> stereotype: interceptedBean.getStereotypes()) {
+                Transactional transactionalAnn = stereotype.getAnnotation(Transactional.class);
+                if(transactionalAnn != null) return transactionalAnn;
+            }
+        } else { // null for EE components
+            Transactional transactional = ic.getMethod().getAnnotation(Transactional.class);
+            if (transactional != null) {
+                return transactional;
+            }
+    
+            Class<?> targetClass = ic.getTarget().getClass();
+            transactional = targetClass.getAnnotation(Transactional.class);
+            if (transactional != null) {
+                return transactional;
             }
         }
 
         throw new RuntimeException(jtaLogger.i18NLogger.get_expected_transactional_annotation());
+    }
+
+    private Transactional getTransactionalAnnotationRecursive(Annotation... annotationsOnMember) {
+        if(annotationsOnMember == null) return null;
+        Set<Class<? extends Annotation>> stereotypeAnnotations = new HashSet<>();
+
+        for(Annotation annotation: annotationsOnMember) {
+            if(annotation.annotationType().equals(Transactional.class)) {
+                return (Transactional) annotation;
+            }
+            if (beanManager.isStereotype(annotation.annotationType())) {
+                stereotypeAnnotations.add(annotation.annotationType());
+            }
+        }
+        for(Class<? extends Annotation> stereotypeAnnotation: stereotypeAnnotations) {
+            return getTransactionalAnnotationRecursive(beanManager.getStereotypeDefinition(stereotypeAnnotation));
+        }
+        return null;
+    }
+
+    private Transactional getTransactionalAnnotationRecursive(Set<Annotation> annotationsOnMember) {
+        return getTransactionalAnnotationRecursive(
+            annotationsOnMember.toArray(new Annotation[annotationsOnMember.size()]));
     }
 
     protected Object invokeInOurTx(InvocationContext ic, TransactionManager tm) throws Exception {
