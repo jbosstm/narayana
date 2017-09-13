@@ -278,6 +278,7 @@ function build_narayana {
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
+  echo "Using MAVEN_OPTS: $MAVEN_OPTS"
   ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
@@ -876,7 +877,7 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
 kill_qa_suite_processes $MainClassPatterns
 
-export MEM_SIZE=640m
+export MEM_SIZE=1024m
 [ $MAVEN_OPTS ] || export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
