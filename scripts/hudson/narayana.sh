@@ -111,7 +111,7 @@ function init_test_options {
         export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
         export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
         export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
-        [ -z ${MAVEN_OPTS+x} ] || export MAVEN_OPTS="-Xms2048m -Xmx2048m"
+        [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
@@ -278,6 +278,7 @@ function build_narayana {
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
+  echo "Using MAVEN_OPTS: $MAVEN_OPTS"
   ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
@@ -876,8 +877,8 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
 kill_qa_suite_processes $MainClassPatterns
 
-export MEM_SIZE=640m
-[ $MAVEN_OPTS ] || export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
+export MEM_SIZE=1024m
+[ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"#
 export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
 
