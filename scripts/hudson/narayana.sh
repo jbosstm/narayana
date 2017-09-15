@@ -878,7 +878,7 @@ MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryM
 kill_qa_suite_processes $MainClassPatterns
 
 export MEM_SIZE=1024m
-[ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"#
+[ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
 
