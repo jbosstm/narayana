@@ -22,7 +22,9 @@
 package io.narayana.lra.client;
 
 import io.narayana.lra.annotation.Compensate;
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.annotation.Complete;
+import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.Leave;
 import io.narayana.lra.annotation.Status;
 
@@ -87,6 +89,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
     public static final String COMPENSATE = "compensate";
     public static final String STATUS = "status";
     public static final String LEAVE = "leave";
+    public static final String FORGET = "forget";
 
     public static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
     public static final String CLIENT_ID_PARAM_NAME = "ClientID";
@@ -366,6 +369,11 @@ public class LRAClient implements LRAClientAPI, Closeable {
     }
 
     @Override
+    public URL updateCompensator(URL recoveryUrl, URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl, byte[] compensatorData) throws GenericLRAException {
+        return null;// TODO
+    }
+
+    @Override
     public void leaveLRA(URL lraId, String compensatorUrl) throws GenericLRAException {
         Response response = null;
 
@@ -476,11 +484,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
             Annotation pathAnnotation = method.getAnnotation(Path.class);
 
             if (pathAnnotation != null) {
-                if (checkMethod(paths, COMPLETE, (Path) pathAnnotation, method.getAnnotation(Complete.class), uriPrefix)) {
-                    validCnt[0] += 1;
-                }
 
-                if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation, method.getAnnotation(Compensate.class), uriPrefix)) {
+                if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation, method.getAnnotation(Compensate.class), uriPrefix) != 0) {
                     validCnt[0] += 1;
                     TimeLimit timeLimit = method.getAnnotation(TimeLimit.class);
 
@@ -488,15 +493,15 @@ public class LRAClient implements LRAClientAPI, Closeable {
                         paths.put(TIMELIMIT_PARAM_NAME, Long.toString(timeLimit.unit().toMillis(timeLimit.limit())));
                 }
 
-                if (checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class), uriPrefix)) {
-                    validCnt[0] += 1;
-                }
+                validCnt[0] += checkMethod(paths, COMPLETE, (Path) pathAnnotation, method.getAnnotation(Complete.class), uriPrefix);
+                validCnt[0] += checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class), uriPrefix);
+                validCnt[0] += checkMethod(paths, FORGET, (Path) pathAnnotation, method.getAnnotation(Forget.class), uriPrefix);
 
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
             }
         });
 
-        if (validate && validCnt[0] < 3)
+        if (validate && (validCnt[0] > 0 && validCnt[0] < 3))
             throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
                     String.format(MISSING_ANNOTATION_FORMAT, compensatorClass.getName()), null);
 
@@ -504,22 +509,23 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
         paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
 
-        paths.put("Link", linkHeaderValue.toString());
+        if (validCnt[0] == 3)
+           paths.put("Link", linkHeaderValue.toString());
 
         return paths;
     }
 
-    private boolean checkMethod(Map<String, String> paths,
+    private int checkMethod(Map<String, String> paths,
                                 String rel,
                                 Path pathAnnotation,
                                 Annotation annotationClass,
                                 String uriPrefix) {
         if (annotationClass == null)
-            return false;
+            return 0;
 
         paths.put(rel, uriPrefix + pathAnnotation.value());
 
-        return true;
+        return 1;
     }
 
     private Boolean getStatus(URL lraId, String statusFormat) {

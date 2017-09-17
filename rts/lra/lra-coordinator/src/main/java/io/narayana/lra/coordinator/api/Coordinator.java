@@ -86,6 +86,11 @@ public class Coordinator {
     @Inject // Will not work in an async scenario: CDI-452
     private LRAService lraService;
 
+    @GET
+    @Path("start")
+    public void start() { // trigger postConstruct()
+    }
+
     // Performing a GET on /lra-io.narayana.lra.coordinator returns a list of all transactions.
     @GET
     @Path("/")

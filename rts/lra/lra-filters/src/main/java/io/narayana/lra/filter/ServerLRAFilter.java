@@ -266,21 +266,26 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation && enlist) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = lraClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, true);
+            Map<String, String> terminateURIs = lraClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, false);
             String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
-            try {
-                recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
-            } catch (IllegalLRAStateException e) {
-                lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                throw e;
-            } catch (WebApplicationException e) {
-                lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
-            }
+            if (terminateURIs.containsKey("Link")) {
+                try {
+                    recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
+                } catch (IllegalLRAStateException e) {
+                    lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
+                    throw e;
+                } catch (WebApplicationException e) {
+                    lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
+                    throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
+                }
 
-            headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl);
+                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl);
+            } else {
+                lraTrace(containerRequestContext, lraId,
+                        "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no compensator annotations");
+            }
         }
 
         if (method.isAnnotationPresent(Leave.class)) {
@@ -311,6 +316,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 Response.Status[] cancel0n = (Response.Status[]) requestContext.getProperty(CANCEL_ON_PROP);
                 Boolean closeCurrent = (Boolean) requestContext.getProperty(TERMINAL_LRA_PROP);
 
+                if (closeCurrent == null)
+                    closeCurrent = false;
+
                 if (cancel0nFamily != null)
                     if (Arrays.stream(cancel0nFamily).anyMatch(f -> Response.Status.Family.familyOf(status) == f))
                         closeCurrent = true;
@@ -319,7 +327,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     if (Arrays.stream(cancel0n).anyMatch(f -> status == f.getStatusCode()))
                         closeCurrent = true;
 
-                if (closeCurrent != null && closeCurrent) {
+                if (closeCurrent) {
                     lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA becasue http status is " + status);
                     lraClient.cancelLRA(current);
 

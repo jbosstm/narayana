@@ -132,7 +132,7 @@ public @interface LRA {
      */
     @Nonbinding
     Response.Status.Family[] cancelOnFamily() default {
-        Response.Status.Family.CLIENT_ERROR, Response.Status.Family.SERVER_ERROR
+//        Response.Status.Family.CLIENT_ERROR, Response.Status.Family.SERVER_ERROR
     };
 
     /**

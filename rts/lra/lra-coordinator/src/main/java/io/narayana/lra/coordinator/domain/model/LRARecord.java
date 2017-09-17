@@ -23,8 +23,10 @@ package io.narayana.lra.coordinator.domain.model;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.client.Current;
@@ -68,6 +70,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
     private byte[] compensatorData;
     private ScheduledFuture<?> scheduledAbort;
+
+    public LRARecord() {
+        compensateURI = null;
+    }
 
     LRARecord(String lraId, String coordinatorURI, String linkURI, byte[] compensatorData) {
         super(new Uid());
@@ -209,13 +215,32 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             Current.push(coordinatorURI);
 
-            Response response = target.request()
-                    .header(LRA_HTTP_HEADER, coordinatorURI.toString())
-                    .post(Entity.entity("", MediaType.APPLICATION_JSON));
+            Response response;
 
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            try {
+                response = target.request()
+                        .header(LRA_HTTP_HEADER, coordinatorURI.toString())
+                        .post(Entity.entity("", MediaType.APPLICATION_JSON));
+            } catch (Exception e) {
+                response = null;
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debugf("LRARecord.doEnd post %s failed: %s",
+                            target.getUri(), e.getMessage());
+                }
+            }
+
+            if (response == null || response.getStatus() != Response.Status.OK.getStatusCode()) {
                 isFailed = true;
-                System.out.printf("Compensator failed with code %s%n", response.getStatus());
+                if (response !=  null && tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debugf("LRARecord.doEnd post %s failed with status: %d",
+                            target.getUri(), response.getStatus());
+                }
+
+                if (compensate) {
+                    // the LRA record will be deleted so remember that this compensator failed to compensate
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
+
                 return TwoPhaseOutcome.FINISH_ERROR;
             }
 
@@ -297,6 +322,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     @Override
     public boolean restore_state(InputObjectState os, int t) {
+
         if (super.restore_state(os, t)) {
             try {
                 coordinatorURI = new URL(os.unpackString());

@@ -200,6 +200,22 @@ public interface LRAClientAPI {
                    byte[] compensatorData) throws GenericLRAException;
 
     /**
+     * Change the endpoints that a compensator can be contacted on.
+     *
+     * @param recoveryUrl
+     * @param compensateUrl
+     * @param completeUrl
+     * @param forgetUrl
+     * @param leaveUrl
+     * @param statusUrl
+     * @param compensatorData
+     * @return an updated recovery URL for this compensator
+     * @throws GenericLRAException
+     */
+    URL updateCompensator(URL recoveryUrl,URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
+                           byte[] compensatorData) throws GenericLRAException;
+
+    /**
      * A Compensator can resign from the LRA at any time prior to the completion of an activity
      * 
      * @param lraId The unique identifier of the LRA (required)
