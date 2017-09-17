@@ -29,6 +29,9 @@ import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,7 +41,10 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,15 +57,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resource.Transaction {
+public class Transaction extends AtomicAction {
+    private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA"; //org.jboss.jbossts.star.resource.Transaction {
     private final ScheduledExecutorService scheduler;
-    private final URL id;
-    private final URL parentId; // TODO save_state and restore_state
-    private final String clientId;
+    private URL id;
+    private URL parentId; // TODO save_state and restore_state
+    private String clientId;
     private List<LRARecord> pending;
     private CompensatorStatus status; // reuse commpensator states for the LRA
     private List<String> responseData;
-    private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
+    private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
 
     public Transaction(String baseUrl, URL parentId, String clientId) throws MalformedURLException {
@@ -69,10 +76,68 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         this.parentId = parentId;
         this.clientId = clientId;
         this.cancelOn = null;
+        this.status = null; // means the LRA is active
 
-        status = null; // means the LRA is active
+        this.scheduler = Executors.newScheduledThreadPool(1);
+    }
 
-        scheduler = Executors.newScheduledThreadPool(1);
+    public Transaction(Uid rcvUid) {
+        super(rcvUid);
+
+        this.id = null;
+        this.parentId = null;
+        this.clientId = null;
+        this.cancelOn = null;
+        this.status = null; // means the LRA is active
+        this.scheduler = Executors.newScheduledThreadPool(1);
+    }
+
+    public static String getType() {
+        return LRA_TYPE;
+    }
+
+    public boolean save_state (OutputObjectState os, int ot) {
+        boolean saved = super.save_state(os, ot);
+
+        try {
+            os.packString(id == null ? null : id.toString());
+            os.packString(parentId == null ? null : parentId.toString());
+            os.packString(clientId);
+            if (cancelOn != null)
+                os.packLong(cancelOn.toInstant(ZoneOffset.UTC).toEpochMilli());
+            else
+                os.packLong(0L);
+
+            if (status == null) {
+                os.packBoolean(false);
+            } else {
+                os.packBoolean(true);
+                os.packString(status.name());
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        return saved;
+    }
+
+
+    public boolean restore_state (InputObjectState os, int ot) {
+        boolean restored = super.restore_state(os, ot);
+
+        try {
+            String s = os.unpackString();
+            id = s == null ? null : new URL(s);
+            s = os.unpackString();
+            parentId = s == null ? null : new URL(s);
+            clientId = os.unpackString();
+            long millis = os.unpackLong();
+            cancelOn = millis == 0 ? null : LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC);
+            status = os.unpackBoolean() ? CompensatorStatus.valueOf(os.unpackString()) : null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return restored;
     }
 
     @Override
@@ -92,6 +157,10 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         result = 31 * result + getId().hashCode();
         return result;
     }
+
+    public String type() {
+		return LRA_TYPE;
+	}
 
     public URL getId() {
         return id;
@@ -119,8 +188,8 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
     }
 
     public boolean isRecovering() {
-        return false;
-    } // TODO
+        return status != null && status.equals(CompensatorStatus.Compensating);
+    }
 
     private int closeLRA() {
         return end(false);
@@ -160,17 +229,13 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
                 pending.forEach(r -> pendingList.putRear(r));
 
                 super.phase2Abort(true);
+//                res = super.Abort();
 
                 res = status();
 
                 status = toLRAStatus(status());
             }
         } else {
-
-//        if (!status.equals(CompensatorStatus.Active))
-//            return status();
-
-
             if (compensate || status() == ActionStatus.ABORT_ONLY) {
                 status = CompensatorStatus.Compensating;
 
@@ -180,13 +245,13 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
                 for (int i = sz - 1; i > 0; i--)
                     pendingList.putRear(pendingList.getFront());
 
-                // tell each compensator that the lra canceled - use commit since we need recovery for compensation actions
-                res = super.abort();
+                // tell each compensator that the lra canceled
+                res = super.Abort(); // this route to abort forces a log write on failures and heuristics
             } else {
                 status = CompensatorStatus.Completing;
 
                 // tell each compensator that the lra completed ok
-                res = super.commit(true);
+                res = super.End(true);
             }
         }
 
@@ -204,9 +269,18 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
                 pending.clear(); // TODO we will loose this data if we need recovery
         }
 
-        status = toLRAStatus(res);
+        if (getSize(heuristicList) != 0 || getSize(failedList) != 0)
+            status = CompensatorStatus.Compensating;
+        else if (getSize(pendingList) != 0 || getSize(preparedList) != 0)
+            status = CompensatorStatus.Completing;
+        else
+            status = toLRAStatus(res);
 
         return res;
+    }
+
+    private int getSize(RecordList list) {
+        return list == null ? 0 : list.size();
     }
 
     private Collection<String> getCompensatorResponse(ObjectMapper mapper, String data) {
@@ -257,6 +331,7 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         if (coordinatorId != null && findLRAParticipant(participantUrl) != null) {
             // need to remember that there is a new participant
             deactivate(); // if it fails the superclass will have logged a warning
+            savedIntentionList = true; // need this clean up if the LRA times out
         }
 
         return coordinatorId;
@@ -355,7 +430,26 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
             case ActionStatus.COMMITTED:
             case ActionStatus.ABORTED:
                 return 200;
-            default: // TODO return a more comprehensive mapping between states
+            default:
+                return lraStatusToHttpStatus();
+        }
+    }
+
+    private int lraStatusToHttpStatus() {
+        if (status == null)
+            return 202; // in progress
+
+        switch (status) {
+            case Completed:
+            case Compensated:
+                return 200;
+            case Compensating:
+            case Completing:
+                return 202;
+            case FailedToComplete:
+            case FailedToCompensate:
+                return 412; // probably not the correct code
+            default:
                 return 500;
         }
     }
@@ -378,7 +472,7 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
         if (timeLimit > 0) {
-            cancelOn = LocalTime.now().plusNanos(timeLimit * 1000000);
+            cancelOn = LocalDateTime.now().plusNanos(timeLimit * 1000000);
 
             scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
         } else {
@@ -394,7 +488,10 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         int status = status();
 
         if (status == ActionStatus.RUNNING || status == ActionStatus.ABORT_ONLY) {
-            System.out.printf("Cancelling LRA: %s%n", id);
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
+            }
+
             CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
         }
     }
