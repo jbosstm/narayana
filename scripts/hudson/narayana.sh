@@ -195,6 +195,7 @@ function init_test_options {
     [ $JAC_ORB ] || JAC_ORB=1 # Run QA test suite against JacORB
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
+    [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
 }
 
 function comment_on_pull
@@ -261,7 +262,7 @@ function build_narayana {
     git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
     [ $? = 0 ] || fatal "git fetch of pulls failed"
     git checkout $SPI_BRANCH
-    [ $? = 0 ] || fatal "git fetch of pull branch failed"
+    [ $? = 0 ] || fatal "git fetch of pull branch failed"    
     cd ../
     ./build.sh -f jboss-transaction-spi/pom.xml clean install
     [ $? = 0 ] || fatal "Build of SPI failed"
@@ -331,6 +332,11 @@ function build_as {
 
   git pull --rebase --ff-only upstream master
   [ $? = 0 ] || fatal "git rebase failed"
+  
+  if [ $REDUCE_SPACE = 1 ]; then
+    echo "Deleting git dir to reduce disk usage"
+    rm -rf .git
+  fi
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
@@ -338,7 +344,7 @@ function build_as {
     JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.6.5.Final-SNAPSHOT
     [ $? = 0 ] || fatal "AS build failed"
 
-    ./build.sh -f testsuite/pom.xml -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=5.6.5.Final-SNAPSHOT -fae
+    ./build.sh -f testsuite/integration/pom.xml -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=5.6.5.Final-SNAPSHOT -fae
     [ $? = 0 ] || fatal "AS testsuite build failed"
   else
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.6.5.Final-SNAPSHOT
