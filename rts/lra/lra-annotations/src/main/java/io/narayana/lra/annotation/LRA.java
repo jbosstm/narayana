@@ -124,6 +124,13 @@ public @interface LRA {
     boolean terminal() default false;
 
     /**
+     * If true then the annotated class will be checked for compensator annotations and when present the class
+     * will be enlisted with any LRA that is associated with the invocation
+     * @return whether or not to automatically enlist a compensator
+     */
+    boolean join() default true;
+
+    /**
      * The cancelOnFamily element can be set to indicate which families of HTTP response codes will cause
      * the LRA to cancel. By default client errors (4xx codes) and server errors (5xx codes) will result in
      * cancellation of the LRA.

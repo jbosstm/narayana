@@ -23,7 +23,6 @@ package io.narayana.lra.coordinator.domain.model;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -68,14 +67,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private String responseData;
     private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
-    private byte[] compensatorData;
+    private String compensatorData;
     private ScheduledFuture<?> scheduledAbort;
 
     public LRARecord() {
-        compensateURI = null;
     }
 
-    LRARecord(String lraId, String coordinatorURI, String linkURI, byte[] compensatorData) {
+    LRARecord(String lraId, String coordinatorURI, String linkURI, String compensatorData) {
         super(new Uid());
 
         try {
@@ -102,7 +100,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             this.participantPath = linkURI;
 
             this.coordinatorURI = new URL(coordinatorURI);
-            this.compensatorData = compensatorData == null ? new byte[0] : compensatorData;
+            this.compensatorData = compensatorData;
         } catch (MalformedURLException e) {
             throw new InvalidLRAId(coordinatorURI, "Invalid LRA id", e);
         }
@@ -220,7 +218,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             try {
                 response = target.request()
                         .header(LRA_HTTP_HEADER, coordinatorURI.toString())
-                        .post(Entity.entity("", MediaType.APPLICATION_JSON));
+                        .post(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
             } catch (Exception e) {
                 response = null;
                 if (tsLogger.logger.isDebugEnabled()) {
@@ -307,7 +305,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 os.packString(completeURI.toString());
                 os.packString(compensateURI.toString());
                 os.packString(statusURI.toString());
-                os.packBytes(compensatorData);
+                os.packString(compensatorData);
 
                 os.packBoolean(isCompelete);
                 os.packBoolean(isCompensated);
@@ -322,7 +320,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     @Override
     public boolean restore_state(InputObjectState os, int t) {
-
         if (super.restore_state(os, t)) {
             try {
                 coordinatorURI = new URL(os.unpackString());
@@ -330,7 +327,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 completeURI = new URL(os.unpackString());
                 compensateURI = new URL(os.unpackString());
                 statusURI = new URL(os.unpackString());
-                compensatorData = os.unpackBytes();
+                compensatorData = os.unpackString();
 
                 isCompelete = os.unpackBoolean();
                 isCompensated = os.unpackBoolean();

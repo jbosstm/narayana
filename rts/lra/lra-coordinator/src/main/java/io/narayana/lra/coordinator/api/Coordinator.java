@@ -55,6 +55,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -395,7 +396,7 @@ public class Coordinator {
                     required = true )
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") long timeLimit,
             @ApiParam( value = "compensator data that will be passed back to the compensator when LRA is terminated" )
-            byte[] userData) throws NotFoundException {
+            String userData) throws NotFoundException {
         return joinLRA(toURL(lraId), timeLimit, null, linkHeader, userData);
     }
 
@@ -427,6 +428,11 @@ public class Coordinator {
                     + " The application or coordinator may use this information to control the lifecycle of a LRA.",
                     required = true )
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") int timeLimit,
+            @ApiParam( value = "The resource paths that the coordinator will use to complete or compensate and to request"
+                    + " the status of the compensator. The link rel names are"
+                    + " complete, compensate and status.",
+                    required = false )
+            @HeaderParam("Link") String compensatorLink,
             @ApiParam( value = "The resource path that the LRA coordinator will use to drive the compensator.\n"
                     + "Performing a GET on the compensator URL will return the current status of the compensator,\n"
                     + "or 404 if the compensator is no longer present.\n"
@@ -446,17 +452,31 @@ public class Coordinator {
                     + "Performing a POST on <URL>/complete will cause the compensator to tidy up and\n"
                     + "   it can forget this LRA.\n")
                     String compensatorUrl) throws NotFoundException {
+        // test to see if the join request contains any compensator specific data
+        if (compensatorLink != null && !isLink(compensatorUrl))
+            return joinLRA(toURL(lraId), timeLimit, compensatorLink, null, compensatorUrl);
+            
         return joinLRA(toURL(lraId), timeLimit, compensatorUrl, null, null);
     }
 
-    private Response joinLRA(URL lraId, long timeLimit, String compensatorUrl, String linkHeader, byte[] userData)
+    private boolean isLink(String linkString) {
+        try {
+            Link.valueOf(linkString);
+
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private Response joinLRA(URL lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("http://%s/%s/",
                 context.getRequestUri().getAuthority(), LRAClient.RECOVERY_COORDINATOR_PATH_NAME);
 
         StringBuilder recoveryUrl = new StringBuilder();
 
-        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, compensatorUrl, linkHeader, recoveryUrlBase, null);
+        int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, compensatorUrl, linkHeader, recoveryUrlBase, userData);
 
         return Response.status(status).entity(recoveryUrl).header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl).build();
     }

@@ -33,6 +33,7 @@ import io.narayana.lra.client.Current;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.LRAClientAPI;
 
 import javax.inject.Inject;
 import javax.ws.rs.Path;
@@ -51,6 +52,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
@@ -60,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.LRAClient.COMPENSATE;
 import static io.narayana.lra.client.LRAClient.COMPLETE;
+import static io.narayana.lra.client.LRAClient.FORGET;
 import static io.narayana.lra.client.LRAClient.LEAVE;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
@@ -78,7 +81,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private LRAClient lraClient;
+    private LRAClientAPI lraClient;
 
 //    private AtomicAction previous = null;
 
@@ -111,6 +114,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         String recoveryUrl = null;
         boolean nested;
         boolean isLongRunning = false;
+        boolean enlist;
 
         if (transactional == null)
             transactional = method.getDeclaringClass().getDeclaredAnnotation(LRA.class);
@@ -131,7 +135,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 containerRequestContext.setProperty(CANCEL_ON_PROP, cancel0n);
         }
 
-        boolean enlist = true;
         boolean endAnnotation = method.isAnnotationPresent(Complete.class)
                 || method.isAnnotationPresent(Compensate.class)
                 || method.isAnnotationPresent(Leave.class)
@@ -153,6 +156,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             return;
         }
 
+        enlist = ((LRA) transactional).join();
         nested = resourceInfo.getResourceMethod().isAnnotationPresent(NestedLRA.class);
 
         switch (type) {
@@ -266,13 +270,20 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation && enlist) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = lraClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, false);
+            Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, false);
             String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
             if (terminateURIs.containsKey("Link")) {
                 try {
-                    recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
+                    recoveryUrl = lraClient.joinLRA(lraId, timeLimit,
+                            toURL(terminateURIs.get(COMPENSATE)),
+                            toURL(terminateURIs.get(COMPLETE)),
+                            toURL(terminateURIs.get(FORGET)),
+                            toURL(terminateURIs.get(LEAVE)),
+                            toURL(terminateURIs.get(STATUS)),
+                            null);
+//                    recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
                 } catch (IllegalLRAStateException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
                     throw e;
@@ -300,6 +311,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available as a thread local");
 //        FilterState.setCurrentLRA(new FilterState(lraId, newLRA, suspendedLRA, recoveryUrl));
+    }
+
+    private URL toURL(String url) throws MalformedURLException {
+        return url == null ? null : new URL(url);
     }
 
     @Override
@@ -419,7 +434,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 checkMethod(paths, COMPENSATE, (Path) pathAnnotation, method.getAnnotation(Compensate.class));
                 checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class));
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class));
-                checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Forget.class));
+                checkMethod(paths, FORGET, (Path) pathAnnotation, method.getAnnotation(Forget.class));
             }
 
             // TODO do we need to tell the coordinaor which HTTP verb the annotations are using

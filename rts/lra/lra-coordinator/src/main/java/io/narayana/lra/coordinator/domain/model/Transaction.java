@@ -43,7 +43,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,7 +187,8 @@ public class Transaction extends AtomicAction {
     }
 
     public boolean isRecovering() {
-        return status != null && status.equals(CompensatorStatus.Compensating);
+        return status != null &&
+                (status.equals(CompensatorStatus.Compensating) || status.equals(CompensatorStatus.Completing));
     }
 
     private int closeLRA() {
@@ -228,6 +228,8 @@ public class Transaction extends AtomicAction {
 
                 pending.forEach(r -> pendingList.putRear(r));
 
+                updateState(CompensatorStatus.Compensating);
+
                 super.phase2Abort(true);
 //                res = super.Abort();
 
@@ -237,8 +239,6 @@ public class Transaction extends AtomicAction {
             }
         } else {
             if (compensate || status() == ActionStatus.ABORT_ONLY) {
-                status = CompensatorStatus.Compensating;
-
                 // compensators must be called in reverse order so reverse the pending list
                 int sz = pendingList == null ? 0 : pendingList.size();
 
@@ -246,11 +246,11 @@ public class Transaction extends AtomicAction {
                     pendingList.putRear(pendingList.getFront());
 
                 // tell each compensator that the lra canceled
+                updateState(CompensatorStatus.Compensating);
                 res = super.Abort(); // this route to abort forces a log write on failures and heuristics
             } else {
-                status = CompensatorStatus.Completing;
-
                 // tell each compensator that the lra completed ok
+                updateState(CompensatorStatus.Completing);
                 res = super.End(true);
             }
         }
@@ -277,6 +277,11 @@ public class Transaction extends AtomicAction {
             status = toLRAStatus(res);
 
         return res;
+    }
+
+    private boolean updateState(CompensatorStatus nextState) {
+        status = nextState;
+        return deactivate();
     }
 
     private int getSize(RecordList list) {
@@ -319,7 +324,7 @@ public class Transaction extends AtomicAction {
     }
 
     public String enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                    long timeLimit, byte[] compensatorData) {
+                                    long timeLimit, String compensatorData) {
         LRARecord participant = findLRAParticipant(participantUrl);
 
         if (participant != null)
@@ -338,7 +343,7 @@ public class Transaction extends AtomicAction {
     }
 
     public String enlistParticipant(String coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
-                                    long timeLimit, byte[] compensatorData) {
+                                    long timeLimit, String compensatorData) {
         if (findLRAParticipant(participantUrl) != null)
             return null;    // already enlisted
 
@@ -348,10 +353,11 @@ public class Transaction extends AtomicAction {
 
         String recoveryUrl = recoveryUrlBase + txId + '/' + coordinatorId;
 
-        if (add(p) != AddOutcome.AR_REJECTED)
-            return recoveryUrl;
+        if (add(p) != AddOutcome.AR_REJECTED) {
+            p.setTimeLimit(scheduler, timeLimit);
 
-        p.setTimeLimit(scheduler, timeLimit);
+            return recoveryUrl;
+        }
 
         return null;
     }
