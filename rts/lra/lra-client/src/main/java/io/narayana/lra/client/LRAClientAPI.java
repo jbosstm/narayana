@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.client;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -172,14 +173,15 @@ public interface LRAClientAPI {
      *                     Performing a POST on URL/complete will cause the compensator to tidy up and
      *                  it can forget this LRA.  (optional)
      *
+     * @param compensatorData
      * @return a recovery URL for this enlistment
      *
      * @throws GenericLRAException Comms error
      */
-    String joinLRA(URL lraId, Long timelimit, String body, byte[] compensatorData) throws GenericLRAException;
+    String joinLRA(URL lraId, Long timelimit, String body, String compensatorData) throws GenericLRAException;
 
     /**
-     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, byte[])} but the various compensator urls
+     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, String)} but the various compensator urls
      * are passed in explicitly
      *
      * @param lraId The unique identifier of the LRA (required)
@@ -191,13 +193,27 @@ public interface LRAClientAPI {
      * @param leaveUrl Performing a PUT on this URL with cause the compensator to leave the LRA
      * @param statusUrl Performing a GET on this URL will return the status of the compensator {@see joinLRA}
      *
+     * @param compensatorData
      * @return a recovery URL for this enlistment
      *
      * @throws GenericLRAException
      */
     String joinLRA(URL lraId, Long timelimit,
                    URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
-                   byte[] compensatorData) throws GenericLRAException;
+                   String compensatorData) throws GenericLRAException;
+
+    /**
+     * Join an LRA passing in a class that will act as the compensator.
+     *
+     * @param lraId The unique identifier of the LRA (required)
+     * @param resourceClass An annotated class for the compensator methods
+     * @param baseUri Base uri for the compensator endpoints
+     * @param compensatorData Compensator specific data that the coordinator will pass to the compensator when the LRA
+     *                        is closed or cancelled
+     * @return
+     * @throws GenericLRAException
+     */
+    String joinLRA(URL lraId, Class<?> resourceClass, URI baseUri, String compensatorData) throws GenericLRAException;
 
     /**
      * Change the endpoints that a compensator can be contacted on.
@@ -213,7 +229,7 @@ public interface LRAClientAPI {
      * @throws GenericLRAException
      */
     URL updateCompensator(URL recoveryUrl,URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
-                           byte[] compensatorData) throws GenericLRAException;
+                           String compensatorData) throws GenericLRAException;
 
     /**
      * A Compensator can resign from the LRA at any time prior to the completion of an activity
@@ -239,4 +255,12 @@ public interface LRAClientAPI {
      * @param unit the time unit for limit
      */
     void renewTimeLimit(URL lraId, long limit, TimeUnit unit);
+
+    /**
+     * Update the clients notion of the current coordinator. Warning all further operations will be performed
+     * on the LRA manager that created the passed in coordinator.
+     *
+     * @param coordinatorUrl the full url of an LRA
+     */
+    void setCurrentLRA(URL coordinatorUrl);
 }

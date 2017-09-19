@@ -198,7 +198,7 @@ public class LRAService {
 
     public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
-                                    byte[] compensatorData) {
+                                    String compensatorData) {
         if (lra ==  null)
             lraTrace(null, "Error missing LRA header in join request");
 

@@ -103,7 +103,8 @@ public class LRARecoveryModule implements RecoveryModule {
             try {
                 RecoveringLRA lra = new RecoveringLRA( recoverUid, theStatus ) ;
 
-                lra.replayPhase2() ;
+                if (lra.isRecovering())
+                    lra.replayPhase2();
             } catch ( Exception ex ) {
                 if (tsLogger.logger.isInfoEnabled())
                     tsLogger.logger.infof("failed to recover Transaction %s: %s", recoverUid, ex.getMessage());

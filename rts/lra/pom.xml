@@ -128,8 +128,6 @@
         <module>lra-annotations</module>
         <module>lra-coordinator</module>
         <module>lra-filters</module>
-<!--        <module>lra-recovery</module>
--->
         <module>lra-test</module>
         <module>lra-cdi-rest</module>
     </modules>
