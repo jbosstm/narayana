@@ -58,8 +58,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private URL completeURI;
     private URL compensateURI;
-    private URL statusURI;
-    private URL forgetURI;
+//    private URL statusURI;
+//    private URL forgetURI;
 
     private boolean isCompelete;
     private boolean isCompensated;
@@ -93,8 +93,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             } else {
                 this.compensateURI = new URL(String.format("%s/compensate", linkURI));
                 this.completeURI = new URL(String.format("%s/complete", linkURI));
-                this.statusURI = new URL(String.format("%s/status", linkURI));
-                this.forgetURI = new URL(String.format("%s/forget", linkURI));
+//                this.statusURI = new URL(String.format("%s/status", linkURI));
+//                this.forgetURI = new URL(String.format("%s/forget", linkURI));
             }
 
             this.participantPath = linkURI;
@@ -140,10 +140,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 compensateURI = new URL(uri);
             else if ("complete".equals(rel))
                 completeURI = new URL(uri);
-            else if ("status".equals(rel))
-                statusURI = new URL(uri);
-            else if ("forget".equals(rel))
-                forgetURI = new URL(uri);
+//            else if ("status".equals(rel))
+//                statusURI = new URL(uri);
+//            else if ("forget".equals(rel))
+//                forgetURI = new URL(uri);
 
             return null;
         } catch (MalformedURLException e) {
@@ -260,24 +260,25 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     public boolean forget() {
-        if (forgetURI == null)
-            return false; // warning
-
-        Client client = ClientBuilder.newClient();
-        WebTarget target = null;
-
-        try {
-            target = client.target(URI.create(forgetURI.toExternalForm()));
-
-            Response response = target.request()
-                    .header(LRA_HTTP_HEADER, coordinatorURI)
-                    .post(Entity.entity("", MediaType.APPLICATION_JSON));
-
-            return response.getStatus() == Response.Status.OK.getStatusCode();
-        } finally {
-            if (client != null)
-                client.close();
-        }
+        return true;
+//        if (forgetURI == null)
+//            return false; // warning
+//
+//        Client client = ClientBuilder.newClient();
+//        WebTarget target = null;
+//
+//        try {
+//            target = client.target(URI.create(forgetURI.toExternalForm()));
+//
+//            Response response = target.request()
+//                    .header(LRA_HTTP_HEADER, coordinatorURI)
+//                    .post(Entity.entity("", MediaType.APPLICATION_JSON));
+//
+//            return response.getStatus() == Response.Status.OK.getStatusCode();
+//        } finally {
+//            if (client != null)
+//                client.close();
+//        }
     }
 
     public boolean isCompelete() {
@@ -304,7 +305,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 os.packString(participantPath);
                 os.packString(completeURI.toString());
                 os.packString(compensateURI.toString());
-                os.packString(statusURI.toString());
+//                os.packString(statusURI.toString());
                 os.packString(compensatorData);
 
                 os.packBoolean(isCompelete);
@@ -326,7 +327,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 participantPath = os.unpackString();
                 completeURI = new URL(os.unpackString());
                 compensateURI = new URL(os.unpackString());
-                statusURI = new URL(os.unpackString());
+//                statusURI = new URL(os.unpackString());
                 compensatorData = os.unpackString();
 
                 isCompelete = os.unpackBoolean();
