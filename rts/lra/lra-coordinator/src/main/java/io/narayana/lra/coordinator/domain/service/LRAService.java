@@ -34,6 +34,9 @@ import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Destroyed;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
@@ -252,10 +255,15 @@ public class LRAService {
         return lra.setTimeLimit(timelimit);
     }
 
+    public boolean isLocal(URL lraId) {
+        return hasTransaction(lraId.toExternalForm());
+    }
+
     // TODO why doesn't this get triggered after construction
 //    @PostConstruct
     // TODO enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init)
-    public void enableRecovery() {
+    public void enableRecovery(@Observes @Initialized(ApplicationScoped.class)
+                                       Object init /* a javax.servlet.ServletContext */) {
         if (lraRecoveryModule == null) {
             lraRecoveryModule = new LRARecoveryModule();
             lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
@@ -271,7 +279,9 @@ public class LRAService {
     }
 
     //    @PreDestroy
-    public void disableRecovery() {
+
+    public void disableRecovery(@Observes @Destroyed(ApplicationScoped.class)
+                                        Object init /* a javax.servlet.ServletContext */) {
         if (lraRecoveryModule != null) {
             Implementations.uninstall();
             RecoveryManager.manager().removeModule(lraRecoveryModule, false);

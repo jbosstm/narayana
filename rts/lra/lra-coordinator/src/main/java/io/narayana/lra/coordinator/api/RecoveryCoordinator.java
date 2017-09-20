@@ -21,7 +21,6 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,12 +30,11 @@ import io.swagger.annotations.ApiResponses;
 import org.jboss.logging.Logger;
 import io.narayana.lra.client.LRAClient;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -52,22 +50,6 @@ public class RecoveryCoordinator {
 
     @Inject
     private LRAService lraService;
-
-    @PostConstruct
-    public void postContruct() {
-        lraService.enableRecovery();
-    }
-
-    @PreDestroy
-    public void preDestroy() {
-        lraService.disableRecovery();
-    }
-
-    @GET
-    @Path("start")
-    public void start() { // trigger postConstruct()
-        lraService.enableRecovery();
-    }
 
     // Performing a GET on the recovery URL (return from a join request) will return the original <compensator URL>
     @GET
