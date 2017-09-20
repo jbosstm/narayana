@@ -540,9 +540,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
         StringBuilder linkHeaderValue = new StringBuilder();
 
-        paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
-
-        paths.put("Link", linkHeaderValue.toString());
+        if (paths.size() != 0) {
+            paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
+            paths.put("Link", linkHeaderValue.toString());
+        }
 
         return paths;
     }

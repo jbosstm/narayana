@@ -200,9 +200,10 @@ public class Transaction extends AtomicAction {
     }
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
-    public int end(/*Vertx vertx,*/ boolean compensate) {
+    public int end(boolean compensate) {
         int res = status();
         boolean nested = !isTopLevel();
+        boolean onePhase = super.pendingList == null || super.pendingList.size() == 1;
 
         if (scheduledAbort != null) {
             scheduledAbort.cancel(false);
@@ -255,6 +256,9 @@ public class Transaction extends AtomicAction {
             }
         }
 
+        if (onePhase) {
+            updateState();
+        }
         // gather up any response data
         ObjectMapper mapper = new ObjectMapper();
 
