@@ -74,7 +74,7 @@ public class LraAnnotationProcessingExtension implements Extension {
         Set<Class<? extends Annotation>> missing = new HashSet<>();
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Compensate.class))) missing.add(Compensate.class);
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Complete.class))) missing.add(Complete.class);
-        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
+//        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
 
         if(!missing.isEmpty()) {
             throw new DeploymentException("Class " + classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName() + " uses "

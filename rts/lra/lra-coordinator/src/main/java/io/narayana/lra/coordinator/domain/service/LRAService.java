@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAId;
 import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.internal.Implementations;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
@@ -253,12 +254,17 @@ public class LRAService {
 
     // TODO why doesn't this get triggered after construction
 //    @PostConstruct
+    // TODO enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init)
     public void enableRecovery() {
         if (lraRecoveryModule == null) {
             lraRecoveryModule = new LRARecoveryModule();
             lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
             RecoveryManager.manager().addModule(lraRecoveryModule);
             Implementations.install();
+
+/*   TODO         for (Transaction transaction : recoveringLRAs.values())
+                for (LRARecord lraRecord : transaction.getRecords())
+                    addCompensator(lraRecord.getRecoveryCoordinatorURL(), lraRecord.getCompensatorURL());*/
         }
 
         RecoveryManager.manager().scan();

@@ -525,16 +525,16 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
                 validCnt[0] += checkMethod(paths, COMPLETE, (Path) pathAnnotation,
                         method.getAnnotation(Complete.class), uriPrefix);
-                validCnt[0] += checkMethod(paths, STATUS, (Path) pathAnnotation,
+                checkMethod(paths, STATUS, (Path) pathAnnotation,
                         method.getAnnotation(Status.class), uriPrefix);
-                validCnt[0] += checkMethod(paths, FORGET, (Path) pathAnnotation,
+                checkMethod(paths, FORGET, (Path) pathAnnotation,
                         method.getAnnotation(Forget.class), uriPrefix);
 
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
             }
         });
 
-        if (validate && (validCnt[0] > 0 && validCnt[0] < 3))
+        if (validate && validCnt[0] == 1) // must have neither or both of COMPLETE and COMPENSATE
             throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
                     String.format(MISSING_ANNOTATION_FORMAT, compensatorClass.getName()), null);
 
@@ -542,8 +542,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
         paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
 
-        if (validCnt[0] == 4)
-           paths.put("Link", linkHeaderValue.toString());
+        paths.put("Link", linkHeaderValue.toString());
 
         return paths;
     }
@@ -578,6 +577,9 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
     private static StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
 
+        if (value == null)
+            return b;
+
         String terminationUri = uriPrefix == null ? value : String.format("%s%s", uriPrefix, value);
         Link link =  Link.fromUri(terminationUri).title(key + " URI").rel(key).type(MediaType.TEXT_PLAIN).build();
 
@@ -594,8 +596,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
         validateURL(completeUrl, false, "Invalid complete URL: %s");
         validateURL(compensateUrl, false, "Invalid compensate URL: %s");
         validateURL(leaveUrl, true, "Invalid status URL: %s");
-        validateURL(forgetUrl, false, "Invalid forgetUrl URL: %s");
-        validateURL(statusUrl, false, "Invalid status URL: %s");
+        validateURL(forgetUrl, true, "Invalid forgetUrl URL: %s");
+        validateURL(statusUrl, true, "Invalid status URL: %s");
 
         Map<String, String> terminateURIs = new HashMap<>();
 

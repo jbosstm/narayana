@@ -137,8 +137,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         boolean endAnnotation = method.isAnnotationPresent(Complete.class)
                 || method.isAnnotationPresent(Compensate.class)
-                || method.isAnnotationPresent(Leave.class)
-                || method.isAnnotationPresent(Forget.class);
+                || method.isAnnotationPresent(Leave.class);
+//                || method.isAnnotationPresent(Forget.class);
 
         if (type == null) {
             if(!endAnnotation)
@@ -150,11 +150,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (headers.containsKey(LRA_HTTP_HEADER))
             incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER)); // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
 
-        if (endAnnotation && incommingLRA == null) {
-//            Current.clearContext(headers); // or don't provide the header to participants and force them to provide something unique
-
+        if (endAnnotation && incommingLRA == null)
             return;
-        }
 
         enlist = ((LRA) transactional).join();
         nested = resourceInfo.getResourceMethod().isAnnotationPresent(NestedLRA.class);
@@ -245,7 +242,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
 
         if (lraId == null) {
-            lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: removing header");
+            lraTrace(containerRequestContext, null, "ServerLRAFilter before: removing header");
             // the method call needs to run without a transaction
             Current.clearContext(headers);
             return; // non transactional
@@ -279,9 +276,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     recoveryUrl = lraClient.joinLRA(lraId, timeLimit,
                             toURL(terminateURIs.get(COMPENSATE)),
                             toURL(terminateURIs.get(COMPLETE)),
-                            toURL(terminateURIs.get(FORGET)),
+                            null, //toURL(terminateURIs.get(FORGET)),
                             toURL(terminateURIs.get(LEAVE)),
-                            toURL(terminateURIs.get(STATUS)),
+                            null, //toURL(terminateURIs.get(STATUS)),
                             null);
 //                    recoveryUrl = lraClient.joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), null);
                 } catch (IllegalLRAStateException e) {
@@ -401,9 +398,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private String getCompensatorId(URL lraId, URI baseUri) {
         Map<String, String> terminateURIs = getTerminationUris(resourceInfo.getResourceClass());
 
-        if (terminateURIs.size() < 3)
+        if (!terminateURIs.containsKey(COMPENSATE) || !terminateURIs.containsKey(COMPLETE))
             throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Missing complete, compensate or status annotations", null);
+                    "Missing complete or compensate annotations", null);
 
         // register with the coordinator
 
@@ -437,7 +434,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 checkMethod(paths, FORGET, (Path) pathAnnotation, method.getAnnotation(Forget.class));
             }
 
-            // TODO do we need to tell the coordinaor which HTTP verb the annotations are using
+            // NB the lra-cdi-rest maven artifact also validates that the annotated methods are using @POST annotation
         });
 
         return paths;
