@@ -74,9 +74,13 @@ public class LraAnnotationProcessingExtension implements Extension {
         Set<Class<? extends Annotation>> missing = new HashSet<>();
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Compensate.class))) missing.add(Compensate.class);
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Complete.class))) missing.add(Complete.class);
-//        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
+        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
 
-        if(!missing.isEmpty()) {
+        // if LRA contains join attribute with value false then we do not expect LRA annotations to be present on the type
+        LRA lraAnnotation = classAnnotatedWithLra.getAnnotatedType().getAnnotation(LRA.class);
+        boolean isJoin = lraAnnotation.join();
+
+        if(!missing.isEmpty() && isJoin) {
             throw new DeploymentException("Class " + classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName() + " uses "
               + LRA.class.getName() + " which requires methods handling LRA events. Missing annotations in the class: " + missing);
         }
@@ -118,47 +122,53 @@ public class LraAnnotationProcessingExtension implements Extension {
             throw new DeploymentException(errorMsg.apply(Forget.class, methodsWithForget));
         }
 
-        // Each method annotated with LRA-style annotations contain all necessary REST annotations
-        // @Compensate - requires @Path and @POST
-        final AnnotatedMethod<? super X> methodWithCompensate = methodsWithCompensate.get(0);
-        Function<Class<?>, String> getCompensateMissingErrMsg = (wrongAnnotation) ->
-            getMissingAnnotationError(methodWithCompensate, classAnnotatedWithLra, Compensate.class, wrongAnnotation);
-        boolean isCompensateContainsPathAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
-        if(!isCompensateContainsPathAnnotation) {
-            throw new DeploymentException(getCompensateMissingErrMsg.apply(Path.class));
-        }
-        boolean isCompensateContainsPostAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
-        if(!isCompensateContainsPostAnnotation) {
-            throw new DeploymentException(getCompensateMissingErrMsg.apply(POST.class));
+        if(methodsWithCompensate.size() > 0) {
+            // Each method annotated with LRA-style annotations contain all necessary REST annotations
+            // @Compensate - requires @Path and @POST
+            final AnnotatedMethod<? super X> methodWithCompensate = methodsWithCompensate.get(0);
+            Function<Class<?>, String> getCompensateMissingErrMsg = (wrongAnnotation) ->
+                getMissingAnnotationError(methodWithCompensate, classAnnotatedWithLra, Compensate.class, wrongAnnotation);
+            boolean isCompensateContainsPathAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
+            if(!isCompensateContainsPathAnnotation) {
+                throw new DeploymentException(getCompensateMissingErrMsg.apply(Path.class));
+            }
+            boolean isCompensateContainsPostAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
+            if(!isCompensateContainsPostAnnotation) {
+                throw new DeploymentException(getCompensateMissingErrMsg.apply(POST.class));
+            }
         }
 
-        // @Complete - requires @Path and @POST
-        final AnnotatedMethod<? super X> methodWithComplete = methodsWithComplete.get(0);
-        Function<Class<?>, String> getCompleteMissingErrMsg = (wrongAnnotation) ->
-            getMissingAnnotationError(methodWithComplete, classAnnotatedWithLra, Complete.class, wrongAnnotation);
-        boolean isCompleteContainsPathAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
-        if(!isCompleteContainsPathAnnotation) {
-            throw new DeploymentException(getCompleteMissingErrMsg.apply(Path.class));
-        }
-        boolean isCompleteContainsPostAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
-        if(!isCompleteContainsPostAnnotation) {
-            throw new DeploymentException(getCompleteMissingErrMsg.apply(POST.class));
+        if(methodsWithComplete.size() > 0) {
+            // @Complete - requires @Path and @POST
+            final AnnotatedMethod<? super X> methodWithComplete = methodsWithComplete.get(0);
+            Function<Class<?>, String> getCompleteMissingErrMsg = (wrongAnnotation) ->
+                getMissingAnnotationError(methodWithComplete, classAnnotatedWithLra, Complete.class, wrongAnnotation);
+            boolean isCompleteContainsPathAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
+            if(!isCompleteContainsPathAnnotation) {
+                throw new DeploymentException(getCompleteMissingErrMsg.apply(Path.class));
+            }
+            boolean isCompleteContainsPostAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
+            if(!isCompleteContainsPostAnnotation) {
+                throw new DeploymentException(getCompleteMissingErrMsg.apply(POST.class));
+            }
         }
         
-        // @Status - requires @Path and @GET
-        final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
-        Function<Class<?>, String> getStatusMissingErrMsg = (wrongAnnotation) ->
-            getMissingAnnotationError(methodWithStatus, classAnnotatedWithLra, Status.class, wrongAnnotation);
-        boolean isStatusContainsPathAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
-        if(!isStatusContainsPathAnnotation) {
-            throw new DeploymentException(getStatusMissingErrMsg.apply(Path.class));
-        }
-        boolean isStatusContainsPostAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(GET.class));
-        if(!isStatusContainsPostAnnotation) {
-            throw new DeploymentException(getStatusMissingErrMsg.apply(GET.class));
+        if(methodsWithStatus.size() > 0) {
+            // @Status - requires @Path and @GET
+            final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
+            Function<Class<?>, String> getStatusMissingErrMsg = (wrongAnnotation) ->
+                getMissingAnnotationError(methodWithStatus, classAnnotatedWithLra, Status.class, wrongAnnotation);
+            boolean isStatusContainsPathAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
+            if(!isStatusContainsPathAnnotation) {
+                throw new DeploymentException(getStatusMissingErrMsg.apply(Path.class));
+            }
+            boolean isStatusContainsPostAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(GET.class));
+            if(!isStatusContainsPostAnnotation) {
+                throw new DeploymentException(getStatusMissingErrMsg.apply(GET.class));
+            }
         }
 
-        if(methodsWithLeave.size() > 0) { 
+        if(methodsWithLeave.size() > 0) {
             // @Leave - requires @PUT
             final AnnotatedMethod<? super X> methodWithLeave = methodsWithLeave.get(0);
             boolean isLeaveContainsPutAnnotation = methodWithLeave.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(PUT.class));
