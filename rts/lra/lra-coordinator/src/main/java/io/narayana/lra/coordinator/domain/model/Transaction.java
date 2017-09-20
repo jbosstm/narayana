@@ -281,7 +281,8 @@ public class Transaction extends AtomicAction {
 
     private boolean updateState(CompensatorStatus nextState) {
         status = nextState;
-        return deactivate();
+
+        return (pendingList == null || pendingList.size() == 0) || deactivate();
     }
 
     private int getSize(RecordList list) {
@@ -292,7 +293,7 @@ public class Transaction extends AtomicAction {
         if (data !=null && data.startsWith("[")) {
             try {
                 String[] ja = mapper.readValue(data, String[].class);
-                // TODO should reccurse here since the encoded strings may themselves contain compensator output
+                // TODO should recurse here since the encoded strings may themselves contain compensator output
                 return Arrays.asList(ja);
             } catch (IOException e) {
                 e.printStackTrace();
