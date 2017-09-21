@@ -26,16 +26,21 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 
 class RecoveringLRA extends Transaction {
     /**
      * Re-creates/activates an LRA for the specified transaction Uid.
      */
-    RecoveringLRA(Uid rcvUid, int theStatus ) {
-        super(rcvUid );
+    RecoveringLRA(LRAService lraService, Uid rcvUid, int theStatus) {
+        super(lraService, rcvUid );
 
         _theStatus = theStatus ;
         _activated = activate(); // this should initialize the state
+    }
+
+    public boolean isActivated() {
+        return _activated;
     }
 
     /**

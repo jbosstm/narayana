@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import io.narayana.lra.coordinator.domain.model.Transaction;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 
 import java.net.URL;
 import java.util.Enumeration;
@@ -43,7 +44,9 @@ import java.util.Map;
 import java.util.Vector;
 
 public class LRARecoveryModule implements RecoveryModule {
-    public LRARecoveryModule() {
+    public LRARecoveryModule(LRAService lraService) {
+        this.lraService = lraService;
+
         if (_recoveryStore == null)
             _recoveryStore = StoreManager.getRecoveryStore();
 
@@ -89,27 +92,30 @@ public class LRARecoveryModule implements RecoveryModule {
         // Retrieve the transaction status from its original process.
         int theStatus = _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
 
-        boolean inFlight = isTransactionInMidFlight( theStatus ) ;
+//        boolean inFlight = false; // TODO figure out how to determine isTransactionInMidFlight( theStatus ) ;
 
-        String Status = ActionStatus.stringForm( theStatus ) ;
-
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
-                    recoverUid.toString() + "\n ActionStatus is " + Status +
-                    " in flight is " + inFlight);
-        }
-
-        if ( ! inFlight ) {
             try {
-                RecoveringLRA lra = new RecoveringLRA( recoverUid, theStatus ) ;
+                RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus) ;
+                String Status = ActionStatus.stringForm( theStatus ) ;
+                boolean inFlight = lraService.hasTransaction(lra.getId());
 
-                if (lra.isRecovering())
+                if (inFlight // might have been loaded on start up
+                        && !lraService.getTransaction(lra.getId()).isInFlight())
+                    inFlight = false; // lraService knows about it but was loaded at start up time
+
+                if (tsLogger.logger.isDebugEnabled()) {
+                    tsLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
+                            recoverUid.toString() + "\n ActionStatus is " + Status +
+                            " in flight is " + inFlight);
+                }
+
+                if (!inFlight && lra.isRecovering())
                     lra.replayPhase2();
+
             } catch ( Exception ex ) {
                 if (tsLogger.logger.isInfoEnabled())
                     tsLogger.logger.infof("failed to recover Transaction %s: %s", recoverUid, ex.getMessage());
             }
-        }
     }
 
     private boolean isTransactionInMidFlight( int status )
@@ -214,12 +220,17 @@ public class LRARecoveryModule implements RecoveryModule {
             while (transactionUidEnum.hasMoreElements()) {
                 Uid currentUid = (Uid) transactionUidEnum.nextElement();
                 int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, currentUid);
-                RecoveringLRA lra = new RecoveringLRA( currentUid, status );
+                RecoveringLRA lra = new RecoveringLRA(lraService, currentUid, status);
 
-                lras.put(lra.getId(), lra);
+                if (lra.isActivated())
+                    lras.put(lra.getId(), lra);
+                else
+                    tsLogger.logger.infof("failed to activate LRA %s", currentUid);
             }
         }
     }
+
+    LRAService lraService;
 
     // 'type' within the Object Store for LRAs.
     private String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType() ;

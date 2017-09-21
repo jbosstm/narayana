@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
+import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -422,7 +423,7 @@ public class Coordinator {
                     + " It may therefore be necessary for the application or service to start other activities to explicitly try to compensate this work."
                     + " The application or coordinator may use this information to control the lifecycle of a LRA.",
                     required = true )
-            @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") int timeLimit,
+            @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") long timeLimit,
             @ApiParam( value = "The resource paths that the coordinator will use to complete or compensate and to request"
                     + " the status of the compensator. The link rel names are"
                     + " complete, compensate and status.",
@@ -448,10 +449,32 @@ public class Coordinator {
                     + "   it can forget this LRA.\n")
                     String compensatorUrl) throws NotFoundException {
         // test to see if the join request contains any compensator specific data
-        if (compensatorLink != null && !isLink(compensatorUrl))
+        boolean isLink = isLink(compensatorUrl);
+
+        if (compensatorLink != null && !isLink)
             return joinLRA(toURL(lraId), timeLimit, compensatorLink, null, compensatorUrl);
-            
-        return joinLRA(toURL(lraId), timeLimit, compensatorUrl, null, null);
+
+        if (!isLink) { // interpret the content as a standard compensator url
+            compensatorUrl += "/";
+
+            String reqUri = context.getRequestUri().toString();
+
+            try {
+                String recoveryUrl = lraService.joinLRA(new URL(reqUri), timeLimit,
+                        new URL(compensatorUrl + "compensate"),
+                        new URL(compensatorUrl + "complete"),
+                        null,
+                        null,
+                        new URL(compensatorUrl + "status"),
+                        null);
+
+                return Response.ok().entity(recoveryUrl).header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl).build();
+            } catch (GenericLRAException | MalformedURLException e) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        }
+
+        return joinLRA(toURL(lraId), timeLimit, null, compensatorUrl, null);
     }
 
     private boolean isLink(String linkString) {

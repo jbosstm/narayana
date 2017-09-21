@@ -51,9 +51,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
-    private URL coordinatorURI;
+    private URL lraId;
+    private URL recoveryURL;
     private String participantPath;
 
     private URL completeURI;
@@ -73,7 +75,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public LRARecord() {
     }
 
-    LRARecord(String lraId, String coordinatorURI, String linkURI, String compensatorData) {
+    LRARecord(String lraId, String linkURI, String compensatorData) {
         super(new Uid());
 
         try {
@@ -89,20 +91,22 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 });
 
                 if (parseException[0] != null)
-                    throw new InvalidLRAId(coordinatorURI, "Invalid link URL", parseException[0]);
+                    throw new InvalidLRAId(lraId, "Invalid link URL", parseException[0]);
             } else {
                 this.compensateURI = new URL(String.format("%s/compensate", linkURI));
                 this.completeURI = new URL(String.format("%s/complete", linkURI));
 //                this.statusURI = new URL(String.format("%s/status", linkURI));
 //                this.forgetURI = new URL(String.format("%s/forget", linkURI));
+
             }
 
+            this.lraId = new URL(lraId);
             this.participantPath = linkURI;
 
-            this.coordinatorURI = new URL(coordinatorURI);
+            this.recoveryURL = null;
             this.compensatorData = compensatorData;
         } catch (MalformedURLException e) {
-            throw new InvalidLRAId(coordinatorURI, "Invalid LRA id", e);
+            throw new InvalidLRAId(lraId, "Invalid LRA id", e);
         }
     }
 
@@ -128,6 +132,24 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             b.append(',');
 
         return b.append(value);
+    }
+
+    public static String extractCompensator(String linkStr) {
+        for (String lnk : linkStr.split(",")) {
+            Link link;
+
+            try {
+                link = Link.valueOf(lnk);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return linkStr;
+            }
+
+            if ("compensate".equals(link.getRel()))
+                return link.getUri().toString();
+        }
+
+        return linkStr;
     }
 
     private MalformedURLException parseLink(String linkStr) {
@@ -211,13 +233,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             client = ClientBuilder.newClient();
             WebTarget target = client.target(URI.create(endPath.toExternalForm()));
 
-            Current.push(coordinatorURI);
+            Current.push(lraId);
 
             Response response;
 
             try {
                 response = target.request()
-                        .header(LRA_HTTP_HEADER, coordinatorURI.toString())
+                        .header(LRA_HTTP_HEADER, lraId.toExternalForm())
+                        .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
                         .post(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
             } catch (Exception e) {
                 response = null;
@@ -271,7 +294,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 //            target = client.target(URI.create(forgetURI.toExternalForm()));
 //
 //            Response response = target.request()
-//                    .header(LRA_HTTP_HEADER, coordinatorURI)
+//                    .header(LRA_HTTP_HEADER, recoveryURL)
 //                    .post(Entity.entity("", MediaType.APPLICATION_JSON));
 //
 //            return response.getStatus() == Response.Status.OK.getStatusCode();
@@ -301,10 +324,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public boolean save_state(OutputObjectState os, int t) {
         if (super.save_state(os, t)) {
             try {
-                os.packString(coordinatorURI.toString());
+                os.packString(lraId.toExternalForm());
+                os.packString(recoveryURL.toExternalForm());
                 os.packString(participantPath);
-                os.packString(completeURI.toString());
-                os.packString(compensateURI.toString());
+                os.packString(completeURI.toExternalForm());
+                os.packString(compensateURI.toExternalForm());
 //                os.packString(statusURI.toString());
                 os.packString(compensatorData);
 
@@ -323,7 +347,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public boolean restore_state(InputObjectState os, int t) {
         if (super.restore_state(os, t)) {
             try {
-                coordinatorURI = new URL(os.unpackString());
+                lraId = new URL(os.unpackString());
+                recoveryURL = new URL(os.unpackString());
                 participantPath = os.unpackString();
                 completeURI = new URL(os.unpackString());
                 compensateURI = new URL(os.unpackString());
@@ -341,8 +366,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return true;
     }
 
-    public int typeIs() {
+    static int getTypeId() {
         return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we dependend on swarm for narayana which is using an earlier version
+    }
+
+    public int typeIs() {
+        return getTypeId();
     }
 
     public int nestedAbort()
@@ -446,5 +475,29 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         return Response.Status.OK.getStatusCode();
+    }
+
+    public URL getRecoveryCoordinatorURL() {
+        return recoveryURL;
+    }
+
+    public String getParticipantURL() {
+        return participantPath;
+    }
+
+    void setRecoveryURL(String recoveryURL) {
+        try {
+            this.recoveryURL = new URL(recoveryURL);
+        } catch (MalformedURLException e) {
+            throw new InvalidLRAId(recoveryURL, "Invalid recovery id", e);
+        }
+    }
+
+    void setRecoveryURL(String recoveryUrlBase, String txId, String coordinatorId) {
+        setRecoveryURL(recoveryUrlBase + txId + '/' + coordinatorId);
+    }
+
+    public String getCompensator() {
+        return compensateURI.toExternalForm();
     }
 }

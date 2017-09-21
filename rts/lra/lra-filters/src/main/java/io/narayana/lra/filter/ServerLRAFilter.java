@@ -249,6 +249,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         } else {
             lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: adding header");
 //            headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
+            if (lraId.toExternalForm().contains("recovery-coordi"))
+                System.out.println("wrong lra id");
         }
 
         if (isLongRunning)

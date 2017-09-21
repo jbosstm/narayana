@@ -24,6 +24,7 @@ package io.narayana.lra.coordinator.domain.service;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAId;
 import io.narayana.lra.client.LRAClient;
@@ -41,6 +42,7 @@ import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -117,8 +119,17 @@ public class LRAService {
         }
     }
 
-    public void addCompensator(Transaction transaction, String coordinatorId, String compensatorUrl) {
-        participants.put(coordinatorId, compensatorUrl);
+    public void updateRecoveryURL(URL lraId, String compensatorUrl, String recoveryURL, boolean persist) {
+        assert recoveryURL != null;
+        assert compensatorUrl != null;
+
+        participants.put(recoveryURL, compensatorUrl);
+
+        if (persist && lraId != null) {
+            Transaction transaction = getTransaction(lraId);
+
+            transaction.updateRecoveryURL(compensatorUrl, recoveryURL);
+        }
     }
 
     public String getParticipant(String rcvCoordId) {
@@ -129,7 +140,7 @@ public class LRAService {
         Transaction lra;
 
         try {
-            lra = new Transaction(baseUri, parentLRA, clientId);
+            lra = new Transaction(this, baseUri, parentLRA, clientId);
         } catch (MalformedURLException e) {
             throw new InvalidLRAId(baseUri, "Invalid base uri", e);
         }
@@ -200,6 +211,12 @@ public class LRAService {
         }
     }
 
+    public String joinLRA(URL lraId, Long timelimit,
+                   URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
+                   String compensatorData) throws GenericLRAException {
+        return lraClient.joinLRA(lraId, timelimit, compensateUrl, completeUrl, forgetUrl, leaveUrl, statusUrl, compensatorData);
+    }
+
     public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
                                     String compensatorData) {
@@ -216,22 +233,38 @@ public class LRAService {
         if (!transaction.isActive())
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
-        String recoveryURL = transaction.enlistParticipant(lra,
-                linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
-                timeLimit, compensatorData);
+        LRARecord participant;
 
-        if (recoveryURL == null) // probably already closing or cancelling
+        try {
+            participant = transaction.enlistParticipant(lra,
+                    linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
+                    timeLimit, compensatorData);
+        } catch (UnsupportedEncodingException e) {
+            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
+
+        if (participant == null || participant.getRecoveryCoordinatorURL() == null) // probably already closing or cancelling
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
-        addCompensator(transaction, recoveryURL, compensatorUrl);
+        String recoveryURL = participant.getRecoveryCoordinatorURL().toExternalForm();
+
+        updateRecoveryURL(lra, participant.getParticipantURL(), recoveryURL, false);
 
         recoveryUrl.append(recoveryURL);
 
         return Response.Status.OK.getStatusCode();
     }
 
-    public boolean hasTransaction(String id) {
+    public boolean hasTransaction(URL id) {
         return lras.containsKey(id);
+    }
+
+    public boolean hasTransaction(String id) {
+        try {
+            return lras.containsKey(new URL(id));
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 
     private void lraTrace(URL lraId, String reason) {
@@ -256,36 +289,41 @@ public class LRAService {
     }
 
     public boolean isLocal(URL lraId) {
-        return hasTransaction(lraId.toExternalForm());
+        return hasTransaction(lraId);
     }
 
-    // TODO why doesn't this get triggered after construction
-//    @PostConstruct
-    // TODO enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init)
-    public void enableRecovery(@Observes @Initialized(ApplicationScoped.class)
-                                       Object init /* a javax.servlet.ServletContext */) {
-        if (lraRecoveryModule == null) {
-            lraRecoveryModule = new LRARecoveryModule();
-            lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
-            RecoveryManager.manager().addModule(lraRecoveryModule);
-            Implementations.install();
+    /**
+     * When the deployment is loaded register for recovery
+     *
+     * @param init a javax.servlet.ServletContext
+     */
+    void enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        assert lraRecoveryModule == null;
 
-/*   TODO         for (Transaction transaction : recoveringLRAs.values())
-                for (LRARecord lraRecord : transaction.getRecords())
-                    addCompensator(lraRecord.getRecoveryCoordinatorURL(), lraRecord.getCompensatorURL());*/
-        }
+        System.out.printf("LRA recovery is enabled%n");
 
-        RecoveryManager.manager().scan();
+        lraRecoveryModule = new LRARecoveryModule(this);
+        RecoveryManager.manager().addModule(lraRecoveryModule);
+        Implementations.install();
+
+        lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
+
+        for (Transaction transaction : recoveringLRAs.values())
+            transaction.getRecoveryCoordinatorUrls(participants);
     }
 
-    //    @PreDestroy
+    /**
+     * When the deployment is unloaded unregister for recovery
+     *
+     * @param init a javax.servlet.ServletContext
+     */
+    void disableRecovery(@Observes @Destroyed(ApplicationScoped.class) Object init) {
+        assert lraRecoveryModule != null;
 
-    public void disableRecovery(@Observes @Destroyed(ApplicationScoped.class)
-                                        Object init /* a javax.servlet.ServletContext */) {
-        if (lraRecoveryModule != null) {
-            Implementations.uninstall();
-            RecoveryManager.manager().removeModule(lraRecoveryModule, false);
-            lraRecoveryModule = null;
-        }
+        Implementations.uninstall();
+        RecoveryManager.manager().removeModule(lraRecoveryModule, false);
+        lraRecoveryModule = null;
+
+        System.out.printf("LRA recovery is disabled%n");
     }
 }
