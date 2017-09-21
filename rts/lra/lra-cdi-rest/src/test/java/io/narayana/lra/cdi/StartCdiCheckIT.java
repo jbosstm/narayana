@@ -36,6 +36,7 @@ import io.narayana.lra.cdi.bean.OnlyOneLraAnnotationBean;
 import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
 import io.narayana.lra.cdi.bean.CorrectBean;
 import io.narayana.lra.cdi.bean.LeaveWithoutPutBean;
+import io.narayana.lra.cdi.bean.LraJoinFalseBean;
 import io.narayana.lra.cdi.bean.MultiForgetBean;
 import io.narayana.lra.cdi.bean.NoPostOrGetBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -107,13 +108,18 @@ public class StartCdiCheckIT {
     }
 
     @Test
-    public void allCorrect() throws Exception {
-        File logFile = tmpFolder.newFile();
-        Swarm swarm = new Swarm(getLoggingArgs(logFile))
-            .fraction(new JAXRSFraction())
-            .fraction(new CDIFraction())
-            .start();
+    public void lraJoinFalseCorrect() throws Exception {
+        Swarm swarm = startSwarm(tmpFolder.newFile());
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseBean.class));
+        } finally {
+            swarm.stop();
+        }
+    }
 
+    @Test
+    public void allCorrect() throws Exception {
+        Swarm swarm = startSwarm(tmpFolder.newFile());
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectBean.class));
         } finally {
@@ -148,17 +154,19 @@ public class StartCdiCheckIT {
            String outString = inputString;
            if(inputString.contains("path")) outString = String.format(inputString, logFile.getAbsolutePath());
            return outString;
-        }).toArray(new String[]{});
+        }).toArray(new String[] {});
+    }
+
+    private Swarm startSwarm(File logFile) throws Exception{
+        return new Swarm(getLoggingArgs(logFile))
+            .fraction(new JAXRSFraction())
+            .fraction(new CDIFraction())
+            .start();
     }
 
     private void checkSwarmWithDeploymentException(String stringToMatch, Class<?>... classesToAdd) throws Exception {
         File logFile = tmpFolder.newFile();
-
-        Swarm swarm = new Swarm(getLoggingArgs(logFile))
-            .fraction(new JAXRSFraction())
-            .fraction(new CDIFraction())
-            .start();
-
+        Swarm swarm = startSwarm(logFile);
         try {
             swarm
                 .deploy(getBaseDeployment().addClasses(classesToAdd));

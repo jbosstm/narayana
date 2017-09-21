@@ -23,17 +23,26 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAId;
 import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.coordinator.domain.model.LRARecord;
+import io.narayana.lra.coordinator.internal.Implementations;
+import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Destroyed;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -44,20 +53,25 @@ import static java.util.stream.Collectors.toList;
 
 @ApplicationScoped
 public class LRAService {
-    private Map<URL, Transaction> transactions = new ConcurrentHashMap<>();
-    private Map<URL, Transaction> recoveringTransactions = new ConcurrentHashMap<>();
+    private Map<URL, Transaction> lras = new ConcurrentHashMap<>();
+    private Map<URL, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
 
     private static Map<String, String> participants = new ConcurrentHashMap<>();
     private static Boolean isTrace = Boolean.getBoolean("trace");
+    private LRARecoveryModule lraRecoveryModule;
 
     @Inject
     LRAClient lraClient;
 
     public Transaction getTransaction(URL lraId) throws NotFoundException {
-        if (!transactions.containsKey(lraId))
-            throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
+        if (!lras.containsKey(lraId)) {
+            if (!recoveringLRAs.containsKey(lraId))
+                throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
 
-        return transactions.get(lraId);
+            return recoveringLRAs.get(lraId);
+        }
+
+        return lras.get(lraId);
     }
 
     public List<LRAStatus> getAll() {
@@ -69,41 +83,53 @@ public class LRAService {
     }
 
     public List<LRAStatus> getAllActive() {
-        return transactions.values().stream().map(LRAStatus::new).collect(toList());
+        return lras.values().stream().map(LRAStatus::new).collect(toList());
     }
 
     public List<LRAStatus> getAllRecovering() {
-        return recoveringTransactions.values().stream().map(LRAStatus::new).collect(toList());
+        return recoveringLRAs.values().stream().map(LRAStatus::new).collect(toList());
     }
 
     public void addTransaction(Transaction lra) {
-        transactions.put(lra.getId(), lra);
+        lras.put(lra.getId(), lra);
     }
 
-    public void finished(Transaction transaction, boolean fromHierarchy, boolean needsRecovery) {
-        // if the LRA is top level or it's a nested LRA that was
-        // closed by a parent LRA (ie when fromHierarchy is true) then forget about the LRA
-        if (fromHierarchy || transaction.isTopLevel()) {
+    public void finished(Transaction transaction, boolean fromHierarchy) {
+        if (transaction.isRecovering()) {
+            recoveringLRAs.put(transaction.getId(), transaction);
+        } else if (fromHierarchy || transaction.isTopLevel()) {
+            // the LRA is top level or it's a nested LRA that was closed by a
+            // parent LRA (ie when fromHierarchy is true) then it's okay to forget about the LRA
+
             remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
         }
-
-        if (needsRecovery)
-            recoveringTransactions.put(transaction.getId(), transaction);
     }
 
     public void remove(String state, URL lraId) {
         lraTrace(lraId, "remove LRA");
 
-        if (transactions.containsKey(lraId)) {
-            transactions.get(lraId); // validate that the LRA exists
+        if (lras.containsKey(lraId)) {
+            lras.get(lraId); // validate that the LRA exists
 
-            transactions.remove(lraId);
-            recoveringTransactions.remove(lraId);
+            lras.remove(lraId);
+        }
+
+        if (recoveringLRAs.containsKey(lraId)) {
+            recoveringLRAs.remove(lraId);
         }
     }
 
-    public void addCompensator(Transaction transaction, String coordinatorId, String compensatorUrl) {
-        participants.put(coordinatorId, compensatorUrl);
+    public void updateRecoveryURL(URL lraId, String compensatorUrl, String recoveryURL, boolean persist) {
+        assert recoveryURL != null;
+        assert compensatorUrl != null;
+
+        participants.put(recoveryURL, compensatorUrl);
+
+        if (persist && lraId != null) {
+            Transaction transaction = getTransaction(lraId);
+
+            transaction.updateRecoveryURL(compensatorUrl, recoveryURL);
+        }
     }
 
     public String getParticipant(String rcvCoordId) {
@@ -114,7 +140,7 @@ public class LRAService {
         Transaction lra;
 
         try {
-            lra = new Transaction(baseUri, parentLRA, clientId);
+            lra = new Transaction(this, baseUri, parentLRA, clientId);
         } catch (MalformedURLException e) {
             throw new InvalidLRAId(baseUri, "Invalid base uri", e);
         }
@@ -148,16 +174,16 @@ public class LRAService {
 
         Transaction transaction = getTransaction(lraId);
 
-        if (!transaction.isActive() && transaction.isTopLevel())
+        if (!transaction.isActive() && !transaction.isRecovering() && transaction.isTopLevel())
             throw new IllegalLRAStateException(lraId.toString(), "LRA is closing or closed", null);
 
-        int status = transaction.end(compensate);
+        transaction.end(compensate);
 
         if (transaction.currentLRA() != null)
             System.out.printf("WARNING LRA %s ended but is still associated with %s%n",
                     lraId, transaction.currentLRA().get_uid().fileStringForm());
 
-        finished(transaction, fromHierarchy, false); // TODO implement recovery
+        finished(transaction, fromHierarchy);
 
         if (transaction.isTopLevel()) {
             // forget any nested LRAs
@@ -185,9 +211,15 @@ public class LRAService {
         }
     }
 
+    public String joinLRA(URL lraId, Long timelimit,
+                   URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
+                   String compensatorData) throws GenericLRAException {
+        return lraClient.joinLRA(lraId, timelimit, compensateUrl, completeUrl, forgetUrl, leaveUrl, statusUrl, compensatorData);
+    }
+
     public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
-                                    byte[] compensatorData) {
+                                    String compensatorData) {
         if (lra ==  null)
             lraTrace(null, "Error missing LRA header in join request");
 
@@ -201,28 +233,44 @@ public class LRAService {
         if (!transaction.isActive())
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
-        String recoveryURL = transaction.enlistParticipant(lra,
-                linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
-                timeLimit, compensatorData);
+        LRARecord participant;
 
-        if (recoveryURL == null) // probably already closing or cancelling
+        try {
+            participant = transaction.enlistParticipant(lra,
+                    linkHeader != null ? linkHeader : compensatorUrl, recoveryUrlBase,
+                    timeLimit, compensatorData);
+        } catch (UnsupportedEncodingException e) {
+            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
+
+        if (participant == null || participant.getRecoveryCoordinatorURL() == null) // probably already closing or cancelling
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
-        addCompensator(transaction, recoveryURL, compensatorUrl);
+        String recoveryURL = participant.getRecoveryCoordinatorURL().toExternalForm();
+
+        updateRecoveryURL(lra, participant.getParticipantURL(), recoveryURL, false);
 
         recoveryUrl.append(recoveryURL);
 
         return Response.Status.OK.getStatusCode();
     }
 
+    public boolean hasTransaction(URL id) {
+        return lras.containsKey(id);
+    }
+
     public boolean hasTransaction(String id) {
-        return transactions.containsKey(id);
+        try {
+            return lras.containsKey(new URL(id));
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 
     private void lraTrace(URL lraId, String reason) {
         if (isTrace) {
-            if (transactions.containsKey(lraId)) {
-                Transaction lra = transactions.get(lraId);
+            if (lras.containsKey(lraId)) {
+                Transaction lra = lras.get(lraId);
                 System.out.printf("%s (%s) in state %s: %s%n",
                         reason, lra.getClientId(), ActionStatus.stringForm(lra.status()), lra.getId());
             } else {
@@ -232,11 +280,50 @@ public class LRAService {
     }
 
     public int renewTimeLimit(URL lraId, Long timelimit) {
-        Transaction lra = transactions.get(lraId);
+        Transaction lra = lras.get(lraId);
 
         if (lra == null)
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
         return lra.setTimeLimit(timelimit);
+    }
+
+    public boolean isLocal(URL lraId) {
+        return hasTransaction(lraId);
+    }
+
+    /**
+     * When the deployment is loaded register for recovery
+     *
+     * @param init a javax.servlet.ServletContext
+     */
+    void enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        assert lraRecoveryModule == null;
+
+        System.out.printf("LRA recovery is enabled%n");
+
+        lraRecoveryModule = new LRARecoveryModule(this);
+        RecoveryManager.manager().addModule(lraRecoveryModule);
+        Implementations.install();
+
+        lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
+
+        for (Transaction transaction : recoveringLRAs.values())
+            transaction.getRecoveryCoordinatorUrls(participants);
+    }
+
+    /**
+     * When the deployment is unloaded unregister for recovery
+     *
+     * @param init a javax.servlet.ServletContext
+     */
+    void disableRecovery(@Observes @Destroyed(ApplicationScoped.class) Object init) {
+        assert lraRecoveryModule != null;
+
+        Implementations.uninstall();
+        RecoveryManager.manager().removeModule(lraRecoveryModule, false);
+        lraRecoveryModule = null;
+
+        System.out.printf("LRA recovery is disabled%n");
     }
 }

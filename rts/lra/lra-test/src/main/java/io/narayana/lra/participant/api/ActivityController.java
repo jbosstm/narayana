@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.participant.api;
 
+import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.participant.service.ActivityService;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Compensate;
@@ -179,6 +180,25 @@ public class ActivityController {
         activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
 
         System.out.printf("ActivityController compensating %s%n", txId);
+        return Response.ok(activity.statusUrl).build();
+    }
+
+    @POST
+    @Path("/forget")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Forget
+    public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) {//throws NotFoundException {
+        completedCount.incrementAndGet();
+
+        assert lraId != null;
+        String txId = LRAClient.getLRAId(lraId);
+        Activity activity = activityService.getActivity(txId);
+
+        activityService.remove(activity.id);
+        activity.status = CompensatorStatus.Completed;
+        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
+
+        System.out.printf("ActivityController forgetting %s%n", txId);
         return Response.ok(activity.statusUrl).build();
     }
 
