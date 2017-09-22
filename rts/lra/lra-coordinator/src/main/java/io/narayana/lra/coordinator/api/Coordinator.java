@@ -63,7 +63,9 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -457,24 +459,41 @@ public class Coordinator {
         if (!isLink) { // interpret the content as a standard compensator url
             compensatorUrl += "/";
 
-            String reqUri = context.getRequestUri().toString();
+            Map<String, String> terminateURIs = new HashMap<>();
 
             try {
-                String recoveryUrl = lraService.joinLRA(new URL(reqUri), timeLimit,
-                        new URL(compensatorUrl + "compensate"),
-                        new URL(compensatorUrl + "complete"),
-                        null,
-                        null,
-                        new URL(compensatorUrl + "status"),
-                        null);
-
-                return Response.ok().entity(recoveryUrl).header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl).build();
-            } catch (GenericLRAException | MalformedURLException e) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                terminateURIs.put(LRAClient.COMPENSATE, new URL(compensatorUrl + "compensate").toExternalForm());
+                terminateURIs.put(LRAClient.COMPLETE, new URL(compensatorUrl + "complete").toExternalForm());
+                terminateURIs.put(LRAClient.STATUS, new URL(compensatorUrl + "status").toExternalForm());
+            } catch (MalformedURLException e) {
+                return Response.status(Response.Status.PRECONDITION_FAILED).build();
             }
+
+            // register with the coordinator
+            // put the lra id in an http header
+            StringBuilder linkHeaderValue = new StringBuilder();
+
+            terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, "", k, v)); // or use Collectors.joining(",")
+
+            compensatorUrl = linkHeaderValue.toString();
         }
 
         return joinLRA(toURL(lraId), timeLimit, null, compensatorUrl, null);
+    }
+
+
+    private static StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
+
+        if (value == null)
+            return b;
+
+        String terminationUri = uriPrefix == null ? value : String.format("%s%s", uriPrefix, value);
+        Link link =  Link.fromUri(terminationUri).rel(key).type(MediaType.TEXT_PLAIN).build();
+
+        if (b.length() != 0)
+            b.append(',');
+
+        return b.append(link);
     }
 
     private boolean isLink(String linkString) {

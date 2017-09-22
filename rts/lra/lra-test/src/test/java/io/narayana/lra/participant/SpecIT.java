@@ -103,8 +103,10 @@ public class SpecIT {
 
     @BeforeClass
     public static void setupClass() throws Exception {
-        System.out.println("Getting ready to connect - waiting for coordinator to startup...");
-        Thread.currentThread().sleep(20000);
+        if (Boolean.valueOf(System.getProperty("enablePause", "true"))) {
+            System.out.println("Getting ready to connect - waiting for coordinator to startup...");
+            Thread.currentThread().sleep(20000);
+        }
         int servicePort = Integer.getInteger("service.http.port", TEST_SWARM_PORT);
         MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 

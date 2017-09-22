@@ -78,7 +78,6 @@
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-filters</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
