@@ -23,6 +23,7 @@ package io.narayana.lra.client;
 
 import io.narayana.lra.annotation.Compensate;
 import io.narayana.lra.annotation.Complete;
+import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.Leave;
 import io.narayana.lra.annotation.Status;
 
@@ -87,6 +88,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
     public static final String COMPENSATE = "compensate";
     public static final String STATUS = "status";
     public static final String LEAVE = "leave";
+    public static final String FORGET = "forget";
 
     public static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
     public static final String CLIENT_ID_PARAM_NAME = "ClientID";
@@ -181,7 +183,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
         try {
             return new URL(lraId);
         } catch (MalformedURLException e) {
-            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),String.format("%s: %s", message, lraId), e);
+            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
+                    String.format("%s: %s", message, lraId), e);
         }
     }
 
@@ -212,6 +215,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         client = ClientBuilder.newClient();
         return client.target(base);
     }
+
     /**
      * Update the clients notion of the current coordinator. Warning all further operations will be performed
      * on the LRA manager that created the passed in coordinator.
@@ -246,7 +250,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
         if (timeout == null)
             timeout = 0L;
         else if (timeout < 0)
-            throw new GenericLRAException(parentLRA, Response.Status.BAD_REQUEST.getStatusCode(), "Invalid timeout value: " + timeout, null);
+            throw new GenericLRAException(parentLRA, Response.Status.BAD_REQUEST.getStatusCode(),
+                    "Invalid timeout value: " + timeout, null);
 
         lraTrace(String.format("startLRA for client %s with parent %s", clientID, parentLRA), null);
 
@@ -333,17 +338,20 @@ public class LRAClient implements LRAClientAPI, Closeable {
      * @param timelimit how long the participant is prepared to wait for LRA completion
      * @param linkHeader participant protocol URLs in link header format (RFC 5988)
      *
+     * @param compensatorData
      * @return a recovery URL for this enlistment
      *
      * @throws GenericLRAException if the LRA coordinator failed to enlist the participant
      */
-    public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader, byte[] compensatorData) throws GenericLRAException {
+    public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader,
+                                        String compensatorData) throws GenericLRAException {
         lraTrace(String.format("joining LRA with compensator link: %s", linkHeader), lraUrl);
         return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
     }
 
     @Override
-    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl, byte[] compensatorData) throws GenericLRAException {
+    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl,
+                          String compensatorData) throws GenericLRAException {
         lraTrace(String.format("joining LRA with compensator %s", compensatorUrl), lraId);
 
         return enlistCompensator(lraId, timelimit, "",
@@ -355,14 +363,36 @@ public class LRAClient implements LRAClientAPI, Closeable {
                 compensatorData);
     }
 
+    private String toExternalForm(URL url) {
+        return url == null ? null : url.toExternalForm();
+    }
+
     @Override
     public String joinLRA(URL lraId, Long timelimit,
                           URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
-                          byte[] compensatorData) throws GenericLRAException {
+                          String compensatorData) throws GenericLRAException {
         return enlistCompensator(lraId, timelimit, "",
-                compensateUrl.toExternalForm(), completeUrl.toExternalForm(),
-                forgetUrl.toExternalForm(), leaveUrl.toExternalForm(), statusUrl.toExternalForm(),
+                toExternalForm(compensateUrl), toExternalForm(completeUrl),
+                toExternalForm(forgetUrl), toExternalForm(leaveUrl), toExternalForm(statusUrl),
                 compensatorData);
+    }
+
+    public String joinLRA(URL lraId, Class<?> resourceClass, URI baseUri,
+                          String compensatorData) throws GenericLRAException {
+            Map<String, String> terminateURIs = getTerminationUris(resourceClass, baseUri, false);
+            String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
+            long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
+
+            if (terminateURIs.containsKey("Link"))
+                return joinLRAWithLinkHeader(lraId, timeLimit, terminateURIs.get("Link"), compensatorData);
+
+            return null;
+    }
+    @Override
+    public URL updateCompensator(URL recoveryUrl, URL compensateUrl, URL completeUrl,
+                                 URL forgetUrl, URL leaveUrl, URL statusUrl,
+                                 String compensatorData) throws GenericLRAException {
+        return null;// TODO
     }
 
     @Override
@@ -441,7 +471,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
         } catch (Exception e) {
             System.out.printf("Error parsing json LRAStatus");
 
-            return new LRAStatus(jo.getString("lraId"), jo.getString("lraId"), jo.getBoolean("complete"), jo.getBoolean("compensated"), jo.getBoolean("recovering"), jo.getBoolean("active"), jo.getBoolean("topLevel"));
+            return new LRAStatus(
+                    jo.getString("lraId"),
+                    jo.getString("lraId"),
+                    jo.getBoolean("complete"),
+                    jo.getBoolean("compensated"),
+                    jo.getBoolean("recovering"),
+                    jo.getBoolean("active"),
+                    jo.getBoolean("topLevel"));
         }
     }
 
@@ -460,7 +497,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return getStatus(lraId, isCompletedUrlFormat);
     }
 
-    public Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, boolean validate) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, boolean validate) {
         Map<String, String> paths = new HashMap<>();
 
         Annotation resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
@@ -476,11 +513,9 @@ public class LRAClient implements LRAClientAPI, Closeable {
             Annotation pathAnnotation = method.getAnnotation(Path.class);
 
             if (pathAnnotation != null) {
-                if (checkMethod(paths, COMPLETE, (Path) pathAnnotation, method.getAnnotation(Complete.class), uriPrefix)) {
-                    validCnt[0] += 1;
-                }
 
-                if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation, method.getAnnotation(Compensate.class), uriPrefix)) {
+                if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation,
+                        method.getAnnotation(Compensate.class), uriPrefix) != 0) {
                     validCnt[0] += 1;
                     TimeLimit timeLimit = method.getAnnotation(TimeLimit.class);
 
@@ -488,38 +523,42 @@ public class LRAClient implements LRAClientAPI, Closeable {
                         paths.put(TIMELIMIT_PARAM_NAME, Long.toString(timeLimit.unit().toMillis(timeLimit.limit())));
                 }
 
-                if (checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class), uriPrefix)) {
-                    validCnt[0] += 1;
-                }
+                validCnt[0] += checkMethod(paths, COMPLETE, (Path) pathAnnotation,
+                        method.getAnnotation(Complete.class), uriPrefix);
+                checkMethod(paths, STATUS, (Path) pathAnnotation,
+                        method.getAnnotation(Status.class), uriPrefix);
+                checkMethod(paths, FORGET, (Path) pathAnnotation,
+                        method.getAnnotation(Forget.class), uriPrefix);
 
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
             }
         });
 
-        if (validate && validCnt[0] < 3)
+        if (validate && validCnt[0] == 1) // must have neither or both of COMPLETE and COMPENSATE
             throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
                     String.format(MISSING_ANNOTATION_FORMAT, compensatorClass.getName()), null);
 
         StringBuilder linkHeaderValue = new StringBuilder();
 
-        paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
-
-        paths.put("Link", linkHeaderValue.toString());
+        if (paths.size() != 0) {
+            paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
+            paths.put("Link", linkHeaderValue.toString());
+        }
 
         return paths;
     }
 
-    private boolean checkMethod(Map<String, String> paths,
+    private static int checkMethod(Map<String, String> paths,
                                 String rel,
                                 Path pathAnnotation,
                                 Annotation annotationClass,
                                 String uriPrefix) {
         if (annotationClass == null)
-            return false;
+            return 0;
 
         paths.put(rel, uriPrefix + pathAnnotation.value());
 
-        return true;
+        return 1;
     }
 
     private Boolean getStatus(URL lraId, String statusFormat) {
@@ -528,7 +567,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
         try {
             aquireConnection();
 
-            response = getTarget().path("status").path(String.format(statusFormat, getLRAId(lraId.toString()))).request().get();
+            response = getTarget().path("status").path(String.format(statusFormat, getLRAId(lraId.toString())))
+                    .request().get();
 
             return Boolean.valueOf(response.readEntity(String.class));
         } finally {
@@ -536,7 +576,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
         }
     }
 
-    private StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
+    private static StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
+
+        if (value == null)
+            return b;
 
         String terminationUri = uriPrefix == null ? value : String.format("%s%s", uriPrefix, value);
         Link link =  Link.fromUri(terminationUri).title(key + " URI").rel(key).type(MediaType.TEXT_PLAIN).build();
@@ -548,12 +591,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
     }
 
     private String enlistCompensator(URL lraUrl, long timelimit, String uriPrefix,
-                                     String compensateUrl, String completeUrl, String forgetUrl, String leaveUrl, String statusUrl,
-                                     byte[] compensatorData) {
+                                     String compensateUrl, String completeUrl,
+                                     String forgetUrl, String leaveUrl, String statusUrl,
+                                     String compensatorData) {
         validateURL(completeUrl, false, "Invalid complete URL: %s");
         validateURL(compensateUrl, false, "Invalid compensate URL: %s");
         validateURL(leaveUrl, true, "Invalid status URL: %s");
-        validateURL(statusUrl, false, "Invalid status URL: %s");
+        validateURL(forgetUrl, true, "Invalid forgetUrl URL: %s");
+        validateURL(statusUrl, true, "Invalid status URL: %s");
 
         Map<String, String> terminateURIs = new HashMap<>();
 
@@ -561,6 +606,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         terminateURIs.put(LRAClient.COMPLETE, completeUrl);
         terminateURIs.put(LRAClient.LEAVE, leaveUrl);
         terminateURIs.put(LRAClient.STATUS, statusUrl);
+        terminateURIs.put(LRAClient.FORGET, forgetUrl);
 
         // register with the coordinator
         // put the lra id in an http header
@@ -571,7 +617,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return enlistCompensator(lraUrl, timelimit, linkHeaderValue.toString(), compensatorData);
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader, byte[] compensatorData) {
+    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader, String compensatorData) {
         // register with the coordinator
         // put the lra id in an http header
         Response response = null;
@@ -585,14 +631,16 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .request()
                     .header("Link", linkHeader)
                     .header(LRA_HTTP_HEADER, lraUrl)
-                    .put(Entity.entity(linkHeader, MediaType.TEXT_PLAIN));
+                    .put(Entity.entity(compensatorData == null ? linkHeader : compensatorData, MediaType.TEXT_PLAIN));
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                throw new IllegalLRAStateException(lraUrl.toString(), "Too late to join with this LRA", null);
+                throw new IllegalLRAStateException(lraUrl.toString(),
+                        "Too late to join with this LRA", null);
             } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 lraTrace(String.format("enlist in LRA failed (%d)", response.getStatus()), lraUrl);
 
-                throw new GenericLRAException(lraUrl, response.getStatus(), "unable to register compensator", null);
+                throw new GenericLRAException(lraUrl, response.getStatus(),
+                        "unable to register compensator", null);
             }
 
             return response.readEntity(String.class);
@@ -611,7 +659,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
             response = getTarget().path(confirmUrl).request().put(Entity.text(""));
 
             assertEquals(response, Response.Status.OK.getStatusCode(),
-                    response.getStatus(), "LRA finished with an unexpected status code: " + response.getStatus());
+                    response.getStatus(), "LRA finished with an unexpected status code: "
+                            + response.getStatus());
 
             String responseData = response.readEntity(String.class);
 
@@ -639,24 +688,28 @@ public class LRAClient implements LRAClientAPI, Closeable {
     private void validateURL(String url, boolean nullAllowed, String message) {
         if (url == null) {
             if (!nullAllowed)
-                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(), String.format(message, "null value"), null);
+                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(),
+                        String.format(message, "null value"), null);
         } else {
             try {
                 new URL(url);
             } catch (MalformedURLException e) {
-                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(), String.format(message, e.getMessage()), e);
+                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(),
+                        String.format(message, e.getMessage()), e);
             }
         }
     }
 
     private void assertNotNull(Object lra, String message) {
         if (lra == null)
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message, null);
+            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    message, null);
     }
 
     private void assertEquals(Response response, Object expected, Object actual, String messageFormat) {
         if (!actual.equals(expected))
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), String.format(messageFormat, expected, actual), null);
+            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    String.format(messageFormat, expected, actual), null);
     }
 
     public String getUrl() {

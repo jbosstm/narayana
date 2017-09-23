@@ -29,21 +29,32 @@ import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.narayana.lra.annotation.CompensatorStatus;
+import io.narayana.lra.client.InvalidLRAId;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalTime;
+import java.net.URLEncoder;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,28 +62,159 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resource.Transaction {
+public class Transaction extends AtomicAction {
+    private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
     private final ScheduledExecutorService scheduler;
-    private final URL id;
-    private final URL parentId; // TODO save_state and restore_state
-    private final String clientId;
+    private URL id;
+    private URL parentId;
+    private String clientId;
     private List<LRARecord> pending;
     private CompensatorStatus status; // reuse commpensator states for the LRA
     private List<String> responseData;
-    private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
+    private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
+    private boolean inFlight;
 
-    public Transaction(String baseUrl, URL parentId, String clientId) throws MalformedURLException {
+    private LRAService lraService;
+
+    public Transaction(LRAService lraService, String baseUrl, URL parentId, String clientId) throws MalformedURLException {
         super(new Uid());
 
+        this.lraService = lraService;
         this.id = new URL(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
+        this.inFlight = true;
         this.parentId = parentId;
         this.clientId = clientId;
         this.cancelOn = null;
+        this.status = null; // means the LRA is active
 
-        status = null; // means the LRA is active
+        this.scheduler = Executors.newScheduledThreadPool(1);
+    }
 
-        scheduler = Executors.newScheduledThreadPool(1);
+    public Transaction(LRAService lraService, Uid rcvUid) {
+        super(rcvUid);
+
+        this.lraService = lraService;
+        this.inFlight = false;
+        this.id = null;
+        this.parentId = null;
+        this.clientId = null;
+        this.cancelOn = null;
+        this.status = null; // means the LRA is active
+        this.scheduler = Executors.newScheduledThreadPool(1);
+    }
+
+    public static String getType() {
+        return LRA_TYPE;
+    }
+
+    public boolean save_state (OutputObjectState os, int ot) {
+        if (!super.save_state(os, ot)
+                || !save_list(os, ot, pendingList)
+                || !save_list(os, ot, preparedList))
+            return false;
+
+        try {
+            os.packString(id == null ? null : id.toString());
+            os.packString(parentId == null ? null : parentId.toString());
+            os.packString(clientId);
+            os.packLong(cancelOn == null ? 0L : cancelOn.toInstant(ZoneOffset.UTC).toEpochMilli());
+
+            if (status == null) {
+                os.packBoolean(false);
+            } else {
+                os.packBoolean(true);
+                os.packString(status.name());
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean save_list(OutputObjectState os, int ot, RecordList list) {
+        if (list != null && list.size() > 0) {
+            AbstractRecord first, temp;
+
+            first = temp = list.getFront();
+
+            while (temp != null) {
+                list.putRear(temp);
+
+                if (!temp.doSave())
+                    return false;
+
+                try {
+                    os.packInt(temp.typeIs());
+
+                    if (!temp.save_state(os, ot))
+                        return false;
+                } catch (IOException e) {
+                    return false;
+                }
+
+                temp = list.getFront();
+
+                if (temp == first) {
+                    list.putFront(temp);
+                    temp = null;
+                }
+            }
+        }
+
+        try {
+            os.packInt(RecordType.NONE_RECORD);
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean restore_list(InputObjectState os, int ot, RecordList list) {
+
+        int record_type = RecordType.NONE_RECORD;
+
+        try {
+            while ((record_type = os.unpackInt()) != RecordType.NONE_RECORD) {
+                AbstractRecord record = AbstractRecord.create(record_type);
+
+                if (record == null || !record.restore_state(os, ot) || !list.insert(record))
+                    return false;
+            }
+        } catch (IOException e1) {
+            return false;
+        } catch (final NullPointerException ex) {
+            tsLogger.i18NLogger.warn_coordinator_norecordfound(Integer.toString(record_type));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean restore_state (InputObjectState os, int ot) {
+
+        if (!super.restore_state(os, ot)
+                || !restore_list(os, ot, pendingList)
+                || !restore_list(os, ot, preparedList))
+            return false;
+
+        try {
+            String s = os.unpackString();
+            id = s == null ? null : new URL(s);
+            s = os.unpackString();
+            parentId = s == null ? null : new URL(s);
+            clientId = os.unpackString();
+            long millis = os.unpackLong();
+            cancelOn = millis == 0 ? null : LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC);
+            status = os.unpackBoolean() ? CompensatorStatus.valueOf(os.unpackString()) : null;
+
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -91,6 +233,10 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         int result = super.hashCode();
         result = 31 * result + getId().hashCode();
         return result;
+    }
+
+    public String type() {
+        return LRA_TYPE;
     }
 
     public URL getId() {
@@ -119,8 +265,9 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
     }
 
     public boolean isRecovering() {
-        return false;
-    } // TODO
+        return status != null &&
+                (status.equals(CompensatorStatus.Compensating) || status.equals(CompensatorStatus.Completing));
+    }
 
     private int closeLRA() {
         return end(false);
@@ -131,7 +278,7 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
     }
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
-    public int end(/*Vertx vertx,*/ boolean compensate) {
+    public int end(boolean compensate) {
         int res = status();
         boolean nested = !isTopLevel();
 
@@ -159,36 +306,34 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
 
                 pending.forEach(r -> pendingList.putRear(r));
 
+                updateState(CompensatorStatus.Compensating);
+
                 super.phase2Abort(true);
+//                res = super.Abort();
 
                 res = status();
 
                 status = toLRAStatus(status());
             }
         } else {
-
-//        if (!status.equals(CompensatorStatus.Active))
-//            return status();
-
-
             if (compensate || status() == ActionStatus.ABORT_ONLY) {
-                status = CompensatorStatus.Compensating;
-
                 // compensators must be called in reverse order so reverse the pending list
                 int sz = pendingList == null ? 0 : pendingList.size();
 
                 for (int i = sz - 1; i > 0; i--)
                     pendingList.putRear(pendingList.getFront());
 
-                // tell each compensator that the lra canceled - use commit since we need recovery for compensation actions
-                res = super.abort();
+                // tell each compensator that the lra canceled
+                updateState(CompensatorStatus.Compensating);
+                res = super.Abort(); // this route to abort forces a log write on failures and heuristics
             } else {
-                status = CompensatorStatus.Completing;
-
                 // tell each compensator that the lra completed ok
-                res = super.commit(true);
+                updateState(CompensatorStatus.Completing);
+                res = super.End(true);
             }
         }
+
+        updateState();
 
         // gather up any response data
         ObjectMapper mapper = new ObjectMapper();
@@ -204,16 +349,37 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
                 pending.clear(); // TODO we will loose this data if we need recovery
         }
 
-        status = toLRAStatus(res);
+        if (getSize(heuristicList) != 0 || getSize(failedList) != 0)
+            status = CompensatorStatus.Compensating;
+        else if (getSize(pendingList) != 0 || getSize(preparedList) != 0)
+            status = CompensatorStatus.Completing;
+        else
+            status = toLRAStatus(res);
+
+        if (!isRecovering())
+            if (lraService != null)
+                lraService.finished(this, false);
+        else
+            System.out.printf("WARNING null LRAService in LRA#end");
 
         return res;
+    }
+
+    private boolean updateState(CompensatorStatus nextState) {
+        status = nextState;
+
+        return (pendingList == null || pendingList.size() == 0) || deactivate();
+    }
+
+    private int getSize(RecordList list) {
+        return list == null ? 0 : list.size();
     }
 
     private Collection<String> getCompensatorResponse(ObjectMapper mapper, String data) {
         if (data !=null && data.startsWith("[")) {
             try {
                 String[] ja = mapper.readValue(data, String[].class);
-                // TODO should reccurse here since the encoded strings may themselves contain compensator output
+                // TODO should recurse here since the encoded strings may themselves contain compensator output
                 return Arrays.asList(ja);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -244,39 +410,42 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         }
     }
 
-    public String enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                    long timeLimit, byte[] compensatorData) {
-        LRARecord participant = findLRAParticipant(participantUrl);
+    public LRARecord enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase,
+                                    long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+        LRARecord participant = findLRAParticipant(participantUrl, false);
 
         if (participant != null)
-            return participant.get_uid().fileStringForm(); // must have already been enlisted
+            return participant; // must have already been enlisted
 
-        String coordinatorId = enlistParticipant(coordinatorUrl.toString(), participantUrl, recoveryUrlBase, null,
+        participant = enlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase, null,
                 timeLimit, compensatorData);
 
-        if (coordinatorId != null && findLRAParticipant(participantUrl) != null) {
+        if (participant != null && findLRAParticipant(participantUrl, false) != null) {
             // need to remember that there is a new participant
             deactivate(); // if it fails the superclass will have logged a warning
+            savedIntentionList = true; // need this clean up if the LRA times out
         }
 
-        return coordinatorId;
+        return participant;
     }
 
-    public String enlistParticipant(String coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
-                                    long timeLimit, byte[] compensatorData) {
-        if (findLRAParticipant(participantUrl) != null)
+    public LRARecord enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
+                                       long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+        if (findLRAParticipant(participantUrl, false) != null)
             return null;    // already enlisted
 
-        String txId = get_uid().fileStringForm();
-        LRARecord p = new LRARecord(txId, coordinatorUrl, participantUrl, compensatorData);
-        String coordinatorId = p.get_uid().fileStringForm();
+        LRARecord p = new LRARecord(coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
+        String pid = p.get_uid().fileStringForm();
 
-        String recoveryUrl = recoveryUrlBase + txId + '/' + coordinatorId;
+        String txId = URLEncoder.encode(coordinatorUrl.toExternalForm(), "UTF-8");
 
-        if (add(p) != AddOutcome.AR_REJECTED)
-            return recoveryUrl;
+        p.setRecoveryURL(recoveryUrlBase, txId, pid);
 
-        p.setTimeLimit(scheduler, timeLimit);
+        if (add(p) != AddOutcome.AR_REJECTED) {
+            p.setTimeLimit(scheduler, timeLimit);
+
+            return p;
+        }
 
         return null;
     }
@@ -286,13 +455,7 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
     }
 
     public boolean forgetParticipant(String participantUrl) {
-        return pendingList == null || pendingList.size() == 0 || doForgetParticipant(participantUrl);
-    }
-
-    private boolean doForgetParticipant(String participantLinkUrl) {
-        LRARecord pUrl = findLRAParticipant(participantLinkUrl);
-
-        return pUrl == null || pendingList.remove(pUrl);
+        return findLRAParticipant(participantUrl, true) != null;
     }
 
     public void forgetAllParticipants() {
@@ -316,21 +479,40 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         }
     }
 
-    private LRARecord findLRAParticipant(String participantUrl) {
-        if (pendingList != null) {
+    private LRARecord findLRAParticipant(String participantUrl, boolean remove) {
+        String pUrl = LRARecord.extractCompensator(participantUrl);
+        LRARecord rec = findLRAParticipant(pUrl, remove, pendingList);
 
-            RecordListIterator i = new RecordListIterator(pendingList);
+        if (rec == null)
+            rec = findLRAParticipant(pUrl, remove, preparedList);
+
+        if (rec == null)
+            rec = findLRAParticipant(pUrl, remove, heuristicList);
+
+        if (rec == null)
+            rec = findLRAParticipant(pUrl, remove, failedList);
+
+        return rec;
+    }
+
+    private LRARecord findLRAParticipant(String participantUrl, boolean remove, RecordList list) {
+        if (list != null) {
+            RecordListIterator i = new RecordListIterator(list);
             AbstractRecord r;
 
             if (participantUrl.indexOf(',') != -1)
-                participantUrl = LRARecord.cannonicalForm(participantUrl);
+                participantUrl = LRARecord.extractCompensator(participantUrl);
 
             while ((r = i.iterate()) != null) {
                 if (r instanceof LRARecord) {
                     LRARecord rr = (LRARecord) r;
                     // can't use == because this may be a recovery scenario
-                    if (rr.getParticipantPath().equals(participantUrl))
+                    if (rr.getCompensator().equals(participantUrl)) {
+                        if (remove)
+                            list.remove(rr);
+
                         return rr;
+                    }
                 }
             }
         }
@@ -355,7 +537,26 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
             case ActionStatus.COMMITTED:
             case ActionStatus.ABORTED:
                 return 200;
-            default: // TODO return a more comprehensive mapping between states
+            default:
+                return lraStatusToHttpStatus();
+        }
+    }
+
+    private int lraStatusToHttpStatus() {
+        if (status == null)
+            return 202; // in progress
+
+        switch (status) {
+            case Completed:
+            case Compensated:
+                return 200;
+            case Compensating:
+            case Completing:
+                return 202;
+            case FailedToComplete:
+            case FailedToCompensate:
+                return 412; // probably not the correct code
+            default:
                 return 500;
         }
     }
@@ -378,7 +579,7 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
 
         if (timeLimit > 0) {
-            cancelOn = LocalTime.now().plusNanos(timeLimit * 1000000);
+            cancelOn = LocalDateTime.now().plusNanos(timeLimit * 1000000);
 
             scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
         } else {
@@ -394,8 +595,52 @@ public class Transaction extends AtomicAction { //org.jboss.jbossts.star.resourc
         int status = status();
 
         if (status == ActionStatus.RUNNING || status == ActionStatus.ABORT_ONLY) {
-            System.out.printf("Cancelling LRA: %s%n", id);
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
+            }
+
             CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
         }
+    }
+
+    public void getRecoveryCoordinatorUrls(Map<String, String> participants, RecordList list) {
+        RecordListIterator iter = new RecordListIterator(list);
+        AbstractRecord rec;
+
+        while (((rec = iter.iterate()) != null)) {
+            if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
+                LRARecord lraRecord = (LRARecord) rec;
+
+                participants.put(lraRecord.getRecoveryCoordinatorURL().toExternalForm(), lraRecord.getParticipantPath());
+            }
+        }
+    }
+
+    public void getRecoveryCoordinatorUrls(Map<String, String> participants) {
+        getRecoveryCoordinatorUrls(participants, pendingList);
+        getRecoveryCoordinatorUrls(participants, preparedList);
+    }
+
+    public void updateRecoveryURL(String compensatorUrl, String recoveryURL) {
+        LRARecord lraRecord = findLRAParticipant(compensatorUrl, false);
+
+        if (lraRecord != null) {
+            try {
+                lraRecord.setRecoveryURL(recoveryURL);
+
+
+                if (!deactivate())
+                    if (tsLogger.logger.isInfoEnabled())
+                       tsLogger.logger.infof("Could not save new recovery URL");
+
+            } catch (InvalidLRAId e) {
+                if (tsLogger.logger.isInfoEnabled())
+                    tsLogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
+            }
+        }
+    }
+
+    public boolean isInFlight() {
+        return inFlight;
     }
 }
