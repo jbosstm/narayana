@@ -28,8 +28,8 @@ import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
 /**
- *
- * @author Ondra Chaloupka <ochaloup@redhat.com>
+ * Bean containing three LRA annotations but they do not contain PATH
+ * where JAXRS endpoind is bound at.
  */
 @LRA
 public class AllAnnotationsNoPathBean {

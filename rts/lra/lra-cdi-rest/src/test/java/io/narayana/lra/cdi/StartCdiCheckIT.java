@@ -28,17 +28,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-import io.narayana.lra.cdi.bean.AllAnnotationsNoPathBean;
-import io.narayana.lra.cdi.bean.ForgetWithoutDeleteBean;
-import io.narayana.lra.annotation.Forget;
-import io.narayana.lra.cdi.LraAnnotationProcessingExtension;
-import io.narayana.lra.cdi.bean.OnlyOneLraAnnotationBean;
-import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
-import io.narayana.lra.cdi.bean.CorrectBean;
-import io.narayana.lra.cdi.bean.LeaveWithoutPutBean;
-import io.narayana.lra.cdi.bean.LraJoinFalseBean;
-import io.narayana.lra.cdi.bean.MultiForgetBean;
-import io.narayana.lra.cdi.bean.NoPostOrGetBean;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -53,6 +42,20 @@ import org.wildfly.swarm.cdi.CDIFraction;
 import org.wildfly.swarm.jaxrs.JAXRSFraction;
 
 import com.google.common.collect.Lists;
+
+import io.narayana.lra.annotation.Forget;
+import io.narayana.lra.cdi.bean.AllAnnotationsNoPathBean;
+import io.narayana.lra.cdi.bean.CompleteOptionalBean;
+import io.narayana.lra.cdi.bean.CorrectBean;
+import io.narayana.lra.cdi.bean.CorrectMethodLRABean;
+import io.narayana.lra.cdi.bean.ForgetWithoutDeleteBean;
+import io.narayana.lra.cdi.bean.LeaveWithoutPutBean;
+import io.narayana.lra.cdi.bean.LraJoinFalseBean;
+import io.narayana.lra.cdi.bean.LraJoinFalseMethodLRABean;
+import io.narayana.lra.cdi.bean.MultiForgetBean;
+import io.narayana.lra.cdi.bean.NoPostOrGetBean;
+import io.narayana.lra.cdi.bean.OnlyOneLraAnnotationBean;
+import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
 
 /**
  * Test case which checks functionality of CDI extension by deploying wrongly
@@ -116,12 +119,42 @@ public class StartCdiCheckIT {
             swarm.stop();
         }
     }
+    
+    @Test
+    public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
+        Swarm swarm = startSwarm(tmpFolder.newFile());
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseMethodLRABean.class));
+        } finally {
+            swarm.stop();
+        }
+    }
 
     @Test
     public void allCorrect() throws Exception {
         Swarm swarm = startSwarm(tmpFolder.newFile());
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectBean.class));
+        } finally {
+            swarm.stop();
+        }
+    }
+    
+    @Test
+    public void allCorrectLRAOnMethod() throws Exception {
+        Swarm swarm = startSwarm(tmpFolder.newFile());
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(CorrectMethodLRABean.class));
+        } finally {
+            swarm.stop();
+        }
+    }
+    
+    @Test
+    public void completeAnnotationIsOptional() throws Exception {
+        Swarm swarm = startSwarm(tmpFolder.newFile());
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(CompleteOptionalBean.class));
         } finally {
             swarm.stop();
         }

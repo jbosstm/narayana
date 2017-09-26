@@ -29,6 +29,10 @@ import io.narayana.lra.annotation.Complete;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
+/**
+ * The LRA annotations do not contain HTTP methods
+ * which are compulsory when LRA annotations are used.
+ */
 @LRA
 public class NoPostOrGetBean {
     

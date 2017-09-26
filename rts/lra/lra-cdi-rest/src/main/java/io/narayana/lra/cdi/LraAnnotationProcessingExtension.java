@@ -23,6 +23,7 @@
 package io.narayana.lra.cdi;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,19 +74,28 @@ public class LraAnnotationProcessingExtension implements Extension {
         Supplier<Stream<AnnotatedMethod<? super X>>> sup = () -> classAnnotatedWithLra.getAnnotatedType().getMethods().stream();
         Set<Class<? extends Annotation>> missing = new HashSet<>();
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Compensate.class))) missing.add(Compensate.class);
-        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Complete.class))) missing.add(Complete.class);
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
 
-        // if LRA contains join attribute with value false then we do not expect LRA annotations to be present on the type
-        LRA lraAnnotation = classAnnotatedWithLra.getAnnotatedType().getAnnotation(LRA.class);
-        boolean isJoin = lraAnnotation.join();
+        // gathering all LRA annotations in the class
+        List<LRA> lraAnnotations = new ArrayList<>();
+        LRA classLraAnnotation = classAnnotatedWithLra.getAnnotatedType().getAnnotation(LRA.class);
+        if(classLraAnnotation != null)lraAnnotations.add(classLraAnnotation);
+        List<LRA> methodlraAnnotations = sup.get()
+                .filter(m -> m.isAnnotationPresent(LRA.class))
+                .map(m -> m.getAnnotation(LRA.class))
+                .collect(Collectors.toList());
+        lraAnnotations.addAll(methodlraAnnotations);
+        // if any of the LRA annotations have set the join attribute to true (join se to true means
+        // handling it as full LRA participant which needs to be completed, compensated...) 
+        // then have to process checks for compulsory LRA annotations
+        boolean isJoin = lraAnnotations.stream().anyMatch(m -> m.join());
 
         if(!missing.isEmpty() && isJoin) {
             throw new DeploymentException("Class " + classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName() + " uses "
               + LRA.class.getName() + " which requires methods handling LRA events. Missing annotations in the class: " + missing);
         }
 
-        // Only one of the compulsory LRA annotations are placed in the class
+        // Only one of each LRA annotation is placed in the class
         List<AnnotatedMethod<? super X>> methodsWithCompensate = sup.get()
             .filter(m -> m.isAnnotationPresent(Compensate.class))
             .collect(Collectors.toList());
@@ -137,6 +147,21 @@ public class LraAnnotationProcessingExtension implements Extension {
                 throw new DeploymentException(getCompensateMissingErrMsg.apply(POST.class));
             }
         }
+        
+        if(methodsWithStatus.size() > 0) {
+            // @Status - requires @Path and @GET
+            final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
+            Function<Class<?>, String> getStatusMissingErrMsg = (wrongAnnotation) ->
+            getMissingAnnotationError(methodWithStatus, classAnnotatedWithLra, Status.class, wrongAnnotation);
+            boolean isStatusContainsPathAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
+            if(!isStatusContainsPathAnnotation) {
+                throw new DeploymentException(getStatusMissingErrMsg.apply(Path.class));
+            }
+            boolean isStatusContainsPostAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(GET.class));
+            if(!isStatusContainsPostAnnotation) {
+                throw new DeploymentException(getStatusMissingErrMsg.apply(GET.class));
+            }
+        }
 
         if(methodsWithComplete.size() > 0) {
             // @Complete - requires @Path and @POST
@@ -150,21 +175,6 @@ public class LraAnnotationProcessingExtension implements Extension {
             boolean isCompleteContainsPostAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
             if(!isCompleteContainsPostAnnotation) {
                 throw new DeploymentException(getCompleteMissingErrMsg.apply(POST.class));
-            }
-        }
-        
-        if(methodsWithStatus.size() > 0) {
-            // @Status - requires @Path and @GET
-            final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
-            Function<Class<?>, String> getStatusMissingErrMsg = (wrongAnnotation) ->
-                getMissingAnnotationError(methodWithStatus, classAnnotatedWithLra, Status.class, wrongAnnotation);
-            boolean isStatusContainsPathAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
-            if(!isStatusContainsPathAnnotation) {
-                throw new DeploymentException(getStatusMissingErrMsg.apply(Path.class));
-            }
-            boolean isStatusContainsPostAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(GET.class));
-            if(!isStatusContainsPostAnnotation) {
-                throw new DeploymentException(getStatusMissingErrMsg.apply(GET.class));
             }
         }
 
