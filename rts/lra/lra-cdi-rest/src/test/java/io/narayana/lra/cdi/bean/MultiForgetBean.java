@@ -33,6 +33,9 @@ import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
+/**
+ * Bean containing more {@link Forget} annotations.
+ */
 @LRA
 public class MultiForgetBean {
     @Complete

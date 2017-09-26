@@ -22,46 +22,17 @@
 
 package io.narayana.lra.cdi.bean;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Status;
 
 /**
- * Having {@link Forget} LRA annotation with missing
- * {@link Path} and method type {@link DELETE}.
+ * Having LRA with parameter join which defines the
+ * bean is ok not containing any LRA annotation.
+ * <p>
+ * The {@link LRA} annotation is put at method.
  */
-@LRA
-public class ForgetWithoutDeleteBean {
-    @Complete
-    @Path("complete")
-    @POST
-    public void complete() {
-        // no implementation needed
-    }
-    
-    @Compensate
-    @Path("compensate")
-    @POST
-    public void compensate() {
-        // no implementation needed
-    }
-    
-    @Status
-    @Path("status")
-    @GET
-    public void status() {
-        // no implementation needed
-    }
-
-    @Forget
-    public void forget() {
+public class LraJoinFalseMethodLRABean {
+    @LRA(join = false)
+    public void process() {
         // no implementation needed
     }
 }

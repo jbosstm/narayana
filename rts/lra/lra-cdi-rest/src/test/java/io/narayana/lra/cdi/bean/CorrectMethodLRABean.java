@@ -22,23 +22,25 @@
 
 package io.narayana.lra.cdi.bean;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import io.narayana.lra.annotation.Compensate;
 import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
 /**
- * Having {@link Forget} LRA annotation with missing
- * {@link Path} and method type {@link DELETE}.
+ * All three LRA annotations where {@link LRA} is annotated
+ * on a method. 
  */
-@LRA
-public class ForgetWithoutDeleteBean {
+public class CorrectMethodLRABean {
+    @LRA
+    public void process() {
+        // no implementation needed
+    }
+
     @Complete
     @Path("complete")
     @POST
@@ -57,11 +59,6 @@ public class ForgetWithoutDeleteBean {
     @Path("status")
     @GET
     public void status() {
-        // no implementation needed
-    }
-
-    @Forget
-    public void forget() {
         // no implementation needed
     }
 }

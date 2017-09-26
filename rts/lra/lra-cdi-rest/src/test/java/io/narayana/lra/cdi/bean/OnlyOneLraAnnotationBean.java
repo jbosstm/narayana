@@ -29,9 +29,7 @@ import io.narayana.lra.annotation.LRA;
 
 /**
  * {@link LRA} bean which contains only one annotation - {@link Compensate}
- * but the LRA prescribe for the bean to contain three: {@link Compensate}, {@link Complete} and {@link Status}.
- *
- * @author Ondra Chaloupka <ochaloup@redhat.com>
+ * but the LRA prescribe for the bean to contain two: {@link Compensate} and {@link Status}.
  */
 @LRA
 public class OnlyOneLraAnnotationBean {

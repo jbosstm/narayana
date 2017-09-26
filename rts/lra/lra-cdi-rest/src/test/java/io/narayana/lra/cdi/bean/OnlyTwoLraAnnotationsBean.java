@@ -29,9 +29,7 @@ import io.narayana.lra.annotation.Status;
 
 /**
  * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status} 
- * but the LRA prescribe for the bean to contain three: {@link Compensate}, {@link Complete} and {@link Status}.
- *
- * @author Ondra Chaloupka <ochaloup@redhat.com>
+ * but the LRA prescribe for the bean to contain two compulsory: {@link Compensate} and {@link Status}.
  */
 @LRA
 public class OnlyTwoLraAnnotationsBean {

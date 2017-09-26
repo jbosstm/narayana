@@ -24,6 +24,7 @@ package io.narayana.lra.cdi.bean;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
 import io.narayana.lra.annotation.Compensate;
@@ -32,6 +33,10 @@ import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Leave;
 import io.narayana.lra.annotation.Status;
 
+/**
+ * Three base LRA annotations are correct but the {@link Leave}
+ * annotation misses the HTTP method to use which should be {@link PUT}.  
+ */
 @LRA
 public class LeaveWithoutPutBean {
     @Complete

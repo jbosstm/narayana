@@ -31,6 +31,10 @@ import io.narayana.lra.annotation.Complete;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
+/**
+ * LRA bean which contain all three LRA annotations with {@link Path}
+ * and correct HTTP method to run at. 
+ */
 @LRA
 public class CorrectBean {
     @Complete
