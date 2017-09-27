@@ -283,18 +283,17 @@ function build_narayana {
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
-  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  
+  if [ $JAVA_VERSION = "9-ea" ]; then
+    ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install -Dmaven.javadoc.skip=true
+  else
+    ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  fi
+
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
 }
-
-#function build_openjdk_orb {
-#    rm -rf openjdk-orb
-#    git clone -b jdk-9 https://github.com/zhfeng/openjdk-orb.git
-#    MAVEN_OPTS="--add-modules java.corba --add-exports java.corba/com.sun.tools.corba.se.idl.toJavaPortable=ALL-UNNAMED" ./build.sh -f openjdk-orb/pom.xml clean install -DskipTests
-#    [ $? = 0 ] || fatal "openjdk-orb build failed"
-#}
 
 function build_as {
   echo "Building AS"
@@ -348,13 +347,6 @@ function build_as {
     rm -rf .git
   fi
 
-  if [ $JAVA_VERSION = "9-ea" ]; then
-     # build openjdk-orb with fixing the reflect issue
-     # build_openjdk_orb
-     # replace the openjdk-orb with the 8.0.8.Beta1
-     sed -i s/8.0.7.Final/8.0.8.Beta1/g pom.xml
-  fi
-
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
@@ -365,12 +357,6 @@ function build_as {
     [ $? = 0 ] || fatal "AS testsuite build failed"
   else
     if [ $JAVA_VERSION = "9-ea" ]; then
-      # build openjdk-orb with fixing the reflect issue
-      #build_openjdk_orb
-
-      # replace the openjdk-orb with the 8.0.8.Beta1-SNAPSHOT
-      #sed -i s/8.0.6.Final/8.0.8.Beta1-SNAPSHOT/g pom.xml
-
       export MAVEN_OPTS="--add-exports java.xml/com.sun.xml.internal.stream=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED $MAVEN_OPTS"
       # j9 TODO enforcer.BanTransitiveDependencies fails for narayana-jts-integration (skip-enforce)
       JAVA_OPTS="-Xms1303m -Xmx1303m $JAVA_OPTS" ./build.sh clean install -Dskip-enforce -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.7.1.Final-SNAPSHOT
@@ -487,13 +473,6 @@ function blacktie {
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
     if [ $JAVA_VERSION = "9-ea" ]; then
-      # build openjdk-orb with fixing the reflect issue
-      #build_openjdk_orb
-
-      # replace the openjdk-orb with the 8.0.8.Beta1
-      wget https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Beta1/openjdk-orb-8.0.8.Beta1.jar -O blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/openjdk-orb-8.0.8.Beta1.jar
-      sed -i s/8.0.6.Final/8.0.8.Beta1/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
-
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     else
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
