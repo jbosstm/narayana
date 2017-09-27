@@ -23,6 +23,7 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
@@ -57,7 +58,6 @@ public class LRAService {
     private Map<URL, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
 
     private static Map<String, String> participants = new ConcurrentHashMap<>();
-    private static Boolean isTrace = Boolean.getBoolean("trace");
     private LRARecoveryModule lraRecoveryModule;
 
     @Inject
@@ -146,7 +146,9 @@ public class LRAService {
         }
 
         if (lra.currentLRA() != null)
-            System.out.printf("WARNING LRA %s is already associated");
+            if (tsLogger.logger.isInfoEnabled())
+                tsLogger.logger.infof("LRAServicve.startLRA LRA %s is already associated%n",
+                        lra.currentLRA().get_uid().fileStringForm());
 
         int status = lra.begin(timelimit);
 
@@ -180,8 +182,9 @@ public class LRAService {
         transaction.end(compensate);
 
         if (transaction.currentLRA() != null)
-            System.out.printf("WARNING LRA %s ended but is still associated with %s%n",
-                    lraId, transaction.currentLRA().get_uid().fileStringForm());
+            if (tsLogger.logger.isInfoEnabled())
+                tsLogger.logger.infof("LRAServicve.endLRA LRA %s ended but is still associated with %s%n",
+                        lraId, transaction.currentLRA().get_uid().fileStringForm());
 
         finished(transaction, fromHierarchy);
 
@@ -203,7 +206,8 @@ public class LRAService {
 
         try {
             if (!transaction.forgetParticipant(compensatorUrl))
-                System.out.printf("WARNING forget %s failed%n", lraId);
+                if (tsLogger.logger.isInfoEnabled())
+                    tsLogger.logger.infof("LRAServicve.forget %s failed%n", lraId);
 
             return Response.Status.OK.getStatusCode();
         } catch (Exception e) {
@@ -268,13 +272,15 @@ public class LRAService {
     }
 
     private void lraTrace(URL lraId, String reason) {
-        if (isTrace) {
+        if (tsLogger.logger.isTraceEnabled()) {
+            tsLogger.logger.tracef("LRAServicve.forget %s failed%n", lraId);
+
             if (lras.containsKey(lraId)) {
                 Transaction lra = lras.get(lraId);
-                System.out.printf("%s (%s) in state %s: %s%n",
+                tsLogger.logger.tracef("LRAServicve: %s (%s) in state %s: %s%n",
                         reason, lra.getClientId(), ActionStatus.stringForm(lra.status()), lra.getId());
             } else {
-                System.out.printf("%s not found: %s%n", reason, lraId);
+                tsLogger.logger.tracef("LRAServicve: %s not found: %s%n", reason, lraId);
             }
         }
     }
@@ -300,7 +306,8 @@ public class LRAService {
     void enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init) {
         assert lraRecoveryModule == null;
 
-        System.out.printf("LRA recovery is enabled%n");
+        if (tsLogger.logger.isDebugEnabled())
+            tsLogger.logger.debugf("LRAServicve.enableRecovery%n");
 
         lraRecoveryModule = new LRARecoveryModule(this);
         RecoveryManager.manager().addModule(lraRecoveryModule);
@@ -324,6 +331,6 @@ public class LRAService {
         RecoveryManager.manager().removeModule(lraRecoveryModule, false);
         lraRecoveryModule = null;
 
-        System.out.printf("LRA recovery is disabled%n");
-    }
+        if (tsLogger.logger.isDebugEnabled())
+            tsLogger.logger.debugf("LRAServicve.disableRecovery%n");    }
 }

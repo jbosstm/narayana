@@ -30,6 +30,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.client.InvalidLRAId;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -39,9 +40,11 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.SortedMap;
@@ -71,11 +74,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
     private String compensatorData;
     private ScheduledFuture<?> scheduledAbort;
+    private LRAService lraService;
 
     public LRARecord() {
     }
 
-    LRARecord(String lraId, String linkURI, String compensatorData) {
+    LRARecord(LRAService lraService, String lraId, String linkURI, String compensatorData) {
         super(new Uid());
 
         try {
@@ -101,6 +105,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             this.lraId = new URL(lraId);
+            this.lraService = lraService;
             this.participantPath = linkURI;
 
             this.recoveryURL = null;
@@ -232,79 +237,106 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         // NB trying to compensate when already completed is allowed
 
-        try {
+        Current.push(lraId);
+
+        Response response = null;
+        LRAStatus inVMStatus = null;
+
+        if (lraService != null) {
+            String[] segments = endPath.getPath().split("/");
+            int pCnt = segments.length;
+
+            if (pCnt > 1) {
+                String cId = null;
+
+                try {
+                    cId = URLDecoder.decode(segments[pCnt - 2], "UTF-8");
+                } catch (UnsupportedEncodingException ignore) {
+                }
+
+                if (cId != null && lraService.hasTransaction(cId)) {
+                    try {
+                        // this is a call from a parent LRA to end the nested LRA:
+                        boolean isCompensate = "compensate".equals(segments[pCnt - 1]);
+                        boolean isComplete = "complete".equals(segments[pCnt - 1]);
+
+                        if (!isCompensate && !isComplete) {
+                            if (tsLogger.logger.isInfoEnabled()) {
+                                tsLogger.logger.infof("LRARecord.doEnd invalid nested compensator url %s" +
+                                                "(should be compensate or complete)",
+                                        endPath.toExternalForm());
+                            }
+
+                            response = Response.status(Response.Status.BAD_REQUEST).build();
+                        } else {
+                            inVMStatus = lraService.endLRA(new URL(cId), isCompensate, true);
+
+                            response = Response.ok().status(inVMStatus.getHttpStatus()).build();
+
+                            try {
+                                responseData = inVMStatus.getEncodedResponseData();
+                            } catch (IOException ignore) {
+                            }
+                        }
+                    } catch (MalformedURLException e) {
+                        // fall back to using JAX-RS
+                    }
+                }
+            }
+        }
+
+        if (response == null) {
             client = ClientBuilder.newClient();
             WebTarget target = client.target(URI.create(endPath.toExternalForm()));
-
-            Current.push(lraId);
-
-            Response response;
 
             try {
                 response = target.request()
                         .header(LRA_HTTP_HEADER, lraId.toExternalForm())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
                         .post(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
+
+                if (response.hasEntity())
+                    responseData = response.readEntity(String.class);
             } catch (Exception e) {
                 response = null;
-                if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debugf("LRARecord.doEnd post %s failed: %s",
+                if (tsLogger.logger.isInfoEnabled()) {
+                    tsLogger.logger.infof("LRARecord.doEnd post %s failed: %s",
                             target.getUri(), e.getMessage());
                 }
+            } finally {
+                client.close();
             }
+        }
 
-            if (response == null || response.getStatus() != Response.Status.OK.getStatusCode()) {
-                isFailed = true;
-                if (response !=  null && tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debugf("LRARecord.doEnd post %s failed with status: %d",
-                            target.getUri(), response.getStatus());
-                }
+        if (response == null || response.getStatus() != Response.Status.OK.getStatusCode()) {
+            isFailed = true;
 
-                if (compensate) {
-                    // the LRA record will be deleted so remember that this compensator failed to compensate
-                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
-                }
-
-                return TwoPhaseOutcome.FINISH_ERROR;
+            if (response != null && tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debugf("LRARecord.doEnd post %s failed with status: %d",
+                        endPath, response.getStatus());
             }
 
             if (compensate) {
-                isCompensated = true;
-                isCompelete = false;
-            } else {
-                isCompelete = true;
-                isCompensated = false;
+                // the LRA record will be deleted so remember that this compensator failed to compensate
+                return TwoPhaseOutcome.HEURISTIC_HAZARD;
             }
 
-            responseData = response.readEntity(String.class);
-
-            return TwoPhaseOutcome.FINISH_OK;
-        } finally {
-            if (client != null)
-                client.close();
+            return TwoPhaseOutcome.FINISH_ERROR;
         }
+
+        if (compensate) {
+            isCompensated = true;
+            isCompelete = false;
+        } else {
+            isCompelete = true;
+            isCompensated = false;
+        }
+
+        return TwoPhaseOutcome.FINISH_OK;
     }
 
     public boolean forget() {
         return true;
-//        if (forgetURI == null)
-//            return false; // warning
-//
-//        Client client = ClientBuilder.newClient();
-//        WebTarget target = null;
-//
-//        try {
-//            target = client.target(URI.create(forgetURI.toExternalForm()));
-//
-//            Response response = target.request()
-//                    .header(LRA_HTTP_HEADER, recoveryURL)
-//                    .post(Entity.entity("", MediaType.APPLICATION_JSON));
-//
-//            return response.getStatus() == Response.Status.OK.getStatusCode();
-//        } finally {
-//            if (client != null)
-//                client.close();
-//        }
     }
 
     public boolean isCompelete() {
@@ -507,5 +539,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public String getCompensator() {
         return compensateURI.toExternalForm();
+    }
+
+    void setLRAService(LRAService lraService) {
+        this.lraService = lraService;
     }
 }
