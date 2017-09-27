@@ -182,6 +182,10 @@ public class Transaction extends AtomicAction {
 
                 if (record == null || !record.restore_state(os, ot) || !list.insert(record))
                     return false;
+
+                if (record instanceof LRARecord)
+                    ((LRARecord) record).setLRAService(lraService);
+
             }
         } catch (IOException e1) {
             return false;
@@ -434,7 +438,7 @@ public class Transaction extends AtomicAction {
         if (findLRAParticipant(participantUrl, false) != null)
             return null;    // already enlisted
 
-        LRARecord p = new LRARecord(coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
+        LRARecord p = new LRARecord(lraService, coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
         String txId = URLEncoder.encode(coordinatorUrl.toExternalForm(), "UTF-8");
