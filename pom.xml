@@ -481,7 +481,7 @@
     <version.org.jacoco>0.6.3.201306030806</version.org.jacoco>
 -->
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
-    <version.org.codehaus.plexus.plexus-archiver>3.0.3</version.org.codehaus.plexus.plexus-archiver>
+    <!--<version.org.codehaus.plexus.plexus-archiver>3.0.3</version.org.codehaus.plexus.plexus-archiver>-->
   </properties>
   <modules>
     <module>tools</module>
