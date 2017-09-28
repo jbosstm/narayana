@@ -53,7 +53,7 @@
         <!-- the unmodularized jdk skips the jdk-9 jta-module -->
         <id>unmodularizedJdk</id>
         <activation>
-          <jdk>[1.5,1.8)</jdk>
+          <jdk>[1.5,1.9)</jdk>
         </activation>
         <modules>
             <module>jta</module>
