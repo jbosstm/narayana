@@ -39,17 +39,14 @@ ROOT="/"
 M2_HOME=""
 MAVEN_HOME=""
 
-JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"')
+JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
 
 if [ -z "$MAVEN_OPTS" ]
 then
 	if [ $JAVA_VERSION = "9" ]; then
 		MAVEN_OPTS="$MAVEN_OPTS -Xmx2048M"
 		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.util=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.lang.reflect=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.base/java.text=ALL-UNNAMED"
-		MAVEN_OPTS="$MAVEN_OPTS --add-exports-private java.desktop/java.awt.font=ALL-UNNAMED"
+		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
 	else
 		MAVEN_OPTS="$MAVEN_OPTS -Xmx640M -XX:MaxPermSize=256m"
 	fi
