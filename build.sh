@@ -41,12 +41,15 @@ MAVEN_HOME=""
 
 JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
 
+if [ $JAVA_VERSION = "9" ]; then
+  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
+  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
+fi
+
 if [ -z "$MAVEN_OPTS" ]
 then
 	if [ $JAVA_VERSION = "9" ]; then
 		MAVEN_OPTS="$MAVEN_OPTS -Xmx2048M"
-		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
-		MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
 	else
 		MAVEN_OPTS="$MAVEN_OPTS -Xmx640M -XX:MaxPermSize=256m"
 	fi
