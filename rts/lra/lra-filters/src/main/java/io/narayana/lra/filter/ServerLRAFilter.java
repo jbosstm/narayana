@@ -83,6 +83,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     @Inject
     private LRAClientAPI lraClient;
 
+    private URL suspendedLRA;
+
+    private boolean nested;
+
 //    private AtomicAction previous = null;
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
@@ -109,10 +113,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         URL lraId;
         URL newLRA = null;
 
-        URL suspendedLRA = null;
         URL incommingLRA = null;
         String recoveryUrl = null;
-        boolean nested;
         boolean isLongRunning = false;
         boolean enlist;
 
@@ -355,7 +357,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 lraClient.closeLRA((URL) newLRA);
             }
         } finally {
-            Current.updateLRAContext(responseContext.getHeaders());
+            if (nested && suspendedLRA != null) {
+                requestContext.getHeaders().putSingle(LRA_HTTP_HEADER, suspendedLRA.toString());
+            } else {
+                Current.updateLRAContext(responseContext.getHeaders());
+            }
 
             Current.popAll();
         }
