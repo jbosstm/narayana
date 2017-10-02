@@ -196,6 +196,10 @@ function init_test_options {
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
+
+    get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
+
+    JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
 }
 
 function comment_on_pull
@@ -279,8 +283,13 @@ function build_narayana {
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
-  echo "Using MAVEN_OPTS: $MAVEN_OPTS"
-  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  
+  if [ $JAVA_VERSION = "9" ]; then
+    ./build.sh -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install -Djacorb-disabled=true
+  else
+    ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  fi
+
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -347,10 +356,17 @@ function build_as {
     ./build.sh -f testsuite/integration/pom.xml -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=5.7.1.Final-SNAPSHOT -fae
     [ $? = 0 ] || fatal "AS testsuite build failed"
   else
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.7.1.Final-SNAPSHOT
+    if [ $JAVA_VERSION = "9" ]; then
+      export MAVEN_OPTS="--add-exports java.xml/com.sun.xml.internal.stream=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED $MAVEN_OPTS"
+      # j9 TODO enforcer.BanTransitiveDependencies fails for narayana-jts-integration (skip-enforce)
+      JAVA_OPTS="-Xms1303m -Xmx1303m $JAVA_OPTS" ./build.sh clean install -Dskip-enforce -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.7.1.Final-SNAPSHOT
+    else
+      export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
+      JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.7.1.Final-SNAPSHOT
+    fi
   fi
   [ $? = 0 ] || fatal "AS build failed"
-  
+
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
@@ -395,7 +411,11 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq $CODE_COVERAGE_ARGS "$@" test
+  if [ $JAVA_VERSION = "9" ]; then
+    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq $CODE_COVERAGE_ARGS "$@" test
+  else
+    MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq $CODE_COVERAGE_ARGS "$@" test
+  fi
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -452,12 +472,16 @@ function blacktie {
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    if [ $JAVA_VERSION = "9" ]; then
+      JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    else
+      JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
+    fi
     sleep 5
   fi
 
   # BUILD BLACKTIE
-  ./build.sh -f blacktie/pom.xml clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  ./build.sh -f blacktie/pom.xml clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
@@ -577,9 +601,9 @@ EOF
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
 }
 
-function enable_qa_trace {
+function set_qa_log_level {
 echo "creating file $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml"
-cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
+cat << EOF > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/log4j.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
@@ -587,7 +611,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
 
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.err"/>
-        <param name="Threshold" value="TRACE"/>
+        <param name="Threshold" value="$1"/>
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
@@ -597,7 +621,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
     <appender name="file" class="org.apache.log4j.FileAppender">
         <param name="File" value="logs/test.log"/>
         <param name="Append" value="false"/>
-        <param name="Threshold" value="TRACE"/>
+        <param name="Threshold" value="$1"/>
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%c\t[%t]\t%m%n"/>
@@ -605,7 +629,7 @@ cat << 'EOF' > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/
     </appender>
 
     <category name="com.arjuna">
-        <level value="TRACE"/>
+        <level value="$1"/>
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </category>
@@ -697,7 +721,11 @@ function qa_tests_once {
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" get.drivers dist ||
+  if [ $JAVA_VERSION = "9" ]; then
+    orbtype="${orbtype}"
+  fi
+  ant get.drivers
+  [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
   [ $? = 0 ] || fatal "qa build failed"
@@ -722,25 +750,34 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target (QA_TESTMETHODS is a list of method names in QA_TESTGROUP to be executed)
-    [ $QA_TRACE ] && enable_qa_trace
+    if [ $QA_TRACE = 1 ]; then
+        set_qa_log_level TRACE
+    else
+        set_qa_log_level INFO
+    fi
     [ $QA_TESTMETHODS ] || QA_TESTMETHODS=""
 
     if [ "x$QA_TESTGROUP" != "x" ]; then
+      ok=0
       if [[ -n "$QA_STRESS" ]] ; then
-        ok=0
         for i in `seq 1 $QA_STRESS`; do
           echo run $i;
-          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
           if [ $? -ne 0 ]; then
             ok=1; break;
           fi
         done
       else
-        ant -f run-tests.xml $QA_PROFILE -Dtest.name=$QA_TESTGROUP -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage;
-        ok=$?
+        for testgroup in $QA_TESTGROUP; do
+          ant -f run-tests.xml $QA_PROFILE -Dtest.name=$testgroup -Dtest.methods="$QA_TESTMETHODS" onetest -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype;
+          if [ $? -ne 0 ]; then
+            echo "test group $testgroup failed"
+            ok=1;
+          fi
+        done
       fi
     else
-      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage
+      ant -f run-tests.xml $target $QA_PROFILE -Dcode.coverage=$codeCoverage -Dorbtype=$orbtype
       ok=$?
     fi
 
@@ -771,7 +808,7 @@ function qa_tests {
     qa_tests_once "orb=ibmorb" "$@" # run qa against the Sun orb
     ok3=$?
   else
-    if [ $SUN_ORB = 1 ]; then
+    if [ $JAVA_VERSION = "9" -o $SUN_ORB = 1 ]; then
       qa_tests_once "orb=idlj" "$@" # run qa against the Sun orb
       ok2=$?
     fi
@@ -858,7 +895,7 @@ init_test_options
 
 # if QA_BUILD_ARGS is unset then get the db drivers form the file system otherwise get them from the
 # default location (see build.xml). Note ${var+x} substitutes null for the parameter if var is undefined
-[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/hudson/dbdrivers"
+[ -z "${QA_BUILD_ARGS+x}" ] && QA_BUILD_ARGS="-Ddriver.url=file:///home/jenkins/dbdrivers"
 
 # Note: set QA_TARGET if you want to override the QA test ant target
 
@@ -892,6 +929,7 @@ export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThr
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
+
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $BLACKTIE = 1 ] && blacktie "$@"

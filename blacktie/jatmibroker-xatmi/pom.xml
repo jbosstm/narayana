@@ -137,24 +137,24 @@
             <artifactId>jboss-transaction-api_1.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.2_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jts</groupId>
             <artifactId>narayana-jts-jacorb</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
+            <groupId>jacorb</groupId>
+            <artifactId>jacorb</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>jacorb</groupId>
-            <artifactId>jacorb</artifactId>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -219,6 +219,8 @@
     </dependencies>
     <properties>
         <test.output.type>shared</test.output.type>
+        <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
+        <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch}-${project.version}.jar</java.corba.patch.jar>
     </properties>
     <profiles>
         <profile>
@@ -243,6 +245,80 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.jacorb</groupId>
+                                            <artifactId>jacorb-omgapi</artifactId>
+                                            <version>${version.org.jacorb.jacorb}</version>
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.basedir}/target/java9-jacorb</outputDirectory>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.jboss.narayana.jta</groupId>
+                                            <artifactId>narayana-jta-j9-module</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                            <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>1.9</source>
+                            <target>1.9</target>
+                            <compilerArgs>
+                                <arg>--add-modules</arg>
+                                <arg>java.corba</arg>
+                                <arg>--patch-module</arg>
+                                <arg>java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar</arg>
+                                <arg>--upgrade-module-path</arg>
+                                <arg>${project.build.directory}/upgrademodulepath</arg>
+                                <arg>--add-exports</arg>
+                                <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <jvm.jdk9.args>
+                  --add-modules java.corba
+                  --patch-module java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar
+                  --upgrade-module-path ${project.build.directory}/upgrademodulepath
+                  --add-exports=java.corba/org.omg.CORBA_2_5=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.CONV_FRAME=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.CSIIOP=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.ETF=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.GIOP=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.PortableGroup=ALL-UNNAMED
+                  --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED
+                </jvm.jdk9.args>
+                <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
+            </properties>
         </profile>
     </profiles>
 </project>

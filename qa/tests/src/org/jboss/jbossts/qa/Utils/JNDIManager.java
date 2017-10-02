@@ -77,7 +77,7 @@ public class JNDIManager
 
 				Class c = Class.forName(dynamicClass);
 
-				DynamicClass arjunaJDBC2DynamicClass = (DynamicClass) c.newInstance();
+				DynamicClass arjunaJDBC2DynamicClass = (DynamicClass) c.getDeclaredConstructor().newInstance();
 				javax.sql.XADataSource xaDataSource = arjunaJDBC2DynamicClass.getDataSource(databaseURL);
 
 				xaDataSourceToBind = xaDataSource;
@@ -197,7 +197,7 @@ class XADataSourceReflectionWrapper {
     private XADataSource xaDataSource;
     XADataSourceReflectionWrapper(String classname) {
         try {
-            xaDataSource = (XADataSource)Class.forName(classname).newInstance();
+            xaDataSource = (XADataSource)Class.forName(classname).getDeclaredConstructor().newInstance();
         } catch(Exception e) {
             throw new ExceptionInInitializerError(e);
         }
