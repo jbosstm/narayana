@@ -80,7 +80,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         try {
             // if compensateURI is a link parse it into compensate,complete and status urls
-            if (linkURI.indexOf(',') != -1) {
+            if (linkURI.startsWith("<")) {
                 linkURI = cannonicalForm(linkURI);
                 Exception parseException[] = {null};
 
@@ -221,8 +221,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             // run the compensator
             endPath = compensateURI;
         } else {
-            if (isCompelete())
+            if (isCompelete() || completeURI == null) {
+                isCompelete = true;
+                isCompensated = false;
                 return TwoPhaseOutcome.FINISH_OK;
+            }
             // run complete
             endPath = completeURI;
         }
@@ -327,7 +330,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 os.packString(lraId.toExternalForm());
                 os.packString(recoveryURL.toExternalForm());
                 os.packString(participantPath);
-                os.packString(completeURI.toExternalForm());
+                if (completeURI == null) {
+                    os.packBoolean(false);
+                } else {
+                    os.packBoolean(true);
+                    os.packString(completeURI.toExternalForm());
+                }
                 os.packString(compensateURI.toExternalForm());
 //                os.packString(statusURI.toString());
                 os.packString(compensatorData);
@@ -350,7 +358,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 lraId = new URL(os.unpackString());
                 recoveryURL = new URL(os.unpackString());
                 participantPath = os.unpackString();
-                completeURI = new URL(os.unpackString());
+                completeURI = os.unpackBoolean() ? new URL(os.unpackString()) : null;
                 compensateURI = new URL(os.unpackString());
 //                statusURI = new URL(os.unpackString());
                 compensatorData = os.unpackString();
