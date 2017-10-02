@@ -259,8 +259,12 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // store state with the current thread. TODO for the async version use containerRequestContext.setProperty("lra", Current.peek());
         Current.updateLRAContext(lraId, headers); // make the current LRA available to the called method
 
-        if (newLRA != null)
+        if (newLRA != null) {
+            if (suspendedLRA != null)
+                Current.putState("suspendedLRA", suspendedLRA);
+
             Current.putState("newLRA", newLRA);
+        }
 
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected LRAClient");
         lraClient.setCurrentLRA(lraId); // make the current LRA available to the called method
@@ -320,6 +324,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         // a request is leaving the container so clear any context on the thread and fix up the LRA response header
 
+        Object suspendedLRA = Current.getState("suspendedLRA");
         Object newLRA = Current.getState("newLRA");
         URL current = Current.peek();
 
@@ -355,6 +360,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 lraClient.closeLRA((URL) newLRA);
             }
         } finally {
+            if (suspendedLRA != null)
+                Current.push((URL) suspendedLRA);
+
             Current.updateLRAContext(responseContext.getHeaders());
 
             Current.popAll();
