@@ -379,7 +379,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
     public String joinLRA(URL lraId, Class<?> resourceClass, URI baseUri,
                           String compensatorData) throws GenericLRAException {
-            Map<String, String> terminateURIs = getTerminationUris(resourceClass, baseUri, false);
+            Map<String, String> terminateURIs = getTerminationUris(resourceClass, baseUri);
             String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
@@ -497,7 +497,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return getStatus(lraId, isCompletedUrlFormat);
     }
 
-    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, boolean validate) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri) {
         Map<String, String> paths = new HashMap<>();
 
         Annotation resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
@@ -507,8 +507,6 @@ public class LRAClient implements LRAClientAPI, Closeable {
                 baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1))
                 .replaceAll("/$", "");
 
-        final int[] validCnt = {0};
-
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
             Annotation pathAnnotation = method.getAnnotation(Path.class);
 
@@ -516,14 +514,13 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
                 if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation,
                         method.getAnnotation(Compensate.class), uriPrefix) != 0) {
-                    validCnt[0] += 1;
                     TimeLimit timeLimit = method.getAnnotation(TimeLimit.class);
 
                     if (timeLimit != null)
                         paths.put(TIMELIMIT_PARAM_NAME, Long.toString(timeLimit.unit().toMillis(timeLimit.limit())));
                 }
 
-                validCnt[0] += checkMethod(paths, COMPLETE, (Path) pathAnnotation,
+                checkMethod(paths, COMPLETE, (Path) pathAnnotation,
                         method.getAnnotation(Complete.class), uriPrefix);
                 checkMethod(paths, STATUS, (Path) pathAnnotation,
                         method.getAnnotation(Status.class), uriPrefix);
@@ -533,10 +530,6 @@ public class LRAClient implements LRAClientAPI, Closeable {
                 checkMethod(paths, LEAVE, (Path) pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
             }
         });
-
-        if (validate && validCnt[0] == 1) // must have neither or both of COMPLETE and COMPENSATE
-            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
-                    String.format(MISSING_ANNOTATION_FORMAT, compensatorClass.getName()), null);
 
         StringBuilder linkHeaderValue = new StringBuilder();
 
@@ -594,8 +587,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
                                      String compensateUrl, String completeUrl,
                                      String forgetUrl, String leaveUrl, String statusUrl,
                                      String compensatorData) {
-        validateURL(completeUrl, false, "Invalid complete URL: %s");
-        validateURL(compensateUrl, false, "Invalid compensate URL: %s");
+        validateURL(completeUrl, true, "Invalid complete URL: %s");
+        validateURL(compensateUrl, true, "Invalid compensate URL: %s");
         validateURL(leaveUrl, true, "Invalid status URL: %s");
         validateURL(forgetUrl, true, "Invalid forgetUrl URL: %s");
         validateURL(statusUrl, true, "Invalid status URL: %s");

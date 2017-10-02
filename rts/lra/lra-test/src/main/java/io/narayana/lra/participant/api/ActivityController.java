@@ -116,7 +116,7 @@ public class ActivityController {
         if (lraUrl != null) {
             String lraId = LRAClient.getLRAId(lraUrl);
 
-            Map<String, String> terminateURIs = lraClient.getTerminationUris(this.getClass(), context.getBaseUri(), true);
+            Map<String, String> terminateURIs = lraClient.getTerminationUris(this.getClass(), context.getBaseUri());
             lraClient.leaveLRA(new URL(lraUrl), terminateURIs.get("Link"));
 
             activityService.getActivity(lraId);
