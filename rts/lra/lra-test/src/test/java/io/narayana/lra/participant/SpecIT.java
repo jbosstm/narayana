@@ -272,6 +272,11 @@ public class SpecIT {
                 .header(LRAClient.LRA_HTTP_HEADER, lra)
                 .put(Entity.text(""));
 
+        Object parentId = response.getHeaders().getFirst(LRAClient.LRA_HTTP_HEADER);
+
+        assertNotNull(parentId);
+        assertEquals(lra.toExternalForm(), parentId);
+
         String nestedLraId = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
         List<LRAStatus> lras = lraClient.getActiveLRAs();
