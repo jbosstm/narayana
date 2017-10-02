@@ -253,6 +253,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 System.out.println("wrong lra id");
         }
 
+
+        if (suspendedLRA != null)
+            Current.putState("suspendedLRA", suspendedLRA);
+
         if (isLongRunning)
             newLRA = null;
 
@@ -260,8 +264,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Current.updateLRAContext(lraId, headers); // make the current LRA available to the called method
 
         if (newLRA != null) {
-            if (suspendedLRA != null)
-                Current.putState("suspendedLRA", suspendedLRA);
 
             Current.putState("newLRA", newLRA);
         }
