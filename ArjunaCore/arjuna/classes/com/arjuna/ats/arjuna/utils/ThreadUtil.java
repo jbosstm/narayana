@@ -20,7 +20,10 @@
  */
 package com.arjuna.ats.arjuna.utils;
 
-import java.util.WeakHashMap;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -36,7 +39,10 @@ public class ThreadUtil
     /**
      * The ID associated with the thread.
      */
-    private static final WeakHashMap<Thread,String> THREAD_ID = new WeakHashMap<Thread,String>();
+    // Ideally a WeakHashMap would be used here, but unfortunately it's not thread-safe
+    // Would need to synchronize it, as even gets have to be treated as writes since they remove stale entries
+    private static final ConcurrentWeakHashMap THREAD_ID = new ConcurrentWeakHashMap();
+
     /**
      * The thread id counter.
      */
@@ -58,33 +64,7 @@ public class ThreadUtil
      */
     public static String getThreadId(final Thread thread)
     {
-        // fastpath - if we have cached the result in a thread local,
-        // we can avoid lock contention on the map.
-        if(thread == Thread.currentThread()) {
-            String id = LOCAL_ID.get();
-            if(id != null) {
-                return id;
-            }
-
-        }
-
-        synchronized (ThreadUtil.class) {
-            final String id = THREAD_ID.get(thread);
-            if (id != null) {
-                if (thread == Thread.currentThread()) {
-                    LOCAL_ID.set(id);
-                }
-
-                return id;
-            }
-
-            final String newId = getNextId();
-            THREAD_ID.put(thread, newId);
-            if (thread == Thread.currentThread()) {
-                LOCAL_ID.set(newId);
-            }
-            return newId;
-        }
+	return THREAD_ID.get(thread);
     }
 
     /**
@@ -95,4 +75,71 @@ public class ThreadUtil
     {
         return Long.toHexString(id.incrementAndGet());
     }
+
+    // --- //
+
+    private static final class ConcurrentWeakHashMap
+    {
+        private final ConcurrentHashMap<WeakKey<Thread>, String> map = new ConcurrentHashMap<>();
+        private final ReferenceQueue<Thread> refQueue = new ReferenceQueue<>();
+
+        public String get(Thread thread)
+        {
+            if (thread == null)
+            {
+                throw new NullPointerException("null thread");
+            }
+            purgeStaleKeys();
+
+            // Should just call map.computeIfAbsent(), but do it old style to avoid creating a lambda
+            String newValue, value = map.get(thread);
+            if (value == null)
+            {
+                value = map.putIfAbsent(new WeakKey<>(thread, refQueue), newValue = getNextId());
+                return value == null ? newValue : value;
+            }
+            return value;
+        }
+
+        private void purgeStaleKeys()
+        {
+            for(Reference<? extends Thread> ref; (ref = refQueue.poll()) != null; map.remove(ref))
+            {
+            }
+        }
+
+        private static class WeakKey<K> extends WeakReference<K>
+        {
+            private final int hashCode;
+
+            private WeakKey(K key, ReferenceQueue<K> queue)
+            {
+                super(key, queue);
+                hashCode = key.hashCode();
+            }
+
+            public int hashCode()
+            {
+                return hashCode;
+            }
+
+            public boolean equals(Object other)
+            {
+                if (other == this)
+                {
+                    return true;
+                }
+                else if (!(other instanceof WeakKey))
+                {
+                    return false;
+                }
+                else
+                {
+                    Object referent = this.get();
+                    return referent != null && referent == ((WeakKey)other).get();
+                }
+            }
+        }
+    }
+
 }
