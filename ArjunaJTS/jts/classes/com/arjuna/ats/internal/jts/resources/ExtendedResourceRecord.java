@@ -527,7 +527,8 @@ public class ExtendedResourceRecord extends
         }
 		catch (Exception e2)
 		{
-			e2.printStackTrace();
+
+		    jtsLogger.i18NLogger.warn_resources_extresrecord_failed_to_commit(order(), e2);
 			
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
@@ -625,8 +626,6 @@ public class ExtendedResourceRecord extends
 		}
 		catch (Exception e5) {
             jtsLogger.i18NLogger.warn_resources_errgenerr("ExtendedResourceRecord.topLevelOnePhaseCommit", e5);
-
-            e5.printStackTrace();
 
             /*
                 * Unknown error - better assume heuristic!
@@ -734,7 +733,7 @@ public class ExtendedResourceRecord extends
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+		    jtsLogger.i18NLogger.warn_resources_errgenerr("Can't restore state", e);
 
 			result = false;
 		}
