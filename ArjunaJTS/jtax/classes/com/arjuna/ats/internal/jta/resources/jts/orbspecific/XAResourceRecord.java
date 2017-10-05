@@ -134,6 +134,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_theUid = new Uid();
 		_theReference = null;
 		_recoveryCoordinator = null;
+		_phaseTwoStarted = false;
 
 		_theTransaction = tx;
 
@@ -143,8 +144,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			_cachedUidStringForm = END_XARESOURCE.stringForm();
 	}
 
-	// for recovery only!
-	
+	/*
+	 * for recovery only!
+	 */
 	public XAResourceRecord ()
 	{
 	    _theXAResource = null;
@@ -160,6 +162,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
             _theUid = new Uid();
             _theReference = null;
             _recoveryCoordinator = null;
+            _phaseTwoStarted = true;
 	}
 	
 	public final Uid get_uid()
@@ -416,6 +419,12 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						case XAException.XA_RBTIMEOUT:
 							destroyState();
 							break;
+						case XAException.XAER_NOTA:
+							if (_phaseTwoStarted) {
+								// rolled back previously and recovery completed
+								destroyState();
+								break;
+							}
 						default:
 							destroyState();
 
@@ -435,6 +444,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				finally
 				{
+				    _phaseTwoStarted = true;
 					if (_prepared)
 						destroyState();
 					else
@@ -544,6 +554,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 							throw new org.omg.CosTransactions.HeuristicMixed();
 
                         case XAException.XAER_NOTA:
+                            if (_phaseTwoStarted) // committed previously on participant
+                                break;
                             // RM unexpectedly lost track of the tx, outcome is uncertain
                             updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
 			    			throw new org.omg.CosTransactions.HeuristicHazard();
@@ -573,6 +585,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				finally
 				{
+				    _phaseTwoStarted = true;
 					if (removeConnection) {
 						removeConnection();
 					}
@@ -1156,6 +1169,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		_theReference = null;
 		_recoveryCoordinator = null;
 		_theTransaction = null;
+		_phaseTwoStarted = true;
 
 		_valid = loadState();
 	}
@@ -1491,6 +1505,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private Uid _theUid;
 	private org.omg.CosTransactions.Resource _theReference;
 	private org.omg.CosTransactions.RecoveryCoordinator _recoveryCoordinator;
+	private boolean _phaseTwoStarted; // needed so that recovery can reason about XAER_NOTA failures
 	private TransactionImple _theTransaction;
 	private boolean _forgotten;
 
