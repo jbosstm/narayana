@@ -33,6 +33,7 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
+import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResource;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -1085,6 +1086,10 @@ public interface jtsI18NLogger {
 	@Message(id = 22265, value = "failure on processing doRecover for xid {0} and parent node name {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
 	public void info_fail_to_dorecover(Xid xid, String parentNodeName, @Cause() Exception e);
+
+	@Message(id = 22266, value = "topLevelCommit of resource {0} failed", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_resources_extresrecord_failed_to_commit(Uid uid, @Cause() Throwable arg1);
 
     /*
         Allocate new messages directly above this notice.

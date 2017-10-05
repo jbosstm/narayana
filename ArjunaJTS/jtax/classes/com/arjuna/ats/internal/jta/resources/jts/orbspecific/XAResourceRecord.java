@@ -498,7 +498,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				catch (XAException e1)
 				{
-					e1.printStackTrace();
 
 					if (notAProblem(e1, true))
 					{
@@ -838,12 +837,14 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	            }
 	            catch (SystemException ex)
 	            {
-	                ex.printStackTrace();
+	                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex);
 
 	                throw ex;
 	            }
 	            catch (org.omg.CosTransactions.HeuristicHazard ex)
 	            {
+	                jtaxLogger.i18NLogger.warn_jtax_resources_jts_orbspecific_cant_commit_onephase(_tranID, ex.getClass(), ex);
+
 	                throw ex;
 	            }
 	            catch (Exception e2)
@@ -986,7 +987,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+		    jtaxLogger.i18NLogger.warn_jtax_resources_jts_cant_save_state(_tranID, e);
 
 			res = false;
 		}
