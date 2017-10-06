@@ -22,6 +22,7 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.client.GenericLRAException;
+import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +46,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 @ApplicationScoped
 @Path(LRAClient.RECOVERY_COORDINATOR_PATH_NAME)
@@ -127,5 +129,18 @@ public class RecoveryCoordinator {
         }
 
         throw new NotFoundException(rcvCoordId);
+    }
+
+    @GET
+    @Path("recovery")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "List recovering Long Running Actions",
+            notes = "Returns LRAs that are recovering (ie some compensators still need to be ran)",
+            response = LRAStatus.class, responseContainer = "List")
+    @ApiResponses( {
+            @ApiResponse( code = 200, message = "The request was successful" )
+    } )
+    public List<LRAStatus> getRecoveringLRAs() {
+        return lraService.getAllRecovering(true);
     }
 }

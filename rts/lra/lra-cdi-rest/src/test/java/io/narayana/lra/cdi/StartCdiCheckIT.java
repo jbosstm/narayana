@@ -88,7 +88,7 @@ public class StartCdiCheckIT {
     
     @Test
     public void methodTypeAnnotationMissing() throws Exception {
-        checkSwarmWithDeploymentException("should use complementary annotation.*(POST|GET)",
+        checkSwarmWithDeploymentException("should use complementary annotation.*(PUT|GET)",
             NoPostOrGetBean.class);
     }
     

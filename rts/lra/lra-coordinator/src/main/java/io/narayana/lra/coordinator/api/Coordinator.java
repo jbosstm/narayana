@@ -249,19 +249,19 @@ public class Coordinator {
         return Response.ok(lra.getLRAStatus().name()).build();
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURL(nestedLraId), false, true);
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURL(nestedLraId), true, true);
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/forget")
     public Response forgetNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         lraService.remove(null, toURL(nestedLraId));
@@ -449,9 +449,9 @@ public class Coordinator {
                     + "-  Completed: the coordinator/participant has confirmed.\n"
                     + "-  FailedToComplete: the Compensator was unable to tidy-up.\n"
                     + "\n"
-                    + "Performing a POST on <URL>/compensate will cause the compensator to compensate\n"
+                    + "Performing a PUT on <URL>/compensate will cause the compensator to compensate\n"
                     + "  the work that was done within the scope of the LRA.\n"
-                    + "Performing a POST on <URL>/complete will cause the compensator to tidy up and\n"
+                    + "Performing a PUT on <URL>/complete will cause the compensator to tidy up and\n"
                     + "   it can forget this LRA.\n")
                     String compensatorUrl) throws NotFoundException {
         // test to see if the join request contains any compensator specific data

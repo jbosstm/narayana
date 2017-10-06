@@ -86,8 +86,15 @@ public class LRAService {
         return lras.values().stream().map(LRAStatus::new).collect(toList());
     }
 
-    public List<LRAStatus> getAllRecovering() {
+    public List<LRAStatus> getAllRecovering(boolean scan) {
+        if (scan)
+            RecoveryManager.manager().scan();
+
         return recoveringLRAs.values().stream().map(LRAStatus::new).collect(toList());
+    }
+
+    public List<LRAStatus> getAllRecovering() {
+        return getAllRecovering(false);
     }
 
     public void addTransaction(Transaction lra) {

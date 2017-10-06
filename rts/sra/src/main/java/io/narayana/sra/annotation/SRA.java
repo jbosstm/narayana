@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * An annotation for controlling the lifecycle of Short Running Actions (SRAs).
  *
  * Newly created SRAs are uniquely identified and the id is referred to as the SRA context. The context
- * is passed around using a JAX-RS request/response header called SRAClient#SRA_HTTP_HEADER ("X-io.narayana.sra").
+ * is passed around using a JAX-RS request/response header called SRAClient#SRA_HTTP_HEADER ("Short-Running-Action").
  * The implementation (of the SRA specification) is expected to manage this context and the application
  * developer is expected to declaratively control the creation, propagation and destruction of SRAs
  * using the @SRA annotation. When a JAX-RS bean method is invoked in the context of an SRA any JAX-RS

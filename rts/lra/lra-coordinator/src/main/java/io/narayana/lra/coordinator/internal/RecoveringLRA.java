@@ -23,10 +23,15 @@
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+
+import java.util.ArrayList;
 
 class RecoveringLRA extends Transaction {
     /**
@@ -61,20 +66,39 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.H_MIXED) ||
                     (_theStatus == ActionStatus.H_HAZARD) )
             {
-                super.phase2Commit( _reportHeuristics ) ;
+                // move any heuristics back onto the prepared list for another attempt:
+                moveTo(heuristicList, preparedList);
+
+                super.phase2Commit( true ) ;
             }
             else if ( (_theStatus == ActionStatus.ABORTED) ||
                     (_theStatus == ActionStatus.H_ROLLBACK) ||
                     (_theStatus == ActionStatus.ABORTING) ||
                     (_theStatus == ActionStatus.ABORT_ONLY) )
             {
-                super.phase2Abort( _reportHeuristics ) ;
+                // move any heuristics back onto the pending list for another attempt:
+                moveTo(heuristicList, pendingList);
+
+                super.phase2Abort( true ) ;
             }
             else {
                 if (tsLogger.logger.isInfoEnabled()) {
                     tsLogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
                             + ActionStatus.stringForm(_theStatus));
                 }
+            }
+
+            // if there are no more heuristics or failures then update the status of the LRA
+            if (heuristicList.size() == 0 && failedList.size() == 0)
+                setLRAStatus(_theStatus);
+
+            switch (getLRAStatus()) {
+                case Completed:
+                case Compensated:
+                    getLraService().finished(this, false);
+                    break;
+                default:
+                    /* FALLTHRU */
             }
         }
         else {
@@ -88,17 +112,18 @@ class RecoveringLRA extends Transaction {
         }
     }
 
-    // Current transaction status
-    // (retrieved from the TransactionStatusManager)
-    private int _theStatus ;
+    private void moveTo(RecordList fromList, RecordList toList) {
+        RecordListIterator i = new RecordListIterator(fromList);
+        AbstractRecord record;
 
-    // Flag to indicate that this transaction has been re-activated
-    // successfully.
+        while ((record = fromList.getFront()) != null)
+            toList.putFront(record);
+    }
+
+    private int _theStatus ; // Current transaction status
+
+    // Flag to indicate that this transaction has been re-activated successfully.
     private boolean _activated = false ;
-
-    // whether heuristic reporting on phase 2 commit is enabled.
-    private boolean _reportHeuristics = true ;
-
 }
 
 
