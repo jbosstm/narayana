@@ -118,42 +118,6 @@ public class LRARecoveryModule implements RecoveryModule {
             }
     }
 
-    private boolean isTransactionInMidFlight( int status )
-    {
-        boolean inFlight;
-
-        switch ( status )
-        {
-            // these states can only come from a process that is still alive
-            case ActionStatus.RUNNING    :
-            case ActionStatus.ABORT_ONLY :
-            case ActionStatus.PREPARING  :
-            case ActionStatus.COMMITTING :
-            case ActionStatus.ABORTING   :
-            case ActionStatus.PREPARED   :
-                inFlight = true ;
-                break ;
-
-            // the transaction is apparently still there, but has completed its
-            // phase2. should be safe to redo it.
-            case ActionStatus.COMMITTED  :
-            case ActionStatus.H_COMMIT   :
-            case ActionStatus.H_MIXED    :
-            case ActionStatus.H_HAZARD   :
-            case ActionStatus.ABORTED    :
-            case ActionStatus.H_ROLLBACK :
-                inFlight = false ;
-                break ;
-
-            // this shouldn't happen
-            case ActionStatus.INVALID :
-            default:
-                inFlight = false ;
-        }
-
-        return inFlight ;
-    }
-
     private Vector<Uid> processTransactions( InputObjectState uids ) {
         Vector<Uid> uidVector = new Vector<>() ;
 

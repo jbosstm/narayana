@@ -23,7 +23,7 @@
 package io.narayana.lra.cdi.bean;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
 import io.narayana.lra.annotation.Compensate;
@@ -43,7 +43,7 @@ public class CompleteOptionalBean {
 
     @Compensate
     @Path("compensate")
-    @POST
+    @PUT
     public void compensate() {
         // no implementation needed
     }

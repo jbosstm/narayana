@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.client.InvalidLRAId;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -36,6 +37,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,10 +45,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,24 +61,24 @@ import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
+    private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
+
     private URL lraId;
     private URL recoveryURL;
     private String participantPath;
 
     private URL completeURI;
     private URL compensateURI;
-//    private URL statusURI;
-//    private URL forgetURI;
-
-    private boolean isCompelete;
-    private boolean isCompensated;
-    private boolean isFailed;
+    private URL statusURI;
+    private URL forgetURI;
 
     private String responseData;
     private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
     private String compensatorData;
     private ScheduledFuture<?> scheduledAbort;
     private LRAService lraService;
+    private CompensatorStatus status;
+    boolean accepted;
 
     public LRARecord() {
     }
@@ -99,8 +103,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             } else {
                 this.compensateURI = new URL(String.format("%s/compensate", linkURI));
                 this.completeURI = new URL(String.format("%s/complete", linkURI));
-//                this.statusURI = new URL(String.format("%s/status", linkURI));
-//                this.forgetURI = new URL(String.format("%s/forget", linkURI));
+                this.statusURI = new URL(String.format("%s", linkURI));
+                this.forgetURI = new URL(String.format("%s", linkURI));
 
             }
 
@@ -119,7 +123,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return participantPath;
     }
 
-    static String cannonicalForm(String linkStr) {
+    private static String cannonicalForm(String linkStr) {
         if (linkStr.indexOf(',') == -1)
             return linkStr;
 
@@ -139,7 +143,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return b.append(value);
     }
 
-    public static String extractCompensator(String linkStr) {
+    static String extractCompensator(String linkStr) {
         for (String lnk : linkStr.split(",")) {
             Link link;
 
@@ -167,10 +171,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 compensateURI = new URL(uri);
             else if ("complete".equals(rel))
                 completeURI = new URL(uri);
-//            else if ("status".equals(rel))
-//                statusURI = new URL(uri);
-//            else if ("forget".equals(rel))
-//                forgetURI = new URL(uri);
+            else if ("status".equals(rel))
+                statusURI = new URL(uri);
+            else if ("forget".equals(rel))
+                forgetURI = new URL(uri);
 
             return null;
         } catch (MalformedURLException e) {
@@ -184,35 +188,27 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     @Override
-    // (? should complete actions be mapped onto abort since complete is best effort - ie it is compensate that recovery
-    // needs to retry). If a compensator needs to know
+    // NB if a compensator needs to know
     // if the lra completed then it can ask the io.narayana.lra.coordinator. A 404 status implies:
     // - all compensators completed ok, or
     // - all compensators compensated ok
     // This compensator can infer which possibility happened since it will have been told to complete or compensate
     public int topLevelAbort() {
-        // TODO if this wa due to a timeout then we need to return doEnd(true);
-
-        // put to compensateURI
         return doEnd(true);
     }
 
     @Override
     public int topLevelOnePhaseCommit() {
-
         return topLevelCommit();
     }
 
     @Override
-    // ? what about mapping compensate actions commit (since we need recovery to kick in if any compensation fails)
     public int topLevelCommit() {
         return doEnd(false);
     }
 
     private int doEnd(boolean compensate) {
-        // put to completeURI
         URL endPath;
-        Client client = null;
 
         if (scheduledAbort != null) {
             // NB this could have been called from the scheduler so don't cancel our self!
@@ -223,42 +219,305 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         if (compensate) {
             if (isCompensated())
                 return TwoPhaseOutcome.FINISH_OK;
-            // run the compensator
-            endPath = compensateURI;
+
+            endPath = compensateURI; // run the compensator
         } else {
             if (isCompelete() || completeURI == null) {
-                isCompelete = true;
-                isCompensated = false;
+                status = CompensatorStatus.Completed;
+
                 return TwoPhaseOutcome.FINISH_OK;
             }
-            // run complete
-            endPath = completeURI;
+
+            endPath = completeURI; // run complete
         }
 
         // NB trying to compensate when already completed is allowed
 
-        Current.push(lraId);
+        Current.push(lraId); // make sure the lra id is set so that it can be included in the headers
 
-        Response response = null;
-        LRAStatus inVMStatus = null;
+        int httpStatus = -1;
 
+        if (accepted) {
+            // the compensator has previously returned a HTTP 200 Accepted response so the status URL
+            // must be valid - try that first for the status
+            int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
+
+            if (twoPhaseOutcome != -1)
+                return twoPhaseOutcome;
+        } else {
+            httpStatus = tryLocalEndInvocation(endPath);
+        }
+
+        if (httpStatus == -1) {
+            // the local invocation was not made so fallback to using JAX-RS
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target(URI.create(endPath.toExternalForm()));
+
+            try {
+                Response response = target.request()
+                        .header(LRA_HTTP_HEADER, lraId.toExternalForm())
+                        .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                        .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
+
+                httpStatus = response.getStatus();
+
+                accepted = httpStatus == Response.Status.ACCEPTED.getStatusCode();
+
+                if (accepted && statusURI == null) {
+                    // the participant could not finish immediately and we have no status URL so one should be
+                    // present in the Location header
+                    Object lh = response.getHeaders().getFirst(HttpHeaders.LOCATION);
+
+                    if (lh != null)
+                        try {
+                            statusURI = new URL((String) lh);
+                        } catch (MalformedURLException e) {
+                            if (tsLogger.logger.isInfoEnabled()) {
+                                tsLogger.logger.infof("LRARecord.doEnd missing Location header on ACCEPTED response %s failed: %s",
+                                        target.getUri(), e.getMessage());
+                            }
+                        }
+                }
+
+                if (response.hasEntity())
+                    responseData = response.readEntity(String.class);
+            } catch (Exception e) {
+                if (tsLogger.logger.isInfoEnabled()) {
+                    tsLogger.logger.infof("LRARecord.doEnd put %s failed: %s",
+                            target.getUri(), e.getMessage());
+                }
+            } finally {
+                client.close();
+            }
+        }
+
+        if (httpStatus != Response.Status.OK.getStatusCode() && !accepted) {
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debugf("LRARecord.doEnd put %s failed with status: %d",
+                        endPath, httpStatus);
+            }
+
+            if (compensate) {
+                status = CompensatorStatus.Compensating; // recovery will figure out the status via the status url
+
+                /*
+                 * We are mapping compensate onto Abort. TwoPhaseCoordinator uses presumed abort
+                 * so if we were to return FINISH_ERROR recovery would not replay the log.
+                 * To force the record to be eligible for recovery we return a heuristic hazard.
+                 */
+                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+            }
+
+            status = CompensatorStatus.Completing; // recovery will figure out the status via the status url
+
+            return TwoPhaseOutcome.FINISH_ERROR;
+        }
+
+        if (compensate)
+            status = accepted ? CompensatorStatus.Compensating : CompensatorStatus.Compensated;
+        else
+            status = accepted ? CompensatorStatus.Completing : CompensatorStatus.Completed;
+
+        // if the the request is still in progress (ie accepted is true) let recovery finish it
+        return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
+    }
+
+    private int retryGetEndStatus(URL endPath, boolean compensate) {
+        assert accepted;
+
+        // the compensator has previously returned a HTTP 200 Accepted response so the status URL
+        // must be valid - try that first for the status
+
+        // first check that this isn't a nested coordinator running locally
+        URL nestedLraId = extractParentLRA(endPath);
+
+        if (nestedLraId != null && lraService != null) {
+            Transaction transaction = lraService.getTransaction(nestedLraId);
+
+            if (transaction != null) {
+                CompensatorStatus cStatus = transaction.getLRAStatus();
+
+                if (cStatus == null) {
+                    tsLogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
+                            endPath);
+                    return -1; // shouldn't happen since it imples it's still be active - force end to be called
+                }
+
+                switch (cStatus) {
+                    case Completed:
+                    case Compensated:
+                        return TwoPhaseOutcome.FINISH_OK;
+                    case Completing:
+                    case Compensating:
+                        return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                    case FailedToCompensate:
+                    case FailedToComplete:
+                        return TwoPhaseOutcome.FINISH_ERROR;
+                }
+
+            }
+        } else if (statusURI != null) {
+            // it is a standard participant - check the status URL
+            Client client = ClientBuilder.newClient();
+
+            try {
+                WebTarget target = client.target(statusURI.toURI());
+
+                Response response = target.request()
+                        .header(LRA_HTTP_HEADER, lraId.toExternalForm())
+                        .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                        .get();
+
+                if (response.getStatus() == Response.Status.OK.getStatusCode() &&
+                        response.hasEntity()) {
+                    // the compensator is available again and has reported its status
+                    String s = response.readEntity(String.class);
+
+                    status = CompensatorStatus.valueOf(s);
+
+                    switch (status) {
+                        case Completed:
+                        case Compensated:
+                            return TwoPhaseOutcome.FINISH_OK;
+                        case Completing:
+                        case Compensating:
+                            // still in progress - make sure recovery keeps retrying it
+                            return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                        case FailedToCompensate:
+                        case FailedToComplete:
+                            // the participant could not finish - log a warning and forget
+                            tsLogger.logger.warnf(
+                                    "LRARecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
+                                    compensate, target.getUri(), status);
+
+                            if (forgetURI != null)
+                                forgetURI = statusURI; // forget is equivalent to HTTP delete on the status URL
+
+                            if (forgetURI != null) {
+                                try {
+                                    // let the participant know he can clean up
+                                    WebTarget target2 = client.target(forgetURI.toURI());
+                                    Response response2 = target2.request()
+                                            .header(LRA_HTTP_HEADER, lraId.toExternalForm())
+                                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                                            .delete();
+
+                                    if (response2.getStatus() == Response.Status.OK.getStatusCode())
+                                        return TwoPhaseOutcome.FINISH_OK;
+                                } catch (Exception e) {
+                                    if (tsLogger.logger.isInfoEnabled()) {
+                                        tsLogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
+                                                forgetURI, e.getMessage());
+                                    }
+
+                                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
+                                }
+
+                            } else {
+                                tsLogger.logger.warnf(
+                                        "LRARecord.doEnd(%b) LRA: %s: cannot forget %s: missing forget URI",
+                                        compensate, lraId, statusURI, status);
+                            }
+
+                            if (compensate)
+                                return TwoPhaseOutcome.FINISH_OK;
+
+                            return TwoPhaseOutcome.FINISH_OK;
+                    }
+                }
+            } catch (Exception e) {
+                if (tsLogger.logger.isInfoEnabled()) {
+                    tsLogger.logger.infof("LRARecord.doEnd status URI %s is invalid (%s)",
+                            statusURI, e.getMessage());
+                }
+            } finally {
+                client.close();
+            }
+        }
+
+        return -1;
+    }
+
+    // see if the participant is an LRA in the same VM as the coordinator
+    private URL extractParentLRA(URL endPath) {
         if (lraService != null) {
             String[] segments = endPath.getPath().split("/");
             int pCnt = segments.length;
 
             if (pCnt > 1) {
-                String cId = null;
+                String cId;
+
+                try {
+                    cId = URLDecoder.decode(segments[pCnt - 2], "UTF-8");
+
+                    return lraService.hasTransaction(cId) ? new URL(cId) : null;
+                } catch (UnsupportedEncodingException | MalformedURLException ignore) {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private int tryLocalEndInvocation(URL endPath) {
+        URL cId = extractParentLRA(endPath);
+
+        if (cId != null) {
+            String[] segments = endPath.getPath().split("/");
+            int pCnt = segments.length;
+
+            // this is a call from a parent LRA to end the nested LRA:
+            boolean isCompensate = "compensate".equals(segments[pCnt - 1]);
+            boolean isComplete = "complete".equals(segments[pCnt - 1]);
+            int httpStatus;
+
+            if (!isCompensate && !isComplete) {
+                if (tsLogger.logger.isInfoEnabled()) {
+                    tsLogger.logger.infof("LRARecord.doEnd invalid nested compensator url %s" +
+                                    "(should be compensate or complete)",
+                            endPath.toExternalForm());
+                }
+
+                httpStatus = Response.Status.BAD_REQUEST.getStatusCode();
+            } else {
+                LRAStatus inVMStatus = lraService.endLRA(cId, isCompensate, true);
+
+                httpStatus = inVMStatus.getHttpStatus();
+
+                try {
+                    responseData = inVMStatus.getEncodedResponseData();
+                } catch (IOException ignore) {
+                }
+            }
+
+            return httpStatus;
+        }
+
+        // fall back to using JAX-RS
+
+        return -1;
+    }
+
+    private int xtryLocalEndInvocation(URL endPath) {
+        if (lraService != null) {
+            String[] segments = endPath.getPath().split("/");
+            int pCnt = segments.length;
+
+            if (pCnt > 1) {
+                String cId;
 
                 try {
                     cId = URLDecoder.decode(segments[pCnt - 2], "UTF-8");
                 } catch (UnsupportedEncodingException ignore) {
+                    return -1;
                 }
 
-                if (cId != null && lraService.hasTransaction(cId)) {
+                if (lraService.hasTransaction(cId)) {
                     try {
                         // this is a call from a parent LRA to end the nested LRA:
                         boolean isCompensate = "compensate".equals(segments[pCnt - 1]);
                         boolean isComplete = "complete".equals(segments[pCnt - 1]);
+                        int httpStatus;
 
                         if (!isCompensate && !isComplete) {
                             if (tsLogger.logger.isInfoEnabled()) {
@@ -267,17 +526,19 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                         endPath.toExternalForm());
                             }
 
-                            response = Response.status(Response.Status.BAD_REQUEST).build();
+                            httpStatus = Response.Status.BAD_REQUEST.getStatusCode();
                         } else {
-                            inVMStatus = lraService.endLRA(new URL(cId), isCompensate, true);
+                            LRAStatus inVMStatus = lraService.endLRA(new URL(cId), isCompensate, true);
 
-                            response = Response.ok().status(inVMStatus.getHttpStatus()).build();
+                            httpStatus = inVMStatus.getHttpStatus();
 
                             try {
                                 responseData = inVMStatus.getEncodedResponseData();
                             } catch (IOException ignore) {
                             }
                         }
+
+                        return httpStatus;
                     } catch (MalformedURLException e) {
                         // fall back to using JAX-RS
                     }
@@ -285,73 +546,22 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
         }
 
-        if (response == null) {
-            client = ClientBuilder.newClient();
-            WebTarget target = client.target(URI.create(endPath.toExternalForm()));
-
-            try {
-                response = target.request()
-                        .header(LRA_HTTP_HEADER, lraId.toExternalForm())
-                        .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
-                        .post(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
-
-                if (response.hasEntity())
-                    responseData = response.readEntity(String.class);
-            } catch (Exception e) {
-                response = null;
-                if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.infof("LRARecord.doEnd post %s failed: %s",
-                            target.getUri(), e.getMessage());
-                }
-            } finally {
-                client.close();
-            }
-        }
-
-        if (response == null || response.getStatus() != Response.Status.OK.getStatusCode()) {
-            isFailed = true;
-
-            if (response != null && tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debugf("LRARecord.doEnd post %s failed with status: %d",
-                        endPath, response.getStatus());
-            }
-
-            if (compensate) {
-                // the LRA record will be deleted so remember that this compensator failed to compensate
-                return TwoPhaseOutcome.HEURISTIC_HAZARD;
-            }
-
-            return TwoPhaseOutcome.FINISH_ERROR;
-        }
-
-        if (compensate) {
-            isCompensated = true;
-            isCompelete = false;
-        } else {
-            isCompelete = true;
-            isCompensated = false;
-        }
-
-        return TwoPhaseOutcome.FINISH_OK;
+        return -1;
     }
 
-    public boolean forget() {
+    boolean forget() {
         return true;
     }
 
-    public boolean isCompelete() {
-        return isCompelete;
+    private boolean isCompelete() {
+        return status != null && status == CompensatorStatus.Completed;
     }
 
-    public boolean isCompensated() {
-        return isCompensated;
+    private boolean isCompensated() {
+        return status != null && status == CompensatorStatus.Compensated;
     }
 
-    public boolean isFailed() {
-        return isFailed;
-    }
-
-    public String getResponseData() {
+    String getResponseData() {
         return responseData;
     }
 
@@ -359,22 +569,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public boolean save_state(OutputObjectState os, int t) {
         if (super.save_state(os, t)) {
             try {
-                os.packString(lraId.toExternalForm());
-                os.packString(recoveryURL.toExternalForm());
+                packURL(os, lraId);
+                packURL(os, compensateURI);
+                packURL(os, recoveryURL);
+                packURL(os, completeURI);
+                packURL(os, statusURI);
+                packURL(os, forgetURI);
+                packStatus(os);
                 os.packString(participantPath);
-                if (completeURI == null) {
-                    os.packBoolean(false);
-                } else {
-                    os.packBoolean(true);
-                    os.packString(completeURI.toExternalForm());
-                }
-                os.packString(compensateURI.toExternalForm());
-//                os.packString(statusURI.toString());
                 os.packString(compensatorData);
-
-                os.packBoolean(isCompelete);
-                os.packBoolean(isCompensated);
-                os.packBoolean(isFailed);
             } catch (IOException e) {
                 return false;
             }
@@ -387,17 +590,16 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public boolean restore_state(InputObjectState os, int t) {
         if (super.restore_state(os, t)) {
             try {
-                lraId = new URL(os.unpackString());
-                recoveryURL = new URL(os.unpackString());
+                lraId = unpackURL(os);
+                compensateURI = unpackURL(os);
+                recoveryURL = unpackURL(os);
+                completeURI = unpackURL(os);
+                statusURI = unpackURL(os);
+                forgetURI = unpackURL(os);
+                unpackStatus(os);
                 participantPath = os.unpackString();
-                completeURI = os.unpackBoolean() ? new URL(os.unpackString()) : null;
-                compensateURI = new URL(os.unpackString());
-//                statusURI = new URL(os.unpackString());
                 compensatorData = os.unpackString();
-
-                isCompelete = os.unpackBoolean();
-                isCompensated = os.unpackBoolean();
-                isFailed = os.unpackBoolean();
+                accepted = status == CompensatorStatus.Completing || status == CompensatorStatus.Compensating;
             } catch (IOException e) {
                 return false;
             }
@@ -406,8 +608,34 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return true;
     }
 
-    static int getTypeId() {
-        return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we dependend on swarm for narayana which is using an earlier version
+    private void packStatus(OutputObjectState os) throws IOException {
+        if (status == null) {
+            os.packBoolean(false);
+        } else {
+            os.packBoolean(true);
+            os.packInt(status.ordinal());
+        }
+    }
+
+    private void unpackStatus(InputObjectState os) throws IOException {
+        status = os.unpackBoolean() ? CompensatorStatus.values()[os.unpackInt()] : null;
+    }
+
+    private void packURL(OutputObjectState os, URL url) throws IOException {
+        if (url == null) {
+            os.packBoolean(false);
+        } else {
+            os.packBoolean(true);
+            os.packString(url.toExternalForm());
+        }
+    }
+
+    private URL unpackURL(InputObjectState os) throws IOException {
+        return os.unpackBoolean() ? new URL(os.unpackString()) : null;
+    }
+
+    private static int getTypeId() {
+        return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we depend on swarm for narayana which is using an earlier version
     }
 
     public int typeIs() {
@@ -436,12 +664,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public String type()
     {
-        return LRARecord.typeName();
-    }
-
-    public static String typeName()
-    {
-        return "/StateManager/AbstractRecord/LRARecord";
+        return TYPE_NAME;
     }
 
     public boolean doSave()
@@ -496,13 +719,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return 0;
     }
 
-    public void setTimeLimit(ScheduledExecutorService scheduler, long timeLimit) {
-        scheduleCancelation(this::topLevelAbort, scheduler, timeLimit);
+    boolean setTimeLimit(ScheduledExecutorService scheduler, long timeLimit) {
+        return scheduleCancelation(this::topLevelAbort, scheduler, timeLimit);
     }
 
-    private int scheduleCancelation(Runnable runnable, ScheduledExecutorService scheduler, Long timeLimit) {
+    private boolean scheduleCancelation(Runnable runnable, ScheduledExecutorService scheduler, Long timeLimit) {
         if ((scheduledAbort != null && !scheduledAbort.cancel(false)))
-            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+            return false;
 
         if (timeLimit > 0) {
             cancelOn = LocalTime.now().plusNanos(timeLimit * 1000000);
@@ -514,7 +737,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             scheduledAbort = null;
         }
 
-        return Response.Status.OK.getStatusCode();
+        return true;
     }
 
     public URL getRecoveryCoordinatorURL() {

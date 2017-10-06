@@ -43,7 +43,6 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -57,6 +56,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +66,14 @@ import java.util.stream.IntStream;
 
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
 
 @ApplicationScoped
-@Path("/activities")
+@Path(ACTIVITIES_PATH)
 @LRA(LRA.Type.SUPPORTS)
 public class ActivityController {
+    public static final String ACTIVITIES_PATH = "activities";
+    public static final String ACCEPT_WORK = "acceptWork";
 
     @Inject
     private LRAClient lraClient;
@@ -92,12 +95,19 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @LRA(LRA.Type.NOT_SUPPORTED)
-    public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response status(@PathParam("LraUrl")String lraUrl, @HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
 
         if (activity.status == null)
             throw new IllegalLRAStateException(lraId, "LRA is not active", null);
+
+        if (activity.getAndDecrementAcceptCount() <= 0) {
+            if (activity.status == CompensatorStatus.Completing)
+                activity.status = CompensatorStatus.Completed;
+            else if (activity.status == CompensatorStatus.Compensating)
+                activity.status = CompensatorStatus.Compensated;
+        }
 
         return Response.ok(activity.status.name()).build();
     }
@@ -147,16 +157,25 @@ public class ActivityController {
         return Response.ok("non transactional").build();
     }
 
-    @POST
+    @PUT
     @Path("/complete")
     @Produces(MediaType.APPLICATION_JSON)
     @Complete
-    public Response completeWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response completeWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
         completedCount.incrementAndGet();
 
         assert lraId != null;
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
+
+        activity.setEndData(userData);
+
+        if (activity.getAndDecrementAcceptCount() > 0) {
+            activity.status = CompensatorStatus.Completing;
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+
+            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+        }
 
         activity.status = CompensatorStatus.Completed;
         activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
@@ -165,16 +184,25 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/compensate")
     @Produces(MediaType.APPLICATION_JSON)
     @Compensate
-    public Response compensateWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response compensateWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
         compensatedCount.incrementAndGet();
 
         assert lraId != null;
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
+
+        activity.setEndData(userData);
+
+        if (activity.getAndDecrementAcceptCount() > 0) {
+            activity.status = CompensatorStatus.Compensating;
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+
+            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+        }
 
         activity.status = CompensatorStatus.Compensated;
         activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
@@ -183,7 +211,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/forget")
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
@@ -200,6 +228,22 @@ public class ActivityController {
 
         System.out.printf("ActivityController forgetting %s%n", txId);
         return Response.ok(activity.statusUrl).build();
+    }
+
+    @PUT
+    @Path(ACCEPT_WORK)
+    @LRA(LRA.Type.REQUIRED)
+    public Response acceptWork(
+            @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
+            @HeaderParam(LRA_HTTP_HEADER) String lraId) {
+        assert lraId != null;
+        Activity activity = addWork(lraId, rcvId);
+
+        if (activity == null)
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+
+        activity.setAcceptedCount(1); // tests that it is possible to asynchronously complete
+        return Response.ok(lraId).build();
     }
 
     @PUT
@@ -413,7 +457,7 @@ public class ActivityController {
     }
 
     /**
-     * Performing a POST on <compensator URL>/compensate will cause the participant to compensate
+     * Performing a PUT on <compensator URL>/compensate will cause the participant to compensate
      * the work that was done within the scope of the transaction.
      *
      * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
@@ -422,7 +466,7 @@ public class ActivityController {
      * <URL>/cannot-compensate
      * <URL>/cannot-complete
      */
-    @POST
+    @PUT
     @Path("/{TxId}/compensate")
     @Produces(MediaType.APPLICATION_JSON)
     public Response compensate(@PathParam("TxId")String txId) throws NotFoundException {
@@ -435,14 +479,14 @@ public class ActivityController {
     }
 
     /**
-     * Performing a POST on <compensator URL>/complete will cause the participant to tidy up and it can forget this transaction.
+     * Performing a PUT on <compensator URL>/complete will cause the participant to tidy up and it can forget this transaction.
      *
      * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
      * and will simply return the same (implicit) information:
      * <URL>/cannot-compensate
      * <URL>/cannot-complete
      */
-    @POST
+    @PUT
     @Path("/{TxId}/complete")
     @Produces(MediaType.APPLICATION_JSON)
     public Response complete(@PathParam("TxId")String txId) throws NotFoundException {
@@ -454,7 +498,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/{TxId}/forget")
     public void forget(@PathParam("TxId")String txId) throws NotFoundException {
         Activity activity = activityService.getActivity(txId);

@@ -168,9 +168,9 @@ public interface LRAClientAPI {
      *                -  Completing: the Compensator is tidying up after being told to complete.
      *                -  Completed: the coordinator/participant has confirmed.
      *                -  FailedToComplete: the Compensator was unable to tidy-up.
-     *                     Performing a POST on URL/compensate will cause the compensator to compensate
+     *                     Performing a PUT on URL/compensate will cause the compensator to compensate
      *                     the work that was done within the scope of the LRA.
-     *                     Performing a POST on URL/complete will cause the compensator to tidy up and
+     *                     Performing a PUT on URL/complete will cause the compensator to tidy up and
      *                  it can forget this LRA.  (optional)
      *
      * @param compensatorData
@@ -187,9 +187,9 @@ public interface LRAClientAPI {
      * @param lraId The unique identifier of the LRA (required)
      * @param timelimit The time limit (in seconds) that the Compensator can guarantee that it
      *                can compensate the work performed by the service
-     * @param compensateUrl Performing a POST onthis URL will cause the participant to compensate the work that
+     * @param compensateUrl Performing a PUT onthis URL will cause the participant to compensate the work that
      *                      was done within the scope of the LRA.
-     * @param completeUrl Performing a POST on this URL  will cause the participant to tidy up and it can forget this transaction.
+     * @param completeUrl Performing a PUT on this URL  will cause the participant to tidy up and it can forget this transaction.
      * @param leaveUrl Performing a PUT on this URL with cause the compensator to leave the LRA
      * @param statusUrl Performing a GET on this URL will return the status of the compensator {@see joinLRA}
      *
