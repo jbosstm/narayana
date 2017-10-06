@@ -436,7 +436,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 checkMethod(paths, FORGET, (Path) pathAnnotation, method.getAnnotation(Forget.class));
             }
 
-            // NB the lra-cdi-rest maven artifact also validates that the annotated methods are using @POST annotation
+            // NB the lra-cdi-rest maven artifact also validates that the annotated methods are using @PUT annotation
         });
 
         return paths;

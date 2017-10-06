@@ -23,10 +23,16 @@
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+
+import java.util.ArrayList;
 
 class RecoveringLRA extends Transaction {
     /**
@@ -61,6 +67,9 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.H_MIXED) ||
                     (_theStatus == ActionStatus.H_HAZARD) )
             {
+                // move any heuristics back onto the prepared list for another attempt:
+                moveTo(heuristicList, preparedList);
+
                 super.phase2Commit( _reportHeuristics ) ;
             }
             else if ( (_theStatus == ActionStatus.ABORTED) ||
@@ -68,6 +77,9 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.ABORTING) ||
                     (_theStatus == ActionStatus.ABORT_ONLY) )
             {
+                // move any heuristics back onto the pending list for another attempt:
+                moveTo(heuristicList, pendingList);
+
                 super.phase2Abort( _reportHeuristics ) ;
             }
             else {
@@ -85,6 +97,22 @@ class RecoveringLRA extends Transaction {
             }
 
             // Failure to activate (NB other types such as AtomicActionExpiryScanner move the log)
+        }
+    }
+
+    private void moveTo(RecordList fromList, RecordList toList) {
+        RecordListIterator i = new RecordListIterator(fromList);
+        AbstractRecord record;
+
+        while ((record = i.iterate()) != null) {
+            if (record instanceof LRARecord) {
+                toList.putRear(record);
+            }
+        }
+
+        // clear the source list
+        while (fromList.getRear() != null) {
+            // do nothing;
         }
     }
 

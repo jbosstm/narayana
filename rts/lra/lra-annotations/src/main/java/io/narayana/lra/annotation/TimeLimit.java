@@ -49,5 +49,5 @@ public @interface TimeLimit {
      */
     long limit() default 0;
 
-    TimeUnit unit() default TimeUnit.MILLISECONDS;
+    TimeUnit unit() default TimeUnit.SECONDS;
 }

@@ -43,7 +43,6 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -147,7 +146,7 @@ public class ActivityController {
         return Response.ok("non transactional").build();
     }
 
-    @POST
+    @PUT
     @Path("/complete")
     @Produces(MediaType.APPLICATION_JSON)
     @Complete
@@ -165,7 +164,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/compensate")
     @Produces(MediaType.APPLICATION_JSON)
     @Compensate
@@ -183,7 +182,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/forget")
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
@@ -413,7 +412,7 @@ public class ActivityController {
     }
 
     /**
-     * Performing a POST on <compensator URL>/compensate will cause the participant to compensate
+     * Performing a PUT on <compensator URL>/compensate will cause the participant to compensate
      * the work that was done within the scope of the transaction.
      *
      * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
@@ -422,7 +421,7 @@ public class ActivityController {
      * <URL>/cannot-compensate
      * <URL>/cannot-complete
      */
-    @POST
+    @PUT
     @Path("/{TxId}/compensate")
     @Produces(MediaType.APPLICATION_JSON)
     public Response compensate(@PathParam("TxId")String txId) throws NotFoundException {
@@ -435,14 +434,14 @@ public class ActivityController {
     }
 
     /**
-     * Performing a POST on <compensator URL>/complete will cause the participant to tidy up and it can forget this transaction.
+     * Performing a PUT on <compensator URL>/complete will cause the participant to tidy up and it can forget this transaction.
      *
      * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
      * and will simply return the same (implicit) information:
      * <URL>/cannot-compensate
      * <URL>/cannot-complete
      */
-    @POST
+    @PUT
     @Path("/{TxId}/complete")
     @Produces(MediaType.APPLICATION_JSON)
     public Response complete(@PathParam("TxId")String txId) throws NotFoundException {
@@ -454,7 +453,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @POST
+    @PUT
     @Path("/{TxId}/forget")
     public void forget(@PathParam("TxId")String txId) throws NotFoundException {
         Activity activity = activityService.getActivity(txId);

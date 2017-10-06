@@ -75,8 +75,8 @@ import java.util.concurrent.TimeUnit;
  */
 @RequestScoped
 public class LRAClient implements LRAClientAPI, Closeable {
-    public static final String LRA_HTTP_HEADER = "X-lra";
-    public static final String LRA_HTTP_RECOVERY_HEADER = "X-lra-recovery";
+    public static final String LRA_HTTP_HEADER = "Long-Running-Action";
+    public static final String LRA_HTTP_RECOVERY_HEADER = "Long-Running-Action-Recovery";
 
     public static final String COORDINATOR_PATH_NAME = "lra-coordinator";
     public static final String RECOVERY_COORDINATOR_PATH_NAME = "lra-recovery-coordinator";
@@ -236,7 +236,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
     @Override
     public URL startLRA(String clientID, Long timeout) throws GenericLRAException {
-        return startLRA(null, clientID, timeout, TimeUnit.MILLISECONDS);
+        return startLRA(null, clientID, timeout, TimeUnit.SECONDS);
     }
 
     @Override
@@ -501,10 +501,12 @@ public class LRAClient implements LRAClientAPI, Closeable {
         Map<String, String> paths = new HashMap<>();
 
         Annotation resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
-        String resourcePath = resourcePathAnnotation == null ? "/" : ((Path) resourcePathAnnotation).value();
+        String resourcePath = resourcePathAnnotation == null
+                ? ""
+                : ((Path) resourcePathAnnotation).value().replaceAll("^/+", "");
 
         final String uriPrefix = String.format("%s:%s%s",
-                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1))
+                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath)
                 .replaceAll("/$", "");
 
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
@@ -546,8 +548,19 @@ public class LRAClient implements LRAClientAPI, Closeable {
                                 Path pathAnnotation,
                                 Annotation annotationClass,
                                 String uriPrefix) {
-        if (annotationClass == null)
+            /*
+             * If the annotationClass is null the requested compensator annotation is not present,
+             * but we also need to check for conformance with the interoperability spec,
+             * ie look for paths of the form:
+             * `<compensator URL>/compensate`
+             * `<compensator URL>/complete`
+             * etc
+             */
+        if (annotationClass == null) {
+            // TODO support standard compenators with: && !pathAnnotation.value().endsWith(rel)) {
+            // ie ones that do not use the @Compensate annotation
             return 0;
+        }
 
         paths.put(rel, uriPrefix + pathAnnotation.value());
 

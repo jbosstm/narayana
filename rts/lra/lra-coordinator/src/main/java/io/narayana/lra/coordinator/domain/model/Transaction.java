@@ -283,6 +283,7 @@ public class Transaction extends AtomicAction {
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
     public int end(boolean compensate) {
+        inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();
 
@@ -446,7 +447,9 @@ public class Transaction extends AtomicAction {
         p.setRecoveryURL(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            p.setTimeLimit(scheduler, timeLimit);
+            if (!p.setTimeLimit(scheduler, timeLimit))
+                if (tsLogger.logger.isInfoEnabled())
+                    tsLogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
 
             return p;
         }
