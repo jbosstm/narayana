@@ -74,7 +74,6 @@ public class Transaction extends AtomicAction {
     private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
     private boolean inFlight;
-
     private LRAService lraService;
 
     public Transaction(LRAService lraService, String baseUrl, URL parentId, String clientId) throws MalformedURLException {
@@ -182,6 +181,10 @@ public class Transaction extends AtomicAction {
 
                 if (record == null || !record.restore_state(os, ot) || !list.insert(record))
                     return false;
+
+                if (record instanceof LRARecord)
+                    ((LRARecord) record).setLRAService(lraService);
+
             }
         } catch (IOException e1) {
             return false;
@@ -247,6 +250,10 @@ public class Transaction extends AtomicAction {
         return clientId;
     }
 
+    protected LRAService getLraService() {
+        return lraService;
+    }
+
     /**
      * return the current status of the LRA
      *
@@ -254,6 +261,10 @@ public class Transaction extends AtomicAction {
      */
     public CompensatorStatus getLRAStatus() {
         return status;
+    }
+
+    protected void setLRAStatus(int actionStatus) {
+        status = toLRAStatus(actionStatus);
     }
 
     public boolean isComplete() {
@@ -279,6 +290,7 @@ public class Transaction extends AtomicAction {
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
     public int end(boolean compensate) {
+        inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();
 
@@ -434,7 +446,7 @@ public class Transaction extends AtomicAction {
         if (findLRAParticipant(participantUrl, false) != null)
             return null;    // already enlisted
 
-        LRARecord p = new LRARecord(coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
+        LRARecord p = new LRARecord(lraService, coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
         String txId = URLEncoder.encode(coordinatorUrl.toExternalForm(), "UTF-8");
@@ -442,7 +454,9 @@ public class Transaction extends AtomicAction {
         p.setRecoveryURL(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            p.setTimeLimit(scheduler, timeLimit);
+            if (!p.setTimeLimit(scheduler, timeLimit))
+                if (tsLogger.logger.isInfoEnabled())
+                    tsLogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
 
             return p;
         }

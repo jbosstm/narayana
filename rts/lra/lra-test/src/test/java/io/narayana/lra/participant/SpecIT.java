@@ -45,6 +45,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import io.narayana.lra.participant.api.ActivityController;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -64,19 +65,23 @@ import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
+import static io.narayana.lra.client.LRAClient.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
+
 @RunWith(Arquillian.class)
 @RunAsClient
 public class SpecIT {
     private static final Long LRA_TIMEOUT_MILLIS = 50000L;
     private static URL MICRSERVICE_BASE_URL;
+    private static URL RC_BASE_URL;
 
     private static final int COORDINATOR_SWARM_PORT = 8082;
     private static final int TEST_SWARM_PORT = 8081;
 
     private static LRAClient lraClient;
-    private static Client msClient;
+    private static Client msClient, rcClient;
 
-    private WebTarget msTarget;
+    private WebTarget msTarget, recoveryTarget;
 
     private static List<LRAStatus> oldLRAs;
 
@@ -107,14 +112,18 @@ public class SpecIT {
             System.out.println("Getting ready to connect - waiting for coordinator to startup...");
             Thread.currentThread().sleep(20000);
         }
+
         int servicePort = Integer.getInteger("service.http.port", TEST_SWARM_PORT);
-        MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
+        String rcHost = System.getProperty("lra.http.host", "localhost");
+        int rcPort = Integer.getInteger("lra.http.port", COORDINATOR_SWARM_PORT);
+
+        MICRSERVICE_BASE_URL = new URL(String.format("http://localhost:%d", servicePort));
+        RC_BASE_URL = new URL(String.format("http://%s:%d", rcHost, rcPort));
 
         // setting up the client
-        lraClient = new LRAClient(
-                System.getProperty("lra.http.host", "localhost"),
-                Integer.getInteger("lra.http.port", COORDINATOR_SWARM_PORT));
+        lraClient = new LRAClient(rcHost, rcPort);
         msClient = ClientBuilder.newClient();
+        rcClient = ClientBuilder.newClient();
 
         oldLRAs = new ArrayList<>();
     }
@@ -124,11 +133,13 @@ public class SpecIT {
         oldLRAs.clear();
         lraClient.close();
         msClient.close();
+        rcClient.close();
     }
 
     @Before
     public void setupTest() throws Exception {
         msTarget = msClient.target(URI.create(new URL(MICRSERVICE_BASE_URL, "/").toExternalForm()));
+        recoveryTarget = rcClient.target(URI.create(new URL(RC_BASE_URL, "/").toExternalForm()));
     }
 
     @After
@@ -446,7 +457,71 @@ public class SpecIT {
                 response.close();
         }
     }
+    
+    /*
+     * Participants can pass data during enlistment and this data will be returned during
+     * the complete/compensate callbacks
+     */
+//    @Test // this test passes when ran under surefire but fails as an Arquilian test - TODO debug it
+    public void testUserData() {
+        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        int count = lras.size();
+        String testData = "test compensator data";
 
+        Response response = msTarget.path(ACTIVITIES_PATH).path("testUserData")
+                .request().put(Entity.text(testData));
+
+        String activityId = response.readEntity(String.class);
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
+
+        lras = lraClient.getActiveLRAs();
+        System.out.printf("join ok %d versus %d lras%n", count, lras.size());
+        assertEquals(count, lras.size());
+
+        response = msTarget.path(ACTIVITIES_PATH).path("getActivity")
+                .queryParam("activityId", activityId)
+                .request()
+                .get();
+
+        String activity = response.readEntity(String.class);
+
+        // validate that the service received the correct data during the complete call
+        assertTrue(activity.contains("userData='" + testData));
+        assertTrue(activity.contains("endData='" + testData));
+    }
+
+    @Test
+    public void acceptTest() throws WebApplicationException {
+        joinAndEnd(true, true, ACTIVITIES_PATH, ActivityController.ACCEPT_WORK);
+    }
+
+    private void joinAndEnd(boolean waitForRecovery, boolean close, String path, String path2) throws WebApplicationException {
+        int countBefore = lraClient.getActiveLRAs().size();
+        URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS);
+
+        Response response = msTarget.path(path).path(path2)
+                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
+
+        if (close)
+            lraClient.closeLRA(lra);
+        else
+            lraClient.cancelLRA(lra);
+
+        if (waitForRecovery) {
+            // trigger a recovery scan which trigger a replay attempt on any participants
+            // that have responded to complete/compensate requests with Response.Status.ACCEPTED
+            Response response2 = recoveryTarget.path(RECOVERY_COORDINATOR_PATH_NAME).path("recovery")
+                    .request().get();
+
+            checkStatusAndClose(response2, Response.Status.OK.getStatusCode(), false);
+        }
+
+        int countAfter = lraClient.getActiveLRAs().size();
+
+        assertEquals(countBefore, countAfter);
+    }
 
     // @Test
     public void renewTimeLimit() {

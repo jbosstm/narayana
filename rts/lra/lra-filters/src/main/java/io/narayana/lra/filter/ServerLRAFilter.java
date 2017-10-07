@@ -398,24 +398,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private String getCompensatorId(URL lraId, URI baseUri) {
-        Map<String, String> terminateURIs = getTerminationUris(resourceInfo.getResourceClass());
+        Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
 
-        if (!terminateURIs.containsKey(COMPENSATE) || !terminateURIs.containsKey(COMPLETE))
+        if (!terminateURIs.containsKey("Link"))
             throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
                     "Missing complete or compensate annotations", null);
 
-        // register with the coordinator
-
-        StringBuilder linkHeaderValue = new StringBuilder();
-        Annotation resourcePathAnnotation = resourceInfo.getResourceClass().getAnnotation(Path.class);
-        String resourcePath = resourcePathAnnotation == null ? "/" : ((Path) resourcePathAnnotation).value();
-
-        String uriPrefix = String.format("%s:%s%s",
-                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1));
-
-        terminateURIs.forEach((k, v) -> getParticipantLink(linkHeaderValue, uriPrefix, k, v));
-
-        return linkHeaderValue.toString();
+        return terminateURIs.get("Link");
     }
 
     /**
@@ -436,7 +425,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 checkMethod(paths, FORGET, (Path) pathAnnotation, method.getAnnotation(Forget.class));
             }
 
-            // NB the lra-cdi-rest maven artifact also validates that the annotated methods are using @POST annotation
+            // NB the lra-cdi-rest maven artifact also validates that the annotated methods are using @PUT annotation
         });
 
         return paths;

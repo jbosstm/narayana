@@ -178,21 +178,25 @@ public class Coordinator {
             @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA,
             @HeaderParam(LRA_HTTP_HEADER) String parentId) throws WebApplicationException, InvalidLRAId {
 
-        URL parent = null;
+        URL parentLRAUrl = null;
 
         if (parentLRA != null && !parentLRA.isEmpty())
-            parent = LRAClient.lraToURL(parentLRA, "Invalid parent LRA id");
+            parentLRAUrl = LRAClient.lraToURL(parentLRA, "Invalid parent LRA id");
 
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
-        URL lraId = lraService.startLRA(coordinatorUrl, parent, clientId, timelimit);
+        URL lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
 
-        if (parent != null) {
-            // register with the parent as a participant
+        if (parentLRAUrl != null) {
+            // register with the parentLRA as a participant
             Client client = ClientBuilder.newClient();
             String compensatorUrl = String.format("%s/%s", coordinatorUrl,
                     LRAClient.encodeURL(lraId, "Invalid parent LRA id"));
+            Response response;
 
-            Response response = client.target(parentLRA).request().put(Entity.text(compensatorUrl));
+            if (lraService.hasTransaction(parentLRAUrl))
+                response = joinLRAViaBody(parentLRAUrl.toExternalForm(), timelimit, null, compensatorUrl);
+            else
+                response = client.target(parentLRA).request().put(Entity.text(compensatorUrl));
 
             if (response.getStatus() != Response.Status.OK.getStatusCode())
                 return response;
@@ -245,19 +249,19 @@ public class Coordinator {
         return Response.ok(lra.getLRAStatus().name()).build();
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURL(nestedLraId), false, true);
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURL(nestedLraId), true, true);
     }
 
-    @POST
+    @PUT
     @Path("{NestedLraId}/forget")
     public Response forgetNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         lraService.remove(null, toURL(nestedLraId));
@@ -445,9 +449,9 @@ public class Coordinator {
                     + "-  Completed: the coordinator/participant has confirmed.\n"
                     + "-  FailedToComplete: the Compensator was unable to tidy-up.\n"
                     + "\n"
-                    + "Performing a POST on <URL>/compensate will cause the compensator to compensate\n"
+                    + "Performing a PUT on <URL>/compensate will cause the compensator to compensate\n"
                     + "  the work that was done within the scope of the LRA.\n"
-                    + "Performing a POST on <URL>/complete will cause the compensator to tidy up and\n"
+                    + "Performing a PUT on <URL>/complete will cause the compensator to tidy up and\n"
                     + "   it can forget this LRA.\n")
                     String compensatorUrl) throws NotFoundException {
         // test to see if the join request contains any compensator specific data

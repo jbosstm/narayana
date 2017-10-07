@@ -67,8 +67,8 @@ import java.util.concurrent.TimeUnit;
  */
 @RequestScoped
 public class SRAClient implements SRAClientAPI, Closeable {
-    public static final String SRA_HTTP_HEADER = "X-io.narayana.sra";
-    public static final String RTS_HTTP_RECOVERY_HEADER = "X-io.narayana.sra-recovery";
+    public static final String SRA_HTTP_HEADER = "Short-Running-Action";
+    public static final String RTS_HTTP_RECOVERY_HEADER = "Short-Running-Action-Recovery";
 
     public static final String COORDINATOR_PATH_NAME = "tx/transaction-manager";
     public static final String RECOVERY_COORDINATOR_PATH_NAME = "tx/transaction-manager";

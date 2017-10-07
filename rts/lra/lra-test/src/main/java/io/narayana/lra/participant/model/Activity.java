@@ -24,17 +24,63 @@ package io.narayana.lra.participant.model;
 import io.narayana.lra.annotation.CompensatorStatus;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Activity implements Serializable {
-
     public String id;
     public String rcvUrl;
     public String statusUrl;
     public CompensatorStatus status;
     public boolean registered;
     public String registrationStatus;
+    private String userData;
+    private String endData;
+    private final AtomicInteger acceptedCount = new AtomicInteger(0);
 
     public Activity(String txId) {
         this.id = txId;
+    }
+
+    public void setUserData(String userData) {
+        this.userData = userData;
+    }
+
+    public String getUserData() {
+        return userData;
+    }
+
+    public void setEndData(String endData) {
+        this.endData = endData;
+    }
+
+    public String getEndData() {
+        return endData;
+    }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id='" + id + '\'' +
+                ", rcvUrl='" + rcvUrl + '\'' +
+                ", statusUrl='" + statusUrl + '\'' +
+                ", status=" + status +
+                ", registered=" + registered +
+                ", registrationStatus='" + registrationStatus + '\'' +
+                ", userData='" + userData + '\'' +
+                ", endData='" + endData + '\'' +
+                '}';
+    }
+
+    public int getAcceptedCount() {
+        return acceptedCount.get();
+    }
+
+    public void setAcceptedCount(int acceptedCount) {
+        this.acceptedCount.set(acceptedCount);
+    }
+
+
+    public int getAndDecrementAcceptCount() {
+        return acceptedCount.getAndDecrement();
     }
 }

@@ -41,7 +41,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
@@ -134,7 +133,7 @@ public class LraAnnotationProcessingExtension implements Extension {
 
         if(methodsWithCompensate.size() > 0) {
             // Each method annotated with LRA-style annotations contain all necessary REST annotations
-            // @Compensate - requires @Path and @POST
+            // @Compensate - requires @Path and @PUT
             final AnnotatedMethod<? super X> methodWithCompensate = methodsWithCompensate.get(0);
             Function<Class<?>, String> getCompensateMissingErrMsg = (wrongAnnotation) ->
                 getMissingAnnotationError(methodWithCompensate, classAnnotatedWithLra, Compensate.class, wrongAnnotation);
@@ -142,9 +141,9 @@ public class LraAnnotationProcessingExtension implements Extension {
             if(!isCompensateContainsPathAnnotation) {
                 throw new DeploymentException(getCompensateMissingErrMsg.apply(Path.class));
             }
-            boolean isCompensateContainsPostAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
-            if(!isCompensateContainsPostAnnotation) {
-                throw new DeploymentException(getCompensateMissingErrMsg.apply(POST.class));
+            boolean isCompensateContainsPutAnnotation = methodWithCompensate.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(PUT.class));
+            if(!isCompensateContainsPutAnnotation) {
+                throw new DeploymentException(getCompensateMissingErrMsg.apply(PUT.class));
             }
         }
         
@@ -164,7 +163,7 @@ public class LraAnnotationProcessingExtension implements Extension {
         }
 
         if(methodsWithComplete.size() > 0) {
-            // @Complete - requires @Path and @POST
+            // @Complete - requires @Path and @PUT
             final AnnotatedMethod<? super X> methodWithComplete = methodsWithComplete.get(0);
             Function<Class<?>, String> getCompleteMissingErrMsg = (wrongAnnotation) ->
                 getMissingAnnotationError(methodWithComplete, classAnnotatedWithLra, Complete.class, wrongAnnotation);
@@ -172,9 +171,9 @@ public class LraAnnotationProcessingExtension implements Extension {
             if(!isCompleteContainsPathAnnotation) {
                 throw new DeploymentException(getCompleteMissingErrMsg.apply(Path.class));
             }
-            boolean isCompleteContainsPostAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(POST.class));
-            if(!isCompleteContainsPostAnnotation) {
-                throw new DeploymentException(getCompleteMissingErrMsg.apply(POST.class));
+            boolean isCompleteContainsPutAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(PUT.class));
+            if(!isCompleteContainsPutAnnotation) {
+                throw new DeploymentException(getCompleteMissingErrMsg.apply(PUT.class));
             }
         }
 

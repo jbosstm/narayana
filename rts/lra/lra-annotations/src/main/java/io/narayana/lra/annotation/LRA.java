@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * An annotation for controlling the lifecycle of Long Running Actions (LRAs).
  *
  * Newly created LRAs are uniquely identified and the id is referred to as the LRA context. The context is passed around
- * using a JAX-RS request/response header called LRAClient#LRA_HTTP_HEADER ("X-lra"). The implementation (of the LRA
+ * using a JAX-RS request/response header called LRAClient#LRA_HTTP_HEADER ("Long-Running-Action"). The implementation (of the LRA
  * specification) is expected to manage this context and the application developer is expected to declaratively control
  * the creation, propagation and destruction of LRAs using the @LRA annotation. When a JAX-RS bean method is invoked in the
  * context of an LRA any JAX-RS client requests that it performs will carry the same header so that the receiving
