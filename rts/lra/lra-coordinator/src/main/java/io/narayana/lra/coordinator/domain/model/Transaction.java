@@ -74,7 +74,6 @@ public class Transaction extends AtomicAction {
     private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
     private boolean inFlight;
-
     private LRAService lraService;
 
     public Transaction(LRAService lraService, String baseUrl, URL parentId, String clientId) throws MalformedURLException {
@@ -251,6 +250,10 @@ public class Transaction extends AtomicAction {
         return clientId;
     }
 
+    protected LRAService getLraService() {
+        return lraService;
+    }
+
     /**
      * return the current status of the LRA
      *
@@ -258,6 +261,10 @@ public class Transaction extends AtomicAction {
      */
     public CompensatorStatus getLRAStatus() {
         return status;
+    }
+
+    protected void setLRAStatus(int actionStatus) {
+        status = toLRAStatus(actionStatus);
     }
 
     public boolean isComplete() {

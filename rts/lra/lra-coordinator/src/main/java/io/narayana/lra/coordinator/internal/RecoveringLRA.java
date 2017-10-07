@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -87,6 +88,19 @@ class RecoveringLRA extends Transaction {
                     tsLogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
                             + ActionStatus.stringForm(_theStatus));
                 }
+            }
+
+            if (heuristicList.size() == 0 && failedList.size() == 0) {
+                setLRAStatus(_theStatus);
+            }
+
+            switch (getLRAStatus()) {
+                case Completed:
+                case Compensated:
+                    getLraService().finished(this, false);
+                    break;
+                default:
+                    /* FALLTHRU */
             }
         }
         else {

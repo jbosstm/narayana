@@ -56,6 +56,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -65,11 +66,14 @@ import java.util.stream.IntStream;
 
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
 
 @ApplicationScoped
-@Path("/activities")
+@Path(ACTIVITIES_PATH)
 @LRA(LRA.Type.SUPPORTS)
 public class ActivityController {
+    public static final String ACTIVITIES_PATH = "activities";
+    public static final String ACCEPT_WORK = "acceptWork";
 
     @Inject
     private LRAClient lraClient;
@@ -91,12 +95,19 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @LRA(LRA.Type.NOT_SUPPORTED)
-    public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response status(@PathParam("LraUrl")String lraUrl, @HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
 
         if (activity.status == null)
             throw new IllegalLRAStateException(lraId, "LRA is not active", null);
+
+        if (activity.getAndDecrementAcceptCount() <= 0) {
+            if (activity.status == CompensatorStatus.Completing)
+                activity.status = CompensatorStatus.Completed;
+            else if (activity.status == CompensatorStatus.Compensating)
+                activity.status = CompensatorStatus.Compensated;
+        }
 
         return Response.ok(activity.status.name()).build();
     }
@@ -150,12 +161,21 @@ public class ActivityController {
     @Path("/complete")
     @Produces(MediaType.APPLICATION_JSON)
     @Complete
-    public Response completeWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response completeWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
         completedCount.incrementAndGet();
 
         assert lraId != null;
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
+
+        activity.setEndData(userData);
+
+        if (activity.getAndDecrementAcceptCount() > 0) {
+            activity.status = CompensatorStatus.Completing;
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+
+            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+        }
 
         activity.status = CompensatorStatus.Completed;
         activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
@@ -168,12 +188,21 @@ public class ActivityController {
     @Path("/compensate")
     @Produces(MediaType.APPLICATION_JSON)
     @Compensate
-    public Response compensateWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+    public Response compensateWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
         compensatedCount.incrementAndGet();
 
         assert lraId != null;
         String txId = LRAClient.getLRAId(lraId);
         Activity activity = activityService.getActivity(txId);
+
+        activity.setEndData(userData);
+
+        if (activity.getAndDecrementAcceptCount() > 0) {
+            activity.status = CompensatorStatus.Compensating;
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+
+            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+        }
 
         activity.status = CompensatorStatus.Compensated;
         activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
@@ -199,6 +228,22 @@ public class ActivityController {
 
         System.out.printf("ActivityController forgetting %s%n", txId);
         return Response.ok(activity.statusUrl).build();
+    }
+
+    @PUT
+    @Path(ACCEPT_WORK)
+    @LRA(LRA.Type.REQUIRED)
+    public Response acceptWork(
+            @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
+            @HeaderParam(LRA_HTTP_HEADER) String lraId) {
+        assert lraId != null;
+        Activity activity = addWork(lraId, rcvId);
+
+        if (activity == null)
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+
+        activity.setAcceptedCount(1); // tests that it is possible to asynchronously complete
+        return Response.ok(lraId).build();
     }
 
     @PUT

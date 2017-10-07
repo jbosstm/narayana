@@ -268,8 +268,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .post(Entity.text(""));
 
             // validate the HTTP status code says an LRAStatus resource was created
-            assertEquals(response, response.getStatus(), Response.Status.CREATED.getStatusCode(),
-                    "LRA start returned an unexpected status code: %d versus %d");
+            checkStatus(null, response, "LRA start returned an unexpected status code: %d",
+                    Response.Status.CREATED);
 
             // validate that there is an LRAStatus response header holding the LRAStatus id
             Object lraObject = response.getHeaders().getFirst(LRA_HTTP_HEADER);
@@ -664,9 +664,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
         try {
             response = getTarget().path(confirmUrl).request().put(Entity.text(""));
 
-            assertEquals(response, Response.Status.OK.getStatusCode(),
-                    response.getStatus(), "LRA finished with an unexpected status code: "
-                            + response.getStatus());
+            checkStatus(lra, response,"LRA finished with an unexpected status code: %d",
+                    Response.Status.OK, Response.Status.ACCEPTED);
 
             String responseData = response.readEntity(String.class);
 
@@ -712,10 +711,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     message, null);
     }
 
-    private void assertEquals(Response response, Object expected, Object actual, String messageFormat) {
-        if (!actual.equals(expected))
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    String.format(messageFormat, expected, actual), null);
+    private void checkStatus(URL lraId, Response response, String messageFormat, Response.Status... expected) {
+        for (Response.Status anExpected : expected) {
+            if (response.getStatus() == anExpected.getStatusCode())
+                return;
+        }
+
+        throw new GenericLRAException(lraId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                String.format(messageFormat, response.getStatus()), null);
     }
 
     public String getUrl() {
