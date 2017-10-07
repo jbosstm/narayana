@@ -22,6 +22,7 @@
 
 package io.narayana.lra.cdi.bean;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -32,6 +33,10 @@ import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
+/**
+ * Having {@link Forget} LRA annotation with missing
+ * {@link Path} and method type {@link DELETE}.
+ */
 @LRA
 public class ForgetWithoutDeleteBean {
     @Complete

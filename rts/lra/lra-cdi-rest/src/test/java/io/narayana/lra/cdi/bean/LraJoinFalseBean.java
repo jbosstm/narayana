@@ -24,6 +24,10 @@ package io.narayana.lra.cdi.bean;
 
 import io.narayana.lra.annotation.LRA;
 
+/**
+ * Having LRA with parameter join which defines the
+ * bean is ok not containing any LRA annotation.
+ */
 @LRA(join = false)
 public class LraJoinFalseBean {
 }

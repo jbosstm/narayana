@@ -22,24 +22,35 @@
 
 package io.narayana.lra.cdi.bean;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
 import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
 /**
- * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status} 
- * but the LRA prescribe for the bean to contain two compulsory: {@link Compensate} and {@link Status}.
+ * {@link LRA} bean which contains annotations - {@link Compensate} and {@link Status}
+ * is enough to run the LRA 
  */
-@LRA
-public class OnlyTwoLraAnnotationsBean {
+public class CompleteOptionalBean {
 
-    @Complete
-    public void complete() {
+    @LRA
+    public void process() {
+        // no implementation needed
+    }
+
+    @Compensate
+    @Path("compensate")
+    @POST
+    public void compensate() {
         // no implementation needed
     }
     
     @Status
+    @Path("status")
+    @GET
     public void status() {
         // no implementation needed
     }

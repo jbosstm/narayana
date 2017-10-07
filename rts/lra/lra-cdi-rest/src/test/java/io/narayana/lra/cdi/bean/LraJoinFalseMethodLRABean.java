@@ -22,25 +22,17 @@
 
 package io.narayana.lra.cdi.bean;
 
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
 import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Status;
 
 /**
- * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status} 
- * but the LRA prescribe for the bean to contain two compulsory: {@link Compensate} and {@link Status}.
+ * Having LRA with parameter join which defines the
+ * bean is ok not containing any LRA annotation.
+ * <p>
+ * The {@link LRA} annotation is put at method.
  */
-@LRA
-public class OnlyTwoLraAnnotationsBean {
-
-    @Complete
-    public void complete() {
-        // no implementation needed
-    }
-    
-    @Status
-    public void status() {
+public class LraJoinFalseMethodLRABean {
+    @LRA(join = false)
+    public void process() {
         // no implementation needed
     }
 }
