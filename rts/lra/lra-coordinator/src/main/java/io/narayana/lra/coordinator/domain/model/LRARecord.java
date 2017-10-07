@@ -410,6 +410,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                                 forgetURI, e.getMessage());
                                     }
 
+                                    // TODO write a test to ensure that recovery only retries the forget request
                                     return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
                                 }
 
