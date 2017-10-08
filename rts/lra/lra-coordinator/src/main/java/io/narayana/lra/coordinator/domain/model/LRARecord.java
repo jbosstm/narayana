@@ -167,14 +167,19 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         String uri = link.getUri().toString();
 
         try {
-            if ("compensate".equals(rel))
+            if ("compensate".equals(rel)) {
                 compensateURI = new URL(uri);
-            else if ("complete".equals(rel))
+            } else if ("complete".equals(rel)) {
                 completeURI = new URL(uri);
-            else if ("status".equals(rel))
+            } else if ("status".equals(rel)) {
                 statusURI = new URL(uri);
-            else if ("forget".equals(rel))
+            } else if ("forget".equals(rel)) {
                 forgetURI = new URL(uri);
+            } else if ("participant".equals(rel)) {
+                compensateURI = new URL(uri + "/compensate");
+                completeURI = new URL(uri + "/complete");
+                statusURI = forgetURI = new URL(uri);
+            }
 
             return null;
         } catch (MalformedURLException e) {
@@ -188,11 +193,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     @Override
-    // NB if a compensator needs to know
+    // NB if a participant needs to know
     // if the lra completed then it can ask the io.narayana.lra.coordinator. A 404 status implies:
     // - all compensators completed ok, or
     // - all compensators compensated ok
-    // This compensator can infer which possibility happened since it will have been told to complete or compensate
+    // This participant can infer which possibility happened since it will have been told to complete or compensate
     public int topLevelAbort() {
         return doEnd(true);
     }
@@ -220,7 +225,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             if (isCompensated())
                 return TwoPhaseOutcome.FINISH_OK;
 
-            endPath = compensateURI; // run the compensator
+            endPath = compensateURI; // run the participant
         } else {
             if (isCompelete() || completeURI == null) {
                 status = CompensatorStatus.Completed;
@@ -238,7 +243,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         int httpStatus = -1;
 
         if (accepted) {
-            // the compensator has previously returned a HTTP 200 Accepted response so the status URL
+            // the participant has previously returned a HTTP 200 Accepted response so the status URL
             // must be valid - try that first for the status
             int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
 
@@ -291,7 +296,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
         }
 
-        if (httpStatus != Response.Status.OK.getStatusCode() && !accepted) {
+        if (httpStatus != Response.Status.OK.getStatusCode()
+                && httpStatus != Response.Status.NO_CONTENT.getStatusCode()
+                && !accepted) {
             if (tsLogger.logger.isDebugEnabled()) {
                 tsLogger.logger.debugf("LRARecord.doEnd put %s failed with status: %d",
                         endPath, httpStatus);
@@ -325,7 +332,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private int retryGetEndStatus(URL endPath, boolean compensate) {
         assert accepted;
 
-        // the compensator has previously returned a HTTP 200 Accepted response so the status URL
+        // the participant has previously returned a HTTP 200 Accepted response so the status URL
         // must be valid - try that first for the status
 
         // first check that this isn't a nested coordinator running locally
@@ -370,7 +377,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.hasEntity()) {
-                    // the compensator is available again and has reported its status
+                    // the participant is available again and has reported its status
                     String s = response.readEntity(String.class);
 
                     status = CompensatorStatus.valueOf(s);
@@ -474,7 +481,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             if (!isCompensate && !isComplete) {
                 if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.infof("LRARecord.doEnd invalid nested compensator url %s" +
+                    tsLogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
                                     "(should be compensate or complete)",
                             endPath.toExternalForm());
                 }
@@ -522,7 +529,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                         if (!isCompensate && !isComplete) {
                             if (tsLogger.logger.isInfoEnabled()) {
-                                tsLogger.logger.infof("LRARecord.doEnd invalid nested compensator url %s" +
+                                tsLogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
                                                 "(should be compensate or complete)",
                                         endPath.toExternalForm());
                             }

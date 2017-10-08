@@ -335,11 +335,11 @@ public class Transaction extends AtomicAction {
                 for (int i = sz - 1; i > 0; i--)
                     pendingList.putRear(pendingList.getFront());
 
-                // tell each compensator that the lra canceled
+                // tell each participant that the lra canceled
                 updateState(CompensatorStatus.Compensating);
                 res = super.Abort(); // this route to abort forces a log write on failures and heuristics
             } else {
-                // tell each compensator that the lra completed ok
+                // tell each participant that the lra completed ok
                 updateState(CompensatorStatus.Completing);
                 res = super.End(true);
             }
@@ -391,7 +391,7 @@ public class Transaction extends AtomicAction {
         if (data !=null && data.startsWith("[")) {
             try {
                 String[] ja = mapper.readValue(data, String[].class);
-                // TODO should recurse here since the encoded strings may themselves contain compensator output
+                // TODO should recurse here since the encoded strings may themselves contain participant output
                 return Arrays.asList(ja);
             } catch (IOException e) {
                 e.printStackTrace();

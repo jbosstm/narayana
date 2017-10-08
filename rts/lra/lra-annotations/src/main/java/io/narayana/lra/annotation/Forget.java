@@ -29,9 +29,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * If a compensator is unable to compensate it must remember the fact (by reporting it when asked for its'
+ * If a participant is unable to compensate it must remember the fact (by reporting it when asked for its'
  * {@link Status}) until it is explicitly told to forget. To support this
- * requirement the developer should annotate one of the compensator methods with @Forget.
+ * requirement the developer should annotate one of the participant methods with @Forget.
  */
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)

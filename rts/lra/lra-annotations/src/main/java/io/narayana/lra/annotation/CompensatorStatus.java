@@ -22,8 +22,8 @@
 package io.narayana.lra.annotation;
 
 /**
- * The status of a compensator. The status is only valid after the coordinator has told the compensator to
- * complete or compensate. The name value of the enum should be returned by compensator methods marked with
+ * The status of a participant. The status is only valid after the coordinator has told the participant to
+ * complete or compensate. The name value of the enum should be returned by participant methods marked with
  * the {@link Status} annotation.
  */
 public enum CompensatorStatus {

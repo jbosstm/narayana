@@ -368,26 +368,26 @@ public class Coordinator {
     @ApiOperation(value = "A Compensator can join with the LRA at any time prior to the completion of an activity",
             response = String.class)
     @ResponseHeader(name = LRA_HTTP_RECOVERY_HEADER, response = String.class,
-            description = "If the compensator is successfully registered with the LRA then this header\n"
-                    + " will contain a unique resource reference for that compensator:\n"
-                    + " - HTTP GET on the reference returns the original compensator URL;\n"
-                    + " - HTTP PUT on the reference will overwrite the old compensator URL with the new one supplied.")
+            description = "If the participant is successfully registered with the LRA then this header\n"
+                    + " will contain a unique resource reference for that participant:\n"
+                    + " - HTTP GET on the reference returns the original participant URL;\n"
+                    + " - HTTP PUT on the reference will overwrite the old participant URL with the new one supplied.")
     @ApiResponses( {
             @ApiResponse( code = 404, message = "The coordinator has no knowledge of this LRA" ),
             @ApiResponse( code = 412, message = "The LRA is not longer active (ie in the complete or compensate messages have been sent" ),
-            @ApiResponse( code = 200, message = "The compensator was successfully registered with the LRA and"
-                    + " the response body contains a unique resource reference for that compensator:\n"
-                    + " - HTTP GET on the reference returns the original compensator URL;\n"
-                    + " - HTTP PUT on the reference will overwrite the old compensator URL with the new one supplied."
+            @ApiResponse( code = 200, message = "The participant was successfully registered with the LRA and"
+                    + " the response body contains a unique resource reference for that participant:\n"
+                    + " - HTTP GET on the reference returns the original participant URL;\n"
+                    + " - HTTP PUT on the reference will overwrite the old participant URL with the new one supplied."
             )
     } )
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     // TODO don't use headers to pass the LRA context to the coordinator (follow the spec instead via joinLRAViaBody())
     public Response joinLRAViaHeader(
-            @ApiParam( value = "The identifier of the LRA that the compensator wishes to join", required = true )
+            @ApiParam( value = "The identifier of the LRA that the participant wishes to join", required = true )
             @HeaderParam(LRA_HTTP_HEADER) String lraId,
             @ApiParam( value = "The resource paths that the coordinator will use to complete or compensate and to request"
-                    + " the status of the compensator. The link rel names are"
+                    + " the status of the participant. The link rel names are"
                     + " complete, compensate and status",
                     required = true )
             @HeaderParam("Link") String linkHeader,
@@ -397,7 +397,7 @@ public class Coordinator {
                     + " The application or coordinator may use this information to control the lifecycle of a LRA.",
                     required = true )
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") long timeLimit,
-            @ApiParam( value = "compensator data that will be passed back to the compensator when LRA is terminated" )
+            @ApiParam( value = "participant data that will be passed back to the participant when LRA is terminated" )
             String userData) throws NotFoundException {
         return joinLRA(toURL(lraId), timeLimit, null, linkHeader, userData);
     }
@@ -408,17 +408,17 @@ public class Coordinator {
     @ApiOperation(value = "A Compensator can join with the LRA at any time prior to the completion of an activity",
             response = String.class)
     @ResponseHeader(name = LRA_HTTP_RECOVERY_HEADER, response = String.class,
-            description = "If the compensator is successfully registered with the LRA then this header\n"
-                    + " will contain a unique resource reference for that compensator:\n"
-                    + " - HTTP GET on the reference returns the original compensator URL;\n"
-                    + " - HTTP PUT on the reference will overwrite the old compensator URL with the new one supplied.")
+            description = "If the participant is successfully registered with the LRA then this header\n"
+                    + " will contain a unique resource reference for that participant:\n"
+                    + " - HTTP GET on the reference returns the original participant URL;\n"
+                    + " - HTTP PUT on the reference will overwrite the old participant URL with the new one supplied.")
     @ApiResponses( {
             @ApiResponse( code = 404, message = "The coordinator has no knowledge of this LRA" ),
             @ApiResponse( code = 412, message = "The LRA is not longer active (ie in the complete or compensate messages have been sent" ),
-            @ApiResponse( code = 200, message = "The compensator was successfully registered with the LRA and"
-                    + " the response body contains a unique resource reference for that compensator:\n"
-                    + " - HTTP GET on the reference returns the original compensator URL;\n"
-                    + " - HTTP PUT on the reference will overwrite the old compensator URL with the new one supplied."
+            @ApiResponse( code = 200, message = "The participant was successfully registered with the LRA and"
+                    + " the response body contains a unique resource reference for that participant:\n"
+                    + " - HTTP GET on the reference returns the original participant URL;\n"
+                    + " - HTTP PUT on the reference will overwrite the old participant URL with the new one supplied."
             )
     } )
     public Response joinLRAViaBody(
@@ -431,13 +431,13 @@ public class Coordinator {
                     required = true )
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") long timeLimit,
             @ApiParam( value = "The resource paths that the coordinator will use to complete or compensate and to request"
-                    + " the status of the compensator. The link rel names are"
+                    + " the status of the participant. The link rel names are"
                     + " complete, compensate and status.",
                     required = false )
             @HeaderParam("Link") String compensatorLink,
-            @ApiParam( value = "The resource path that the LRA coordinator will use to drive the compensator.\n"
-                    + "Performing a GET on the compensator URL will return the current status of the compensator,\n"
-                    + "or 404 if the compensator is no longer present.\n"
+            @ApiParam( value = "The resource path that the LRA coordinator will use to drive the participant.\n"
+                    + "Performing a GET on the participant URL will return the current status of the participant,\n"
+                    + "or 404 if the participant is no longer present.\n"
                     + "\n"
                     + "The following types must be returned by Compensators to indicate their current status:\n"
                     + "-  Compensating: the Compensator is currently compensating for the jfdi.\n"
@@ -449,18 +449,18 @@ public class Coordinator {
                     + "-  Completed: the coordinator/participant has confirmed.\n"
                     + "-  FailedToComplete: the Compensator was unable to tidy-up.\n"
                     + "\n"
-                    + "Performing a PUT on <URL>/compensate will cause the compensator to compensate\n"
+                    + "Performing a PUT on <URL>/compensate will cause the participant to compensate\n"
                     + "  the work that was done within the scope of the LRA.\n"
-                    + "Performing a PUT on <URL>/complete will cause the compensator to tidy up and\n"
+                    + "Performing a PUT on <URL>/complete will cause the participant to tidy up and\n"
                     + "   it can forget this LRA.\n")
                     String compensatorUrl) throws NotFoundException {
-        // test to see if the join request contains any compensator specific data
+        // test to see if the join request contains any participant specific data
         boolean isLink = isLink(compensatorUrl);
 
         if (compensatorLink != null && !isLink)
             return joinLRA(toURL(lraId), timeLimit, compensatorLink, null, compensatorUrl);
 
-        if (!isLink) { // interpret the content as a standard compensator url
+        if (!isLink) { // interpret the content as a standard participant url
             compensatorUrl += "/";
 
             Map<String, String> terminateURIs = new HashMap<>();
@@ -522,8 +522,8 @@ public class Coordinator {
         return Response.status(status).entity(recoveryUrl).header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl).build();
     }
 
-    // A compensator can resign from a lra at any time prior to the completion of an activity by performing a
-    // PUT on lra-coordinator/<LraId>/remove with the URL of the compensator.
+    // A participant can resign from a lra at any time prior to the completion of an activity by performing a
+    // PUT on lra-coordinator/<LraId>/remove with the URL of the participant.
     @PUT
     @Path("{LraId}/remove")
     @Produces(MediaType.APPLICATION_JSON)
@@ -532,7 +532,7 @@ public class Coordinator {
     @ApiResponses( {
             @ApiResponse( code = 404, message = "The coordinator has no knowledge of this LRA" ),
             @ApiResponse( code = 412, message = "The LRA is not longer active (ie in the complete or compensate messages have been sent" ),
-            @ApiResponse( code = 200, message = "If the compensator was successfully removed from the LRA" )
+            @ApiResponse( code = 200, message = "If the participant was successfully removed from the LRA" )
     } )
     public Response leaveLRA(
             @ApiParam( value = "The unique identifier of the LRA", required = true )

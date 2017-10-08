@@ -124,9 +124,9 @@ public @interface LRA {
     boolean terminal() default false;
 
     /**
-     * If true then the annotated class will be checked for compensator annotations and when present the class
+     * If true then the annotated class will be checked for participant annotations and when present the class
      * will be enlisted with any LRA that is associated with the invocation
-     * @return whether or not to automatically enlist a compensator
+     * @return whether or not to automatically enlist a participant
      */
     boolean join() default true;
 
