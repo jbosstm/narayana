@@ -19,28 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package io.narayana.lra.annotation;
-
-import javax.interceptor.InterceptorBinding;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package io.narayana.lra.client.participant;
 
 /**
- * <p>
- * When a bean method executes in the context of an LRA any methods in the bean class that are annotated with @Complete
- * will be used as a participant for that LRA and when it is present, so too must the {@link Compensate} and
- * {@link Status} annotations. If it is applied to multiple methods an arbitrary one is chosen.
- * <p>
- * If the associated LRA is subsequently closed the method annotated with @Complete will be invoked.
- * <p>
- * The annotation can be combined with {@link TimeLimit} annotation to limit the time that the participant
- * remains valid, after which the corresponding @Compensate method will be called.
+ * An object that knows how to recreate a participant from its' persistent form
  */
-@InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface Complete {
+public interface LRAParticipantDeserializer {
+    LRAParticipant deserialize(byte[] recoveryState);
 }

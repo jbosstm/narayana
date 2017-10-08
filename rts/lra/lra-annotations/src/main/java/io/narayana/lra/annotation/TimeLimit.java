@@ -32,16 +32,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>
  * Used on ({@link LRA} and {@link Compensate} annotations to indicate the maximum time that the LRA or
- * compensator should remain active for.
+ * participant should remain active for.
  * <p>
- * When applied at the class level the timeout applies to any method that starts an LRA or registers a compensator.
+ * When applied at the class level the timeout applies to any method that starts an LRA or registers a participant.
  */
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface TimeLimit {
     /**
-     * @return the period for which the LRA or compensator will remain valid. A value
+     * @return the period for which the LRA or participant will remain valid. A value
      * of zero indicates that it is always remain valid.<br>
      *
      * For compensations the corresponding compensation (a method annotated with {@link Compensate} in the

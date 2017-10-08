@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * javax.ws.rs.Path and javax.ws.rs.GET, respectively). They must report their status using one of the enum names listed
  * in {@link CompensatorStatus} whenever an HTTP GET request is made on the method.
  * <p>
- * If the compensator has not yet been asked to complete or compensate it should return with a <code>412 Precondition Failed</code>
+ * If the participant has not yet been asked to complete or compensate it should return with a <code>412 Precondition Failed</code>
  * HTTP status code. NB although this circumstance could be detected via the framework
  * it would necessitate a network call to the LRA coordinator.
  */

@@ -286,7 +286,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl);
             } else {
                 lraTrace(containerRequestContext, lraId,
-                        "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no compensator annotations");
+                        "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no participant annotations");
             }
         }
 
@@ -297,7 +297,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             lraTrace(containerRequestContext, lraId, "leaving LRA");
             lraClient.leaveLRA(lraId, compensatorId);
 
-            // let the compensator know which lra he left by leaving the header intact
+            // let the participant know which lra he left by leaving the header intact
         }
 
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available as a thread local");

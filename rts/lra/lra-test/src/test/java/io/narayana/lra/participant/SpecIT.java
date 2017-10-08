@@ -164,7 +164,7 @@ public class SpecIT {
         Current.popAll();
     }
 
-    // TODO add a test for a compensator annotated with @TimeLimit
+    // TODO add a test for a participant annotated with @TimeLimit
 
     @Test
     public void startLRA() throws WebApplicationException {
@@ -355,11 +355,11 @@ public class SpecIT {
         response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // call a method annotated with @Leave (should remove the compensator from the LRA)
+        // call a method annotated with @Leave (should remove the participant from the LRA)
         response = msTarget.path("activities").path("leave").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // lraClient.leaveLRA(lra, "some compensator"); // ask the MS for the compensator url so we can test LRAClient
+        // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
 
         lraClient.closeLRA(lra);
 
@@ -381,7 +381,7 @@ public class SpecIT {
         response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // call a method annotated with @Leave (should remove the compensator from the LRA)
+        // call a method annotated with @Leave (should remove the participant from the LRA)
         try {
             response = msTarget.path("activities").path("leave").path(URLEncoder.encode(lra.toString(), "UTF-8"))
                     .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
@@ -391,7 +391,7 @@ public class SpecIT {
         }
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // lraClient.leaveLRA(lra, "some compensator"); // ask the MS for the compensator url so we can test LRAClient
+        // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
 
         lraClient.closeLRA(lra);
 
@@ -442,7 +442,7 @@ public class SpecIT {
 
             checkStatusAndClose(response, -1, true);
 
-            // check that compensator was invoked
+            // check that participant was invoked
             int[] cnt2 = {completedCount(true), completedCount(false)};
 
             /*
@@ -466,7 +466,7 @@ public class SpecIT {
     public void testUserData() {
         List<LRAStatus> lras = lraClient.getActiveLRAs();
         int count = lras.size();
-        String testData = "test compensator data";
+        String testData = "test participant data";
 
         Response response = msTarget.path(ACTIVITIES_PATH).path("testUserData")
                 .request().put(Entity.text(testData));
@@ -536,7 +536,7 @@ public class SpecIT {
 
             checkStatusAndClose(response, -1, true);
 
-            // check that compensator was invoked
+            // check that participant was invoked
             int[] cnt2 = {completedCount(true), completedCount(false)};
 
             /*
@@ -639,9 +639,9 @@ public class SpecIT {
         } else {
             /*
              * The test is calling for a mixed uutcome (a top level LRA L! and nestedCnt nested LRAs (L2, L3, ...)::
-             * L1 the mandatory call (PUT "activities/multiLevelNestedActivity") registers compensator C1
+             * L1 the mandatory call (PUT "activities/multiLevelNestedActivity") registers participant C1
              *   the resource makes nestedCnt calls to "activities/nestedActivity" each of which create nested LRAs
-             * L2, L3, ... each of which enlists a compensator (C2, C3, ...) which are completed when the call returns
+             * L2, L3, ... each of which enlists a participant (C2, C3, ...) which are completed when the call returns
              * L2 is canceled  which causes C2 to compensate
              * L1 is closed which triggers the completion of C1
              *
@@ -671,14 +671,14 @@ public class SpecIT {
         } else if (how == CompletionType.compensate) {
             /*
              * the test starts LRA1 calls a @Mandatory method multiLevelNestedActivity which enlists in LRA1
-             * multiLevelNestedActivity then calls an @Nested method which starts L2 and enlists another compensator
-             *   when the method returns the nested compensator is completed (ie completed count is incremented)
+             * multiLevelNestedActivity then calls an @Nested method which starts L2 and enlists another participant
+             *   when the method returns the nested participant is completed (ie completed count is incremented)
              * Canceling L1 should then compensate the L1 enlistement (ie compensate count is incrememted)
              * which will then tell L2 to compenstate (ie the compensate count is incrememted again)
              */
-            // each nested compensator should have completed (the +nestedCnt)
+            // each nested participant should have completed (the +nestedCnt)
             assertEquals(cnt1[0] + nestedCnt, cnt3[0]);
-            // each nested compensator should have compensated. The top level enlistement should have compensated (the +1)
+            // each nested participant should have compensated. The top level enlistement should have compensated (the +1)
             assertEquals(cnt2[1] + 1 + nestedCnt, cnt3[1]);
         } else {
             /*
@@ -710,7 +710,7 @@ public class SpecIT {
 
             checkStatusAndClose(response, Response.Status.BAD_REQUEST.getStatusCode(), true);
 
-            // check that compensator was invoked
+            // check that participant was invoked
             int[] cnt2 = {completedCount(true), completedCount(false)};
 
             // check that complete was not called and that compensate was

@@ -31,12 +31,12 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * When a bean method executes in the context of an LRA any methods in the bean class that are annotated with @Compensate
- * will be used as a compensator for that LRA and when it is present, so too must the {@link Compensate} and
+ * will be used as a participant for that LRA and when it is present, so too must the {@link Compensate} and
  * {@link Status} annotations. If it is applied to multiple methods an arbitrary one is chosen.
  * <p>
  * If the associated LRA is subsequently cancelled the method annotated with @Compensate will be invoked.
  * <p>
- * The annotation can be combined with {@link TimeLimit} annotation to limit the time that the compensator remains
+ * The annotation can be combined with {@link TimeLimit} annotation to limit the time that the participant remains
  * valid, after which the corresponding @Compensate method will be called.
  */
 @InterceptorBinding

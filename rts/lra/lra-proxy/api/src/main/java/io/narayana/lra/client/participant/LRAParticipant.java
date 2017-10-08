@@ -19,14 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client.compensator;
+package io.narayana.lra.client.participant;
 
-public interface LRAManagement {
-    /**
-     * join an LRA
-     * @param compensator an instance of a {@link Compensator} that will be notified when the target LRA ends
-     * @param deserializer a mechanism for recreating compensators during recovery
-     * @param lraId the LRA to join
-     */
-    void joinLRA(Compensator compensator, CompensatorDeserializer deserializer, String lraId);
+import io.narayana.lra.annotation.CompensatorStatus;
+
+import javax.ws.rs.NotFoundException;
+import java.io.Serializable;
+import java.net.URL;
+
+/**
+ * The API for notifying participants that a LRA is completing or cancelling
+ */
+public interface LRAParticipant extends Serializable {
+    void completeWork(URL lraId) throws NotFoundException;
+
+    void compensateWork(URL lraId) throws NotFoundException;
+
+    CompensatorStatus status(URL lraId) throws NotFoundException;
+
+    void forget(URL lraId) throws NotFoundException;
 }
+

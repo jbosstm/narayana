@@ -70,8 +70,8 @@ public interface LRAClientAPI {
      * without enlisting a participant.
      *
      * @param lraId The unique identifier of the LRA (required)
-     * @return compensator sepcific data provided by the application
-     *         for nested LRA the API implementation will combine compensator data into a
+     * @return participant sepcific data provided by the application
+     *         for nested LRA the API implementation will combine participant data into a
      *         JSON encoded array. This means that compensators MUST not return any data
      *         that starts with the JSON array start token (ie a '[' character)
      * @throws GenericLRAException Comms error
@@ -87,8 +87,8 @@ public interface LRAClientAPI {
      * a participant.
      *
      * @param lraId The unique identifier of the LRA (required)
-     * @return compensator sepcific data provided by the application
-     *         for nested LRA the API implementation will combine compensator data into a
+     * @return participant sepcific data provided by the application
+     *         for nested LRA the API implementation will combine participant data into a
      *         JSON encoded array. This means that compensators MUST not return any data
      *         that starts with the JSON array start token (ie a '[' character)
      * @throws GenericLRAException Comms error
@@ -155,9 +155,9 @@ public interface LRAClientAPI {
      *                LRA. It may therefore be necessary for the application or service to start other
      *                activities to explicitly try to compensate this work. The application or coordinator may
      *                use this information to control the lifecycle of a LRA. (required)
-     * @param body    The resource path that the LRA coordinator will use to drive the compensator.
-     *                Performing a GET on the compensator URL will return the current status of the compensator,
-     *                or 404 if the compensator is no longer present.  The following types must be returned by
+     * @param body    The resource path that the LRA coordinator will use to drive the participant.
+     *                Performing a GET on the participant URL will return the current status of the participant,
+     *                or 404 if the participant is no longer present.  The following types must be returned by
      *                Compensators to indicate their current status:
      *                -  Compensating: the Compensator is currently compensating for the LRA;
      *                -  Compensated: the Compensator has successfully compensated for
@@ -168,9 +168,9 @@ public interface LRAClientAPI {
      *                -  Completing: the Compensator is tidying up after being told to complete.
      *                -  Completed: the coordinator/participant has confirmed.
      *                -  FailedToComplete: the Compensator was unable to tidy-up.
-     *                     Performing a PUT on URL/compensate will cause the compensator to compensate
+     *                     Performing a PUT on URL/compensate will cause the participant to compensate
      *                     the work that was done within the scope of the LRA.
-     *                     Performing a PUT on URL/complete will cause the compensator to tidy up and
+     *                     Performing a PUT on URL/complete will cause the participant to tidy up and
      *                  it can forget this LRA.  (optional)
      *
      * @param compensatorData
@@ -181,7 +181,7 @@ public interface LRAClientAPI {
     String joinLRA(URL lraId, Long timelimit, String body, String compensatorData) throws GenericLRAException;
 
     /**
-     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, String)} but the various compensator urls
+     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, String)} but the various participant urls
      * are passed in explicitly
      *
      * @param lraId The unique identifier of the LRA (required)
@@ -190,8 +190,8 @@ public interface LRAClientAPI {
      * @param compensateUrl Performing a PUT onthis URL will cause the participant to compensate the work that
      *                      was done within the scope of the LRA.
      * @param completeUrl Performing a PUT on this URL  will cause the participant to tidy up and it can forget this transaction.
-     * @param leaveUrl Performing a PUT on this URL with cause the compensator to leave the LRA
-     * @param statusUrl Performing a GET on this URL will return the status of the compensator {@see joinLRA}
+     * @param leaveUrl Performing a PUT on this URL with cause the participant to leave the LRA
+     * @param statusUrl Performing a GET on this URL will return the status of the participant {@see joinLRA}
      *
      * @param compensatorData
      * @return a recovery URL for this enlistment
@@ -203,12 +203,12 @@ public interface LRAClientAPI {
                    String compensatorData) throws GenericLRAException;
 
     /**
-     * Join an LRA passing in a class that will act as the compensator.
+     * Join an LRA passing in a class that will act as the participant.
      *
      * @param lraId The unique identifier of the LRA (required)
-     * @param resourceClass An annotated class for the compensator methods
-     * @param baseUri Base uri for the compensator endpoints
-     * @param compensatorData Compensator specific data that the coordinator will pass to the compensator when the LRA
+     * @param resourceClass An annotated class for the participant methods
+     * @param baseUri Base uri for the participant endpoints
+     * @param compensatorData Compensator specific data that the coordinator will pass to the participant when the LRA
      *                        is closed or cancelled
      * @return
      * @throws GenericLRAException
@@ -216,7 +216,7 @@ public interface LRAClientAPI {
     String joinLRA(URL lraId, Class<?> resourceClass, URI baseUri, String compensatorData) throws GenericLRAException;
 
     /**
-     * Change the endpoints that a compensator can be contacted on.
+     * Change the endpoints that a participant can be contacted on.
      *
      * @param recoveryUrl
      * @param compensateUrl
@@ -225,7 +225,7 @@ public interface LRAClientAPI {
      * @param leaveUrl
      * @param statusUrl
      * @param compensatorData
-     * @return an updated recovery URL for this compensator
+     * @return an updated recovery URL for this participant
      * @throws GenericLRAException
      */
     URL updateCompensator(URL recoveryUrl,URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,

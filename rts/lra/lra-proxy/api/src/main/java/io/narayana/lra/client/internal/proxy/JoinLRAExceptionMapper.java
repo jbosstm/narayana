@@ -19,14 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client.compensator;
+package io.narayana.lra.client.internal.proxy;
 
-import java.io.ObjectInputStream;
+import io.narayana.lra.client.participant.JoinLRAException;
 
-/**
- * An object that knows how to recreate a compensator from its' persistent form
- */
-public interface CompensatorDeserializer {
-    Compensator deserialize(ObjectInputStream objectInputStream);
-    Compensator recreate(byte[] recoveryState);
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+
+public class JoinLRAExceptionMapper implements ExceptionMapper<JoinLRAException> {
+    @Override
+    public Response toResponse(JoinLRAException exception) {
+        return Response.status(exception.getStatusCode())
+                .entity(String.format("%s: %s", exception.getLraId() != null
+                        ? exception.getLraId()
+                        : "not present", exception.getMessage())).build();
+    }
 }

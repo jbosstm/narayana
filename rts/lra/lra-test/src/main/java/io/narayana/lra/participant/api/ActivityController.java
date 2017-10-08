@@ -88,7 +88,7 @@ public class ActivityController {
     private ActivityService activityService;
 
     /**
-     Performing a GET on the compensator URL will return the current status of the compensator {@link CompensatorStatus}, or 404 if the compensator is no longer present.
+     Performing a GET on the participant URL will return the current status of the participant {@link CompensatorStatus}, or 404 if the participant is no longer present.
      */
     @GET
     @Path("/status")
@@ -457,10 +457,10 @@ public class ActivityController {
     }
 
     /**
-     * Performing a PUT on <compensator URL>/compensate will cause the participant to compensate
+     * Performing a PUT on <participant URL>/compensate will cause the participant to compensate
      * the work that was done within the scope of the transaction.
      *
-     * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
+     * The participant will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
      * and will simply return the same (implicit) information:
      *
      * <URL>/cannot-compensate
@@ -479,9 +479,9 @@ public class ActivityController {
     }
 
     /**
-     * Performing a PUT on <compensator URL>/complete will cause the participant to tidy up and it can forget this transaction.
+     * Performing a PUT on <participant URL>/complete will cause the participant to tidy up and it can forget this transaction.
      *
-     * The compensator will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
+     * The participant will either return a 200 OK code and a <status URL> which indicates the outcome and which can be probed (via GET)
      * and will simply return the same (implicit) information:
      * <URL>/cannot-compensate
      * <URL>/cannot-complete

@@ -345,14 +345,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
      */
     public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader,
                                         String compensatorData) throws GenericLRAException {
-        lraTrace(String.format("joining LRA with compensator link: %s", linkHeader), lraUrl);
+        lraTrace(String.format("joining LRA with participant link: %s", linkHeader), lraUrl);
         return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
     }
 
     @Override
     public String joinLRA(URL lraId, Long timelimit, String compensatorUrl,
                           String compensatorData) throws GenericLRAException {
-        lraTrace(String.format("joining LRA with compensator %s", compensatorUrl), lraId);
+        lraTrace(String.format("joining LRA with participant %s", compensatorUrl), lraId);
 
         return enlistCompensator(lraId, timelimit, "",
                 String.format("%s/compensate", compensatorUrl),
@@ -549,11 +549,11 @@ public class LRAClient implements LRAClientAPI, Closeable {
                                 Annotation annotationClass,
                                 String uriPrefix) {
             /*
-             * If the annotationClass is null the requested compensator annotation is not present,
+             * If the annotationClass is null the requested participant annotation is not present,
              * but we also need to check for conformance with the interoperability spec,
              * ie look for paths of the form:
-             * `<compensator URL>/compensate`
-             * `<compensator URL>/complete`
+             * `<participant URL>/compensate`
+             * `<participant URL>/complete`
              * etc
              */
         if (annotationClass == null) {
@@ -646,7 +646,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
                 lraTrace(String.format("enlist in LRA failed (%d)", response.getStatus()), lraUrl);
 
                 throw new GenericLRAException(lraUrl, response.getStatus(),
-                        "unable to register compensator", null);
+                        "unable to register participant", null);
             }
 
             return response.readEntity(String.class);
