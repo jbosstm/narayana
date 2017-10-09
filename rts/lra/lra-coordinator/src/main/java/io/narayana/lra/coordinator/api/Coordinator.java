@@ -62,6 +62,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -519,7 +521,15 @@ public class Coordinator {
 
         int status = lraService.joinLRA(recoveryUrl, lraId, timeLimit, compensatorUrl, linkHeader, recoveryUrlBase, userData);
 
-        return Response.status(status).entity(recoveryUrl).header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl).build();
+        try {
+            return Response.status(status)
+                    .entity(recoveryUrl)
+                    .location(new URI(recoveryUrl.toString()))
+                    .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl)
+                    .build();
+        } catch (URISyntaxException e) {
+            throw new GenericLRAException(lraId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "Invalid recovery URL", e);
+        }
     }
 
     // A participant can resign from a lra at any time prior to the completion of an activity by performing a
