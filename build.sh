@@ -44,6 +44,8 @@ JAVA_VERSION=$(java -version 2>&1 | grep "java version" | cut -d\  -f3 | tr -d '
 if [ $JAVA_VERSION = "9" ]; then
   MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
   MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
+  MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.ws"
+  export MAVEN_OPTS
 fi
 
 if [ -z "$MAVEN_OPTS" ]

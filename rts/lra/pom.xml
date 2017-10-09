@@ -41,6 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <test.logs.to.file>false</test.logs.to.file>
+        <skipITs>false</skipITs>
     </properties>
 
     <repositories>
@@ -109,6 +110,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
+                    <skipITs>${skipITs}</skipITs>
                     <systemProperties>
                         <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
                     </systemProperties>
@@ -159,6 +161,16 @@
     </modules>
 
     <profiles>
+      <profile>
+          <id>j9</id>
+          <activation>
+             <jdk>[1.9,)</jdk>
+          </activation>
+          <properties>
+             <!-- JBTM-2942 Disable the lra-tests running with the JDK9 -->
+             <skipITs>true</skipITs>
+          </properties>
+      </profile>
       <profile>
           <id>release</id>
           <build>

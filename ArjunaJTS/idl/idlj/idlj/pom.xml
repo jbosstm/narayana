@@ -128,7 +128,9 @@
             <activation>
                 <jdk>[1.9,)</jdk>
             </activation>
-
+            <properties>
+                <jvm.args.jdk9>--add-modules java.corba</jvm.args.jdk9>
+            </properties>
             <build>
                 <plugins>
 

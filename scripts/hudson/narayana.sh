@@ -308,7 +308,7 @@ function build_narayana {
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
   
   if [ $JAVA_VERSION = "9" ]; then
-    ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install -Djacorb-disabled=true
+    ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   else
     ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   fi
@@ -489,6 +489,9 @@ function blacktie {
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
     if [ $JAVA_VERSION = "9" ]; then
+      # replace the openjdk-orb with the 8.0.8.Final
+      wget https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Final/openjdk-orb-8.0.8.Final.jar -O blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/openjdk-orb-8.0.8.Final.jar
+      sed -i s/8.0.6.Final/8.0.8.Final/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED -Xms256m -Xmx256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
     else
       JBOSS_HOME=`pwd`/blacktie/wildfly-${WILDFLY_MASTER_VERSION} JAVA_OPTS="-Xms256m -Xmx256m -XX:MaxPermSize=256m $JAVA_OPTS" blacktie/wildfly-${WILDFLY_MASTER_VERSION}/bin/standalone.sh -c standalone-blacktie.xml -Djboss.bind.address=$JBOSSAS_IP_ADDR -Djboss.bind.address.unsecure=$JBOSSAS_IP_ADDR -Djboss.bind.address.management=$JBOSSAS_IP_ADDR&
@@ -498,6 +501,12 @@ function blacktie {
 
   # BUILD BLACKTIE
   ./build.sh -f blacktie/pom.xml -B clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  if [ $JAVA_VERSION = "9" ]; then
+    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  else
+    ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  fi
+
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
@@ -733,7 +742,11 @@ function qa_tests_once {
 
   if [ $orbtype = "openjdk" ]; then
     openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
-    EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    if [ $JAVA_VERSION = "9" ]; then
+        EXTRA_QA_SYSTEM_PROPERTIES="--patch-module java.corba=$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    else
+        EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
+    fi
     orbtype="idlj"
   fi
 

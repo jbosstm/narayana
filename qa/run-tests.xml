@@ -61,7 +61,7 @@
   <property name="testoutput.zip.includes" value="testoutput/**,TEST*"/>
   <property name="profile" value=""/>
 
-  <condition property="modular.jdk.args" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED" else="">
+  <condition property="modular.jdk.args" value="--add-modules=java.corba --upgrade-module-path ../ArjunaJTS/jtax/target/upgrademodulepath --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED" else="">
     <and>
         <equals arg1="${ant.java.version}" arg2="1.9"/>
         <equals arg1="${orbtype}" arg2="idlj"/>
