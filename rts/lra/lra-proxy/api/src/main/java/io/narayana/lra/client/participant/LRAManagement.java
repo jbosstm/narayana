@@ -22,14 +22,32 @@
 package io.narayana.lra.client.participant;
 
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public interface LRAManagement {
     /**
      * Join an existing LRA
      *
-     * @param LRAParticipant an instance of a {@link LRAParticipant} that will be notified when the target LRA ends
-     * @param deserializer a mechanism for recreating participants during recovery
-     * @param lraId the LRA to join
+     * @param participant an instance of a {@link LRAParticipant} that will be notified when the target LRA ends
+     * @param deserializer a mechanism for recreating participants during recovery.
+     *                     If the parameter is null then standard Java object deserialization will be used
+     * @param lraId the LRA that the join request pertains to
+     * @param timeLimit the time for which the participant should remain valid. When this time limit is exceeded
+     *                  the participant may longer be able to fulfil the protocol guarantees.
+     * @param unit the unit that the timeLimit parameter is expressed in
      */
-    String joinLRA(LRAParticipant LRAParticipant, LRAParticipantDeserializer deserializer, URL lraId, Long timelimit) throws JoinLRAException;
+    String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer,
+                   URL lraId, Long timeLimit, TimeUnit unit) throws JoinLRAException;
+
+    /**
+     * Join an existing LRA. In contrast to the other form of registration this method does not indicate a time limit
+     * for the participant meaning that the participant registration will remain valid until it terminates successfully
+     * or unsuccessfully (ie it will never be timed out externally).
+     *
+     * @param participant an instance of a {@link LRAParticipant} that will be notified when the target LRA ends
+     * @param deserializer a mechanism for recreating participants during recovery.
+     *                     If the parameter is null then standard Java object deserialization will be used
+     * @param lraId the LRA that the join request pertains to
+     */
+    String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer, URL lraId) throws JoinLRAException;
 }

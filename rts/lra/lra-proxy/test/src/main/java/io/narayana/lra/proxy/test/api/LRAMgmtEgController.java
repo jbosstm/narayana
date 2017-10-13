@@ -39,6 +39,7 @@ import javax.ws.rs.core.Response;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
 
@@ -67,7 +68,7 @@ public class LRAMgmtEgController {
         activityService.add(activity);
 
         activity.rcvUrl = lraManagement.joinLRA(
-                new Participant(activity), null, toURL(lraId), 0L);
+                new Participant(activity), null, toURL(lraId), 0L, TimeUnit.SECONDS);
 
         return Response.ok(activity.id).build();
     }

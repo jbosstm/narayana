@@ -22,6 +22,7 @@
 package io.narayana.lra.coordinator.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.narayana.lra.annotation.CompensatorStatus;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -48,6 +49,8 @@ public class LRAStatus {
     private int httpStatus;
     private List<String> responseData;
 
+    private CompensatorStatus status;
+
     public LRAStatus(Transaction lra) {
         this.lraId = lra.getId().toString();
         this. clientId = lra.getClientId();
@@ -58,6 +61,7 @@ public class LRAStatus {
         this. isTopLevel = lra.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
+        this.status = lra.getLRAStatus();
     }
 
     public String getLraId() {
@@ -68,12 +72,36 @@ public class LRAStatus {
         return clientId;
     }
 
-    public boolean isComplete() {
-        return isComplete;
+    public CompensatorStatus getStatus() {
+        return status;
+    }
+
+    private boolean isInState(CompensatorStatus state) {
+        return status != null && status == state;
+    }
+
+    public boolean isCompensating() {
+        return isInState(CompensatorStatus.Compensating);
     }
 
     public boolean isCompensated() {
-        return isCompensated;
+        return isInState(CompensatorStatus.Compensated);
+    }
+
+    public boolean isCompleting() {
+        return isInState(CompensatorStatus.Completing);
+    }
+
+    public boolean isCompleted() {
+        return isInState(CompensatorStatus.Completed);
+    }
+
+    public boolean isFailedToComplete() {
+        return isInState(CompensatorStatus.FailedToComplete);
+    }
+
+    public boolean isFailedToCompensate() {
+        return isInState(CompensatorStatus.FailedToCompensate);
     }
 
     public boolean isRecovering() {

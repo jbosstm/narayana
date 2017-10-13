@@ -27,7 +27,8 @@ import java.net.URL;
 //@AllArgsConstructor
 //@ApiModel( value = "LRA", description = "A Long Running Action" )
 public class LRAStatus {
-//    @ApiModelProperty( value = "The unique id of the LRA", required = true )
+    private Exception jsonParseError;
+    //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
 //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
     private String clientId ;
@@ -57,6 +58,18 @@ public class LRAStatus {
         this.isRecovering = isRecovering;
         this.isActive = isActive;
         this.isTopLevel = isTopLevel;
+        this.jsonParseError = null;
+    }
+
+    public LRAStatus(Exception e) {
+        jsonParseError = e;
+        this.lraId = "JSON Parse Error: " + e.getMessage();
+        this.clientId = e.getMessage();
+        this.isComplete = false;
+        this.isCompensated = false;
+        this.isRecovering = false;
+        this.isActive = false;
+        this.isTopLevel = false;
     }
 
     public String getLraId() {

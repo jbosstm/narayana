@@ -350,6 +350,15 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA");
                 lraClient.closeLRA((URL) newLRA);
             }
+
+            if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
+                    LRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
+                System.out.printf("WARNING LRA participant completion for asynchronous method %s#%s should return %d and not %d%n",
+                        resourceInfo.getResourceMethod().getDeclaringClass().getName(),
+                        resourceInfo.getResourceMethod().getName(),
+                        Response.Status.ACCEPTED.getStatusCode(),
+                        Response.Status.OK.getStatusCode());
+            }
         } finally {
             if (suspendedLRA != null)
                 Current.push((URL) suspendedLRA);

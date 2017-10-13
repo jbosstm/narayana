@@ -19,35 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client.participant;
+package io.narayana.lra.client.internal.proxy;
 
-import java.net.URL;
-
-/**
- * An exception used to report failures during enlistment of a participant in an LRA
- */
-public class JoinLRAException extends Exception {
-    private URL lraId;
-    private int statusCode;
-
-    /**
-     * @return the specific reason for why the enlistment failed
-     */
-    public int getStatusCode() {
-        return statusCode;
+class InvalidLRAStateException extends Exception {
+    InvalidLRAStateException() {
+        this("Invalid state");
     }
 
-    /**
-     * @return the LRA that join request related to
-     */
-    public URL getLraId() {
-        return lraId;
+    InvalidLRAStateException(String s) {
+        super(s);
     }
 
-    public JoinLRAException(URL lraId, int statusCode, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
-
-        this.lraId = lraId;
-        this.statusCode = statusCode;
+    InvalidLRAStateException(String message, Exception e) {
+        super(String.format("%s (%s)", message, e.getMessage()), e);
     }
 }
