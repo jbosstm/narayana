@@ -21,22 +21,44 @@
  */
 package io.narayana.lra.client.participant;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-
 import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The API for notifying participants that a LRA is completing or cancelling
+ * The API for notifying participants that a LRA is completing or cancelling.
+ * A participant joins with an LRA via a call to
+ * {@link LRAManagement#joinLRA(LRAParticipant, LRAParticipantDeserializer, URL, Long, TimeUnit)}
  */
 public interface LRAParticipant extends Serializable {
-    void completeWork(URL lraId) throws NotFoundException;
+    /**
+     * Notifies the participant that the LRA is closing
+     * @param lraId the LRA that is closing
+     * @return null if the participant completed successfully. If the participant cannot
+     *         complete immediately it should return a future that the caller can use
+     *         to monitor progress. If the JVM crashes before the participant can finish
+     *         it should expect this method to be called again. If the participant fails
+     *         to complete it must cancel the future or throw a TerminationException.
+     * @throws NotFoundException the participant does not know about this LRA
+     * @throws TerminationException the participant was unable to complete and will never
+     *         be able to do so
+     */
+    Future<Void> completeWork(URL lraId) throws NotFoundException, TerminationException;
 
-    void compensateWork(URL lraId) throws NotFoundException;
-
-    CompensatorStatus status(URL lraId) throws NotFoundException;
-
-    void forget(URL lraId) throws NotFoundException;
+    /**
+     * Notifies the participant that the LRA is cancelling
+     * @param lraId the LRA that is closing
+     * @return null if the participant completed successfully. If the participant cannot
+     *         complete immediately it should return a future that the caller can use
+     *         to monitor progress. If the JVM crashes before the participant can finish
+     *         it should expect this method to be called again. If the participant fails
+     *         to complete it must cancel the future or throw a TerminationException.
+     * @throws NotFoundException the participant does not know about this LRA
+     * @throws TerminationException the participant was unable to complete and will never
+     *         be able to do so
+     */
+    Future<Void> compensateWork(URL lraId) throws NotFoundException, TerminationException;
 }
 

@@ -50,14 +50,14 @@ import java.lang.annotation.Target;
 public @interface LRA {
 
     /**
-     * The Type element of the LRA annotation indicates whether a bean method
-     * is to be executed within a compensatable LRA context.
+     * <p>The Type element of the LRA annotation indicates whether a bean method
+     * is to be executed within a compensatable LRA context.</p>
      */
     Type value() default Type.REQUIRED;
 
     /**
      * <p>The Type element of the annotation indicates whether a bean method is to be executed within a
-     * compensatable transaction (aka LRA) context where the values provide the following behaviors.</p>
+     * compensatable transaction (aka LRA) context where the values provide the following behaviors:</p>
      */
     enum Type {
         /**
@@ -71,69 +71,75 @@ public @interface LRA {
          *  method call and when the call completes another JAX-RS filter will complete the LRA.</p>
          *
          *  <p>If called inside a LRA context a JAX-RS filter will suspend it and begin a new LRA for the
-         *  duration of the method call and when the call completes another JAX-RS filter will complete the LRA and resume
-         *  the one that was active on entry to the method.</p>
+         *  duration of the method call and when the call completes another JAX-RS filter will complete the
+         *  LRA and resume the one that was active on entry to the method.</p>
          */
         REQUIRES_NEW,
 
         /**
          *  <p>If called outside a transaction context, the method call will return
          *  with a 412 Precondition Failed HTTP status code</p>
-         *  <p>If called inside a transaction context the bean method execution will then continue under that context.</p>
+         *
+         *  <p>If called inside a transaction context the bean method execution will then continue within
+         *  that context.</p>
          */
         MANDATORY,
 
         /**
-         *  <p>If called outside a LRA context managed bean method execution
+         *  <p>If called outside a LRA context the bean method execution
          *  must then continue outside a LRA context.</p>
-         *  <p>If called inside a LRA context, the managed bean method execution
+         *
+         *  <p>If called inside a LRA context the managed bean method execution
          *  must then continue inside this LRA context.</p>
          */
         SUPPORTS,
 
         /**
-         *  The bean method is executed without a LRA context. If a context is present on entry then it is
-         *  suspended and then resumed after the execution has completed.</p>
+         *  <p>The bean method is executed without a LRA context. If a context is present on
+         *  entry then it is suspended and then resumed after the execution has completed.</p>
          */
         NOT_SUPPORTED,
 
         /**
-         *  <p>If called outside a LRA context, managed bean method execution
+         *  <p>If called outside a LRA context the managed bean method execution
          *  must then continue outside a LRA context.</p>
-         *  <p>If called inside a LRA context the method is not executed and a <code>412 Precondition Failed</code> HTTP status code
-         *  is returned to the caller.</p>
+         *
+         *  <p>If called inside a LRA context the method is not executed and a
+         *  <code>412 Precondition Failed</code> HTTP status code is returned to the caller.</p>
          */
         NEVER
     }
 
     /**
-     * Some annotations (such as REQUIRES_NEW) will start an LRA on entry to a method and
+     * <p>Some annotations (such as REQUIRES_NEW) will start an LRA on entry to a method and
      * end it on exit. For some business activities it is desirable for the action to survive
-     * method execution and be completed elsewhere.
+     * method execution and be completed elsewhere.</p>
      *
-     * @return whether or not newly created LRAs will survive after the method has executed.
+     * @return whether or not newly created LRAs will survive after the method has finished executing.
      */
     boolean delayClose() default false;
 
     /**
-     * Normally if an LRA is present when a bean method is invoked it will not be ended when the method returns.
-     * To override this behaviour use the terminal element to force its' termination
+     * <p>Normally if an LRA is present when a bean method is executed it will not be ended when
+     * the method returns. To override this behaviour and force LRA termination on exit use the
+     * terminal element</p>
      *
      * @return true if an LRA that was present before method execution will be terminated when the bean method finishes.
      */
     boolean terminal() default false;
 
     /**
-     * If true then the annotated class will be checked for participant annotations and when present the class
-     * will be enlisted with any LRA that is associated with the invocation
+     * <p>If true then the annotated class will be checked for participant annotations and when present the class
+     * will be enlisted with any LRA that is associated with the invocation</p>
+     *
      * @return whether or not to automatically enlist a participant
      */
     boolean join() default true;
 
     /**
-     * The cancelOnFamily element can be set to indicate which families of HTTP response codes will cause
+     * <p>The cancelOnFamily element can be set to indicate which families of HTTP response codes will cause
      * the LRA to cancel. By default client errors (4xx codes) and server errors (5xx codes) will result in
-     * cancellation of the LRA.
+     * cancellation of the LRA.</p>
      *
      * @return the {@link Response.Status.Family} families that will cause cancellation of the LRA
      */

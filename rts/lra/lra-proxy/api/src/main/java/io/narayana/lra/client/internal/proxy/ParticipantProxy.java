@@ -21,43 +21,50 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.participant.LRAParticipant;
 import io.narayana.lra.client.participant.LRAParticipantDeserializer;
+import io.narayana.lra.client.participant.TerminationException;
 
 import java.net.URL;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 class ParticipantProxy {
     private URL lraId;
     private String participantId;
-    private LRAParticipant LRAParticipant;
+    private LRAParticipant participant;
     private LRAParticipantDeserializer deserializer;
+    private Future<Void> future;
+    private boolean compensate;
 
-    ParticipantProxy(URL lraId, String participantId, LRAParticipant LRAParticipant, LRAParticipantDeserializer deserializer) {
+    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant, LRAParticipantDeserializer deserializer) {
         this.lraId = lraId;
         this.participantId = participantId;
-        this.LRAParticipant = LRAParticipant;
+        this.participant = participant;
         this.deserializer = deserializer;
     }
 
-    public ParticipantProxy(URL lraId, String participantId) {
+    ParticipantProxy(URL lraId, String participantId) {
         this.lraId = lraId;
         this.participantId = participantId;
     }
 
 
-    public URL getLraId() {
+    private URL getLraId() {
         return lraId;
     }
 
-    public String getParticipantId() {
+    String getParticipantId() {
         return participantId;
     }
 
-    public LRAParticipant getLRAParticipant() {
-        return LRAParticipant;
+    LRAParticipant getParticipant() {
+        return participant;
     }
 
-    public LRAParticipantDeserializer getDeserializer() {
+    LRAParticipantDeserializer getDeserializer() {
         return deserializer;
     }
 
@@ -68,8 +75,7 @@ class ParticipantProxy {
 
         ParticipantProxy that = (ParticipantProxy) o;
 
-        if (!getLraId().equals(that.getLraId())) return false;
-        return getParticipantId().equals(that.getParticipantId());
+        return getLraId().equals(that.getLraId()) && getParticipantId().equals(that.getParticipantId());
     }
 
     @Override
@@ -77,5 +83,53 @@ class ParticipantProxy {
         int result = getLraId().hashCode();
         result = 31 * result + getParticipantId().hashCode();
         return result;
+    }
+
+     void setFuture(Future<Void> future, boolean compensate) {
+        this.future = future;
+        this.compensate = compensate;
+    }
+
+    private CompensatorStatus getExpectedStatus() {
+        return compensate ? CompensatorStatus.Compensated : CompensatorStatus.Completed;
+    }
+
+    private CompensatorStatus getCurrentStatus() {
+        return compensate ? CompensatorStatus.Compensating : CompensatorStatus.Completing;
+    }
+
+    private CompensatorStatus getFailedStatus() {
+        return compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete;
+    }
+
+    Optional<CompensatorStatus> getStatus() throws InvalidLRAStateException {
+        if (future == null)
+            return Optional.empty();
+
+        if (future.isDone()) {
+            try {
+                future.get();
+
+                return Optional.of(getExpectedStatus());
+            } catch (ExecutionException e) {
+                if (!TerminationException.class.equals(e.getCause().getClass())) {
+                    // the participant threw an unexpected exception
+                    System.err.printf("Participant %s exception during completion: %s%n",
+                            participant.getClass().getName(), e.getMessage());
+
+                    e.printStackTrace(System.err);
+                }
+
+                return Optional.of(getFailedStatus());
+            } catch (InterruptedException e) {
+                // the only recourse is to retry of mark as failed
+                return Optional.of(getFailedStatus()); // interpret as failure
+            }
+        } else if (future.isCancelled()) {
+            // the participant canceled it so assume it finished early
+            return Optional.of(getExpectedStatus()); // success
+        } else {
+            return Optional.of(getCurrentStatus()); // still in progress
+        }
     }
 }

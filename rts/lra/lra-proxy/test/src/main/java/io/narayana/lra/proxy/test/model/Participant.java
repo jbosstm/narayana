@@ -23,10 +23,12 @@ package io.narayana.lra.proxy.test.model;
 
 import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.participant.LRAParticipant;
+import io.narayana.lra.client.participant.TerminationException;
 
 import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.concurrent.Future;
 
 public class Participant implements LRAParticipant, Serializable {
     private Activity activity;
@@ -36,21 +38,16 @@ public class Participant implements LRAParticipant, Serializable {
     }
 
     @Override
-    public void completeWork(URL lraId) throws NotFoundException {
+    public Future<Void> completeWork(URL lraId) throws NotFoundException, TerminationException {
         activity.status = CompensatorStatus.Completed;
+
+        return null;
     }
 
     @Override
-    public void compensateWork(URL lraId) throws NotFoundException {
+    public Future<Void> compensateWork(URL lraId) throws NotFoundException, TerminationException {
         activity.status = CompensatorStatus.Compensated;
-    }
 
-    @Override
-    public CompensatorStatus status(URL lraId) throws NotFoundException {
-        return activity.status;
-    }
-
-    @Override
-    public void forget(URL lraId) throws NotFoundException {
+        return null;
     }
 }

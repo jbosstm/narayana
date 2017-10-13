@@ -25,6 +25,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAId;
@@ -74,12 +75,29 @@ public class LRAService {
         return lras.get(lraId);
     }
 
-    public List<LRAStatus> getAll() {
-        List<LRAStatus> all = getAllActive();
+    public List<LRAStatus> getAll(String state) {
+        if (state == null || state.isEmpty()) {
+            List<LRAStatus> all = getAllActive();
 
-        all.addAll(getAllRecovering());
+            all.addAll(getAllRecovering());
 
-        return all;
+            return all;
+        }
+
+        if (CompensatorStatus.Compensating.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
+        else if (CompensatorStatus.Compensated.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensated).collect(toList());
+        else if (CompensatorStatus.FailedToCompensate.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToCompensate).collect(toList());
+        else if (CompensatorStatus.Completing.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
+        else if (CompensatorStatus.Completed.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompleted).collect(toList());
+        else if (CompensatorStatus.FailedToComplete.name().equals(state))
+            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToComplete).collect(toList());
+
+        return null;
     }
 
     public List<LRAStatus> getAllActive() {

@@ -21,33 +21,8 @@
  */
 package io.narayana.lra.client.participant;
 
-import java.net.URL;
-
 /**
- * An exception used to report failures during enlistment of a participant in an LRA
+ * {@inheritDoc io.narayana.lra.client.participant.LRAParticipant}
  */
-public class JoinLRAException extends Exception {
-    private URL lraId;
-    private int statusCode;
-
-    /**
-     * @return the specific reason for why the enlistment failed
-     */
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * @return the LRA that join request related to
-     */
-    public URL getLraId() {
-        return lraId;
-    }
-
-    public JoinLRAException(URL lraId, int statusCode, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
-
-        this.lraId = lraId;
-        this.statusCode = statusCode;
-    }
+public class TerminationException extends Exception {
 }

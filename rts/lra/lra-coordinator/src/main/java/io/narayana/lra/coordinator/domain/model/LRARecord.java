@@ -215,6 +215,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private int doEnd(boolean compensate) {
         URL endPath;
 
+        // cancel any timer associated with this participant
         if (scheduledAbort != null) {
             // NB this could have been called from the scheduler so don't cancel our self!
             scheduledAbort.cancel(false);
@@ -223,17 +224,17 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         if (compensate) {
             if (isCompensated())
-                return TwoPhaseOutcome.FINISH_OK;
+                return TwoPhaseOutcome.FINISH_OK; // the participant has already compensated
 
-            endPath = compensateURI; // run the participant
+            endPath = compensateURI; // we are going to ask the participant to compensate
         } else {
             if (isCompelete() || completeURI == null) {
                 status = CompensatorStatus.Completed;
 
-                return TwoPhaseOutcome.FINISH_OK;
+                return TwoPhaseOutcome.FINISH_OK; // the participant has already completed
             }
 
-            endPath = completeURI; // run complete
+            endPath = completeURI;  // we are going to ask the participant to complete
         }
 
         // NB trying to compensate when already completed is allowed
@@ -243,14 +244,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         int httpStatus = -1;
 
         if (accepted) {
-            // the participant has previously returned a HTTP 200 Accepted response so the status URL
-            // must be valid - try that first for the status
+            // the participant has previously returned a HTTP 200 Accepted response
+            // to indicate that it is in progress in which case the status URL
+            // must be valid so try that first for the status
             int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
 
             if (twoPhaseOutcome != -1)
                 return twoPhaseOutcome;
         } else {
-            httpStatus = tryLocalEndInvocation(endPath);
+            httpStatus = tryLocalEndInvocation(endPath); // see if participant is in the same JVM
         }
 
         if (httpStatus == -1) {
@@ -259,6 +261,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             WebTarget target = client.target(URI.create(endPath.toExternalForm()));
 
             try {
+                // ask the participant to complete or compensate
                 Response response = target.request()
                         .header(LRA_HTTP_HEADER, lraId.toExternalForm())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
@@ -284,6 +287,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         }
                 }
 
+                if (httpStatus == Response.Status.NOT_FOUND.getStatusCode()) {
+                    return TwoPhaseOutcome.FINISH_OK; // the participant must have finished ok but we lost the response
+                }
                 if (response.hasEntity())
                     responseData = response.readEntity(String.class);
             } catch (Exception e) {
@@ -293,6 +299,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 }
             } finally {
                 client.close();
+            }
+        }
+
+        if (httpStatus == Response.Status.OK.getStatusCode() && responseData != null) {
+            // see if any content contains a failed status
+            if (compensate && CompensatorStatus.FailedToCompensate.name().equals(responseData)) {
+                return reportFailure(true, endPath.toExternalForm());
+            } else if (!compensate && CompensatorStatus.FailedToComplete.name().equals(responseData)) {
+                return reportFailure(false, endPath.toExternalForm());
             }
         }
 
@@ -329,10 +344,21 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
     }
 
+    private int reportFailure(boolean compensate, String endPath) {
+        status = compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete;
+
+        tsLogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
+                endPath, compensate ? "compensate" : "complete");
+
+        // permanently failed so tell recovery to ignore us in the future. TODO could move it to
+        // another list for reporting
+        return TwoPhaseOutcome.FINISH_OK;
+    }
+
     private int retryGetEndStatus(URL endPath, boolean compensate) {
         assert accepted;
 
-        // the participant has previously returned a HTTP 200 Accepted response so the status URL
+        // the participant has previously returned a HTTP 202 Accepted response so the status URL
         // must be valid - try that first for the status
 
         // first check that this isn't a nested coordinator running locally
@@ -361,7 +387,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     case FailedToComplete:
                         return TwoPhaseOutcome.FINISH_ERROR;
                 }
-
             }
         } else if (statusURI != null) {
             // it is a standard participant - check the status URL
@@ -374,6 +399,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .header(LRA_HTTP_HEADER, lraId.toExternalForm())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
                         .get();
+
+                if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
+                    // the participant never got the completion request so resend it
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
 
                 if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.hasEntity()) {

@@ -21,14 +21,17 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
+import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.participant.LRAParticipant;
 import io.narayana.lra.client.participant.LRAParticipantDeserializer;
 import io.narayana.lra.client.participant.JoinLRAException;
 import io.narayana.lra.client.participant.LRAManagement;
+import io.narayana.lra.client.participant.TerminationException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ApplicationScoped;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -52,6 +55,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
 
@@ -105,57 +110,83 @@ public class ProxyService implements LRAManagement {
         return (i == -1 ? null : participants.get(i));
     }
 
-    private ParticipantProxy recreateProxy(URL lraId, String participantId, String participantData) {
+    private ParticipantProxy recreateProxy(URL lraId, String participantId) {
         // TODO deserialize participantData - means that deserializers need to be registered at startup
         return new ParticipantProxy(lraId, participantId);
     }
 
-    void notifyParticipant(URL lraId, String participantId, String participantData, boolean compensate) {
+    Response notifyParticipant(URL lraId, String participantId, String participantData, boolean compensate) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
             /*
              * must be in a recovery scenario so recreate the proxy from the registered data
              */
-            proxy = recreateProxy(lraId, participantId, participantData);
+            proxy = recreateProxy(lraId, participantId);
         }
 
-        LRAParticipant LRAParticipant = proxy.getLRAParticipant();
+        LRAParticipant participant = proxy.getParticipant();
 
-        if (LRAParticipant == null && participantData != null && participantData.length() > 0)
-            LRAParticipant = deserializeParticipant(proxy.getDeserializer(), participantData).orElse(null);
+        if (participant == null && participantData != null && participantData.length() > 0)
+            participant = deserializeParticipant(proxy.getDeserializer(), participantData).orElse(null);
 
-        if (LRAParticipant != null) {
-            if (compensate)
-                LRAParticipant.compensateWork(lraId); // let any NotFoundException propagate back to the coordinator
-            else
-                LRAParticipant.completeWork(lraId); // let any NotFoundException propagate back to the coordinator
-            participants.remove(proxy);
+        if (participant != null) {
+            Future<Void> future = null;
+
+            try {
+                if (compensate)
+                    future = participant.compensateWork(lraId); // let any NotFoundException propagate back to the coordinator
+                else
+                    future = participant.completeWork(lraId); // let any NotFoundException propagate back to the coordinator
+            } catch (TerminationException e) {
+                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete).build();
+            } finally {
+                if (future == null)
+                    participants.remove(proxy); // we definitively know the outcome
+                else
+                    proxy.setFuture(future, compensate); // remember the future so that we can report its progress
+            }
+
+            if (future != null)
+                return Response.accepted().build();
+
+            return Response.ok().build();
         } else {
-            System.err.printf("TODO recovery: null LRAParticipant for callback %s%n", lraId.toExternalForm());
+            System.err.printf("TODO recovery: null participant for callback %s%n", lraId.toExternalForm());
         }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     void notifyForget(URL lraId, String participantId) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy != null)
-            proxy.getLRAParticipant().forget(lraId);
+            participants.remove(proxy);
     }
 
-    String getStatus(URL lraId, String participantId) {
+    CompensatorStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
-        if (proxy != null)
-            return proxy.getLRAParticipant().status(lraId).name();
+        if (proxy == null)
+            throw new NotFoundException();
 
-        return null;
+        Optional<CompensatorStatus> status = proxy.getStatus();
+
+        // null status implies that the participant is still active
+        return status.orElseThrow(InvalidLRAStateException::new);
     }
 
     @Override
-    public String joinLRA(LRAParticipant LRAParticipant, LRAParticipantDeserializer deserializer, URL lraId, Long timelimit)
+    public String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer, URL lraId)
             throws JoinLRAException {
-        ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), LRAParticipant, deserializer);
+        return joinLRA(participant, deserializer, lraId, 0L, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer, URL lraId, Long timelimit, TimeUnit unit)
+            throws JoinLRAException {
+        ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant, deserializer);
 
         try {
             String pId = proxy.getParticipantId();
@@ -167,7 +198,7 @@ public class ProxyService implements LRAManagement {
                     .rel("participant").type("text/plain")
                     .build();
 
-            Optional<String> participantData = serializeParticipant(LRAParticipant); // TODO serialize LRAParticipant
+            Optional<String> participantData = serializeParticipant(participant);
 
             participants.add(proxy);
 
