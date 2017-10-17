@@ -70,7 +70,7 @@ public class Transaction extends AtomicAction {
     private String clientId;
     private List<LRARecord> pending;
     private CompensatorStatus status; // reuse commpensator states for the LRA
-    private List<String> responseData;
+    private String responseData;
     private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
     private boolean inFlight;
@@ -351,12 +351,6 @@ public class Transaction extends AtomicAction {
         ObjectMapper mapper = new ObjectMapper();
 
         if (pending != null && pending.size() != 0) {
-            responseData = pending.stream()
-                    .map(LRARecord::getResponseData)
-                    .map(s -> getCompensatorResponse(mapper, s)) // some compensators may be for nested LRAs so their response data will be an encoded array
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
-
             if (!nested)
                 pending.clear(); // TODO we will loose this data if we need recovery
         }
@@ -373,6 +367,8 @@ public class Transaction extends AtomicAction {
                 lraService.finished(this, false);
         else
             System.out.printf("WARNING null LRAService in LRA#end");
+
+        responseData = status == null ? null : status.name();
 
         return res;
     }
@@ -538,7 +534,7 @@ public class Transaction extends AtomicAction {
         return parentId == null;
     }
 
-    public List<String> getResponseData() {
+    public String getResponseData() {
         return responseData;
     }
 

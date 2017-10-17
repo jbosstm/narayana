@@ -36,11 +36,9 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.narayana.lra.annotation.TimeLimit;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.StringReader;
 
 import javax.ws.rs.Path;
@@ -66,7 +64,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +119,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
     private Client client;
     private boolean isUseable;
     private boolean connectionInUse;
-    private Map<URL, List<String>> responseDataMap;
+    private Map<URL, String> responseDataMap;
 
     public LRAClient() throws URISyntaxException {
         this("http",
@@ -847,6 +844,8 @@ public class LRAClient implements LRAClientAPI, Closeable {
     }
 
     private void setResponseData(URL lraId, String responseData) {
+        responseDataMap.put(lraId, responseData);
+/*
         if (responseData == null || responseData.isEmpty())
             return;
 
@@ -863,9 +862,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
     }
 
-    public List<String> getResponseData(URL lraId) {
-        return responseDataMap.containsKey(lraId) ? responseDataMap.get(lraId) : Collections.emptyList();
+    public String getResponseData(URL lraId) {
+        return responseDataMap.containsKey(lraId) ? responseDataMap.get(lraId) : null;
     }
 }

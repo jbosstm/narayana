@@ -342,12 +342,6 @@ public class Coordinator {
 
     private Response endLRA(URL lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
         LRAStatus status = lraService.endLRA(lraId, compensate, fromHierarchy);
-        String compensatorData;
-        try {
-            compensatorData = status.getEncodedResponseData();
-        } catch (IOException e) {
-            compensatorData = "Unable to encode as JSON";
-        }
 
         return Response.ok(status.getStatus().name()).build();
 //        return compensatorData == null
