@@ -47,7 +47,7 @@ public class LRAStatus {
     //    @ApiModelProperty( value = "Indicates whether or not this LRA is top level", required = false )
     private boolean isTopLevel;
     private int httpStatus;
-    private List<String> responseData;
+    private String responseData;
 
     private CompensatorStatus status;
 
@@ -120,19 +120,11 @@ public class LRAStatus {
         return httpStatus;
     }
 
-    public List<String> getResponseData() {
+    public String getResponseData() {
         return responseData;
     }
 
     public String getEncodedResponseData() throws IOException {
-        if (responseData == null || responseData.size() == 0)
-            return null;
-
-        final StringWriter sw = new StringWriter();
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.writeValue(sw, responseData);
-
-        return sw.toString();
+        return responseData;
     }
 }
