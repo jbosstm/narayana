@@ -240,6 +240,12 @@ public class SubordinateATCoordinator extends ATCoordinator
      */
 	public void rollback ()
 	{
+		// as this coordinator could be called as normal XAResource by topLeveRecord
+		// this rollback call could be part of the prevent commit when beforeCompletion fails
+		// in such case the heuristicList was not created by prepare call and may throw NPE
+		if(heuristicList == null)
+		    heuristicList = new RecordList();
+
 		super.phase2Abort(true);
 		
 		int status;
