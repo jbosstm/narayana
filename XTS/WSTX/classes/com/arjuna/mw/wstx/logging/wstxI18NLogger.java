@@ -22,8 +22,15 @@ package com.arjuna.mw.wstx.logging;
 
 
 import org.jboss.logging.annotations.*;
+
+import com.arjuna.mw.wscf.model.twophase.vote.Vote;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.Volatile2PCParticipant;
+
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.annotations.Message.Format.*;
+
+import java.util.List;
 
 /**
  * i18n log messages for the wstx module.
@@ -161,13 +168,13 @@ public interface wstxI18NLogger {
 	@LogMessage(level = ERROR)
 	public void error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(String arg0);
 
-	@Message(id = 45034, value = "comms timeout attempting to commit WS-AT participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 45034, value = "comms timeout attempting to commit WS-AT participant {0} : {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(String arg0);
+	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(String id, Durable2PCParticipant participant);
 
-	@Message(id = 45035, value = "comms timeout attempting to prepare WS-AT participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 45035, value = "comms timeout attempting to prepare WS-AT participant {0} : {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(String arg0);
+	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(String id, Durable2PCParticipant participant);
 
 	@Message(id = 45036, value = "Not implemented!", format = MESSAGE_FORMAT)
 	public String get_mwlabs_wst_at_remote_Transaction11ManagerImple_1();
@@ -264,6 +271,71 @@ public interface wstxI18NLogger {
     @Message(id = 45062, value = "Coordinator cancelled the activity", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
    	public void warn_mwlabs_wst11_ba_coordinator_cancelled_activity();
+
+    @Message(id = 45063, value = "Wrong vote type {0} on prepare of volatile 2PC participant {1}."
+            + "Expecting one from {2}.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Volatile2PC_prepare_wrong_type(com.arjuna.wst.Vote vote,
+            Volatile2PCParticipant participant, List<Class<?>> expectedVotes);
+
+    @Message(id = 45064, value = "Calling prepare on volatile participant but participant is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Volatile2PC_prepare_is_null();
+
+    @Message(id = 45065, value = "Can't prepare participant {0}.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Volatile2PC_prepare(Volatile2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45066, value = "Calling confirm on volatile participant but participant is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Volatile2PC_confirm_is_null();
+
+    @Message(id = 45067, value = "Calling cancel on volatile participant but participant is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Volatile2PC_cancel_is_null();
+
+    @Message(id = 45068, value = "can't commit durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_confirm (
+            String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45069, value = "Calling confirm on durable participant but participant with id {0} is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_confirm_is_null(String id);
+
+    @Message(id = 45070, value = "can't prepare durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_prepare (
+            String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45071, value = "can't commit one phase durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_wst_at_participants_Durable2PC_commit_one_phase (
+            String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45072, value = "Calling cancel on durable participant but participant with id {0} is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_cancel_is_null(String id);
+
+    @Message(id = 45073, value = "Durable participant {0} : {1} was cancelled.", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_wst_at_participants_Durable2PC_canceled(String id, Durable2PCParticipant participant);
+
+    @Message(id = 45074, value = "Confirm one phase call of durable participant {0} : {1} failed.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_one_phase_failed(String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45075, value = "Calling confirm one phase on durable participant but participant with id {0} is null.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_confirm_one_phase_is_null(String id);
+
+    @Message(id = 45076, value = "Unknown call of participant {0} : {1} failed.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_unknown(String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+    @Message(id = 45077, value = "One phase confirm of participant {0} : {1} returned not expected vote {2}.", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_wst_at_participants_Durable2PC_one_phase_wrong_vote(String id, Durable2PCParticipant participant, String vote);
 
     /*
         Allocate new messages directly above this notice.

@@ -139,8 +139,6 @@ public class ParticipantRecord extends
 		catch (Exception ex6) {
             wscfLogger.i18NLogger.warn_model_twophase_arjunacore_ParticipantRecord_3(order(), ex6);
 
-            ex6.printStackTrace();
-
             return TwoPhaseOutcome.FINISH_ERROR;
         }
 	}
@@ -506,8 +504,6 @@ public class ParticipantRecord extends
 		}
 		catch (Exception e) {
             wscfLogger.i18NLogger.warn_model_twophase_arjunacore_ParticipantRecord_12(order(), e);
-
-            e.printStackTrace();
         }
 
 		return false;

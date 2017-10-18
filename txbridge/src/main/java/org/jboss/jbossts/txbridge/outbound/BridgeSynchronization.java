@@ -59,6 +59,7 @@ public class BridgeSynchronization implements Synchronization
             // JTA does not explicitly provide for beforeCompletion signalling problems, but in
             // our impl the engine will set the tx rollbackOnly if beforeCompletion throw an exception
             // Note com.arjuna.ats.jta.TransactionManager.getTransaction().setRollbackOnly may also work.
+            txbridgeLogger.i18NLogger.error_bridge_wrapper_prepare_volatile(bridgeWrapper);
             throw new RuntimeException("BridgeWrapper.prepareVolatile() returned false");
         }
     }

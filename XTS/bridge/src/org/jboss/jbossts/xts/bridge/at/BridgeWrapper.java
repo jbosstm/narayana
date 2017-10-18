@@ -246,6 +246,12 @@ public class BridgeWrapper
         coordinator.rollback();
 	}
 
+	@Override
+	public String toString() {
+	    return String.format("XTS WS-AT bridge (%s) id %s of subordinate type %s managed by coordinator %s of context %s",
+	            super.toString(), id, subordinateType, coordinator, context);
+	}
+
     private SubordinateATCoordinator coordinator;
     private TxContext context;
     private String id;
