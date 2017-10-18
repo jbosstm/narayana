@@ -22,6 +22,8 @@
 package org.jboss.narayana.compensations.api;
 
 /**
+ * Exception thrown if unexpected transaction is found on the thread.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class InvalidTransactionException extends Exception {

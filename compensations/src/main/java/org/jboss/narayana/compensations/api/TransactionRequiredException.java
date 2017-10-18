@@ -22,6 +22,8 @@
 package org.jboss.narayana.compensations.api;
 
 /**
+ * Exception thrown when an expected transaction is not found on the thread.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class TransactionRequiredException extends Exception {

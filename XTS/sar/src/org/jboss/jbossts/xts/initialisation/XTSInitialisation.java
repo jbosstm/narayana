@@ -1,7 +1,7 @@
 package org.jboss.jbossts.xts.initialisation;
 
 /**
- * interface allowing initialisation code to eb ;plugged into the XTS Service startup
+ * interface allowing initialization code to be plugged into the XTS Service startup
  */
 public interface XTSInitialisation
 {

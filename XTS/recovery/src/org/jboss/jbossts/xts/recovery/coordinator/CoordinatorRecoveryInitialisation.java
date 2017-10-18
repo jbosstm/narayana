@@ -73,9 +73,12 @@ public class CoordinatorRecoveryInitialisation
     }
 
     /**
-     * shutdown routine which removes all installed recovery modules
+     * Shutdown routine which removes all installed recovery modules.
+     *
+     * @param isWaitOnRecoveryScan  will we waiting for recovery manager
+     *   to finish recovery scanning before removing module
      */
-    public static void shutdown()
+    public static void shutdown(boolean isWaitOnRecoveryScan)
     {
         if (!initialised) {
             return;
@@ -85,7 +88,7 @@ public class CoordinatorRecoveryInitialisation
 
         while (iterator.hasNext()) {
             XTSRecoveryModule module = iterator.next();
-            RecoveryManager.manager().removeModule(module, true);
+            RecoveryManager.manager().removeModule(module, isWaitOnRecoveryScan);
             module.uninstall();
         }
 
