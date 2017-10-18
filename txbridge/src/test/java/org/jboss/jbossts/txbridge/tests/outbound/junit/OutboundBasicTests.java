@@ -34,6 +34,9 @@ import org.junit.*;
 import org.jboss.byteman.contrib.dtest.*;
 import org.junit.runner.RunWith;
 
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.mwlabs.wst.at.participants.VolatileTwoPhaseCommitParticipant;
+
 import java.net.URL;
 
 /**
@@ -141,6 +144,35 @@ public class OutboundBasicTests extends AbstractBasicTests {
         instrumentedTestDurableParticipant.assertMethodNotCalled("prepare");
         instrumentedTestDurableParticipant.assertMethodCalled("rollback");
         instrumentedTestDurableParticipant.assertMethodNotCalled("commit");
+    }
+
+    /**
+     * Reproducing trouble of possible NullPointerException being thrown from the BasicAction#doAbort.
+     * See JBTM-2948 for more details.
+     */
+    @Test
+    @OperateOnDeployment(OUTBOUND_CLIENT_DEPLOYMENT_NAME)
+    public void testSynchronizationFailure(@ArquillianResource URL baseURL) throws Exception {
+
+        instrumentor.injectFault(VolatileTwoPhaseCommitParticipant.class, "beforeCompletion",
+            RuntimeException.class, new Object[]{"injected BeforeCompletion fault"});
+        instrumentor.injectFault(com.arjuna.wst11.stub.ParticipantStub.class, "rollback",
+            com.arjuna.wst.SystemException.class, new Object[]{"injected bridge participant fault"});
+
+        instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$1 = true"); // shouldCommit=true
+
+        InstrumentedClass basicActionInstrumented = instrumentor.instrumentClass(BasicAction.class);
+
+        String output = execute(baseURL.toString() + TestClient.URL_PATTERN);
+
+        Assert.assertTrue("Failure was injected, rollback was expected", output.contains("RollbackException"));
+        // if clean from NPE then the cause of the doAbort call can be saved as deffered exception
+        // at least one instrumented BasicAction has to do so
+        for(InstrumentedInstance ic: basicActionInstrumented.getInstances()) {
+            if(ic.getInvocationCount("addDeferredThrowables") > 0)
+                return;
+        }
+        Assert.fail("There was thrown NullPointerException on BasicAction#doAbort, consult server.log");
     }
 
     @Test

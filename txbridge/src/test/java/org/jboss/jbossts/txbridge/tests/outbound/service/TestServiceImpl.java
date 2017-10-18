@@ -55,6 +55,7 @@ public class TestServiceImpl {
     }
 
     public void enlistVolatileParticipant(int count) {
+        log.tracef("enlisting %s of %s", count, TestVolatileParticipant.class.getName());
         TransactionManager tm = TransactionManagerFactory.transactionManager();
         try {
             for (int i = 0; i < count; i++) {
@@ -67,6 +68,7 @@ public class TestServiceImpl {
     }
 
     public void enlistDurableParticipant(int count) {
+        log.tracef("enlisting %s of %s", count, TestDurableParticipant.class.getName());
         TransactionManager tm = TransactionManagerFactory.transactionManager();
         try {
             for (int i = 0; i < count; i++) {
