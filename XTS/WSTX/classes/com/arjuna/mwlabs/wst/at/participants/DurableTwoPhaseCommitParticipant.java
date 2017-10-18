@@ -106,7 +106,10 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		//	catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 		catch (com.arjuna.wst.WrongStateException ex)
 		{
-			throw new WrongStateException(ex.toString());
+			wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_prepare(_id, _resource, ex);
+			WrongStateException wse = new WrongStateException(ex.toString());
+			wse.addSuppressed(ex);
+			throw wse;
 		}
 		/*
 		 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex {
@@ -118,12 +121,17 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		catch (com.arjuna.wst.SystemException ex)
 		{
             if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
-                // log an error here or else the participant may be left hanging
-                // waiting for a prepare
-                wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(_id);
-                throw new SystemCommunicationException(ex.toString());
-            } else {
-			throw new SystemException(ex.toString());
+                wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(_id, _resource);
+                SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+                sce.addSuppressed(ex);
+                throw sce;
+            }
+            else
+            {
+                wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_prepare(_id, _resource, ex);
+                SystemException se = new SystemException(ex.toString());
+                se.addSuppressed(ex);
+                throw se;
             }
         }
 	}
@@ -148,7 +156,10 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
-				throw new WrongStateException(ex.toString());
+				wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm(_id, _resource, ex);
+				WrongStateException wse = new WrongStateException(ex.toString());
+				wse.addSuppressed(wse);
+				throw wse;
 			}
 			/*
 			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
@@ -161,17 +172,26 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException)
+				{
                     // log an error here -- we will end up writing a heuristic transaction record too
-                    wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(_id);
-                    throw new SystemCommunicationException(ex.toString());
+                    wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(_id, _resource);
+                    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+                    sce.addSuppressed(ex);
+                    throw sce;
                 } else {
-                    throw new SystemException(ex.toString());
+                    wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm(_id, _resource, ex);
+                    SystemException se = new SystemException(ex.toString());
+                    se.addSuppressed(ex);
+                    throw se;
                 }
             }
 		}
 		else
-			throw new InvalidParticipantException();
+		{
+			wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm_is_null(_id);
+			throw new InvalidParticipantException("participant " + _id + " to confirm is null");
+		}
 	}
 
     /**
@@ -192,7 +212,9 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
-				throw new WrongStateException(ex.toString());
+				WrongStateException wse = new WrongStateException(ex.toString());
+				wse.addSuppressed(ex);
+				throw wse;
 			}
 			/*
 			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
@@ -205,17 +227,25 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-                if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+                if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException)
+                {
                     // log an error here -- if the participant is dead it will retry anyway
                     wstxLogger.i18NLogger.error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(_id);
-                    throw new SystemCommunicationException(ex.toString());
+                    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+                    sce.addSuppressed(ex);
+                    throw sce;
                 } else {
-                    throw new SystemException(ex.toString());
+                    SystemException se = new SystemException(ex.toString());
+                    se.addSuppressed(ex);
+                    throw se;
                 }
 			}
 		}
 		else
+		{
+			wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_cancel_is_null(_id);
 			throw new InvalidParticipantException();
+		}
 	}
 
 	// TODO mark ParticipantCancelledException explicitly?
@@ -237,7 +267,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
                 // either the prepare timed out or the participant was invalid or in an
                 // invalid state
                 
-                ex.printStackTrace();
+                wstxLogger.i18NLogger.warn_wst_at_participants_Durable2PC_commit_one_phase(_id, _resource, ex);
 
 				v = new VoteCancel();
 			}
@@ -258,6 +288,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
                     // if the rollback times out as well as the prepare we
                     // return an exception which indicates a failed transaction
                 }
+                wstxLogger.i18NLogger.warn_wst_at_participants_Durable2PC_canceled(_id, _resource);
                 throw new ParticipantCancelledException();
 			}
 			else
@@ -270,23 +301,30 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 					}
 					catch (HeuristicHazardException ex)
 					{
+						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
 						throw ex;
 					}
 					catch (HeuristicMixedException ex)
 					{
+						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
 						throw ex;
 					}
 					catch (HeuristicCancelException ex)
 					{
+						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
 						throw ex;
 					}
 					catch (Exception ex)
 					{
-						throw new HeuristicHazardException();
+						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
+						HeuristicHazardException hhe = new HeuristicHazardException();
+						hhe.addSuppressed(ex);
+						throw ex;
 					}
 				}
 				else
 				{
+					wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_wrong_vote(_id, _resource, v.toString());
 					cancel(); // TODO error
 
 					throw new HeuristicHazardException();
@@ -294,7 +332,10 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			}
 		}
 		else
+		{
+		    wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm_one_phase_is_null(_id);
 			throw new InvalidParticipantException();
+		}
 	}
 
 	public void forget () throws InvalidParticipantException,
@@ -314,6 +355,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		}
 		catch (Exception ex)
 		{
+			wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_unknown(_id, _resource, ex);
 			// TODO
 		}
 	}

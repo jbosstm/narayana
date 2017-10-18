@@ -35,9 +35,13 @@ import com.arjuna.wst.Volatile2PCParticipant;
 
 import com.arjuna.mw.wscf.model.twophase.common.*;
 import com.arjuna.mw.wscf.model.twophase.participants.*;
+import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wscf.model.twophase.exceptions.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
@@ -83,11 +87,18 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 						// do nothing
 					}
 					else
-						throw new SystemException();
+					{
+						List<Class<?>> expected = Arrays.asList(com.arjuna.wst.ReadOnly.class, com.arjuna.wst.Prepared.class);
+						wstxLogger.i18NLogger.error_wst_at_participants_Volatile2PC_prepare_wrong_type(vt, _resource, expected);
+						throw new SystemException("participant on before completion preparation resulted in wrong vote result " + vt);
+					}
 				}
 			}
 			else
-				throw new SystemException();
+			{
+				wstxLogger.i18NLogger.error_wst_at_participants_Volatile2PC_prepare_is_null();
+				throw new SystemException("participant to prepare is null");
+			}
 		}
 		catch (SystemException ex)
 		{
@@ -95,7 +106,10 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 		}
 		catch (Exception ex)
 		{
-			throw new SystemException(ex.toString());
+			wstxLogger.i18NLogger.error_wst_at_participants_Volatile2PC_prepare(_resource, ex);
+			SystemException se = new SystemException(ex.toString());
+			se.addSuppressed(ex);
+			throw se;
 		}
 	}
 
@@ -133,7 +147,9 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 			}
 			catch (Exception ex)
 			{
-				throw new SystemException(ex.toString());
+				SystemException se = new SystemException(ex.toString());
+				se.addSuppressed(ex);
+				throw se;
 			}
 		}
 	}
@@ -151,7 +167,9 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 			// catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
-				throw new WrongStateException(ex.toString());
+				WrongStateException wse = new WrongStateException(ex.toString());
+				wse.addSuppressed(ex);
+				throw wse;
 			}
 			/*
 			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
@@ -164,11 +182,16 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 			// catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				throw new SystemException(ex.toString());
+				SystemException se = new SystemException(ex.toString());
+				se.addSuppressed(ex);
+				throw se;
 			}
 		}
 		else
-			throw new InvalidParticipantException();
+		{
+			wstxLogger.i18NLogger.error_wst_at_participants_Volatile2PC_confirm_is_null();
+			throw new InvalidParticipantException("participant to confirm is null");
+		}
 	}
 
 	private final void cancel () throws InvalidParticipantException,
@@ -184,7 +207,9 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 			// catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
-				throw new WrongStateException(ex.toString());
+			    WrongStateException wse = new WrongStateException(ex.toString());
+			    wse.addSuppressed(ex);
+			    throw wse;
 			}
 			/*
 			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
@@ -197,11 +222,16 @@ public class VolatileTwoPhaseCommitParticipant implements Synchronization
 			// catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				throw new SystemException(ex.toString());
+			    SystemException se = new SystemException(ex.toString());
+			    se.addSuppressed(ex);
+			    throw se;
 			}
 		}
 		else
-			throw new InvalidParticipantException();
+		{
+		    wstxLogger.i18NLogger.error_wst_at_participants_Volatile2PC_cancel_is_null();
+			throw new InvalidParticipantException("praticipant to cancel is null");
+		}
 	}
 
 	private Volatile2PCParticipant _resource = null;
