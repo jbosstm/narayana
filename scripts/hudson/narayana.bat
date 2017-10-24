@@ -48,6 +48,7 @@ echo "Started server"
 @ping 127.0.0.1 -n 20 -w 1000 > nul
 
 rem BUILD BLACKTIE
+set JAVA_OPTS="%JAVA_OPTS% -XX:+HeapDumpOnOutOfMemoryError"
 call build.bat -f blacktie\pom.xml clean install "-Djbossas.ip.addr=%JBOSSAS_IP_ADDR%" %* || (call:fail_build & exit -1)
 
 rem SHUTDOWN ANY PREVIOUS BUILD REMNANTS

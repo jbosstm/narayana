@@ -324,6 +324,7 @@
                 </plugins>
             </build>
             <properties>
+                <version.surefire.plugin>2.19.1</version.surefire.plugin>
                 <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
                 <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch}-${project.version}.jar</java.corba.patch.jar>
                 <jvm.jdk9.args>

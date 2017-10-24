@@ -439,7 +439,7 @@
 
     <!-- External dependencies versions -->
     <version.jnpserver>5.0.3.GA</version.jnpserver>
-    <version.org.codehaus.mojo.findbugs-maven-plugin>3.0.5</version.org.codehaus.mojo.findbugs-maven-plugin>
+    <version.com.github.spotbugs.spotbugs-maven-plugin>3.1.0-RC7</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.jandex>1.1.0.Final</version.org.jboss.jandex>
@@ -512,6 +512,7 @@
     <version.org.codehaus.plexus.plexus-archiver>3.0.3</version.org.codehaus.plexus.plexus-archiver>
     <!-- SUREFIRE-1424 we need to downgrade to 2.20 -->
     <version.surefire.plugin>2.20</version.surefire.plugin>
+    <version.doxia>1.7.5</version.doxia>
   </properties>
   <modules>
     <module>tools</module>
@@ -603,6 +604,8 @@
         <properties>
           <maven.compiler.source>1.9</maven.compiler.source>
           <maven.compiler.target>1.9</maven.compiler.target>
+          <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
+          <version.org.jacorb.jacorb-idl-compiler>3.7</version.org.jacorb.jacorb-idl-compiler>
           <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}</server.jvm.args>
         </properties>
       </profile>
@@ -736,7 +739,7 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
-                  <argLine>${surefireArgLine} -Xss2048k</argLine>
+                  <argLine>${surefireArgLine} ${jvm.args.jdk9} -Djdk.attach.allowAttachSelf=true -Xss2048k</argLine>
                   <systemProperties>
                       <property>
                           <name>com.arjuna.ats.arjuna.common.propertiesFile</name>
@@ -792,12 +795,12 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${version.org.codehaus.mojo.findbugs-maven-plugin}</version>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>${version.com.github.spotbugs.spotbugs-maven-plugin}</version>
                         <executions>
                             <execution>
-                                <id>findbugs</id>
+                                <id>spotbugs</id>
                                 <phase>compile</phase>
                                 <goals>
                                     <goal>check</goal>
@@ -811,12 +814,39 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-decoration-model</artifactId>
+                                <version>${version.doxia}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-skin-model</artifactId>
+                                <version>${version.doxia}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-integration-tools</artifactId>
+                                <version>${version.doxia}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-site-renderer</artifactId>
+                                <version>${version.doxia}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-doc-renderer</artifactId>
+                                <version>${version.doxia}</version>
+                            </dependency>
+                        </dependencies>
                         <configuration>
                             <reportPlugins>
                                 <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>findbugs-maven-plugin</artifactId>
-                                    <version>${version.org.codehaus.mojo.findbugs-maven-plugin}</version>
+                                    <groupId>com.github.spotbugs</groupId>
+                                    <artifactId>spotbugs-maven-plugin</artifactId>
+                                    <version>${version.com.github.spotbugs.spotbugs-maven-plugin}</version>
                                 </plugin>
                             </reportPlugins>
                         </configuration>

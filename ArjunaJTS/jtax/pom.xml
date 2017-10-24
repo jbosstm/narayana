@@ -33,6 +33,7 @@
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     <idlj.jdk9.args/>
     <jacorb.jdk9.args/>
+    <surefireArgLine/>
   </properties>
 
   <build>
@@ -324,7 +325,7 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>${jacorb.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${jacorb.jdk9.args}</argLine>
                   <systemProperties combine.children="append">
                      <property>
                        <name>java.util.logging.config.file</name>
@@ -389,7 +390,7 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>${idlj.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args}</argLine>
                   <systemProperties combine.children="append">
                      <property>
                        <name>java.util.logging.config.file</name>
@@ -468,7 +469,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <argLine>${idlj.jdk9.args} ${idlj.boot.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args} ${idlj.boot.args}</argLine>
                   <skip>false</skip>
                   <systemProperties combine.children="append">
                      <property>

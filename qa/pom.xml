@@ -248,8 +248,22 @@
           <artifactId>narayana-jts-idlj</artifactId>
           <version>${project.version}</version>
         </dependency>
+
 	</dependencies>
   <profiles>
+  <profile>
+        <id>j9</id>
+        <activation>
+          <jdk>[1.9,)</jdk>
+        </activation>
+        <dependencies>
+          <dependency>
+            <groupId>org.jacorb</groupId>
+            <artifactId>jacorb-omgapi</artifactId>
+            <version>${version.org.jacorb.jacorb}</version>
+          </dependency>
+        </dependencies>
+  </profile>
 	<profile>
 		<id>postgresql</id>
 		<dependencies>
