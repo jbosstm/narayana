@@ -147,21 +147,6 @@ public class LraAnnotationProcessingExtension implements Extension {
             }
         }
         
-        if(methodsWithStatus.size() > 0) {
-            // @Status - requires @Path and @GET
-            final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
-            Function<Class<?>, String> getStatusMissingErrMsg = (wrongAnnotation) ->
-            getMissingAnnotationError(methodWithStatus, classAnnotatedWithLra, Status.class, wrongAnnotation);
-            boolean isStatusContainsPathAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(Path.class));
-            if(!isStatusContainsPathAnnotation) {
-                throw new DeploymentException(getStatusMissingErrMsg.apply(Path.class));
-            }
-            boolean isStatusContainsPostAnnotation = methodWithStatus.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(GET.class));
-            if(!isStatusContainsPostAnnotation) {
-                throw new DeploymentException(getStatusMissingErrMsg.apply(GET.class));
-            }
-        }
-
         if(methodsWithComplete.size() > 0) {
             // @Complete - requires @Path and @PUT
             final AnnotatedMethod<? super X> methodWithComplete = methodsWithComplete.get(0);
