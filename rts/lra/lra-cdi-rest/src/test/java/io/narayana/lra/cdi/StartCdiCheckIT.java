@@ -24,24 +24,27 @@ package io.narayana.lra.cdi;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestName;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.cdi.CDIFraction;
 import org.wildfly.swarm.jaxrs.JAXRSFraction;
-
-import com.google.common.collect.Lists;
+import org.wildfly.swarm.logging.LoggingFraction;
 
 import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.cdi.bean.AllAnnotationsNoPathBean;
@@ -64,9 +67,24 @@ import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
  * @author Ondra Chaloupka <ochaloup@redhat.com>
  */
 public class StartCdiCheckIT {
+    private static final Logger log = Logger.getLogger(StartCdiCheckIT.class.getName());
+
+    private static final int SWARM_START_TIMEOUT = Integer.getInteger("swarm.test.start.timeout", 2);
+    private static final String LOG_FILE_NAME = "target/cdi-test-swarm.log"; // see logging.properties
 
     @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    public TestName testName = new TestName();
+
+    @Before
+    public void cleanUp() throws Exception {
+        File log = new File(LOG_FILE_NAME);
+        if(log.exists()) {
+            // need to clean file for the next test can check existence of log strings
+            PrintWriter writer = new PrintWriter(log);
+            writer.print("");
+            writer.close();
+        }
+    }
 
     @Test
     public void onlyCompensateAnnotationPresent() throws Exception {
@@ -112,7 +130,7 @@ public class StartCdiCheckIT {
 
     @Test
     public void lraJoinFalseCorrect() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseBean.class));
         } finally {
@@ -122,7 +140,7 @@ public class StartCdiCheckIT {
     
     @Test
     public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseMethodLRABean.class));
         } finally {
@@ -132,7 +150,7 @@ public class StartCdiCheckIT {
 
     @Test
     public void allCorrect() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectBean.class));
         } finally {
@@ -142,7 +160,7 @@ public class StartCdiCheckIT {
     
     @Test
     public void allCorrectLRAOnMethod() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectMethodLRABean.class));
         } finally {
@@ -152,19 +170,13 @@ public class StartCdiCheckIT {
     
     @Test
     public void completeAnnotationIsOptional() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(CompleteOptionalBean.class));
         } finally {
             swarm.stop();
         }
     }
-
-    private static List<String> loggingArgs = Arrays.asList(new String[] {
-            "-Dswarm.logging.periodic-rotating-file-handlers=FILE",
-            "-Dswarm.logging.periodic-rotating-file-handlers.FILE.file.path=%s",
-            "-Dswarm.logging.root-logger.handlers=[CONSOLE,FILE]"
-        });
 
     private WebArchive getBaseDeployment() {
         WebArchive deployment = ShrinkWrap.create(WebArchive.class, "lra-cdi-check.war")
@@ -182,25 +194,57 @@ public class StartCdiCheckIT {
         return deployment;
     }
 
-    private String[] getLoggingArgs(final File logFile) {
-        return Lists.transform(loggingArgs, inputString -> {
-           String outString = inputString;
-           if(inputString.contains("path")) outString = String.format(inputString, logFile.getAbsolutePath());
-           return outString;
-        }).toArray(new String[] {});
-    }
-
-    private Swarm startSwarm(File logFile) throws Exception{
-        return new Swarm(getLoggingArgs(logFile))
+    private Swarm startSwarm() throws Exception{
+        final Swarm swarm = new Swarm()
             .fraction(new JAXRSFraction())
             .fraction(new CDIFraction())
-            .start();
+            .fraction(new LoggingFraction());
+
+        final String testMethodName = this.testName.getMethodName();
+        log.infof("Starting swarm '%s' for test '%s'", swarm, testMethodName);
+
+        runWithTimeout(() -> {
+            try {
+                swarm.start();
+            } catch (Exception startE) {
+                log.errorf(startE, "Error starting swarm '%s' for test '%s'", swarm, testMethodName);
+                runWithTimeout(() -> {
+                    try {
+                        swarm.stop();
+                    } catch (Exception stopE) {
+                        log.debugf(stopE, "Error stopping swarm '%s' for test '%s'", swarm, testMethodName);
+                    }
+                }, 1, TimeUnit.MINUTES);
+            }
+        }, SWARM_START_TIMEOUT, TimeUnit.MINUTES);
+
+        return swarm;
+    }
+
+    private static void runWithTimeout(Runnable r, int timeout, TimeUnit timeUnit) {
+        log.tracef("Running runnable '%s' with timeout '%s' s", r, timeUnit.toSeconds(timeout));
+        ExecutorService e = Executors.newSingleThreadExecutor();
+        e.submit(r);
+
+        try {
+            e.shutdown();
+            e.awaitTermination(timeout, timeUnit);
+        }
+        catch (InterruptedException ie) {
+            log.debugf(ie, "Shutdowning executor '%s' task of test execution interrupted", r);
+        }
+        finally {
+            if (!e.isTerminated()) {
+                log.debugf("Executor '%s' was not finished we are going to forcibly end it", r);
+            }
+            e.shutdownNow();
+        }
     }
 
     private void checkSwarmWithDeploymentException(String stringToMatch, Class<?>... classesToAdd) throws Exception {
-        File logFile = tmpFolder.newFile();
-        Swarm swarm = startSwarm(logFile);
+        Swarm swarm = startSwarm();
         try {
+            log.infof("Test '%s' of swarm '%s' deploying '%s'", testName.getMethodName(), swarm, classesToAdd);
             swarm
                 .deploy(getBaseDeployment().addClasses(classesToAdd));
             Assert.fail("Expected deployment exception to be thrown");
@@ -210,7 +254,7 @@ public class StartCdiCheckIT {
             swarm.stop();
         }
 
-        assertLogLine(logFile, stringToMatch);
+        assertLogLine(new File(LOG_FILE_NAME), stringToMatch);
     }
 
     private void assertLogLine(File file, String expectedString) throws IOException {
