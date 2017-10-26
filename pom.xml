@@ -374,6 +374,36 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+              <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <excludes>**/*$logger.java,**/*$bundle.java</excludes>
+              <useFile/>
+              <!-- checkstyle is set to be run on particular modules by disabling skip -->
+              <skip>true</skip>
+          </configuration>
+          <dependencies>
+              <dependency>
+                  <groupId>org.wildfly.checkstyle</groupId>
+                  <artifactId>wildfly-checkstyle-config</artifactId>
+                  <version>${version.org.wildfly.checkstyle-config}</version>
+              </dependency>
+          </dependencies>
+          <executions>
+              <execution>
+                  <id>check-style</id>
+                  <phase>compile</phase>
+                  <goals>
+                      <goal>checkstyle</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -456,6 +486,7 @@
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
     <version.org.mockito>1.10.19</version.org.mockito>
+    <version.org.wildfly.checkstyle-config>1.0.6.Final</version.org.wildfly.checkstyle-config>
 
     <!-- Maven plugin versions -->
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>

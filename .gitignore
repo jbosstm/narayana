@@ -2,6 +2,7 @@ target
 .project
 .classpath
 .settings
+.checkstyle
 *.iml
 .idea
 jboss-as

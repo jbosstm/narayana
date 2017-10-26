@@ -149,8 +149,7 @@ public class LRARecoveryModule implements RecoveryModule {
         return uidVector ;
     }
 
-    private void processTransactionsStatus()
-    {
+    private void processTransactionsStatus() {
         // JBTM-2016 If the volatile object store is used we would not be able
         // to recover anything but if this module is still configured it would
         // get an NPE

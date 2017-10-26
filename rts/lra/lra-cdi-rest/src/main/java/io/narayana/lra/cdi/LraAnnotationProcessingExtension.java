@@ -62,7 +62,7 @@ import io.narayana.lra.annotation.Status;
  * are defined in LRA specification.
  * <p>
  * In case of validity violation the {@link DeploymentException} is thrown.
- * 
+ *
  * @author Ondra Chaloupka <ochaloup@redhat.com>
  */
 public class LraAnnotationProcessingExtension implements Extension {
@@ -85,7 +85,7 @@ public class LraAnnotationProcessingExtension implements Extension {
                 .collect(Collectors.toList());
         lraAnnotations.addAll(methodlraAnnotations);
         // if any of the LRA annotations have set the join attribute to true (join se to true means
-        // handling it as full LRA participant which needs to be completed, compensated...) 
+        // handling it as full LRA participant which needs to be completed, compensated...)
         // then have to process checks for compulsory LRA annotations
         boolean isJoin = lraAnnotations.stream().anyMatch(m -> m.join());
 
@@ -146,7 +146,7 @@ public class LraAnnotationProcessingExtension implements Extension {
                 throw new DeploymentException(getCompensateMissingErrMsg.apply(PUT.class));
             }
         }
-        
+
         if(methodsWithComplete.size() > 0) {
             // @Complete - requires @Path and @PUT
             final AnnotatedMethod<? super X> methodWithComplete = methodsWithComplete.get(0);
@@ -161,7 +161,7 @@ public class LraAnnotationProcessingExtension implements Extension {
                 throw new DeploymentException(getCompleteMissingErrMsg.apply(PUT.class));
             }
         }
-        
+
         if(methodsWithStatus.size() > 0) {
             // @Status - requires @Path and @GET
             final AnnotatedMethod<? super X> methodWithStatus = methodsWithStatus.get(0);
@@ -185,7 +185,7 @@ public class LraAnnotationProcessingExtension implements Extension {
                 throw new DeploymentException(getMissingAnnotationError(methodWithLeave, classAnnotatedWithLra, Leave.class, PUT.class));
             }
         }
-        
+
         if(methodsWithForget.size() > 0) {
             // @Forget - requires @DELETE
             final AnnotatedMethod<? super X> methodWithForget = methodsWithForget.get(0);

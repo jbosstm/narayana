@@ -45,14 +45,14 @@ public class ForgetWithoutDeleteBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     @Path("compensate")
     @PUT
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET
