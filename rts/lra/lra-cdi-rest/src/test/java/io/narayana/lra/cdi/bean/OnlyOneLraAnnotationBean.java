@@ -23,7 +23,6 @@
 package io.narayana.lra.cdi.bean;
 
 import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
 import io.narayana.lra.annotation.Status;
 import io.narayana.lra.annotation.LRA;
 

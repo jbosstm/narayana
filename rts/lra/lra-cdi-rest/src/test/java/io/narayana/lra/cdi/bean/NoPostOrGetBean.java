@@ -35,19 +35,19 @@ import io.narayana.lra.annotation.Status;
  */
 @LRA
 public class NoPostOrGetBean {
-    
+
     @Path("/complete")
     @Complete
     public void complete() {
         // no implementation needed
     }
-    
+
     @Path("/compensate")
     @Compensate
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Path("/status")
     @Status
     public void status() {

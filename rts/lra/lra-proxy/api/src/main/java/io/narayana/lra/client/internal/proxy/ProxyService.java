@@ -65,7 +65,7 @@ public class ProxyService implements LRAManagement {
     private static final String COORDINATOR_PATH_NAME = "lra-coordinator"; // LRAClient.COORDINATOR_PATH_NAME
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
 
-    static private List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
+    private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
 
     private Client lcClient;
     private WebTarget lcTarget;
@@ -221,7 +221,7 @@ public class ProxyService implements LRAManagement {
     }
 
     private static Optional<String> serializeParticipant(final Serializable object) {
-        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(object);
 
@@ -236,7 +236,7 @@ public class ProxyService implements LRAManagement {
     private static Optional<LRAParticipant> deserializeParticipant(final LRAParticipantDeserializer deserializer, final String objectAsString) {
         final byte[] data = Base64.getDecoder().decode(objectAsString);
 
-        try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
             return Optional.of((LRAParticipant) ois.readObject());
         } catch (final IOException | ClassNotFoundException e) {
             if (deserializer != null) {

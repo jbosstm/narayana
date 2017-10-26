@@ -56,6 +56,32 @@ Code Coverage Testing
 ---------------------
   ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
 
+Checkstyle
+----------
+
+Narayana expect usage of the style of code defined by WildFly checkstyle (maven artifact 
+[org.wildfly.checkstyle:wildfly-checkstyle-config](https://github.com/wildfly/wildfly-checkstyle-config)).
+
+Because of historical reasons the checkstyle is applied only at newly developed Narayana modules.
+The old ones are left without strict code style rules. There is only a recommendation to follow
+code style used in the particular file you edit.
+
+Checkstyle checking is bound to maven install phase and if the file does not comply with the defined rules
+the compilation fails.
+
+To get your developer life easier use the checkstyle plugins for your IDE
+
+* clone the repo with the
+  [checkstyle.xml](https://github.com/wildfly/wildfly-checkstyle-config/blob/master/src/main/resources/wildfly-checkstyle/checkstyle.xml)
+  file https://github.com/wildfly/wildfly-checkstyle-config
+* install checkstyle plugin to your favourite IDE
+** IntelliJ IDEA: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
+** Eclipse: http://eclipse-cs.sourceforge.net
+* configure plugin to consume the *checkstyle.xml* and being applied to the particular module
+
+The WildFly provides a formatter complying with the checkstyle rules. If interested check the IDE configs
+at project [wildfly-core](https://github.com/wildfly/wildfly-core/tree/master/ide-configs).
+
 Build QA
 --------
 

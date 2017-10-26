@@ -45,12 +45,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -90,7 +88,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             // if compensateURI is a link parse it into compensate,complete and status urls
             if (linkURI.startsWith("<")) {
                 linkURI = cannonicalForm(linkURI);
-                Exception parseException[] = {null};
+                Exception[] parseException = { null };
 
                 Arrays.stream(linkURI.split(",")).forEach((linkStr) -> {
                     Exception e = parseLink(linkStr);
@@ -680,33 +678,27 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return getTypeId();
     }
 
-    public int nestedAbort()
-    {
+    public int nestedAbort() {
         return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public int nestedCommit()
-    {
+    public int nestedCommit() {
         return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public int nestedPrepare()
-    {
+    public int nestedPrepare() {
         return TwoPhaseOutcome.PREPARE_OK; // do nothing
     }
 
-    public int nestedOnePhaseCommit()
-    {
+    public int nestedOnePhaseCommit() {
         return TwoPhaseOutcome.FINISH_ERROR;
     }
 
-    public String type()
-    {
+    public String type() {
         return TYPE_NAME;
     }
 
-    public boolean doSave()
-    {
+    public boolean doSave() {
         return true;
     }
 
@@ -716,23 +708,19 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public void alter(AbstractRecord a) {
     }
 
-    public boolean shouldAdd(AbstractRecord a)
-    {
+    public boolean shouldAdd(AbstractRecord a) {
         return (a.typeIs() == typeIs());
     }
 
-    public boolean shouldAlter(AbstractRecord a)
-    {
+    public boolean shouldAlter(AbstractRecord a) {
         return false;
     }
 
-    public boolean shouldMerge(AbstractRecord a)
-    {
+    public boolean shouldMerge(AbstractRecord a) {
         return false;
     }
 
-    public boolean shouldReplace(AbstractRecord a)
-    {
+    public boolean shouldReplace(AbstractRecord a) {
         return false;
     }
 

@@ -44,14 +44,14 @@ public class MultiForgetBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     @Path("compensate")
     @PUT
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET
@@ -64,7 +64,7 @@ public class MultiForgetBean {
     public void foget1() {
         // no implementation needed
     }
-    
+
     @Forget
     @DELETE
     public void foget2() {

@@ -77,7 +77,7 @@ public class LRASmokeIT {
         File[] libs = Maven.resolver()
             .loadPomFromFile("pom.xml")
             .resolve("org.jboss.narayana.rts:lra-filters")
-            .withTransitivity().as(File.class); 
+            .withTransitivity().as(File.class);
 
         deployment.addAsLibraries(libs);
         return deployment;

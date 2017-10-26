@@ -100,7 +100,7 @@ public class SpecIT {
         File[] libs = Maven.resolver()
             .loadPomFromFile("pom.xml")
             .resolve("org.jboss.narayana.rts:lra-filters")
-            .withTransitivity().as(File.class); 
+            .withTransitivity().as(File.class);
 
         deployment.addAsLibraries(libs);
         return deployment;
@@ -462,12 +462,12 @@ public class SpecIT {
                 response.close();
         }
     }
-    
+
     /*
      * Participants can pass data during enlistment and this data will be returned during
      * the complete/compensate callbacks
      */
-//    @Test // this test passes when ran under surefire but fails as an Arquilian test - TODO debug it
+    // @Test // this test passes when ran under surefire but fails as an Arquilian test - TODO debug it
     public void testUserData() {
         List<LRAStatus> lras = lraClient.getActiveLRAs();
         int count = lras.size();

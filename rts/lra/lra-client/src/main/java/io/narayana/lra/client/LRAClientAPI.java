@@ -80,7 +80,7 @@ public interface LRAClientAPI {
 
     /**
      * Lookup active LRAs
-     * 
+     *
      * @throws GenericLRAException on error
      */
     List<LRAStatus> getActiveLRAs() throws GenericLRAException;
@@ -120,7 +120,7 @@ public interface LRAClientAPI {
     /**
      * Indicates whether an LRA is active. The same information can be obtained via a call to
      * {@link LRAClientAPI#getStatus(URL)}.
-     * 
+     *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
      * {@link GenericLRAException#getCause()} and/or {@link GenericLRAException#getStatusCode()}
@@ -131,7 +131,7 @@ public interface LRAClientAPI {
     /**
      * Indicates whether an LRA was compensated. The same information can be obtained via a call to
      * {@link LRAClientAPI#getStatus(URL)}.
-     * 
+     *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
      * {@link GenericLRAException#getCause()} and/or {@link GenericLRAException#getStatusCode()}
@@ -142,7 +142,7 @@ public interface LRAClientAPI {
     /**
      * Indicates whether an LRA is complete. The same information can be obtained via a call to
      * {@link LRAClientAPI#getStatus(URL)}.
-     * 
+     *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
      * {@link GenericLRAException#getCause()} and/or {@link GenericLRAException#getStatusCode()}
@@ -152,7 +152,7 @@ public interface LRAClientAPI {
     /**
      * A participant can join with the LRA at any time prior to the completion of an activity.
      * The participant provides end points on which it will listen for LRA related events.
-     * 
+     *
      * @param lraId   The unique identifier of the LRA (required) to enlist with
      * @param timelimit The time limit (in seconds) that the participant can guarantee that it
      *                can compensate the work performed while the LRA is active.
@@ -220,7 +220,7 @@ public interface LRAClientAPI {
 
     /**
      * A Compensator can resign from the LRA at any time prior to the completion of an activity
-     * 
+     *
      * @param lraId The unique identifier of the LRA (required)
      * @param body  (optional)
      * @throws GenericLRAException if the request to the coordinator failed.

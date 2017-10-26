@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>lra-filters</artifactId>
-    <name>LRA Participant Filters</name> 
+    <name>LRA Participant Filters</name>
     <packaging>jar</packaging>
 
     <build>

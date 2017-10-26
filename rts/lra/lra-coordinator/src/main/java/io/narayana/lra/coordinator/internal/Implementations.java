@@ -35,19 +35,16 @@ import io.narayana.lra.coordinator.domain.model.LRARecord;
  * @since JTS 1.0.
  */
 
-class LRACompensatorMap implements RecordTypeMap
-{
+class LRACompensatorMap implements RecordTypeMap {
     @SuppressWarnings("unchecked")
-    public Class getRecordClass ()
-    {
+    public Class getRecordClass () {
         return LRARecord.class;
     }
-    
-    public int getType ()
-    {
+
+    public int getType () {
         return RecordType.USER_DEF_FIRST0;
     }
-    
+
 }
 
 public class Implementations {
@@ -57,7 +54,7 @@ public class Implementations {
     public static synchronized void install () {
         if (!_added) {
             RecordTypeManager.manager().add(new LRACompensatorMap());
-            
+
             _added = true;
         }
     }

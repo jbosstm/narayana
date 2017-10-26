@@ -21,12 +21,9 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.narayana.lra.annotation.CompensatorStatus;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
 
 //@Data
 //@AllArgsConstructor

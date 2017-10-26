@@ -40,7 +40,7 @@ import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA
 @ApplicationScoped
 @Path(LRA_PROXY_PATH)
 public class ParticipantProxyResource {
-    final static String LRA_PROXY_PATH = "lraproxy";
+    static final String LRA_PROXY_PATH = "lraproxy";
     @Inject
     private ProxyService proxyService;
 
@@ -51,7 +51,7 @@ public class ParticipantProxyResource {
                          String participantData) throws MalformedURLException, UnsupportedEncodingException {
         return proxyService.notifyParticipant(toURL(lraId, true), participantId, participantData, false);
     }
-    
+
     @Path("{lraId}/{pId}/compensate")
     @PUT
     public Response compensate(@PathParam("lraId")String lraId,

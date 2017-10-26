@@ -31,8 +31,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
-import java.util.ArrayList;
-
 class RecoveringLRA extends Transaction {
     /**
      * Re-creates/activates an LRA for the specified transaction Uid.
@@ -51,8 +49,7 @@ class RecoveringLRA extends Transaction {
     /**
      * Replays phase 2 of the commit protocol.
      */
-    public void replayPhase2()
-    {
+    public void replayPhase2() {
         if (tsLogger.logger.isDebugEnabled()) {
             tsLogger.logger.debug("RecoveringLRA.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
         }

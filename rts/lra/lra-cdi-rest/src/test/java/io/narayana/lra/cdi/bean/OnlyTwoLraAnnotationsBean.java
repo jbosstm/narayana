@@ -28,7 +28,7 @@ import io.narayana.lra.annotation.LRA;
 import io.narayana.lra.annotation.Status;
 
 /**
- * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status} 
+ * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status}
  * but the LRA prescribe for the bean to contain two compulsory: {@link Compensate} and {@link Status}.
  */
 @LRA
@@ -38,7 +38,7 @@ public class OnlyTwoLraAnnotationsBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Status
     public void status() {
         // no implementation needed

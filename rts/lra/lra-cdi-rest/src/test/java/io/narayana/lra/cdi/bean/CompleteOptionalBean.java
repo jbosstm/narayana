@@ -32,7 +32,7 @@ import io.narayana.lra.annotation.Status;
 
 /**
  * {@link LRA} bean which contains annotations - {@link Compensate} and {@link Status}
- * is enough to run the LRA 
+ * is enough to run the LRA
  */
 public class CompleteOptionalBean {
 
@@ -47,7 +47,7 @@ public class CompleteOptionalBean {
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET

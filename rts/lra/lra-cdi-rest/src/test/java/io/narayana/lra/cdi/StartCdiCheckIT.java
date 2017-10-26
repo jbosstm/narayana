@@ -97,31 +97,31 @@ public class StartCdiCheckIT {
         checkSwarmWithDeploymentException("LRA which requires methods handling LRA events. Missing annotations",
             OnlyTwoLraAnnotationsBean.class);
     }
-    
+
     @Test
     public void complementaryPathAnnotation() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*Path",
             AllAnnotationsNoPathBean.class);
     }
-    
+
     @Test
     public void methodTypeAnnotationMissing() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(PUT|GET)",
             NoPostOrGetBean.class);
     }
-    
+
     @Test
     public void forgetMissingDelete() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(DELETE)",
             ForgetWithoutDeleteBean.class);
     }
-    
+
     @Test
     public void leaveMissingPut() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(PUT)",
             LeaveWithoutPutBean.class);
     }
-    
+
     @Test
     public void multiForgetAnnotations() throws Exception {
         checkSwarmWithDeploymentException("multiple annotations.*" + Forget.class.getName(),
@@ -137,7 +137,7 @@ public class StartCdiCheckIT {
             swarm.stop();
         }
     }
-    
+
     @Test
     public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
         Swarm swarm = startSwarm();
@@ -157,7 +157,7 @@ public class StartCdiCheckIT {
             swarm.stop();
         }
     }
-    
+
     @Test
     public void allCorrectLRAOnMethod() throws Exception {
         Swarm swarm = startSwarm();
@@ -167,7 +167,7 @@ public class StartCdiCheckIT {
             swarm.stop();
         }
     }
-    
+
     @Test
     public void completeAnnotationIsOptional() throws Exception {
         Swarm swarm = startSwarm();
@@ -184,13 +184,13 @@ public class StartCdiCheckIT {
             .addAsManifestResource(new StringAsset(LraAnnotationProcessingExtension.class.getName()),
                 "services/javax.enterprise.inject.spi.Extension")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        
+
         File[] libs = Maven.resolver()
             .loadPomFromFile("pom.xml")
             .resolve("org.jboss.narayana.rts:lra-annotations")
-            .withTransitivity().as(File.class); 
+            .withTransitivity().as(File.class);
         deployment.addAsLibraries(libs);
-        
+
         return deployment;
     }
 
