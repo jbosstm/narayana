@@ -21,10 +21,15 @@
  */
 package io.narayana.lra.client;
 
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
-public class InvalidLRAId extends WebApplicationException {
-    public InvalidLRAId(String lraId, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
+@Provider
+public class InvalidLRAIdExceptionMapper implements ExceptionMapper<InvalidLRAIdException> {
+    @Override
+    public Response toResponse(InvalidLRAIdException exception) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(exception.getMessage()).build();
     }
 }

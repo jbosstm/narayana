@@ -27,7 +27,7 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
-import com.arjuna.ats.arjuna.logging.tsLogger;
+import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
@@ -50,8 +50,8 @@ class RecoveringLRA extends Transaction {
      * Replays phase 2 of the commit protocol.
      */
     public void replayPhase2() {
-        if (tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("RecoveringLRA.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
+        if (LRALogger.logger.isDebugEnabled()) {
+            LRALogger.logger.debug("RecoveringLRA.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
         }
 
         if ( _activated )
@@ -79,8 +79,8 @@ class RecoveringLRA extends Transaction {
                 super.phase2Abort( true ) ;
             }
             else {
-                if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
                             + ActionStatus.stringForm(_theStatus));
                 }
             }
@@ -99,8 +99,8 @@ class RecoveringLRA extends Transaction {
             }
         }
         else {
-            if (tsLogger.logger.isInfoEnabled()) {
-                tsLogger.logger.infof(
+            if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.infof(
                         "RecoveringLRA: LRA %s not activated, unable to replay phase 2 commit, will retry later",
                         get_uid());
             }

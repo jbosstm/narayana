@@ -48,6 +48,26 @@
             <version>${version.jaxrs.api}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- jboss logging -->
+        <dependency>
+	      <groupId>org.jboss.logging</groupId>
+	      <artifactId>jboss-logging</artifactId>
+	      <version>${version.org.jboss.logging.jboss-logging}</version>
+	      <scope>provided</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.jboss.logging</groupId>
+	      <artifactId>jboss-logging-processor</artifactId>
+	      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+	      <scope>provided</scope>
+	    </dependency>
+        <!-- LRA API -->
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+	    <!-- testing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -59,11 +79,6 @@
             <artifactId>resteasy-client</artifactId>
             <version>${version.resteasy-client}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-annotations</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
