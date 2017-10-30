@@ -48,17 +48,16 @@ import org.wildfly.swarm.logging.LoggingFraction;
 
 import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.cdi.bean.AllAnnotationsNoPathBean;
-import io.narayana.lra.cdi.bean.CompleteOptionalBean;
+import io.narayana.lra.cdi.bean.AsyncSuspendWithoutForgetBean;
 import io.narayana.lra.cdi.bean.CorrectBean;
 import io.narayana.lra.cdi.bean.CorrectMethodLRABean;
 import io.narayana.lra.cdi.bean.ForgetWithoutDeleteBean;
+import io.narayana.lra.cdi.bean.LRANoContextBean;
 import io.narayana.lra.cdi.bean.LeaveWithoutPutBean;
 import io.narayana.lra.cdi.bean.LraJoinFalseBean;
 import io.narayana.lra.cdi.bean.LraJoinFalseMethodLRABean;
 import io.narayana.lra.cdi.bean.MultiForgetBean;
 import io.narayana.lra.cdi.bean.NoPostOrGetBean;
-import io.narayana.lra.cdi.bean.OnlyOneLraAnnotationBean;
-import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
 
 /**
  * Test case which checks functionality of CDI extension by deploying wrongly
@@ -87,18 +86,6 @@ public class StartCdiCheckIT {
     }
 
     @Test
-    public void onlyCompensateAnnotationPresent() throws Exception {
-        checkSwarmWithDeploymentException("LRA which requires methods handling LRA events. Missing annotations",
-            OnlyOneLraAnnotationBean.class);
-    }
-
-    @Test
-    public void onlyCompleteAndStatusAnnotationsPresent() throws Exception {
-        checkSwarmWithDeploymentException("LRA which requires methods handling LRA events. Missing annotations",
-            OnlyTwoLraAnnotationsBean.class);
-    }
-
-    @Test
     public void complementaryPathAnnotation() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*Path",
             AllAnnotationsNoPathBean.class);
@@ -108,6 +95,12 @@ public class StartCdiCheckIT {
     public void methodTypeAnnotationMissing() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(PUT|GET)",
             NoPostOrGetBean.class);
+    }
+
+    @Test
+    public void asyncInvocationWithoutForgetDefined() throws Exception {
+        checkSwarmWithDeploymentException("The LRA class has to contain @Status and @Forget annotations",
+                AsyncSuspendWithoutForgetBean.class);
     }
 
     @Test
@@ -169,10 +162,10 @@ public class StartCdiCheckIT {
     }
 
     @Test
-    public void completeAnnotationIsOptional() throws Exception {
+    public void noLraContext() throws Exception {
         Swarm swarm = startSwarm();
         try {
-            swarm.deploy(getBaseDeployment().addClasses(CompleteOptionalBean.class));
+            swarm.deploy(getBaseDeployment().addClasses(LRANoContextBean.class));
         } finally {
             swarm.stop();
         }

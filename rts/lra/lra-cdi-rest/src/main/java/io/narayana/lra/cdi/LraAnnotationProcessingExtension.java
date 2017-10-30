@@ -43,6 +43,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.container.Suspended;
 
 import io.narayana.lra.annotation.Compensate;
 import io.narayana.lra.annotation.Complete;
@@ -73,7 +74,6 @@ public class LraAnnotationProcessingExtension implements Extension {
         Supplier<Stream<AnnotatedMethod<? super X>>> sup = () -> classAnnotatedWithLra.getAnnotatedType().getMethods().stream();
         Set<Class<? extends Annotation>> missing = new HashSet<>();
         if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Compensate.class))) missing.add(Compensate.class);
-        if(!sup.get().anyMatch(m -> m.isAnnotationPresent(Status.class))) missing.add(Status.class);
 
         // gathering all LRA annotations in the class
         List<LRA> lraAnnotations = new ArrayList<>();
@@ -84,13 +84,21 @@ public class LraAnnotationProcessingExtension implements Extension {
                 .map(m -> m.getAnnotation(LRA.class))
                 .collect(Collectors.toList());
         lraAnnotations.addAll(methodlraAnnotations);
-        // if any of the LRA annotations have set the join attribute to true (join se to true means
+
+        // when LRA annotations expect no context then they are not part of the LRA and no handling
+        // of the completion or compensation is needed
+        boolean isNoLRAContext = lraAnnotations.stream().allMatch(
+                lraAnn -> (lraAnn.value() == LRA.Type.NEVER || lraAnn.value() == LRA.Type.NOT_SUPPORTED));
+        if(isNoLRAContext) return;
+
+        // if any of the LRA annotations have set the join attribute to true (join to be true means
         // handling it as full LRA participant which needs to be completed, compensated...)
         // then have to process checks for compulsory LRA annotations
-        boolean isJoin = lraAnnotations.stream().anyMatch(m -> m.join());
+        boolean isJoin = lraAnnotations.stream().anyMatch(lraAnn -> lraAnn.join());
 
+        final String classAnnotatedWithLraName = classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName();
         if(!missing.isEmpty() && isJoin) {
-            throw new DeploymentException("Class " + classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName() + " uses "
+            throw new DeploymentException("Class " + classAnnotatedWithLraName + " uses "
               + LRA.class.getName() + " which requires methods handling LRA events. Missing annotations in the class: " + missing);
         }
 
@@ -113,7 +121,7 @@ public class LraAnnotationProcessingExtension implements Extension {
 
         BiFunction<Class<?>, List<AnnotatedMethod<? super X>>, String> errorMsg = (clazz, methods) -> String.format(
             "There are used multiple annotations '%s' in the class '%s' on methods %s. Only one per the class is expected.",
-            clazz.getName(), classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName(),
+            clazz.getName(), classAnnotatedWithLraName,
             methods.stream().map(a -> a.getJavaMember().getName()).collect(Collectors.toList()));
         if(methodsWithCompensate.size() > 1) {
             throw new DeploymentException(errorMsg.apply(Compensate.class, methodsWithCompensate));
@@ -145,6 +153,13 @@ public class LraAnnotationProcessingExtension implements Extension {
             if(!isCompensateContainsPutAnnotation) {
                 throw new DeploymentException(getCompensateMissingErrMsg.apply(PUT.class));
             }
+            boolean isCompensateParametersContainsSuspended = methodWithCompensate.getParameters().stream().flatMap(p -> p.getAnnotations().stream())
+                    .anyMatch(a -> a.annotationType().equals(Suspended.class));
+            if(isCompensateParametersContainsSuspended) {
+                if(methodsWithStatus.size() == 0 || methodsWithForget.size() == 0) {
+                    throw new DeploymentException(getMissingAnnotationsForAsynchHandling(methodWithCompensate, classAnnotatedWithLra, Compensate.class));
+                }
+            }
         }
 
         if(methodsWithComplete.size() > 0) {
@@ -159,6 +174,13 @@ public class LraAnnotationProcessingExtension implements Extension {
             boolean isCompleteContainsPutAnnotation = methodWithComplete.getAnnotations().stream().anyMatch(a -> a.annotationType().equals(PUT.class));
             if(!isCompleteContainsPutAnnotation) {
                 throw new DeploymentException(getCompleteMissingErrMsg.apply(PUT.class));
+            }
+            boolean isCompleteParametersContainsSuspended = methodWithComplete.getParameters().stream().flatMap(p -> p.getAnnotations().stream())
+                    .anyMatch(a -> a.annotationType().equals(Suspended.class));
+            if(isCompleteParametersContainsSuspended) {
+                if(methodsWithStatus.size() == 0 || methodsWithForget.size() == 0) {
+                    throw new DeploymentException(getMissingAnnotationsForAsynchHandling(methodWithComplete, classAnnotatedWithLra, Complete.class));
+                }
             }
         }
 
@@ -198,8 +220,16 @@ public class LraAnnotationProcessingExtension implements Extension {
 
     private String getMissingAnnotationError(AnnotatedMethod<?> method, ProcessAnnotatedType<?> classAnnotated,
         Class<?> lraTypeAnnotation, Class<?> complementaryAnnotation) {
-        return String.format("Method '%s' of class '%s' annotated by '%s' should use complementary annotation %s",
+        return String.format("Method '%s' of class '%s' annotated with '%s' should use complementary annotation %s",
             method.getJavaMember().getName(), classAnnotated.getAnnotatedType().getJavaClass().getName(),
             lraTypeAnnotation.getName(), complementaryAnnotation.getName());
+    }
+
+    private String getMissingAnnotationsForAsynchHandling(AnnotatedMethod<?> method, ProcessAnnotatedType<?> classAnnotated,
+            Class<?> completionAnnotation) {
+        return String.format("Method '%s' of class '%s' annotated with '%s' is defined being asynchronous via @Suspend parameter annotation. " +
+            "The LRA class has to contain @Status and @Forget annotations to activate such handling.",
+                method.getJavaMember().getName(), classAnnotated.getAnnotatedType().getJavaClass().getName(),
+                completionAnnotation.getName());
     }
 }
