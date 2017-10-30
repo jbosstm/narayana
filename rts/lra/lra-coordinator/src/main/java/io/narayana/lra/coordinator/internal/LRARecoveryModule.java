@@ -27,7 +27,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.logging.tsLogger;
+import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -76,14 +76,14 @@ public class LRARecoveryModule implements RecoveryModule {
             if (_recoveryStore.allObjUids( _transactionType, aa_uids ))
                 _transactionUidVector = processTransactions( aa_uids ) ;
         } catch ( ObjectStoreException e ) {
-            if (tsLogger.logger.isInfoEnabled())
-                tsLogger.logger.infof("LRARecoverModule: Object store exception: %s", e.getMessage());
+            if (LRALogger.logger.isInfoEnabled())
+                LRALogger.logger.infof("LRARecoverModule: Object store exception: %s", e.getMessage());
         }
     }
 
     public void periodicWorkSecondPass() {
-        if (tsLogger.logger.isDebugEnabled())
-            tsLogger.logger.debug("AtomicActionRecoveryModule second pass");
+        if (LRALogger.logger.isDebugEnabled())
+            LRALogger.logger.debug("AtomicActionRecoveryModule second pass");
 
         processTransactionsStatus() ;
     }
@@ -103,8 +103,8 @@ public class LRARecoveryModule implements RecoveryModule {
                         && !lraService.getTransaction(lra.getId()).isInFlight())
                     inFlight = false; // lraService knows about it but was loaded at start up time
 
-                if (tsLogger.logger.isDebugEnabled()) {
-                    tsLogger.logger.debug("transaction type is " + _transactionType + " uid is " +
+                if (LRALogger.logger.isDebugEnabled()) {
+                    LRALogger.logger.debug("transaction type is " + _transactionType + " uid is " +
                             recoverUid.toString() + "\n ActionStatus is " + Status +
                             " in flight is " + inFlight);
                 }
@@ -113,16 +113,16 @@ public class LRARecoveryModule implements RecoveryModule {
                     lra.replayPhase2();
 
             } catch ( Exception ex ) {
-                if (tsLogger.logger.isInfoEnabled())
-                    tsLogger.logger.infof("failed to recover Transaction %s: %s", recoverUid, ex.getMessage());
+                if (LRALogger.logger.isInfoEnabled())
+                    LRALogger.logger.infof("failed to recover Transaction %s: %s", recoverUid, ex.getMessage());
             }
     }
 
     private Vector<Uid> processTransactions( InputObjectState uids ) {
         Vector<Uid> uidVector = new Vector<>() ;
 
-        if (tsLogger.logger.isDebugEnabled())
-            tsLogger.logger.debugf("processing transaction type %s", _transactionType);
+        if (LRALogger.logger.isDebugEnabled())
+            LRALogger.logger.debugf("processing transaction type %s", _transactionType);
 
         boolean moreUids = true ;
 
@@ -135,8 +135,8 @@ public class LRARecoveryModule implements RecoveryModule {
                 } else {
                     Uid newUid = new Uid( uid ) ;
 
-                    if (tsLogger.logger.isDebugEnabled()) {
-                        tsLogger.logger.debug("found transaction " + newUid);
+                    if (LRALogger.logger.isDebugEnabled()) {
+                        LRALogger.logger.debug("found transaction " + newUid);
                     }
 
                     uidVector.addElement( newUid ) ;
@@ -164,8 +164,8 @@ public class LRARecoveryModule implements RecoveryModule {
                     if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
                         doRecoverTransaction(currentUid);
                 } catch (ObjectStoreException e) {
-                    if (tsLogger.logger.isInfoEnabled()) {
-                        tsLogger.logger.infof("failed to access transaction store %s: %s",
+                    if (LRALogger.logger.isInfoEnabled()) {
+                        LRALogger.logger.infof("failed to access transaction store %s: %s",
                                 currentUid, e.getMessage());
                     }
                 }
@@ -188,7 +188,7 @@ public class LRARecoveryModule implements RecoveryModule {
                 if (lra.isActivated())
                     lras.put(lra.getId(), lra);
                 else
-                    tsLogger.logger.infof("failed to activate LRA %s", currentUid);
+                    LRALogger.logger.infof("failed to activate LRA %s", currentUid);
             }
         }
     }

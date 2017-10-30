@@ -25,15 +25,16 @@ package io.narayana.lra.client;
 import javax.ws.rs.core.Response;
 
 public class ParentLRAJoinException extends Exception {
-    public Response getReason() {
-        return reason;
-    }
 
-    private Response reason;
+    private final Response reason;
 
     public ParentLRAJoinException(String lraId, String message, Response reason) {
-        super(String.format("%s: %s", lraId, message));
+        super(String.format("%s, lra id: %s", message, lraId));
 
         this.reason = reason;
+    }
+
+    public Response getReason() {
+        return reason;
     }
 }

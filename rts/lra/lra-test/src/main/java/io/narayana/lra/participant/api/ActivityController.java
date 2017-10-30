@@ -100,7 +100,7 @@ public class ActivityController {
         Activity activity = activityService.getActivity(txId);
 
         if (activity.status == null)
-            throw new IllegalLRAStateException(lraId, "LRA is not active", null);
+            throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
 
         if (activity.getAndDecrementAcceptCount() <= 0) {
             if (activity.status == CompensatorStatus.Completing)

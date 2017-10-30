@@ -30,6 +30,7 @@ public class IllegalLRAStateExceptionMapper implements ExceptionMapper<IllegalLR
     @Override
     public Response toResponse(IllegalLRAStateException exception) {
         return Response.status(Response.Status.PRECONDITION_FAILED)
-                .entity(String.format("LRA is in the wrong state for this operation: %s", exception.getMessage())).build();
+                .entity(String.format("LRA is in the wrong state for operation '%s': %s",
+                        exception.getOperation(), exception.getMessage())).build();
     }
 }

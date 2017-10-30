@@ -30,7 +30,6 @@ import java.util.Stack;
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 
 public class Current {
-    //    private static final ThreadLocal<Optional<Current>> lraContext = new ThreadLocal<>();
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();
 
     private Stack<URL> stack;
@@ -146,22 +145,5 @@ public class Current {
         headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
         push(lraId);
     }
-
-
-/*    static Optional<URL> getCurrent() {
-        Optional<Stack<URL>> url = lraContext.get().map(Current::getStack).filter(st -> !st.empty());
-
-        return Optional.ofNullable(url.isPresent() ? url.get().peek() : null);
-    }
-
-
-    private static void setCurrent(URL current) {
-        Optional<Current> o = Optional.of(new Current(current));
-
-        if (lraContext.get() == null)
-            lraContext.set(o);
-        else
-            lraContext.get().ifPresent(c -> c.stack.push(current));
-    }*/
 
 }

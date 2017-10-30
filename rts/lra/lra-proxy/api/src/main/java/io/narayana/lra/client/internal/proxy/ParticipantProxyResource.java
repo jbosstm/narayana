@@ -30,6 +30,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+
+import io.narayana.lra.proxy.logging.LRAProxyLogger;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,6 +77,7 @@ public class ParticipantProxyResource {
         try {
             return proxyService.getStatus(toURL(lraId, true), participantId).name();
         } catch (MalformedURLException e) {
+            LRAProxyLogger.i18NLogger.error_gettingParticipantStatus(participantId, lraId, e);
             throw new InvalidLRAStateException("Caller provided an invalid LRA: " + lraId, e);
         }
     }

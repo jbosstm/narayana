@@ -34,6 +34,7 @@ import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.LRAClient;
 import io.narayana.lra.client.LRAClientAPI;
+import io.narayana.lra.logging.LRALogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -71,8 +72,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private static final String CANCEL_ON_PROP = "CancelOn";
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
 
-    private static Boolean isTrace = Boolean.getBoolean("trace");
-
     @Context
     protected ResourceInfo resourceInfo;
 
@@ -81,11 +80,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
         if (lraId == null && shouldNotBeNull) {
-            throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but no tx", null);
+            throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                    type.name() + " but no tx");
         } else if (lraId != null && !shouldNotBeNull) {
             throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but found tx", null);
+                    type.name() + " but found tx");
         }
     }
 
@@ -170,8 +169,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -181,8 +180,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             case NOT_SUPPORTED:
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -353,7 +352,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
                     LRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
-                System.out.printf("WARNING LRA participant completion for asynchronous method %s#%s should return %d and not %d%n",
+                LRALogger.i18NLogger.warn_lraParticipantqForAsync(
                         resourceInfo.getResourceMethod().getDeclaringClass().getName(),
                         resourceInfo.getResourceMethod().getName(),
                         Response.Status.ACCEPTED.getStatusCode(),
@@ -405,9 +404,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private void lraTrace(ContainerRequestContext context, URL lraId, String reason) {
-        if (isTrace) {
+        if (LRALogger.logger.isTraceEnabled()) {
             Method method = resourceInfo.getResourceMethod();
-            System.out.printf("%s: container request for method %s: lra: %s%n",
+            LRALogger.logger.tracef("%s: container request for method %s: lra: %s%n",
                     reason, method.getDeclaringClass().getName() + "#" + method.getName(),
                     lraId == null ? "context" : lraId);
         }
@@ -415,8 +414,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     private void lraWarn(ContainerRequestContext context, URL lraId, String reason) {
         Method method = resourceInfo.getResourceMethod();
-        System.out.printf("%s: container request for method %s: lra: %s%n",
-                reason, method.getDeclaringClass().getName() + "#" + method.getName(),
-                lraId == null ? "context" : lraId);
+        LRALogger.i18NLogger.warn_lraFilterContainerRequest(reason,
+            method.getDeclaringClass().getName() + "#" + method.getName(), lraId == null ? "context" : lraId.toString());
     }
 }

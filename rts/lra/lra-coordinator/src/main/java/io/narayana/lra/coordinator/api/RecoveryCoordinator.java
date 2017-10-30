@@ -24,6 +24,7 @@ package io.narayana.lra.coordinator.api;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import io.narayana.lra.logging.LRALogger;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -80,8 +81,10 @@ public class RecoveryCoordinator {
 
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
 
-        if (compensatorUrl == null)
+        if (compensatorUrl == null) {
+            LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
             throw new NotFoundException(rcvCoordId);
+        }
 
         return compensatorUrl;
     }
@@ -114,8 +117,8 @@ public class RecoveryCoordinator {
             try {
                 lra = new URL(lraId);
             } catch (MalformedURLException e) {
-                throw new GenericLRAException(null,
-                        Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e.getCause());
+                LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensator(lraId, compensatorUrl, e);
+                throw new GenericLRAException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e.getCause());
             }
 
             lraService.updateRecoveryURL(lra, newCompensatorUrl, rcvCoordId, true);
@@ -123,11 +126,13 @@ public class RecoveryCoordinator {
             try {
                 return context.getRequestUri().toURL().toExternalForm();
             } catch (MalformedURLException e) { // cannot happen
+                LRALogger.i18NLogger.error_invalidFormatOfRequestUri(context.getRequestUri(), lraId, compensatorUrl, e);
                 throw new GenericLRAException(lra,
                         Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e.getCause());
             }
         }
 
+        LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
         throw new NotFoundException(rcvCoordId);
     }
 

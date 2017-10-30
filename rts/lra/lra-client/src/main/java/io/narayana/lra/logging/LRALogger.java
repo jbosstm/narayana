@@ -19,17 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+package io.narayana.lra.logging;
 
-@Provider
-public class GenericLRAExceptionMapper implements ExceptionMapper<GenericLRAException> {
-    @Override
-    public Response toResponse(GenericLRAException exception) {
-        return Response.status(exception.getStatusCode())
-                .entity(exception.getMessage()).build();
-    }
+import org.jboss.logging.Logger;
+
+public final class LRALogger {
+    public static final Logger logger = Logger.getLogger("io.narayana.lra");
+    public static final lraI18NLogger i18NLogger = Logger.getMessageLogger(lraI18NLogger.class, "io.narayana.lra");
 }

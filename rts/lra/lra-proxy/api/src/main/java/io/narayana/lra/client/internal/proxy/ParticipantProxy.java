@@ -25,6 +25,7 @@ import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.participant.LRAParticipant;
 import io.narayana.lra.client.participant.LRAParticipantDeserializer;
 import io.narayana.lra.client.participant.TerminationException;
+import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import java.net.URL;
 import java.util.Optional;
@@ -114,10 +115,7 @@ class ParticipantProxy {
             } catch (ExecutionException e) {
                 if (!TerminationException.class.equals(e.getCause().getClass())) {
                     // the participant threw an unexpected exception
-                    System.err.printf("Participant %s exception during completion: %s%n",
-                            participant.getClass().getName(), e.getMessage());
-
-                    e.printStackTrace(System.err);
+                    LRAProxyLogger.i18NLogger.error_participantExceptionOnCompletion(participant.getClass().getName(), e);
                 }
 
                 return Optional.of(getFailedStatus());

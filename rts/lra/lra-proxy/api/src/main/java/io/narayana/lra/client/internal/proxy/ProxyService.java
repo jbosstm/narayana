@@ -27,6 +27,7 @@ import io.narayana.lra.client.participant.LRAParticipantDeserializer;
 import io.narayana.lra.client.participant.JoinLRAException;
 import io.narayana.lra.client.participant.LRAManagement;
 import io.narayana.lra.client.participant.TerminationException;
+import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -152,7 +153,7 @@ public class ProxyService implements LRAManagement {
 
             return Response.ok().build();
         } else {
-            System.err.printf("TODO recovery: null participant for callback %s%n", lraId.toExternalForm());
+            LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toExternalForm());
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -227,7 +228,7 @@ public class ProxyService implements LRAManagement {
 
             return Optional.of(Base64.getEncoder().encodeToString(baos.toByteArray()));
         } catch (final IOException e) {
-            System.err.printf("ProxyService: participant serialization problem: %s%n", e.getMessage());
+            LRAProxyLogger.i18NLogger.error_cannotSerializeParticipant(e.toString(), e);
 
             return Optional.empty();
         }
@@ -246,7 +247,7 @@ public class ProxyService implements LRAManagement {
                     return Optional.of(LRAParticipant);
             }
 
-            System.err.printf("ProxyService: participant deserialization problem: %s%n", e.getMessage());
+            LRAProxyLogger.i18NLogger.error_cannotDeserializeParticipant(deserializer, e);
 
             return Optional.empty();
         }

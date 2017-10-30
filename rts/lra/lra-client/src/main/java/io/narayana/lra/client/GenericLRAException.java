@@ -25,21 +25,93 @@ import javax.ws.rs.WebApplicationException;
 import java.net.URL;
 
 public class GenericLRAException extends WebApplicationException {
-    private URL lraId;
-    private int statusCode;
+    private final String lraId;
+    private final int statusCode;
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param lraId  URL of lra id that this exception relates to
+     * @param statusCode  error status code behind the creation of this exception
+     * @param message  error exception message
+     * @param cause  cause of the exception
+     */
+    public GenericLRAException(URL lraId, int statusCode, String message, Throwable cause) {
+        this((String) (lraId == null ? null : lraId.toString()), statusCode, message, cause);
+    }
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param statusCode  error status code behind the creation of this exception
+     * @param message  error exception message
+     */
+    public GenericLRAException(int statusCode, String message) {
+        super(message);
+
+        this.lraId = null;
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param lraId  URL of lra id that this exception relates to
+     * @param statusCode  error status code behind the creation of this exception
+     */
+    public GenericLRAException(URL lraId, int statusCode) {
+        this.lraId = lraId == null ? null : lraId.toString();
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param lraId  URL of lra id that this exception relates to
+     * @param statusCode  error status code behind the creation of this exception
+     * @param message  error exception message
+     */
+    public GenericLRAException(URL lraId, int statusCode, String message) {
+        super(String.format("%s, lra id: %s", message, lraId));
+
+        this.lraId = lraId == null ? null : lraId.toString();
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param statusCode  error status code behind the creation of this exception
+     * @param message  error exception message
+     * @param cause  cause of why this exception is created
+     */
+    public GenericLRAException(int statusCode, String message, Throwable cause) {
+        super(message, cause);
+
+        this.lraId = null;
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Generic LRA exception.
+     *
+     * @param lraId  URL of lra id that this exception relates to
+     * @param statusCode  error status code behind the creation of this exception
+     * @param message  error exception message
+     * @param cause  cause of the exception
+     */
+    public GenericLRAException(String lraId, int statusCode, String message, Throwable cause) {
+        super(String.format("%s, lra id: %s", message, lraId), cause);
+
+        this.lraId = lraId;
+        this.statusCode = statusCode;
+    }
 
     public int getStatusCode() {
         return statusCode;
     }
 
-    public URL getLraId() {
+    public String getLraId() {
         return lraId;
-    }
-
-    public GenericLRAException(URL lraId, int statusCode, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
-
-        this.lraId = lraId;
-        this.statusCode = statusCode;
     }
 }

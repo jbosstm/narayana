@@ -21,26 +21,38 @@
  */
 package io.narayana.lra.client;
 
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Forget;
-import io.narayana.lra.annotation.Leave;
-import io.narayana.lra.annotation.Status;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
+import static javax.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
+
+import java.io.Closeable;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import io.narayana.lra.annotation.TimeLimit;
-
-import java.io.Closeable;
-import java.io.StringReader;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -51,24 +63,14 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import io.narayana.lra.annotation.Compensate;
+import io.narayana.lra.annotation.CompensatorStatus;
+import io.narayana.lra.annotation.Complete;
+import io.narayana.lra.annotation.Forget;
+import io.narayana.lra.annotation.Leave;
+import io.narayana.lra.annotation.Status;
+import io.narayana.lra.annotation.TimeLimit;
+import io.narayana.lra.logging.LRALogger;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the prefered mechanism is to use
@@ -121,20 +123,45 @@ public class LRAClient implements LRAClientAPI, Closeable {
     private boolean connectionInUse;
     private Map<URL, String> responseDataMap;
 
+    /**
+     * Creating LRA client where expecting LRA coordinator being at
+     * <code>http://localhost:8080</code>
+     */
     public LRAClient() throws URISyntaxException {
         this("http",
                 System.getProperty(CORRDINATOR_HOST_PROP, "localhost"),
                 Integer.getInteger(CORRDINATOR_PORT_PROP, 8080));
     }
 
+    /**
+     * Creating LRA client where expecting LRA coordinator being available through <code>http</code>
+     * protocol at <i>host</i>:<i>port</i>.
+     *
+     * @param host  hostname where the LRA coordinator will be contacted
+     * @param port  port where the LRA coordinator will be contacted
+     */
     public LRAClient(String host, int port) throws URISyntaxException {
         this("http", host, port);
     }
 
+    /**
+     * Creating LRA client where expecting LRA coordinator being available through
+     * protocol <i>scheme</i> at <i>host</i>:<i>port</i>.
+     *
+     * @param scheme  protocol used to contact the LRA coordinator
+     * @param host  hostname where the LRA coordinator will be contacted
+     * @param port  port where the LRA coordinator will be contacted
+     */
     public LRAClient(String scheme, String host, int port) throws URISyntaxException {
         init(scheme, host, port);
     }
 
+    /**
+     * Creating LRA client where expecting LRA coordinator being available
+     * at the provided url.
+     *
+     * @param coordinatorUrl  url of the lra coordinator
+     */
     public LRAClient(URL coordinatorUrl) throws MalformedURLException, URISyntaxException {
         init(coordinatorUrl);
     }
@@ -158,7 +185,11 @@ public class LRAClient implements LRAClientAPI, Closeable {
             responseDataMap.clear();
     }
 
-
+    /**
+     * Defines if the LRA client is an active instance and was not destroyed.
+     *
+     * @return  true if it's active, false if it was destroyed
+     */
     public boolean isUseable() {
         return isUseable;
     }
@@ -174,65 +205,110 @@ public class LRAClient implements LRAClientAPI, Closeable {
         isUseable = false;
     }
 
+    /**
+     * Transforming the LRA id to {@link URL} format.
+     *
+     * @param lraId  LRA id to be transformed to URL
+     */
     public static URL lraToURL(String lraId) {
         return lraToURL(lraId, "Invalid LRA id");
     }
 
-    public static URL lraToURL(String lraId, String message) {
+    /**
+     * Transforming the LRA id to {@link URL} format.
+     *
+     * @param lraId  LRA id to be transformed to URL
+     * @param errorMessage  error message which will be included under
+     *   {@link GenericLRAException} message
+     */
+    public static URL lraToURL(String lraId, String errorMessage) {
         try {
             return new URL(lraId);
         } catch (MalformedURLException e) {
-            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
-                    String.format("%s: %s", message, lraId), e);
+            LRALogger.i18NLogger.error_urlConstructionFromStringLraId(lraId, e);
+            throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), errorMessage, e);
         }
     }
 
-    public static String encodeURL(URL lraId, String message) {
+    /**
+     * Transforming the LRA id to {@link URL} format with use of the {@link URLEncoder}.
+     *
+     * @param lraId  LRA id to be transformed to URL
+     * @param errorMessage  error message which will be included under
+     *   {@link GenericLRAException} message
+     */
+    public static String encodeURL(URL lraId, String errorMessage) {
         try {
             return URLEncoder.encode(lraId.toString(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(), String.format("%s: %s", message, lraId), e);
+            LRALogger.i18NLogger.error_invalidFormatToEncodeUrl(lraId, e);
+            throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), errorMessage, e);
         }
     }
 
-    // extract the uid part from an LRA URL
+    /**
+     * Extract the uid part from an LRA URL.
+     *
+     * @param lraId  LRA id to extract from
+     * @return  uid of lra extracted from LRA id URL
+     */
     public static String getLRAId(String lraId) {
         return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
     }
 
-    public URL toURL(String lraId) throws InvalidLRAId {
+    /**
+     * Converting LRA id string format to URL.
+     *
+     * @param lraId  string LRA id
+     * @return URL format of the lraId
+     * @throws InvalidLRAIdException  if the string lra id can't be transformed to URL
+     */
+    public URL toURL(String lraId) throws InvalidLRAIdException {
         try {
             return new URL(lraId);
         } catch (MalformedURLException e) {
-            throw new InvalidLRAId(lraId, "Invalid syntax", e);
+            LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
+            throw new InvalidLRAIdException(lraId, "Invalid syntax", e);
         }
     }
 
     private WebTarget getTarget() {
-//        return target; // TODO can't share the target if a service makes multiple JAX-RS requests
+        // return target; // TODO can't share the target if a service makes multiple JAX-RS requests
         client.close(); // hacking
         client = ClientBuilder.newClient();
         return client.target(base);
     }
 
-    /**
-     * Update the clients notion of the current coordinator. Warning all further operations will be performed
-     * on the LRA manager that created the passed in coordinator.
-     *
-     * @param coordinatorUrl the full url of an LRA
-     */
+    @Override
     public void setCurrentLRA(URL coordinatorUrl) {
         try {
             init(coordinatorUrl);
         } catch (URISyntaxException e) {
+            LRALogger.i18NLogger.error_invalidCoordinatorUrl(coordinatorUrl, e);
             throw new GenericLRAException(coordinatorUrl, Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage(), e);
         }
     }
 
+    /**
+     * Starting LRA. You provide client id determining the LRA being started.
+     *
+     * @param clientID  client id determining the LRA
+     * @return  LRA id as URL
+     * @throws GenericLRAException  thrown when start of the LRA failed
+     */
     public URL startLRA(String clientID) throws GenericLRAException {
         return startLRA(clientID, 0L);
     }
 
+    /**
+     * Starting LRA. You provide client id that joins the LRA context
+     * and is passed when working with the LRA.
+     *
+     * @param clientID  client id determining the LRA
+     * @param timeout  timeout value in seconds, when timeouted the LRA will be compensated
+     * @return  LRA id as URL
+     * @throws GenericLRAException  thrown when start of the LRA failed
+     */
     public URL startLRA(String clientID, Long timeout) throws GenericLRAException {
         return startLRA(null, clientID, timeout, TimeUnit.SECONDS);
     }
@@ -249,9 +325,9 @@ public class LRAClient implements LRAClientAPI, Closeable {
             timeout = 0L;
         else if (timeout < 0)
             throw new GenericLRAException(parentLRA, Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Invalid timeout value: " + timeout, null);
+                    "Invalid timeout value: " + timeout);
 
-        lraTrace(String.format("startLRA for client %s with parent %s", clientID, parentLRA), null);
+        lraTracef("startLRA for client %s with parent %s", clientID, parentLRA);
 
         try {
             String encodedParentLRA = parentLRA == null ? "" : URLEncoder.encode(parentLRA.toString(), "UTF-8");
@@ -266,34 +342,43 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .post(Entity.text(""));
 
             // validate the HTTP status code says an LRAStatus resource was created
-            checkStatus(null, response, "LRA start returned an unexpected status code: %d",
-                    Response.Status.CREATED);
+            if(!isExpectedResponseStatus(response, Response.Status.CREATED)) {
+                LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), response);
+                throw new GenericLRAException(INTERNAL_SERVER_ERROR.getStatusCode(),
+                        "LRA start returned an unexpected status code: " + response.getStatus());
+            }
 
             // validate that there is an LRAStatus response header holding the LRAStatus id
             Object lraObject = response.getHeaders().getFirst(LRA_HTTP_HEADER);
 
-            assertNotNull(lraObject, "LRA is null");
+            if(lraObject == null) {
+                LRALogger.i18NLogger.error_nullLraOnCreation(response);
+                throw new GenericLRAException(INTERNAL_SERVER_ERROR.getStatusCode(), "LRA creation is null");
+            }
 
             lra = new URL(URLDecoder.decode(lraObject.toString(), "UTF-8"));
 
-            lraTrace("startLRA returned", lra);
+            lraTrace(lra, "startLRA returned");
 
             Current.push(lra);
 
         } catch (UnsupportedEncodingException | MalformedURLException e) {
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
+            LRALogger.i18NLogger.error_cannotCreateUrlFromLCoordinatorResponse(response, e);
+            throw new GenericLRAException(INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
         } catch (Exception e) {
-            if (e.getCause() != null && ConnectException.class.equals(e.getCause().getClass()))
-                throw new GenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                        "Cannont connect to an LRA coordinator: " + e.getCause().getMessage(), e);
+            LRALogger.i18NLogger.error_cannotContactLRACoordinator(base, e);
 
-            throw new GenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage(), e);
+            if (e.getCause() != null && ConnectException.class.equals(e.getCause().getClass()))
+                throw new GenericLRAException(SERVICE_UNAVAILABLE.getStatusCode(),
+                        "Cannot connect to the LRA coordinator: "  + base + " (" + e.getCause().getMessage() + ")", e);
+
+            throw new GenericLRAException(Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage(), e);
         } finally {
             releaseConnection(response);
         }
 
         // check that the lra is active
-//        isActiveLRA(lra);
+        // isActiveLRA(lra);
 
         return lra;
     }
@@ -302,7 +387,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
     public void renewTimeLimit(URL lraId, long limit, TimeUnit unit) {
         Response response = null;
 
-        lraTrace(String.format("renew time limit to %s s of LRA", unit.toSeconds(limit)), lraId);
+        lraTracef(lraId, "renew time limit to %s s of LRA", unit.toSeconds(limit));
 
         try {
             aquireConnection();
@@ -314,6 +399,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .put(Entity.text(""));
 
             if (Response.Status.OK.getStatusCode() != response.getStatus())
+                LRALogger.i18NLogger.error_lraRenewalUnexpectedStatus(response.getStatus(), response);
                 throw new GenericLRAException(lraId, response.getStatus(), "", null);
         } finally {
             releaseConnection(response);
@@ -335,22 +421,21 @@ public class LRAClient implements LRAClientAPI, Closeable {
      * @param lraUrl the URL of the LRA to join
      * @param timelimit how long the participant is prepared to wait for LRA completion
      * @param linkHeader participant protocol URLs in link header format (RFC 5988)
-     *
-     * @param compensatorData
+     * @param compensatorData  data provided during compensation
      * @return a recovery URL for this enlistment
      *
      * @throws GenericLRAException if the LRA coordinator failed to enlist the participant
      */
     public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader,
                                         String compensatorData) throws GenericLRAException {
-        lraTrace(String.format("joining LRA with participant link: %s", linkHeader), lraUrl);
+        lraTracef(lraUrl, "joining LRA with participant link: %s", linkHeader);
         return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
     }
 
     @Override
     public String joinLRA(URL lraId, Long timelimit, String compensatorUrl,
                           String compensatorData) throws GenericLRAException {
-        lraTrace(String.format("joining LRA with participant %s", compensatorUrl), lraId);
+        lraTracef(lraId, "joining LRA with participant %s", compensatorUrl);
 
         return enlistCompensator(lraId, timelimit, "",
                 String.format("%s/compensate", compensatorUrl),
@@ -398,7 +483,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
     public void leaveLRA(URL lraId, String compensatorUrl) throws GenericLRAException {
         Response response = null;
 
-        lraTrace("leaving LRA", lraId);
+        lraTracef(lraId, "leaving LRA, compensator url: %s", compensatorUrl);
 
         try {
             aquireConnection();
@@ -408,8 +493,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .header(LRA_HTTP_HEADER, lraId)
                     .put(Entity.entity(compensatorUrl, MediaType.TEXT_PLAIN));
 
-            if (Response.Status.OK.getStatusCode() != response.getStatus())
-                throw new GenericLRAException(lraId, response.getStatus(), "", null);
+            if (Response.Status.OK.getStatusCode() != response.getStatus()) {
+                LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(), response);
+                throw new GenericLRAException(lraId, response.getStatus());
+            }
         } finally {
             releaseConnection(response);
         }
@@ -442,7 +529,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
                 response = getTarget().queryParam(queryName, queryValue).request().get();
 
             if (!response.hasEntity())
-                throw new GenericLRAException(null, response.getStatus(), "missing entity body", null);
+                throw new GenericLRAException(response.getStatus(), "missing entity body");
 
             List<LRAStatus> actions = new ArrayList<>();
 
@@ -471,8 +558,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     jo.getBoolean("active"),
                     jo.getBoolean("topLevel"));
         } catch (Exception e) {
-            System.out.printf("Error parsing json LRAStatus");
-
+            LRALogger.i18NLogger.warn_failedParsingStatusFromJson(jo, e);
             return new LRAStatus(e);
         }
     }
@@ -499,6 +585,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return isStatus(lraId, CompensatorStatus.Completed);
     }
 
+    /**
+     * For particular compensator class it returns termination uris based on the provided base uri.
+     * You get map of string and url.
+     *
+     * @param compensatorClass  compensator class to examine
+     * @param baseUri  base url used on creation of the termination map.
+     * @return map of urls
+     */
     public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri) {
         Map<String, String> paths = new HashMap<>();
         final boolean[] asyncTermination = {false};
@@ -541,9 +635,11 @@ public class LRAClient implements LRAClientAPI, Closeable {
             }
         });
 
-        if (asyncTermination[0] && !paths.containsKey(STATUS) && !paths.containsKey(FORGET))
-            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
-                    "LRA participant class with asynchronous temination but no @Status or @Forget annotations", null);
+        if (asyncTermination[0] && !paths.containsKey(STATUS) && !paths.containsKey(FORGET)) {
+            LRALogger.i18NLogger.error_asyncTerminationBeanMissStatusAndForget(compensatorClass);
+            throw new GenericLRAException(Response.Status.BAD_REQUEST.getStatusCode(),
+                    "LRA participant class with asynchronous temination but no @Status or @Forget annotations");
+        }
 
         StringBuilder linkHeaderValue = new StringBuilder();
 
@@ -555,12 +651,20 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return paths;
     }
 
+    /**
+     * Providing information if method is defined to be completed asynchronously.
+     * This means that {@link Suspended} annotation is available amongst the method parameters
+     * while the method is annotated with {@link Complete} or {@link Compensate}.
+     *
+     * @param method  method to be checked for async completion
+     * @return  true if method is to complete asynchronously, false if synchronously
+     */
     public static boolean isAsyncCompletion(Method method) {
         if (method.isAnnotationPresent(Complete.class) || method.isAnnotationPresent(Compensate.class)) {
             for (Annotation[] ann : method.getParameterAnnotations())
                 for (Annotation an : ann)
                     if (Suspended.class.getName().equals(an.annotationType().getName())) {
-                        System.out.printf("WARNING: JAX-RS @Suspended annotation is untested");
+                        LRALogger.logger.warn("JAX-RS @Suspended annotation is untested");
                         return true;
                     }
         }
@@ -603,6 +707,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return status.get() == testStatus;
     }
 
+    @Override
     public Optional<CompensatorStatus> getStatus(URL lraId) throws GenericLRAException {
         Response response = null;
 
@@ -616,6 +721,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
         } catch (Exception e) {
             releaseConnection(null);
 
+            LRALogger.i18NLogger.error_cannotAccesCorrdinatorWhenGettingStatus(base, lraId, e);
             throw new GenericLRAException(lraId,
                     Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "Could not access the LRA coordinator: " + e.getMessage(),
@@ -626,17 +732,20 @@ public class LRAClient implements LRAClientAPI, Closeable {
             if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode())
                 return Optional.empty();
 
-            if (response.getStatus() != Response.Status.OK.getStatusCode())
+            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                LRALogger.i18NLogger.error_invalidStatusCode(base, response.getStatus(), lraId);
                 throw new GenericLRAException(lraId,
                         response.getStatus(),
                         "LRA coordinator returned an invalid status code",
                         null);
+            }
 
-            if (!response.hasEntity())
+            if (!response.hasEntity()) {
+                LRALogger.i18NLogger.error_noContentOnGetStatus(base, lraId);
                 throw new GenericLRAException(lraId,
                         Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                        "LRA coordinator#getStatus returned 200 OK but no content",
-                        null);
+                        "LRA coordinator#getStatus returned 200 OK but no content");
+            }
 
             // convert the returned String into a status
             Optional<CompensatorStatus> status;
@@ -644,6 +753,7 @@ public class LRAClient implements LRAClientAPI, Closeable {
             try {
                 return fromString(response.readEntity(String.class));
             } catch (IllegalArgumentException e) {
+                LRALogger.i18NLogger.error_invalidArgumentOnStatusFromCoordinator(base, lraId, e);
                 throw new GenericLRAException(lraId,
                         Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                         "LRA coordinator returned an invalid status",
@@ -725,13 +835,14 @@ public class LRAClient implements LRAClientAPI, Closeable {
                     .put(Entity.entity(compensatorData == null ? linkHeader : compensatorData, MediaType.TEXT_PLAIN));
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
+                LRALogger.i18NLogger.error_tooLateToJoin(lraUrl, response);
                 throw new IllegalLRAStateException(lraUrl.toString(),
-                        "Too late to join with this LRA", null);
+                        "Too late to join with this LRA", "enlistCompensator");
             } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                lraTrace(String.format("enlist in LRA failed (%d)", response.getStatus()), lraUrl);
+                LRALogger.i18NLogger.error_failedToEnlist(lraUrl, base, response.getStatus());
 
                 throw new GenericLRAException(lraUrl, response.getStatus(),
-                        "unable to register participant", null);
+                        "unable to register participant");
             }
 
             return response.readEntity(String.class);
@@ -744,13 +855,16 @@ public class LRAClient implements LRAClientAPI, Closeable {
         String confirmUrl = String.format(confirm ? confirmFormat : compensateFormat, getLRAId(lra.toString()));
         Response response = null;
 
-        lraTrace(String.format("%s LRA", confirm ? "close" : "compensate"), lra);
+        lraTracef(lra, "%s LRA", confirm ? "close" : "compensate");
 
         try {
             response = getTarget().path(confirmUrl).request().put(Entity.text(""));
 
-            checkStatus(lra, response,"LRA finished with an unexpected status code: %d",
-                    Response.Status.OK, Response.Status.ACCEPTED);
+            if(!isExpectedResponseStatus(response, Response.Status.OK, Response.Status.ACCEPTED)) {
+                LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(), response);
+                throw new GenericLRAException(INTERNAL_SERVER_ERROR.getStatusCode(),
+                        "LRA finished with an unexpected status code: " + response.getStatus());
+            }
 
             String responseData = response.readEntity(String.class);
 
@@ -778,32 +892,24 @@ public class LRAClient implements LRAClientAPI, Closeable {
     private void validateURL(String url, boolean nullAllowed, String message) {
         if (url == null) {
             if (!nullAllowed)
-                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(),
-                        String.format(message, "null value"), null);
+                throw new GenericLRAException(NOT_ACCEPTABLE.getStatusCode(),
+                        String.format(message, "null value"));
         } else {
             try {
                 new URL(url);
             } catch (MalformedURLException e) {
-                throw new GenericLRAException(null, Response.Status.NOT_ACCEPTABLE.getStatusCode(),
+                throw new GenericLRAException(NOT_ACCEPTABLE.getStatusCode(),
                         String.format(message, e.getMessage()), e);
             }
         }
     }
 
-    private void assertNotNull(Object lra, String message) {
-        if (lra == null)
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    message, null);
-    }
-
-    private void checkStatus(URL lraId, Response response, String messageFormat, Response.Status... expected) {
+    private boolean isExpectedResponseStatus(Response response, Response.Status... expected) {
         for (Response.Status anExpected : expected) {
             if (response.getStatus() == anExpected.getStatusCode())
-                return;
+                return true;
         }
-
-        throw new GenericLRAException(lraId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                String.format(messageFormat, response.getStatus()), null);
+        return false;
     }
 
     public String getUrl() {
@@ -814,9 +920,26 @@ public class LRAClient implements LRAClientAPI, Closeable {
         return Current.peek();
     }
 
-    private void lraTrace(String reason, URL lra) {
-        if (isTrace)
-            System.out.printf("LRAClient: %s: lra: %s%n", reason, lra == null ? "null" : lra);
+    private void lraTracef(String reasonFormat, Object... parameters) {
+        if(!LRALogger.logger.isTraceEnabled())
+            return;
+
+        LRALogger.logger.tracef(reasonFormat, parameters);
+    }
+
+    private void lraTrace(URL lra, String reason) {
+        lraTracef(lra, reason, (Object[]) null);
+    }
+
+    private void lraTracef(URL lra, String reasonFormat, Object... parameters) {
+        Object[] newParams;
+        if(parameters != null) {
+            newParams = Arrays.copyOf(parameters, parameters.length + 1);
+        } else {
+            newParams = new Object[1];
+        }
+        newParams[newParams.length - 1] = lra;
+        lraTracef(reasonFormat + ", lra id: %s", newParams);
     }
 
     public void close() {
@@ -827,10 +950,10 @@ public class LRAClient implements LRAClientAPI, Closeable {
 
     private void aquireConnection() {
         if (connectionInUse) {
-            System.out.printf("LRAClient: trying to aquire an in use connection");
+            LRALogger.i18NLogger.error_cannotAquireInUseConnection();
 
-            throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    "LRAClient: trying to aquire an in use connection", null);
+            throw new GenericLRAException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                    "LRAClient: trying to aquire an in use connection");
         }
 
         connectionInUse = true;
