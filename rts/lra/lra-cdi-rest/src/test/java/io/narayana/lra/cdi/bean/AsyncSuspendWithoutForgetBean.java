@@ -25,19 +25,31 @@ package io.narayana.lra.cdi.bean;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 
 import io.narayana.lra.annotation.Compensate;
+import io.narayana.lra.annotation.Complete;
+import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.annotation.LRA;
+import io.narayana.lra.annotation.LRA.Type;
 import io.narayana.lra.annotation.Status;
 
 /**
- * {@link LRA} bean which contains annotations - {@link Compensate} and {@link Status}
- * is enough to run the LRA
+ * LRA bean where termination complete method is annotated to be handled asynchronously
+ * but {@link Status} and {@link Forget} is then necessary.
  */
-public class CompleteOptionalBean {
+public class AsyncSuspendWithoutForgetBean {
 
-    @LRA
-    public void process() {
+    @LRA(value = Type.SUPPORTS)
+    public void go() {
+        // no implementation needed
+    }
+
+    @Complete
+    @Path("complete")
+    @PUT
+    public void complete(@Suspended AsyncResponse ar) {
         // no implementation needed
     }
 

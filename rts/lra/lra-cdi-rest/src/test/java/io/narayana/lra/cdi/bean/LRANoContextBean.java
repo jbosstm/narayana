@@ -22,19 +22,13 @@
 
 package io.narayana.lra.cdi.bean;
 
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Status;
 import io.narayana.lra.annotation.LRA;
+import io.narayana.lra.annotation.LRA.Type;
 
 /**
- * {@link LRA} bean which contains only one annotation - {@link Compensate}
- * but the LRA prescribe for the bean to contain two: {@link Compensate} and {@link Status}.
+ * LRA bean where no context is expected and thus no handling
+ * of the termination is needed.
  */
-@LRA
-public class OnlyOneLraAnnotationBean {
-
-    @Compensate
-    public void compensate() {
-        // no implementation
-    }
+@LRA(value = Type.NEVER)
+public class LRANoContextBean {
 }
