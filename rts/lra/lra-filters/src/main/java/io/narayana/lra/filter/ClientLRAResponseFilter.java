@@ -26,13 +26,11 @@ import io.narayana.lra.client.Current;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.net.URL;
 
 import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
 
-@Provider
 public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
