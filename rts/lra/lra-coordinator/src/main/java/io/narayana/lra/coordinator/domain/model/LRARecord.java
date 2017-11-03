@@ -55,8 +55,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";

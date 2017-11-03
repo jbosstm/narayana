@@ -29,7 +29,7 @@ import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAIdException;
-import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.internal.Implementations;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
@@ -62,7 +62,7 @@ public class LRAService {
     private LRARecoveryModule lraRecoveryModule;
 
     @Inject
-    LRAClient lraClient;
+    NarayanaLRAClient lraClient;
 
     public Transaction getTransaction(URL lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {

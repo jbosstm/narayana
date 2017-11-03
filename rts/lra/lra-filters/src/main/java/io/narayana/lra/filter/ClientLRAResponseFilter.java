@@ -29,7 +29,7 @@ import javax.ws.rs.client.ClientResponseFilter;
 import java.io.IOException;
 import java.net.URL;
 
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 
 public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Override

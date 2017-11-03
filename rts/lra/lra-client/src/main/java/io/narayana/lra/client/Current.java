@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();

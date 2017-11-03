@@ -32,8 +32,7 @@ import io.narayana.lra.annotation.TimeLimit;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
-import io.narayana.lra.client.LRAClient;
-import io.narayana.lra.client.LRAClientAPI;
+import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 
 import javax.inject.Inject;
@@ -57,13 +56,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static io.narayana.lra.client.LRAClient.COMPENSATE;
-import static io.narayana.lra.client.LRAClient.COMPLETE;
-import static io.narayana.lra.client.LRAClient.LEAVE;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.client.LRAClient.STATUS;
-import static io.narayana.lra.client.LRAClient.FORGET;
+import static io.narayana.lra.client.NarayanaLRAClient.COMPENSATE;
+import static io.narayana.lra.client.NarayanaLRAClient.COMPLETE;
+import static io.narayana.lra.client.NarayanaLRAClient.LEAVE;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.STATUS;
+import static io.narayana.lra.client.NarayanaLRAClient.FORGET;
 
 @Provider
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
@@ -76,7 +75,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private LRAClientAPI lraClient;
+    private NarayanaLRAClient lraClient;
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
         if (lraId == null && shouldNotBeNull) {
@@ -265,9 +264,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation && enlist) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
-            String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
-            long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+            String timeLimitStr = terminateURIs.get(NarayanaLRAClient.TIMELIMIT_PARAM_NAME);
+            long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
             if (terminateURIs.containsKey("Link")) {
                 try {
@@ -351,7 +350,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
-                    LRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
+                    NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
                 LRALogger.i18NLogger.warn_lraParticipantqForAsync(
                         resourceInfo.getResourceMethod().getDeclaringClass().getName(),
                         resourceInfo.getResourceMethod().getName(),
@@ -375,7 +374,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             timeLimit = method.getDeclaringClass().getDeclaredAnnotation(TimeLimit.class);
 
         if (timeLimit == null)
-            return LRAClient.DEFAULT_TIMEOUT_MILLIS;
+            return NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS;
 
         TimeLimit tl = (TimeLimit) timeLimit;
 
@@ -394,7 +393,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private String getCompensatorId(URL lraId, URI baseUri) {
-        Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
 
         if (!terminateURIs.containsKey("Link"))
             throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
