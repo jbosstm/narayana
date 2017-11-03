@@ -50,8 +50,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import io.narayana.lra.client.Current;
-import io.narayana.lra.client.LRAClient;
-import io.narayana.lra.client.LRAStatus;
+import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.LRAInfo;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -65,7 +65,7 @@ import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
-import static io.narayana.lra.client.LRAClient.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
 
 @RunWith(Arquillian.class)
@@ -78,12 +78,12 @@ public class SpecIT {
     private static final int COORDINATOR_SWARM_PORT = 8082;
     private static final int TEST_SWARM_PORT = 8081;
 
-    private static LRAClient lraClient;
+    private static NarayanaLRAClient lraClient;
     private static Client msClient, rcClient;
 
     private WebTarget msTarget, recoveryTarget;
 
-    private static List<LRAStatus> oldLRAs;
+    private static List<LRAInfo> oldLRAs;
 
     private enum CompletionType {
         complete, compensate, mixed
@@ -121,7 +121,7 @@ public class SpecIT {
         RC_BASE_URL = new URL(String.format("http://%s:%d", rcHost, rcPort));
 
         // setting up the client
-        lraClient = new LRAClient(rcHost, rcPort);
+        lraClient = new NarayanaLRAClient(rcHost, rcPort);
         msClient = ClientBuilder.newClient();
         rcClient = ClientBuilder.newClient();
 
@@ -144,7 +144,7 @@ public class SpecIT {
 
     @After
     public void finishTest() throws Exception {
-        List<LRAStatus> activeLRAs = lraClient.getActiveLRAs();
+        List<LRAInfo> activeLRAs = lraClient.getActiveLRAs();
 
         System.out.printf("TEST %s finished with %d active LRAs%n", testName.getMethodName(), activeLRAs.size());
 
@@ -179,7 +179,7 @@ public class SpecIT {
 
         lraClient.cancelLRA(lra);
 
-        List<LRAStatus> lras = lraClient.getAllLRAs();
+        List<LRAInfo> lras = lraClient.getAllLRAs();
 
         assertFalse(lras.contains(lra));
     }
@@ -190,17 +190,17 @@ public class SpecIT {
 
         lraClient.closeLRA(lra);
 
-        List<LRAStatus> lras = lraClient.getAllLRAs();
+        List<LRAInfo> lras = lraClient.getAllLRAs();
 
-        assertFalse(lras.contains(new LRAStatus(lra)));
+        assertFalse(lras.contains(new LRAInfo(lra)));
     }
 
     @Test
     public void getActiveLRAs() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#getActiveLRAs", LRA_TIMEOUT_MILLIS);
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
 
-        assertTrue(lras.contains(new LRAStatus(lra)));
+        assertTrue(lras.contains(new LRAInfo(lra)));
 
         lraClient.closeLRA(lra);
     }
@@ -208,9 +208,9 @@ public class SpecIT {
     @Test
     public void getAllLRAs() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#getAllLRAs", LRA_TIMEOUT_MILLIS);
-        List<LRAStatus> lras = lraClient.getAllLRAs();
+        List<LRAInfo> lras = lraClient.getAllLRAs();
 
-        assertTrue(lras.contains(new LRAStatus(lra)));
+        assertTrue(lras.contains(new LRAInfo(lra)));
 
         lraClient.closeLRA(lra);
     }
@@ -256,10 +256,10 @@ public class SpecIT {
         String lra = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
         // validate that the LRA coordinator no longer knows about lraId
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
 
         // the resource /activities/work is annotated with Type.REQUIRED so the container should have ended it
-        assertFalse(lras.contains(new LRAStatus(lra)));
+        assertFalse(lras.contains(new LRAInfo(lra)));
     }
 
     @Test
@@ -269,17 +269,17 @@ public class SpecIT {
         Response response = msTarget
                 .path("activities").path("nestedActivity")
                 .request()
-                .header(LRAClient.LRA_HTTP_HEADER, lra)
+                .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
                 .put(Entity.text(""));
 
-        Object parentId = response.getHeaders().getFirst(LRAClient.LRA_HTTP_HEADER);
+        Object parentId = response.getHeaders().getFirst(NarayanaLRAClient.LRA_HTTP_HEADER);
 
         assertNotNull(parentId);
         assertEquals(lra.toExternalForm(), parentId);
 
         String nestedLraId = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
 
         // close the LRA
         lraClient.closeLRA(lra);
@@ -288,7 +288,7 @@ public class SpecIT {
         lras = lraClient.getActiveLRAs();
 
         // the resource /activities/work is annotated with Type.REQUIRED so the container should have ended it
-        assertFalse(lras.contains(new LRAStatus(nestedLraId)));
+        assertFalse(lras.contains(new LRAInfo(nestedLraId)));
     }
 
     @Test
@@ -313,19 +313,19 @@ public class SpecIT {
         URL lra = lraClient.startLRA("SpecTest#joinLRAViaBody", LRA_TIMEOUT_MILLIS);
 
         Response response = msTarget.path("activities").path("work")
-                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // validate that the LRA coordinator still knows about lraId
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
-        assertTrue(lras.contains(new LRAStatus(lra)));
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
+        assertTrue(lras.contains(new LRAInfo(lra)));
 
         // close the LRA
         lraClient.closeLRA(lra);
 
         // check that LRA coordinator no longer knows about lraId
         lras = lraClient.getActiveLRAs();
-        assertFalse(lras.contains(new LRAStatus(lra)));
+        assertFalse(lras.contains(new LRAInfo(lra)));
 
         // check that participant was told to complete
         int cnt2 = completedCount(true);
@@ -334,12 +334,12 @@ public class SpecIT {
 
     @Test
     public void join () throws WebApplicationException {
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS);
 
         Response response = msTarget.path("activities").path("work")
-                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
         lraClient.closeLRA(lra);
 
@@ -353,15 +353,15 @@ public class SpecIT {
         int cnt1 = completedCount(true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS);
 
-        Response response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
-        response = msTarget.path("activities").path("leave").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path("activities").path("leave").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
@@ -379,17 +379,17 @@ public class SpecIT {
         int cnt1 = completedCount(true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS);
 
-        Response response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path("activities").path("work").request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
         try {
             response = msTarget.path("activities").path("leave").path(URLEncoder.encode(lra.toString(), "UTF-8"))
-                    .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+                    .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         } catch (UnsupportedEncodingException e) {
             throw new WebApplicationException(
                     Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Entity.text(e.getMessage())).build());
@@ -411,7 +411,7 @@ public class SpecIT {
         // call a method annotated with NOT_SUPPORTED but one which programatically starts an LRA and returns it via a header
         Response response = msTarget.path("activities").path("startViaApi").request().put(Entity.text(""));
         // check that the method started an LRA
-        Object lraHeader = response.getHeaders().getFirst(LRAClient.LRA_HTTP_HEADER);
+        Object lraHeader = response.getHeaders().getFirst(NarayanaLRAClient.LRA_HTTP_HEADER);
 
         String id = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
@@ -469,7 +469,7 @@ public class SpecIT {
      */
     // @Test // this test passes when ran under surefire but fails as an Arquilian test - TODO debug it
     public void testUserData() {
-        List<LRAStatus> lras = lraClient.getActiveLRAs();
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         String testData = "test participant data";
 
@@ -505,7 +505,7 @@ public class SpecIT {
         URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS);
 
         Response response = msTarget.path(path).path(path2)
-                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
 
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
@@ -603,12 +603,12 @@ public class SpecIT {
                 .path("activities").path("multiLevelNestedActivity")
                 .queryParam("nestedCnt", nestedCnt)
                 .request()
-                .header(LRAClient.LRA_HTTP_HEADER, lra)
+                .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
                 .put(Entity.text(""));
 
         String lraStr = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
         String[] lraArray = lraStr.split(",");
-        final List<LRAStatus> lras = lraClient.getActiveLRAs();
+        final List<LRAInfo> lras = lraClient.getActiveLRAs();
         URL[] urls = new URL[lraArray.length];
 
         IntStream.range(0, urls.length).forEach(i -> {
@@ -624,10 +624,10 @@ public class SpecIT {
 
         // check that the coordinator knows about the two nested LRAs started by the multiLevelNestedActivity method
         // NB even though they should have completed they are held in memory pending the enclosing LRA finishing
-        IntStream.rangeClosed(1, nestedCnt).forEach(i -> assertTrue(lras.contains(new LRAStatus(lraArray[i]))));
+        IntStream.rangeClosed(1, nestedCnt).forEach(i -> assertTrue(lras.contains(new LRAInfo(lraArray[i]))));
 
         // and the mandatory lra seen by the multiLevelNestedActivity method
-        assertTrue(lras.contains(new LRAStatus(lraArray[0])));
+        assertTrue(lras.contains(new LRAInfo(lraArray[0])));
 
         int[] cnt2 = {completedCount(true), completedCount(false)};
 
@@ -661,9 +661,9 @@ public class SpecIT {
         }
 
         // validate that the top level and nested LRAs are gone
-        final List<LRAStatus> lras2 = lraClient.getActiveLRAs();
+        final List<LRAInfo> lras2 = lraClient.getActiveLRAs();
 
-        IntStream.rangeClosed(0, nestedCnt).forEach(i -> assertFalse(lras2.contains(new LRAStatus(lraArray[i]))));
+        IntStream.rangeClosed(0, nestedCnt).forEach(i -> assertFalse(lras2.contains(new LRAInfo(lraArray[i]))));
 
         int[] cnt3 = {completedCount(true), completedCount(false)};
 
@@ -710,7 +710,7 @@ public class SpecIT {
             response = msTarget.path("activities")
                     .path(path)
                     .request()
-                    .header(LRAClient.LRA_HTTP_HEADER, lra)
+                    .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
                     .get();
 
             checkStatusAndClose(response, Response.Status.BAD_REQUEST.getStatusCode(), true);

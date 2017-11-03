@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.jboss.logging.Logger;
-import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.NarayanaLRAClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -50,8 +50,8 @@ import java.net.URL;
 import java.util.List;
 
 @ApplicationScoped
-@Path(LRAClient.RECOVERY_COORDINATOR_PATH_NAME)
-@Api(value = LRAClient.RECOVERY_COORDINATOR_PATH_NAME, tags = "LRA Recovery")
+@Path(NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME)
+@Api(value = NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME, tags = "LRA Recovery")
 public class RecoveryCoordinator {
 
     private final Logger logger = Logger.getLogger(RecoveryCoordinator.class.getName());

@@ -50,7 +50,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.NarayanaLRAClient;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -67,7 +67,7 @@ public class LRASmokeIT {
     @ArquillianResource
     private URL base;
 
-    private LRAClient lraClient;
+    private NarayanaLRAClient lraClient;
 
     @Deployment(testable = false)
     public static Archive<?> createDeployment() throws Exception {
@@ -87,7 +87,7 @@ public class LRASmokeIT {
     public void setupClass() throws MalformedURLException, URISyntaxException {
         System.out.println(String.format("LRA client is connecting to %s://%s:%s",
             base.getProtocol(), base.getHost(), base.getPort()));
-        lraClient = new LRAClient(base.getProtocol(), base.getHost(), base.getPort());
+        lraClient = new NarayanaLRAClient(base.getProtocol(), base.getHost(), base.getPort());
     }
 
     @After

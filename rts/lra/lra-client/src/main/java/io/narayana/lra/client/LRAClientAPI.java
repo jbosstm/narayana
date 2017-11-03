@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public interface LRAClientAPI {
+public interface LRAClient {
 
     /**
      * Start a new LRA
@@ -56,7 +56,7 @@ public interface LRAClientAPI {
      * @param lraId The unique identifier of the LRA (required)
      * @return the response MAY contain the final status of the LRA as reported by
      * {@link CompensatorStatus#name()}. If the final status is not returned the client can still discover
-     * the final state using the {@link LRAClientAPI#getStatus(URL)} method
+     * the final state using the {@link LRAClient#getStatus(URL)} method
      * @throws GenericLRAException Communication error (the reason is availalbe via the
      * {@link GenericLRAException#getStatusCode()} method
      */
@@ -72,7 +72,7 @@ public interface LRAClientAPI {
      *
      * @return the response MAY contain the final status of the LRA as reported by
      * {@link CompensatorStatus#name()}. If the final status is not returned the client can still discover
-     * the final state using the {@link LRAClientAPI#getStatus(URL)} method
+     * the final state using the {@link LRAClient#getStatus(URL)} method
      * @throws GenericLRAException Communication error (the reason is availalbe via the
      * {@link GenericLRAException#getStatusCode()} method
      */
@@ -83,7 +83,7 @@ public interface LRAClientAPI {
      *
      * @throws GenericLRAException on error
      */
-    List<LRAStatus> getActiveLRAs() throws GenericLRAException;
+    List<LRAInfo> getActiveLRAs() throws GenericLRAException;
 
     /**
      * Returns all LRAs
@@ -93,7 +93,7 @@ public interface LRAClientAPI {
      * @return List<LRA>
      * @throws GenericLRAException on error
      */
-    List<LRAStatus> getAllLRAs() throws GenericLRAException;
+    List<LRAInfo> getAllLRAs() throws GenericLRAException;
 
     /**
      * List recovering Long Running Actions
@@ -104,7 +104,7 @@ public interface LRAClientAPI {
      *
      * @throws GenericLRAException on error
      */
-    List<LRAStatus> getRecoveringLRAs() throws GenericLRAException;
+    List<LRAInfo> getRecoveringLRAs() throws GenericLRAException;
 
     /**
      * Lookup the status of an LRA
@@ -119,7 +119,7 @@ public interface LRAClientAPI {
 
     /**
      * Indicates whether an LRA is active. The same information can be obtained via a call to
-     * {@link LRAClientAPI#getStatus(URL)}.
+     * {@link LRAClient#getStatus(URL)}.
      *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
@@ -130,7 +130,7 @@ public interface LRAClientAPI {
 
     /**
      * Indicates whether an LRA was compensated. The same information can be obtained via a call to
-     * {@link LRAClientAPI#getStatus(URL)}.
+     * {@link LRAClient#getStatus(URL)}.
      *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
@@ -141,7 +141,7 @@ public interface LRAClientAPI {
 
     /**
      * Indicates whether an LRA is complete. The same information can be obtained via a call to
-     * {@link LRAClientAPI#getStatus(URL)}.
+     * {@link LRAClient#getStatus(URL)}.
      *
      * @param lraId The unique identifier of the LRA (required)
      * @throws GenericLRAException if the request to the coordinator failed.
@@ -174,7 +174,7 @@ public interface LRAClientAPI {
     String joinLRA(URL lraId, Long timelimit, String body, String compensatorData) throws GenericLRAException;
 
     /**
-     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, String)} except that the various
+     * Similar to {@link LRAClient#joinLRA(URL, Long, String, String)} except that the various
      * participant URLs are passed in explicitly.
      */
     String joinLRA(URL lraId, Long timelimit,
@@ -183,7 +183,7 @@ public interface LRAClientAPI {
 
     /**
      * Join an LRA passing in a class that will act as the participant.
-     * Similar to {@link LRAClientAPI#joinLRA(URL, Long, String, String)} but the various participant URLs
+     * Similar to {@link LRAClient#joinLRA(URL, Long, String, String)} but the various participant URLs
      * are expressed as CDI annotations on the passed in resource class.
      *
      * @param lraId The unique identifier of the LRA (required)

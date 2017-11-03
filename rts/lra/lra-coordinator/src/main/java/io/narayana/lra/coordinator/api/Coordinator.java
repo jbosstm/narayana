@@ -36,7 +36,7 @@ import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.InvalidLRAIdException;
-import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.NarayanaLRAClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -69,14 +69,14 @@ import java.util.Map;
 
 import io.swagger.annotations.ApiOperation;
 
-import static io.narayana.lra.client.LRAClient.CLIENT_ID_PARAM_NAME;
-import static io.narayana.lra.client.LRAClient.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.CLIENT_ID_PARAM_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.COORDINATOR_PATH_NAME;
 
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.client.LRAClient.PARENT_LRA_PARAM_NAME;
-import static io.narayana.lra.client.LRAClient.STATUS_PARAM_NAME;
-import static io.narayana.lra.client.LRAClient.TIMELIMIT_PARAM_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.PARENT_LRA_PARAM_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.STATUS_PARAM_NAME;
+import static io.narayana.lra.client.NarayanaLRAClient.TIMELIMIT_PARAM_NAME;
 
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
@@ -205,7 +205,7 @@ public class Coordinator {
         URL parentLRAUrl = null;
 
         if (parentLRA != null && !parentLRA.isEmpty())
-            parentLRAUrl = LRAClient.lraToURL(parentLRA, "Invalid parent LRA id");
+            parentLRAUrl = NarayanaLRAClient.lraToURL(parentLRA, "Invalid parent LRA id");
 
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
         URL lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
@@ -214,7 +214,7 @@ public class Coordinator {
             // register with the parentLRA as a participant
             Client client = ClientBuilder.newClient();
             String compensatorUrl = String.format("%s/%s", coordinatorUrl,
-                    LRAClient.encodeURL(lraId, "Invalid parent LRA id"));
+                    NarayanaLRAClient.encodeURL(lraId, "Invalid parent LRA id"));
             Response response;
 
             if (lraService.hasTransaction(parentLRAUrl))
@@ -411,9 +411,9 @@ public class Coordinator {
             Map<String, String> terminateURIs = new HashMap<>();
 
             try {
-                terminateURIs.put(LRAClient.COMPENSATE, new URL(compensatorUrl + "compensate").toExternalForm());
-                terminateURIs.put(LRAClient.COMPLETE, new URL(compensatorUrl + "complete").toExternalForm());
-                terminateURIs.put(LRAClient.STATUS, new URL(compensatorUrl + "status").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.COMPENSATE, new URL(compensatorUrl + "compensate").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.COMPLETE, new URL(compensatorUrl + "complete").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.STATUS, new URL(compensatorUrl + "status").toExternalForm());
             } catch (MalformedURLException e) {
                 if(LRALogger.logger.isTraceEnabled())
                     LRALogger.logger.tracef(e, "Cannot join to LRA id '%s' with body as compensator url '%s' is invalid",
@@ -461,7 +461,7 @@ public class Coordinator {
     private Response joinLRA(URL lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("http://%s/%s/",
-                context.getRequestUri().getAuthority(), LRAClient.RECOVERY_COORDINATOR_PATH_NAME);
+                context.getRequestUri().getAuthority(), NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME);
 
         StringBuilder recoveryUrl = new StringBuilder();
 
