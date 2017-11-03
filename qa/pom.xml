@@ -45,12 +45,30 @@
 
 	<build>
 		<sourceDirectory>tests/src</sourceDirectory>
+		<outputDirectory>tests/build/classes</outputDirectory>
 		<resources>
 			<resource>
 				<directory>config</directory>
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>tests/build/idl</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>idlj-maven-plugin</artifactId>
@@ -71,7 +89,7 @@
 						<configuration>
 							<compiler>jacorb</compiler>
 							<sourceDirectory>${project.basedir}/tests/idl/</sourceDirectory>
-							<outputDirectory>${project.build.directory}/generated-sources/idl</outputDirectory>
+							<outputDirectory>tests/build/idl</outputDirectory>
 							<sources>
 								<source>
 									<includes>
