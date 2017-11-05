@@ -363,9 +363,10 @@ public class TransactionImple extends
         if(branch) {
             if(_xaResourceRecordWrappingPlugin != null) {
                 eisName = _xaResourceRecordWrappingPlugin.getEISName(xaResource);
+                XATxConverter.setEisName(((XidImple)xid).getXID(), eisName);
+               // TODO we need to make sure that it is unique - this used to be via a setBrancHUID but then we would need a map of branches to actions
             }
         }
-		xid = new XidImple(xid, branch, eisName);
 
 		if (theModifier != null)
 		{

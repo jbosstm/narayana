@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.xa.Xid;
@@ -50,38 +51,32 @@ public class JTAActionStatusServiceXAResourceOrphanFilter implements XAResourceO
         }
 
         XidImple theXid = new XidImple(xid);
-        Uid u = theXid.getTransactionUid();
+        List<Uid> toCheck = new ArrayList<Uid>();
+        toCheck.add(theXid.getTransactionUid());
+        toCheck.add(XATxConverter.getBranchUid(theXid.getXID()));
 
-        List<String> xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
-        String nodeName = XAUtils.getXANodeName(xid);
-        if (jtaLogger.logger.isDebugEnabled()) {
-            jtaLogger.logger.debug("node name of " + xid + " is " + nodeName);
-        }
-        if (xaRecoveryNodes == null || xaRecoveryNodes.size() == 0 || (!xaRecoveryNodes.contains(nodeName) && !xaRecoveryNodes.contains(NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES))) {
-            return Vote.ABSTAIN;
-        }
+        for (Uid u: toCheck) {
+            String process_id = u.getHexPid();
 
-        String process_id = u.getHexPid();
+            if (process_id.equals(LOCAL_UID.getHexPid())) {
 
-        if (process_id.equals(LOCAL_UID.getHexPid())) {
+                ActionStatusService ass = new ActionStatusService();
+                int transactionStatus = ass.getTransactionStatus("", u.stringForm());
 
-            ActionStatusService ass = new ActionStatusService();
-            int transactionStatus = ass.getTransactionStatus("", u.stringForm());
-
-            if (transactionStatus == ActionStatus.ABORTED) {
-                // Known about and completed
-                return Vote.ROLLBACK;
-            } else if (transactionStatus == ActionStatus.NO_ACTION) {
-                // Not used by current implementation but possible in protocol
-                return Vote.ABSTAIN;
+                if (transactionStatus == ActionStatus.ABORTED) {
+                    // Known about and completed
+                    return Vote.ROLLBACK;
+                } else if (transactionStatus == ActionStatus.NO_ACTION) {
+                    // Not used by current implementation but possible in protocol
+                } else {
+                    // Local transaction in-flight
+                    return Vote.LEAVE_ALONE;
+                }
             } else {
-                // Local transaction in-flight
-                return Vote.LEAVE_ALONE;
+                // For a different JVM
             }
-        } else {
-            // For a different JVM
-            return Vote.ABSTAIN;
         }
+        return Vote.ABSTAIN;
     }
 
     private static final Uid LOCAL_UID = new Uid();
