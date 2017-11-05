@@ -117,6 +117,7 @@ public class SubordinateAtomicAction extends
 				_parentNodeName = XATxConverter.getNodeName(toCheck);
 			}
 			XATxConverter.setSubordinateNodeName(toImport.getXID(), TxControl.getXANodeName());
+      XATxConverter.setBranchUID(toImport.getXID(), get_uid());
 			_theXid = new XidImple(toImport);
 		} else {
 			_theXid = new XidImple(xid);
