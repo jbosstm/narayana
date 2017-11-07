@@ -24,8 +24,13 @@ package com.arjuna.ats.jta.distributed.server;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import sun.misc.Resource;
 import sun.misc.URLClassPath;
@@ -39,23 +44,36 @@ public class IsolatableServersClassLoader extends ClassLoader {
 	private String otherIgnoredPackage;
 
 	public IsolatableServersClassLoader(String includedPackage, String ignoredPackage, ClassLoader parent) throws SecurityException, NoSuchMethodException,
-			MalformedURLException {
+			IOException {
 		super(parent);
 		this.includedPackage = includedPackage;
 		this.otherIgnoredPackage = ignoredPackage;
 		this.ignoredPackage = IsolatableServersClassLoader.class.getPackage().getName();
 		String property = System.getProperty("java.class.path");
 		String[] split = property.split(System.getProperty("path.separator"));
-		URL[] urls = new URL[split.length];
-		for (int i = 0; i < urls.length; i++) {
+		List<URL> urls = new ArrayList<URL>();
+		for (int i = 0; i < split.length; i++) {
 			String url = split[i];
 			if (url.endsWith(".jar")) {
-				urls[i] = new URL("jar:file:" + url + "!/");
+				urls.add(new URL("jar:file:" + url + "!/"));
 			} else {
-				urls[i] = new URL("file:" + url + "/");
+				urls.add(new URL("file:" + url + "/"));
 			}
 		}
-		this.ucp = new URLClassPath(urls);
+		Enumeration<URL> manifestUrls =
+				getResources("META-INF/MANIFEST.MF");
+		while (manifestUrls.hasMoreElements()) {
+			try {
+				URL manifestUrl = manifestUrls.nextElement();
+				if(manifestUrl.getProtocol().equals("jar")) {
+					urls.add(new URL(manifestUrl.getFile().substring(0,
+							manifestUrl.getFile().lastIndexOf("!"))));
+				}
+			} catch (MalformedURLException ex) {
+				throw new AssertionError();
+			}
+		}
+		this.ucp = new URLClassPath(urls.toArray(new URL[]{}));
 	}
 
 	@Override

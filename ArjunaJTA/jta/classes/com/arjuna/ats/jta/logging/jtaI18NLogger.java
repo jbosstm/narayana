@@ -477,6 +477,11 @@ public interface jtaI18NLogger {
 	@LogMessage(level = FATAL)
 	public void fatalSubordinate1PCDuringPrepare(Xid xid);
 
+	@Message(id = 16131, value = "Subordinate transaction was not recovered successfully {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = FATAL)
+    void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
+
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

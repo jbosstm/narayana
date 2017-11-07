@@ -67,6 +67,7 @@
     <entry key="JTAEnvironmentBean.xaResourceOrphanFilterClassNames">
         com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter
         com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter
+        com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinationManagerXAResourceOrphanFilter
     </entry>
 
     <!--
@@ -93,6 +94,7 @@
         com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
         com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule
         com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule
+        com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinateAtomicActionRecoveryModule
         com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule
     </entry>
 
