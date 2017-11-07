@@ -22,11 +22,25 @@ package com.hp.mwtests.ts.jta.recovery;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.transaction.HeuristicCommitException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinationManagerXAResourceOrphanFilter;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.hp.mwtests.ts.jta.commitmarkable.SimpleXAResource;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -120,6 +134,50 @@ public class XAResourceOrphanFilterTest
             tpc2.cancel();
         } finally {
             jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
+        }
+    }
+
+    @Test
+    public void testJTAActionStatusServiceXAResourceOrphanFilterSubordinate() throws HeuristicRollbackException, HeuristicMixedException, HeuristicCommitException, SystemException, RollbackException, XAException {
+        XAResourceOrphanFilter orphanFilter = new SubordinationManagerXAResourceOrphanFilter();
+
+        List<String> xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
+        List<String> recoveryNodes = new LinkedList<String>();
+        recoveryNodes.add("1");
+        jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(recoveryNodes);
+        final List<String> recoveryExtensions = new ArrayList<String>();
+
+        recoveryExtensions.add(com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinateAtomicActionRecoveryModule.class.getName());
+        recoveryExtensions.add(com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule.class.getName());
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryModuleClassNames(recoveryExtensions);
+        int recoveryBackoffPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod();
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
+        RecoveryManager.manager().scan();
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(recoveryBackoffPeriod);
+        try {
+            Xid xid = XATxConverter.getXid(Uid.nullUid(), false, XATxConverter.FORMAT_ID);
+            assertEquals(XAResourceOrphanFilter.Vote.ABSTAIN, orphanFilter.checkXid(xid));
+            SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
+            final List<Xid> xids = new ArrayList<Xid>();
+            XAResource xar = new SimpleXAResource() {
+                @Override
+                public void start (Xid xid, int flags) throws XAException {
+                    super.start(xid, flags);
+                    xids.add(xid);
+                }
+            };
+            subordinateTransaction.enlistResource(xar);
+            try {
+                assertEquals(XAResourceOrphanFilter.Vote.LEAVE_ALONE, orphanFilter.checkXid(xids.get(0)));
+            } finally {
+                subordinateTransaction.doRollback();
+            }
+            assertEquals(XAResourceOrphanFilter.Vote.LEAVE_ALONE, orphanFilter.checkXid(xids.get(0)));
+            SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+            assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xids.get(0)));
+        } finally {
+            jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
+            recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryModuleClassNames(null);
         }
     }
 }
