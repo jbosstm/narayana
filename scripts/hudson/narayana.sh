@@ -133,7 +133,7 @@ function init_test_options {
         if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0
         else
           export COMMENT_ON_PULL=""
@@ -142,7 +142,7 @@ function init_test_options {
         if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0
         else
           export COMMENT_ON_PULL=""
