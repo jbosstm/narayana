@@ -507,15 +507,15 @@ public class TaskImpl implements Task
             taskReaderThread.shutdown();
         }
 
-
+        process.destroy();
         for (int i = 0; i < 10; i++) {
-            process.destroy();
             try {
                 process.exitValue();
                 break;
             } catch (IllegalThreadStateException e) {
+                System.out.printf("IllegalThreadStateException %n", Thread.currentThread().getId());
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                     // Ignore
                 }
