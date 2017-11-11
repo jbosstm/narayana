@@ -2,7 +2,7 @@
 # -i (1 iteration), -wi (10 warm ups), -r (300 seconds at each iteration)
 # use java -jar <maven module>/target/benchmarks.jar -h for options
 #[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 10 -f 1 -r 300"
-[ -z "${JMHARGS}" ] && JMHARGS="-foe -i 1 -wi 4 -f 1 -t 240 -r 240 -prof stack"
+[ -z "${JMHARGS}" ] && JMHARGS="-i 1 -wi 4 -f 1 -t 240 -r 240 -prof stack"
 
 [ -z "${WORKSPACE}" ] && WORKSPACE=`pwd`
 MAVEN_HOME=$WORKSPACE/tools/maven
