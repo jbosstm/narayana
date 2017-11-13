@@ -77,7 +77,7 @@
     <delete dir="${driver.home}"/>
     <property name="dbdrivers.cleaned" value="true"/>
   </target>
-  <target name="clean" depends="clean-tests,clean-dbdrivers"/>
+  <target name="clean" depends="clean-tests"/>
   <target name="clean-tests">
     <delete dir="PutObjectStoreDirHere"/>
     <delete dir="ObjectStore"/>
