@@ -74,6 +74,7 @@ public class EmptyObjectStore
                 BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setDropTable(true);
 
                 storeEnvBean.setDropTable(true);
+                storeEnvBean.setCreateTable(true);
 
                 // the first get on a store initializes it (which, for a JDBC store, includes table reinitialization)
                 StoreManager.getParticipantStore();
