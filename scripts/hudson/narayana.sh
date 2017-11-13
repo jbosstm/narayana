@@ -819,8 +819,15 @@ function hw_spec {
 }
 
 function perf_tests {
-  $WORKSPACE/scripts/hudson/benchmark.sh "$@"
+  cd $WORKSPACE
+  [[ -d tmp ]] || mkdir tmp
+  cd tmp
+  rm -rf performance
+  git clone https://github.com/jbosstm/performance
+  cd performance/
+  ./scripts/run_bm.sh
   res=$?
+  cd $WORKSPACE
 
   hw_spec | tee hwinfo.txt
 
