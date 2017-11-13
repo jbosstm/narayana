@@ -130,7 +130,7 @@ public class Coordinator {
         CompensatorStatus status = lraService.getTransaction(toURL(lraId)).getLRAStatus();
 
         if (status == null)
-            return Response.noContent().build(); // 202 means the LRA is still active
+            return Response.noContent().build(); // 204 means the LRA is still active
 
         return Response.ok(status.name()).build();
     }

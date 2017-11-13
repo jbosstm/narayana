@@ -41,6 +41,7 @@ import io.narayana.lra.client.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -558,20 +559,20 @@ public class Transaction extends AtomicAction {
 
     private int lraStatusToHttpStatus() {
         if (status == null)
-            return 202; // in progress
+            return Status.NO_CONTENT.getStatusCode(); // in progress, 204
 
         switch (status) {
             case Completed:
             case Compensated:
-                return 200;
+                return Status.OK.getStatusCode(); // 200
             case Compensating:
             case Completing:
-                return 202;
+                return Status.ACCEPTED.getStatusCode(); // 202
             case FailedToComplete:
             case FailedToCompensate:
-                return 412; // probably not the correct code
+                return Status.PRECONDITION_FAILED.getStatusCode(); // 412, probably not the correct code
             default:
-                return 500;
+                return Status.INTERNAL_SERVER_ERROR.getStatusCode(); // 500
         }
     }
 
