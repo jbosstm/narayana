@@ -825,7 +825,7 @@ function perf_tests {
   rm -rf performance
   git clone https://github.com/jbosstm/performance
   cd performance/
-  ./scripts/run_bm.sh
+  JMHARGS="-t 240 -r 30 -f 3 -wi 5 -i 5 -prof stack" ./scripts/run_bm.sh
   res=$?
   cd $WORKSPACE
 
