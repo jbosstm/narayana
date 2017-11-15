@@ -127,7 +127,7 @@ public class StartCdiCheckIT {
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseBean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
@@ -137,7 +137,7 @@ public class StartCdiCheckIT {
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseMethodLRABean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
@@ -147,7 +147,7 @@ public class StartCdiCheckIT {
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectBean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
@@ -157,7 +157,7 @@ public class StartCdiCheckIT {
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectMethodLRABean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
@@ -167,7 +167,7 @@ public class StartCdiCheckIT {
         try {
             swarm.deploy(getBaseDeployment().addClasses(LRANoContextBean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
@@ -203,7 +203,7 @@ public class StartCdiCheckIT {
                 log.errorf(startE, "Error starting swarm '%s' for test '%s'", swarm, testMethodName);
                 runWithTimeout(() -> {
                     try {
-                        swarm.stop();
+                        stopSwarm(swarm);
                     } catch (Exception stopE) {
                         log.debugf(stopE, "Error stopping swarm '%s' for test '%s'", swarm, testMethodName);
                     }
@@ -212,6 +212,12 @@ public class StartCdiCheckIT {
         }, SWARM_START_TIMEOUT, TimeUnit.MINUTES);
 
         return swarm;
+    }
+
+    private void stopSwarm(Swarm swarm) throws Exception {
+        swarm.stop();
+        // sleeping a sec to be sure that weld container shutdown hook was processed
+        Thread.sleep(1500);
     }
 
     private static void runWithTimeout(Runnable r, int timeout, TimeUnit timeUnit) {
@@ -244,7 +250,7 @@ public class StartCdiCheckIT {
         } catch (org.wildfly.swarm.container.DeploymentException de) {
             // expected
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
 
         assertLogLine(new File(LOG_FILE_NAME), stringToMatch);
