@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
@@ -50,7 +51,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class TwoPhaseCoordinator extends BasicAction implements Reapable
 {
-
 	public TwoPhaseCoordinator ()
 	{
 	}
@@ -168,15 +168,20 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
                     return AddOutcome.AR_ADDED;
                 }
 
-                // disallow addition of Synchronizations that would appear
-                // earlier in sequence than any that has already been called
-                // during the pre-commmit phase. This generic support is required for
-                // JTA Synchronization ordering behaviour
-                if(_currentRecord != null) {
-                    if(sr.compareTo(_currentRecord) != 1) {
-                        return AddOutcome.AR_REJECTED;
-                    }
-                }
+                	// disallow addition of Synchronizations that would appear
+					// earlier in sequence than any that has already been called
+					// during the pre-commmit phase. This generic support is required for
+					// JTA Synchronization ordering behaviour
+					if (_currentRecord != null) {
+						if (sr.compareTo(_currentRecord) != 1) {
+							if (!arjPropertyManager.getCoordinatorEnvironmentBean().isAllowEarlySyncRegistration()) {
+								return AddOutcome.AR_REJECTED;
+							} else {
+								earlySyncsRegistered++;
+							}
+						}
+					}
+
 
                 // need to guard against synchs being added while we are performing beforeCompletion processing
                 if (_synchs.add(sr))
@@ -360,7 +365,11 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	                        }
 	                    }
 
-	                    lastIndexProcessed = lastIndexProcessed+1;
+	                    lastIndexProcessed = lastIndexProcessed+earlySyncsRegistered+1;
+	                    if (earlySyncsRegistered > 0 && lastIndexProcessed >= copiedSynchs.length) {
+	                    	break;
+						}
+						earlySyncsRegistered = 0;
 	                    _currentRecord = copiedSynchs[lastIndexProcessed];
 
 	                    try
@@ -603,4 +612,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	private boolean _beforeCalled = false;
 	private boolean _afterCalled = false;
+
+	private int earlySyncsRegistered;
 }
