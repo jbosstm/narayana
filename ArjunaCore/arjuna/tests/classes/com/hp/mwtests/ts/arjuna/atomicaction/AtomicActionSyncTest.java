@@ -21,6 +21,7 @@
  */
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,6 +30,7 @@ public class AtomicActionSyncTest extends AtomicActionTestBase
     // NOTE: The following bean properties can only be set once (because TxControl takes a static copy of them)
     @BeforeClass
     public static void init() {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAllowEarlySyncRegistration(false);
         AtomicActionTestBase.init(false);
     }
 
