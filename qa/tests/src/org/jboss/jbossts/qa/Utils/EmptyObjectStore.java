@@ -71,7 +71,9 @@ public class EmptyObjectStore
 			{
                 // ensure that all relevant JDBC store tables are cleared
                 BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "stateStore").setDropTable(true);
+                BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "stateStore").setCreateTable(true);
                 BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setDropTable(true);
+                BeanPopulator.getNamedInstance(ObjectStoreEnvironmentBean.class, "communicationStore").setCreateTable(true);
 
                 storeEnvBean.setDropTable(true);
                 storeEnvBean.setCreateTable(true);
