@@ -33,9 +33,9 @@ package com.arjuna.ats.arjuna;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -229,7 +229,7 @@ public class StateManager
              * later by the creation of a new ActivationRecord.)
              */
 
-            synchronized (mutex)
+            synchronized (lock)
             {
                 createLists();
                 
@@ -336,7 +336,7 @@ public class StateManager
 
                     if (forceAR)
                     {
-                        synchronized (mutex)
+                        synchronized (lock)
                         {
                             usingActions.remove(action.get_uid());
                         }
@@ -957,17 +957,15 @@ public class StateManager
 
         BasicAction action = null;
 
-        synchronized (mutex)
+        synchronized (lock)
         {
 	    createLists();
 
             if (usingActions.size() > 0)
             {
-                Enumeration e = usingActions.keys();
-
-                while (e.hasMoreElements())
+                for (Uid uid : usingActions.keySet())
                 {
-                    action = (BasicAction) usingActions.remove(e.nextElement());
+                    action = usingActions.remove(uid);
 
                     if (action != null)
                     {
@@ -1222,7 +1220,7 @@ public class StateManager
 
         if (recordType != RecordType.RECOVERY)
         {
-            synchronized (mutex)
+            synchronized (lock)
             {
                 if (usingActions != null)
                 {
@@ -1277,7 +1275,7 @@ public class StateManager
         {
             if ((action != null) && (action.status() == ActionStatus.RUNNING))
             {
-                synchronized (mutex)
+                synchronized (lock)
                 {
 		    createLists();  // if there wasn't a transaction running when we were activated then we need to do this now
 
@@ -1295,65 +1293,7 @@ public class StateManager
         return result;
     }
 
-    /**
-     * @return the mutex object used to lock this object.
-     * @since JTS 2.1.
-     */
 
-    protected final ReentrantLock getMutex ()
-    {
-        return mutex;
-    }
-
-    /**
-     * @return the result of the attempt to lock this object.
-     * @since JTS 2.1.
-     */
-
-    protected final boolean lockMutex ()
-    {
-        try
-        {
-            mutex.lock();
-            
-            return true;
-        }
-        catch (final Throwable ex)
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @return the result of the attempt to unlock this object.
-     * @since JTS 2.1.
-     */
-
-    protected final boolean unlockMutex ()
-    {
-        try
-        {
-            mutex.unlock();
-            
-            return true;
-        }
-        catch (final Throwable ex)
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @return <code>true</code> if the object was locked, <code>false</code> if
-     *         the attempt would cause the thread to block.
-     * @since JTS 2.1.
-     */
-
-    protected final boolean tryLockMutex ()
-    {
-        return mutex.tryLock();
-    }
-   
     /*
      * Delay creating these lists until we really need them. Some transactions may start
      * and end without adding any participants or being involved with multiple threads.
@@ -1365,8 +1305,8 @@ public class StateManager
     {
         if (modifyingActions == null)
         {
-            modifyingActions = new Hashtable();
-            usingActions = new Hashtable();
+            modifyingActions = Collections.synchronizedMap(new HashMap<Uid, BasicAction>());
+            usingActions = Collections.synchronizedMap(new HashMap<Uid, BasicAction>());
         }
     }
     
@@ -1384,8 +1324,8 @@ public class StateManager
         currentStatus = ObjectStatus.DESTROYED;
     }
 
-    protected Hashtable modifyingActions = null;
-    protected Hashtable usingActions = null;
+    protected Map<Uid, BasicAction> modifyingActions = null;
+    protected Map<Uid, BasicAction> usingActions = null;
     protected final Uid objectUid;
     protected int objectModel = ObjectModel.SINGLE;
 
@@ -1396,7 +1336,7 @@ public class StateManager
     private int myType;
     private ParticipantStore participantStore = null;
     private String storeRoot = null;
-    private ReentrantLock mutex = new ReentrantLock();
+    private Object lock = new Object();
 
     private static final String marker = "#ARJUNA#";
 }
