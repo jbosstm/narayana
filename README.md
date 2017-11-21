@@ -28,32 +28,66 @@ Building Naryana
 To build Narayana you should call:
 
 	./build.[sh|bat] <maven_goals, default is install>
+	
+To build Narayana without running tests you can call:
 
-To use this wrapper to build an individual module (say arjuna) you would type:
+	./build.[sh|bat] -DskipTests
 
-	./build.[sh|bat] clean install -pl :arjuna
 
 If you are building the "community" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
 
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/
 	
 The distribution is then available in:
+
 	./narayana-full/target/narayana-full-<VERSION>-bin.zip
 
 Alternatively, the uber jar for JacORB is available here:
+
 	./ArjunaJTS/narayana-jts-jacorb/target/narayana-jts-jacorb-<VERSION>.jar
 	
 The uber jar for the JDK ORB is available here:
+
 	./ArjunaJTS/narayana-jts-idlj/target/narayana-jts-idlj-<VERSION>.jar
 
 The user jar for local JTA is here:
+
 	./ArjunaJTA/narayana-jta/target/narayana-jta-<VERSION>.jar
 
 If you just need the facilities provided by ArjunaCore:
+
 	./ArjunaCore/arjunacore/target/arjunacore-<VERSION>.jar
+	
+Building specific components
+----------------------------
+
+If you would like to build an individual module (say arjuna) you would type:
+
+	./build.[sh|bat] clean install -pl :arjuna
+	
+If you would like to build an individual module (say arjuna) with its dependencies you would type:
+
+	./build.[sh|bat] clean install -pl :arjuna -am
+	
+Other interesting specific components can be built using:
+
+ArjunaCore - ./build.[sh|bat] -am -pl :arjunacore
+
+NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
+
+NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true
+
+NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true
+
+NarayanaJTS (ibmorb) - ./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true (requires IBM jdk)
+
+XTS - ./build.[sh|bat] -am -pl :jboss-xts
+
+STM - ./build.[sh|bat] -am -pl :stm
 
 Code Coverage Testing
 ---------------------
+
   ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
 
 Checkstyle
@@ -114,22 +148,3 @@ http://maven.apache.org/
 
 A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
 tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
-
-Building specific components
-----------------------------
-
-Narayana supports building specific components using Maven build options.
-
-ArjunaCore - ./build.[sh|bat] -am -pl :arjunacore
-
-NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
-
-NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true
-
-NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true
-
-NarayanaJTS (ibmorb) - ./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true (requires IBM jdk)
-
-XTS - ./build.[sh|bat] -am -pl :jboss-xts
-
-STM - ./build.[sh|bat] -am -pl :stm
