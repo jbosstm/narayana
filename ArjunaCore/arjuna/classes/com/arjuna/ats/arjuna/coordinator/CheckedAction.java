@@ -61,10 +61,12 @@ public class CheckedAction
 
     public void check (boolean isCommit, Uid actUid, Hashtable list)
     {
+        int sz = list == null ? 0 : list.size();
+
         if (isCommit)
-            tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(list.size()));
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(sz));
         else
-            tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(list.size()));
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(sz));
     }
 
 }
