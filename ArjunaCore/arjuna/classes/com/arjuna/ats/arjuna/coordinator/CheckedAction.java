@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -59,12 +59,14 @@ public class CheckedAction
      * The default implementation simply prints a warning.
      */
 
-    public void check (boolean isCommit, Uid actUid, Map list)
+    public void check (boolean isCommit, Uid actUid, Hashtable list)
     {
+        int sz = list == null ? 0 : list.size();
+
         if (isCommit)
-            tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(list.size()));
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_1(actUid, Integer.toString(sz));
         else
-            tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(list.size()));
+            tsLogger.i18NLogger.warn_coordinator_CheckedAction_2(actUid, Integer.toString(sz));
     }
 
 }

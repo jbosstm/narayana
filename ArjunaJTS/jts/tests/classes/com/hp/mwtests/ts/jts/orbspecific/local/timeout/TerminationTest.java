@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 import org.junit.Test;
 import org.omg.CORBA.SystemException;
@@ -60,7 +60,7 @@ import com.arjuna.orbportability.RootOA;
 
 class FakeCheckedAction extends CheckedAction
 {
-    public void check (boolean isCommit, Uid actUid, Map list)
+    public void check (boolean isCommit, Uid actUid, Hashtable list)
     {
         called = true;
     }

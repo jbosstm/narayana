@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -3407,8 +3408,13 @@ public class BasicAction extends StateManager
                     }
                 }
 
-                if (_checkedAction != null)
-                    _checkedAction.check(isCommit, get_uid(), _childThreads);
+                if (_checkedAction != null) {
+                    // check to see if anyone has overridden the default checked action class
+                    if (_checkedAction.getClass() == CheckedAction.class)
+                        _checkedAction.check(isCommit, get_uid(), null); // the default ignores the map so pass in null
+                    else
+                        _checkedAction.check(isCommit, get_uid(), new Hashtable(_childThreads));
+                }
 
                 removeAllChildThreads();
             }
