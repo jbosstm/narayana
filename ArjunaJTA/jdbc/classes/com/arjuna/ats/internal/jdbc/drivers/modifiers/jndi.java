@@ -61,7 +61,7 @@ public class jndi implements XAModifier
 	}
 
 	/*
-	 * If at start, then this must be a JNDI URL. So remove component.
+	 * If at start, then this must be a JNDI URL. So release component.
 	 */
 
 	if (index != 0)
