@@ -53,7 +53,8 @@ public class ConnectionManager {
     /*
      * Connections are pooled for the duration of a transaction.
      */
-    public static synchronized Connection create(String dbUrl, Properties info) throws SQLException {
+    public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
+    {
         String user = info.getProperty(TransactionalDriver.userName, "");
         String passwd = info.getProperty(TransactionalDriver.password, "");
         String dynamic = info.getProperty(TransactionalDriver.dynamicClass, "");
@@ -164,11 +165,17 @@ public class ConnectionManager {
         }
     }
 
-    public static void release(ConnectionImple conn) {
+    public synchronized static void remove(ConnectionImple conn) {
+        synchronized (_connections) {
+            _connections.remove(conn);
+        }
+    }
+
+    public synchronized static void release(ConnectionImple conn) {
         synchronized (_connections) {
             _connections.notify();
         }
     }
 
-    private static Set<ConnectionImple> _connections = new HashSet<>();
+    private static Set<ConnectionImple> _connections = new HashSet<ConnectionImple>();
 }

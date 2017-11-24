@@ -54,107 +54,133 @@ import java.util.Hashtable;
  * @since JTS 2.0.
  */
 
-public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection {
+public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
+{
 
-    public IndirectRecoverableConnection(String dbName, String user,
-                                         String passwd,
-                                         ConnectionImple conn) throws SQLException {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ( " + dbName + ", " + user + ", " + passwd + " )");
-        }
+    public IndirectRecoverableConnection () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ()");
+    }
+    }
 
-        _dbName = dbName;
-        _user = user;
-        _passwd = passwd;
-        _theArjunaConnection = conn;
+    public IndirectRecoverableConnection (String dbName, String user,
+				     String passwd,
+				     ConnectionImple conn) throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ( " + dbName + ", " + user + ", " + passwd + " )");
+    }
+
+	_dbName = dbName;
+	_user = user;
+	_passwd = passwd;
+	_theArjunaConnection = conn;
 
 	/*
-     * Create a jndi specific modifier first, so that we can then
+	 * Create a jndi specific modifier first, so that we can then
 	 * use this to find out what the end-point datasource really
 	 * is.
 	 */
 
-        com.arjuna.ats.internal.jdbc.drivers.modifiers.jndi jndiModifier = new com.arjuna.ats.internal.jdbc.drivers.modifiers.jndi();
+	com.arjuna.ats.internal.jdbc.drivers.modifiers.jndi jndiModifier = new com.arjuna.ats.internal.jdbc.drivers.modifiers.jndi();
 
-        _dbName = jndiModifier.initialise(_dbName);
-        _theModifier = null;
+	_dbName = jndiModifier.initialise(_dbName);
+	_theModifier = null;
 
-        createDataSource();
+	createDataSource();
     }
 
-    public boolean packInto(OutputObjectState os) {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("IndirectRecoverableConnection.packInto ()");
-        }
-
-        try {
-            os.packString(_dbName);
-            os.packString(_user);
-            os.packString(_passwd);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean packInto (OutputObjectState os)
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.packInto ()");
     }
 
-    public boolean unpackFrom(InputObjectState os) {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("IndirectRecoverableConnection.unpackFrom ()");
-        }
+	try
+	{
+	    os.packString(_dbName);
+	    os.packString(_user);
+	    os.packString(_passwd);
 
-        try {
-            _dbName = os.unpackString();
-            _user = os.unpackString();
-            _passwd = os.unpackString();
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+	    return true;
+	}
+	catch (Exception e)
+	{
+	    return false;
+	}
     }
 
-    public String getDatabaseName() {
-        return _dbName;
+    public boolean unpackFrom (InputObjectState os)
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.unpackFrom ()");
     }
 
-    public XADataSource getDataSource() throws SQLException {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("IndirectRecoverableConnection.getDataSource ()");
-        }
+	try
+	{
+	    _dbName = os.unpackString();
+	    _user = os.unpackString();
+	    _passwd = os.unpackString();
 
-        return _theDataSource;
+	    return true;
+	}
+	catch (Exception e)
+	{
+	    return false;
+	}
     }
 
-    private final void createDataSource() throws SQLException {
-        try {
-            if (_theDataSource == null) {
-                Hashtable env = jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties();
-                Context ctx = new InitialContext(env);
-                _theDataSource = (XADataSource) ctx.lookup(_dbName);
-            }
-
-            if (_theDataSource == null) {
-                throw new SQLException(jdbcLogger.i18NLogger.get_jndierror());
-            }
-        } catch (SQLException ex) {
-            throw ex;
-        } catch (Exception e) {
-            jdbcLogger.logger.error(e);
-
-            SQLException sqlException = new SQLException(e.toString());
-            sqlException.initCause(e);
-            throw sqlException;
-        }
+    public String getDatabaseName ()
+    {
+	return _dbName;
     }
 
-    /**
+    /*
      * If there is a connection then return it. Do not create a
      * new connection otherwise.
      */
 
-    public final XAConnection getCurrentConnection() throws SQLException {
-        return _theConnection;
+    public XAConnection getCurrentConnection () throws SQLException
+    {
+	return _theConnection;
+    }
+
+    public XADataSource getDataSource () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getDataSource ()");
+    }
+
+	return _theDataSource;
+    }
+
+    private final void createDataSource () throws SQLException
+    {
+	try
+	{
+	    if (_theDataSource == null)
+	    {
+    		Hashtable env = jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties();
+            Context ctx = new InitialContext(env);
+            _theDataSource = (XADataSource) ctx.lookup(_dbName);
+		}
+
+		if (_theDataSource == null) {
+		    throw new SQLException(jdbcLogger.i18NLogger.get_jndierror());
+	    }
+	}
+	catch (SQLException ex)
+	{
+	    throw ex;
+	}
+	catch (Exception e)
+	{
+        jdbcLogger.logger.error(e);
+
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
 
     protected void createConnection() throws SQLException {

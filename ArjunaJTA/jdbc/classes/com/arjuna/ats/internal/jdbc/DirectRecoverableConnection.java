@@ -50,53 +50,71 @@ import java.sql.SQLException;
  * @since JTS 2.0.
  */
 
-public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection {
-    public DirectRecoverableConnection(String dbName, String user,
-                                       String passwd, String dynamic,
-                                       ConnectionImple conn) throws SQLException {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + dynamic + " )");
-        }
+public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
+{
 
-        _dbName = dbName;
-        _user = user;
-        _passwd = passwd;
-        _dynamic = dynamic;
-        _theArjunaConnection = conn;
+    public DirectRecoverableConnection () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection()");
+    }
     }
 
-    public boolean packInto(OutputObjectState os) {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("DirectRecoverableConnection.packInto ()");
-        }
-
-        try {
-            os.packString(_dbName);
-            os.packString(_user);
-            os.packString(_passwd);
-            os.packString(_dynamic);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public DirectRecoverableConnection (String dbName, String user,
+				      String passwd, String dynamic,
+				      ConnectionImple conn) throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection( " + dbName + ", " + user + ", " + passwd + ", " + dynamic + " )");
     }
 
-    public boolean unpackFrom(InputObjectState os) {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("DirectRecoverableConnection.unpackFrom ()");
-        }
+	_dbName = dbName;
+	_user = user;
+	_passwd = passwd;
+	_dynamic = dynamic;
+	_theArjunaConnection = conn;
+    }
 
-        try {
-            _dbName = os.unpackString();
-            _user = os.unpackString();
-            _passwd = os.unpackString();
-            _dynamic = os.unpackString();
+    public boolean packInto (OutputObjectState os)
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.packInto ()");
+    }
 
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+	try
+	{
+	    os.packString(_dbName);
+	    os.packString(_user);
+	    os.packString(_passwd);
+	    os.packString(_dynamic);
+
+	    return true;
+	}
+	catch (Exception e)
+	{
+	    return false;
+	}
+    }
+
+    public boolean unpackFrom (InputObjectState os)
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.unpackFrom ()");
+    }
+
+	try
+	{
+	    _dbName = os.unpackString();
+	    _user = os.unpackString();
+	    _passwd = os.unpackString();
+	    _dynamic = os.unpackString();
+
+	    return true;
+	}
+	catch (Exception e)
+	{
+	    return false;
+	}
     }
 
     /**
@@ -104,8 +122,9 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
      * new connection otherwise.
      */
 
-    public final XAConnection getCurrentConnection() throws SQLException {
-        return _theConnection;
+    public XAConnection getCurrentConnection () throws SQLException
+    {
+	return _theConnection;
     }
 
     protected void createConnection() throws SQLException {
@@ -137,8 +156,9 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
         }
     }
 
-    private String _dynamic;
-    private DynamicClass _dynamicConnection;
+    private String		          _dynamic;
+    private DynamicClass                  _dynamicConnection;
+    private ConnectionImple               _theArjunaConnection;
 
 }
 

@@ -136,6 +136,7 @@ public class JDBC2Test
         JdbcDataSource ds = new JdbcDataSource();
 		ds.setURL("jdbc:h2:./h2/foo");
         dbProperties.put(TransactionalDriver.XADataSource, ds);
+        dbProperties.put(TransactionalDriver.poolConnections, "false");
 		
 		conn = DriverManager.getConnection(url, dbProperties);
 	}
@@ -398,6 +399,7 @@ public class JDBC2Test
 
     @Test
     public void testCloseUsed() throws Exception {
+        conn.close();
         javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
         assertTrue(conn.isClosed());
