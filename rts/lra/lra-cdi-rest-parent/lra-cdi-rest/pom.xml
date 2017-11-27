@@ -9,18 +9,24 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-parent</artifactId>
+        <artifactId>lra-cdi-rest-parent</artifactId>
         <version>5.7.2.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>lra-cdi-rest</artifactId>
-    <name>LRA Cdi REST integration</name>
-    <description>Extension which helps for easier use of LRA annotations</description>
+    <name>LRA CDI REST integration</name>
+    <description>CDI extension for checking LRA annotations used in the project,
+                 meant for easier booting of usage LRA annotations.</description>
     <packaging>jar</packaging>
 
     <properties>
-        <swarm.test.start.timeout>2</swarm.test.start.timeout>
+        <swarm.test.start.timeout>30</swarm.test.start.timeout>
+        <swarm.test.logging.level>INFO</swarm.test.logging.level>
+        <swarm.test.full.console.print>false</swarm.test.full.console.print>
+
+        <version.zt.exec>1.10</version.zt.exec>
+        <version.zt.process.killer>1.8</version.zt.process.killer>
     </properties>
 
     <build>
@@ -38,6 +44,8 @@
             <configuration>
                 <systemProperties>
                     <swarm.test.start.timeout>${swarm.test.start.timeout}</swarm.test.start.timeout>
+                    <swarm.test.logging.level>${swarm.test.logging.level}</swarm.test.logging.level>
+                    <swarm.test.full.console.print>${swarm.test.full.console.print}</swarm.test.full.console.print>
                     <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                 </systemProperties>
             </configuration>
@@ -67,13 +75,9 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>cdi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>jaxrs</artifactId>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${version.org.jboss.logging.jboss-logging}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -83,9 +87,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>${version.org.jboss.logging.jboss-logging}</version>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-exec</artifactId>
+            <version>${version.zt.exec}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-process-killer</artifactId>
+            <version>${version.zt.process.killer}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
