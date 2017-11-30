@@ -61,13 +61,9 @@ If you just need the facilities provided by ArjunaCore:
 Building specific components
 ----------------------------
 
-If you would like to build an individual module (say arjuna) you would type:
-
-	./build.[sh|bat] clean install -pl :arjuna
-	
 If you would like to build an individual module (say arjuna) with its dependencies you would type:
 
-	./build.[sh|bat] clean install -pl :arjuna -am
+	./build.[sh|bat] [clean] install -pl :arjuna -am
 	
 Other interesting specific components can be built using:
 
