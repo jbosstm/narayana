@@ -1270,7 +1270,6 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 		if (_recoveryObject != null)
 		{
 			_recoveryObject.close();
-			_recoveryObject = null;
 		}
 
 		if (_theTransaction != null)

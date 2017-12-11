@@ -149,9 +149,7 @@ public class JDBCXARecovery implements XAResourceRecovery
      * property file provided at input to this instance.
      */
 
-    private final void createDataSource()
-        throws SQLException
-    {
+    private final void createDataSource() throws SQLException {
         try
         {
             if (_dataSource == null)
@@ -161,18 +159,18 @@ public class JDBCXARecovery implements XAResourceRecovery
                 _dataSource = (XADataSource) context.lookup(_dbName);
 
                 if (_dataSource == null)
-                    throw new SQLException(jdbcLogger.i18NLogger.get_xa_recjndierror());
+                    throw new SQLException(jdbcLogger.i18NLogger.get_cant_resolve_ds_jndi_lookup(_dbName, env));
             }
         }
         catch (SQLException ex)
         {
-            ex.printStackTrace();
+            jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, ex);
 
             throw ex;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            jdbcLogger.i18NLogger.error_cannot_create_datasource(_dbName, e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
@@ -184,13 +182,13 @@ public class JDBCXARecovery implements XAResourceRecovery
      * Create the XAConnection from the XADataSource.
      */
 
-    private final void createConnection()
-        throws SQLException
+    private final void createConnection() throws SQLException
     {
+        if (_dataSource == null)
+            createDataSource();
+
         try
         {
-            if (_dataSource == null)
-                createDataSource();
 
             if (_connection == null)
             {
@@ -204,13 +202,13 @@ public class JDBCXARecovery implements XAResourceRecovery
         }
         catch (SQLException ex)
         {
-            ex.printStackTrace();
+            jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, ex);
 
             throw ex;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            jdbcLogger.i18NLogger.error_cannot_create_connection(_dataSource, _user, _password, e);
 
             SQLException sqlException = new SQLException(e.toString());
             sqlException.initCause(e);
