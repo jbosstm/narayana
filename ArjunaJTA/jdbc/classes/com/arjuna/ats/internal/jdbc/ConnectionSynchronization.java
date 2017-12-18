@@ -45,10 +45,10 @@ import javax.transaction.Synchronization;
 public class ConnectionSynchronization implements Synchronization
 {
 
-	public ConnectionSynchronization (ConnectionImple conn)
+	public ConnectionSynchronization (ConnectionImple conn, boolean needsClose)
     {
 	_theConnection = conn;
-	_theConnection.incrementUseCount();
+	this.needsClose = needsClose;
     }
 
     public void afterCompletion(int status)
@@ -56,7 +56,7 @@ public class ConnectionSynchronization implements Synchronization
 		try
 		{
 			if (_theConnection != null) {
-				_theConnection.closeImpl();
+				_theConnection.closeImpl(needsClose);
 			}
 		}
 		catch (Exception ex)
@@ -70,5 +70,6 @@ public class ConnectionSynchronization implements Synchronization
     }
 
     private ConnectionImple _theConnection = null;
+	private final boolean needsClose;
 }
 

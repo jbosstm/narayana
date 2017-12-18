@@ -31,18 +31,22 @@
 
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
-import com.arjuna.ats.jdbc.logging.jdbcLogger;
-import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import java.sql.SQLException;
+import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-import java.sql.SQLException;
-import java.util.Hashtable;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
 /**
  * This class is responsible for maintaining connection information
@@ -54,7 +58,7 @@ import java.util.Hashtable;
  * @since JTS 2.0.
  */
 
-public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
+public class IndirectRecoverableConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
 {
 
     public IndirectRecoverableConnection () throws SQLException
@@ -62,6 +66,16 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	if (jdbcLogger.logger.isTraceEnabled()) {
         jdbcLogger.logger.trace("IndirectRecoverableConnection.IndirectRecoverableConnection ()");
     }
+
+	_dbName = null;
+	_user = null;
+	_passwd = null;
+	_theConnection = null;
+	_theDataSource = null;
+	_theXAResource = null;
+	_theTransaction = null;
+	_theArjunaConnection = null;
+	_theModifier = null;
     }
 
     public IndirectRecoverableConnection (String dbName, String user,
@@ -75,6 +89,10 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	_dbName = dbName;
 	_user = user;
 	_passwd = passwd;
+	_theConnection = null;
+	_theDataSource = null;
+	_theXAResource = null;
+	_theTransaction = null;
 	_theArjunaConnection = conn;
 
 	/*
@@ -89,6 +107,22 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	_theModifier = null;
 
 	createDataSource();
+    }
+
+    public void finalize ()
+    {
+	try
+	{
+	    if (_theConnection != null)
+	    {
+		_theConnection.close();
+		_theConnection = null;
+	    }
+	}
+	catch (SQLException e)
+	{
+        jdbcLogger.i18NLogger.warn_drcdest(e);
+	}
     }
 
     public boolean packInto (OutputObjectState os)
@@ -136,6 +170,71 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	return _dbName;
     }
 
+    public XAResource getResource () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getResource ()");
+    }
+
+	try
+	{
+		if (_theXAResource == null) {
+	    	if (_theModifier != null && _theModifier.requiresSameRMOverride()) {
+	    		_theXAResource = new IsSameRMOverrideXAResource(getConnection().getXAResource());
+	    	} else {
+	    		_theXAResource = getConnection().getXAResource();
+	    	}
+	    }
+	    return _theXAResource;
+	}
+	catch (Exception e)
+	{
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;
+	}
+    }
+
+    public final void close ()
+    {
+	reset();
+    }
+
+    public final void reset ()
+    {
+	_theXAResource = null;
+	_theTransaction = null;
+    }
+
+    public boolean setTransaction (javax.transaction.Transaction tx)
+    {
+	synchronized (this)
+	{
+	    if (_theTransaction == null)
+	    {
+		_theTransaction = tx;
+
+		return true;
+	    }
+	}
+
+	/*
+	 * In case we have already set it for this transaction.
+	 */
+
+	return validTransaction(tx);
+    }
+
+    public boolean validTransaction (javax.transaction.Transaction tx)
+    {
+	boolean valid = true;
+
+	if (_theTransaction != null)
+	    valid = _theTransaction.equals(tx);
+
+	return valid;
+    }
+
     /*
      * If there is a connection then return it. Do not create a
      * new connection otherwise.
@@ -144,6 +243,46 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
     public XAConnection getCurrentConnection () throws SQLException
     {
 	return _theConnection;
+    }
+
+    public void closeCloseCurrentConnection() throws SQLException
+    {
+        synchronized (this)
+        {
+            if (_theConnection != null)
+            {
+                _theConnection.close();
+				_theConnection = null;
+				reset();
+            }
+        }
+    }
+
+    public XAConnection getConnection () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("IndirectRecoverableConnection.getConnection ()");
+    }
+
+	try
+	{
+	    synchronized (this)
+	    {
+		if (_theConnection == null)
+		{
+		    createConnection();
+		}
+	    }
+
+	    return _theConnection;
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
 
     public XADataSource getDataSource () throws SQLException
@@ -155,6 +294,56 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	return _theDataSource;
     }
 
+    public boolean inuse ()
+    {
+	return (boolean) (_theXAResource != null);
+    }
+
+    public String user ()
+    {
+	return _user;
+    }
+
+    public String password ()
+    {
+	return _passwd;
+    }
+
+    public String url ()
+    {
+	return _dbName;
+    }
+
+    public String dynamicClass ()
+    {
+	return "";
+    }
+
+    public String dataSourceName ()
+    {
+	if (_theDataSource != null)
+	    return _theDataSource.toString();
+	else
+	    return "";
+    }
+
+    public Transaction transaction ()
+    {
+	return _theTransaction;
+    }
+
+    public void setModifier (ConnectionModifier cm)
+    {
+	_theModifier = cm;
+
+	if (_theModifier != null)
+	    _dbName = _theModifier.initialise(_dbName);
+    }
+
+	public XADataSource xaDataSource () {
+		return _theDataSource;
+	}
+    
     private final void createDataSource () throws SQLException
     {
 	try
@@ -183,21 +372,91 @@ public class IndirectRecoverableConnection extends BaseTransactionalDriverXAConn
 	    throw sqlException;	}
     }
 
-    protected void createConnection() throws SQLException {
-        try {
-            if (_theDataSource == null)
-                createDataSource();
+    private final void createConnection () throws SQLException
+    {
+	try
+	{
+	    if (_theDataSource == null)
+		createDataSource();
 
-            super.createConnection();
-        } catch (SQLException ex) {
-            throw ex;
-        } catch (Exception e) {
-            e.printStackTrace();
+	    if ((_user == null || _user.isEmpty()) && (_passwd == null || _passwd.isEmpty()))
+		_theConnection = _theDataSource.getXAConnection();
+	    else
+		_theConnection = _theDataSource.getXAConnection(_user, _passwd);
+	}
+	catch (SQLException ex)
+	{
+	    throw ex;
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
 
-            SQLException sqlException = new SQLException(e.toString());
-            sqlException.initCause(e);
-            throw sqlException;
-        }
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
+
+    /*
+     * Warning; roadworks ahead!!
+     *
+     * For some reasons JNDI uses different property names internally for
+     * specifying things like the initial context to those it expects
+     * users to manipulate. Why?! There are some really stupid people
+     * at Sun!!
+     */
+
+    private final String translate (String name)
+    {
+	try
+	{
+	    if (name.equals("Context.APPLET"))
+		return Context.APPLET;
+	    if (name.equals("Context.AUTHORITATIVE"))
+		return Context.AUTHORITATIVE;
+	    if (name.equals("Context.BATCHSIZE"))
+		return Context.BATCHSIZE;
+	    if (name.equals("Context.DNS_URL"))
+		return Context.DNS_URL;
+	    if (name.equals("Context.INITIAL_CONTEXT_FACTORY"))
+		return Context.INITIAL_CONTEXT_FACTORY;
+	    if (name.equals("Context.LANGUAGE"))
+		return Context.LANGUAGE;
+	    if (name.equals("Context.OBJECT_FACTORIES"))
+		return Context.OBJECT_FACTORIES;
+	    if (name.equals("Context.PROVIDER_URL"))
+		return Context.PROVIDER_URL;
+	    if (name.equals("Context.REFERRAL"))
+		return Context.REFERRAL;
+	    if (name.equals("Context.SECURITY_AUTHENTICATION"))
+		return Context.SECURITY_AUTHENTICATION;
+	    if (name.equals("Context.SECURITY_CREDENTIALS"))
+		return Context.SECURITY_CREDENTIALS;
+	    if (name.equals("Context.SECURITY_PRINCIPAL"))
+		return Context.SECURITY_PRINCIPAL;
+	    if (name.equals("Context.SECURITY_PROTOCOL"))
+		return Context.SECURITY_PROTOCOL;
+	    if (name.equals("Context.STATE_FACTORIES"))
+		return Context.STATE_FACTORIES;
+	    if (name.equals("Context.URL_PKG_PREFIXES"))
+		return Context.URL_PKG_PREFIXES;
+	}
+	catch (NullPointerException ex)
+	{
+	    // name is null
+	}
+
+	return name;
+    }
+
+    private String                        _dbName;
+    private String                        _user;
+    private String                        _passwd;
+    private XAConnection                  _theConnection;
+    private XADataSource                  _theDataSource;
+    private XAResource                    _theXAResource;
+    private javax.transaction.Transaction _theTransaction;
+    private ConnectionImple               _theArjunaConnection;
+    private ConnectionModifier            _theModifier;
 
 }

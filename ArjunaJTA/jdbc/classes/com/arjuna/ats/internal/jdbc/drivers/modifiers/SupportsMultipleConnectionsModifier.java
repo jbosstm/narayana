@@ -55,7 +55,7 @@ public class SupportsMultipleConnectionsModifier implements XAModifier, Connecti
     @Override
     public void setIsolationLevel(Connection conn, int level)
             throws SQLException, NotImplementedException {
-        conn.setTransactionIsolation(level);
+        // Non-modifier path does not call this
     }
 
     @Override

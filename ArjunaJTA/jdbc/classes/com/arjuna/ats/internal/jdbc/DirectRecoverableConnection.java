@@ -31,14 +31,19 @@
 
 package com.arjuna.ats.internal.jdbc;
 
+import java.sql.SQLException;
+
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
+
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.common.internal.util.ClassloadingUtility;
-
-import javax.sql.XAConnection;
-import java.sql.SQLException;
 
 /**
  * This class is responsible for maintaining connection information
@@ -50,7 +55,7 @@ import java.sql.SQLException;
  * @since JTS 2.0.
  */
 
-public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
+public class DirectRecoverableConnection implements RecoverableXAConnection, ConnectionControl, TransactionalDriverXAConnection
 {
 
     public DirectRecoverableConnection () throws SQLException
@@ -58,6 +63,18 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 	if (jdbcLogger.logger.isTraceEnabled()) {
         jdbcLogger.logger.trace("DirectRecoverableConnection.DirectRecoverableConnection()");
     }
+
+	_dbName = null;
+	_user = null;
+	_passwd = null;
+	_dynamic = null;
+	_theConnection = null;
+	_theDataSource = null;
+	_dynamicConnection = null;
+	_theXAResource = null;
+	_theTransaction = null;
+	_theArjunaConnection = null;
+	_theModifier = null;
     }
 
     public DirectRecoverableConnection (String dbName, String user,
@@ -72,7 +89,30 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 	_user = user;
 	_passwd = passwd;
 	_dynamic = dynamic;
+	_theConnection = null;
+	_theDataSource = null;
+	_dynamicConnection = null;
+	_theXAResource = null;
+	_theTransaction = null;
 	_theArjunaConnection = conn;
+	_theModifier = null;
+    }
+
+    public void finalize ()
+    {
+	try
+	{
+	    if (_theConnection != null)
+	    {
+		_theConnection.close();
+		_theConnection = null;
+        _theXAResource = null;
+	    }
+	}
+	catch (SQLException e)
+	{
+        jdbcLogger.i18NLogger.warn_drcdest(e);
+	}
     }
 
     public boolean packInto (OutputObjectState os)
@@ -117,6 +157,78 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 	}
     }
 
+    public boolean setTransaction (javax.transaction.Transaction tx)
+    {
+	synchronized (this)
+	{
+	    if (_theTransaction == null)
+	    {
+		_theTransaction = tx;
+
+		return true;
+	    }
+	}
+
+	/*
+	 * In case we have already set it for this transaction.
+	 */
+
+	return validTransaction(tx);
+    }
+
+    public boolean validTransaction (javax.transaction.Transaction tx)
+    {
+	boolean valid = true;
+
+	if (_theTransaction != null)
+	    valid = _theTransaction.equals(tx);
+
+	return valid;
+    }
+
+    /**
+     * @return a new XAResource for this connection.
+     */
+
+    public XAResource getResource () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getResource ()");
+    }
+
+	try
+	{
+	    if (_theXAResource == null) {
+	    	if (_theModifier != null && _theModifier.requiresSameRMOverride()) {
+	    		_theXAResource = new IsSameRMOverrideXAResource(getConnection().getXAResource());
+	    	} else {
+	    		_theXAResource = getConnection().getXAResource();
+	    	}
+	    }
+
+	    return _theXAResource;
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+        throw sqlException;
+	}
+    }
+
+    public final void close ()
+    {
+	reset();
+    }
+
+    public final void reset ()
+    {
+	_theXAResource = null;
+	_theTransaction = null;
+    }
+
     /**
      * If there is a connection then return it. Do not create a
      * new connection otherwise.
@@ -127,38 +239,166 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 	return _theConnection;
     }
 
-    protected void createConnection() throws SQLException {
-        if (jdbcLogger.logger.isTraceEnabled()) {
-            jdbcLogger.logger.trace("DirectRecoverableConnection.createConnection");
-        }
-
-        if ((_dynamic == null) || (_dynamic.equals(""))) {
-            throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
-        } else {
-            try {
-                if (_theDataSource == null) {
-                    _dynamicConnection = ClassloadingUtility.loadAndInstantiateClass(DynamicClass.class, _dynamic, null);
-                    if (_dynamicConnection == null) {
-                        throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
-                    }
-
-                    _theDataSource = _dynamicConnection.getDataSource(_dbName);
-                }
-
-                super.createConnection();
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                SQLException sqlException = new SQLException(e.toString());
-                sqlException.initCause(e);
-                throw sqlException;
+    public void closeCloseCurrentConnection() throws SQLException
+    {
+        synchronized (this)
+        {
+            if (_theConnection != null)
+            {
+                _theConnection.close();
+				_theConnection = null;
+				reset();
             }
         }
     }
 
+    public XAConnection getConnection () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getConnection ()");
+    }
+
+	try
+	{
+	    synchronized (this)
+	    {
+		if (_theConnection == null)
+		{
+		    createConnection();
+		}
+	    }
+
+	    return _theConnection;
+	}
+	catch (Exception e)
+	{
+	    e.printStackTrace();
+
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;
+	}
+    }
+
+    public XADataSource getDataSource () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.getDataSource ()");
+    }
+
+	return _theDataSource;
+    }
+
+    public boolean inuse ()
+    {
+	return (boolean) (_theXAResource != null);
+    }
+
+    public String user ()
+    {
+	return _user;
+    }
+
+    public String password ()
+    {
+	return _passwd;
+    }
+
+    public String url ()
+    {
+	return _dbName;
+    }
+
+    public String dynamicClass ()
+    {
+	return _dynamic;
+    }
+
+    public String dataSourceName ()
+    {
+	return _dbName;
+    }
+
+    public Transaction transaction ()
+    {
+	return _theTransaction;
+    }
+
+    public void setModifier (ConnectionModifier cm)
+    {
+	_theModifier = cm;
+
+	if (_theModifier != null)
+	    _dbName = _theModifier.initialise(_dbName);
+    }
+
+	public XADataSource xaDataSource () {
+		return _theDataSource;
+	}
+
+    private final void createConnection () throws SQLException
+    {
+	if (jdbcLogger.logger.isTraceEnabled()) {
+        jdbcLogger.logger.trace("DirectRecoverableConnection.createConnection");
+    }
+
+	if ((_dynamic == null) || (_dynamic.equals("")))
+	{
+	    throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
+	}
+	else
+	{
+	    try
+	    {
+		if (_theDataSource == null)
+		{
+		    _dynamicConnection = ClassloadingUtility.loadAndInstantiateClass(DynamicClass.class, _dynamic, null);
+            if(_dynamicConnection == null) {
+                throw new SQLException(jdbcLogger.i18NLogger.get_dynamicerror());
+            }
+
+		    _theDataSource = _dynamicConnection.getDataSource(_dbName);
+		}
+
+		if ((_user == null || _user.isEmpty()) && (_passwd == null || _passwd.isEmpty()))
+		{
+		    if (jdbcLogger.logger.isTraceEnabled()) {
+                jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection with no user");
+            }
+
+		    _theConnection = _theDataSource.getXAConnection();
+		}
+		else
+		{
+		    if (jdbcLogger.logger.isTraceEnabled()) {
+                jdbcLogger.logger.trace("DirectRecoverableConnection - getting connection for user " + _user);
+            }
+
+		    _theConnection = _theDataSource.getXAConnection(_user, _passwd);
+		}
+	    }
+	    catch (Exception e)
+	    {
+		e.printStackTrace();
+
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+    		throw sqlException; 
+	    }
+	}
+    }
+
+    private String		          _dbName;
+    private String		          _user;
+    private String		          _passwd;
     private String		          _dynamic;
+    private XAConnection                  _theConnection;
+    private XADataSource	          _theDataSource;
     private DynamicClass                  _dynamicConnection;
+    private XAResource                    _theXAResource;
+    private javax.transaction.Transaction _theTransaction;
     private ConnectionImple               _theArjunaConnection;
+    private ConnectionModifier            _theModifier;
 
 }
 

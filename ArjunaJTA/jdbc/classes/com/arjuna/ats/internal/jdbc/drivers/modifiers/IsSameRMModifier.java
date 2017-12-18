@@ -74,7 +74,7 @@ public class IsSameRMModifier implements XAModifier, ConnectionModifier {
 	@Override
 	public void setIsolationLevel(Connection conn, int level)
 			throws SQLException, NotImplementedException {
-		conn.setTransactionIsolation(level);
+		// Non-modifier path does not call this
 	}
 
 	@Override
