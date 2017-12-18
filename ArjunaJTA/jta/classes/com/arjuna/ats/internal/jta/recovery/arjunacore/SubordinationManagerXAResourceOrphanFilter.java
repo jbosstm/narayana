@@ -25,12 +25,15 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -49,7 +52,20 @@ public class SubordinationManagerXAResourceOrphanFilter implements XAResourceOrp
             return Vote.ABSTAIN;
         }
 
-        if (!TxControl.getXANodeName().equals(XATxConverter.getSubordinateNodeName(new XidImple(xid).getXID()))) {
+        List<String> _xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
+
+        if(_xaRecoveryNodes == null || _xaRecoveryNodes.size() == 0) {
+            jtaLogger.i18NLogger.info_recovery_noxanodes();
+            return Vote.ABSTAIN;
+        }
+
+        String nodeName = XATxConverter.getSubordinateNodeName(new XidImple(xid).getXID());
+
+        if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("subordinate node name of " + xid + " is " + nodeName);
+        }
+
+        if (!_xaRecoveryNodes.contains(nodeName)) {
             // It either doesn't have a subordinate node name or isn't for this server
             return Vote.ABSTAIN;
         }
