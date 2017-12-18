@@ -23,6 +23,7 @@ package com.hp.mwtests.ts.jta.recovery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,9 +38,11 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinateJTAXAResourceOrphanFilter;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.SubordinationManagerXAResourceOrphanFilter;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.hp.mwtests.ts.jta.commitmarkable.SimpleXAResource;
 import org.junit.Test;
 
@@ -178,6 +181,22 @@ public class XAResourceOrphanFilterTest
         } finally {
             jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
             recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryModuleClassNames(null);
+        }
+    }
+
+    @Test
+    public void testSubordinateJTAXAResourceOrphanFilter() throws HeuristicRollbackException, HeuristicMixedException, HeuristicCommitException, SystemException, RollbackException, XAException {
+        XAResourceOrphanFilter orphanFilter = new SubordinateJTAXAResourceOrphanFilter();
+        XidImple xid = (XidImple) XATxConverter.getXid(Uid.nullUid(), false, XATxConverter.FORMAT_ID);
+        XATxConverter.setSubordinateNodeName(xid.getXID(), TxControl.getXANodeName());
+        List<String> xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
+        try {
+            jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(Arrays.asList("2"));
+            assertEquals(XAResourceOrphanFilter.Vote.ABSTAIN, orphanFilter.checkXid(xid));
+            jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(Arrays.asList("1"));
+            assertEquals(XAResourceOrphanFilter.Vote.ROLLBACK, orphanFilter.checkXid(xid));
+        } finally {
+            jtaPropertyManager.getJTAEnvironmentBean().setXaRecoveryNodes(xaRecoveryNodes);
         }
     }
 }
