@@ -21,6 +21,7 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Stack;
 
 import javax.transaction.xa.Xid;
@@ -32,6 +33,7 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.utils.XAHelper;
@@ -47,11 +49,23 @@ public class SubordinateJTAXAResourceOrphanFilter implements XAResourceOrphanFil
 
 	@Override
 	public Vote checkXid(Xid xid) {
+		List<String> _xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
+		
+        if(_xaRecoveryNodes == null || _xaRecoveryNodes.size() == 0) {
+        	jtaLogger.i18NLogger.info_recovery_noxanodes();
+        	return Vote.ABSTAIN;
+        }
+
 		String nodeName = XATxConverter.getSubordinateNodeName(new XidImple(xid).getXID());
 
 		if (jtaLogger.logger.isDebugEnabled()) {
 			jtaLogger.logger.debug("subordinate node name of " + xid + " is " + nodeName);
 		}
+
+        if (!_xaRecoveryNodes.contains(nodeName)) {
+        	// It either doesn't have a subordinate node name or isn't for this server
+        	return Vote.ABSTAIN;
+        }
 
 		// It does have an XID
 		if (nodeName != null) {
