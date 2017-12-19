@@ -61,8 +61,20 @@ public class RecoveryTest {
     private static final Logger log = Logger.getLogger(RecoveryTest.class);
     private TransactionalDriver transactionalDriver;
 
+    // small hack for H2 connection that works badly with XA
+    // there is trouble of finishing XA transaction when a fail happens during XA execution
+    // we need to leave such failed connection opened during recovery
+    private Connection failedTxnConnection = null;
+
     @After
     public void cleanUp() {
+        if(failedTxnConnection != null) {
+            try {
+                failedTxnConnection.close();
+            } catch(Exception ignored) {
+            }
+            failedTxnConnection = null;
+        }
         try {
             if(transactionalDriver != null)
                 DriverManager.deregisterDriver(transactionalDriver);
@@ -189,6 +201,7 @@ public class RecoveryTest {
 	 */
 	private void step0_setupTables(String url, Properties dbProperties) throws Exception {
         Connection conn = DriverManager.getConnection(url, dbProperties);
+        log.debugf("conn step0: %s, db props %s", conn, dbProperties);
 
         Statement stmt = conn.createStatement(); // non-tx statement
 
@@ -212,7 +225,8 @@ public class RecoveryTest {
         Thread thread = new Thread(() -> {
             try {
                 Uid[] uid = new Uid[1];
-                Connection conn = DriverManager.getConnection(url, dbProperties);
+                failedTxnConnection = DriverManager.getConnection(url, dbProperties);
+                log.debugf("conn step1: %s, db props %s", failedTxnConnection, dbProperties);
                 TransactionManager tx = com.arjuna.ats.jta.TransactionManager
                         .transactionManager();
 
@@ -224,7 +238,7 @@ public class RecoveryTest {
                     }
                 });
 
-                Statement stmtx = conn.createStatement(); // will be a tx-statement
+                Statement stmtx = failedTxnConnection.createStatement(); // will be a tx-statement
 
                 stmtx.executeUpdate("INSERT INTO test_table (a, b) VALUES (1,2)");
 
@@ -233,12 +247,13 @@ public class RecoveryTest {
                 } catch (Throwable e) {
                     // expected
                     ActionManager.manager().remove(uid[0]);
-                } finally {
-                    conn.close();
                 }
-                // conn.close();
+                // do not close connection here as H2 does not handle well XA txn
+                // when we close connection with failed transaction and then we want to recover it 
+                // failedTxnConnection.close();
             } catch (Throwable t) {
-                fail("Error on leaving xids in db table of connection url: " + url);
+                fail("Error injecting byteman rule to prepare unfinished xids"
+                        + " of connection url: " + url + ", props: " + dbProperties);
             }
         });
         thread.start();
@@ -250,6 +265,7 @@ public class RecoveryTest {
      */
 	private void step2_checkDbIsNotCommitted(String url, Properties dbProperties) throws Exception {
         Connection conn = DriverManager.getConnection(url, dbProperties);
+        log.debugf("conn step2: %s, db props %s", conn, dbProperties);
         Statement stmt = conn.createStatement(); // non-tx statement
 
         ResultSet res1 = stmt.executeQuery("SELECT * FROM test_table");
@@ -273,6 +289,7 @@ public class RecoveryTest {
      */
 	private void step4_finalDbCommitCheck(String url, Properties dbProperties) throws Exception {
         Connection conn = DriverManager.getConnection(url, dbProperties);
+        log.debugf("conn step4: %s, db props %s", conn, dbProperties);
         Statement stmt = conn.createStatement(); // non-tx statement
 
         ResultSet res1 = stmt.executeQuery("SELECT * FROM test_table");
