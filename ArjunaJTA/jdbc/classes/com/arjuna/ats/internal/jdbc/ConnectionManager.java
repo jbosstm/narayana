@@ -88,11 +88,7 @@ public class ConnectionManager {
 
                     /* Check transaction and database connection. */
                     if ((tx1 != null && tx1.equals(tx2))
-                            && dbUrl.equals(connControl.url())
-                            && user.equals(connControl.user())
-                            && passwd.equals(connControl.password())
-                            && dynamic.equals(connControl.dynamicClass())
-                            && (xaDataSource == null || xaDataSource.equals(connControl.xaDataSource()))) // equal ProvidedXADataSourceConnection instances should have the same data source
+                            && isSameConnection(dbUrl, user, passwd, dynamic, xaDataSource, connControl))
                     {
                         try {
                             /*
@@ -125,7 +121,7 @@ public class ConnectionManager {
                 while (conn == null) {
                     if (conn == null) {
                         for (ConnectionImple con : _connections) {
-                            if (!con.inUse()) {
+                            if (!con.inUse() && isSameConnection(dbUrl, user, passwd, dynamic, xaDataSource, con.connectionControl())) {
                                 conn = con;
                                 conn.incrementUseCount();
                                 break;
@@ -175,6 +171,16 @@ public class ConnectionManager {
         synchronized (_connections) {
             _connections.notify();
         }
+    }
+
+    private static boolean isSameConnection(String dbUrl, String user, String passwd, String dynamic, Object xaDataSource, ConnectionControl connControl) {
+        return 
+            dbUrl.equals(connControl.url())
+            && user.equals(connControl.user())
+            && passwd.equals(connControl.password())
+            && dynamic.equals(connControl.dynamicClass())
+            // equal ProvidedXADataSourceConnection instances should have the same data source
+            && (xaDataSource == null || xaDataSource.equals(connControl.xaDataSource()));
     }
 
     private static Set<ConnectionImple> _connections = new HashSet<ConnectionImple>();
