@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.FATAL;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;

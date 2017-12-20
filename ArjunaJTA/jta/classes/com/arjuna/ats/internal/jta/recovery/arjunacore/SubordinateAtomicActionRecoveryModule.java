@@ -79,7 +79,13 @@ public class SubordinateAtomicActionRecoveryModule implements RecoveryModule {
                 }
             }
             recoveryScanCompletedWithoutError = true;
-        } catch (ObjectStoreException | XAException | IOException e) {
+        } catch (ObjectStoreException e) {
+            jtaLogger.i18NLogger.warn_could_not_recover_subordinate(uid, e);
+            recoveryScanCompletedWithoutError = false;
+        } catch (XAException e) {
+            jtaLogger.i18NLogger.warn_could_not_recover_subordinate(uid, e);
+            recoveryScanCompletedWithoutError = false;
+        } catch (IOException e) {
             jtaLogger.i18NLogger.warn_could_not_recover_subordinate(uid, e);
             recoveryScanCompletedWithoutError = false;
         }
