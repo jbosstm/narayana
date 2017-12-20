@@ -51,7 +51,7 @@ public class RecoveryShutdownTest {
         recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-        XARecoveryModule xarm = new XARecoveryModule();
+        final XARecoveryModule xarm = new XARecoveryModule();
 
         final SimpleResource testXAResource = new SimpleResource() {
             @Override
@@ -93,10 +93,12 @@ public class RecoveryShutdownTest {
         xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) );
 
         final boolean[] removedHelper = {false};
-        Runnable r = () -> {
-            // the next call will hang unless JBTM-2837 is fixed
-            xarm.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
-            removedHelper[0] = true;
+        Runnable r = new Runnable(){
+            public void run() {
+                // the next call will hang unless JBTM-2837 is fixed
+                xarm.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+                removedHelper[0] = true;
+            }
         };
 
         Thread t = new Thread(r);
