@@ -3,4 +3,5 @@
 <properties>
     <entry key="RecoveryEnvironmentBean.periodicRecoveryPeriod">2</entry>
     <entry key="RecoveryEnvironmentBean.recoveryBackoffPeriod">2</entry>
+    <entry key="ObjectStoreEnvironmentBean.objectStoreDir">work/Catalina/localhost/test/ObjectStore</entry>
 </properties>

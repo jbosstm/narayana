@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.tomcat.jta.integration;
+package org.jboss.narayana.tomcat.jta.integration.app;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

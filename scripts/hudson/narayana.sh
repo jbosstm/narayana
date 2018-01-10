@@ -577,21 +577,28 @@ function tomcat_tests {
     wget -nc https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.zip
     rm -rf apache-tomcat-$TOMCAT_VERSION
     unzip apache-tomcat-$TOMCAT_VERSION.zip
-    cp ~/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar apache-tomcat-$TOMCAT_VERSION/lib/
-    chmod +x $(pwd)/apache-tomcat-$TOMCAT_VERSION/bin/catalina.sh
-    sed -i 's/<\/tomcat-users>/<user username="test" password="test" roles="manager-script"\/>\n<\/tomcat-users>/' $(pwd)/apache-tomcat-$TOMCAT_VERSION/conf/tomcat-users.xml
-    echo "Executing Narayana Tomcat tests"
     case "$(uname -s)" in
     CYGWIN*)    export CATALINA_HOME=`cygpath -w $(pwd)/apache-tomcat-$TOMCAT_VERSION/`;;
     *)          export CATALINA_HOME=$(pwd)/apache-tomcat-$TOMCAT_VERSION/
     esac
-    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} clean install "$@"
+    chmod +x ${CATALINA_HOME}/bin/catalina.sh
+    sed -i 's/<\/tomcat-users>/<user username="arquillian" password="arquillian" roles="manager-script"\/>\n<\/tomcat-users>/' ${CATALINA_HOME}/conf/tomcat-users.xml
+    cat <<EOT >> ${CATALINA_HOME}/conf/logging.properties
+org.apache.tomcat.tomcat-jdbc.level = ALL
+org.h2.level = ALL
+org.postgresql.level = ALL
+javax.sql.level = ALL
+org.apache.tomcat.tomcat-dbcp.level = ALL
+com.arjuna.level = ALL
+EOT
+    echo "Executing Narayana Tomcat tests"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
-    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dpostgres-db=true "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
-    rm -r apache-tomcat-$TOMCAT_VERSION
+    rm -r ${CATALINA_HOME}
 }
 
 function enable_qa_trace {

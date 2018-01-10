@@ -22,9 +22,16 @@
 
 package org.jboss.narayana.tomcat.jta.integration;
 
+import org.apache.commons.io.FileUtils;
+import org.jboss.arquillian.container.test.api.ContainerController;
+import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.narayana.tomcat.jta.integration.app.TestApplication;
+import org.jboss.narayana.tomcat.jta.integration.app.TestExecutor;
+import org.jboss.narayana.tomcat.jta.integration.app.TestXAResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -37,22 +44,28 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
-import static org.jboss.narayana.tomcat.jta.integration.TestExecutor.BASE_PATH;
-import static org.jboss.narayana.tomcat.jta.integration.TestExecutor.JNDI_TEST;
-import static org.jboss.narayana.tomcat.jta.integration.TestExecutor.RECOVERY_TEST;
+import static org.jboss.narayana.tomcat.jta.integration.app.TestExecutor.BASE_PATH;
+import static org.jboss.narayana.tomcat.jta.integration.app.TestExecutor.JNDI_TEST;
+import static org.jboss.narayana.tomcat.jta.integration.app.TestExecutor.RECOVERY_TEST;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ * @author <a href="mailto:karm@redhat.com">Michal Karm Babacek</a>
  */
 @RunAsClient
 @RunWith(Arquillian.class)
-public class BaseITCase {
+public class BaseITCase extends AbstractCase {
+
+    private static final Logger LOGGER = Logger.getLogger(BaseITCase.class.getName());
 
     private static final String DEPLOYMENT_NAME = "test";
 
@@ -66,32 +79,56 @@ public class BaseITCase {
 
     private Client client;
 
-    @Deployment
-    public static WebArchive getDeployment() {
-        File[] libraries = Maven.resolver().resolve(NARAYANA_DEPENDENCY, RESTEASY_DEPENDENCY, System.getProperty("database.driver")).withTransitivity()
-                .asFile();
+    @ArquillianResource
+    private Deployer deployer;
 
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
+    @ArquillianResource
+    private ContainerController controller;
+
+    /**
+     * Prepares test web app for deployment, including Narayana and RestEasy.
+     * The context.xml is tailored for a specific database data source as needed in @BeforeClass.
+     * A specific driver for the particular database is added in @BeforeClass.
+     *
+     * @return war deployment for Tomcat
+     */
+    @Deployment(name = "Basic-app", managed = false)
+    public static WebArchive getDeployment() {
+        final File[] libraries = Maven.resolver().resolve(NARAYANA_DEPENDENCY, RESTEASY_DEPENDENCY).withTransitivity().asFile();
+        final WebArchive archive = ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
                 .addClasses(TestApplication.class, TestExecutor.class, TestXAResource.class)
                 .addAsLibraries(libraries)
-                .addAsManifestResource("context.xml", "context.xml")
                 .addAsResource("jbossts-properties.xml", "jbossts-properties.xml")
                 .addAsWebInfResource("web.xml", "web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        System.out.println(archive.toString(true));
+        LOGGER.info(archive.toString(true));
+        webArchive = archive;
         return archive;
     }
 
     @Before
     public void before() {
-        File objectStore = new File(System.getenv("CATALINA_HOME") + File.separator + "bin" + File.separator + "ObjectStore");
-        assertTrue("Failed to clear object store", deleteDirectory(objectStore));
+        // Clean Object store and stray deployments
+        try {
+            FileUtils.deleteDirectory(Paths.get(catalinaHome, "work", "Catalina", "localhost", "test", "ObjectStore").toFile());
+            FileUtils.deleteDirectory(Paths.get(catalinaHome, "work", "Narayana", "ObjectStore").toFile());
+            FileUtils.deleteDirectory(Paths.get(catalinaHome, "bin", "ObjectStore").toFile());
+            FileUtils.deleteDirectory(Paths.get(catalinaHome, "webapps", "test").toFile());
+            FileUtils.deleteQuietly(Paths.get(catalinaHome, "webapps", "test.war").toFile());
+        } catch (IOException | NullPointerException e) {
+            LOGGER.log(Level.SEVERE, "Failed to delete stray ObjectStore(s).", e);
+        }
+        controller.start("tomcat");
         client = ClientBuilder.newClient();
+        deployer.deploy("Basic-app");
     }
 
     @After
     public void after() {
         client.close();
+        deployer.undeploy("Basic-app");
+        controller.stop("tomcat");
+        assertTrue("Failed to clean DB, check logs for the root cause.", dba.cleanDB(db));
     }
 
     @Test
@@ -101,25 +138,15 @@ public class BaseITCase {
 
     @Test
     public void testRecovery() {
-        test(EXECUTOR_URL + RECOVERY_TEST);
+        IntStream.range(0, 3).forEach(i -> test(EXECUTOR_URL + RECOVERY_TEST));
     }
 
-    private void test(String url) {
-        Response response = client.target(url).request().get();
+    private void test(final String url) {
+        final Response response = client.target(url).request().get();
         if (response.getStatus() == 500) {
             fail(response.readEntity(String.class));
         } else if (response.getStatus() != 204) {
-            fail("Unexpected test status: " + response.getStatus());
+            fail(String.format("Unexpected test status: %d", response.getStatus()));
         }
     }
-
-    private boolean deleteDirectory(File path) {
-        if (!path.exists()) {
-            return true;
-        }
-
-        return Arrays.stream(path.listFiles()).map(file -> file.isDirectory() ? deleteDirectory(file) : file.delete())
-                .allMatch(result -> result);
-    }
-
 }

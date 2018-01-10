@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package org.jboss.narayana.tomcat.jta;
+package org.jboss.narayana.tomcat.jta;
 
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.dbcp.dbcp2.PoolableConnection;
 import org.apache.tomcat.dbcp.dbcp2.PoolableConnectionFactory;
 import org.apache.tomcat.dbcp.dbcp2.managed.DataSourceXAConnectionFactory;
@@ -39,20 +41,18 @@ import javax.transaction.xa.XAResource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Zheng Feng</a>
  */
 public class TransactionalDataSourceFactory implements ObjectFactory {
 
-    private static final Logger LOGGER = Logger.getLogger(TransactionalDataSourceFactory.class.getSimpleName());
+    private static final Log log = LogFactory.getLog(TransactionalDataSourceFactory.class);
 
     private static final String PROP_TRANSACTION_MANAGER = "transactionManager";
     private static final String PROP_XA_DATASOURCE = "xaDataSource";
@@ -89,7 +89,8 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         }
 
         final Reference ref = (Reference) obj;
-        if (!"javax.sql.DataSource".equals(ref.getClassName())) {
+        if (!"javax.sql.XADataSource".equals(ref.getClassName())) {
+            log.fatal(String.format("The expected type of datasource was javax.sql.XADataSource and not %s.", ref.getClassName()));
             return null;
         }
 
@@ -103,25 +104,28 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             }
         }
 
-        TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, PROP_TRANSACTION_MANAGER);
-        XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, PROP_XA_DATASOURCE);
+        final TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, PROP_TRANSACTION_MANAGER);
+        final XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, PROP_XA_DATASOURCE);
 
         if (transactionManager != null && xaDataSource != null) {
-            DataSourceXAConnectionFactory xaConnectionFactory =
+            final DataSourceXAConnectionFactory xaConnectionFactory =
                     new DataSourceXAConnectionFactory(transactionManager, xaDataSource);
-            PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(xaConnectionFactory, null);
-            GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            final PoolableConnectionFactory poolableConnectionFactory =
+                    new PoolableConnectionFactory(xaConnectionFactory, null);
+            final GenericObjectPoolConfig config =
+                    new GenericObjectPoolConfig();
             setPoolConfig(config, properties);
-            GenericObjectPool<PoolableConnection> objectPool =
+            final GenericObjectPool<PoolableConnection> objectPool =
                     new GenericObjectPool<>(poolableConnectionFactory, config);
             poolableConnectionFactory.setPool(objectPool);
 
             // Register for recovery
             XARecoveryModule xaRecoveryModule = getXARecoveryModule();
             if (xaRecoveryModule != null) {
-                xaRecoveryModule.addXAResourceRecoveryHelper( new XAResourceRecoveryHelper() {
-                    private Object lock = new Object();
+                xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+                    private final Object lock = new Object();
                     private XAConnection connection;
+
                     @Override
                     public boolean initialise(String p) throws Exception {
                         return true;
@@ -154,7 +158,7 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                             connection.addConnectionEventListener(new ConnectionEventListener() {
                                 @Override
                                 public void connectionClosed(ConnectionEvent event) {
-                                    LOGGER.warning("The connection was closed: " + connection);
+                                    log.warn("The connection was closed: " + connection);
                                     synchronized (lock) {
                                         connection = null;
                                     }
@@ -162,13 +166,13 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
 
                                 @Override
                                 public void connectionErrorOccurred(ConnectionEvent event) {
-                                    LOGGER.warning("A connection error occurred: " + connection);
+                                    log.warn("A connection error occurred: " + connection);
                                     synchronized (lock) {
                                         try {
                                             connection.close();
                                         } catch (SQLException e) {
                                             // Ignore
-                                            LOGGER.warning("Could not close failing connection: " + connection);
+                                            log.warn("Could not close failing connection: " + connection);
                                         }
                                         connection = null;
                                     }
@@ -197,9 +201,9 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
     private void setPoolConfig(GenericObjectPoolConfig config, Properties properties) {
         for (String propertyName : properties.stringPropertyNames()) {
             try {
-                Method method = getSetMethod(GenericObjectPoolConfig.class, propertyName);
-                Class type = GenericObjectPoolConfig.class.getDeclaredField(propertyName).getType();
-                String value = properties.getProperty(propertyName);
+                final Method method = getSetMethod(GenericObjectPoolConfig.class, propertyName);
+                final Class type = GenericObjectPoolConfig.class.getDeclaredField(propertyName).getType();
+                final String value = properties.getProperty(propertyName);
                 if (value != null) {
                     if (type == int.class) {
                         method.invoke(config, Integer.parseInt(value));
@@ -212,29 +216,29 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                     }
                 }
             } catch (Exception e) {
+                log.warn("There was an error processing pool config properties.", e);
             }
         }
     }
 
     private Method getSetMethod(Class objectClass, String fieldName) throws Exception {
-        Class[] parameterTypes = new Class[1];
-        Field field = objectClass.getDeclaredField(fieldName);
+        final Class[] parameterTypes = new Class[1];
+        final Field field = objectClass.getDeclaredField(fieldName);
         parameterTypes[0] = field.getType();
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("set");
         sb.append(fieldName.substring(0, 1).toUpperCase());
         sb.append(fieldName.substring(1));
+        @SuppressWarnings("unchecked")
         Method method = objectClass.getMethod(sb.toString(), parameterTypes);
         return method;
     }
 
     private XARecoveryModule getXARecoveryModule() {
-        XARecoveryModule xaRecoveryModule = XARecoveryModule
-                .getRegisteredXARecoveryModule();
+        final XARecoveryModule xaRecoveryModule = XARecoveryModule.getRegisteredXARecoveryModule();
         if (xaRecoveryModule != null) {
             return xaRecoveryModule;
         }
-        throw new IllegalStateException(
-                "XARecoveryModule is not registered with recovery manager");
+        throw new IllegalStateException("XARecoveryModule is not registered with recovery manager");
     }
 }

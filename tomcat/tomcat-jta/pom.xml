@@ -40,6 +40,12 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <version>${version.org.apache.tomcat}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.2_spec</artifactId>
             <version>${version.org.jboss.spec.javax.transaction}</version>
@@ -82,13 +88,6 @@
             <version>${version.org.jboss.logging.jboss-logging}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-dbcp</artifactId>
-            <version>${version.org.apache.tomcat}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${version.javax.servlet}</version>
@@ -103,6 +102,12 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.org.jboss.arquillian.core}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
             <version>${version.org.jboss.arquillian.core}</version>
             <scope>test</scope>
         </dependency>
@@ -146,6 +151,12 @@
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman-bmunit</artifactId>
             <version>${version.org.jboss.byteman}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana</groupId>
+            <version>${project.version}</version>
+            <artifactId>test-utils</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -201,64 +212,6 @@
     </build>
     <profiles>
         <profile>
-            <id>h2-db</id>
-            <activation>
-                <property>
-                    <name>!postgres-db</name>
-                </property>
-            </activation>
-            <properties>
-                <database.driver>com.h2database:h2:${version.com.h2database}</database.driver>
-            </properties>
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-h2</directory>
-                    </testResource>
-                </testResources>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                    <version>${version.com.h2database}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>postgres-db</id>
-            <activation>
-                <property>
-                    <name>postgres-db</name>
-                </property>
-            </activation>
-            <properties>
-                <database.driver>postgresql:postgresql:${version.postgresql}</database.driver>
-            </properties>
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-postgres</directory>
-                    </testResource>
-                </testResources>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>${version.postgresql}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>arq-tomcat</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -284,12 +237,64 @@
                                 <configuration>
                                     <skip>false</skip>
                                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                                    <forkCount>0</forkCount>
                                     <systemPropertyVariables combine.children="append">
                                         <project.build.directory>${project.build.directory}</project.build.directory>
                                         <version.org.jboss.narayana>${project.version}</version.org.jboss.narayana>
                                         <version.org.jboss.resteasy>${version.org.jboss.resteasy}</version.org.jboss.resteasy>
-                                        <database.driver>${database.driver}</database.driver>
+                                        <version.org.jboss.spec.javax.transaction>${version.org.jboss.spec.javax.transaction}</version.org.jboss.spec.javax.transaction>
                                         <server.jvm.args>${server.jvm.args}</server.jvm.args>
+                                        <tomcat.user>arquillian</tomcat.user>
+                                        <tomcat.pass>arquillian</tomcat.pass>
+
+                                        <!--
+                                        h2:
+                                          By default, the integration test runs with "h2" database, platform independent and in-memory.
+                                        pgsql:
+                                          If selected, the TS runs against a remote, always present PostgreSQL database server available in the Narayana CI.
+                                        container:
+                                          It requires a running Docker daemon the user executing this TS has the rights to control
+                                          A database is started as a Docker container and it is discarded at the end of testing.
+                                        dballocator:
+                                          It requires an instance of DBAllocator running in your infrastructure. It enables the TS to
+                                          lease various databases, including but not limited to Sybase, DB2, MS SQL, Maria, Postgress, Oracle...
+                                        -->
+                                        <test.db.type>h2</test.db.type>
+
+                                        <!-- pgsql properties -->
+                                        <version.postgresql>${version.postgresql}</version.postgresql>
+                                        <pgsql.user>dtf11</pgsql.user>
+                                        <pgsql.password>dtf11</pgsql.password>
+                                        <pgsql.servername>narayanaci1.eng.hst.ams2.redhat.com</pgsql.servername>
+                                        <pgsql.portnumber>5432</pgsql.portnumber>
+                                        <pgsql.databasename>jbossts</pgsql.databasename>
+
+                                        <!-- h2 properties -->
+                                        <version.com.h2database>${version.com.h2database}</version.com.h2database>
+
+                                        <!-- container properties -->
+                                        <container.database.image>postgres:10</container.database.image>
+                                        <container.database.driver.artifact>org.postgresql:postgresql:42.2.2</container.database.driver.artifact>
+                                        <container.database.driver.class>org.postgresql.Driver</container.database.driver.class>
+                                        <container.database.datasource.class.xa>org.postgresql.xa.PGXADataSource</container.database.datasource.class.xa>
+                                        <container.docker.daemon.api.url>tcp://127.0.0.1:2375</container.docker.daemon.api.url>
+                                        <container.name>narayana_db</container.name>
+                                        <container.database.username>narayana_user</container.database.username>
+                                        <container.database.password>narayana_pass</container.database.password>
+                                        <container.database.name>narayana_db</container.database.name>
+                                        <container.database.bind.host.ip>127.0.0.1</container.database.bind.host.ip>
+                                        <container.database.bind.host.port>5432</container.database.bind.host.port>
+                                        <!-- The undermentioned timeout accounts both for pulling image and starting container. Might be split into two timeouts in future. -->
+                                        <container.timeout.waiting.for.tcp>240000</container.timeout.waiting.for.tcp>
+
+                                        <!-- dballocator properties -->
+                                        <dballocator.host.port>http://your.db.allocator.example.com:8080</dballocator.host.port>
+                                        <dballocator.expression>postgresql94</dballocator.expression>
+                                        <dballocator.requestee>narayana-tomcat-ts</dballocator.requestee>
+                                        <dballocator.expiry.minutes>10</dballocator.expiry.minutes>
+                                        <dballocator.timeout.minutes>20</dballocator.timeout.minutes>
+                                        <dballocator.driver.url>http://your.fileserver.example.com/postgresql-42.1.1.jar</dballocator.driver.url>
+                                        <dballocator.driver.url.timeout.seconds>120</dballocator.driver.url.timeout.seconds>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
@@ -335,19 +340,19 @@
           <id>release</id>
           <build>
             <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-install-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-install</id>
-                  <phase>install</phase>
-                </execution>
-              </executions>
-              <inherited>false</inherited>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>default-install</id>
+                    <phase>install</phase>
+                  </execution>
+                </executions>
+                <inherited>false</inherited>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
     </profiles>
 </project>
