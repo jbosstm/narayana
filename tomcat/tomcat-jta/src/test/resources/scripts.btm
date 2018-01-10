@@ -3,7 +3,7 @@
 # If isCrash is set to true crash flag is created.
 ############################################################
 RULE Trigger system crash simulation
-CLASS org.jboss.narayana.tomcat.jta.integration.TestXAResource
+CLASS org.jboss.narayana.tomcat.jta.integration.app.TestXAResource
 METHOD start
 AT ENTRY
 IF TRUE

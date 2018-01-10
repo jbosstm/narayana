@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.tomcat.jta.integration;
+package org.jboss.narayana.tomcat.jta.integration.app;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 
@@ -99,7 +99,7 @@ public class TestXAResource implements XAResource, XAResourceRecoveryHelper {
             return new Xid[0];
         }
 
-        return new Xid[] { xid };
+        return new Xid[]{xid};
     }
 
     @Override
@@ -114,6 +114,6 @@ public class TestXAResource implements XAResource, XAResourceRecoveryHelper {
 
     @Override
     public XAResource[] getXAResources() {
-        return new XAResource[] { this };
+        return new XAResource[]{this};
     }
 }

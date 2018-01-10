@@ -20,3 +20,4 @@ qa/TaskImpl.properties
 ObjectStore/
 apache-tomcat-*.zip
 apache-tomcat-*/
+tomcat/tomcat-deployment

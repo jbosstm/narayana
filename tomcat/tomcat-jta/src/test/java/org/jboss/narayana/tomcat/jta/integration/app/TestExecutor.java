@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.narayana.tomcat.jta.integration;
+package org.jboss.narayana.tomcat.jta.integration.app;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
@@ -145,8 +145,8 @@ public class TestExecutor {
     private boolean doesEntryExist(String entry) throws SQLException, NamingException {
         String query = "SELECT COUNT(*) FROM test WHERE value='" + entry + "'";
         try (Connection connection = getTransactionalDataSource().getConnection();
-                Statement statement = connection.createStatement();
-                ResultSet result = statement.executeQuery(query)) {
+             Statement statement = connection.createStatement();
+             ResultSet result = statement.executeQuery(query)) {
             return result.next() && result.getInt(1) > 0;
         } catch (SQLException e) {
             return false;
@@ -156,7 +156,7 @@ public class TestExecutor {
     private void writeToTheDatabase(String entry) throws NamingException, SQLException {
         String query = "INSERT INTO test VALUES ('" + entry + "')";
         try (Connection connection = getTransactionalDataSource().getConnection();
-                Statement statement = connection.createStatement()) {
+             Statement statement = connection.createStatement()) {
             statement.execute(query);
         }
     }
@@ -180,7 +180,7 @@ public class TestExecutor {
     private void createTestTable() throws SQLException, NamingException {
         String query = "CREATE TABLE IF NOT EXISTS test (value VARCHAR(100))";
         try (Connection connection = getTransactionalDataSource().getConnection();
-                Statement statement = connection.createStatement()) {
+             Statement statement = connection.createStatement()) {
             statement.execute(query);
         }
     }

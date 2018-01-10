@@ -482,12 +482,14 @@
     <version.org.jboss.arquillian.core>1.1.7.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.arquillian.container.weld>1.0.0.CR8</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.container.tomcat>1.0.1.Final</version.org.jboss.arquillian.container.tomcat>
+    <version.org.apache.tomcat>9.0.7</version.org.apache.tomcat>
     <version.org.jboss.shrinkwrap.resolver>2.2.2</version.org.jboss.shrinkwrap.resolver>
     <version.org.jboss.jboss-transaction-spi>7.6.0.Final</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
     <version.org.mockito>1.10.19</version.org.mockito>
     <version.org.wildfly.checkstyle-config>1.0.6.Final</version.org.wildfly.checkstyle-config>
+    <version.com.github.docker-java>3.0.14</version.com.github.docker-java>
 
     <!-- Maven plugin versions -->
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
