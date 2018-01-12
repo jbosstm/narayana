@@ -14,14 +14,14 @@
                 <replaceable>module</replaceable>
                 propertyManager
             </classname>
-            class., which provides static getter methods for one or more
+            class, which provides static getter methods for one or more
             <classname>
                 <replaceable>name</replaceable>
                 EnvironmentBean
             </classname>
             classes. An example is
-            <classname>com.arjuna.ats.arjuna.commmon.arjPropertyManager</classname>
-            . These environment beans are standard
+            <classname>com.arjuna.ats.arjuna.commmon.arjPropertyManager</classname>.
+            These environment beans are standard
             JavaBean containing properties for each configuration option in the
             system. Typical usage is of the form:
         </para>
@@ -39,14 +39,16 @@
                 <substeps>
                     <step>
                         <para>
-                            If the properties file name property is set (
+                            If the properties file name property
                             <methodname>com.arjuna.ats.arjuna.common.propertiesFile</methodname>
-                            ), its value is used as the file name.
+                            is set, its value is used as the file name.
                         </para>
                     </step>
                     <step>
                         <para>
-                            If not, the default file name is used.
+                            If not, the default file name <code>jbossts-properties.xml</code> is used.
+                            The definition of the used value can be found at Narayana distribution jar file under
+                            <code>META-INF/MANIFEST.MF</code> at property <code>arjuna-properties-file</code>.
                         </para>
                     </step>
                 </substeps>
@@ -63,17 +65,17 @@
                     </listitem>
                     <listitem>
                         <para>
-                            user.dir
+                            <code>user.dir</code>
                         </para>
                     </listitem>
                     <listitem>
                         <para>
-                            user.home
+                            <code>user.home</code>
                         </para>
                     </listitem>
                     <listitem>
                         <para>
-                            java.home
+                            <code>java.home</code>
                         </para>
                     </listitem>
                     <listitem>
@@ -83,64 +85,49 @@
                     </listitem>
                     <listitem>
                         <para>
-                            a default file embedded in the product .jar file.
+                            a default file embedded in the product .jar file
+                        </para>
+                        <para>
+                            if you use Narayana dependency org.jboss.narayana.jts:narayana-jts-idlj
+                            you can check the default properties settings
+                            <ulink url="https://github.com/jbosstm/narayana/blob/master/ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-properties.xml">
+                            in the Narayana repository at github</ulink>.
                         </para>
                     </listitem>
                 </orderedlist>
             </step>
             <step>
                 <para>
-                    The file is treated as being of standard java.util.Properties xml format and loaded accordingly.
-                    The
-                    entry names are of the form EnvironmentBeanClass.propertyName:
-                    <code>&lt;entry
-                        key="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>
-                    or
-                    EnvironmentBeanClass.&lt;storeType&gt;propertyName:
-                    <code>&lt;entry
-                        key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType"&gt;com.arjuna.ats.internal.arjuna.objectstore.VolatileStore&lt;/entry&gt;
-                    </code>
-                    The second form is required if you want to set properties on configuration beans other that the
-                    default bean instances.
-                    Valid values for Boolean properties are case-insensitive, and may be one of:
+                    The file is treated as being of standard
+                    <ulink url="https://docs.oracle.com/javase/8/docs/api/java/util/Properties.html"><code>java.util.Properties</code> xml format</ulink>
+                    and loaded accordingly.
+                    The <code>entry</code> names are of the form <code>EnvironmentBeanClass.propertyName</code>.
                 </para>
-                <itemizedlist>
-                    <listitem>
-                        <para>
-                            NO
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            YES
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            FALSE
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            TRUE
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            OFF
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>
-                            ON
-                        </para>
-                    </listitem>
-                </itemizedlist>
+                <para>
+                   An example is
+                    <code>&lt;entrykey="CoordinatorEnvironmentBean.commitOnePhase"&gt;YES&lt;/entry&gt;</code>
+                </para>
+                <para>
+                    In specific cases when you want to set properties on configuration beans other that the
+                    default bean instances the form is <code>EnvironmentBeanClass.&lt;storeType&gt;.propertyName</code>.
+                </para>
+                <para>
+                  An example is
+                    <code>&lt;entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType"&gt;</code>
+                    <code>com.arjuna.ats.internal.arjuna.objectstore.VolatileStore&lt;/entry&gt;</code>
+                </para>
+                <note>
+                    <para>
+                       Valid values for Boolean properties are case-insensitive, and may be one of
+                       <code>NO</code>/<code>YES</code>, <code>FALSE</code>/<code>TRUE</code>,
+                       <code>OFF</code>/<code>ON</code>.
+                    </para>
+                </note>
                 <para>
                     In the case of properties that take multiple values, they are white-space-delimited.
                 </para>
                 <example>
-                    <title>Example Environment Bean</title>
+                    <title>Example recovery modules of Recovery Environment Bean</title>
                     <programlisting language="XML" role="XML"><xi:include href="extras/EnvironmentBeans.xml"
                         xmlns:xi="http://www.w3.org/2001/XInclude" parse="text" /></programlisting>
                 </example>
@@ -167,15 +154,26 @@
                         <para>
                             Fully.Qualified.NameEnvironmentBean.propertyName
                         </para>
-                    </listitem>
-                    <listitem>
                         <para>
-                            NameEnvironmentBean.propertyName (this is the preferred form used in the properties file)
+                          for example <code>com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean.commitOnePhase</code>
                         </para>
                     </listitem>
                     <listitem>
                         <para>
-                            the old com.arjuna... properties key (deprecated, for backwards compatibility only).
+                            NameEnvironmentBean.propertyName (<replaceable>this is the preferred form used in the properties file</replaceable>)
+                        </para>
+                        <para>
+                          for example <code>CoordinatorEnvironmentBean.commitOnePhase</code>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            the old com.arjuna... properties key defined at bean by annnotations <code>@PropertyPrefix</code>
+                            or <code>@FullPropertyName</code>
+                            (<replaceable>deprecated, for backwards compatibility only</replaceable>).
+                        </para>
+                        <para>
+                          for example <code>com.arjuna.ats.arjuna.coordinator.commitOnePhase</code>
                         </para>
                     </listitem>
                 </itemizedlist>
@@ -216,48 +214,47 @@
         <para>
             The canonical reference for configuration options is the Javadoc of the various
             <classname>EnvironmentBean</classname>
-            classes, For ArjunaCore these are:
+            classes. For ArjunaCore these are:
         </para>
         <itemizedlist>
             <listitem>
                 <para>
-                    <classname>com.arjuna.common.internal.util.logging.LoggingEnvironmentBean.java </classname>
+                    <classname>com.arjuna.common.internal.util.logging.LoggingEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean.java </classname>
+                    <classname>com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.txoj.common.TxojEnvironmentBean.java </classname>
+                    <classname>com.arjuna.ats.txoj.common.TxojEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean.java </classname>
+                    <classname>com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean.java </classname>
+                    <classname>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean.java </classname>
+                    <classname>com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.arjuna.common.CoreEnvironmentBean.java </classname>
+                    <classname>com.arjuna.ats.arjuna.common.CoreEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean.java
-                    </classname>
+                    <classname>com.arjuna.ats.internal.arjuna.objectstore.hornetq.HornetqJournalEnvironmentBean</classname>
                 </para>
             </listitem>
         </itemizedlist>
@@ -274,12 +271,12 @@
         <itemizedlist>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.jdbc.common.JDBCEnvironmentBean.java</classname>
+                    <classname>com.arjuna.ats.jdbc.common.JDBCEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.jta.common.JTAEnvironmentBean.java</classname>
+                    <classname>com.arjuna.ats.jta.common.JTAEnvironmentBean</classname>
                 </para>
             </listitem>
         </itemizedlist>
@@ -291,22 +288,57 @@
         <para>
             The canonical reference for configuration options is the javadoc of the various
             <classname>EnvironmentBean</classname>
-            classes, For &PRODUCT;
-            JTS these are the ones
+            classes. For &PRODUCT; JTS these are the ones
             provided by ArjunaCore, as well as:
         </para>
         <itemizedlist>
             <listitem>
                 <para>
-                    <classname>com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean.java</classname>
+                    <classname>com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean</classname>
                 </para>
             </listitem>
             <listitem>
                 <para>
-                    <classname>com.arjuna.ats.jts.common.JTSEnvironmentBean.java</classname>
+                    <classname>com.arjuna.ats.jts.common.JTSEnvironmentBean</classname>
                 </para>
             </listitem>
         </itemizedlist>
     </section>
+    <section>
+        <title>&PRODUCT;
+            WS-AT/WS-BA Options
+        </title>
+        <para>
+            For &PRODUCT;
+            WebService transaction protocols these are the ones
+            provided by ArjunaCore, as well as:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    <classname>org.jboss.jbossts.xts.environment.WSCEnvironmentBean</classname>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <classname>org.jboss.jbossts.xts.environment.WSCFEnvironmentBean</classname>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <classname>org.jboss.jbossts.xts.environment.WSTEnvironmentBean</classname>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <classname>org.jboss.jbossts.xts.environment.XTSEnvironmentBean</classname>
+                </para>
+            </listitem>
+            <listitem>
+              <para>
+                <classname>org.jboss.jbossts.xts.environment.RecoveryEnvironmentBean</classname>
+              </para>
+            </listitem>
+        </itemizedlist>
+    </section>
 </section>
-
