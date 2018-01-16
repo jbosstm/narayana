@@ -45,9 +45,10 @@ import javax.transaction.Synchronization;
 public class ConnectionSynchronization implements Synchronization
 {
 
-    public ConnectionSynchronization (ConnectionImple conn)
+	public ConnectionSynchronization (ConnectionImple conn)
     {
 	_theConnection = conn;
+	_theConnection.incrementUseCount();
     }
 
     public void afterCompletion(int status)

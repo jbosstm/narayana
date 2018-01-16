@@ -90,7 +90,7 @@ public class ConnectionImpleTest {
     @Test
     public void checkIfConnectionIsClosedWithoutTheConnection() throws SQLException {
         assertFalse(getConnectionToTest().isClosed());
-        verify(connection, times(0)).isClosed();
+        verify(connection, times(1)).isClosed(); // We changed that now when you create a ConnectionImple it creates a JDBC connection so isClosed ends up being called
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ConnectionImpleTest {
         ConnectionImple connectionToTest = getConnectionToTest();
         connectionToTest.clearWarnings(); // Initialises the connection
         connectionToTest.isClosed();
-        verify(connection, times(1)).isClosed();
+        verify(connection, times(2)).isClosed();
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ConnectionImpleTest {
         ConnectionImple connectionToTest = getConnectionToTest();
         connectionToTest.clearWarnings(); // Initialises the connection
         connectionToTest.isClosed();
-        verify(connection, times(1)).isClosed();
+        verify(connection, times(2)).isClosed();
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ConnectionImpleTest {
             }
         });
         transactionManager.commit();
-        verify(connection, times(1)).isClosed();
+        verify(connection, times(2)).isClosed();
     }
 
     @Test

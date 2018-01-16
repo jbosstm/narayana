@@ -43,7 +43,14 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.XADataSource;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.h2.Driver;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
@@ -55,12 +62,64 @@ import com.arjuna.ats.jdbc.TransactionalDriver;
 public class JDBC2Test
 {
 	protected Connection conn = null;
-	protected Connection conn2 = null;
 	protected boolean commit = true;
 	protected boolean nested = false;
 	protected boolean reuseconn = false;
 	protected Properties dbProperties = null;
 	protected String url = null;
+
+	@Test
+    public void testBC() throws SystemException, NotSupportedException, SQLException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+
+        try (Statement stmt = conn.createStatement() ) {
+            try {
+                stmt.executeUpdate("DROP TABLE test_table");
+            } catch (Exception e) {
+                // Ignore
+            } finally {
+                stmt.executeUpdate("CREATE TABLE test_table (a INTEGER,b INTEGER)");
+            }
+        }
+
+        javax.transaction.TransactionManager tx = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        tx.begin();
+
+        TransactionSynchronizationRegistryImple transactionSynchronizationRegistryImple = new TransactionSynchronizationRegistryImple();
+        transactionSynchronizationRegistryImple.registerInterposedSynchronization(new Synchronization() {
+            @Override
+            public void beforeCompletion() {
+                try {
+                    ResultSet res = conn.prepareStatement("SELECT * FROM test_table").executeQuery();
+                    int rowCount1 = 0;
+                    while (res.next()) {
+                        rowCount1++;
+                    }
+                    conn.createStatement().execute("INSERT INTO test_table (a, b) VALUES (1,2)");
+                    res = conn.prepareStatement("SELECT * FROM test_table").executeQuery();
+                    int rowCount2 = 0;
+                    while (res.next()) {
+                        rowCount2++;
+                    }
+                    conn.close();
+                    if (rowCount2 != rowCount1 + 1) {
+                        fail("Number of rows = " + rowCount2 + ", test was expecting " + rowCount1 + 1);
+                    }
+
+                } catch (Exception e) {
+                    fail(e.getMessage());
+                }
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+
+            }
+        });
+
+
+        tx.commit();
+    }
 
     @Before
 	public void setup() throws Exception
@@ -77,9 +136,9 @@ public class JDBC2Test
         JdbcDataSource ds = new JdbcDataSource();
 		ds.setURL("jdbc:h2:./h2/foo");
         dbProperties.put(TransactionalDriver.XADataSource, ds);
+        dbProperties.put(TransactionalDriver.poolConnections, "false");
 		
 		conn = DriverManager.getConnection(url, dbProperties);
-        conn2 = DriverManager.getConnection(url, dbProperties);
 	}
 
     @Test
@@ -332,7 +391,6 @@ public class JDBC2Test
 
     @Test
     public void testCloseUnused() throws Exception {
-        assertFalse(conn.isClosed());
 
         conn.close();
 
@@ -341,9 +399,10 @@ public class JDBC2Test
 
     @Test
     public void testCloseUsed() throws Exception {
+        conn.close();
         javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
-        assertFalse(conn.isClosed());
+        assertTrue(conn.isClosed());
 
         tx.begin();
         conn.createStatement().close();

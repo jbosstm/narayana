@@ -31,6 +31,21 @@
 
 package com.arjuna.ats.internal.jdbc;
 
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
+import com.arjuna.ats.jdbc.TransactionalDriver;
+import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
+import com.arjuna.ats.jdbc.logging.jdbcLogger;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
+import com.arjuna.ats.jta.xa.XAModifier;
+
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.xa.XAResource;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -49,21 +64,7 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
-import javax.sql.XAConnection;
-import javax.sql.XADataSource;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.xa.XAResource;
-
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ConnectionModifier;
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.ModifierFactory;
-import com.arjuna.ats.jdbc.TransactionalDriver;
-import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
-import com.arjuna.ats.jdbc.logging.jdbcLogger;
-import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-import com.arjuna.ats.jta.xa.XAModifier;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A transactional JDBC connection. This wraps the real connection and
@@ -86,86 +87,66 @@ import com.arjuna.ats.jta.xa.XAModifier;
 public class ConnectionImple implements Connection
 {
 
-	public ConnectionImple(String dbName, Properties info) throws SQLException
-	{
-		if (jdbcLogger.logger.isTraceEnabled()) {
+
+    public ConnectionImple(String dbName, Properties info) throws SQLException {
+        if (jdbcLogger.logger.isTraceEnabled()) {
             jdbcLogger.logger.trace("ConnectionImple.ConnectionImple ( " + dbName + " )");
         }
 
-		String user = null;
-		String passwd = null;
-		String dynamic = null;
-		Object xaDataSource = null;
+        String user = null;
+        String passwd = null;
+        String dynamic = null;
+        Object xaDataSource = null;
+        boolean poolingEnabled = false;
 
-		if (info != null)
-		{
-			user = info.getProperty(TransactionalDriver.userName, "");
-			passwd = info.getProperty(TransactionalDriver.password, "");
-			dynamic = info.getProperty(TransactionalDriver.dynamicClass);
-			xaDataSource = info.get(TransactionalDriver.XADataSource);
-		}
+        if (info != null) {
+            user = info.getProperty(TransactionalDriver.userName, "");
+            passwd = info.getProperty(TransactionalDriver.password, "");
+            dynamic = info.getProperty(TransactionalDriver.dynamicClass);
+            xaDataSource = info.get(TransactionalDriver.XADataSource);
+            poolingEnabled = Boolean.valueOf(info.getProperty(TransactionalDriver.poolConnections, "true")).booleanValue();
+        }
 
-		if (xaDataSource != null)
-		{
-			_transactionalDriverXAConnectionConnection = new ProvidedXADataSourceConnection(dbName, user,
-					passwd, (XADataSource) xaDataSource, this);	
-		}
-		else if ((dynamic == null) || (dynamic.equals("")))
-		{
-			_transactionalDriverXAConnectionConnection = new IndirectRecoverableConnection(dbName,
-					user, passwd, this);
-		}
-		else
-		{
-			_transactionalDriverXAConnectionConnection = new DirectRecoverableConnection(dbName, user,
-					passwd, dynamic, this);
-		}
 
-		/*
-		 * Is there any "modifier" we are required to work with?
-		 */
+        init (dbName, user, passwd, dynamic, xaDataSource, poolingEnabled);
+    }
 
-		_theModifier = null;
-		_theConnection = null;
-	}
-
-	public ConnectionImple(String dbName, String user, String passwd)
-			throws SQLException
-	{
-		this(dbName, user, passwd, null, null);
-	}
-
-	public ConnectionImple(String dbName, String user, String passwd,
-			String dynamic, Object xaDataSource) throws SQLException
-	{
-		if (jdbcLogger.logger.isTraceEnabled()) {
+    public ConnectionImple(String dbName, String user, String passwd,
+                           String dynamic, Object xaDataSource) throws SQLException {
+        if (jdbcLogger.logger.isTraceEnabled()) {
             jdbcLogger.logger.trace("ConnectionImple.ConnectionImple ( " + dbName + ", " + user
                     + ", " + passwd + ", " + dynamic + " )");
         }
 
-		if (xaDataSource != null)
-		{
-			_transactionalDriverXAConnectionConnection = new ProvidedXADataSourceConnection(dbName, user,
-					passwd, (XADataSource) xaDataSource, this);	
-		}
-		else if ((dynamic == null) || (dynamic.equals("")))
-		{
-			_transactionalDriverXAConnectionConnection = new IndirectRecoverableConnection(dbName,
-					user, passwd, this);
-		}
-		else
-		{
-			_transactionalDriverXAConnectionConnection = new DirectRecoverableConnection(dbName, user,
-					passwd, dynamic, this);
-		}
+        init(dbName, user, passwd, dynamic, xaDataSource, false);
+    }
+
+    private void init (String dbName, String user, String passwd,
+                       String dynamic, Object xaDataSource, boolean poolingEnabled) throws SQLException {
+        if (xaDataSource != null) {
+            _transactionalDriverXAConnectionConnection = new ProvidedXADataSourceConnection(dbName, user,
+                    passwd, (XADataSource) xaDataSource, this);
+        } else if ((dynamic == null) || (dynamic.equals(""))) {
+            _transactionalDriverXAConnectionConnection = new IndirectRecoverableConnection(dbName,
+                    user, passwd, this);
+        } else {
+            _transactionalDriverXAConnectionConnection = new DirectRecoverableConnection(dbName, user,
+                    passwd, dynamic, this);
+        }
 
 		/*
 		 * Any "modifier" required to work with?
 		 */
 
 		_theModifier = null;
-		_theConnection = null;
-	}
+
+        getConnection();
+
+        _poolingEnabled = poolingEnabled;
+        incrementUseCount();
+    }
+
+
 
 	public Statement createStatement() throws SQLException
 	{
@@ -293,9 +274,8 @@ public class ConnectionImple implements Connection
 	/*
 	 * This needs to be reworked in light of experience and requirements.
 	 */
-	public void close() throws SQLException
-	{
-        boolean delayClose = false;
+	public void close() throws SQLException {
+		jdbcLogger.logger.trace("Connection closed: " + this);
 
 	    try
 	    {
@@ -317,47 +297,10 @@ public class ConnectionImple implements Connection
 	        {
 	            if (_transactionalDriverXAConnectionConnection.validTransaction(tx))
 	            {
-	                XAResource xares = _transactionalDriverXAConnectionConnection.getResource();
-
-	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(xares, XAResource.TMSUCCESS)) ||
-                            (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(xares, XAResource.TMFAIL)))
+	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMSUCCESS)) ||
+                            (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMFAIL)))
 	                    throw new SQLException(
 	                            jdbcLogger.i18NLogger.get_delisterror());
-
-                    if (tx.getStatus() == Status.STATUS_ACTIVE) {
-                        getModifier();
-
-                        if (_theModifier == null) {
-                            jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
-
-                            // no indication about connections, so assume close immediately
-
-	                    /*
-	                     * Don't return just yet. Drop through bottom of these clauses and
-	                     * close _theConnection and _recoveryConnection.
-	                     * 
-	                     * delayClose is false at this point.
-	                     * 
-	                     * JBTM-789.
-	                     */
-                        } else {
-                            if (((ConnectionModifier) _theModifier).supportsMultipleConnections()) {
-	                        /*
-	                         * We can't close the connection until the transaction has
-	                         * terminated, so register a Synchronization here.
-	                         */
-
-                                jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
-
-                                delayClose = true;
-                            }
-                        }
-
-                        if (delayClose)
-                        {
-                            tx.registerSynchronization(new ConnectionSynchronization(this));
-                        }
-                    }
 	            }
 	            else
 	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
@@ -377,26 +320,48 @@ public class ConnectionImple implements Connection
 	        sqlException.initCause(e1);
 	        throw sqlException;
 	    } finally {
-			if (!delayClose) {
-				closeImpl();
+            closeImpl();
 			}
-		}
 	}
 
-	void closeImpl() throws SQLException {
-		try {
+    public void incrementUseCount() {
+        synchronized (this) {
+            useCount.incrementAndGet();
+        }
+    }
+
+    public boolean inUse() {
+        return useCount.get() > 0;
+    }
+
+    void closeImpl() throws SQLException {
+        jdbcLogger.logger.trace("Connection closeImpl: " + this);
+        boolean release = false;
+        boolean remove = false;
+        synchronized (this) {
+            if (useCount.decrementAndGet() == 0) {
+                if (_poolingEnabled) {
+                    if (_transactionalDriverXAConnectionConnection != null) {
+                        _transactionalDriverXAConnectionConnection.setTransaction(null);
+                    }
+                    release = true;
+                } else if (_transactionalDriverXAConnectionConnection != null) {
+					if (_theConnection != null && !_theConnection.isClosed()) {
+						_theConnection.close();
+					}
+                    _transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
+					remove = true;
+                }
+            }
+        }
+        if (remove) {
 			ConnectionManager.remove(this);
-			if (_theConnection != null && !_theConnection.isClosed()) {
-				_theConnection.close();
-			}
-			if (_transactionalDriverXAConnectionConnection != null) {
-				_transactionalDriverXAConnectionConnection.closeCloseCurrentConnection();
-			}
-		} finally {
-			_theConnection = null;
-			_transactionalDriverXAConnectionConnection = null;
-		}
-	}
+		} else if (release) {
+            ConnectionManager.release(this);
+        }
+    }
+
+
 
 	public boolean isClosed() throws SQLException
 	{
@@ -841,23 +806,6 @@ public class ConnectionImple implements Connection
 		}
 	}
 
-	/**
-	 * Remove this connection so that we have to get another one when asked.
-	 * Some drivers allow connections to be reused once any transactions have
-	 * finished with them.
-	 */
-
-	final void reset()
-	{
-		try
-		{
-			closeImpl();
-		}
-		catch (Exception ex)
-		{
-		}
-	}
-
 	final java.sql.Connection getConnection() throws SQLException
 	{
 		if (_theConnection != null && !_theConnection.isClosed())
@@ -876,8 +824,10 @@ public class ConnectionImple implements Connection
 				if (_theModifier != null)
 				{
 					((ConnectionModifier) _theModifier).setIsolationLevel(
-							_theConnection, _currentIsolationLevel);
-				}
+							_theConnection, defaultIsolationLevel);
+				} else {
+                    _theConnection.setTransactionIsolation(defaultIsolationLevel);
+                }
 			}
 			catch (SQLException ex)
 			{
@@ -943,6 +893,7 @@ public class ConnectionImple implements Connection
             jdbcLogger.logger.trace("ConnectionImple.registerDatabase ()");
         }
 
+        boolean needsClose = _theConnection == null;
 		Connection theConnection = getConnection();
 
 		if (theConnection != null)
@@ -955,8 +906,10 @@ public class ConnectionImple implements Connection
 						.transactionManager();
 				javax.transaction.Transaction tx = tm.getTransaction();
 
-				if (tx == null)
+				if (tx == null) {
 					return;
+				}
+
 
 				/*
 				 * Already enlisted with this transaction?
@@ -1006,12 +959,35 @@ public class ConnectionImple implements Connection
 					throw new SQLException(
 							"ConnectionImple.registerDatabase - "
 									+ jdbcLogger.i18NLogger.get_enlistfailed());
-				}
+				} else {
+					getModifier();
 
-				params = null;
-				xares = null;
-				tx = null;
-				tm = null;
+					if (_theModifier == null) {
+						jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
+
+						// no indication about connections, so assume close immediately
+
+	                    /*
+						 * Don't return just yet. Drop through bottom of these clauses and
+	                     * close _theConnection and _recoveryConnection.
+	                     *
+	                     * delayClose is false at this point.
+	                     *
+	                     * JBTM-789.
+	                     */
+					} else {
+						if (((ConnectionModifier) _theModifier).supportsMultipleConnections()) {
+	                        /*
+	                         * We can't close the connection until the transaction has
+	                         * terminated, so register a Synchronization here.
+	                         */
+
+							jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
+
+							jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistry().registerInterposedSynchronization(new ConnectionSynchronization(this));
+						}
+					}
+				}
 			}
 			catch (RollbackException e1)
 			{
@@ -1106,8 +1082,10 @@ public class ConnectionImple implements Connection
 
 	private Connection _theConnection;
 
-	private static final int defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE;
+    private static final int defaultIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
 
-	private static final int _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
+    private boolean _poolingEnabled = false;
 
+
+    private AtomicInteger useCount = new AtomicInteger(0);
 }
