@@ -65,7 +65,7 @@
                 <source>../jta/classes</source>
                 <source>../cdi/classes</source>
                 <source>../jdbc/classes</source>
-                <source>../jms/classes</source>
+                <source>../jms/src/main/java</source>
               </sources>
             </configuration>
           </execution>
