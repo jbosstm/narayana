@@ -64,7 +64,7 @@
                 <source>../../ArjunaCore/txoj/classes</source>
                 <source>../../ArjunaJTA/jta/classes</source>
                 <source>../../ArjunaJTA/jdbc/classes</source>
-                <source>../../ArjunaJTA/jms/classes</source>
+                <source>../../ArjunaJTA/jms/src/main/java</source>
                 <source>../../ArjunaJTA/cdi/classes</source>
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
