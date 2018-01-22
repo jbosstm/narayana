@@ -34,7 +34,7 @@ rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
 IF NOT EXIST wildfly-%WILDFLY_MASTER_VERSION%.zip wget http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip
 if %ERRORLEVEL% NEQ 0 (call:comment_on_pull "Pull failed on Windows - could not download http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip" & exit -1)
 unzip wildfly-%WILDFLY_MASTER_VERSION%
-unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.7.2.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
+unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.7.2.Final-bin.zip -d %JBOSS_HOME%
 cd ..\
 
 rem INITIALIZE JBOSS
