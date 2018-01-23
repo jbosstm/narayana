@@ -152,6 +152,21 @@ public class WSCEnvironmentBean
     @FullPropertyName(name = "org.jboss.jbossts.xts.wsc11.serviceURLPath")
     private volatile String serviceURLPath = null;
 
+    public static final String NO_ASYNC_REQUEST = "NO";
+    public static final String PLAIN_ASYNC_REQUEST = "PLAIN";
+    public static final String SECURE_ASYNC_REQUEST = "SECURE";
+    
+    @FullPropertyName(name = "org.jboss.jbossts.xts.useAsynchronousRequest")
+    private volatile String useAsynchronousRequest = NO_ASYNC_REQUEST;
+    
+    /**
+     * The maximum time in milliseconds that an async response is waited for
+     * arrival. Only used if <em>useAsynchronousRequest</em> is PLAIN or SECURE.
+     * By default is 10 seconds.
+     */
+    @FullPropertyName(name="org.jboss.jbossts.xts.transport.asyncRequestWait")
+    private volatile int asyncRequestWait = 10 * 1000;
+    
     /**
      * Returns initial time to wait before resending a coordination protocol message.
      * This is increased gradually, doubling every two resends up to the maximum value
@@ -653,5 +668,37 @@ public class WSCEnvironmentBean
      */
     public void setServiceURLPath(String serviceURLPath) {
         this.serviceURLPath = serviceURLPath;
+    }
+    
+    /**
+     * Getter for the asynchronous request (default NO) for registration.
+     * @return the value for asynch request
+     */
+    public String getUseAsynchronousRequest() {
+        return useAsynchronousRequest;
+    }
+
+    /**
+     * Setter for the asynchronous request (default false) for registration.
+     * @param useAsynchronousRequest New async request
+     */
+    public void setUseAsynchronousRequest(String useAsynchronousRequest) {
+        this.useAsynchronousRequest = useAsynchronousRequest;
+    }
+
+    /**
+     * Getter for the async request wait.
+     * @return The async request time.
+     */
+    public int getAsyncRequestWait() {
+        return asyncRequestWait;
+    }
+
+    /**
+     * Setter for the async request time.
+     * @param asyncRequestWait The new async request wait time.
+     */
+    public void setAsyncRequestWait(int asyncRequestWait) {
+        this.asyncRequestWait = asyncRequestWait;
     }
 }
