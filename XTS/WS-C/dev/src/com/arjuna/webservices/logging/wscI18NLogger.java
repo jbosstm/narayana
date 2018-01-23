@@ -304,7 +304,11 @@ public interface wscI18NLogger {
 	@Message(id = 42085, value = "Failed to create service instance: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_cannot_create_service_instance(Class arg0, @Cause() Throwable arg1);
-
+        
+        @Message(id = 42086, value = "Empty messageId received by an async endpoint", format = MESSAGE_FORMAT)
+        @LogMessage(level = ERROR)
+        public void error_empty_messageId_received_by_async_endpoint();
+        
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
