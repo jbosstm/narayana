@@ -37,6 +37,10 @@ public interface CoordinationConstants
     public String WSCOOR_PREFIX = "wscoor" ;
 
     public String REGISTRATION_SERVICE_NAME = "RegistrationService";
+    
+    public String REGISTRATION_RESPONSE_SERVICE_NAME = "RegistrationResponseService";
+    
+    public String COORDINATION_SOAP_FAULT_SERVICE_NAME = "CoordinationFaultService";
 
     public String ACTIVATION_SERVICE_NAME = "ActivationService";
 

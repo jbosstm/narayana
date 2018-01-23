@@ -269,5 +269,19 @@
     <entry key="org.jboss.jbossts.xts11.wst.clientServiceURLPath.">/client/services</entry>
     <entry key="org.jboss.jbossts.xts11.wst.participantServiceURLPath.">/participant/services</entry>
     -->
+
+    <!--
+     This property marks when to use asynchronous Registration service. Values:
+     * NO: No async (ReplyTo/FaultTo) URIs are used. Default value.
+     * PLAIN: The plain ports URLs are used.
+     * SECURE: The secure ports are used.
+    <entry key="org.jboss.jbossts.xts.useAsynchronousRequest">SECURE</entry>
+    -->
+
+    <!--
+     Timeout to wait for responses if asynchronous (PLAIN or SECURE) responses
+     are configured. It is defined in milliseconds. Default 10000m or 10s.
+    <entry key="org.jboss.jbossts.xts.transport.asyncRequestWait">15000</entry>
+    -->
     
 </properties>
