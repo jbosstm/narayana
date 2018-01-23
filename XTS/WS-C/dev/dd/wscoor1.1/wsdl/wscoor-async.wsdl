@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+     Asynchronous execution for Microsoft implementation.
+     WSCOOR windows implementation seems to only work when
+     a valid ReplyTo and FaultTo ws-addressing headers are
+     sent. This file covers the port-types for the
+     non-standard endpoints.
+--> 
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06">
+        <wsdl:types>
+          <xs:schema>
+            <xs:import
+                namespace='http://docs.oasis-open.org/ws-tx/wscoor/2006/06'
+                schemaLocation='wscoor.xsd' />
+          </xs:schema>
+        </wsdl:types> 
+  <!-- Messages -->
+  <wsdl:message name="CreateCoordinationContextResponse">
+    <wsdl:part name="parameters" element="wscoor:CreateCoordinationContextResponse"/>
+  </wsdl:message>
+  <wsdl:message name="RegisterResponse">
+    <wsdl:part name="parameters" element="wscoor:RegisterResponse"/>
+  </wsdl:message>
+  <!-- Port Types -->
+  <wsdl:portType name="RegistrationResponsePortType">
+    <wsdl:operation name="RegisterResponseOperation">
+      <wsdl:input message="wscoor:RegisterResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

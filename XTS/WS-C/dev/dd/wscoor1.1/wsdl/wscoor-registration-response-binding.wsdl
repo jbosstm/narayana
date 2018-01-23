@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Windows implementation needs ReplyTo and FaultTo in
+     WSCOOR operations. This endpoint is the one that
+     will receive the Registration responses.
+-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl">
+
+  <wsdl:import
+      namespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06"
+      location="wscoor-async.wsdl" />
+
+  <wsdl:binding name="RegistrationResponse_SOAPBinding" type="wscoor:RegistrationResponsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="RegisterResponseOperation">
+            <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/RegisterResponse"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="RegistrationResponseService">
+    <wsdl:port binding="wscoor:RegistrationResponse_SOAPBinding" name="RegistrationResponsePortType">
+      <soap:address location="http://localhost:9000/ws-c11/RegistrationResponseService"/>
+       <wsaw:UsingAddressing required="true"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

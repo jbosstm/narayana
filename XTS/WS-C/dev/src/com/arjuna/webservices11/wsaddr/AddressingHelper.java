@@ -379,6 +379,18 @@ public class AddressingHelper
     public static MAP outboundMap(Map<String, Object>  ctx) {
         return PrivilegedMapBuilderFactory.getInstance().getBuilderInstance().outboundMap(ctx);
     }
+    
+    public static MAP outboundMap(Map<String, Object>  ctx, String replyTo, String faultTo) {
+        final MAPBuilder builder = PrivilegedMapBuilderFactory.getInstance().getBuilderInstance();
+        MAP map = builder.outboundMap(ctx);
+        if (replyTo != null) {
+            map.setReplyTo(builder.newEndpoint(replyTo));
+        }
+        if (faultTo != null) {
+            map.setFaultTo(builder.newEndpoint(faultTo));
+        }
+        return map;
+    }
 
     private static MAPEndpoint noneAddress = null;
 
