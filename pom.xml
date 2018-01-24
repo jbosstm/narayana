@@ -455,7 +455,7 @@
     <version.org.apache.activemq>1.5.5.jbossorg-008</version.org.apache.activemq>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
     <version.org.jboss.spec.javax.interceptor>1.0.0.Final</version.org.jboss.spec.javax.interceptor>
-    <version.org.jboss.spec.javax.transaction>1.0.0.Final</version.org.jboss.spec.javax.transaction>
+    <version.org.jboss.spec.javax.transaction>1.1.0.Final</version.org.jboss.spec.javax.transaction>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
     <version.org.jboss.spec.javax.servlet>1.0.2.Final</version.org.jboss.spec.javax.servlet>
     <version.org.jboss.spec.jboss-javaee-6.0>3.0.2.Final</version.org.jboss.spec.jboss-javaee-6.0>
