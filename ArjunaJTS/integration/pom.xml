@@ -25,7 +25,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
+    <modular.jdk.args>--add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
   </properties>
 
   <build>
