@@ -849,7 +849,7 @@ public class XARecoveryModule implements RecoveryModule
             if(e1.errorCode == XAException.XAER_NOTA)
             {
                 if(jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("XAER_NOTA received while rolling back " + XAHelper.xidToString(xid));
+                    jtaLogger.logger.debug(_logName+".xaRecovery: XAER_NOTA received while rolling back " + XAHelper.xidToString(xid));
                 }
             }
             else
