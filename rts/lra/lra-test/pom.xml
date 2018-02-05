@@ -133,53 +133,37 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>org.honton.chas</groupId>
+                        <artifactId>process-exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>start</id>
+                                <id>start-swarm-lra-coordinator</id>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>start</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
-                                        <property name="runtime_classpath" refid="maven.runtime.classpath"/>
-                                        <java jar="../lra-coordinator/target/lra-coordinator-swarm.jar" spawn="true" fork="true" >
- +                                          <sysproperty key="swarm.http.port" value="${lra.http.port}"/>
- +                                      </java>
-                                    </target>
+                                    <name>lra-coordinator-swarm</name>
+                                    <workingDir>${basedir}</workingDir>
+                                    <healthCheckUrl>http://localhost:${lra.http.port}/lra-coordinator</healthCheckUrl>
+                                    <waitForInterrupt>false</waitForInterrupt>
+                                    <processLogFile>${project.build.directory}/failsafe-reports/lra-coordinator-swarm-startup.log</processLogFile>
+                                    <environment>
+                                        <swarm.http.port>${lra.http.port}</swarm.http.port>
+                                    </environment>
+                                    <arguments>
+                                        <argument>${java.home}/bin/java</argument>
+                                        <argument>-jar</argument>
+                                        <argument>../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>stop</id>
+                                <id>stop-swarm-lra-coordinator</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>stop-all</goal>
                                 </goals>
-                                <configuration>
-                                    <target>
-                                        <exec executable="${JAVA_HOME}/bin/jps">
-                                            <arg value="-l" />
-                                            <redirector outputproperty="process.pid">
-                                                <outputfilterchain>
-                                                    <linecontains>
-                                                        <contains value="lra-coordinator-swarm.jar" />
-                                                    </linecontains>
-                                                    <replaceregex pattern=" .*lra-coordinator-swarm.jar" replace="" flags="i"/>
-                                                </outputfilterchain>
-                                            </redirector>
-                                        </exec>
-                                        <exec executable="taskkill" osfamily="winnt">
-                                            <arg value="/F" />
-                                            <arg value="/PID" />
-                                            <arg value="${process.pid}" />
-                                        </exec>
-                                        <exec executable="kill" osfamily="unix">
-                                            <arg value="-15" />
-                                            <arg value="${process.pid}" />
-                                        </exec>
-                                    </target>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
