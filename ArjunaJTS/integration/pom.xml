@@ -25,7 +25,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <modular.jdk.args>--add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
+    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
   </properties>
 
   <build>
@@ -258,6 +258,13 @@
                       <artifactId>${java.corba.patch.name}</artifactId>
                       <version>${project.version}</version>
                       <type>${project.packaging}</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.jboss.spec.javax.transaction</groupId>
+                      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                      <version>${version.org.jboss.spec.javax.transaction}</version>
+                      <type>jar</type>
+                      <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
