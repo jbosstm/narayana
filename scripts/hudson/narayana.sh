@@ -507,6 +507,13 @@ function xts_tests {
   cd $WORKSPACE
   ran_crt=1
 
+  CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+  grep async-registration "$CONF"
+  sed -e 's#<[^<]*async-registration[^>]*>##g' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+  sed -e 's#\(<subsystem.*xts.*\)#\1\n            <async-registration enabled="true"/>#' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+  echo "How is the xts configuration looks like?"
+  cat "$CONF"
+
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
