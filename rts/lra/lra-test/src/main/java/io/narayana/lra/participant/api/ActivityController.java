@@ -38,6 +38,7 @@ import io.narayana.lra.annotation.CompensatorStatus;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -210,7 +211,7 @@ public class ActivityController {
         return Response.ok(activity.statusUrl).build();
     }
 
-    @PUT
+    @DELETE
     @Path("/forget")
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
