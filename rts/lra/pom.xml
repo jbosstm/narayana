@@ -136,10 +136,8 @@
         <module>lra-annotations</module>
         <module>lra-coordinator</module>
         <module>lra-filters</module>
+        <module>lra-annotation-checker</module>
         <module>lra-test</module>
-        <!-- temporarily disable since it is failing the mac builds
-        <module>lra-cdi-rest</module>
-        -->
     </modules>
 
     <profiles>
