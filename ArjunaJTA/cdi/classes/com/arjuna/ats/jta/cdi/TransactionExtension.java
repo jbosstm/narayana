@@ -47,6 +47,8 @@ import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorSupports;
  */
 public class TransactionExtension implements Extension {
 
+    public static final String TX_INTERCEPTOR = "-tx-interceptor";
+
     private Map<Bean<?>, AnnotatedType<?>> beanToAnnotatedTypeMapping = new HashMap<>();
 
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
@@ -58,12 +60,12 @@ public class TransactionExtension implements Extension {
 
         bbd.addScope(TransactionScoped.class, true, true);
 
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorMandatory.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorNever.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorNotSupported.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequired.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequiresNew.class));
-        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorSupports.class));
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorMandatory.class), TransactionalInterceptorMandatory.class.getName() + TX_INTERCEPTOR);
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorNever.class), TransactionalInterceptorNever.class.getName() + TX_INTERCEPTOR);
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorNotSupported.class), TransactionalInterceptorNotSupported.class.getName() + TX_INTERCEPTOR);
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequired.class), TransactionalInterceptorRequired.class.getName() + TX_INTERCEPTOR);
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequiresNew.class), TransactionalInterceptorRequiresNew.class.getName() + TX_INTERCEPTOR);
+        bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorSupports.class), TransactionalInterceptorSupports.class.getName() + TX_INTERCEPTOR);
     }
 
     /**
