@@ -26,7 +26,7 @@ import java.net.URL;
 //@Data
 //@AllArgsConstructor
 //@ApiModel( value = "LRA", description = "A Long Running Action" )
-public class LRAStatus {
+public class LRAInfo {
     private Exception jsonParseError;
     //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
@@ -43,14 +43,14 @@ public class LRAStatus {
 //    @ApiModelProperty( value = "Indicates whether or not this LRA is top level", required = false )
     private boolean isTopLevel;
 
-    public LRAStatus(String lraId) {
+    public LRAInfo(String lraId) {
         this.lraId = lraId;
     }
-    public LRAStatus(URL lraId) {
+    public LRAInfo(URL lraId) {
         this.lraId = lraId.toString();
     }
 
-    public LRAStatus(String lraId, String clientId, boolean isComplete, boolean isCompensated, boolean isRecovering, boolean isActive, boolean isTopLevel) {
+    public LRAInfo(String lraId, String clientId, boolean isComplete, boolean isCompensated, boolean isRecovering, boolean isActive, boolean isTopLevel) {
         this.lraId = lraId;
         this.clientId = clientId;
         this.isComplete = isComplete;
@@ -61,7 +61,7 @@ public class LRAStatus {
         this.jsonParseError = null;
     }
 
-    public LRAStatus(Exception e) {
+    public LRAInfo(Exception e) {
         jsonParseError = e;
         this.lraId = "JSON Parse Error: " + e.getMessage();
         this.clientId = e.getMessage();
@@ -103,9 +103,9 @@ public class LRAStatus {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LRAStatus)) return false;
+        if (!(o instanceof LRAInfo)) return false;
 
-        LRAStatus lraStatus = (LRAStatus) o;
+        LRAInfo lraStatus = (LRAInfo) o;
 
         return getLraId().equals(lraStatus.getLraId());
     }

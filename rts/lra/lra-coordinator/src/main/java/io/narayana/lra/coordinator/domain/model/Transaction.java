@@ -30,17 +30,19 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.logging.tsLogger;
+import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.InvalidLRAId;
+import io.narayana.lra.client.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -60,7 +62,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -187,9 +188,10 @@ public class Transaction extends AtomicAction {
 
             }
         } catch (IOException e1) {
+            LRALogger.i18NLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), e1);
             return false;
         } catch (final NullPointerException ex) {
-            tsLogger.i18NLogger.warn_coordinator_norecordfound(Integer.toString(record_type));
+            LRALogger.i18NLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), ex);
 
             return false;
         }
@@ -216,6 +218,8 @@ public class Transaction extends AtomicAction {
 
             return true;
         } catch (IOException e) {
+            if(LRALogger.logger.isDebugEnabled())
+                LRALogger.logger.debugf(e, "Cannot restore state of objec type '%s'", ot);
             return false;
         }
     }
@@ -366,7 +370,7 @@ public class Transaction extends AtomicAction {
             if (lraService != null)
                 lraService.finished(this, false);
         else
-            System.out.printf("WARNING null LRAService in LRA#end");
+            LRALogger.logger.warn("null LRAService in LRA#end");
 
         responseData = status == null ? null : status.name();
 
@@ -391,6 +395,7 @@ public class Transaction extends AtomicAction {
                 return Arrays.asList(ja);
             } catch (IOException e) {
                 e.printStackTrace();
+                LRALogger.i18NLogger.warn_cannotGetCompensatorStatusData(data, getId(), e);
                 return Collections.emptyList();
             }
         } else {
@@ -451,8 +456,8 @@ public class Transaction extends AtomicAction {
 
         if (add(p) != AddOutcome.AR_REJECTED) {
             if (!p.setTimeLimit(scheduler, timeLimit))
-                if (tsLogger.logger.isInfoEnabled())
-                    tsLogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
+                if (LRALogger.logger.isInfoEnabled())
+                    LRALogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
 
             return p;
         }
@@ -554,20 +559,20 @@ public class Transaction extends AtomicAction {
 
     private int lraStatusToHttpStatus() {
         if (status == null)
-            return 202; // in progress
+            return Status.NO_CONTENT.getStatusCode(); // in progress, 204
 
         switch (status) {
             case Completed:
             case Compensated:
-                return 200;
+                return Status.OK.getStatusCode(); // 200
             case Compensating:
             case Completing:
-                return 202;
+                return Status.ACCEPTED.getStatusCode(); // 202
             case FailedToComplete:
             case FailedToCompensate:
-                return 412; // probably not the correct code
+                return Status.PRECONDITION_FAILED.getStatusCode(); // 412, probably not the correct code
             default:
-                return 500;
+                return Status.INTERNAL_SERVER_ERROR.getStatusCode(); // 500
         }
     }
 
@@ -605,8 +610,8 @@ public class Transaction extends AtomicAction {
         int status = status();
 
         if (status == ActionStatus.RUNNING || status == ActionStatus.ABORT_ONLY) {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
             }
 
             CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
@@ -640,12 +645,12 @@ public class Transaction extends AtomicAction {
 
 
                 if (!deactivate())
-                    if (tsLogger.logger.isInfoEnabled())
-                       tsLogger.logger.infof("Could not save new recovery URL");
+                    if (LRALogger.logger.isInfoEnabled())
+                       LRALogger.logger.infof("Could not save new recovery URL");
 
-            } catch (InvalidLRAId e) {
-                if (tsLogger.logger.isInfoEnabled())
-                    tsLogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
+            } catch (InvalidLRAIdException e) {
+                if (LRALogger.logger.isInfoEnabled())
+                    LRALogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
             }
         }
     }

@@ -24,38 +24,40 @@ package io.narayana.lra.cdi;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestName;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.cdi.CDIFraction;
 import org.wildfly.swarm.jaxrs.JAXRSFraction;
-
-import com.google.common.collect.Lists;
+import org.wildfly.swarm.logging.LoggingFraction;
 
 import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.cdi.bean.AllAnnotationsNoPathBean;
-import io.narayana.lra.cdi.bean.CompleteOptionalBean;
+import io.narayana.lra.cdi.bean.AsyncSuspendWithoutForgetBean;
 import io.narayana.lra.cdi.bean.CorrectBean;
 import io.narayana.lra.cdi.bean.CorrectMethodLRABean;
 import io.narayana.lra.cdi.bean.ForgetWithoutDeleteBean;
+import io.narayana.lra.cdi.bean.LRANoContextBean;
 import io.narayana.lra.cdi.bean.LeaveWithoutPutBean;
 import io.narayana.lra.cdi.bean.LraJoinFalseBean;
 import io.narayana.lra.cdi.bean.LraJoinFalseMethodLRABean;
 import io.narayana.lra.cdi.bean.MultiForgetBean;
 import io.narayana.lra.cdi.bean.NoPostOrGetBean;
-import io.narayana.lra.cdi.bean.OnlyOneLraAnnotationBean;
-import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
 
 /**
  * Test case which checks functionality of CDI extension by deploying wrongly
@@ -64,46 +66,55 @@ import io.narayana.lra.cdi.bean.OnlyTwoLraAnnotationsBean;
  * @author Ondra Chaloupka <ochaloup@redhat.com>
  */
 public class StartCdiCheckIT {
+    private static final Logger log = Logger.getLogger(StartCdiCheckIT.class.getName());
+
+    private static final int SWARM_START_TIMEOUT = Integer.getInteger("swarm.test.start.timeout", 2);
+    private static final String LOG_FILE_NAME = "target/cdi-test-swarm.log"; // see logging.properties
 
     @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    public TestName testName = new TestName();
 
-    @Test
-    public void onlyCompensateAnnotationPresent() throws Exception {
-        checkSwarmWithDeploymentException("LRA which requires methods handling LRA events. Missing annotations",
-            OnlyOneLraAnnotationBean.class);
+    @Before
+    public void cleanUp() throws Exception {
+        File log = new File(LOG_FILE_NAME);
+        if(log.exists()) {
+            // need to clean file for the next test can check existence of log strings
+            PrintWriter writer = new PrintWriter(log);
+            writer.print("");
+            writer.close();
+        }
     }
 
-    @Test
-    public void onlyCompleteAndStatusAnnotationsPresent() throws Exception {
-        checkSwarmWithDeploymentException("LRA which requires methods handling LRA events. Missing annotations",
-            OnlyTwoLraAnnotationsBean.class);
-    }
-    
     @Test
     public void complementaryPathAnnotation() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*Path",
             AllAnnotationsNoPathBean.class);
     }
-    
+
     @Test
     public void methodTypeAnnotationMissing() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(PUT|GET)",
             NoPostOrGetBean.class);
     }
-    
+
+    @Test
+    public void asyncInvocationWithoutForgetDefined() throws Exception {
+        checkSwarmWithDeploymentException("The LRA class has to contain @Status and @Forget annotations",
+                AsyncSuspendWithoutForgetBean.class);
+    }
+
     @Test
     public void forgetMissingDelete() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(DELETE)",
             ForgetWithoutDeleteBean.class);
     }
-    
+
     @Test
     public void leaveMissingPut() throws Exception {
         checkSwarmWithDeploymentException("should use complementary annotation.*(PUT)",
             LeaveWithoutPutBean.class);
     }
-    
+
     @Test
     public void multiForgetAnnotations() throws Exception {
         checkSwarmWithDeploymentException("multiple annotations.*" + Forget.class.getName(),
@@ -112,59 +123,53 @@ public class StartCdiCheckIT {
 
     @Test
     public void lraJoinFalseCorrect() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseBean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
-    
+
     @Test
     public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(LraJoinFalseMethodLRABean.class));
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
     @Test
     public void allCorrect() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
+        Swarm swarm = startSwarm();
         try {
             swarm.deploy(getBaseDeployment().addClasses(CorrectBean.class));
         } finally {
-            swarm.stop();
-        }
-    }
-    
-    @Test
-    public void allCorrectLRAOnMethod() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
-        try {
-            swarm.deploy(getBaseDeployment().addClasses(CorrectMethodLRABean.class));
-        } finally {
-            swarm.stop();
-        }
-    }
-    
-    @Test
-    public void completeAnnotationIsOptional() throws Exception {
-        Swarm swarm = startSwarm(tmpFolder.newFile());
-        try {
-            swarm.deploy(getBaseDeployment().addClasses(CompleteOptionalBean.class));
-        } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
     }
 
-    private static List<String> loggingArgs = Arrays.asList(new String[] {
-            "-Dswarm.logging.periodic-rotating-file-handlers=FILE",
-            "-Dswarm.logging.periodic-rotating-file-handlers.FILE.file.path=%s",
-            "-Dswarm.logging.root-logger.handlers=[CONSOLE,FILE]"
-        });
+    @Test
+    public void allCorrectLRAOnMethod() throws Exception {
+        Swarm swarm = startSwarm();
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(CorrectMethodLRABean.class));
+        } finally {
+            stopSwarm(swarm);
+        }
+    }
+
+    @Test
+    public void noLraContext() throws Exception {
+        Swarm swarm = startSwarm();
+        try {
+            swarm.deploy(getBaseDeployment().addClasses(LRANoContextBean.class));
+        } finally {
+            stopSwarm(swarm);
+        }
+    }
 
     private WebArchive getBaseDeployment() {
         WebArchive deployment = ShrinkWrap.create(WebArchive.class, "lra-cdi-check.war")
@@ -172,45 +177,83 @@ public class StartCdiCheckIT {
             .addAsManifestResource(new StringAsset(LraAnnotationProcessingExtension.class.getName()),
                 "services/javax.enterprise.inject.spi.Extension")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        
+
         File[] libs = Maven.resolver()
             .loadPomFromFile("pom.xml")
             .resolve("org.jboss.narayana.rts:lra-annotations")
-            .withTransitivity().as(File.class); 
+            .withTransitivity().as(File.class);
         deployment.addAsLibraries(libs);
-        
+
         return deployment;
     }
 
-    private String[] getLoggingArgs(final File logFile) {
-        return Lists.transform(loggingArgs, inputString -> {
-           String outString = inputString;
-           if(inputString.contains("path")) outString = String.format(inputString, logFile.getAbsolutePath());
-           return outString;
-        }).toArray(new String[] {});
-    }
-
-    private Swarm startSwarm(File logFile) throws Exception{
-        return new Swarm(getLoggingArgs(logFile))
+    private Swarm startSwarm() throws Exception{
+        final Swarm swarm = new Swarm()
             .fraction(new JAXRSFraction())
             .fraction(new CDIFraction())
-            .start();
+            .fraction(new LoggingFraction());
+
+        final String testMethodName = this.testName.getMethodName();
+        log.infof("Starting swarm '%s' for test '%s'", swarm, testMethodName);
+
+        runWithTimeout(() -> {
+            try {
+                swarm.start();
+            } catch (Exception startE) {
+                log.errorf(startE, "Error starting swarm '%s' for test '%s'", swarm, testMethodName);
+                runWithTimeout(() -> {
+                    try {
+                        stopSwarm(swarm);
+                    } catch (Exception stopE) {
+                        log.debugf(stopE, "Error stopping swarm '%s' for test '%s'", swarm, testMethodName);
+                    }
+                }, 1, TimeUnit.MINUTES);
+            }
+        }, SWARM_START_TIMEOUT, TimeUnit.MINUTES);
+
+        return swarm;
+    }
+
+    private void stopSwarm(Swarm swarm) throws Exception {
+        swarm.stop();
+        // sleeping a sec to be sure that weld container shutdown hook was processed
+        Thread.sleep(1500);
+    }
+
+    private static void runWithTimeout(Runnable r, int timeout, TimeUnit timeUnit) {
+        log.tracef("Running runnable '%s' with timeout '%s' s", r, timeUnit.toSeconds(timeout));
+        ExecutorService e = Executors.newSingleThreadExecutor();
+        e.submit(r);
+
+        try {
+            e.shutdown();
+            e.awaitTermination(timeout, timeUnit);
+        }
+        catch (InterruptedException ie) {
+            log.debugf(ie, "Shutdowning executor '%s' task of test execution interrupted", r);
+        }
+        finally {
+            if (!e.isTerminated()) {
+                log.debugf("Executor '%s' was not finished we are going to forcibly end it", r);
+            }
+            e.shutdownNow();
+        }
     }
 
     private void checkSwarmWithDeploymentException(String stringToMatch, Class<?>... classesToAdd) throws Exception {
-        File logFile = tmpFolder.newFile();
-        Swarm swarm = startSwarm(logFile);
+        Swarm swarm = startSwarm();
         try {
+            log.infof("Test '%s' of swarm '%s' deploying '%s'", testName.getMethodName(), swarm, classesToAdd);
             swarm
                 .deploy(getBaseDeployment().addClasses(classesToAdd));
             Assert.fail("Expected deployment exception to be thrown");
         } catch (org.wildfly.swarm.container.DeploymentException de) {
             // expected
         } finally {
-            swarm.stop();
+            stopSwarm(swarm);
         }
 
-        assertLogLine(logFile, stringToMatch);
+        assertLogLine(new File(LOG_FILE_NAME), stringToMatch);
     }
 
     private void assertLogLine(File file, String expectedString) throws IOException {

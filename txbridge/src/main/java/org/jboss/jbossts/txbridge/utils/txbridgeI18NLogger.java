@@ -25,6 +25,8 @@ import org.jboss.logging.annotations.*;
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.annotations.Message.Format.*;
 
+import org.jboss.jbossts.xts.bridge.at.BridgeWrapper;
+
 /**
  * i18n log messages for the txbridge module.
  *
@@ -113,6 +115,10 @@ public interface txbridgeI18NLogger
     @Message(id = 33017, value = "Unable to enlist BridgeXAResource or register BridgeSynchronization", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
     public void error_obm_unabletoenlist(@Cause() Throwable arg0);
+
+    @Message(id = 33018, value = "Error on prepareVolatile of bridge wrapper '{0}'", format = MESSAGE_FORMAT)
+    @LogMessage(level = ERROR)
+    public void error_bridge_wrapper_prepare_volatile(BridgeWrapper bridgeWrapper);
 
     /*
         Allocate new messages directly above this notice.

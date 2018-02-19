@@ -34,7 +34,7 @@ import io.narayana.lra.annotation.Status;
 
 /**
  * Three base LRA annotations are correct but the {@link Leave}
- * annotation misses the HTTP method to use which should be {@link PUT}.  
+ * annotation misses the HTTP method to use which should be {@link PUT}.
  */
 @LRA
 public class LeaveWithoutPutBean {
@@ -44,14 +44,14 @@ public class LeaveWithoutPutBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     @Path("compensate")
     @PUT
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET

@@ -33,7 +33,7 @@ import io.narayana.lra.annotation.Status;
 
 /**
  * All three LRA annotations where {@link LRA} is annotated
- * on a method. 
+ * on a method.
  */
 public class CorrectMethodLRABean {
     @LRA
@@ -47,14 +47,14 @@ public class CorrectMethodLRABean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     @Path("compensate")
     @PUT
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET

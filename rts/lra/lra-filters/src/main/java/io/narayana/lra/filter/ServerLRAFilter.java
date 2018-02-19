@@ -32,8 +32,8 @@ import io.narayana.lra.annotation.TimeLimit;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.client.IllegalLRAStateException;
-import io.narayana.lra.client.LRAClient;
-import io.narayana.lra.client.LRAClientAPI;
+import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.logging.LRALogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -56,13 +56,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static io.narayana.lra.client.LRAClient.COMPENSATE;
-import static io.narayana.lra.client.LRAClient.COMPLETE;
-import static io.narayana.lra.client.LRAClient.LEAVE;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.client.LRAClient.STATUS;
-import static io.narayana.lra.client.LRAClient.FORGET;
+import static io.narayana.lra.client.NarayanaLRAClient.COMPENSATE;
+import static io.narayana.lra.client.NarayanaLRAClient.COMPLETE;
+import static io.narayana.lra.client.NarayanaLRAClient.LEAVE;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.STATUS;
+import static io.narayana.lra.client.NarayanaLRAClient.FORGET;
 
 @Provider
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
@@ -71,21 +71,19 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private static final String CANCEL_ON_PROP = "CancelOn";
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
 
-    private static Boolean isTrace = Boolean.getBoolean("trace");
-
     @Context
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private LRAClientAPI lraClient;
+    private NarayanaLRAClient lraClient;
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
         if (lraId == null && shouldNotBeNull) {
-            throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but no tx", null);
+            throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                    type.name() + " but no tx");
         } else if (lraId != null && !shouldNotBeNull) {
             throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but found tx", null);
+                    type.name() + " but found tx");
         }
     }
 
@@ -170,8 +168,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -181,8 +179,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             case NOT_SUPPORTED:
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -266,9 +264,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation && enlist) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
-            String timeLimitStr = terminateURIs.get(LRAClient.TIMELIMIT_PARAM_NAME);
-            long timeLimit = timeLimitStr == null ? LRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+            String timeLimitStr = terminateURIs.get(NarayanaLRAClient.TIMELIMIT_PARAM_NAME);
+            long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
             if (terminateURIs.containsKey("Link")) {
                 try {
@@ -352,8 +350,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
-                    LRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
-                System.out.printf("WARNING LRA participant completion for asynchronous method %s#%s should return %d and not %d%n",
+                    NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
+                LRALogger.i18NLogger.warn_lraParticipantqForAsync(
                         resourceInfo.getResourceMethod().getDeclaringClass().getName(),
                         resourceInfo.getResourceMethod().getName(),
                         Response.Status.ACCEPTED.getStatusCode(),
@@ -376,7 +374,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             timeLimit = method.getDeclaringClass().getDeclaredAnnotation(TimeLimit.class);
 
         if (timeLimit == null)
-            return LRAClient.DEFAULT_TIMEOUT_MILLIS;
+            return NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS;
 
         TimeLimit tl = (TimeLimit) timeLimit;
 
@@ -395,7 +393,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private String getCompensatorId(URL lraId, URI baseUri) {
-        Map<String, String> terminateURIs = LRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
 
         if (!terminateURIs.containsKey("Link"))
             throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
@@ -405,9 +403,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private void lraTrace(ContainerRequestContext context, URL lraId, String reason) {
-        if (isTrace) {
+        if (LRALogger.logger.isTraceEnabled()) {
             Method method = resourceInfo.getResourceMethod();
-            System.out.printf("%s: container request for method %s: lra: %s%n",
+            LRALogger.logger.tracef("%s: container request for method %s: lra: %s%n",
                     reason, method.getDeclaringClass().getName() + "#" + method.getName(),
                     lraId == null ? "context" : lraId);
         }
@@ -415,8 +413,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     private void lraWarn(ContainerRequestContext context, URL lraId, String reason) {
         Method method = resourceInfo.getResourceMethod();
-        System.out.printf("%s: container request for method %s: lra: %s%n",
-                reason, method.getDeclaringClass().getName() + "#" + method.getName(),
-                lraId == null ? "context" : lraId);
+        LRALogger.i18NLogger.warn_lraFilterContainerRequest(reason,
+            method.getDeclaringClass().getName() + "#" + method.getName(), lraId == null ? "context" : lraId.toString());
     }
 }

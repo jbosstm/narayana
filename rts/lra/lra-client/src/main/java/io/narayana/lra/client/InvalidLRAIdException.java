@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2017, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2017, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,28 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package io.narayana.lra.client;
 
-package io.narayana.lra.cdi.bean;
+import javax.ws.rs.WebApplicationException;
 
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Status;
+public class InvalidLRAIdException extends WebApplicationException {
+    private final String lraId;
 
-/**
- * {@link LRA} bean which contains only two annotations - {@link Complete} and {@link Status} 
- * but the LRA prescribe for the bean to contain two compulsory: {@link Compensate} and {@link Status}.
- */
-@LRA
-public class OnlyTwoLraAnnotationsBean {
+    /**
+     * Invalid LRA id exception.
+     *
+     * @param lraId  LRA id that is behind this exception
+     * @param message  error message of this exception
+     * @param cause  cause exception
+     */
+    public InvalidLRAIdException(String lraId, String message, Throwable cause) {
+        super(String.format("%s, lra id: %s", message, lraId), cause);
 
-    @Complete
-    public void complete() {
-        // no implementation needed
+        this.lraId = lraId;
     }
-    
-    @Status
-    public void status() {
-        // no implementation needed
+
+    public String getLraId() {
+        return this.lraId;
     }
 }

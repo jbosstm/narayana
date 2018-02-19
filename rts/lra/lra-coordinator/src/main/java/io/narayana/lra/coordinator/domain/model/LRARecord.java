@@ -25,13 +25,13 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.annotation.CompensatorStatus;
 import io.narayana.lra.client.Current;
-import io.narayana.lra.client.InvalidLRAId;
+import io.narayana.lra.client.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import io.narayana.lra.logging.LRALogger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -45,20 +45,18 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
@@ -90,7 +88,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             // if compensateURI is a link parse it into compensate,complete and status urls
             if (linkURI.startsWith("<")) {
                 linkURI = cannonicalForm(linkURI);
-                Exception parseException[] = {null};
+                Exception[] parseException = { null };
 
                 Arrays.stream(linkURI.split(",")).forEach((linkStr) -> {
                     Exception e = parseLink(linkStr);
@@ -99,7 +97,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 });
 
                 if (parseException[0] != null)
-                    throw new InvalidLRAId(lraId, "Invalid link URL", parseException[0]);
+                    throw new InvalidLRAIdException(lraId, "Invalid link URL", parseException[0]);
             } else {
                 this.compensateURI = new URL(String.format("%s/compensate", linkURI));
                 this.completeURI = new URL(String.format("%s/complete", linkURI));
@@ -115,7 +113,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             this.recoveryURL = null;
             this.compensatorData = compensatorData;
         } catch (MalformedURLException e) {
-            throw new InvalidLRAId(lraId, "Invalid LRA id", e);
+            LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId, linkURI);
+            throw new InvalidLRAIdException(lraId, "Invalid LRA id", e);
         }
     }
 
@@ -150,7 +149,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             try {
                 link = Link.valueOf(lnk);
             } catch (Exception e) {
-                e.printStackTrace();
+                LRALogger.logger.infof(e, "Cannot extract compensator from link'%s'", linkStr);
                 return linkStr;
             }
 
@@ -280,8 +279,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         try {
                             statusURI = new URL((String) lh);
                         } catch (MalformedURLException e) {
-                            if (tsLogger.logger.isInfoEnabled()) {
-                                tsLogger.logger.infof("LRARecord.doEnd missing Location header on ACCEPTED response %s failed: %s",
+                            if (LRALogger.logger.isInfoEnabled()) {
+                                LRALogger.logger.infof("LRARecord.doEnd missing Location header on ACCEPTED response %s failed: %s",
                                         target.getUri(), e.getMessage());
                             }
                         }
@@ -293,8 +292,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 if (response.hasEntity())
                     responseData = response.readEntity(String.class);
             } catch (Exception e) {
-                if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.infof("LRARecord.doEnd put %s failed: %s",
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
                             target.getUri(), e.getMessage());
                 }
             } finally {
@@ -314,8 +313,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         if (httpStatus != Response.Status.OK.getStatusCode()
                 && httpStatus != Response.Status.NO_CONTENT.getStatusCode()
                 && !accepted) {
-            if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debugf("LRARecord.doEnd put %s failed with status: %d",
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf("LRARecord.doEnd put %s failed with status: %d",
                         endPath, httpStatus);
             }
 
@@ -347,7 +346,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private int reportFailure(boolean compensate, String endPath) {
         status = compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete;
 
-        tsLogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
+        LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
                 endPath, compensate ? "compensate" : "complete");
 
         // permanently failed so tell recovery to ignore us in the future. TODO could move it to
@@ -371,7 +370,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 CompensatorStatus cStatus = transaction.getLRAStatus();
 
                 if (cStatus == null) {
-                    tsLogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
+                    LRALogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
                             endPath);
                     return -1; // shouldn't happen since it imples it's still be active - force end to be called
                 }
@@ -423,7 +422,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         case FailedToCompensate:
                         case FailedToComplete:
                             // the participant could not finish - log a warning and forget
-                            tsLogger.logger.warnf(
+                            LRALogger.logger.warnf(
                                     "LRARecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
                                     compensate, target.getUri(), status);
 
@@ -442,8 +441,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     if (response2.getStatus() == Response.Status.OK.getStatusCode())
                                         return TwoPhaseOutcome.FINISH_OK;
                                 } catch (Exception e) {
-                                    if (tsLogger.logger.isInfoEnabled()) {
-                                        tsLogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
+                                    if (LRALogger.logger.isInfoEnabled()) {
+                                        LRALogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
                                                 forgetURI, e.getMessage());
                                     }
 
@@ -452,7 +451,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                 }
 
                             } else {
-                                tsLogger.logger.warnf(
+                                LRALogger.logger.warnf(
                                         "LRARecord.doEnd(%b) LRA: %s: cannot forget %s: missing forget URI",
                                         compensate, lraId, statusURI, status);
                             }
@@ -464,8 +463,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     }
                 }
             } catch (Exception e) {
-                if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.infof("LRARecord.doEnd status URI %s is invalid (%s)",
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("LRARecord.doEnd status URI %s is invalid (%s)",
                             statusURI, e.getMessage());
                 }
             } finally {
@@ -510,8 +509,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             int httpStatus;
 
             if (!isCompensate && !isComplete) {
-                if (tsLogger.logger.isInfoEnabled()) {
-                    tsLogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
                                     "(should be compensate or complete)",
                             endPath.toExternalForm());
                 }
@@ -558,8 +557,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         int httpStatus;
 
                         if (!isCompensate && !isComplete) {
-                            if (tsLogger.logger.isInfoEnabled()) {
-                                tsLogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
+                            if (LRALogger.logger.isInfoEnabled()) {
+                                LRALogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
                                                 "(should be compensate or complete)",
                                         endPath.toExternalForm());
                             }
@@ -680,33 +679,27 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return getTypeId();
     }
 
-    public int nestedAbort()
-    {
+    public int nestedAbort() {
         return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public int nestedCommit()
-    {
+    public int nestedCommit() {
         return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public int nestedPrepare()
-    {
+    public int nestedPrepare() {
         return TwoPhaseOutcome.PREPARE_OK; // do nothing
     }
 
-    public int nestedOnePhaseCommit()
-    {
+    public int nestedOnePhaseCommit() {
         return TwoPhaseOutcome.FINISH_ERROR;
     }
 
-    public String type()
-    {
+    public String type() {
         return TYPE_NAME;
     }
 
-    public boolean doSave()
-    {
+    public boolean doSave() {
         return true;
     }
 
@@ -716,23 +709,19 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public void alter(AbstractRecord a) {
     }
 
-    public boolean shouldAdd(AbstractRecord a)
-    {
+    public boolean shouldAdd(AbstractRecord a) {
         return (a.typeIs() == typeIs());
     }
 
-    public boolean shouldAlter(AbstractRecord a)
-    {
+    public boolean shouldAlter(AbstractRecord a) {
         return false;
     }
 
-    public boolean shouldMerge(AbstractRecord a)
-    {
+    public boolean shouldMerge(AbstractRecord a) {
         return false;
     }
 
-    public boolean shouldReplace(AbstractRecord a)
-    {
+    public boolean shouldReplace(AbstractRecord a) {
         return false;
     }
 
@@ -790,7 +779,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         try {
             this.recoveryURL = new URL(recoveryURL);
         } catch (MalformedURLException e) {
-            throw new InvalidLRAId(recoveryURL, "Invalid recovery id", e);
+            throw new InvalidLRAIdException(recoveryURL, "Invalid recovery id", e);
         }
     }
 

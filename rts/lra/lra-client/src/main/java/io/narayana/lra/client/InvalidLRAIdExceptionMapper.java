@@ -26,10 +26,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class InvalidLRAExceptionMapper implements ExceptionMapper<InvalidLRAId> {
+public class InvalidLRAIdExceptionMapper implements ExceptionMapper<InvalidLRAIdException> {
     @Override
-    public Response toResponse(InvalidLRAId exception) {
+    public Response toResponse(InvalidLRAIdException exception) {
         return Response.status(Response.Status.BAD_REQUEST)
-                .entity(String.format("Invalid LRA id: %s", exception.getMessage())).build();
+                .entity(exception.getMessage()).build();
     }
 }

@@ -95,6 +95,7 @@ public class TestClient extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String result = "OK";
         try {
             log.info("starting the transaction...");
 
@@ -111,13 +112,15 @@ public class TestClient extends HttpServlet {
             terminateTransaction(false);
         } catch (final RollbackException re) {
             log.info("Transaction rolled back");
+            result = re.getClass().getName();
         } catch (Exception e) {
             log.info("problem: ", e);
+            result = e.getClass().getName();
         }
 
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
-        out.println("finished");
+        out.println("finished : " + result);
         out.close();
     }
 

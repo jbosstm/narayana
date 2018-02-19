@@ -58,6 +58,8 @@ import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.LockMode;
 import com.arjuna.ats.txoj.LockResult;
 
+import static com.arjuna.ats.txoj.LockResult.GRANTED;
+
 public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
 {
     /*
@@ -192,6 +194,22 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
             }
             else
                 _txObject = new LockManagerProxy<T>(obj, cont);  // recoverable or persistent
+
+            // this is a new STM proxy so ensure that there is a record of it in the object store by taking a lock inside an atomic block
+            AtomicAction action = new AtomicAction();
+
+            action.begin();
+
+            int result = _txObject.setlock((_optimistic ? new OptimisticLock(LockMode.WRITE) : new Lock(LockMode.WRITE)), 0, 0);
+
+            if (result != GRANTED) {
+                // we didn't get the lock so there must already be a record for it
+                if (txojLogger.logger.isDebugEnabled()) {
+                    txojLogger.logger.debugf("STM InvocationHandler::InvocationHandler could not grab lock. Got: " + LockResult.stringForm(result));
+                }
+            }
+
+            action.commit();
         }
         
         _methods = obj.getClass().getDeclaredMethods();
@@ -396,7 +414,7 @@ public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler
                         {
                             int result = _txObject.setlock((_optimistic ? new OptimisticLock(cachedLock._lockType) : new Lock(cachedLock._lockType)), cachedLock._retry, cachedLock._timeout);
 
-                            if (result != LockResult.GRANTED)
+                            if (result != GRANTED)
                             {
                                 throw new LockException(Thread.currentThread()+" could not set "+LockMode.stringForm(cachedLock._lockType)+" lock. Got: "+LockResult.stringForm(result));
                             }

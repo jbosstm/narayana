@@ -30,8 +30,6 @@ public class GenericLRAExceptionMapper implements ExceptionMapper<GenericLRAExce
     @Override
     public Response toResponse(GenericLRAException exception) {
         return Response.status(exception.getStatusCode())
-                .entity(String.format("%s: %s", exception.getLraId() != null
-                        ? exception.getLraId()
-                        : "not present", exception.getMessage())).build();
+                .entity(exception.getMessage()).build();
     }
 }

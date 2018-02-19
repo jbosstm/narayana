@@ -33,7 +33,7 @@ import io.narayana.lra.annotation.Status;
 
 /**
  * LRA bean which contain all three LRA annotations with {@link Path}
- * and correct HTTP method to run at. 
+ * and correct HTTP method to run at.
  */
 @LRA
 public class CorrectBean {
@@ -43,14 +43,14 @@ public class CorrectBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     @Path("compensate")
     @PUT
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     @Path("status")
     @GET

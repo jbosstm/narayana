@@ -35,11 +35,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.transaction.Status;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
 
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.hp.mwtests.ts.jta.common.DummyXA;
 import com.hp.mwtests.ts.jta.common.Synchronization;
 
 public class SynchronizationUnitTest
@@ -69,5 +73,41 @@ public class SynchronizationUnitTest
         
         assertTrue(comp.compareTo(sync) != 0);
         assertTrue(sync.toString() != null);
+    }
+
+    @Test
+    public void testSynchronizationFailure() throws Exception
+    {
+        TransactionImple tx = new TransactionImple(0);
+        DummyXA res = new DummyXA(false) {
+            public void rollback (Xid xid) throws XAException
+            {
+                super.rollback(xid);
+                throw new XAException(XAException.XA_RETRY);
+            }
+        };
+        tx.enlistResource(res);
+
+        final String exceptionError = "intentional testing exception";
+        tx.registerSynchronization(new javax.transaction.Synchronization() {
+            @Override
+            public void beforeCompletion() {
+                throw new RuntimeException(exceptionError);
+            }
+            @Override
+            public void afterCompletion(int status) {
+            }
+        });
+
+        try {
+            tx.commit();
+        } catch (Exception e) {
+            Throwable exceptionToCheck = e;
+            while(exceptionToCheck != null) {
+                if(exceptionToCheck.getMessage().equals(exceptionError)) return;
+                exceptionToCheck = exceptionToCheck.getCause();
+            }
+            throw e;
+        }
     }
 }

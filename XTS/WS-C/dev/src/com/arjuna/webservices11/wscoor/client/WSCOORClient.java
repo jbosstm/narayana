@@ -1,8 +1,11 @@
 package com.arjuna.webservices11.wscoor.client;
 
+import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices11.util.PrivilegedServiceFactory;
 import com.arjuna.webservices11.util.PrivilegedServiceHelper;
+import com.arjuna.webservices11.util.PrivilegedServiceRegistryFactory;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import org.jboss.ws.api.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationPortType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationService;
@@ -13,6 +16,8 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.Map;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,7 +82,7 @@ public class WSCOORClient
 
         return port;
     }
-
+    
     // don't think we ever need this as we get a registration port from the endpoint ref returned by
     // the activation port request
     public static RegistrationPortType getRegistrationPort(final W3CEndpointReference endpointReference, String action, String messageID)
@@ -94,10 +99,34 @@ public class WSCOORClient
          */
 
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        MAP map = AddressingHelper.outboundMap(requestContext);
+        MAP map = getRegistrationPortMap(requestContext);
         AddressingHelper.installActionMessageID(map, action, messageID);
         // we should not need to do this but JBossWS does not pick up the value in the addressing properties
         AddressingHelper.configureRequestContext(requestContext, map.getTo(), action);
         return port;
+    }
+    
+    private static MAP getRegistrationPortMap(Map<String, Object> requestContext) {
+        final WSCEnvironmentBean wscEnvironmentBean = XTSPropertyManager.getWSCEnvironmentBean();
+        MAP map;
+        if (WSCEnvironmentBean.SECURE_ASYNC_REQUEST.equals(wscEnvironmentBean.getUseAsynchronousRequest())) {
+            String responseService = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry()
+                    .getSecureServiceURI(CoordinationConstants.REGISTRATION_RESPONSE_SERVICE_NAME);
+            String faultService = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry()
+                    .getSecureServiceURI(CoordinationConstants.COORDINATION_SOAP_FAULT_SERVICE_NAME);
+            WSCLogger.logger.tracev("WSCOORClient Using secure endpoints {0} {1}", responseService, faultService);
+            map = AddressingHelper.outboundMap(requestContext, responseService, faultService);
+        } else if (WSCEnvironmentBean.PLAIN_ASYNC_REQUEST.equals(wscEnvironmentBean.getUseAsynchronousRequest())) {
+            String responseService = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry()
+                    .getServiceURI(CoordinationConstants.REGISTRATION_RESPONSE_SERVICE_NAME);
+            String faultService = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry()
+                    .getServiceURI(CoordinationConstants.COORDINATION_SOAP_FAULT_SERVICE_NAME);
+            WSCLogger.logger.tracev("WSCOORClient Using plain endpoints {0} {1}", responseService, faultService);
+            map = AddressingHelper.outboundMap(requestContext, responseService, faultService);
+        } else {
+            WSCLogger.logger.tracev("WSCOORClient Using anonymous endpoints");
+            map = AddressingHelper.outboundMap(requestContext);
+        }
+        return map;
     }
 }

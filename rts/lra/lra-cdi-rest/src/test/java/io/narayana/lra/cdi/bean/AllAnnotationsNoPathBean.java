@@ -38,12 +38,12 @@ public class AllAnnotationsNoPathBean {
     public void complete() {
         // no implementation needed
     }
-    
+
     @Compensate
     public void compensate() {
         // no implementation needed
     }
-    
+
     @Status
     public void status() {
         // no implementation needed

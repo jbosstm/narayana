@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2017, Red Hat, Inc., and individual contributors
+ * Copyright 2017, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,12 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client;
 
-import javax.ws.rs.WebApplicationException;
+package io.narayana.lra.cdi.bean;
 
-public class InvalidLRAId extends WebApplicationException {
-    public InvalidLRAId(String lraId, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
-    }
+import io.narayana.lra.annotation.LRA;
+import io.narayana.lra.annotation.LRA.Type;
+
+/**
+ * LRA bean where no context is expected and thus no handling
+ * of the termination is needed.
+ */
+@LRA(value = Type.NEVER)
+public class LRANoContextBean {
 }

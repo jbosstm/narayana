@@ -1,6 +1,6 @@
 package io.narayana.lra.participant;
 
-import io.narayana.lra.client.LRAClient;
+import io.narayana.lra.client.NarayanaLRAClient;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,7 +29,7 @@ public class SpecTest {
     private static final int COORDINATOR_SWARM_PORT = 8080;
     private static final int TEST_SWARM_PORT = 8081;
 
-    private static LRAClient lraClientAPI;
+    private static NarayanaLRAClient lraClient;
     private static Client msClient;
 
     private WebTarget msTarget;
@@ -44,7 +44,7 @@ public class SpecTest {
         MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 
         // setting up the client
-        lraClientAPI = new LRAClient(rcHost, rcPort);
+        lraClient = new NarayanaLRAClient(rcHost, rcPort);
         msClient = ClientBuilder.newClient();
     }
 
@@ -56,15 +56,15 @@ public class SpecTest {
 
     @After
     public void tearDown() {
-        if(lraClientAPI != null)
-            lraClientAPI.close();
+        if(lraClient != null)
+            lraClient.close();
 
-        lraClientAPI = null;
+        lraClient = null;
     }
 
     @Test
     public void testLRAMgmt() {
-        URL lraId = lraClientAPI.startLRA("testStartLRA");
+        URL lraId = lraClient.startLRA("testStartLRA");
 
         Response response = msTarget.path(LRAM_PATH).path(LRAM_WORK)
                 .queryParam("lraId", lraId.toExternalForm())
@@ -73,7 +73,7 @@ public class SpecTest {
         String activityId = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
         try {
-            lraClientAPI.closeLRA(lraId);
+            lraClient.closeLRA(lraId);
         } catch (Error e) {
             e.printStackTrace();
         }

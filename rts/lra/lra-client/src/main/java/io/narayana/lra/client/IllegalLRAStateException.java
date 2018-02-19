@@ -24,7 +24,27 @@ package io.narayana.lra.client;
 import javax.ws.rs.WebApplicationException;
 
 public class IllegalLRAStateException extends WebApplicationException {
-    public IllegalLRAStateException(String lraId, String message, Throwable cause) {
-        super(String.format("%s: %s", lraId, message), cause);
+    private final String lraId;
+    private final String operation;
+
+    /**
+     * Creation of LRA state exception.
+     *
+     * @param lraId  LRA id that is behind this exception
+     * @param message  error message of this exception
+     */
+    public IllegalLRAStateException(String lraId, String operation, String message) {
+        super(String.format("%s, lra id: %s", message, lraId));
+
+        this.lraId = lraId;
+        this.operation = operation;
+    }
+
+    public String getLraId() {
+        return this.lraId;
+    }
+
+    public String getOperation() {
+        return this.operation;
     }
 }

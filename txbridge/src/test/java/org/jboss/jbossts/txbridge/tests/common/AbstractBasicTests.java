@@ -96,11 +96,11 @@ public abstract class AbstractBasicTests {
     }
 
 
-    protected void execute(String url) throws Exception {
-        execute(url, true);
+    protected String execute(String url) throws Exception {
+        return execute(url, true);
     }
 
-    protected void execute(String url, boolean expectResponse) throws Exception {
+    protected String execute(String url, boolean expectResponse) throws Exception {
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
             HttpGet httpget = new HttpGet(url);
@@ -108,13 +108,16 @@ public abstract class AbstractBasicTests {
             String response = httpclient.execute(httpget, responseHandler);
 
             if (expectResponse) {
-                Assert.assertEquals("Invalid response!", "finished", response.trim());
+                Assert.assertTrue("Invalid response! Expected to start with 'finished' but it's: "
+                    + response, response.trim().startsWith("finished"));
+                return response;
             }
         } catch (IOException e) {
             if (expectResponse) {
                 throw e;
             }
         }
+        return null;
     }
 
 }

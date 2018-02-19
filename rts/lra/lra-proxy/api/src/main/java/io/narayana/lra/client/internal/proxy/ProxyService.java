@@ -27,6 +27,7 @@ import io.narayana.lra.client.participant.LRAParticipantDeserializer;
 import io.narayana.lra.client.participant.JoinLRAException;
 import io.narayana.lra.client.participant.LRAManagement;
 import io.narayana.lra.client.participant.TerminationException;
+import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -65,7 +66,7 @@ public class ProxyService implements LRAManagement {
     private static final String COORDINATOR_PATH_NAME = "lra-coordinator"; // LRAClient.COORDINATOR_PATH_NAME
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
 
-    static private List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
+    private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
 
     private Client lcClient;
     private WebTarget lcTarget;
@@ -152,7 +153,7 @@ public class ProxyService implements LRAManagement {
 
             return Response.ok().build();
         } else {
-            System.err.printf("TODO recovery: null participant for callback %s%n", lraId.toExternalForm());
+            LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toExternalForm());
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -221,13 +222,13 @@ public class ProxyService implements LRAManagement {
     }
 
     private static Optional<String> serializeParticipant(final Serializable object) {
-        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(object);
 
             return Optional.of(Base64.getEncoder().encodeToString(baos.toByteArray()));
         } catch (final IOException e) {
-            System.err.printf("ProxyService: participant serialization problem: %s%n", e.getMessage());
+            LRAProxyLogger.i18NLogger.error_cannotSerializeParticipant(e.toString(), e);
 
             return Optional.empty();
         }
@@ -236,7 +237,7 @@ public class ProxyService implements LRAManagement {
     private static Optional<LRAParticipant> deserializeParticipant(final LRAParticipantDeserializer deserializer, final String objectAsString) {
         final byte[] data = Base64.getDecoder().decode(objectAsString);
 
-        try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
             return Optional.of((LRAParticipant) ois.readObject());
         } catch (final IOException | ClassNotFoundException e) {
             if (deserializer != null) {
@@ -246,7 +247,7 @@ public class ProxyService implements LRAManagement {
                     return Optional.of(LRAParticipant);
             }
 
-            System.err.printf("ProxyService: participant deserialization problem: %s%n", e.getMessage());
+            LRAProxyLogger.i18NLogger.error_cannotDeserializeParticipant(deserializer, e);
 
             return Optional.empty();
         }

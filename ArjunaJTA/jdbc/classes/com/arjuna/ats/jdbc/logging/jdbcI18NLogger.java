@@ -23,7 +23,12 @@ package com.arjuna.ats.jdbc.logging;
 import static org.jboss.logging.Logger.Level.DEBUG;
 import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
+import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
+
+import java.util.Hashtable;
+
+import javax.sql.XADataSource;
 
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
@@ -179,6 +184,17 @@ public interface jdbcI18NLogger {
 
 	@Message(id = 17039, value = "BasicXARecovery did not have enough connection configuration", format = MESSAGE_FORMAT)
 	String insufficientConnectionInformation();
+
+	@Message(id = 17040, value = "Cannot create JDBCXARecovery datasource of jndi name '{0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	void error_cannot_create_datasource(String jndiName, @Cause Throwable arg0);
+
+	@Message(id = 17041, value = "Cannot create JDBCXARecovery connection of datasource '{0}', user: {1}, password: {2}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	void error_cannot_create_connection(XADataSource ds, String user, String password, @Cause Throwable arg0);
+
+	@Message(id = 17042, value = "Could not resolve JNDI '{0}' of XADataSource from jndi properties '{1}'", format = MESSAGE_FORMAT)
+	String get_cant_resolve_ds_jndi_lookup(String jndi, Hashtable jndiProperties);
 
     /*
         Allocate new messages directly above this notice.

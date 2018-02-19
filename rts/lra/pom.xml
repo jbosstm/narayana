@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
         <artifactId>rest-tx</artifactId>
-        <version>5.7.2.Final-SNAPSHOT</version>
+        <version>5.7.3.Final-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -120,6 +120,13 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -130,7 +137,9 @@
         <module>lra-coordinator</module>
         <module>lra-filters</module>
         <module>lra-test</module>
+        <!-- temporarily disable since it is failing the mac builds
         <module>lra-cdi-rest</module>
+        -->
     </modules>
 
     <profiles>
