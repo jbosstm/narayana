@@ -15,7 +15,7 @@ fi
 
 command -v mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting."; exit 1; }
 command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
-command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct but it's not installed.  Aborting."; exit 1; }
+command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct (http://awestruct.org/getting_started) but it's not installed.  Aborting."; exit 1; }
 
 if [ $# -eq 0 ]; then
   . scripts/pre-release-vars.sh
@@ -45,6 +45,7 @@ git fetch upstream --tags
 git tag | grep $CURRENT
 if [[ $? != 0 ]]
 then
+  set -e
   JENKINS_JOBS=narayana,narayana-catelyn,narayana-codeCoverage,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py  
   set +e
   git status | grep "nothing to commit"
