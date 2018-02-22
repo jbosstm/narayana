@@ -105,7 +105,7 @@ public final class CheckerUtil {
     private static List<Class<?>> processStream(Stream<? extends String> stream, ClassLoader classLoader, File streamedFile) {
         return stream
             .filter(fileName -> fileName.endsWith(".class"))
-            .map(fileName -> fileName.replace('/', '.'))
+            .map(fileName -> fileName.replace((CharSequence) File.separator, "."))
             .map(fileName -> fileName.substring(0, fileName.length() - ".class".length()))
             .map(className -> loadClass(className, streamedFile, classLoader))
             .filter(clazz -> clazz != null)

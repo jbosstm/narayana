@@ -138,7 +138,7 @@ public class LraCdiCheckIT {
     private void assertFailureCatalogContains(Class<?> beanClass, String failureStringToCheck) {
         Assert.assertFalse("Failure on checking bean " + beanClass.getName() + " should happen",
                 FailureCatalog.INSTANCE.isEmpty());
-        Assert.assertThat(FailureCatalog.INSTANCE.formatCatalogContent().split("\n"),
+        Assert.assertThat(FailureCatalog.INSTANCE.formatCatalogContent().split(System.lineSeparator()),
                 HamcrestRegexpMatcher.matches(failureStringToCheck));
     }
 }
