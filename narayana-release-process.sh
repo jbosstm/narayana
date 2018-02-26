@@ -1,4 +1,17 @@
 #!/bin/bash
+
+# You can run this script with 0, 1 or 3 arguments.
+# Arguments are then tranformed to env varibales CURRENT, NEXT and WFLYISSUE
+# Release process releases version ${CURRENT} and prepares github with commits to ${NEXT}-SNAPSHOT
+# If WFLYISSUE is not defined then script tries to create new jira with upgrade component.
+#
+# 0 argument: information about CURRENT, NEXT is taken from pom.xml, WFLYISSUE is ignored
+#             CURRENT is taken as what is version from pom.xml without '-SNAPSHOT' suffix,
+#             NEXT is CURRENT with increased micro version
+#             e.g. pom.xml talks about version 5.7.3.Final-SNAPSHOT, CURRENT is 5.7.3.Final and NEXT is 5.7.4.Final
+# 1 argument: same as 0 argument but taken in care WFLYISSUE thus script don't try to create new issue
+# 3 arguments: `./narayana-release-process.sh CURRENT NEXT WFLYISSUE`
+
 if [[ $(uname) == CYGWIN* ]]
 then
   read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT mvn.cmd needs this" ELEV
@@ -9,6 +22,11 @@ then
 fi
 read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
+then
+  exit
+fi
+read -p "Have you configured ~/.m2/settings.xml with repository 'jboss-releases-repository' and correct username/password?" M2OK
+if [[ $M2OK == n* ]]
 then
   exit
 fi
@@ -106,7 +124,7 @@ cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 MAVEN_OPTS="-XX:MaxPermSize=512m" 
-mvn clean -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/
+mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=./ext/ -Prelease
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
