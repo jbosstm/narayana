@@ -1,7 +1,7 @@
 Narayana
 ========
 
-Getting help
+Getting help and TESTIT
 ------------
 If you need help with using Narayana, please visit our forums at:
 https://developer.jboss.org/en/jbosstm/
