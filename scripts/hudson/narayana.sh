@@ -296,14 +296,14 @@ function build_as {
 
     git remote | grep upstream
     if [ $? -ne 0 ]; then
-      git remote add upstream https://github.com/wildfly/wildfly.git
+      git remote add upstream git://github.com/wildfly/wildfly.git
     fi
     #Abort any partially complete rebase
     git rebase --abort
     git checkout 5_BRANCH
     [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
-    [ $? = 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
+    [ $? = 0 ] || fatal "git fetch git://github.com/jbosstm/jboss-as.git failed"
     git reset --hard jbosstm/5_BRANCH
     [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
@@ -313,11 +313,11 @@ function build_as {
   else
     echo "First time checkout of AS7"
     git clone git://github.com/jbosstm/jboss-as.git -o jbosstm
-    [ $? = 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
+    [ $? = 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
 
-    git remote add upstream https://github.com/wildfly/wildfly.git
+    git remote add upstream git://github.com/wildfly/wildfly.git
   fi
 
   [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
