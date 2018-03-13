@@ -100,8 +100,8 @@ public class ConnectionImple implements Connection
         boolean poolingEnabled = false;
 
         if (info != null) {
-            user = info.getProperty(TransactionalDriver.userName, "");
-            passwd = info.getProperty(TransactionalDriver.password, "");
+            user = info.getProperty(TransactionalDriver.userName);
+            passwd = info.getProperty(TransactionalDriver.password);
             dynamic = info.getProperty(TransactionalDriver.dynamicClass);
             xaDataSource = info.get(TransactionalDriver.XADataSource);
             poolingEnabled = Boolean.valueOf(info.getProperty(TransactionalDriver.poolConnections, "true")).booleanValue();

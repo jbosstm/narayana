@@ -37,10 +37,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /*
  * Only ever create a single instance of a given connection, based upon the
@@ -55,8 +52,8 @@ public class ConnectionManager {
      */
     public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
     {
-        String user = info.getProperty(TransactionalDriver.userName, "");
-        String passwd = info.getProperty(TransactionalDriver.password, "");
+        String user = info.getProperty(TransactionalDriver.userName);
+        String passwd = info.getProperty(TransactionalDriver.password);
         String dynamic = info.getProperty(TransactionalDriver.dynamicClass, "");
         String poolConnections = info.getProperty(TransactionalDriver.poolConnections, "true");
         Object xaDataSource = info.get(TransactionalDriver.XADataSource);
@@ -88,7 +85,7 @@ public class ConnectionManager {
 
                     /* Check transaction and database connection. */
                     if ((tx1 != null && tx1.equals(tx2))
-                            && isSameConnection(dbUrl, user, passwd, dynamic, xaDataSource, connControl))
+                        && isSameConnection(dbUrl, user, passwd, dynamic, xaDataSource, connControl))
                     {
                         try {
                             /*
@@ -174,13 +171,13 @@ public class ConnectionManager {
     }
 
     private static boolean isSameConnection(String dbUrl, String user, String passwd, String dynamic, Object xaDataSource, ConnectionControl connControl) {
-        return 
+        return
             dbUrl.equals(connControl.url())
-            && user.equals(connControl.user())
-            && passwd.equals(connControl.password())
-            && dynamic.equals(connControl.dynamicClass())
-            // equal ProvidedXADataSourceConnection instances should have the same data source
-            && (xaDataSource == null || xaDataSource.equals(connControl.xaDataSource()));
+                && Objects.equals(user, connControl.user())
+                && Objects.equals(passwd, connControl.password())
+                && dynamic.equals(connControl.dynamicClass())
+                // equal ProvidedXADataSourceConnection instances should have the same data source
+                && (xaDataSource == null || xaDataSource.equals(connControl.xaDataSource()));
     }
 
     private static Set<ConnectionImple> _connections = new HashSet<ConnectionImple>();
