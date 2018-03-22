@@ -24,6 +24,7 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBeanMBean;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,6 +40,7 @@ import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean;
 import com.arjuna.ats.internal.jta.tools.osb.mbean.jta.XAResourceRecordBean;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.hp.mwtests.ts.jta.common.DummyXA;
+import com.hp.mwtests.ts.jta.tools.FailureXAResource.FailType;
 
 /**
  * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
@@ -108,7 +110,7 @@ public class ObjStoreBrowserTest {
     {
         FailureXAResource failureXAResource = new FailureXAResource(FailureXAResource.FailLocation.commit); // generates a heuristic on commit
 
-        getHeuristicMBean(osb, new TransactionImple(1000000000), failureXAResource);
+        getResourceRecordMBean(osb, new TransactionImple(1000000000), failureXAResource, true);
     }
 
     /**
@@ -119,7 +121,7 @@ public class ObjStoreBrowserTest {
     public void testParticipantForgetAndRemove () throws Exception
     {
         // generate a heuristic
-        HeuristicTestData hd = getHeuristic();
+        FailureXAResourceData hd = getHeuristic();
 
         // try removing the resource (forget calls succeed)
         tryRemove(false, false, hd);
@@ -136,7 +138,7 @@ public class ObjStoreBrowserTest {
     public void testParticipantRemovePasses () throws Exception
     {
         // generate a heuristic
-        HeuristicTestData hd = getHeuristic();
+        FailureXAResourceData hd = getHeuristic();
 
         // try removing the resource (forget fails and remove ignores forget failures)
         tryRemove(true, true, hd);
@@ -153,13 +155,26 @@ public class ObjStoreBrowserTest {
     public void testParticipantRemoveFails () throws Exception
     {
         // generate a heuristic
-        HeuristicTestData hd = getHeuristic();
+        FailureXAResourceData hd = getHeuristic();
 
         // try removing the resource (forget fails and remove does not ignore forget failures)
         tryRemove(true, false, hd);
 
         // since the remove op does not ignores forget failures it should fail (meaning that the corresponding MBean still exists)
         assertEquals(1, hd.getHeuristicParticipants().size());
+    }
+
+    @Test
+    public void testParticipantRemovePrepared() throws Exception
+    {
+        // generate a prepared but failed transaction
+        FailureXAResourceData hd = getPrepared();
+
+        // try removing the resource, expecting forget call on XAResource is ommitted
+        tryRemove(false, false, hd);
+
+        assertEquals("the participant was prepared and expected tooling was able to remove it",
+                0, hd.getHeuristicParticipants().size());
     }
 
     /**
@@ -169,7 +184,7 @@ public class ObjStoreBrowserTest {
     public void testTxnRemovePasses () throws Exception
     {
         // generate a heuristic
-        HeuristicTestData hd = getHeuristic();
+        FailureXAResourceData hd = getHeuristic();
 
         // ignore forget failures during MBean remove opertaions
         arjPropertyManager.getObjectStoreEnvironmentBean().setIgnoreMBeanHeuristics(true);
@@ -193,7 +208,7 @@ public class ObjStoreBrowserTest {
     public void testTxnRemoveFails () throws Exception
     {
         // generate a heuristic
-        HeuristicTestData hd = getHeuristic();
+        FailureXAResourceData hd = getHeuristic();
 
         // ignore forget failures during MBean remove opertaions
         arjPropertyManager.getObjectStoreEnvironmentBean().setIgnoreMBeanHeuristics(false);
@@ -211,7 +226,7 @@ public class ObjStoreBrowserTest {
     }
 
 
-    private static final class HeuristicTestData {
+    private static final class FailureXAResourceData {
         FailureXAResource failureXAResource;
         TransactionImple tx;
         XAResourceRecordBeanMBean resourceBean;
@@ -220,7 +235,7 @@ public class ObjStoreBrowserTest {
         String resourceBeanName;
         String txnBeanName;
 
-        HeuristicTestData(TransactionImple tx, FailureXAResource failureXAResource, JTAActionBean txnMBean,
+        FailureXAResourceData(TransactionImple tx, FailureXAResource failureXAResource, JTAActionBean txnMBean,
                           XAResourceRecordBeanMBean resourceBean,  ObjectName participantBeanName,
                           String txnBeanName, String resourceBeanName) {
             this.failureXAResource = failureXAResource;
@@ -249,11 +264,27 @@ public class ObjStoreBrowserTest {
         }
     }
 
-    private HeuristicTestData getHeuristic() throws Exception
+    private FailureXAResourceData getPrepared() throws Exception
     {
-        FailureXAResource failureXAResource = new FailureXAResource(FailureXAResource.FailLocation.commit); // generates a heuristic on commit
+        // generates a failure but transaction is left prepared for recovery to finish
+        return getFailureXAResourceData(false);
+    }
+
+    private FailureXAResourceData getHeuristic() throws Exception
+    {
+        return getFailureXAResourceData(true);
+    }
+
+    /**
+     * If isHeuristic then expecting heuristic record is generated.
+     * If *not* isHeuristic then expecting prepared record is generated.  
+     */
+    private FailureXAResourceData getFailureXAResourceData(boolean isHeuristic) throws Exception
+    {
+        FailType failType = isHeuristic ? FailType.normal : FailType.rmfail;
+        FailureXAResource failureXAResource = new FailureXAResource(FailureXAResource.FailLocation.commit, failType);
         TransactionImple tx = new TransactionImple(1000000000);
-        XAResourceRecordBeanMBean resourceBean = getHeuristicMBean(osb, tx, failureXAResource);
+        XAResourceRecordBeanMBean resourceBean = getResourceRecordMBean(osb, tx, failureXAResource, isHeuristic);
         JTAActionBean txnMBean = getTransactionBean(osb, tx, true);
         Set<ObjectName> participants;
         String resourceBeanName;
@@ -272,11 +303,11 @@ public class ObjStoreBrowserTest {
 
         assertEquals(1, participants.size());
 
-        return new HeuristicTestData(tx, failureXAResource, txnMBean, resourceBean, participants.iterator().next(),
+        return new FailureXAResourceData(tx, failureXAResource, txnMBean, resourceBean, participants.iterator().next(),
                 txnBeanName, resourceBeanName);
     }
 
-    private HeuristicTestData tryRemove(boolean failForget, boolean ignoreMBeanHeuristics, HeuristicTestData hd)
+    private FailureXAResourceData tryRemove(boolean failForget, boolean ignoreMBeanHeuristics, FailureXAResourceData hd)
             throws MBeanException, MalformedObjectNameException
     {
         ObjectStoreEnvironmentBean osEnv = arjPropertyManager.getObjectStoreEnvironmentBean();
@@ -296,7 +327,7 @@ public class ObjStoreBrowserTest {
         return hd;
     }
 
-    private TransactionImple generateHeuristic(TransactionImple tx, FailureXAResource failureXAResource) throws Exception {
+    private TransactionImple generateFailedTransaction(TransactionImple tx, FailureXAResource failureXAResource, boolean isHeuristic) throws Exception {
         ThreadActionData.purgeActions();
         XAResource[] resources = {
                 new DummyXA(false),
@@ -310,8 +341,10 @@ public class ObjStoreBrowserTest {
         try {
             tx.commit();
 
-            fail("Expected a mixed heuristic");
+            if(isHeuristic) fail("Expected a mixed heuristic of transaction " + tx + " for the resource " + failureXAResource);
         } catch (final HeuristicMixedException expected) {
+            if(!isHeuristic) Assert.fail("The heuristic outcome of the transaction " + tx + " for the resource "
+                    + failureXAResource + " was not expected");
         }
 
         return tx;
@@ -336,8 +369,9 @@ public class ObjStoreBrowserTest {
         return (JTAActionBean) ai;
     }
 
-    private XAResourceRecordBeanMBean getHeuristicMBean(ObjStoreBrowser osb, TransactionImple tx, FailureXAResource failureXAResource) throws Exception {
-        generateHeuristic(tx, failureXAResource);
+    private XAResourceRecordBeanMBean getResourceRecordMBean(ObjStoreBrowser osb, TransactionImple tx,
+            FailureXAResource failureXAResource, boolean isHeuristic) throws Exception {
+        generateFailedTransaction(tx, failureXAResource, isHeuristic);
 
         osb.probe();
         // there should be one MBean corresponding to the Transaction
@@ -353,7 +387,8 @@ public class ObjStoreBrowserTest {
 
         LogRecordWrapper participant = participants.iterator().next();
 
-        assertTrue(participant.isHeuristic());
+        assertEquals("expecting the participant " + participant + " is in heuristic state",
+                isHeuristic, participant.isHeuristic());
         assertTrue(participant instanceof XAResourceRecordBeanMBean);
 
         return (XAResourceRecordBeanMBean) participant;

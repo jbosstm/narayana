@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.HeuristicInformation;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
@@ -235,7 +236,14 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 
     public boolean removeFromList(RecordList rl) {
         if (rl != null && rl.size() > 0 && rec != null) {
-            boolean forgotten = forgetRec || rec.forgetHeuristic();
+            // removing transaction  branch at the participant side
+            boolean isParticipantCleaned = rec.forgetHeuristic();
+            if(!isParticipantCleaned && forgetRec) {
+                if (tsLogger.logger.isDebugEnabled())
+                    tsLogger.logger.debugf("Attempt to forget record '%s' by calling bean removal operation failed, going to call abort", rec);
+                isParticipantCleaned = rec.topLevelAbort() == TwoPhaseOutcome.FINISH_OK;
+            }
+            boolean forgotten = isParticipantCleaned || forgetRec;
             boolean removeAllowed = arjPropertyManager.getObjectStoreEnvironmentBean().isIgnoreMBeanHeuristics();
 
             if (forgotten || removeAllowed) {
