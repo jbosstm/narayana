@@ -34,6 +34,10 @@ rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
 IF NOT EXIST wildfly-%WILDFLY_MASTER_VERSION%.zip wget http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip
 if %ERRORLEVEL% NEQ 0 (call:comment_on_pull "Pull failed on Windows - could not download http://download.jboss.org/wildfly/%WILDFLY_MASTER_VERSION%/wildfly-%WILDFLY_MASTER_VERSION%.zip" & exit -1)
 unzip wildfly-%WILDFLY_MASTER_VERSION%
+rem REPLACE THE OPENJDK-ORB WITH THE 8.0.8.Final
+wget --no-check-certificate https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Final/openjdk-orb-8.0.8.Final.jar -O %JBOSS_HOME%\modules\system\layers\base\javax\orb\api\main\openjdk-orb-8.0.8.Final.jar
+set OPENJDK_ORB_MODULE_XML=%JBOSS_HOME%\modules\system\layers\base\javax\orb\api\main\module.xml
+powershell -Command "((Get-Content ($env:OPENJDK_ORB_MODULE_XML)).replace('8.0.6.Final', '8.0.8.Final') | Set-Content ($env:OPENJDK_ORB_MODULE_XML))"
 unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.9.1.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
 cd ..\
 
