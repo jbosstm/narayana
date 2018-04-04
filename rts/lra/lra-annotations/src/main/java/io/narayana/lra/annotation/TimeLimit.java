@@ -30,6 +30,8 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * <p>
  * Used on ({@link LRA} and {@link Compensate} annotations to indicate the maximum time that the LRA or
  * participant should remain active for.
@@ -39,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
+@Deprecated
 public @interface TimeLimit {
     /**
      * @return the period for which the LRA or participant will remain valid. A value

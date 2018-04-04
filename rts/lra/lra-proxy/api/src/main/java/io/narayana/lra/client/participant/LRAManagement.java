@@ -24,6 +24,10 @@ package io.narayana.lra.client.participant;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.participant
+ */
+@Deprecated
 public interface LRAManagement {
     /**
      * Join an existing LRA

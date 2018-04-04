@@ -22,13 +22,13 @@
 
 package io.narayana.lra.checker;
 
+import org.eclipse.microprofile.lra.annotation.Forget;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.narayana.lra.annotation.Forget;
 import io.narayana.lra.checker.bean.AllAnnotationsNoPathBean;
 import io.narayana.lra.checker.bean.AsyncSuspendWithoutForgetBean;
 import io.narayana.lra.checker.bean.CorrectBean;

@@ -22,8 +22,8 @@
 
 package io.narayana.lra.proxy.test.api;
 
-import io.narayana.lra.client.participant.JoinLRAException;
-import io.narayana.lra.client.participant.LRAManagement;
+import org.eclipse.microprofile.lra.participant.JoinLRAException;
+import org.eclipse.microprofile.lra.participant.LRAManagement;
 import io.narayana.lra.proxy.test.model.Activity;
 import io.narayana.lra.proxy.test.model.Participant;
 import io.narayana.lra.proxy.test.service.ActivityService;

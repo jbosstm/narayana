@@ -21,11 +21,11 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.participant.LRAParticipant;
-import io.narayana.lra.client.participant.LRAParticipantDeserializer;
-import io.narayana.lra.client.participant.TerminationException;
+import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.participant.LRAParticipantDeserializer;
+import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.net.URL;
 import java.util.Optional;

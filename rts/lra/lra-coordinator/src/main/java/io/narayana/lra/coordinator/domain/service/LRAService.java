@@ -23,18 +23,19 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.GenericLRAException;
-import io.narayana.lra.client.IllegalLRAStateException;
-import io.narayana.lra.client.InvalidLRAIdException;
-import io.narayana.lra.client.NarayanaLRAClient;
+
 import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.internal.Implementations;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
+import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
@@ -62,7 +63,7 @@ public class LRAService {
     private LRARecoveryModule lraRecoveryModule;
 
     @Inject
-    NarayanaLRAClient lraClient;
+    private NarayanaLRAClient lraClient;
 
     public Transaction getTransaction(URL lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {

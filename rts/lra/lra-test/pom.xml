@@ -19,8 +19,16 @@
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <swarm.http.port>8081</swarm.http.port>
+
+        <!-- details of where the LRA coordinator is running -->
         <lra.http.host>localhost</lra.http.host>
         <lra.http.port>8082</lra.http.port>
+        <!-- details of the LRA coordinator implementation -->
+        <lra.client.implementation.classname>io.narayana.lra.client.NarayanaLRAClient</lra.client.implementation.classname>
+        <lra.implementation.groupId>org.jboss.narayana.rts</lra.implementation.groupId>
+        <lra.implementation.artifactId>lra-client</lra.implementation.artifactId>
+        <lra.implementation.version>${project.version}</lra.implementation.version>
+
         <service.http.port>${swarm.http.port}</service.http.port>
 
         <swarm.debug.params></swarm.debug.params>
@@ -91,6 +99,12 @@
             <artifactId>lra-filters</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${lra.implementation.groupId}</groupId>
+            <artifactId>${lra.implementation.artifactId}</artifactId>
+            <version>${lra.implementation.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * If a participant is unable to compensate it must remember the fact (by reporting it when asked for its'
  * {@link Status}) until it is explicitly told to forget. To support this
  * requirement the developer should annotate one of the participant methods with @Forget.
@@ -36,5 +38,6 @@ import java.lang.annotation.Target;
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Deprecated
 public @interface Forget {
 }

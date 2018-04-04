@@ -21,15 +21,22 @@
  */
 package io.narayana.lra.client;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.client
+ */
+@Deprecated
 public interface LRAClient {
+    String LRA_HTTP_HEADER = "Long-Running-Action";
+    String LRA_HTTP_RECOVERY_HEADER = "Long-Running-Action-Recovery";
 
     /**
      * Start a new LRA
@@ -187,8 +194,8 @@ public interface LRAClient {
      * are expressed as CDI annotations on the passed in resource class.
      *
      * @param lraId The unique identifier of the LRA (required)
-     * @param resourceClass An annotated class for the participant methods: {@link io.narayana.lra.annotation.Compensate},
-     *                      etc.
+     * @param resourceClass An annotated class for the participant methods:
+     * {@link org.eclipse.microprofile.lra.annotation.Compensate}, etc.
      * @param baseUri Base uri for the participant endpoints
      * @param compensatorData Compensator specific data that the coordinator will pass to the participant when the LRA
      *                        is closed or cancelled

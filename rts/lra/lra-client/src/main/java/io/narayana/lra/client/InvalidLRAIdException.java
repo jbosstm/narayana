@@ -23,7 +23,12 @@ package io.narayana.lra.client;
 
 import javax.ws.rs.WebApplicationException;
 
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.client
+ */
+@Deprecated
 public class InvalidLRAIdException extends WebApplicationException {
+    private static final long serialVersionUID = -127811945354360011L;
     private final String lraId;
 
     /**

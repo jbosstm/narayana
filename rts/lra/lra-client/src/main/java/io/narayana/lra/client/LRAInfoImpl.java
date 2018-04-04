@@ -21,40 +21,31 @@
  */
 package io.narayana.lra.client;
 
+import org.eclipse.microprofile.lra.client.LRAInfo;
+
 import java.net.URL;
 
-/**
- * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.client
- **/
-@Deprecated
-//@Data
-//@AllArgsConstructor
-//@ApiModel( value = "LRA", description = "A Long Running Action" )
-public class LRAInfo {
+public class LRAInfoImpl implements LRAInfo {
     private Exception jsonParseError;
-    //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
-//    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
-    private String clientId ;
-//    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
+    private String clientId;
     private boolean isComplete;
-//    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
     private boolean isCompensated;
-//    @ApiModelProperty( value = "Indicates whether or not this LRA is recovering", required = false )
     private boolean isRecovering;
-//    @ApiModelProperty( value = "Indicates whether or not this LRA has been asked to complete or compensate yet", required = false )
     private boolean isActive;
-//    @ApiModelProperty( value = "Indicates whether or not this LRA is top level", required = false )
     private boolean isTopLevel;
 
-    public LRAInfo(String lraId) {
+    public LRAInfoImpl(String lraId) {
         this.lraId = lraId;
     }
-    public LRAInfo(URL lraId) {
+
+    public LRAInfoImpl(URL lraId) {
         this.lraId = lraId.toString();
     }
 
-    public LRAInfo(String lraId, String clientId, boolean isComplete, boolean isCompensated, boolean isRecovering, boolean isActive, boolean isTopLevel) {
+    public LRAInfoImpl(String lraId, String clientId, boolean isComplete,
+                       boolean isCompensated, boolean isRecovering,
+                       boolean isActive, boolean isTopLevel) {
         this.lraId = lraId;
         this.clientId = clientId;
         this.isComplete = isComplete;
@@ -65,8 +56,8 @@ public class LRAInfo {
         this.jsonParseError = null;
     }
 
-    public LRAInfo(Exception e) {
-        jsonParseError = e;
+    public LRAInfoImpl(Exception e) {
+        this.jsonParseError = e;
         this.lraId = "JSON Parse Error: " + e.getMessage();
         this.clientId = e.getMessage();
         this.isComplete = false;
@@ -77,45 +68,45 @@ public class LRAInfo {
     }
 
     public String getLraId() {
-        return lraId;
+        return this.lraId;
     }
 
     public String getClientId() {
-        return clientId;
+        return this.clientId;
     }
 
     public boolean isComplete() {
-        return isComplete;
+        return this.isComplete;
     }
 
     public boolean isCompensated() {
-        return isCompensated;
+        return this.isCompensated;
     }
 
     public boolean isRecovering() {
-        return isRecovering;
+        return this.isRecovering;
     }
 
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     public boolean isTopLevel() {
-        return isTopLevel;
+        return this.isTopLevel;
     }
 
-    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LRAInfo)) return false;
-
-        LRAInfo lraStatus = (LRAInfo) o;
-
-        return getLraId().equals(lraStatus.getLraId());
+        if (this == o)
+            return true;
+        else if (!(o instanceof LRAInfo))
+            return false;
+        else {
+            LRAInfo lraStatus = (LRAInfo)o;
+            return this.getLraId().equals(lraStatus.getLraId());
+        }
     }
 
-    @Override
     public int hashCode() {
-        return getLraId().hashCode();
+        return this.getLraId().hashCode();
     }
 }

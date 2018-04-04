@@ -26,6 +26,10 @@ import java.net.URL;
 /**
  * An exception used to report failures during enlistment of a participant in an LRA
  */
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.participant
+ */
+@Deprecated
 public class JoinLRAException extends Exception {
     private URL lraId;
     private int statusCode;

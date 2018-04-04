@@ -21,7 +21,6 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.client.GenericLRAException;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -30,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.jboss.logging.Logger;
 import io.narayana.lra.client.NarayanaLRAClient;
 
@@ -118,7 +118,7 @@ public class RecoveryCoordinator {
                 lra = new URL(lraId);
             } catch (MalformedURLException e) {
                 LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensator(lraId, compensatorUrl, e);
-                throw new GenericLRAException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e.getCause());
+                throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
             }
 
             lraService.updateRecoveryURL(lra, newCompensatorUrl, rcvCoordId, true);

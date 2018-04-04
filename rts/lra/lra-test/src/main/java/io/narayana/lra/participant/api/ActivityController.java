@@ -21,20 +21,25 @@
  */
 package io.narayana.lra.participant.api;
 
-import io.narayana.lra.annotation.Forget;
+import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.participant.service.ActivityService;
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Leave;
-import io.narayana.lra.annotation.NestedLRA;
-import io.narayana.lra.annotation.Status;
-import io.narayana.lra.annotation.TimeLimit;
-import io.narayana.lra.client.Current;
-import io.narayana.lra.client.IllegalLRAStateException;
+
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.participant.model.Activity;
-import io.narayana.lra.annotation.CompensatorStatus;
+
+import org.eclipse.microprofile.lra.annotation.Compensate;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.Complete;
+import org.eclipse.microprofile.lra.annotation.Forget;
+import org.eclipse.microprofile.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.Leave;
+import org.eclipse.microprofile.lra.annotation.NestedLRA;
+import org.eclipse.microprofile.lra.annotation.Status;
+import org.eclipse.microprofile.lra.annotation.TimeLimit;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
+import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import org.eclipse.microprofile.lra.client.LRAClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -55,9 +60,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -67,6 +74,7 @@ import java.util.stream.IntStream;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
 @ApplicationScoped
 @Path(ACTIVITIES_PATH)
@@ -75,11 +83,11 @@ public class ActivityController {
     public static final String ACTIVITIES_PATH = "activities";
     public static final String ACCEPT_WORK = "acceptWork";
 
-    @Inject
-    private NarayanaLRAClient lraClient;
-
     private static final AtomicInteger completedCount = new AtomicInteger(0);
     private static final AtomicInteger compensatedCount = new AtomicInteger(0);
+
+    @Inject
+    private LRAClient lraClient;
 
     @Context
     private UriInfo context;
@@ -95,9 +103,8 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @LRA(LRA.Type.NOT_SUPPORTED)
-    public Response status(@PathParam("LraUrl")String lraUrl, @HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
-        String txId = NarayanaLRAClient.getLRAId(lraId);
-        Activity activity = activityService.getActivity(txId);
+    public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
+        Activity activity = activityService.getActivity(lraId);
 
         if (activity.status == null)
             throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
@@ -113,10 +120,10 @@ public class ActivityController {
     }
 
     /**
-     * Test that participants can leave an LRA using the {@link NarayanaLRAClient} programatic API
-     * @param lraUrl
-     * @return
-     * @throws NotFoundException
+     * Test that participants can leave an LRA using the {@link LRAClient} programatic API
+     * @param lraUrl the LRA that the participant should leave
+     * @return the id of the LRA that was left
+     * @throws NotFoundException if the requested LRA does not exist
      */
     @PUT
     @Path("/leave/{LraUrl}")
@@ -124,16 +131,14 @@ public class ActivityController {
     public Response leaveWorkViaAPI(@PathParam("LraUrl")String lraUrl) throws NotFoundException, MalformedURLException {
 
         if (lraUrl != null) {
-            String lraId = NarayanaLRAClient.getLRAId(lraUrl);
-
             Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(this.getClass(), context.getBaseUri());
             lraClient.leaveLRA(new URL(lraUrl), terminateURIs.get("Link"));
 
-            activityService.getActivity(lraId);
+            activityService.getActivity(lraUrl);
 
-            activityService.remove(lraId);
+            activityService.remove(lraUrl);
 
-            return Response.ok(lraId).build();
+            return Response.ok(lraUrl).build();
         }
 
         return Response.ok("non transactional").build();
@@ -144,14 +149,12 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Leave
     public Response leaveWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
-        String txId = NarayanaLRAClient.getLRAId(lraId);
+        if (lraId != null) {
+            activityService.getActivity(lraId);
 
-        if (txId != null) {
-            activityService.getActivity(txId);
+            activityService.remove(lraId);
 
-            activityService.remove(txId);
-
-            return Response.ok(txId).build();
+            return Response.ok(lraId).build();
         }
 
         return Response.ok("non transactional").build();
@@ -165,22 +168,22 @@ public class ActivityController {
         completedCount.incrementAndGet();
 
         assert lraId != null;
-        String txId = NarayanaLRAClient.getLRAId(lraId);
-        Activity activity = activityService.getActivity(txId);
+
+        Activity activity = activityService.getActivity(lraId);
 
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
             activity.status = CompensatorStatus.Completing;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId);
 
             return Response.accepted().location(URI.create(activity.statusUrl)).build();
         }
 
         activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
+        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
 
-        System.out.printf("ActivityController completing %s%n", txId);
+        System.out.printf("ActivityController completing %s%n", lraId);
         return Response.ok(activity.statusUrl).build();
     }
 
@@ -192,22 +195,22 @@ public class ActivityController {
         compensatedCount.incrementAndGet();
 
         assert lraId != null;
-        String txId = NarayanaLRAClient.getLRAId(lraId);
-        Activity activity = activityService.getActivity(txId);
+
+        Activity activity = activityService.getActivity(lraId);
 
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
             activity.status = CompensatorStatus.Compensating;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, txId);
+            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId);
 
             return Response.accepted().location(URI.create(activity.statusUrl)).build();
         }
 
         activity.status = CompensatorStatus.Compensated;
-        activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
+        activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId);
 
-        System.out.printf("ActivityController compensating %s%n", txId);
+        System.out.printf("ActivityController compensating %s%n", lraId);
         return Response.ok(activity.statusUrl).build();
     }
 
@@ -219,14 +222,14 @@ public class ActivityController {
         completedCount.incrementAndGet();
 
         assert lraId != null;
-        String txId = NarayanaLRAClient.getLRAId(lraId);
-        Activity activity = activityService.getActivity(txId);
+
+        Activity activity = activityService.getActivity(lraId);
 
         activityService.remove(activity.id);
         activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
+        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
 
-        System.out.printf("ActivityController forgetting %s%n", txId);
+        System.out.printf("ActivityController forgetting %s%n", lraId);
         return Response.ok(activity.statusUrl).build();
     }
 
@@ -253,7 +256,7 @@ public class ActivityController {
         assert lraId != null;
         addWork(lraId, null);
 
-        return Response.ok(lraId == null ? "" : lraId).build();
+        return Response.ok(lraId).build();
     }
 
     @PUT
@@ -264,7 +267,7 @@ public class ActivityController {
             throw new WebApplicationException(Response.Status.NOT_ACCEPTABLE);
 
         // manually start an LRA via the injection LRAClient api
-        URL lra = lraClient.startLRA("subActivity", 0L);
+        URL lra = lraClient.startLRA("subActivity", 0L, TimeUnit.SECONDS);
 
         lraId = lra.toString();
 
@@ -273,10 +276,10 @@ public class ActivityController {
         // invoke a method that SUPPORTS LRAs. The filters should detect the LRA we just started via the injected client
         // and add it as a header before calling the method at path /supports (ie supportsLRACall()).
         // The supportsLRACall method will return LRA id in the body if it is present.
-        String id = restPutInvocation("supports", "");
+        String id = restPutInvocation(lra,"supports", "");
 
         // check that the invoked method saw the LRA
-        if (lraId == null || id == null || !lraId.equals(id))
+        if (id == null || !lraId.equals(id))
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Entity.text("Unequal LRA ids")).build();
 
         return Response.ok(id).build();
@@ -296,14 +299,14 @@ public class ActivityController {
         return Response.ok(lraId).build();
     }
 
-    private String restPutInvocation(String path, String bodyText) {
+    private String restPutInvocation(URL lraURL, String path, String bodyText) {
         String id = null;
         Response response = ClientBuilder.newClient()
             .target(context.getBaseUri())
             .path("activities")
             .path(path)
             .request()
-            .header(NarayanaLRAClient.LRA_HTTP_HEADER, Current.peek())
+            .header(LRAClient.LRA_HTTP_HEADER, lraURL)
             .put(Entity.text(bodyText));
 
         if (response.hasEntity())
@@ -342,27 +345,32 @@ public class ActivityController {
         if (activity == null)
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
 
+        URL lraURL;
+
+        try {
+            lraURL = new URL(URLDecoder.decode(nestedLRAId, "UTF-8"));
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
+            throw new InvalidLRAIdException(nestedLRAId, e.getMessage(), e);
+        }
+
         // invoke resources that enlist nested LRAs
         String[] lras = new String[nestedCnt + 1];
         lras[0] = nestedLRAId;
-        IntStream.range(1, lras.length).forEach(i -> lras[i] = restPutInvocation("nestedActivity", ""));
+        IntStream.range(1, lras.length).forEach(i -> lras[i] = restPutInvocation(lraURL,"nestedActivity", ""));
 
         return Response.ok(String.join(",", lras)).build();
     }
 
     private Activity addWork(String lraId, String rcvId) {
         assert lraId != null;
-        String txId = NarayanaLRAClient.getLRAId(lraId);
+//        String txId = NarayanaLRAClient.getLRAId(lraId);
 
-        System.out.printf("ActivityController: work id %s and rcvId %s %n", txId, rcvId);
-
-        if (txId == null)
-            return null;
+        System.out.printf("ActivityController: work id %s and rcvId %s %n", lraId, rcvId);
 
         try {
-            return activityService.getActivity(txId);
+            return activityService.getActivity(lraId);
         } catch (NotFoundException e) {
-            Activity activity = new Activity(txId);
+            Activity activity = new Activity(lraId);
 
             activity.rcvUrl = rcvId;
             activity.status = null;
@@ -402,7 +410,7 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(value = LRA.Type.REQUIRED, cancelOn = {Response.Status.NOT_FOUND, Response.Status.BAD_REQUEST})
     public Response cancelOn(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
-        activityService.add(new Activity(NarayanaLRAClient.getLRAId(lraId)));
+        activityService.add(new Activity(lraId));//NarayanaLRAClient.getLRAId(lraId)));
 
         return Response.status(Response.Status.BAD_REQUEST).entity(Entity.text("Simulate buisiness logic failure")).build();
     }
@@ -412,7 +420,7 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(value = LRA.Type.REQUIRED, cancelOnFamily = {Response.Status.Family.CLIENT_ERROR})
     public Response cancelOnFamily(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
-        activityService.add(new Activity(NarayanaLRAClient.getLRAId(lraId)));
+        activityService.add(new Activity(lraId));//NarayanaLRAClient.getLRAId(lraId)));
 
         return Response.status(Response.Status.BAD_REQUEST).entity(Entity.text("Simulate buisiness logic failure")).build();
     }
@@ -423,7 +431,7 @@ public class ActivityController {
     @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
     @LRA(value = LRA.Type.REQUIRED)
     public Response timeLimit(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
-        activityService.add(new Activity(NarayanaLRAClient.getLRAId(lraId)));
+        activityService.add(new Activity(lraId));//NarayanaLRAClient.getLRAId(lraId)));
 
         try {
             Thread.sleep(300); // sleep for 200 miliseconds (should be longer than specified in the @TimeLimit annotation)
@@ -439,7 +447,7 @@ public class ActivityController {
     @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
     @LRA(value = LRA.Type.REQUIRED)
     public Response extendTimeLimit(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
-        activityService.add(new Activity(NarayanaLRAClient.getLRAId(lraId)));
+        activityService.add(new Activity(lraId));//NarayanaLRAClient.getLRAId(lraId)));
 
         try {
             /*
@@ -448,7 +456,7 @@ public class ActivityController {
              * sleep for 200
              * return from the method so the LRA will have been running for 200 ms so it should not be cancelled
              */
-            lraClient.renewTimeLimit(NarayanaLRAClient.lraToURL(lraId), 300, TimeUnit.MILLISECONDS);
+            lraClient.renewTimeLimit(lraToURL(lraId, "Invalid LRA id"), 300, TimeUnit.MILLISECONDS);
             Thread.sleep(200); // sleep for 200000 micro seconds (should be longer than specified in the @TimeLimit annotation)
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -526,6 +534,15 @@ public class ActivityController {
                 throw new WebApplicationException(response);
         } finally {
             response.close();
+        }
+    }
+
+    private static URL lraToURL(String lraId, String errorMessage) {
+        try {
+            return new URL(lraId);
+        } catch (MalformedURLException e) {
+            LRALogger.i18NLogger.error_urlConstructionFromStringLraId(lraId, e);
+            throw new GenericLRAException(null, BAD_REQUEST.getStatusCode(), errorMessage + ": lra id: " + lraId, e);
         }
     }
 }
