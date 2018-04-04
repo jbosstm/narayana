@@ -27,11 +27,12 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import io.narayana.lra.annotation.CompensatorStatus;
+
 import io.narayana.lra.client.Current;
-import io.narayana.lra.client.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -55,8 +56,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
@@ -235,6 +236,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             endPath = completeURI;  // we are going to ask the participant to complete
         }
+
+ //       if (endPath == null)
+ //           return TwoPhaseOutcome.FINISH_OK; // would it be better to throw an exception?
 
         // NB trying to compensate when already completed is allowed
 

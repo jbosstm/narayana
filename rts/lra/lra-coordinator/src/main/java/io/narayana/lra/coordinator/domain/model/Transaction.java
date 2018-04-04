@@ -36,9 +36,9 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;

@@ -24,5 +24,9 @@ package io.narayana.lra.client.participant;
 /**
  * {@inheritDoc io.narayana.lra.client.participant.LRAParticipant}
  */
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.participant
+ */
+@Deprecated
 public class TerminationException extends Exception {
 }

@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.proxy.test.model;
 
-import io.narayana.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;

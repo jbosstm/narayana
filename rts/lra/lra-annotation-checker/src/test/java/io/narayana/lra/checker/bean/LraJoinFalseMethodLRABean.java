@@ -22,7 +22,7 @@
 
 package io.narayana.lra.checker.bean;
 
-import io.narayana.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.LRA;
 
 /**
  * Having LRA with parameter join which defines the

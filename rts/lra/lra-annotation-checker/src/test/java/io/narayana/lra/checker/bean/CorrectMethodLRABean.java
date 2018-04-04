@@ -22,14 +22,14 @@
 
 package io.narayana.lra.checker.bean;
 
+import org.eclipse.microprofile.lra.annotation.Compensate;
+import org.eclipse.microprofile.lra.annotation.Complete;
+import org.eclipse.microprofile.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.Status;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Status;
 
 /**
  * All three LRA annotations where {@link LRA} is annotated

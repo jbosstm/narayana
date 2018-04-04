@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 
 public class ParentLRAJoinException extends Exception {
 
+    private static final long serialVersionUID = -5216874174212926195L;
     private final Response reason;
 
     public ParentLRAJoinException(String lraId, String message, Response reason) {

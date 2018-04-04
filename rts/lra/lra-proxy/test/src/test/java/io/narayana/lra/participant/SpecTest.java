@@ -21,6 +21,8 @@ import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.GET_ACTIVITY_PA
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_WORK;
 
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 import static org.junit.Assert.assertTrue;
 
 public class SpecTest {
@@ -38,8 +40,8 @@ public class SpecTest {
     public static void setupClass() throws Exception {
         System.out.println("Getting ready to connect - waiting for coordinator to startup...");
         int servicePort = Integer.getInteger("service.http.port", TEST_SWARM_PORT);
-        int rcPort = Integer.getInteger("lra.http.port", COORDINATOR_SWARM_PORT);
-        String rcHost = System.getProperty("lra.http.host", "localhost");
+        int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, COORDINATOR_SWARM_PORT);
+        String rcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
 
         MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 

@@ -21,12 +21,13 @@
  */
 package io.narayana.lra.participant.model;
 
-import io.narayana.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Activity implements Serializable {
+    private static final long serialVersionUID = -4141599248046299770L;
     public String id;
     public String rcvUrl;
     public String statusUrl;

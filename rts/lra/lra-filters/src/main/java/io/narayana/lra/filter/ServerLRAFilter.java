@@ -21,21 +21,23 @@
  */
 package io.narayana.lra.filter;
 
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Leave;
-import io.narayana.lra.annotation.NestedLRA;
-import io.narayana.lra.annotation.Status;
-import io.narayana.lra.annotation.Forget;
-import io.narayana.lra.annotation.TimeLimit;
 import io.narayana.lra.client.Current;
-import io.narayana.lra.client.GenericLRAException;
-import io.narayana.lra.client.IllegalLRAStateException;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
+import org.eclipse.microprofile.lra.annotation.Compensate;
+import org.eclipse.microprofile.lra.annotation.Complete;
+import org.eclipse.microprofile.lra.annotation.Forget;
+import org.eclipse.microprofile.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.Leave;
+import org.eclipse.microprofile.lra.annotation.NestedLRA;
+import org.eclipse.microprofile.lra.annotation.Status;
+import org.eclipse.microprofile.lra.annotation.TimeLimit;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
+import org.eclipse.microprofile.lra.client.LRAClient;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -63,6 +65,9 @@ import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.STATUS;
 import static io.narayana.lra.client.NarayanaLRAClient.FORGET;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 
 @Provider
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
@@ -75,22 +80,29 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private NarayanaLRAClient lraClient;
+    private LRAClient lraClient;
+
+    public ServerLRAFilter() throws Exception {
+        if (!NarayanaLRAClient.isInitialised()) {
+            String rcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
+            int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8082);
+            String coordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
+
+            NarayanaLRAClient.setDefaultEndpoint(new URI(String.format("http://%s:%d/%s", rcHost, rcPort, coordinatorPath)));
+        }
+
+        lraClient = (LRAClient) Class.forName(NarayanaLRAClient.class.getCanonicalName()).getDeclaredConstructor().newInstance();
+    }
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
         if (lraId == null && shouldNotBeNull) {
-            throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but no tx");
+            throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                    type.name() + " but no tx", null);
         } else if (lraId != null && !shouldNotBeNull) {
             throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but found tx");
+                    type.name() + " but found tx", null);
         }
     }
-
-//    // TODO figure out how to disable the filters for the coordinator since they are required
-//    private boolean isCoordinator() {
-//        return resourceInfo.getResourceClass().getName().equals("io.narayana.lra.coordinator.api.Coordinator")
-//    }
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
@@ -168,8 +180,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation");
+                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation", null);
                 }
 
                 enlist = false;
@@ -179,8 +191,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             case NOT_SUPPORTED:
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation");
+                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation", null);
                 }
 
                 enlist = false;
@@ -280,6 +292,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 } catch (IllegalLRAStateException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
                     throw e;
+                } catch (NotFoundException e) {
+                    throw e;
                 } catch (WebApplicationException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
                     throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
@@ -346,7 +360,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             if (newLRA != null) {
                 lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA");
-                lraClient.closeLRA((URL) newLRA);
+                try {
+                    lraClient.closeLRA((URL) newLRA);
+                } catch (GenericLRAException | NotFoundException ignore) {
+                    // the LRAClient implementation should have logged something
+                }
             }
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&

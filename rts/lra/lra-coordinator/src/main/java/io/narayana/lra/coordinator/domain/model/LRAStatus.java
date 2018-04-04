@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import io.narayana.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.io.IOException;
 

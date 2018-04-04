@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * <p>
  * When a bean method executes in the context of an LRA any methods in the bean class that are annotated with @Compensate
  * will be used as a participant for that LRA and when it is present, so too must the {@link Compensate} and
@@ -39,6 +41,7 @@ import java.lang.annotation.Target;
  * The annotation can be combined with {@link TimeLimit} annotation to limit the time that the participant remains
  * valid, after which the corresponding @Compensate method will be called.
  */
+@Deprecated
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

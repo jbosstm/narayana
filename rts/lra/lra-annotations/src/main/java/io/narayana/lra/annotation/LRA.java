@@ -31,6 +31,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * An annotation for controlling the lifecycle of Long Running Actions (LRAs).
  *
  * Newly created LRAs are uniquely identified and the id is referred to as the LRA context. The context is passed around
@@ -47,6 +49,7 @@ import java.lang.annotation.Target;
 @InterceptorBinding
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Deprecated
 public @interface LRA {
 
     /**

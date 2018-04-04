@@ -22,13 +22,12 @@
 
 package io.narayana.lra.checker.bean;
 
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.LRA.Type;
+import org.eclipse.microprofile.lra.annotation.LRA;
 
 /**
  * LRA bean where no context is expected and thus no handling
  * of the termination is needed.
  */
-@LRA(value = Type.NEVER)
+@LRA(value = LRA.Type.NEVER)
 public class LRANoContextBean {
 }

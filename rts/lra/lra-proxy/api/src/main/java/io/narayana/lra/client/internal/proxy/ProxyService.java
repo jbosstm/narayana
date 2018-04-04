@@ -21,17 +21,18 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.participant.LRAParticipant;
-import io.narayana.lra.client.participant.LRAParticipantDeserializer;
-import io.narayana.lra.client.participant.JoinLRAException;
-import io.narayana.lra.client.participant.LRAManagement;
-import io.narayana.lra.client.participant.TerminationException;
+import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.participant.LRAParticipantDeserializer;
+import org.eclipse.microprofile.lra.participant.JoinLRAException;
+import org.eclipse.microprofile.lra.participant.LRAManagement;
+import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.faces.bean.ApplicationScoped;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -60,6 +61,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 
 @ApplicationScoped
 public class ProxyService implements LRAManagement {
@@ -88,8 +91,8 @@ public class ProxyService implements LRAManagement {
                 .host(httpHost)
                 .port(httpPort);
 
-        String lcHost = System.getProperty("lra.http.host", "localhost");
-        int lcPort = Integer.getInteger("lra.http.port", 8080);
+        String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
+        int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8080);
 
         UriBuilder urib = UriBuilder.fromPath(COORDINATOR_PATH_NAME).scheme("http").host(lcHost).port(lcPort);
 

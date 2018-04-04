@@ -21,22 +21,20 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.client.GenericLRAException;
+import io.narayana.lra.client.Current;
+import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
+import io.swagger.annotations.ApiOperation;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.Current;
-import io.narayana.lra.client.IllegalLRAStateException;
-import io.narayana.lra.client.InvalidLRAIdException;
-import io.narayana.lra.client.NarayanaLRAClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -67,16 +65,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.swagger.annotations.ApiOperation;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
+import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import static io.narayana.lra.client.NarayanaLRAClient.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.COORDINATOR_PATH_NAME;
 
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.STATUS_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.TIMELIMIT_PARAM_NAME;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
@@ -103,8 +104,8 @@ public class Coordinator {
 
         if (lras == null) {
             LRALogger.i18NLogger.error_invalidQueryForGettingLraStatuses(state);
-            throw new GenericLRAException(Response.Status.BAD_REQUEST.getStatusCode(),
-                    String.format("Invalid query '%s' to get LRAs", state));
+            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
+                    String.format("Invalid query '%s' to get LRAs", state), null);
         }
 
         return lras;

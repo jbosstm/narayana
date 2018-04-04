@@ -21,9 +21,9 @@
  */
 package io.narayana.lra.proxy.test.model;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.participant.LRAParticipant;
-import io.narayana.lra.client.participant.TerminationException;
+import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.participant.TerminationException;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import javax.ws.rs.NotFoundException;
 import java.io.Serializable;

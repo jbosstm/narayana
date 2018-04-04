@@ -23,7 +23,12 @@ package io.narayana.lra.client;
 
 import javax.ws.rs.WebApplicationException;
 
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.client
+ */
+@Deprecated
 public class IllegalLRAStateException extends WebApplicationException {
+    private static final long serialVersionUID = 6991571748348129084L;
     private final String lraId;
     private final String operation;
 
@@ -31,6 +36,7 @@ public class IllegalLRAStateException extends WebApplicationException {
      * Creation of LRA state exception.
      *
      * @param lraId  LRA id that is behind this exception
+     * @param operation the java method that generated the exception
      * @param message  error message of this exception
      */
     public IllegalLRAStateException(String lraId, String operation, String message) {
