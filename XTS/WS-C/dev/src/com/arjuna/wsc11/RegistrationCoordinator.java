@@ -73,7 +73,7 @@ public class RegistrationCoordinator
         } else if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME.equals(subcode)) {
             throw new InvalidStateException(detail);
         }
-        if (sfe == null) {
+        if (sfe != null) {
             throw SoapFault11.create(sfe);
         } else {
             throw SoapFault11.fromFault(fault);
