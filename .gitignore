@@ -17,3 +17,4 @@ qa/ext/log4j.jar
 qa/ext/netty.jar
 qa/TaskImpl.properties
 .DS_Store
+ObjectStore/
