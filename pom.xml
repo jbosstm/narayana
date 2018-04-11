@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.narayana.documentation</groupId>
     <artifactId>narayana-documentation</artifactId>
-    <version>5.8.1.Final</version>
+    <version>5.8.2.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>http://www.jboss.org/jbosstm/</url>
     <name>${project.artifactId}</name>
