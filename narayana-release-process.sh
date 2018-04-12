@@ -142,3 +142,20 @@ wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayan
 wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
 scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
 scp blacktie-${CURRENT}-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
+
+# Building and pushing the lra coordinator docker image
+read -p "You will need: docker.io account with permission to push under https://hub.docker.com/u/jbosstm/. Do you have these? y/n: " ENVOK
+if [[ $ENVOK == n* ]]
+then
+  exit
+fi
+docker login docker.io
+[ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
+git clone git@github.com:jbosstm/jboss-dockerfiles.git
+cd jboss-dockerfiles/lra/dockerfile
+docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
+docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
+docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
+docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
+docker push  docker.io/jbosstm/lra-coordinator:latest
+
