@@ -11,7 +11,12 @@
     <Resource name="h2DataSource" uniqueName="h2Datasource" auth="Container" type="org.h2.jdbcx.JdbcDataSource" username="sa"
               user="sa" password="sa" url="jdbc:h2:mem:testdb" description="H2 Data Source" loginTimeout="0"
               factory="org.h2.jdbcx.JdbcDataSourceFactory"/>
+    <!--
     <Resource name="transactionalDataSource" uniqueName="transactionalDataSource" auth="Container" type="javax.sql.DataSource"
               username="sa" password="sa" driverClassName="com.arjuna.ats.jdbc.TransactionalDriver"
               url="jdbc:arjuna:java:comp/env/h2DataSource" description="Transactional Driver Data Source"/>
+    -->
+    <Resource name="transactionalDataSource" uniqueName="transactionalDataSource" auth="Container" type="javax.sql.DataSource"
+	    transactionManager="TransactionManager" xaDataSource="h2DataSource" maxTotal="4" minIdle="8" maxIdle="16"
+	    username="sa" password="sa" factory="org.jboss.narayana.tomcat.jta.TransactionalDataSourceFactory"/>
 </Context>
