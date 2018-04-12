@@ -37,6 +37,8 @@
             -javaagent:${project.build.directory}/lib/byteman.jar=script:${project.build.directory}/test-classes/scripts.btm,listener:true
         </jvm.args.byteman>
         <server.jvm.args>${jvm.args.byteman} ${jvm.args.debug}</server.jvm.args>
+	<version.commons-dbcp2>2.1.1</version.commons-dbcp2>
+	<version.commons-pool2>2.4.3</version.commons-pool2>
     </properties>
     <dependencies>
         <dependency>
@@ -74,6 +76,23 @@
             <artifactId>jboss-logging</artifactId>
             <version>${version.org.jboss.logging.jboss-logging}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+	    <version>${version.commons-dbcp2}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+	    <version>${version.commons-pool2}</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
