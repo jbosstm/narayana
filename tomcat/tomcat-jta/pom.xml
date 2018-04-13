@@ -131,12 +131,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${version.com.h2database}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.byteman</groupId>
             <artifactId>byteman</artifactId>
             <version>${version.org.jboss.byteman}</version>
@@ -207,6 +201,64 @@
     </build>
     <profiles>
         <profile>
+            <id>h2-db</id>
+            <activation>
+                <property>
+                    <name>!postgres-db</name>
+                </property>
+            </activation>
+            <properties>
+                <database.driver>com.h2database:h2:${version.com.h2database}</database.driver>
+            </properties>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-h2</directory>
+                    </testResource>
+                </testResources>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>${version.com.h2database}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>postgres-db</id>
+            <activation>
+                <property>
+                    <name>postgres-db</name>
+                </property>
+            </activation>
+            <properties>
+                <database.driver>postgresql:postgresql:${version.postgresql}</database.driver>
+            </properties>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-postgres</directory>
+                    </testResource>
+                </testResources>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>${version.postgresql}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>arq-tomcat</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -236,7 +288,7 @@
                                         <project.build.directory>${project.build.directory}</project.build.directory>
                                         <version.org.jboss.narayana>${project.version}</version.org.jboss.narayana>
                                         <version.org.jboss.resteasy>${version.org.jboss.resteasy}</version.org.jboss.resteasy>
-                                        <version.com.h2database>${version.com.h2database}</version.com.h2database>
+                                        <database.driver>${database.driver}</database.driver>
                                         <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                     </systemPropertyVariables>
                                 </configuration>

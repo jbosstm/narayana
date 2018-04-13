@@ -64,13 +64,11 @@ public class BaseITCase {
     private static final String RESTEASY_DEPENDENCY = "org.jboss.resteasy:resteasy-servlet-initializer:"
             + System.getProperty("version.org.jboss.resteasy");
 
-    private static final String H2_DEPENDENCY = "com.h2database:h2:" + System.getProperty("version.com.h2database");
-
     private Client client;
 
     @Deployment
     public static WebArchive getDeployment() {
-        File[] libraries = Maven.resolver().resolve(NARAYANA_DEPENDENCY, RESTEASY_DEPENDENCY, H2_DEPENDENCY).withTransitivity()
+        File[] libraries = Maven.resolver().resolve(NARAYANA_DEPENDENCY, RESTEASY_DEPENDENCY, System.getProperty("database.driver")).withTransitivity()
                 .asFile();
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
