@@ -30,20 +30,26 @@ import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
+import javax.sql.ConnectionEvent;
+import javax.sql.ConnectionEventListener;
+import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:zfeng@redhat.com">Zheng Feng</a>
  */
 public class TransactionalDataSourceFactory implements ObjectFactory {
+
+    private static final Logger LOGGER = Logger.getLogger(TransactionalDataSourceFactory.class.getSimpleName());
+
     private static final String PROP_USERNAME = "username";
     private static final String PROP_PASSWORD = "password";
     private static final String PROP_MAX_TOTAL = "maxTotal";
@@ -94,8 +100,10 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             XARecoveryModule xaRecoveryModule = getXARecoveryModule();
             if (xaRecoveryModule != null) {
                 xaRecoveryModule.addXAResourceRecoveryHelper( new XAResourceRecoveryHelper() {
+                    private XAConnection connection;
                     @Override
                     public boolean initialise(String p) throws Exception {
+                        initialiseConnection();
                         return true;
                     }
 
@@ -112,6 +120,40 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                             }
                         } catch (SQLException ex) {
                             return new XAResource[0];
+                        }
+                    }
+
+                    private void initialiseConnection() throws SQLException {
+                        // This will allow us to ensure that each recovery cycle gets a fresh connection
+                        // It might be better to close at the end of the recovery pass to free up the connection but
+                        // we don't have a hook
+                        if (connection != null) {
+                            String user = properties.getProperty(PROP_USERNAME);
+                            String password = properties.getProperty(PROP_PASSWORD);
+                            if (user != null && password != null) {
+                                connection = xaDataSource.getXAConnection(user, password);
+                            } else {
+                                connection = xaDataSource.getXAConnection();
+                            }
+                            connection.addConnectionEventListener(new ConnectionEventListener() {
+                                @Override
+                                public void connectionClosed(ConnectionEvent event) {
+                                    LOGGER.warning("The connection was closed: " + connection);
+                                    connection = null;
+                                }
+
+                                @Override
+                                public void connectionErrorOccurred(ConnectionEvent event) {
+                                    LOGGER.warning("A connection error occurred: " + connection);
+                                    try {
+                                        connection.close();
+                                    } catch (SQLException e) {
+                                        // Ignore
+                                        LOGGER.warning("Could not close failing connection: " + connection);
+                                    }
+                                    connection = null;
+                                }
+                            });
                         }
                     }
                 });
