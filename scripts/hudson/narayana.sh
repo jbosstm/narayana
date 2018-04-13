@@ -84,6 +84,15 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "TOMCAT" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!TOMCAT* ]]; then
+          comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=1
         else
           export COMMENT_ON_PULL=""
@@ -563,22 +572,21 @@ function tx_bridge_tests {
 function tomcat_tests {
     echo "Initializing Narayana Tomcat tests"
     cd ${WORKSPACE}
-    TOMCAT_NAME=apache-tomcat-7.0.70
-    curl -LOk http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.70/bin/${TOMCAT_NAME}.zip
-    unzip ${TOMCAT_NAME}.zip
-    rm ${TOMCAT_NAME}.zip
-    export CATALINA_HOME=$PWD/${TOMCAT_NAME}
-    chmod u+x ${CATALINA_HOME}/bin/*.sh
-    cat << 'EOF' > ${CATALINA_HOME}/conf/tomcat-users.xml
-<?xml version='1.0' encoding='utf-8'?>
-<tomcat-users>
-    <user username="test" password="test" roles="manager-script"/>
-</tomcat-users>
-EOF
+    TOMCAT_VERSION=9.0.7
+    wget -nc https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.zip
+    rm -rf apache-tomcat-$TOMCAT_VERSION
+    unzip apache-tomcat-$TOMCAT_VERSION.zip
+    cp ~/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar apache-tomcat-$TOMCAT_VERSION/lib/
+    chmod +x $(pwd)/apache-tomcat-$TOMCAT_VERSION/bin/catalina.sh
+    sed -i 's/<\/tomcat-users>/<user username="test" password="test" roles="manager-script"\/>\n<\/tomcat-users>/' $(pwd)/apache-tomcat-$TOMCAT_VERSION/conf/tomcat-users.xml
     echo "Executing Narayana Tomcat tests"
+    case "$(uname -s)" in
+    CYGWIN*)    export CATALINA_HOME=`cygpath -w $(pwd)/apache-tomcat-$TOMCAT_VERSION/`;;
+    *)          export CATALINA_HOME=$(pwd)/apache-tomcat-$TOMCAT_VERSION/
+    esac
     ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} install "$@"
     RESULT=$?
-    rm -r ${TOMCAT_NAME}
+    rm -r apache-tomcat-$TOMCAT_VERSION
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
 }
 
