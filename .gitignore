@@ -18,3 +18,5 @@ qa/ext/netty.jar
 qa/TaskImpl.properties
 .DS_Store
 ObjectStore/
+apache-tomcat-*.zip
+apache-tomcat-*/

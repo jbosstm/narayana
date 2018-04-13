@@ -18,12 +18,12 @@
 
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
-import org.apache.commons.dbcp2.PoolableConnection;
-import org.apache.commons.dbcp2.PoolableConnectionFactory;
-import org.apache.commons.dbcp2.managed.DataSourceXAConnectionFactory;
-import org.apache.commons.dbcp2.managed.ManagedDataSource;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.tomcat.dbcp.dbcp2.PoolableConnection;
+import org.apache.tomcat.dbcp.dbcp2.PoolableConnectionFactory;
+import org.apache.tomcat.dbcp.dbcp2.managed.DataSourceXAConnectionFactory;
+import org.apache.tomcat.dbcp.dbcp2.managed.ManagedDataSource;
+import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
+import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -60,7 +60,6 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> environment) throws Exception {
-
         if (obj == null || !(obj instanceof Reference)) {
             return null;
         }
@@ -81,32 +80,6 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, "transactionManager");
         XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, "xaDataSource");
 
-        XARecoveryModule xaRecoveryModule = getXARecoveryModule();
-        if (xaRecoveryModule != null) {
-            xaRecoveryModule.addXAResourceRecoveryHelper( new XAResourceRecoveryHelper() {
-                @Override
-                public boolean initialise(String p) throws Exception {
-                    return true;
-                }
-
-                @Override
-                public XAResource[] getXAResources() throws Exception {
-                    try {
-                        String user = properties.getProperty(PROP_USERNAME);
-                        String password = properties.getProperty(PROP_PASSWORD);
-
-                        if (user != null && password != null) {
-                            return new XAResource[]{xaDataSource.getXAConnection(user, password).getXAResource()};
-                        } else {
-                            return new XAResource[]{xaDataSource.getXAConnection().getXAResource()};
-                        }
-                    } catch (SQLException ex) {
-                        return new XAResource[0];
-                    }
-                }
-            });
-        }
-
         if (transactionManager != null && xaDataSource != null) {
             DataSourceXAConnectionFactory xaConnectionFactory =
                     new DataSourceXAConnectionFactory(transactionManager, xaDataSource);
@@ -116,6 +89,34 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             GenericObjectPool<PoolableConnection> objectPool =
                     new GenericObjectPool<>(poolableConnectionFactory, config);
             poolableConnectionFactory.setPool(objectPool);
+
+            // Register for recovery
+            XARecoveryModule xaRecoveryModule = getXARecoveryModule();
+            if (xaRecoveryModule != null) {
+                xaRecoveryModule.addXAResourceRecoveryHelper( new XAResourceRecoveryHelper() {
+                    @Override
+                    public boolean initialise(String p) throws Exception {
+                        return true;
+                    }
+
+                    @Override
+                    public XAResource[] getXAResources() throws Exception {
+                        try {
+                            String user = properties.getProperty(PROP_USERNAME);
+                            String password = properties.getProperty(PROP_PASSWORD);
+
+                            if (user != null && password != null) {
+                                return new XAResource[]{xaDataSource.getXAConnection(user, password).getXAResource()};
+                            } else {
+                                return new XAResource[]{xaDataSource.getXAConnection().getXAResource()};
+                            }
+                        } catch (SQLException ex) {
+                            return new XAResource[0];
+                        }
+                    }
+                });
+            }
+
             return new ManagedDataSource<>(objectPool, xaConnectionFactory.getTransactionRegistry());
         } else {
             return null;

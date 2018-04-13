@@ -70,6 +70,19 @@
   </build>
 
   <dependencies>
+    <!-- Standalone JNDI server -->
+    <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnpserver</artifactId>
+      <version>${version.jnpserver}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -117,12 +130,6 @@
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
- 	<dependency>
-		<groupId>org.apache.tomcat</groupId>
-		<artifactId>catalina</artifactId>
-		<version>6.0.33</version>
-		<scope>test</scope>
-	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-jdbc</artifactId>
