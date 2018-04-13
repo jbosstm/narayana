@@ -91,7 +91,8 @@ function init_test_options {
     elif [[ $PROFILE == "TOMCAT" ]]; then
         if [[ ! $PULL_DESCRIPTION == *!TOMCAT* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
+          export AS_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=1
         else
@@ -584,10 +585,13 @@ function tomcat_tests {
     CYGWIN*)    export CATALINA_HOME=`cygpath -w $(pwd)/apache-tomcat-$TOMCAT_VERSION/`;;
     *)          export CATALINA_HOME=$(pwd)/apache-tomcat-$TOMCAT_VERSION/
     esac
-    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} install "$@"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
+    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dpostgres-db=true "$@" ${IPV6_OPTS} clean install "$@"
+    RESULT=$?
+    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
     rm -r apache-tomcat-$TOMCAT_VERSION
-    [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
 }
 
 function enable_qa_trace {
