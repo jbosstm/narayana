@@ -100,26 +100,22 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             XARecoveryModule xaRecoveryModule = getXARecoveryModule();
             if (xaRecoveryModule != null) {
                 xaRecoveryModule.addXAResourceRecoveryHelper( new XAResourceRecoveryHelper() {
+                    private Object lock = new Object();
                     private XAConnection connection;
                     @Override
                     public boolean initialise(String p) throws Exception {
-                        initialiseConnection();
                         return true;
                     }
 
                     @Override
-                    public XAResource[] getXAResources() throws Exception {
-                        try {
-                            String user = properties.getProperty(PROP_USERNAME);
-                            String password = properties.getProperty(PROP_PASSWORD);
-
-                            if (user != null && password != null) {
-                                return new XAResource[]{xaDataSource.getXAConnection(user, password).getXAResource()};
-                            } else {
-                                return new XAResource[]{xaDataSource.getXAConnection().getXAResource()};
+                    public synchronized XAResource[] getXAResources() throws Exception {
+                        synchronized (lock) {
+                            initialiseConnection();
+                            try {
+                                return new XAResource[]{connection.getXAResource()};
+                            } catch (SQLException ex) {
+                                return new XAResource[0];
                             }
-                        } catch (SQLException ex) {
-                            return new XAResource[0];
                         }
                     }
 
@@ -127,7 +123,7 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                         // This will allow us to ensure that each recovery cycle gets a fresh connection
                         // It might be better to close at the end of the recovery pass to free up the connection but
                         // we don't have a hook
-                        if (connection != null) {
+                        if (connection == null) {
                             String user = properties.getProperty(PROP_USERNAME);
                             String password = properties.getProperty(PROP_PASSWORD);
                             if (user != null && password != null) {
@@ -139,19 +135,23 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                                 @Override
                                 public void connectionClosed(ConnectionEvent event) {
                                     LOGGER.warning("The connection was closed: " + connection);
-                                    connection = null;
+                                    synchronized (lock) {
+                                        connection = null;
+                                    }
                                 }
 
                                 @Override
                                 public void connectionErrorOccurred(ConnectionEvent event) {
                                     LOGGER.warning("A connection error occurred: " + connection);
-                                    try {
-                                        connection.close();
-                                    } catch (SQLException e) {
-                                        // Ignore
-                                        LOGGER.warning("Could not close failing connection: " + connection);
+                                    synchronized (lock) {
+                                        try {
+                                            connection.close();
+                                        } catch (SQLException e) {
+                                            // Ignore
+                                            LOGGER.warning("Could not close failing connection: " + connection);
+                                        }
+                                        connection = null;
                                     }
-                                    connection = null;
                                 }
                             });
                         }
