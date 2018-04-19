@@ -39,7 +39,11 @@ import javax.transaction.xa.XAResource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -50,19 +54,33 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
 
     private static final Logger LOGGER = Logger.getLogger(TransactionalDataSourceFactory.class.getSimpleName());
 
+    private static final String PROP_TRANSACTION_MANAGER = "transactionManager";
+    private static final String PROP_XA_DATASOURCE = "xaDataSource";
     private static final String PROP_USERNAME = "username";
     private static final String PROP_PASSWORD = "password";
-    private static final String PROP_MAX_TOTAL = "maxTotal";
-    private static final String PROP_MAX_IDLE = "maxIdle";
-    private static final String PROP_MIN_IDLE = "minIdle";
 
-    private static final String[] ALL_PROPERTIES = {
-            PROP_USERNAME,
-            PROP_PASSWORD,
-            PROP_MAX_TOTAL,
-            PROP_MAX_IDLE,
-            PROP_MIN_IDLE
-    };
+    private static final List<String> DBCP2_POOLING_PROPERTIES = Arrays.asList(
+            "maxTotal",
+            "minIdle",
+            "maxIdle",
+            "lifo",
+            "fairness",
+            "maxWaitMillis",
+            "minEvictableIdleTimeMillis",
+            "evictorShutdownTimeoutMillis",
+            "softMinEvictableIdleTimeMillis",
+            "numTestsPerEvictionRun",
+            "evictionPolicyClassName",
+            "testOnCreate",
+            "testOnBorrow",
+            "testOnReturn",
+            "testWhileIdle",
+            "timeBetweenEvictionRunsMillis",
+            "blockWhenExhausted",
+            "jmxEnabled",
+            "jmxNamePrefix",
+            "jmxNameBase"
+    );
 
     @Override
     public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> environment) throws Exception {
@@ -76,15 +94,17 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         }
 
         final Properties properties = new Properties();
-        for (final String propertyName : ALL_PROPERTIES) {
-            final RefAddr ra = ref.get(propertyName);
-            if (ra != null) {
-                properties.setProperty(propertyName, ra.getContent().toString());
+        Enumeration<RefAddr> iter = ref.getAll();
+
+        while (iter.hasMoreElements()) {
+            RefAddr ra = iter.nextElement();
+            if (DBCP2_POOLING_PROPERTIES.contains(ra.toString())) {
+                properties.setProperty(ra.toString(), ra.getContent().toString());
             }
         }
 
-        TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, "transactionManager");
-        XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, "xaDataSource");
+        TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, PROP_TRANSACTION_MANAGER);
+        XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, PROP_XA_DATASOURCE);
 
         if (transactionManager != null && xaDataSource != null) {
             DataSourceXAConnectionFactory xaConnectionFactory =
@@ -175,7 +195,7 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
     }
 
     private void setPoolConfig(GenericObjectPoolConfig config, Properties properties) {
-        for (String propertyName : ALL_PROPERTIES) {
+        for (String propertyName : properties.stringPropertyNames()) {
             try {
                 Method method = getSetMethod(GenericObjectPoolConfig.class, propertyName);
                 Class type = GenericObjectPoolConfig.class.getDeclaredField(propertyName).getType();
