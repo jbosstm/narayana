@@ -75,10 +75,6 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
         export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
-    elif  [[ $PULL_DESCRIPTION == *NO_TEST* ]]; then
-        export COMMENT_ON_PULL=""
-        export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-        export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
     elif [[ $PROFILE == "MAIN" ]]; then
         if [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
@@ -233,6 +229,22 @@ function check_if_pull_closed
 		echo "pull open"
 	else
 		echo "pull closed"
+		exit 0
+	fi
+    fi
+}
+
+function check_if_pull_noci_label
+{
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+    if [ "$PULL_NUMBER" != "" ]
+    then
+        curl -ujbosstm-bot:$BOT_PASSWORD -s "https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/labels" | grep -q '"name": "NoCI"'
+	if [ $? -eq 1 ]
+	then
+		echo "NoCI label is not present at the pull request $PULL_NUMBER"
+	else
+		echo "pull request $PULL_NUMBER is defined with NoCI label, exiting this CI execution"
 		exit 0
 	fi
     fi
@@ -877,6 +889,7 @@ ulimit -c unlimited
 ulimit -a
 
 check_if_pull_closed
+check_if_pull_noci_label
 
 init_test_options
 
