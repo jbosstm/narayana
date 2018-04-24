@@ -99,8 +99,8 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
 
         while (iter.hasMoreElements()) {
             RefAddr ra = iter.nextElement();
-            if (DBCP2_POOLING_PROPERTIES.contains(ra.toString())) {
-                properties.setProperty(ra.toString(), ra.getContent().toString());
+            if (DBCP2_POOLING_PROPERTIES.contains(ra.getType().toString())) {
+                properties.setProperty(ra.getType().toString(), ra.getContent().toString());
             }
         }
 
