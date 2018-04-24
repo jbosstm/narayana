@@ -111,7 +111,7 @@ public abstract class AbstractCase {
             dba.deallocateDB(db);
         }
         // @see https://issues.jboss.org/browse/JWS-976
-        if (libFiles[0] != null) {
+        if (libFiles != null && libFiles[0] != null) {
             final String file0 = catalinaHome + File.separator + "lib" + File.separator + libFiles[0].getName();
             try {
                 Files.delete(Paths.get(file0));
