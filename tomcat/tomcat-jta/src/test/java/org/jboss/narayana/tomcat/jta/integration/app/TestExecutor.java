@@ -47,6 +47,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -149,6 +150,7 @@ public class TestExecutor {
              ResultSet result = statement.executeQuery(query)) {
             return result.next() && result.getInt(1) > 0;
         } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, e, () -> String.format("Cannot get result when querying entry '%s'", entry));
             return false;
         }
     }
