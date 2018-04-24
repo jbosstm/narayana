@@ -21,3 +21,4 @@ ObjectStore/
 apache-tomcat-*.zip
 apache-tomcat-*/
 tomcat/tomcat-deployment
+tomcat-deployment/
