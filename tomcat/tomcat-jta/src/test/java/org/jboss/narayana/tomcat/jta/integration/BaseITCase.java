@@ -138,7 +138,7 @@ public class BaseITCase extends AbstractCase {
 
     @Test
     public void testRecovery() {
-        IntStream.range(0, 3).forEach(i -> test(EXECUTOR_URL + RECOVERY_TEST));
+        IntStream.range(0, 10).forEach(i -> test(EXECUTOR_URL + RECOVERY_TEST));
     }
 
     private void test(final String url) {
