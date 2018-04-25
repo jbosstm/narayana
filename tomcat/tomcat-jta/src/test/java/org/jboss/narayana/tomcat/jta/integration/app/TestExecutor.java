@@ -24,6 +24,7 @@ package org.jboss.narayana.tomcat.jta.integration.app;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import org.apache.tomcat.dbcp.dbcp2.DelegatingConnection;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -39,6 +40,7 @@ import javax.transaction.UserTransaction;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -98,13 +100,15 @@ public class TestExecutor {
         createTestTable();
         String testEntry = "test-entry-" + LocalTime.now();
         TestXAResource testXAResource = new TestXAResource();
+        Connection connection = null;
 
         updateXARecoveryModule(m -> m.addXAResourceRecoveryHelper(testXAResource));
 
         try {
             getTransactionManager().begin();
             getTransactionManager().getTransaction().enlistResource(testXAResource);
-            writeToTheDatabase(testEntry);
+            connection = getTransactionalDataSource().getConnection();
+            writeToTheDatabase(connection, testEntry);
             try {
                 getTransactionManager().commit();
                 return Response.serverError().entity("Commit failure was expected").build();
@@ -113,8 +117,29 @@ public class TestExecutor {
                 RecoveryManager.manager().scan();
             }
 
-            return getRecoveryTestResponse(testEntry);
+            return getRecoveryTestResponse(connection, testEntry);
         } finally {
+            if (connection != null) {
+                connection.close();
+
+                // This is necessary for H2 to fully reset the connection
+                try {
+                    Field _connField = DelegatingConnection.class.getDeclaredField("_conn");
+                    _connField.setAccessible(true);
+                    Object o = _connField.get(connection);
+                    o = _connField.get(o);
+                    Field currentTransactionField = o.getClass().getEnclosingClass().getDeclaredField("currentTransaction");
+                    currentTransactionField.setAccessible(true);
+                    Field enclosing = o.getClass().getDeclaredField("this$0");
+                    enclosing.setAccessible(true);
+                    o = enclosing.get(o);
+                    currentTransactionField.set(o, null);
+                } catch (NullPointerException e) {
+                    // This should happen for non-H2
+                } catch (NoSuchFieldException e) {
+                } catch (IllegalAccessException e) {
+                }
+            }
             updateXARecoveryModule(m -> m.removeXAResourceRecoveryHelper(testXAResource));
         }
     }
@@ -124,30 +149,30 @@ public class TestExecutor {
                 .forEach(m -> action.accept((XARecoveryModule) m));
     }
 
-    private Response getRecoveryTestResponse(String testEntry) throws SQLException, NamingException {
-        if (didRecoveryHappen(testEntry)) {
+    private Response getRecoveryTestResponse(Connection connection, String testEntry) throws SQLException, NamingException {
+        if (didRecoveryHappen(connection, testEntry)) {
             return Response.noContent().build();
         }
 
         return Response.serverError().entity("Recovery failed").build();
     }
 
-    private boolean didRecoveryHappen(String entry) throws SQLException, NamingException {
+    private boolean didRecoveryHappen(Connection connection, String entry) throws SQLException, NamingException {
         List<String> expectedMethods = Arrays.asList("start", "end", "prepare", "commit");
         List<String> actualMethods = TestXAResource.getMethodCalls();
         LOGGER.info("Verifying TestXAResource methods. Expected=" + expectedMethods + ", actual=" + actualMethods);
 
-        boolean entryExists = doesEntryExist(entry);
+        boolean entryExists = doesEntryExist(connection, entry);
         LOGGER.info("Verifying if database entry exists:" + entryExists);
 
         return expectedMethods.equals(actualMethods) && entryExists;
     }
 
-    private boolean doesEntryExist(String entry) throws SQLException, NamingException {
+    private boolean doesEntryExist(Connection connection, String entry) throws SQLException, NamingException {
         String query = "SELECT COUNT(*) FROM test WHERE value='" + entry + "'";
-        try (Connection connection = getTransactionalDataSource().getConnection();
+        try{
              Statement statement = connection.createStatement();
-             ResultSet result = statement.executeQuery(query)) {
+             ResultSet result = statement.executeQuery(query);
             return result.next() && result.getInt(1) > 0;
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, e, () -> String.format("Cannot get result when querying entry '%s'", entry));
@@ -155,12 +180,10 @@ public class TestExecutor {
         }
     }
 
-    private void writeToTheDatabase(String entry) throws NamingException, SQLException {
+    private void writeToTheDatabase(Connection connection, String entry) throws NamingException, SQLException {
         String query = "INSERT INTO test VALUES ('" + entry + "')";
-        try (Connection connection = getTransactionalDataSource().getConnection();
-             Statement statement = connection.createStatement()) {
-            statement.execute(query);
-        }
+        Statement statement = connection.createStatement();
+        statement.execute(query);
     }
 
     private UserTransaction getUserTransaction() throws NamingException {
@@ -181,10 +204,16 @@ public class TestExecutor {
 
     private void createTestTable() throws SQLException, NamingException {
         String query = "CREATE TABLE IF NOT EXISTS test (value VARCHAR(100))";
-        try (Connection connection = getTransactionalDataSource().getConnection();
-             Statement statement = connection.createStatement()) {
+        Connection connection = null;
+
+        try {
+            connection = getTransactionalDataSource().getConnection();
+            Statement statement = connection.createStatement();
             statement.execute(query);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
-
 }
