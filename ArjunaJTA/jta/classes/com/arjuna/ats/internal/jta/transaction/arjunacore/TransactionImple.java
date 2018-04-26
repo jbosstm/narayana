@@ -764,8 +764,7 @@ public class TransactionImple implements javax.transaction.Transaction,
         }
 		catch (Exception e)
 		{
-			e.printStackTrace();
-
+			jtaLogger.i18NLogger.warn_failed_to_enlist_xa_resource(xaRes, e);
 			/*
 			 * Some exceptional condition arose and we probably could not enlist
 			 * the resouce. So, for safety mark the transaction as rollback
@@ -1631,7 +1630,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtaLogger.i18NLogger.warn_cant_create_xid_of_branch(_theTransaction.get_uid(), branch, eisName, e);
 			}
 		}
 

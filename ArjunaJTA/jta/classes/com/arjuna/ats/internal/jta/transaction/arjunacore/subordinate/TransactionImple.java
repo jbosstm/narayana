@@ -125,7 +125,7 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			ex.printStackTrace();
+			jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
 
 			return TwoPhaseOutcome.INVALID_TRANSACTION;
 		}
@@ -170,7 +170,7 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			ex.printStackTrace();
+            jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -214,7 +214,7 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			ex.printStackTrace();
+			jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -282,7 +282,7 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			ex.printStackTrace();
+            jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
 
             UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
             unexpectedConditionException.initCause(ex);
@@ -300,7 +300,7 @@ public class TransactionImple extends
 	    }
 	    catch (final Exception ex)
 	    {
-	        ex.printStackTrace();
+			jtaLogger.i18NLogger.error_transaction_class_cast_fail(super._theTransaction, ex);
 
 	        UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
 	        unexpectedConditionException.initCause(ex);
@@ -375,7 +375,7 @@ public class TransactionImple extends
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				jtaLogger.i18NLogger.warn_cant_create_xid_of_xid(xid, branch, eisName, e);
 			}
 		}
 

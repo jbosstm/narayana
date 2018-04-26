@@ -1452,6 +1452,7 @@ public interface arjunaI18NLogger {
 //    @LogMessage(level = WARN)
 //    public void warn_recovery_ExpiredEntryMonitor_6(@Cause() Throwable arg0);
 
+    @Deprecated
     @Message(id = 12361, value = "Error constructing mbean", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
     public void info_osb_MBeanCtorFail(@Cause() Throwable arg0);
@@ -1557,6 +1558,10 @@ public interface arjunaI18NLogger {
     @Message(id = 12389, value = "OSB: Error constructing record header reader: {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = INFO)
     public void info_osb_HeaderStateCtorInfo(String reason);
+
+    @Message(id = 12390, value = "Error constructing mbean", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_osb_MBeanCtorFail(@Cause() Throwable arg0);
 
     /*
         Allocate new messages directly above this notice.
