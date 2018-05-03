@@ -174,7 +174,7 @@ wget http://central.maven.org/maven2/org/jboss/spec/javax/transaction/jboss-tran
 ```
 or
 ```bash
-cp cp ~/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar ${CATALINA_HOME}/lib/jboss-transaction-api_1.2_spec-1.1.0.Final.jar
+cp ~/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar ${CATALINA_HOME}/lib/jboss-transaction-api_1.2_spec-1.1.0.Final.jar
 ```
 ## Byteman
 To inject all kinds of failures and to examine and to modify the Java bytecode at runtime, we use Byteman as our weapon of choice.
