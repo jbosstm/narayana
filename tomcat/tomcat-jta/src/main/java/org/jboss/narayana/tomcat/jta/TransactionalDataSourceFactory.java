@@ -24,6 +24,7 @@ import org.apache.tomcat.dbcp.dbcp2.PoolableConnection;
 import org.apache.tomcat.dbcp.dbcp2.PoolableConnectionFactory;
 import org.apache.tomcat.dbcp.dbcp2.managed.DataSourceXAConnectionFactory;
 import org.apache.tomcat.dbcp.dbcp2.managed.ManagedDataSource;
+import org.apache.tomcat.dbcp.pool2.impl.AbandonedConfig;
 import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
 import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
 
@@ -59,10 +60,13 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
     private static final String PROP_USERNAME = "username";
     private static final String PROP_PASSWORD = "password";
 
-    private static final List<String> DBCP2_POOLING_PROPERTIES = Arrays.asList(
+    private static final List<String> GENERIC_POOLING_PROPERTIES = Arrays.asList(
             "maxTotal",
             "minIdle",
-            "maxIdle",
+            "maxIdle"
+    );
+
+    private static final List<String> BASE_POOLING_PROPERTIES = Arrays.asList(
             "lifo",
             "fairness",
             "maxWaitMillis",
@@ -82,6 +86,26 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             "jmxNameBase"
     );
 
+    private static final List<String> ABANDONED_PROPERTIES = Arrays.asList(
+            "removeAbandonedOnBorrow",
+            "removeAbandonedOnMaintenance",
+            "removeAbandonedTimeout",
+            "logAbandoned",
+            "requireFullStackTrace",
+            "useUsageTracking"
+    );
+
+    private static List<String> POOLABLE_CONNECTION_PROPERTIES = Arrays.asList(
+            "validationQuery",
+            "validationQueryTimeout",
+            "connectionInitSqls",
+            "disconnectionSqlCodes",
+            "fastFailValidation",
+            "defaultTransactionIsolation",
+            "defaultCatalog",
+            "cacheState"
+    );
+
     @Override
     public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> environment) throws Exception {
         if (obj == null || !(obj instanceof Reference)) {
@@ -95,12 +119,28 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         }
 
         final Properties properties = new Properties();
+        final Properties generic_pool_properties = new Properties();
+        final Properties base_pool_properties = new Properties();
+        final Properties poolable_connection_properties = new Properties();
+        final Properties abandoned_properties = new Properties();
         Enumeration<RefAddr> iter = ref.getAll();
 
         while (iter.hasMoreElements()) {
             RefAddr ra = iter.nextElement();
-            if (DBCP2_POOLING_PROPERTIES.contains(ra.getType().toString())) {
-                properties.setProperty(ra.getType().toString(), ra.getContent().toString());
+            String type = ra.getType();
+            String content = ra.getContent().toString();
+            if (GENERIC_POOLING_PROPERTIES.contains(type)) {
+                generic_pool_properties.setProperty(type, content);
+            } else if (BASE_POOLING_PROPERTIES.contains(type)) {
+                base_pool_properties.setProperty(type, content);
+            } else if (POOLABLE_CONNECTION_PROPERTIES.contains(type)) {
+                poolable_connection_properties.setProperty("_" + type, content);
+            } else if (ABANDONED_PROPERTIES.contains(type)) {
+                abandoned_properties.setProperty(type, content);
+            } else if (PROP_USERNAME.equals(type)) {
+                properties.setProperty(type, content);
+            } else if (PROP_PASSWORD.equals(type)) {
+                properties.setProperty(type, content);
             }
         }
 
@@ -112,11 +152,16 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                     new DataSourceXAConnectionFactory(transactionManager, xaDataSource);
             final PoolableConnectionFactory poolableConnectionFactory =
                     new PoolableConnectionFactory(xaConnectionFactory, null);
-            final GenericObjectPoolConfig config =
-                    new GenericObjectPoolConfig();
-            setPoolConfig(config, properties);
+            final GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+            final AbandonedConfig abandonedConfig = new AbandonedConfig();
+
+            setPoolConfig(config, generic_pool_properties, GenericObjectPoolConfig.class);
+            setPoolConfig(config, base_pool_properties, GenericObjectPoolConfig.class.getSuperclass());
+            setPoolConfig(poolableConnectionFactory, poolable_connection_properties, PoolableConnectionFactory.class);
+            setPoolConfig(abandonedConfig, abandoned_properties, AbandonedConfig.class);
+
             final GenericObjectPool<PoolableConnection> objectPool =
-                    new GenericObjectPool<>(poolableConnectionFactory, config);
+                    new GenericObjectPool<>(poolableConnectionFactory, config, abandonedConfig);
             poolableConnectionFactory.setPool(objectPool);
 
             // Register for recovery
@@ -148,8 +193,9 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                         // It might be better to close at the end of the recovery pass to free up the connection but
                         // we don't have a hook
                         if (connection == null) {
-                            String user = properties.getProperty(PROP_USERNAME);
-                            String password = properties.getProperty(PROP_PASSWORD);
+                            final String user = properties.getProperty(PROP_USERNAME);
+                            final String password = properties.getProperty(PROP_PASSWORD);
+
                             if (user != null && password != null) {
                                 connection = xaDataSource.getXAConnection(user, password);
                             } else {
@@ -198,11 +244,14 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         }
     }
 
-    private void setPoolConfig(GenericObjectPoolConfig config, Properties properties) {
+    private void setPoolConfig(Object config, Properties properties, Class classConfig) {
         for (String propertyName : properties.stringPropertyNames()) {
             try {
-                final Method method = getSetMethod(GenericObjectPoolConfig.class, propertyName);
-                final Class type = GenericObjectPoolConfig.class.getDeclaredField(propertyName).getType();
+                if (propertyName.equals("maxTotal") || propertyName.equals("maxIdle") || propertyName.equals("minIdle")) {
+                    classConfig = GenericObjectPoolConfig.class;
+                }
+                final Method method = getSetMethod(classConfig, propertyName);
+                final Class type = classConfig.getDeclaredField(propertyName).getType();
                 final String value = properties.getProperty(propertyName);
                 if (value != null) {
                     if (type == int.class) {
@@ -227,8 +276,10 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         parameterTypes[0] = field.getType();
         final StringBuffer sb = new StringBuffer();
         sb.append("set");
-        sb.append(fieldName.substring(0, 1).toUpperCase());
-        sb.append(fieldName.substring(1));
+        int begin = fieldName.charAt(0) != '_' ? 0 : 1;
+
+        sb.append(fieldName.substring(begin, begin + 1).toUpperCase());
+        sb.append(fieldName.substring(begin + 1));
         @SuppressWarnings("unchecked")
         Method method = objectClass.getMethod(sb.toString(), parameterTypes);
         return method;
