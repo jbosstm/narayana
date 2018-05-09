@@ -20,13 +20,9 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.apache.tomcat.dbcp.dbcp2.PoolableConnection;
-import org.apache.tomcat.dbcp.dbcp2.PoolableConnectionFactory;
-import org.apache.tomcat.dbcp.dbcp2.managed.DataSourceXAConnectionFactory;
-import org.apache.tomcat.dbcp.dbcp2.managed.ManagedDataSource;
-import org.apache.tomcat.dbcp.pool2.impl.AbandonedConfig;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPool;
-import org.apache.tomcat.dbcp.pool2.impl.GenericObjectPoolConfig;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory;
+import org.apache.tomcat.dbcp.dbcp2.managed.BasicManagedDataSource;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -40,12 +36,10 @@ import javax.sql.XADataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -60,52 +54,6 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
     private static final String PROP_USERNAME = "username";
     private static final String PROP_PASSWORD = "password";
 
-    private static final List<String> GENERIC_POOLING_PROPERTIES = Arrays.asList(
-            "maxTotal",
-            "minIdle",
-            "maxIdle"
-    );
-
-    private static final List<String> BASE_POOLING_PROPERTIES = Arrays.asList(
-            "lifo",
-            "fairness",
-            "maxWaitMillis",
-            "minEvictableIdleTimeMillis",
-            "evictorShutdownTimeoutMillis",
-            "softMinEvictableIdleTimeMillis",
-            "numTestsPerEvictionRun",
-            "evictionPolicyClassName",
-            "testOnCreate",
-            "testOnBorrow",
-            "testOnReturn",
-            "testWhileIdle",
-            "timeBetweenEvictionRunsMillis",
-            "blockWhenExhausted",
-            "jmxEnabled",
-            "jmxNamePrefix",
-            "jmxNameBase"
-    );
-
-    private static final List<String> ABANDONED_PROPERTIES = Arrays.asList(
-            "removeAbandonedOnBorrow",
-            "removeAbandonedOnMaintenance",
-            "removeAbandonedTimeout",
-            "logAbandoned",
-            "requireFullStackTrace",
-            "useUsageTracking"
-    );
-
-    private static List<String> POOLABLE_CONNECTION_PROPERTIES = Arrays.asList(
-            "validationQuery",
-            "validationQueryTimeout",
-            "connectionInitSqls",
-            "disconnectionSqlCodes",
-            "fastFailValidation",
-            "defaultTransactionIsolation",
-            "defaultCatalog",
-            "cacheState"
-    );
-
     @Override
     public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> environment) throws Exception {
         if (obj == null || !(obj instanceof Reference)) {
@@ -119,50 +67,41 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         }
 
         final Properties properties = new Properties();
-        final Properties generic_pool_properties = new Properties();
-        final Properties base_pool_properties = new Properties();
-        final Properties poolable_connection_properties = new Properties();
-        final Properties abandoned_properties = new Properties();
         Enumeration<RefAddr> iter = ref.getAll();
 
         while (iter.hasMoreElements()) {
             RefAddr ra = iter.nextElement();
             String type = ra.getType();
             String content = ra.getContent().toString();
-            if (GENERIC_POOLING_PROPERTIES.contains(type)) {
-                generic_pool_properties.setProperty(type, content);
-            } else if (BASE_POOLING_PROPERTIES.contains(type)) {
-                base_pool_properties.setProperty(type, content);
-            } else if (POOLABLE_CONNECTION_PROPERTIES.contains(type)) {
-                poolable_connection_properties.setProperty("_" + type, content);
-            } else if (ABANDONED_PROPERTIES.contains(type)) {
-                abandoned_properties.setProperty(type, content);
-            } else if (PROP_USERNAME.equals(type)) {
-                properties.setProperty(type, content);
-            } else if (PROP_PASSWORD.equals(type)) {
-                properties.setProperty(type, content);
-            }
+            properties.setProperty(type, content);
         }
 
         final TransactionManager transactionManager = (TransactionManager) getReferenceObject(ref, context, PROP_TRANSACTION_MANAGER);
         final XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, PROP_XA_DATASOURCE);
 
         if (transactionManager != null && xaDataSource != null) {
-            final DataSourceXAConnectionFactory xaConnectionFactory =
-                    new DataSourceXAConnectionFactory(transactionManager, xaDataSource);
-            final PoolableConnectionFactory poolableConnectionFactory =
-                    new PoolableConnectionFactory(xaConnectionFactory, null);
-            final GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-            final AbandonedConfig abandonedConfig = new AbandonedConfig();
+            String initialSize = properties.getProperty("initialSize");
+            properties.remove("initialSize");
+            BasicDataSource ds = BasicDataSourceFactory.createDataSource(properties);
+            BasicManagedDataSource mds = new BasicManagedDataSource();
 
-            setPoolConfig(config, generic_pool_properties, GenericObjectPoolConfig.class);
-            setPoolConfig(config, base_pool_properties, GenericObjectPoolConfig.class.getSuperclass());
-            setPoolConfig(poolableConnectionFactory, poolable_connection_properties, PoolableConnectionFactory.class);
-            setPoolConfig(abandonedConfig, abandoned_properties, AbandonedConfig.class);
+            for(Field field : ds.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if(field.get(ds) == null || Modifier.isFinal(field.getModifiers())){
+                    continue;
+                }
+                field.set(mds, field.get(ds));
+            }
 
-            final GenericObjectPool<PoolableConnection> objectPool =
-                    new GenericObjectPool<>(poolableConnectionFactory, config, abandonedConfig);
-            poolableConnectionFactory.setPool(objectPool);
+            mds.setTransactionManager(transactionManager);
+            mds.setXaDataSourceInstance(xaDataSource);
+
+            if (initialSize != null) {
+                mds.setInitialSize(Integer.parseInt(initialSize));
+                if (mds.getInitialSize() > 0) {
+                    mds.getLogWriter();
+                }
+            }
 
             // Register for recovery
             XARecoveryModule xaRecoveryModule = getXARecoveryModule();
@@ -229,7 +168,7 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
                 });
             }
 
-            return new ManagedDataSource<>(objectPool, xaConnectionFactory.getTransactionRegistry());
+            return mds;
         } else {
             return null;
         }
@@ -242,47 +181,6 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         } else {
             return null;
         }
-    }
-
-    private void setPoolConfig(Object config, Properties properties, Class classConfig) {
-        for (String propertyName : properties.stringPropertyNames()) {
-            try {
-                if (propertyName.equals("maxTotal") || propertyName.equals("maxIdle") || propertyName.equals("minIdle")) {
-                    classConfig = GenericObjectPoolConfig.class;
-                }
-                final Method method = getSetMethod(classConfig, propertyName);
-                final Class type = classConfig.getDeclaredField(propertyName).getType();
-                final String value = properties.getProperty(propertyName);
-                if (value != null) {
-                    if (type == int.class) {
-                        method.invoke(config, Integer.parseInt(value));
-                    } else if (type == long.class) {
-                        method.invoke(config, Long.parseLong(value));
-                    } else if (type == boolean.class) {
-                        method.invoke(config, Boolean.parseBoolean(value));
-                    } else if (type == String.class) {
-                        method.invoke(config, value);
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("There was an error processing pool config properties.", e);
-            }
-        }
-    }
-
-    private Method getSetMethod(Class objectClass, String fieldName) throws Exception {
-        final Class[] parameterTypes = new Class[1];
-        final Field field = objectClass.getDeclaredField(fieldName);
-        parameterTypes[0] = field.getType();
-        final StringBuffer sb = new StringBuffer();
-        sb.append("set");
-        int begin = fieldName.charAt(0) != '_' ? 0 : 1;
-
-        sb.append(fieldName.substring(begin, begin + 1).toUpperCase());
-        sb.append(fieldName.substring(begin + 1));
-        @SuppressWarnings("unchecked")
-        Method method = objectClass.getMethod(sb.toString(), parameterTypes);
-        return method;
     }
 
     private XARecoveryModule getXARecoveryModule() {
