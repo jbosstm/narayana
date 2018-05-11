@@ -233,7 +233,7 @@ public class ProxyService implements LRAManagement {
 
     @Override
     public void unregisterDeserializer(LRAParticipantDeserializer deserializer) {
-
+        deserializers.remove(deserializer);
     }
 
     private static Optional<String> serializeParticipant(final Serializable object) {
