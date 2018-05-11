@@ -381,7 +381,7 @@ public class Coordinator {
                     + " complete, compensate and status.",
                     required = false )
             @HeaderParam("Link") String compensatorLink,
-            @ApiParam( value = "data that will be stored with the coordinator and passed back to\n"
+            @ApiParam( value = "opaque data that will be stored with the coordinator and passed back to\n"
                     + "the participant when the LRA is closed or cancelled.\n")
                     String compensatorData) throws NotFoundException {
         // test to see if the join request contains any participant specific data
