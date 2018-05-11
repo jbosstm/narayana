@@ -522,7 +522,8 @@ public class Transaction extends AtomicAction {
                 if (r instanceof LRARecord) {
                     LRARecord rr = (LRARecord) r;
                     // can't use == because this may be a recovery scenario
-                    if (rr.getCompensator().equals(participantUrl)) {
+                    if (rr.getParticipantPath().equals(participantUrl) ||
+                            rr.getCompensator().equals(participantUrl)) {
                         if (remove)
                             list.remove(rr);
 

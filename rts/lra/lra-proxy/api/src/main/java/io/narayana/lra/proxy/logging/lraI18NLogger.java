@@ -26,10 +26,10 @@ import static org.jboss.logging.Logger.Level.ERROR;
 
 import java.util.concurrent.ExecutionException;
 
-import org.jboss.logging.Cause;
-import org.jboss.logging.LogMessage;
-import org.jboss.logging.Message;
-import org.jboss.logging.MessageLogger;
+import org.jboss.logging.annotations.Cause;
+import org.jboss.logging.annotations.LogMessage;
+import org.jboss.logging.annotations.Message;
+import org.jboss.logging.annotations.MessageLogger;
 
 /**
  * i18n log messages for the lra module.

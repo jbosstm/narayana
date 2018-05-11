@@ -381,44 +381,28 @@ public class Coordinator {
                     + " complete, compensate and status.",
                     required = false )
             @HeaderParam("Link") String compensatorLink,
-            @ApiParam( value = "The resource path that the LRA coordinator will use to drive the participant.\n"
-                    + "Performing a GET on the participant URL will return the current status of the participant,\n"
-                    + "or 404 if the participant is no longer present.\n"
-                    + "\n"
-                    + "The following types must be returned by Compensators to indicate their current status:\n"
-                    + "-  Compensating: the Compensator is currently compensating for the jfdi.\n"
-                    + "-  Compensated: the Compensator has successfully compensated for the jfdi.\n"
-                    + "-  FailedToCompensate: the Compensator was not able to compensate for the jfdi.\n"
-                    + "   It must maintain information about the work it was to compensate until the\n"
-                    + "   coordinator sends it a forget message.\n"
-                    + "-  Completing: the Compensator is tidying up after being told to complete.\n"
-                    + "-  Completed: the coordinator/participant has confirmed.\n"
-                    + "-  FailedToComplete: the Compensator was unable to tidy-up.\n"
-                    + "\n"
-                    + "Performing a PUT on <URL>/compensate will cause the participant to compensate\n"
-                    + "  the work that was done within the scope of the LRA.\n"
-                    + "Performing a PUT on <URL>/complete will cause the participant to tidy up and\n"
-                    + "   it can forget this LRA.\n")
-                    String compensatorUrl) throws NotFoundException {
+            @ApiParam( value = "data that will be stored with the coordinator and passed back to\n"
+                    + "the participant when the LRA is closed or cancelled.\n")
+                    String compensatorData) throws NotFoundException {
         // test to see if the join request contains any participant specific data
-        boolean isLink = isLink(compensatorUrl);
+        boolean isLink = isLink(compensatorData);
 
-        if (compensatorLink != null && !isLink)
-            return joinLRA(toURL(lraId), timeLimit, compensatorLink, null, compensatorUrl);
+        if (compensatorLink != null)
+            return joinLRA(toURL(lraId), timeLimit, null, compensatorLink, compensatorData);
 
         if (!isLink) { // interpret the content as a standard participant url
-            compensatorUrl += "/";
+            compensatorData += "/";
 
             Map<String, String> terminateURIs = new HashMap<>();
 
             try {
-                terminateURIs.put(NarayanaLRAClient.COMPENSATE, new URL(compensatorUrl + "compensate").toExternalForm());
-                terminateURIs.put(NarayanaLRAClient.COMPLETE, new URL(compensatorUrl + "complete").toExternalForm());
-                terminateURIs.put(NarayanaLRAClient.STATUS, new URL(compensatorUrl + "status").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.COMPENSATE, new URL(compensatorData + "compensate").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.COMPLETE, new URL(compensatorData + "complete").toExternalForm());
+                terminateURIs.put(NarayanaLRAClient.STATUS, new URL(compensatorData + "status").toExternalForm());
             } catch (MalformedURLException e) {
                 if(LRALogger.logger.isTraceEnabled())
                     LRALogger.logger.tracef(e, "Cannot join to LRA id '%s' with body as compensator url '%s' is invalid",
-                            lraId, compensatorUrl);
+                            lraId, compensatorData);
                 return Response.status(Response.Status.PRECONDITION_FAILED).build();
             }
 
@@ -428,10 +412,10 @@ public class Coordinator {
 
             terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, "", k, v)); // or use Collectors.joining(",")
 
-            compensatorUrl = linkHeaderValue.toString();
+            compensatorData = linkHeaderValue.toString();
         }
 
-        return joinLRA(toURL(lraId), timeLimit, null, compensatorUrl, null);
+        return joinLRA(toURL(lraId), timeLimit, null, compensatorData, null);
     }
 
 

@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -70,6 +69,7 @@ public class ProxyService implements LRAManagement {
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
 
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
+    private static List<LRAParticipantDeserializer> deserializers;
 
     private Client lcClient;
     private WebTarget lcTarget;
@@ -77,9 +77,11 @@ public class ProxyService implements LRAManagement {
     private UriBuilder uriBuilder;
 
     @PostConstruct
-    void init() throws MalformedURLException {
-        if (participants == null) // TODO figure out why ProxyService is constructed twice
+    void init() {
+        if (participants == null) { // TODO figure out why ProxyService is constructed twice
             participants = new ArrayList<>();
+            deserializers = new ArrayList<>();
+        }
 
         int httpPort = Integer.getInteger("swarm.http.port", 8081);
         String httpHost = System.getProperty("swarm.http.host", "localhost");
@@ -132,7 +134,7 @@ public class ProxyService implements LRAManagement {
         LRAParticipant participant = proxy.getParticipant();
 
         if (participant == null && participantData != null && participantData.length() > 0)
-            participant = deserializeParticipant(proxy.getDeserializer(), participantData).orElse(null);
+            participant = deserializeParticipant(proxy.getDeserializer(), lraId, participantData).orElse(null);
 
         if (participant != null) {
             Future<Void> future = null;
@@ -224,6 +226,16 @@ public class ProxyService implements LRAManagement {
         }
     }
 
+    @Override
+    public void registerDeserializer(LRAParticipantDeserializer deserializer) {
+        deserializers.add(deserializer);
+    }
+
+    @Override
+    public void unregisterDeserializer(LRAParticipantDeserializer deserializer) {
+
+    }
+
     private static Optional<String> serializeParticipant(final Serializable object) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
@@ -237,17 +249,24 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    private static Optional<LRAParticipant> deserializeParticipant(final LRAParticipantDeserializer deserializer, final String objectAsString) {
+    private static Optional<LRAParticipant> deserializeParticipant(final LRAParticipantDeserializer deserializer, URL lraId, final String objectAsString) {
         final byte[] data = Base64.getDecoder().decode(objectAsString);
 
         try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
             return Optional.of((LRAParticipant) ois.readObject());
         } catch (final IOException | ClassNotFoundException e) {
             if (deserializer != null) {
-                LRAParticipant LRAParticipant = deserializer.deserialize(objectAsString.getBytes());
+                LRAParticipant participant = deserializer.deserialize(lraId, objectAsString.getBytes());
 
-                if (LRAParticipant != null)
-                    return Optional.of(LRAParticipant);
+                if (participant != null)
+                    return Optional.of(participant);
+            }
+
+            for (LRAParticipantDeserializer ds : deserializers) {
+                LRAParticipant participant = ds.deserialize(lraId, data);
+
+                if (participant != null)
+                    return Optional.of(participant);
             }
 
             LRAProxyLogger.i18NLogger.error_cannotDeserializeParticipant(deserializer, e);
