@@ -123,7 +123,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		int outcome = super.Abort(true);
 
-		if (outcome == ActionStatus.ABORTED) { 
+		if (outcome == ActionStatus.ABORTED) {
 			afterCompletion(outcome);
 		}
 
@@ -148,47 +148,43 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		case ActionStatus.RUNNING:
 		case ActionStatus.PREPARING:
 		{
-		    synchronized (this)
-		    {
-		        if (_synchs == null)
-		        {
-		            // Synchronizations should be stored (or at least iterated) in their natural order
-		            _synchs = new TreeSet<SynchronizationRecord>();
-		        }
-		    }
 
-            synchronized (_synchs) {
-                if (runningSynchronizations != null) {
-                    if (executingInterposedSynchs && !sr.isInterposed())
-                        return AddOutcome.AR_REJECTED;
+			if (runningSynchronizations != null) {
+				if (executingInterposedSynchs && !sr.isInterposed())
+					return AddOutcome.AR_REJECTED;
 
-                    runningSynchronizations.add(synchronizationCompletionService.submit(
-                            new AsyncBeforeSynchronization(this, sr)));
+				runningSynchronizations.add(synchronizationCompletionService.submit(
+						new AsyncBeforeSynchronization(this, sr)));
 
-                    return AddOutcome.AR_ADDED;
-                }
+				return AddOutcome.AR_ADDED;
+			}
 
-                // disallow addition of Synchronizations that would appear
-                // earlier in sequence than any that has already been called
-                // during the pre-commmit phase. This generic support is required for
-                // JTA Synchronization ordering behaviour
-                if(_currentRecord != null) {
-                    if(sr.compareTo(_currentRecord) != 1) {
-                        return AddOutcome.AR_REJECTED;
-                    }
-                }
+			// disallow addition of Synchronizations that would appear
+			// earlier in sequence than any that has already been called
+			// during the pre-commmit phase. This generic support is required for
+			// JTA Synchronization ordering behaviour
+			if(_currentRecord != null) {
+				if(sr.compareTo(_currentRecord) != 1) {
+					return AddOutcome.AR_REJECTED;
+				}
+			}
 
-                // need to guard against synchs being added while we are performing beforeCompletion processing
-                if (_synchs.add(sr))
-                {
-                    result = AddOutcome.AR_ADDED;
-                }
+			synchronized (_syncLock) {
+				if (_synchs == null) {
+					// Synchronizations should be stored (or at least iterated) in their natural order
+					_synchs = new TreeSet<SynchronizationRecord>();
+				}
+
+				// need to guard against synchs being added while we are performing beforeCompletion processing
+				if (_synchs.add(sr)) {
+					result = AddOutcome.AR_ADDED;
+				}
+			}
             }
-		}
-		break;
-		default:
-		    break;
-		}
+			break;
+			default:
+				break;
+			}
 
 		return result;
 	}
@@ -197,7 +193,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
         boolean problem = false;
         Collection<SynchronizationRecord> interposedSynchs = new ArrayList<SynchronizationRecord>();
 
-        synchronized (_synchs) {
+        synchronized (_syncLock) {
             synchronizationCompletionService = TwoPhaseCommitThreadPool.getNewCompletionService();
             runningSynchronizations = new ArrayList<Future<Boolean>>(_synchs.size());
 
@@ -216,7 +212,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
             int processed = 0;
 
             do {
-                synchronized (_synchs) {
+                synchronized (_syncLock) {
                     if (processed == runningSynchronizations.size()) {
                         if (executingInterposedSynchs || interposedSynchs.size() == 0)
                             break; // all synchronizations have been executed
@@ -348,17 +344,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	                int lastIndexProcessed = -1;
 	                SynchronizationRecord[] copiedSynchs;
 	                // need to guard against synchs being added while we are performing beforeCompletion processing
-	                synchronized (_synchs) {
-	                    copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-	                }
+	                copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
 	                while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
 
-	                    synchronized (_synchs) {
-	                        // if new Synchronization have been registered, refresh our copy of the collection:
-	                        if(copiedSynchs.length != _synchs.size()) {
-	                            copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-	                        }
-	                    }
+	                    // if new Synchronization have been registered, refresh our copy of the collection:
+						if(copiedSynchs.length != _synchs.size()) {
+							copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+						}
 
 	                    lastIndexProcessed = lastIndexProcessed+1;
 	                    _currentRecord = copiedSynchs[lastIndexProcessed];
@@ -514,8 +506,12 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					// beforeCompletions
 					Stack stack = new Stack();
 					Iterator iterator = _synchs.iterator();
-					while(iterator.hasNext()) {
-						stack.push(iterator.next());
+					try {
+						while (iterator.hasNext()) {
+							stack.push(iterator.next());
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
 					}
 
 					/*
@@ -562,10 +558,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
                         }
 					}
 
-                    synchronized (_synchs) {
                         // nulling _syncs causes concurrency problems, so dispose contents instead:
                         _synchs.clear();
-                    }
 				}
 			}
 		}
@@ -577,7 +571,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
     {
         java.util.Map<Uid, String> synchs = new java.util.HashMap<Uid, String> ();
 
-        synchronized (this) {
+        synchronized (_syncLock) {
             if (_synchs != null)
             {
                 for (Object _synch : _synchs)
