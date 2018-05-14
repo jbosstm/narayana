@@ -80,6 +80,11 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
         final XADataSource xaDataSource = (XADataSource) getReferenceObject(ref, context, PROP_XA_DATASOURCE);
 
         if (transactionManager != null && xaDataSource != null) {
+            /*
+             * There is a trick to fix DBCP-215 so we have to remove the "initialSize" that
+             * the BaiscDataSourceFactory.createDataSource(properties) will not create the connections in the pool.
+             * And it will create the connections with the BaiscManagedDataSource later if the initialSize > 0.
+             */
             String initialSize = properties.getProperty("initialSize");
             properties.remove("initialSize");
             BasicDataSource ds = BasicDataSourceFactory.createDataSource(properties);
