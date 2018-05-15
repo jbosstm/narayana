@@ -274,7 +274,7 @@ function kill_qa_suite_processes
 }
 
 # ensure the microprofile-lra artifact is in the local maven repository
-function build_microprofile-lra {
+function build_microprofile_lra {
     if [ -d microprofile-lra ]; then
       rm -rf microprofile-lra
     fi
@@ -309,7 +309,7 @@ function build_narayana {
   fi
   
   cd $WORKSPACE
-  build_microprofile-lra
+  build_microprofile_lra
 
   echo "Building Narayana"
   cd $WORKSPACE
