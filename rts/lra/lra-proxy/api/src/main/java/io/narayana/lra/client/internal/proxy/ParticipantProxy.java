@@ -22,7 +22,6 @@
 package io.narayana.lra.client.internal.proxy;
 
 import org.eclipse.microprofile.lra.participant.LRAParticipant;
-import org.eclipse.microprofile.lra.participant.LRAParticipantDeserializer;
 import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
@@ -36,15 +35,13 @@ class ParticipantProxy {
     private URL lraId;
     private String participantId;
     private LRAParticipant participant;
-    private LRAParticipantDeserializer deserializer;
     private Future<Void> future;
     private boolean compensate;
 
-    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant, LRAParticipantDeserializer deserializer) {
+    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant) {
         this.lraId = lraId;
         this.participantId = participantId;
         this.participant = participant;
-        this.deserializer = deserializer;
     }
 
     ParticipantProxy(URL lraId, String participantId) {
@@ -63,10 +60,6 @@ class ParticipantProxy {
 
     LRAParticipant getParticipant() {
         return participant;
-    }
-
-    LRAParticipantDeserializer getDeserializer() {
-        return deserializer;
     }
 
     @Override

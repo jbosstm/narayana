@@ -81,7 +81,7 @@ import org.eclipse.microprofile.lra.client.LRAInfo;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the prefered mechanism is to use
- * the annotation in the {@link io.narayana.lra.annotation} package
+ * the annotation in the {@link org.eclipse.microprofile.lra.annotation} package
  */
 @RequestScoped
 public class NarayanaLRAClient implements LRAClient, Closeable {
@@ -111,13 +111,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     private static final String leaveFormat = "/%s/remove";
     private static final String renewFormat = "/%s/renew";
 
-
-    private static final String MISSING_ANNOTATION_FORMAT =
-            "Cannot enlist resource class %s: annotated with LRA but is missing one or more of {@Complete. @Compensate, @Status}";
-
-    private static Boolean isTrace = Boolean.getBoolean("trace");
-
-    private WebTarget target;
     private URI base;
     private Client client;
     private boolean isUseable;
@@ -126,8 +119,13 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     private static URI defaultCoordinatorURI;
 
-    public static void setDefaultEndpoint(URI coordinatorUri) {
-        defaultCoordinatorURI = coordinatorUri;
+    public static void setDefaultCoordinatorEndpoint(URI lraCoordinatorEndpoint) {
+        defaultCoordinatorURI = lraCoordinatorEndpoint;
+    }
+
+    public static void setDefaultRecoveryEndpoint(URI recoveryEndpoint) {
+        LRALogger.logger.infof(
+                "LRAClient assuming the LRA coordinator and recovery coordinator are on the same endpoing");
     }
 
     public static boolean isInitialised() {
@@ -195,7 +193,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             client = ClientBuilder.newClient();
 
         base = uri;
-        target = client.target(base);
 
         isUseable = true;
 
@@ -464,20 +461,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                                         String compensatorData) throws GenericLRAException {
         lraTracef(lraUrl, "joining LRA with participant link: %s", linkHeader);
         return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
-    }
-
-    @Override
-    public String joinLRA(URL lraId, Long timelimit, String compensatorUrl,
-                          String compensatorData) throws GenericLRAException {
-        lraTracef(lraId, "joining LRA with participant %s", compensatorUrl);
-
-        return enlistCompensator(lraId, timelimit, "",
-                String.format("%s/compensate", compensatorUrl),
-                String.format("%s/complete", compensatorUrl),
-                String.format("%s/forget",compensatorUrl),
-                String.format("%s/leave", compensatorUrl),
-                String.format("%s/status", compensatorUrl),
-                compensatorData);
     }
 
     private String toExternalForm(URL url) {
