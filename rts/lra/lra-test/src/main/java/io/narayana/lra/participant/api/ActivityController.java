@@ -21,20 +21,9 @@
  */
 package io.narayana.lra.participant.api;
 
-import io.narayana.lra.annotation.Forget;
-import io.narayana.lra.client.GenericLRAException;
-import io.narayana.lra.client.InvalidLRAIdException;
-import io.narayana.lra.client.LRAClient;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.participant.service.ActivityService;
-import io.narayana.lra.annotation.LRA;
-import io.narayana.lra.annotation.Compensate;
-import io.narayana.lra.annotation.Complete;
-import io.narayana.lra.annotation.Leave;
-import io.narayana.lra.annotation.NestedLRA;
-import io.narayana.lra.annotation.Status;
-import io.narayana.lra.annotation.TimeLimit;
-import io.narayana.lra.client.IllegalLRAStateException;
+
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.participant.model.Activity;
 
@@ -94,9 +83,6 @@ public class ActivityController {
     public static final String ACTIVITIES_PATH = "activities";
     public static final String ACCEPT_WORK = "acceptWork";
 
-    @Inject
-    private LRAClient lraClient;
-
     private static final AtomicInteger completedCount = new AtomicInteger(0);
     private static final AtomicInteger compensatedCount = new AtomicInteger(0);
 
@@ -117,8 +103,7 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @LRA(LRA.Type.NOT_SUPPORTED)
-    public Response status(@PathParam("LraUrl")String lraUrl, @HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
+    public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         Activity activity = activityService.getActivity(lraId);
 
         if (activity.status == null)
@@ -136,9 +121,9 @@ public class ActivityController {
 
     /**
      * Test that participants can leave an LRA using the {@link LRAClient} programatic API
-     * @param lraUrl
-     * @return
-     * @throws NotFoundException
+     * @param lraUrl the LRA that the participant should leave
+     * @return the id of the LRA that was left
+     * @throws NotFoundException if the requested LRA does not exist
      */
     @PUT
     @Path("/leave/{LraUrl}")
@@ -146,8 +131,6 @@ public class ActivityController {
     public Response leaveWorkViaAPI(@PathParam("LraUrl")String lraUrl) throws NotFoundException, MalformedURLException {
 
         if (lraUrl != null) {
-//            String lraId = NarayanaLRAClient.getLRAId(lraUrl);
-
             Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(this.getClass(), context.getBaseUri());
             lraClient.leaveLRA(new URL(lraUrl), terminateURIs.get("Link"));
 
@@ -166,8 +149,6 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Leave
     public Response leaveWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
-
         if (lraId != null) {
             activityService.getActivity(lraId);
 
@@ -187,7 +168,7 @@ public class ActivityController {
         completedCount.incrementAndGet();
 
         assert lraId != null;
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
+
         Activity activity = activityService.getActivity(lraId);
 
         activity.setEndData(userData);
@@ -214,7 +195,7 @@ public class ActivityController {
         compensatedCount.incrementAndGet();
 
         assert lraId != null;
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
+
         Activity activity = activityService.getActivity(lraId);
 
         activity.setEndData(userData);
@@ -241,7 +222,7 @@ public class ActivityController {
         completedCount.incrementAndGet();
 
         assert lraId != null;
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
+
         Activity activity = activityService.getActivity(lraId);
 
         activityService.remove(activity.id);
@@ -286,7 +267,7 @@ public class ActivityController {
             throw new WebApplicationException(Response.Status.NOT_ACCEPTABLE);
 
         // manually start an LRA via the injection LRAClient api
-        URL lra = lraClient.startLRA(null,"subActivity", 0L, TimeUnit.SECONDS);
+        URL lra = lraClient.startLRA("subActivity", 0L, TimeUnit.SECONDS);
 
         lraId = lra.toString();
 
@@ -385,9 +366,6 @@ public class ActivityController {
 //        String txId = NarayanaLRAClient.getLRAId(lraId);
 
         System.out.printf("ActivityController: work id %s and rcvId %s %n", lraId, rcvId);
-
-        if (lraId == null)
-            return null;
 
         try {
             return activityService.getActivity(lraId);
@@ -559,12 +537,12 @@ public class ActivityController {
         }
     }
 
-    public static URL lraToURL(String lraId, String errorMessage) {
+    private static URL lraToURL(String lraId, String errorMessage) {
         try {
             return new URL(lraId);
         } catch (MalformedURLException e) {
             LRALogger.i18NLogger.error_urlConstructionFromStringLraId(lraId, e);
-            throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), errorMessage, e);
+            throw new GenericLRAException(null, BAD_REQUEST.getStatusCode(), errorMessage + ": lra id: " + lraId, e);
         }
     }
 }
