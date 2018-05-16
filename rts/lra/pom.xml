@@ -134,6 +134,7 @@
     <modules>
         <module>lra-client</module>
         <module>lra-proxy</module>
+        <module>lra-annotations</module>
         <module>lra-coordinator</module>
         <module>lra-filters</module>
         <module>lra-annotation-checker</module>
