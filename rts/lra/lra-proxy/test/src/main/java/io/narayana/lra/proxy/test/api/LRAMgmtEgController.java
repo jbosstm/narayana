@@ -68,7 +68,7 @@ public class LRAMgmtEgController {
         activityService.add(activity);
 
         activity.rcvUrl = lraManagement.joinLRA(
-                new Participant(activity), null, toURL(lraId), 0L, TimeUnit.SECONDS);
+                new Participant(activity), toURL(lraId), 0L, TimeUnit.SECONDS);
 
         return Response.ok(activity.id).build();
     }

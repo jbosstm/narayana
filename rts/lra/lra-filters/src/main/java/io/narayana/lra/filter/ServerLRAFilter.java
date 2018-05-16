@@ -68,6 +68,9 @@ import static io.narayana.lra.client.NarayanaLRAClient.FORGET;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_HOST_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PATH_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PORT_KEY;
 
 @Provider
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
@@ -84,11 +87,20 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     public ServerLRAFilter() throws Exception {
         if (!NarayanaLRAClient.isInitialised()) {
-            String rcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
-            int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8082);
-            String coordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
+            String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
+            int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8082);
+            String lraCoordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, NarayanaLRAClient.COORDINATOR_PATH_NAME);
 
-            NarayanaLRAClient.setDefaultEndpoint(new URI(String.format("http://%s:%d/%s", rcHost, rcPort, coordinatorPath)));
+            String lraCoordinatorUrl = String.format("http://%s:%d/%s", lcHost, lcPort, lraCoordinatorPath);
+
+            String rcHost = System.getProperty(LRA_RECOVERY_HOST_KEY, lcHost);
+            int rcPort = Integer.getInteger(LRA_RECOVERY_PORT_KEY, lcPort);
+            String rcPath = System.getProperty(LRA_RECOVERY_PATH_KEY, lraCoordinatorUrl);
+
+            String rcUrl = String.format("http://%s:%d/%s", rcHost, rcPort, rcPath);
+
+            NarayanaLRAClient.setDefaultCoordinatorEndpoint(new URI(lraCoordinatorUrl));
+            NarayanaLRAClient.setDefaultRecoveryEndpoint(new URI(rcUrl));
         }
 
         lraClient = (LRAClient) Class.forName(NarayanaLRAClient.class.getCanonicalName()).getDeclaredConstructor().newInstance();

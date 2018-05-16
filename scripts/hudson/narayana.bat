@@ -71,7 +71,7 @@ goto:eof
   git clone https://github.com/jbosstm/microprofile-lra.git || (call:comment_on_pull "MP LRA clone Failed %BUILD_URL%" & exit -1)
   if %ERRORLEVEL% NEQ 0 exit -1
   cd microprofile-lra
-  git checkout microprofile-lra
+  git checkout microprofile-lra-v2
   if %ERRORLEVEL% NEQ 0 exit -1
   cd ..
   call build.bat clean install "-f" "microprofile-lra\pom.xml" || (call:comment_on_pull "MP LRA build Failed %BUILD_URL%" & exit -1)
