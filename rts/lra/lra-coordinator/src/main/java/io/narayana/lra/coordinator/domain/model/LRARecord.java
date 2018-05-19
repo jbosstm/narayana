@@ -32,6 +32,7 @@ import io.narayana.lra.client.Current;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import javax.ws.rs.client.Client;
@@ -143,15 +144,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return b.append(value);
     }
 
-    static String extractCompensator(String linkStr) {
+    static String extractCompensator(URL lraId, String linkStr) {
         for (String lnk : linkStr.split(",")) {
             Link link;
 
             try {
                 link = Link.valueOf(lnk);
             } catch (Exception e) {
-                LRALogger.logger.infof(e, "Cannot extract compensator from link'%s'", linkStr);
-                return linkStr;
+                throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                        String.format("Invalid compensator join request: cannot parse link '%s'", linkStr), e);
             }
 
             if ("compensate".equals(link.getRel()))

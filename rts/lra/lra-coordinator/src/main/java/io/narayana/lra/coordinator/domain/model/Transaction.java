@@ -495,7 +495,7 @@ public class Transaction extends AtomicAction {
     }
 
     private LRARecord findLRAParticipant(String participantUrl, boolean remove) {
-        String pUrl = LRARecord.extractCompensator(participantUrl);
+        String pUrl = LRARecord.extractCompensator(id, participantUrl);
         LRARecord rec = findLRAParticipant(pUrl, remove, pendingList);
 
         if (rec == null)
@@ -516,7 +516,7 @@ public class Transaction extends AtomicAction {
             AbstractRecord r;
 
             if (participantUrl.indexOf(',') != -1)
-                participantUrl = LRARecord.extractCompensator(participantUrl);
+                participantUrl = LRARecord.extractCompensator(id, participantUrl);
 
             while ((r = i.iterate()) != null) {
                 if (r instanceof LRARecord) {

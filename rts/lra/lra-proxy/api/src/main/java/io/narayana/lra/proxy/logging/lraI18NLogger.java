@@ -48,10 +48,6 @@ public interface lraI18NLogger {
     @LogMessage(level = ERROR)
     void error_cannotSerializeParticipant(String participantToString, @Cause Throwable e);
 
-    @Message(id = 25002, value = "Participant deserialization problem of deserializer '%s'")
-    @LogMessage(level = ERROR)
-    void error_cannotDeserializeParticipant(Object deserializer, @Cause Throwable e);
-
     @Message(id = 25003, value = "Participant '%s' exception during completion")
     @LogMessage(level = ERROR)
     void error_participantExceptionOnCompletion(String name, @Cause ExecutionException e);
