@@ -36,6 +36,9 @@ public class Activity implements Serializable {
     public String registrationStatus;
     private String userData;
     private String endData;
+    private String how;
+    private String arg;
+
     private final AtomicInteger acceptedCount = new AtomicInteger(0);
 
     public Activity(String txId) {
@@ -83,5 +86,21 @@ public class Activity implements Serializable {
 
     public int getAndDecrementAcceptCount() {
         return acceptedCount.getAndDecrement();
+    }
+
+    public String getHow() {
+        return how;
+    }
+
+    public void setHow(String how) {
+        this.how = how;
+    }
+
+    public String getArg() {
+        return arg;
+    }
+
+    public void setArg(String arg) {
+        this.arg = arg;
     }
 }

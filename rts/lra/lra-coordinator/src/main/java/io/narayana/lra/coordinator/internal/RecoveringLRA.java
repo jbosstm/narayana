@@ -27,9 +27,12 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
+import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 class RecoveringLRA extends Transaction {
     /**
@@ -46,10 +49,25 @@ class RecoveringLRA extends Transaction {
         return _activated;
     }
 
+    public void replayPhase2() {
+        // protect against recovery and application threads both trying to finish the LRA
+        ReentrantLock lock = tryLockTransaction();
+
+        if (lock == null) {
+            return;
+        }
+
+        try {
+            tryReplayPhase2();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     /**
      * Replays phase 2 of the commit protocol.
      */
-    public void replayPhase2() {
+    private void tryReplayPhase2() {
         if (LRALogger.logger.isDebugEnabled()) {
             LRALogger.logger.debug("RecoveringLRA.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
         }
@@ -65,6 +83,7 @@ class RecoveringLRA extends Transaction {
             {
                 // move any heuristics back onto the prepared list for another attempt:
                 moveTo(heuristicList, preparedList);
+                checkParticipant(preparedList);
 
                 super.phase2Commit( true ) ;
             }
@@ -75,6 +94,7 @@ class RecoveringLRA extends Transaction {
             {
                 // move any heuristics back onto the pending list for another attempt:
                 moveTo(heuristicList, pendingList);
+                checkParticipant(pendingList);
 
                 super.phase2Abort( true ) ;
             }
@@ -106,6 +126,19 @@ class RecoveringLRA extends Transaction {
             }
 
             // Failure to activate (NB other types such as AtomicActionExpiryScanner move the log)
+        }
+    }
+
+    private void checkParticipant(RecordList participants) {
+        RecordListIterator i = new RecordListIterator(participants);
+        AbstractRecord r;
+
+        while ((r = i.iterate()) != null) {
+            if (r instanceof LRARecord) {
+                LRARecord rec = (LRARecord) r;
+
+                rec.setLraService(getLraService());
+            }
         }
     }
 

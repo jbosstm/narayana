@@ -51,6 +51,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.util.stream.Collectors.toList;
 
@@ -58,6 +59,7 @@ import static java.util.stream.Collectors.toList;
 public class LRAService {
     private Map<URL, Transaction> lras = new ConcurrentHashMap<>();
     private Map<URL, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
+    private Map<URL, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     private static Map<String, String> participants = new ConcurrentHashMap<>();
     private LRARecoveryModule lraRecoveryModule;
@@ -74,6 +76,20 @@ public class LRAService {
         }
 
         return lras.get(lraId);
+    }
+
+    public synchronized ReentrantLock lockTransaction(URL lraId) {
+        ReentrantLock lock = locks.computeIfAbsent(lraId, k -> new ReentrantLock());
+
+        lock.lock();
+
+        return lock;
+    }
+
+    public synchronized ReentrantLock tryLockTransaction(URL lraId) {
+        ReentrantLock lock = locks.computeIfAbsent(lraId, k -> new ReentrantLock());
+
+        return lock.tryLock() ? lock : null;
     }
 
     public List<LRAStatus> getAll(String state) {
@@ -142,6 +158,10 @@ public class LRAService {
 
         if (recoveringLRAs.containsKey(lraId)) {
             recoveringLRAs.remove(lraId);
+        }
+
+        if (locks.containsKey(lraId)) {
+            locks.remove(lraId);
         }
     }
 
