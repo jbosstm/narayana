@@ -62,6 +62,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -187,11 +188,8 @@ public class Transaction extends AtomicAction {
                     ((LRARecord) record).setLRAService(lraService);
 
             }
-        } catch (IOException e1) {
+        } catch (IOException | NullPointerException e1) {
             LRALogger.i18NLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), e1);
-            return false;
-        } catch (final NullPointerException ex) {
-            LRALogger.i18NLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), ex);
 
             return false;
         }
@@ -292,8 +290,22 @@ public class Transaction extends AtomicAction {
         return end(true);
     }
 
-    // in this version close need to run as blocking code {@link Vertx().executeBlocking}
+    protected ReentrantLock tryLockTransaction() {
+        return lraService.tryLockTransaction(getId());
+    }
+
     public int end(boolean compensate) {
+        ReentrantLock lock = lraService.lockTransaction(getId());
+
+        try {
+            return doEnd(compensate);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    // in this version close need to run as blocking code {@link Vertx().executeBlocking}
+    private int doEnd(boolean compensate) {
         inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();

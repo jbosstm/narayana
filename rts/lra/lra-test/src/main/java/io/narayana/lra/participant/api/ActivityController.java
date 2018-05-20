@@ -183,6 +183,8 @@ public class ActivityController {
         activity.status = CompensatorStatus.Completed;
         activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
 
+        endCheck(activity);
+
         System.out.printf("ActivityController completing %s%n", lraId);
         return Response.ok(activity.statusUrl).build();
     }
@@ -209,6 +211,8 @@ public class ActivityController {
 
         activity.status = CompensatorStatus.Compensated;
         activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId);
+
+        endCheck(activity);
 
         System.out.printf("ActivityController compensating %s%n", lraId);
         return Response.ok(activity.statusUrl).build();
@@ -289,9 +293,14 @@ public class ActivityController {
     @Path("/work")
     @LRA(LRA.Type.REQUIRED)
     public Response activityWithLRA(@HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
-                                    @HeaderParam(LRA_HTTP_HEADER) String lraId) {
+                                    @HeaderParam(LRA_HTTP_HEADER) String lraId,
+                                    @QueryParam("how") String how,
+                                    @QueryParam("arg") String arg) {
         assert lraId != null;
         Activity activity = addWork(lraId, rcvId);
+
+        activity.setHow(how);
+        activity.setArg(arg);
 
         if (activity == null)
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
@@ -483,6 +492,8 @@ public class ActivityController {
         activity.status = CompensatorStatus.Compensated;
         activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
 
+        endCheck(activity);
+
         return Response.ok(activity.statusUrl).build();
     }
 
@@ -502,6 +513,8 @@ public class ActivityController {
 
         activity.status = CompensatorStatus.Completed;
         activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
+
+        endCheck(activity);
 
         return Response.ok(activity.statusUrl).build();
     }
@@ -534,6 +547,18 @@ public class ActivityController {
                 throw new WebApplicationException(response);
         } finally {
             response.close();
+        }
+    }
+
+    private void endCheck(Activity activity) {
+        String how = activity.getHow();
+        String arg = activity.getArg();
+
+        activity.setHow(null);
+        activity.setArg(null);
+
+        if ("wait".equals(how) && arg != null && "recovery".equals(arg)) {
+            lraClient.getRecoveringLRAs();
         }
     }
 

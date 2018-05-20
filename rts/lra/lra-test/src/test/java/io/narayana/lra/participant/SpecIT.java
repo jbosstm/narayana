@@ -203,6 +203,32 @@ public class SpecIT {
     }
 
     @Test
+    public void delayCloseLRA () throws WebApplicationException {
+        int[] cnt1 = {completedCount(true), completedCount(false)};
+
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
+        int count = lras.size();
+        URL lra = lraClient.startLRA(null, "SpecTest#delayCloseLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
+                .queryParam("how", "wait")
+                .queryParam("arg", "recovery");
+        Response response = resourcePath
+                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
+        lraClient.closeLRA(lra);
+
+        // check that participant was told to complete
+        int[] cnt2 = {completedCount(true), completedCount(false)};
+
+        assertEquals("delayCloseLRA: wrong completion count", cnt1[0] + 1, cnt2[0]);
+        assertEquals("delayCloseLRA: wrong compensation count", cnt1[1], cnt2[1]);
+
+        lras = lraClient.getActiveLRAs();
+        System.out.printf("join ok %d versus %d lras%n", count, lras.size());
+        assertEquals("join: wrong LRA count", count, lras.size());
+    }
+
+    //@Test
     public void getActiveLRAs() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#getActiveLRAs", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         List<LRAInfo> lras = lraClient.getActiveLRAs();
@@ -222,7 +248,7 @@ public class SpecIT {
         lraClient.closeLRA(lra);
     }
 
-    @Test
+    //@Test
     public void getRecoveringLRAs() throws WebApplicationException {
         // TODO
     }
@@ -524,10 +550,7 @@ public class SpecIT {
         if (waitForRecovery) {
             // trigger a recovery scan which trigger a replay attempt on any participants
             // that have responded to complete/compensate requests with Response.Status.ACCEPTED
-            Response response2 = recoveryTarget.path(RECOVERY_COORDINATOR_PATH_NAME).path("recovery")
-                    .request().get();
-
-            checkStatusAndClose(response2, Response.Status.OK.getStatusCode(), false);
+            waitForRecovery();
         }
 
         int countAfter = lraClient.getActiveLRAs().size();
@@ -706,6 +729,9 @@ public class SpecIT {
              */
             assertEquals(nestedCnt + 1, cnt3[0] - cnt1[0]); //
         }
+
+        // this test leaves something left to recover so run a scan to clear the logs for the next test
+        waitForRecovery();
     }
 
     private void cancelCheck(String path) {
@@ -739,5 +765,13 @@ public class SpecIT {
                 response.close();
 
         }
+    }
+
+    private void waitForRecovery() {
+        // trigger a recovery scan to force a replay attempt on any pending participants
+        Response response = recoveryTarget.path(RECOVERY_COORDINATOR_PATH_NAME).path("recovery")
+                .request().get();
+
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
     }
 }

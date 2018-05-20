@@ -102,6 +102,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     public static final long DEFAULT_TIMEOUT_MILLIS = 0L;
 
     private static final String startLRAUrl = "/start";///?ClientId=abc&timeout=300000";
+    private static final String recoveryQueryUrl = "/recovery";
     private static final String getAllLRAsUrl = "/";
     private static final String getRecoveringLRAsUrl = "?status=Compensating";
     private static final String getActiveLRAsUrl = "?status=";
@@ -112,6 +113,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     private static final String renewFormat = "/%s/renew";
 
     private URI base;
+    private URI rcBase; // base uri of the recovery coordinator
     private Client client;
     private boolean isUseable;
     private boolean connectionInUse;
@@ -209,6 +211,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     private void init(String scheme, String host, int port) throws URISyntaxException {
         setCoordinatorURI(new URI(scheme, null, host, port, "/" + COORDINATOR_PATH_NAME, null, null));
+        rcBase = new URI(scheme, null, host, port, "/" + RECOVERY_COORDINATOR_PATH_NAME, null, null);
     }
 
     /**
@@ -531,7 +534,36 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     @Override
     public List<LRAInfo> getRecoveringLRAs() throws GenericLRAException {
-        return getLRAs("status", CompensatorStatus.Compensating.name());
+        Client rcClient = null;
+
+        try {
+            rcClient = ClientBuilder.newClient();
+            Response response = rcClient.target(rcBase)
+                    .path(recoveryQueryUrl)
+                    .request()
+                    .get();
+
+            if (!response.hasEntity())
+                throw new GenericLRAException(null, response.getStatus(), "missing entity body", null);
+
+            List<LRAInfo> actions = new ArrayList<>();
+
+            String lras = response.readEntity(String.class);
+
+            JsonReader reader = Json.createReader(new StringReader(lras));
+            JsonArray ja = reader.readArray();
+
+            ja.forEach(jsonValue ->
+                    actions.add(toLRAInfo(((JsonObject) jsonValue))));
+
+            actions.addAll(getLRAs("status", CompensatorStatus.Compensating.name()));
+
+            return actions;
+        } finally {
+            if (rcClient != null) {
+                rcClient.close();
+            }
+        }
     }
 
     private List<LRAInfo> getLRAs(String queryName, String queryValue) {

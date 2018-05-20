@@ -180,6 +180,7 @@
                                     </environment>
                                     <arguments>
                                         <argument>${java.home}/bin/java</argument>
+                                        <argument>${swarm.debug.params}</argument>
                                         <argument>-jar</argument>
                                         <argument>../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
                                     </arguments>
