@@ -353,7 +353,11 @@ public class Transaction extends AtomicAction {
 
                 // tell each participant that the lra canceled
                 updateState(CompensatorStatus.Compensating);
-                res = super.Abort(); // this route to abort forces a log write on failures and heuristics
+                // since the phase2Abort route skips prepare we need to make sure the heuristic list exists
+                if (heuristicList == null)
+                    heuristicList = new RecordList();
+                super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
+                res = super.status();
             } else {
                 // tell each participant that the lra completed ok
                 updateState(CompensatorStatus.Completing);
