@@ -23,6 +23,15 @@ When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.8:
 
 	export JAVA_HOME=`/usr/libexec/java_home -v 1.8` 
 
+The build has a dependency on microprofile-lra which is not yet available as a maven artifact
+so it currently needs to be build separately:
+
+    git clone https://github.com/jbosstm/microprofile-lra
+    cd microprofile-lra
+    git checkout microprofile-lra-v2
+    ./build.sh -f microprofile-lra/pom.xml -B clean install
+    cd ..
+
 Building Naryana
 ----------------
 To build Narayana you should call:
