@@ -31,9 +31,13 @@
 
         <service.http.port>${swarm.http.port}</service.http.port>
 
+        <!-- debugging the coordinator -->
+        <coordinator.debug.params></coordinator.debug.params>
+
+        <!-- debugging the deployment -->
         <swarm.debug.params></swarm.debug.params>
+        <swarm.debug.port></swarm.debug.port>
         <swarm.logging.params></swarm.logging.params>
-        <swarm.debug.port>8787</swarm.debug.port>
     </properties>
 
     <build>
@@ -180,7 +184,7 @@
                                     </environment>
                                     <arguments>
                                         <argument>${java.home}/bin/java</argument>
-                                        <argument>${swarm.debug.params}</argument>
+                                        <argument>${coordinator.debug.params}</argument>
                                         <argument>-jar</argument>
                                         <argument>../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
                                     </arguments>
