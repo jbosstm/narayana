@@ -435,11 +435,11 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/timeLimit")
+    @Path("/timeLimitRequiredLRA")
     @Produces(MediaType.APPLICATION_JSON)
     @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
     @LRA(value = LRA.Type.REQUIRED)
-    public Response timeLimit(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
+    public Response timeLimitRequiredLRA(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
         activityService.add(new Activity(lraId));//NarayanaLRAClient.getLRAId(lraId)));
 
         try {

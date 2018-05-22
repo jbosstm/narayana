@@ -467,7 +467,7 @@ public class Transaction extends AtomicAction {
         p.setRecoveryURL(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            if (!p.setTimeLimit(scheduler, timeLimit))
+            if (!p.setTimeLimit(scheduler, timeLimit, this))
                 if (LRALogger.logger.isInfoEnabled())
                     LRALogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
 
@@ -670,5 +670,22 @@ public class Transaction extends AtomicAction {
 
     public boolean isInFlight() {
         return inFlight;
+    }
+
+    protected CompensatorStatus timedOut(LRARecord lraRecord) {
+        // a participant has timed out so cancel the whole LRA
+        ReentrantLock lock = lraService.tryLockTransaction(getId());
+
+        if (lock != null) {
+            try {
+                if (isActive()) {
+                    doEnd(true);
+                } // else it is too late to cancel
+            } finally {
+                lock.unlock();
+            }
+        }  // else another thread finishing this LRA so it is too late to cancel
+
+        return status;
     }
 }
