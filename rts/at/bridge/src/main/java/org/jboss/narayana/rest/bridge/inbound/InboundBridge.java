@@ -35,6 +35,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import org.jboss.logging.Logger;
 
+import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.TransactionManager;
 
@@ -46,7 +47,7 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
     /**
      * Unique (well, hopefully) formatId so we can distinguish our own Xids.
      */
-    public static final int XARESOURCE_FORMAT_ID = 131081;
+    public static final int XARESOURCE_FORMAT_ID = FormatConstants.RTS_BRIDGE_FORMAT_ID;
 
     private static final Logger LOG = Logger.getLogger(InboundBridge.class);
 
