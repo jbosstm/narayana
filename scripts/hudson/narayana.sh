@@ -59,7 +59,7 @@ function get_pull_xargs {
 function init_test_options {
     is_ibm
     ISIBM=$?
-    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.8.2.Final-SNAPSHOT"
+    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.8.2.Final"
     [ $MICROPROFILE_LRA_VERSION ] || MICROPROFILE_LRA_VERSION="1.0-SNAPSHOT"
     [ $MICROPROFILE_LRA_BRANCH ] || MICROPROFILE_LRA_BRANCH="microprofile-lra-v2"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
@@ -484,7 +484,7 @@ function blacktie {
   [ ! -e wildfly-${WILDFLY_MASTER_VERSION}.zip ] && (wget http://download.jboss.org/wildfly/${WILDFLY_MASTER_VERSION}/wildfly-${WILDFLY_MASTER_VERSION}.zip || fatal "Could not download wildfly")
   unzip wildfly-${WILDFLY_MASTER_VERSION}.zip -d blacktie/
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.8.2.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.8.2.Final-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
   ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
