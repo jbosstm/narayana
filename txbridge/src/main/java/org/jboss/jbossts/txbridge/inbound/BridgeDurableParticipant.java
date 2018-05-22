@@ -26,6 +26,7 @@ package org.jboss.jbossts.txbridge.inbound;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
@@ -57,7 +58,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
     /*
      * Uniq (well, hopefully) formatId so we can distinguish our own Xids.
      */
-    public static final int XARESOURCE_FORMAT_ID = 131080;
+    public static final int XARESOURCE_FORMAT_ID = FormatConstants.XTS_BRIDGE_FORMAT_ID;
 
     private transient volatile XATerminator xaTerminator;
 

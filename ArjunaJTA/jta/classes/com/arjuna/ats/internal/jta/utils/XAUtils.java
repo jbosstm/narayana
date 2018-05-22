@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jta.utils;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
@@ -76,15 +77,49 @@ public class XAUtils
 		return optimize;
 	}
 
+	/**
+	 * Trying to convert {@link Xid} to Narayana implementation
+	 * for being able to access the internal byte array
+	 * in order to return node name codified inside of the Xid.
+	 *
+	 * @param xid  the xid to check the node name
+	 * @return  node name saved in the xid
+	 */
 	public static final String getXANodeName (Xid xid)
 	{
-        XidImple xidImple;
-        if(xid instanceof XidImple) {
-            xidImple = (XidImple)xid;
-        } else {
-            xidImple = new XidImple(xid);
-        }
-        return XATxConverter.getNodeName(xidImple.getXID());
+        return XATxConverter.getNodeName(getXIDfromXid(xid));
+	}
+
+	/**
+	 * Returning subordinate node name codified inside of the Xid.
+	 *
+	 * @param xid  the xid to check the subordinate node name
+	 * @return  subordinate node name saved in the xid
+	 */
+	public static final String getSubordinateNodeName (Xid xid)
+	{
+	    return XATxConverter.getSubordinateNodeName(getXIDfromXid(xid));
+	}
+
+	/**
+	 * Returning eis name codified inside of the Xid.
+	 *
+	 * @param xid  the xid to check the eis name
+	 * @return  eis name integer saved in the xid
+	 */
+	public static final Integer getEisName (Xid xid)
+	{
+	    return XATxConverter.getEISName(getXIDfromXid(xid));
+	}
+
+	private static final XID getXIDfromXid(Xid xid) {
+         XidImple xidImple;
+         if(xid instanceof XidImple) {
+             xidImple = (XidImple)xid;
+         } else {
+             xidImple = new XidImple(xid);
+         }
+         return xidImple.getXID();
 	}
 
 	private static final String ORACLE = "oracle";

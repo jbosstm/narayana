@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.extensions;
 
+import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.jts.logging.jtsLogger;
 
 /**
@@ -47,17 +48,17 @@ public class Arjuna
     
 public static final int XID ()
     {
-	return 131072;
+	return FormatConstants.JTS_FORMAT_ID;
     }
 
 public static final int strictXID ()
     {
-	return 131073;
+	return FormatConstants.JTS_STRICT_FORMAT_ID;
     }
 
 public static final int restrictedXID ()
     {
-	return 131074;
+    return FormatConstants.JTS_RESTRICTED_FORMAT_ID;
     }
     
 public static final String arjunaXID ()

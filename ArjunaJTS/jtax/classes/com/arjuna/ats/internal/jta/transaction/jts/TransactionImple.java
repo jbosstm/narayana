@@ -80,6 +80,8 @@ import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import com.arjuna.ats.jta.utils.JTAHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XAModifier;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * An implementation of javax.transaction.Transaction.
@@ -1756,13 +1758,19 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		Xid jtaXid = baseXid();
 
-		// if Xid is from Narayana (format corresponds with Narayana JTS xid we allow Xid to be edited)
+		// if Xid does not belong to Narayana (format corresponding with JTS) not allowing to be edited
 		if (jtaXid != null && jtaXid.getFormatId() != com.arjuna.ats.jts.extensions.Arjuna.XID())
 			return jtaXid;
 
 		try
 		{
-			jtaXid = _theTransaction.get_xid(branch);
+			if (jtaXid != null)
+			{
+				// if Xid exists then we do not want to generate whole Xid from scratch but using unique Uid
+				jtaXid = new XidImple(jtaXid, branch, XAUtils.getEisName(jtaXid));
+			} else {
+				jtaXid = _theTransaction.get_xid(branch);
+			}
 
 			if (theModifier != null)
 			{
