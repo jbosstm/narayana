@@ -31,13 +31,22 @@
 
         <service.http.port>${swarm.http.port}</service.http.port>
 
-        <!-- debugging the coordinator -->
+        <!-- config for the coordinator, for exampe to enable debugging use
+             -Xrunjdwp:transport=dt_socket,address=${coordinator.debug.port},server=y,suspend=y
+             -->
+        <coordinator.debug.port>8787</coordinator.debug.port>
         <coordinator.debug.params></coordinator.debug.params>
 
-        <!-- debugging the deployment -->
+        <!-- config for the test JAX-RS resource, for exampe to enable debugging use
+             -Xrunjdwp:transport=dt_socket,address=${swarm.debug.port},server=y,suspend=y
+             -->
         <swarm.debug.params></swarm.debug.params>
         <swarm.debug.port></swarm.debug.port>
         <swarm.logging.params></swarm.logging.params>
+
+        <!-- to debug of the SpecIT test suite enable failsafe debugging on port 5005 use
+             -Dmaven.failsafe.debug
+             -->
     </properties>
 
     <build>
@@ -181,6 +190,7 @@
                                     <processLogFile>${project.build.directory}/failsafe-reports/lra-coordinator-swarm-startup.log</processLogFile>
                                     <environment>
                                         <swarm.http.port>${lra.http.port}</swarm.http.port>
+                                        <swarm.transactions.node-identifier>2</swarm.transactions.node-identifier>
                                     </environment>
                                     <arguments>
                                         <argument>${java.home}/bin/java</argument>

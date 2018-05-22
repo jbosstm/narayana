@@ -74,6 +74,7 @@ import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
 import static io.narayana.lra.client.NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
+import static io.narayana.lra.participant.api.TimedParticipant.ACTIVITIES_PATH2;
 
 @RunWith(Arquillian.class)
 @RunAsClient
@@ -88,7 +89,8 @@ public class SpecIT {
     private static LRAClient lraClient;
     private static Client msClient, rcClient;
 
-    private WebTarget msTarget, recoveryTarget;
+    private WebTarget msTarget;
+    private WebTarget recoveryTarget;
 
     private static List<LRAInfo> oldLRAs;
 
@@ -204,7 +206,7 @@ public class SpecIT {
 
     @Test
     public void delayCloseLRA () throws WebApplicationException {
-        int[] cnt1 = {completedCount(true), completedCount(false)};
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
@@ -218,7 +220,7 @@ public class SpecIT {
         lraClient.closeLRA(lra);
 
         // check that participant was told to complete
-        int[] cnt2 = {completedCount(true), completedCount(false)};
+        int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         assertEquals("delayCloseLRA: wrong completion count", cnt1[0] + 1, cnt2[0]);
         assertEquals("delayCloseLRA: wrong compensation count", cnt1[1], cnt2[1]);
@@ -228,7 +230,7 @@ public class SpecIT {
         assertEquals("join: wrong LRA count", count, lras.size());
     }
 
-    //@Test
+    @Test
     public void getActiveLRAs() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#getActiveLRAs", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         List<LRAInfo> lras = lraClient.getActiveLRAs();
@@ -284,7 +286,7 @@ public class SpecIT {
 
     @Test
     public void joinLRAViaBody() throws WebApplicationException {
-        Response response = msTarget.path("activities").path("work").request().put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().put(Entity.text(""));
 
         String lra = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
@@ -300,7 +302,7 @@ public class SpecIT {
         URL lra = lraClient.startLRA("SpecTest#nestedActivity", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
         Response response = msTarget
-                .path("activities").path("nestedActivity")
+                .path(ACTIVITIES_PATH).path("nestedActivity")
                 .request()
                 .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
                 .put(Entity.text(""));
@@ -341,11 +343,11 @@ public class SpecIT {
 
     @Test
     public void joinLRAViaHeader () throws WebApplicationException {
-        int cnt1 = completedCount(true);
+        int cnt1 = completedCount(ACTIVITIES_PATH, true);
 
         URL lra = lraClient.startLRA("SpecTest#joinLRAViaBody", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path("activities").path("work")
+        Response response = msTarget.path(ACTIVITIES_PATH).path("work")
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
@@ -361,7 +363,7 @@ public class SpecIT {
         assertFalse(lras.contains(new LRAInfoImpl(lra)));
 
         // check that participant was told to complete
-        int cnt2 = completedCount(true);
+        int cnt2 = completedCount(ACTIVITIES_PATH, true);
         assertEquals(cnt1 + 1, cnt2);
     }
 
@@ -371,7 +373,7 @@ public class SpecIT {
         int count = lras.size();
         URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path("activities").path("work")
+        Response response = msTarget.path(ACTIVITIES_PATH).path("work")
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
         lraClient.closeLRA(lra);
@@ -383,18 +385,18 @@ public class SpecIT {
 
     @Test
     public void leaveLRA() throws WebApplicationException {
-        int cnt1 = completedCount(true);
+        int cnt1 = completedCount(ACTIVITIES_PATH, true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
-        response = msTarget.path("activities").path("leave").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path("leave").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
@@ -402,26 +404,26 @@ public class SpecIT {
         lraClient.closeLRA(lra);
 
         // check that participant was not told to complete
-        int cnt2 = completedCount(true);
+        int cnt2 = completedCount(ACTIVITIES_PATH, true);
 
         assertEquals(cnt1, cnt2);
     }
 
     @Test
     public void leaveLRAViaAPI() throws WebApplicationException {
-        int cnt1 = completedCount(true);
+        int cnt1 = completedCount(ACTIVITIES_PATH, true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path("activities").path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
         try {
-            response = msTarget.path("activities").path("leave").path(URLEncoder.encode(lra.toString(), "UTF-8"))
+            response = msTarget.path(ACTIVITIES_PATH).path("leave").path(URLEncoder.encode(lra.toString(), "UTF-8"))
                     .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         } catch (UnsupportedEncodingException e) {
             throw new WebApplicationException(
@@ -434,7 +436,7 @@ public class SpecIT {
         lraClient.closeLRA(lra);
 
         // check that participant was not told to complete
-        int cnt2 = completedCount(true);
+        int cnt2 = completedCount(ACTIVITIES_PATH, true);
 
         assertEquals(cnt1, cnt2);
     }
@@ -442,7 +444,7 @@ public class SpecIT {
     @Test
     public void dependentLRA() throws WebApplicationException, MalformedURLException {
         // call a method annotated with NOT_SUPPORTED but one which programatically starts an LRA and returns it via a header
-        Response response = msTarget.path("activities").path("startViaApi").request().put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path("startViaApi").request().put(Entity.text(""));
         // check that the method started an LRA
         Object lraHeader = response.getHeaders().getFirst(NarayanaLRAClient.LRA_HTTP_HEADER);
 
@@ -468,29 +470,78 @@ public class SpecIT {
     }
 
     @Test
-    public void timeLimit() {
-        int[] cnt1 = {completedCount(true), completedCount(false)};
+    public void timeLimitRequiredLRA() {
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
         Response response = null;
 
         try {
-            response = msTarget.path("activities")
-                    .path("timeLimit")
+            response = msTarget.path(ACTIVITIES_PATH)
+                    .path("timeLimitRequiredLRA")
                     .request()
                     .get();
 
             checkStatusAndClose(response, -1, true);
 
             // check that participant was invoked
-            int[] cnt2 = {completedCount(true), completedCount(false)};
+            int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
             /*
-             * The call to activities/timeLimit should have started an LRA whch should have timed out
+             * The call to activities/timeLimitRequiredLRA should have started an LRA whch should have timed out
              * (because the called resource method sleeps for long than the @TimeLimit annotation specifies).
              * Therefore the it should have compensated:
              */
-            assertEquals("complete was called instead of compensate", cnt1[0], cnt2[0]);
-            assertEquals("compensate should have been called", cnt1[1] + 1, cnt2[1]);
+            assertEquals("timeLimitRequiredLRA: complete was called instead of compensate",
+                    cnt1[0], cnt2[0]);
+            assertEquals("timeLimitRequiredLRA: compensate should have been called",
+                    cnt1[1] + 1, cnt2[1]);
         } finally {
+            if (response != null)
+                response.close();
+        }
+    }
+
+    @Test
+    public void participantTimeLimitSupportsLRA() {
+        // start an LRA with a timeout longer than the participant timeout
+        // the expectation is that when the partipant timeout expires the LRA will be cancelled
+        URL lra = lraClient.startLRA(null, "SpecTest#timeLimitSupportsLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH2, true),
+                completedCount(ACTIVITIES_PATH2, false)};
+        Response response = null;
+
+        try {
+            WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH2).path("timeLimitSupportsLRA");
+            response = resourcePath
+                    .request()
+                    .get();
+
+            checkStatusAndClose(response, -1, true, resourcePath);
+
+            try {
+                // sleep for longer than specified in the @TimeLimit annotation on
+                // the compensation method
+                // {@link io.narayana.lra.participant.api.TimedParticipant#timeLimitSupportsLRA(String)}
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            int[] cnt2 = {completedCount(ACTIVITIES_PATH2, true),
+                    completedCount(ACTIVITIES_PATH2, false)};
+
+            // the timeout on the participant should have canceled the LRA so check that
+            // the compensation ran
+            assertEquals("timeLimitSupportsLRA: complete was called instead of compensate", cnt1[0], cnt2[0]);
+            assertEquals("timeLimitSupportsLRA: compensate should have been called", cnt1[1] + 1, cnt2[1]);
+
+            // now validate that he LRA was cancelled
+            List<LRAInfo> lras = lraClient.getAllLRAs();
+
+            assertEquals("timeLimitSupportsLRA via client: lra still active",
+                    null, getLra(lras, lra.toExternalForm()));
+        } finally {
+
             if (response != null)
                 response.close();
         }
@@ -560,11 +611,11 @@ public class SpecIT {
 
     // @Test
     public void renewTimeLimit() {
-        int[] cnt1 = {completedCount(true), completedCount(false)};
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
         Response response = null;
 
         try {
-            response = msTarget.path("activities")
+            response = msTarget.path(ACTIVITIES_PATH)
                     .path("renewTimeLimit")
                     .request()
                     .get();
@@ -572,7 +623,7 @@ public class SpecIT {
             checkStatusAndClose(response, -1, true);
 
             // check that participant was invoked
-            int[] cnt2 = {completedCount(true), completedCount(false)};
+            int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
             /*
              * The call to activities/timeLimit should have started an LRA whch should not have timed out
@@ -602,12 +653,32 @@ public class SpecIT {
         return null;
     }
 
-    private int completedCount(boolean completed) {
+    private String checkStatusAndClose(Response response, int expected, boolean readEntity, WebTarget webTarget) {
+        try {
+            if (expected != -1 && response.getStatus() != expected) {
+                if (webTarget != null) {
+                    throw new WebApplicationException(webTarget.getUri().toString(), response);
+                }
+
+                throw new WebApplicationException(response);
+            }
+
+            if (readEntity) {
+                return response.readEntity(String.class);
+            }
+        } finally {
+            response.close();
+        }
+
+        return null;
+    }
+
+    private int completedCount(String basePath, boolean completed) {
         Response response = null;
         String path = completed ? "completedactivitycount" : "compensatedactivitycount";
 
         try {
-            response = msTarget.path("activities").path(path).request().get();
+            response = msTarget.path(basePath).path(path).request().get();
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -621,7 +692,7 @@ public class SpecIT {
 
     private void multiLevelNestedActivity(CompletionType how, int nestedCnt) throws WebApplicationException {
 
-        int[] cnt1 = {completedCount(true), completedCount(false)};
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         if (how == CompletionType.mixed && nestedCnt <= 1)
             how = CompletionType.complete;
@@ -630,7 +701,7 @@ public class SpecIT {
         String lraId = lra.toString();
 
         Response response = msTarget
-                .path("activities").path("multiLevelNestedActivity")
+                .path(ACTIVITIES_PATH).path("multiLevelNestedActivity")
                 .queryParam("nestedCnt", nestedCnt)
                 .request()
                 .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
@@ -659,7 +730,7 @@ public class SpecIT {
         // and the mandatory lra seen by the multiLevelNestedActivity method
         assertTrue(lras.contains(new LRAInfoImpl(lraArray[0])));
 
-        int[] cnt2 = {completedCount(true), completedCount(false)};
+        int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         // check that both nested activities were told to complete
         assertEquals(cnt1[0] + nestedCnt, cnt2[0]);
@@ -695,7 +766,7 @@ public class SpecIT {
 
         IntStream.rangeClosed(0, nestedCnt).forEach(i -> assertFalse(lras2.contains(new LRAInfoImpl(lraArray[i]))));
 
-        int[] cnt3 = {completedCount(true), completedCount(false)};
+        int[] cnt3 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         if (how == CompletionType.complete) {
             // make sure that all nested activities were not told to complete or cancel a second time
@@ -734,13 +805,22 @@ public class SpecIT {
         waitForRecovery();
     }
 
+    private static LRAInfo getLra(List<LRAInfo> lras, String lraId) {
+        for (LRAInfo lraInfo : lras) {
+            if (lraInfo.getLraId().equals(lraId))
+                return lraInfo;
+        }
+
+        return null;
+    }
+
     private void cancelCheck(String path) {
-        int[] cnt1 = {completedCount(true), completedCount(false)};
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
         URL lra = lraClient.startLRA("SpecTest#" + path, LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         Response response = null;
 
         try {
-            response = msTarget.path("activities")
+            response = msTarget.path(ACTIVITIES_PATH)
                     .path(path)
                     .request()
                     .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
@@ -749,7 +829,7 @@ public class SpecIT {
             checkStatusAndClose(response, Response.Status.BAD_REQUEST.getStatusCode(), true);
 
             // check that participant was invoked
-            int[] cnt2 = {completedCount(true), completedCount(false)};
+            int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
             // check that complete was not called and that compensate was
             assertEquals("complete was called instead of compensate", cnt1[0], cnt2[0]);

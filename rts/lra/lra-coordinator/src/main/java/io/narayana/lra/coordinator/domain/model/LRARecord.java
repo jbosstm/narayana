@@ -65,6 +65,7 @@ import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HE
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
 
+    private Transaction lra;
     private URL lraId;
     private URL recoveryURL;
     private String participantPath;
@@ -193,6 +194,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     @Override
     public int topLevelPrepare() {
         return TwoPhaseOutcome.PREPARE_OK;
+    }
+
+    private void topLevelAbortFromTimer() {
+        if (lra != null) {
+            lra.timedOut(this);
+        } else {
+            doEnd(true);
+        }
     }
 
     @Override
@@ -785,8 +794,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return 0;
     }
 
-    boolean setTimeLimit(ScheduledExecutorService scheduler, long timeLimit) {
-        return scheduleCancelation(this::topLevelAbort, scheduler, timeLimit);
+    boolean setTimeLimit(ScheduledExecutorService scheduler, long timeLimit, Transaction lra) {
+        this.lra = lra;
+
+        return scheduleCancelation(this::topLevelAbortFromTimer, scheduler, timeLimit);
     }
 
     private boolean scheduleCancelation(Runnable runnable, ScheduledExecutorService scheduler, Long timeLimit) {
