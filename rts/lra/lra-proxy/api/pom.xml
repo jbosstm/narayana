@@ -63,7 +63,7 @@
 	    </dependency>
         <!-- LRA API -->
         <dependency>
-            <groupId>org.eclipse.microprofile.lra</groupId>
+            <groupId>io.narayana.microprofile.lra</groupId>
             <artifactId>microprofile-lra-api</artifactId>
             <version>${version.microprofile.lra}</version>
         </dependency>
