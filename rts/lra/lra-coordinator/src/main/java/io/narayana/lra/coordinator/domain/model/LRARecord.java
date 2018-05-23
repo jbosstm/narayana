@@ -64,6 +64,7 @@ import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HE
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
+    private static long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
 
     private Transaction lra;
     private URL lraId;
@@ -248,6 +249,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             scheduledAbort = null;
         }
 
+        if (CompensatorStatus.Compensating.equals(status))
+            compensate = true;
+
         if (compensate) {
             if (isCompensated())
                 return TwoPhaseOutcome.FINISH_OK; // the participant has already compensated
@@ -299,7 +303,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                             .async()
                             .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
                     // the catch block below catches any Timeout exception
-                    response = asyncResponse.get(1, TimeUnit.SECONDS);
+                    response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
                 } else {
                     response = target.request()
                             .header(LRA_HTTP_HEADER, lraId.toExternalForm())
@@ -434,6 +438,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             try {
                 WebTarget target = client.target(statusURI.toURI());
+                Current.push(lraId);
 
                 // since this method is called from the recovery thread do not block
                 Future<Response> asyncResponse = target.request()
@@ -443,11 +448,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .get();
 
                 // if the attempt times out the catch block below will return a heuristic
-                Response response = asyncResponse.get(1, TimeUnit.SECONDS);
+                Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
-                if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
-                    // the participant never got the completion request so resend it
-                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
+                    // the participant never got the end request resend it
+                    return -1;
                 }
 
                 if (response.getStatus() == Response.Status.OK.getStatusCode() &&
@@ -477,6 +482,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                             if (forgetURI != null) {
                                 try {
+                                    Current.push(lraId);
                                     // let the participant know he can clean up
                                     WebTarget target2 = client.target(forgetURI.toURI());
                                     Response response2 = target2.request()
@@ -494,6 +500,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                                     // TODO write a test to ensure that recovery only retries the forget request
                                     return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
+                                } finally {
+                                    Current.pop();
                                 }
 
                             } else {
@@ -508,7 +516,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                             return TwoPhaseOutcome.FINISH_OK;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("LRARecord.doEnd status URI %s is invalid (%s)",
                             statusURI, e.getMessage());
@@ -516,6 +524,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
             } finally {
+                Current.pop();
                 client.close();
             }
         }
@@ -579,57 +588,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         // fall back to using JAX-RS
-
-        return -1;
-    }
-
-    private int xtryLocalEndInvocation(URL endPath) {
-        if (lraService != null) {
-            String[] segments = endPath.getPath().split("/");
-            int pCnt = segments.length;
-
-            if (pCnt > 1) {
-                String cId;
-
-                try {
-                    cId = URLDecoder.decode(segments[pCnt - 2], "UTF-8");
-                } catch (UnsupportedEncodingException ignore) {
-                    return -1;
-                }
-
-                if (lraService.hasTransaction(cId)) {
-                    try {
-                        // this is a call from a parent LRA to end the nested LRA:
-                        boolean isCompensate = "compensate".equals(segments[pCnt - 1]);
-                        boolean isComplete = "complete".equals(segments[pCnt - 1]);
-                        int httpStatus;
-
-                        if (!isCompensate && !isComplete) {
-                            if (LRALogger.logger.isInfoEnabled()) {
-                                LRALogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
-                                                "(should be compensate or complete)",
-                                        endPath.toExternalForm());
-                            }
-
-                            httpStatus = Response.Status.BAD_REQUEST.getStatusCode();
-                        } else {
-                            LRAStatus inVMStatus = lraService.endLRA(new URL(cId), isCompensate, true);
-
-                            httpStatus = inVMStatus.getHttpStatus();
-
-                            try {
-                                responseData = inVMStatus.getEncodedResponseData();
-                            } catch (IOException ignore) {
-                            }
-                        }
-
-                        return httpStatus;
-                    } catch (MalformedURLException e) {
-                        // fall back to using JAX-RS
-                    }
-                }
-            }
-        }
 
         return -1;
     }

@@ -86,17 +86,17 @@ public class TimedParticipant {
     public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         Activity activity = activityService.getActivity(lraId);
 
-        if (activity.status == null)
+        if (activity.getStatus() == null)
             throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
 
         if (activity.getAndDecrementAcceptCount() <= 0) {
-            if (activity.status == CompensatorStatus.Completing)
-                activity.status = CompensatorStatus.Completed;
-            else if (activity.status == CompensatorStatus.Compensating)
-                activity.status = CompensatorStatus.Compensated;
+            if (activity.getStatus() == CompensatorStatus.Completing)
+                activity.setStatus(CompensatorStatus.Completed);
+            else if (activity.getStatus() == CompensatorStatus.Compensating)
+                activity.setStatus(CompensatorStatus.Compensated);
         }
 
-        return Response.ok(activity.status.name()).build();
+        return Response.ok(activity.getStatus().name()).build();
     }
 
     @PUT
@@ -114,19 +114,19 @@ public class TimedParticipant {
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
-            activity.status = CompensatorStatus.Completing;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH2, lraId);
+            activity.setStatus(CompensatorStatus.Completing);
+            activity.setStatusUrl(String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH2, lraId));
 
-            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+            return Response.accepted().location(URI.create(activity.getStatusUrl())).build();
         }
 
-        activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
+        activity.setStatus(CompensatorStatus.Completed);
+        activity.setStatusUrl(String.format("%s/%s/activity/completed", context.getBaseUri(), lraId));
 
         endCheck(activity);
 
         System.out.printf("ActivityController completing %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @PUT
@@ -144,19 +144,19 @@ public class TimedParticipant {
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
-            activity.status = CompensatorStatus.Compensating;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH2, lraId);
+            activity.setStatus(CompensatorStatus.Compensating);
+            activity.setStatusUrl(String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH2, lraId));
 
-            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+            return Response.accepted().location(URI.create(activity.getStatusUrl())).build();
         }
 
-        activity.status = CompensatorStatus.Compensated;
-        activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId);
+        activity.setStatus(CompensatorStatus.Compensated);
+        activity.setStatusUrl(String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId));
 
         endCheck(activity);
 
         System.out.printf("ActivityController compensating %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @DELETE
@@ -171,11 +171,11 @@ public class TimedParticipant {
         Activity activity = activityService.getActivity(lraId);
 
         activityService.remove(activity.id);
-        activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
+        activity.setStatus(CompensatorStatus.Completed);
+        activity.setStatusUrl(String.format("%s/%s/activity/completed", context.getBaseUri(), lraId));
 
         System.out.printf("ActivityController forgetting %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @PUT
@@ -245,8 +245,8 @@ public class TimedParticipant {
         } catch (NotFoundException e) {
             Activity activity = new Activity(lraId);
 
-            activity.rcvUrl = rcvId;
-            activity.status = null;
+            activity.setRcvUrl(rcvId);
+            activity.setStatus(null);
 
             activityService.add(activity);
 

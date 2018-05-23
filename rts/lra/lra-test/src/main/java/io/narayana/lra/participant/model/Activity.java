@@ -29,11 +29,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Activity implements Serializable {
     private static final long serialVersionUID = -4141599248046299770L;
     public String id;
-    public String rcvUrl;
-    public String statusUrl;
-    public CompensatorStatus status;
-    public boolean registered;
-    public String registrationStatus;
+    private String rcvUrl;
+    private String statusUrl;
+    private CompensatorStatus status;
+    private boolean registered;
+    private String registrationStatus;
     private String userData;
     private String endData;
     private String how;
@@ -61,17 +61,57 @@ public class Activity implements Serializable {
         return endData;
     }
 
+    public String getRcvUrl() {
+        return rcvUrl;
+    }
+
+    public void setRcvUrl(String rcvUrl) {
+        this.rcvUrl = rcvUrl;
+    }
+
+    public String getStatusUrl() {
+        return statusUrl;
+    }
+
+    public void setStatusUrl(String statusUrl) {
+        this.statusUrl = statusUrl;
+    }
+
+    public CompensatorStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CompensatorStatus status) {
+        this.status = status;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
+    }
+
+    public String getRegistrationStatus() {
+        return registrationStatus;
+    }
+
+    public void setRegistrationStatus(String registrationStatus) {
+        this.registrationStatus = registrationStatus;
+    }
+
     @Override
     public String toString() {
         return "Activity{" +
                 "id='" + id + '\'' +
-                ", rcvUrl='" + rcvUrl + '\'' +
-                ", statusUrl='" + statusUrl + '\'' +
-                ", status=" + status +
-                ", registered=" + registered +
-                ", registrationStatus='" + registrationStatus + '\'' +
-                ", userData='" + userData + '\'' +
-                ", endData='" + endData + '\'' +
+                ", rcvUrl='" + getRcvUrl() + '\'' +
+                ", statusUrl='" + getStatusUrl() + '\'' +
+                ", status=" + getStatus() +
+                ", registered=" + isRegistered() +
+                ", registrationStatus='" + getRegistrationStatus() + '\'' +
+                ", userData='" + getUserData() + '\'' +
+                ", endData='" + getEndData() + '\'' +
                 '}';
     }
 
