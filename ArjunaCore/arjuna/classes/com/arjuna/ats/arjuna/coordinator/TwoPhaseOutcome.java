@@ -71,6 +71,8 @@ public class TwoPhaseOutcome
     public static final int ONE_PHASE_ERROR = 10;  // WARNING this has different meanings depending upon nested or top-level usage.
     public static final int INVALID_TRANSACTION = 11;  // invalid!
     public static final int PREPARE_ONE_PHASE_COMMITTED = 12;  // dynamic one-phase commit optimisation during prepare
+    public static final int NO_PRE_PREPARED = 13;  // there was processed no action at before prepare of the AbstractRecord
+                                                   // this signalizes pre-prepare 1PC optimization can be taken
 
     public TwoPhaseOutcome (int outcome)
     {
