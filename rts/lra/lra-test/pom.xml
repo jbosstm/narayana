@@ -194,6 +194,7 @@
                                     </environment>
                                     <arguments>
                                         <argument>${java.home}/bin/java</argument>
+                                        <argument>-Djava.net.preferIPv4Stack=true</argument>
                                         <argument>${coordinator.debug.params}</argument>
                                         <argument>-jar</argument>
                                         <argument>../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
