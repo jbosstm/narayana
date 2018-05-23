@@ -60,8 +60,6 @@ function init_test_options {
     is_ibm
     ISIBM=$?
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.8.3.Final-SNAPSHOT"
-    [ $MICROPROFILE_LRA_VERSION ] || MICROPROFILE_LRA_VERSION="1.0-SNAPSHOT"
-    [ $MICROPROFILE_LRA_BRANCH ] || MICROPROFILE_LRA_BRANCH="microprofile-lra-v2"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
@@ -273,22 +271,6 @@ function kill_qa_suite_processes
   done
 }
 
-# ensure the microprofile-lra artifact is in the local maven repository
-function build_microprofile_lra {
-    if [ -d microprofile-lra ]; then
-      rm -rf microprofile-lra
-    fi
-
-    git clone https://github.com/jbosstm/microprofile-lra
-    [ $? = 0 ] || fatal "git clone https://github.com/jbosstm/microprofile-lra failed"
-    cd microprofile-lra/
-    git checkout $MICROPROFILE_LRA_BRANCH
-    [ $? = 0 ] || fatal "git checkout $MICROPROFILE_LRA_BRANCH failed"
-    cd ..
-    ./build.sh -f microprofile-lra/pom.xml -B clean install
-    [ $? = 0 ] || fatal "Build of microprofile-lra failed"
-}
-
 function build_narayana {
   echo "Checking if need SPI PR"
   if [ -n "$SPI_BRANCH" ]; then
@@ -308,9 +290,6 @@ function build_narayana {
     [ $? = 0 ] || fatal "Build of SPI failed"
   fi
   
-  cd $WORKSPACE
-  build_microprofile_lra
-
   echo "Building Narayana"
   cd $WORKSPACE
 
