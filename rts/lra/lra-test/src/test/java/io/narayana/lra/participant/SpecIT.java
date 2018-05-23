@@ -52,6 +52,7 @@ import javax.ws.rs.core.Response;
 
 import io.narayana.lra.client.LRAInfoImpl;
 import io.narayana.lra.participant.api.ActivityController;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.LRAClient;
 import org.eclipse.microprofile.lra.client.LRAInfo;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -224,6 +225,45 @@ public class SpecIT {
 
         assertEquals("delayCloseLRA: wrong completion count", cnt1[0] + 1, cnt2[0]);
         assertEquals("delayCloseLRA: wrong compensation count", cnt1[1], cnt2[1]);
+
+        lras = lraClient.getActiveLRAs();
+        System.out.printf("join ok %d versus %d lras%n", count, lras.size());
+        assertEquals("join: wrong LRA count", count, lras.size());
+    }
+
+    @Test
+    public void connectionHangup () throws WebApplicationException {
+        int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
+
+        List<LRAInfo> lras = lraClient.getActiveLRAs();
+        int count = lras.size();
+        URL lra = lraClient.startLRA(null, "SpecTest#connectionHangup", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
+                .queryParam("how", "exception")
+                .queryParam("arg", "javax.ws.rs.ProcessingException");
+        Response response = resourcePath
+                .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
+
+        String status = lraClient.cancelLRA(lra);
+
+        assertEquals("connectionHangup: canceled LRA should be compensating but is " + status,
+                CompensatorStatus.Compensating.name(), status);
+
+        // check that participant was told to compensate
+        int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
+
+        assertEquals("connectionHangup: wrong completion count", cnt1[0], cnt2[0]);
+        assertEquals("connectionHangup: wrong compensation count", cnt1[1] + 1, cnt2[1]);
+
+        // the coordinator should have received an exception so run recovery to force it to retry
+        waitForRecovery();
+
+        int[] cnt3 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
+
+        // there should have been a second compensate call (from the recovery coordinator)
+        assertEquals("connectionHangup: wrong completion count after recovery", cnt1[0], cnt3[0]);
+        assertEquals("connectionHangup: wrong compensation count after recovery", cnt1[1] + 2, cnt3[1]);
 
         lras = lraClient.getActiveLRAs();
         System.out.printf("join ok %d versus %d lras%n", count, lras.size());

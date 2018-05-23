@@ -54,6 +54,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
@@ -96,27 +97,28 @@ public class ActivityController {
     private ActivityService activityService;
 
     /**
-     Performing a GET on the participant URL will return the current status of the participant {@link CompensatorStatus}, or 404 if the participant is no longer present.
+     * Performing a GET on the participant URL will return the current status of the participant
+     * {@link CompensatorStatus}, or 404 if the participant is no longer present.
      */
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
     @Status
-    @LRA(LRA.Type.NOT_SUPPORTED)
+    @LRA(LRA.Type.SUPPORTS) // remark: the status and forget methods should not start new LRAs
     public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         Activity activity = activityService.getActivity(lraId);
 
-        if (activity.status == null)
+        if (activity.getStatus() == null)
             throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
 
         if (activity.getAndDecrementAcceptCount() <= 0) {
-            if (activity.status == CompensatorStatus.Completing)
-                activity.status = CompensatorStatus.Completed;
-            else if (activity.status == CompensatorStatus.Compensating)
-                activity.status = CompensatorStatus.Compensated;
+            if (activity.getStatus() == CompensatorStatus.Completing)
+                activity.setStatus(CompensatorStatus.Completed);
+            else if (activity.getStatus() == CompensatorStatus.Compensating)
+                activity.setStatus(CompensatorStatus.Compensated);
         }
 
-        return Response.ok(activity.status.name()).build();
+        return Response.ok(activity.getStatus().name()).build();
     }
 
     /**
@@ -171,22 +173,22 @@ public class ActivityController {
 
         Activity activity = activityService.getActivity(lraId);
 
+        endCheck(activity); // call the end check before updating the end status
+
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
-            activity.status = CompensatorStatus.Completing;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId);
+            activity.setStatus(CompensatorStatus.Completing);
+            activity.setStatusUrl(String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId));
 
-            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+            return Response.accepted().location(URI.create(activity.getStatusUrl())).build();
         }
 
-        activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
-
-        endCheck(activity);
+        activity.setStatus(CompensatorStatus.Completed);
+        activity.setStatusUrl(String.format("%s/%s/activity/completed", context.getBaseUri(), lraId));
 
         System.out.printf("ActivityController completing %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @PUT
@@ -200,28 +202,29 @@ public class ActivityController {
 
         Activity activity = activityService.getActivity(lraId);
 
+        endCheck(activity); // call the end check before updating the end status
+
         activity.setEndData(userData);
 
         if (activity.getAndDecrementAcceptCount() > 0) {
-            activity.status = CompensatorStatus.Compensating;
-            activity.statusUrl = String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId);
+            activity.setStatus(CompensatorStatus.Compensating);
+            activity.setStatusUrl(String.format("%s/%s/%s/status", context.getBaseUri(), ACTIVITIES_PATH, lraId));
 
-            return Response.accepted().location(URI.create(activity.statusUrl)).build();
+            return Response.accepted().location(URI.create(activity.getStatusUrl())).build();
         }
 
-        activity.status = CompensatorStatus.Compensated;
-        activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId);
-
-        endCheck(activity);
+        activity.setStatus(CompensatorStatus.Compensated);
+        activity.setStatusUrl(String.format("%s/%s/activity/compensated", context.getBaseUri(), lraId));
 
         System.out.printf("ActivityController compensating %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @DELETE
     @Path("/forget")
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
+    @LRA(LRA.Type.SUPPORTS) // remark: the status and forget methods should not start new LRAs
     public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) {//throws NotFoundException {
         completedCount.incrementAndGet();
 
@@ -229,12 +232,14 @@ public class ActivityController {
 
         Activity activity = activityService.getActivity(lraId);
 
+        endCheck(activity); // call the end check before updating the end status
+
         activityService.remove(activity.id);
-        activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), lraId);
+        activity.setStatus(CompensatorStatus.Completed);
+        activity.setStatusUrl(String.format("%s/%s/activity/completed", context.getBaseUri(), lraId));
 
         System.out.printf("ActivityController forgetting %s%n", lraId);
-        return Response.ok(activity.statusUrl).build();
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @PUT
@@ -302,9 +307,6 @@ public class ActivityController {
         activity.setHow(how);
         activity.setArg(arg);
 
-        if (activity == null)
-            return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
-
         return Response.ok(lraId).build();
     }
 
@@ -368,26 +370,6 @@ public class ActivityController {
         IntStream.range(1, lras.length).forEach(i -> lras[i] = restPutInvocation(lraURL,"nestedActivity", ""));
 
         return Response.ok(String.join(",", lras)).build();
-    }
-
-    private Activity addWork(String lraId, String rcvId) {
-        assert lraId != null;
-//        String txId = NarayanaLRAClient.getLRAId(lraId);
-
-        System.out.printf("ActivityController: work id %s and rcvId %s %n", lraId, rcvId);
-
-        try {
-            return activityService.getActivity(lraId);
-        } catch (NotFoundException e) {
-            Activity activity = new Activity(lraId);
-
-            activity.rcvUrl = rcvId;
-            activity.status = null;
-
-            activityService.add(activity);
-
-            return activity;
-        }
     }
 
     @GET
@@ -489,12 +471,12 @@ public class ActivityController {
     public Response compensate(@PathParam("TxId")String txId) throws NotFoundException {
         Activity activity = activityService.getActivity(txId);
 
-        activity.status = CompensatorStatus.Compensated;
-        activity.statusUrl = String.format("%s/%s/activity/compensated", context.getBaseUri(), txId);
-
         endCheck(activity);
 
-        return Response.ok(activity.statusUrl).build();
+        activity.setStatus(CompensatorStatus.Compensated);
+        activity.setStatusUrl(String.format("%s/%s/activity/compensated", context.getBaseUri(), txId));
+
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     /**
@@ -511,18 +493,20 @@ public class ActivityController {
     public Response complete(@PathParam("TxId")String txId) throws NotFoundException {
         Activity activity = activityService.getActivity(txId);
 
-        activity.status = CompensatorStatus.Completed;
-        activity.statusUrl = String.format("%s/%s/activity/completed", context.getBaseUri(), txId);
-
         endCheck(activity);
 
-        return Response.ok(activity.statusUrl).build();
+        activity.setStatus(CompensatorStatus.Completed);
+        activity.setStatusUrl(String.format("%s/%s/activity/completed", context.getBaseUri(), txId));
+
+        return Response.ok(activity.getStatusUrl()).build();
     }
 
     @PUT
     @Path("/{TxId}/forget")
     public void forget(@PathParam("TxId")String txId) throws NotFoundException {
         Activity activity = activityService.getActivity(txId);
+
+        endCheck(activity);
 
         activityService.remove(activity.id);
     }
@@ -539,6 +523,25 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     public String compensatedStatus(@PathParam("TxId")String txId) {
         return CompensatorStatus.Compensated.name();
+    }
+
+    private Activity addWork(String lraId, String rcvId) {
+        assert lraId != null;
+
+        System.out.printf("ActivityController: work id %s and rcvId %s %n", lraId, rcvId);
+
+        try {
+            return activityService.getActivity(lraId);
+        } catch (NotFoundException e) {
+            Activity activity = new Activity(lraId);
+
+            activity.setRcvUrl(rcvId);
+            activity.setStatus(null);
+
+            activityService.add(activity);
+
+            return activity;
+        }
     }
 
     private void checkStatusAndClose(Response response, int expected) {
@@ -559,6 +562,18 @@ public class ActivityController {
 
         if ("wait".equals(how) && arg != null && "recovery".equals(arg)) {
             lraClient.getRecoveringLRAs();
+        } else if ("exception".equals(how)) {
+            Exception cause = null;
+
+            if (arg != null) {
+                try {
+                    cause = (Exception) Class.forName(arg).newInstance();
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ignore) {
+                }
+            }
+
+            // throwing an exception during end should cause the status method to be consulted
+            throw new ProcessingException("*** SIMULATING CONNECTION CLOSED ...", cause);
         }
     }
 

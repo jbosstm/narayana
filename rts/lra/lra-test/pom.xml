@@ -35,17 +35,19 @@
              -Xrunjdwp:transport=dt_socket,address=${coordinator.debug.port},server=y,suspend=y
              -->
         <coordinator.debug.port>8787</coordinator.debug.port>
+        <coordinator.debug.jdwp>-Xrunjdwp:transport=dt_socket,address=${coordinator.debug.port},server=y,suspend=y</coordinator.debug.jdwp>
         <coordinator.debug.params></coordinator.debug.params>
 
         <!-- config for the test JAX-RS resource, for exampe to enable debugging use
              -Xrunjdwp:transport=dt_socket,address=${swarm.debug.port},server=y,suspend=y
              -->
+        <swarm.debug.port>5006</swarm.debug.port>
+        <swarm.debug.jdwp>-Xrunjdwp:transport=dt_socket,address=${swarm.debug.port},server=y,suspend=y</swarm.debug.jdwp>
         <swarm.debug.params></swarm.debug.params>
-        <swarm.debug.port></swarm.debug.port>
         <swarm.logging.params></swarm.logging.params>
 
         <!-- to debug of the SpecIT test suite enable failsafe debugging on port 5005 use
-             -Dmaven.failsafe.debug
+             -Dmaven.failsafe.debug -Dit.test=io.narayana.lra.participant.SpecIT#<test method>
              -->
     </properties>
 
