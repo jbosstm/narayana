@@ -67,6 +67,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -620,6 +621,7 @@ public class SpecIT {
     }
 
     @Test
+    @Ignore // JBTM-3028
     public void acceptTest() throws WebApplicationException {
         joinAndEnd(true, true, ACTIVITIES_PATH, ActivityController.ACCEPT_WORK);
     }
@@ -649,7 +651,8 @@ public class SpecIT {
         assertEquals(countBefore, countAfter);
     }
 
-    // @Test
+    @Test
+    @Ignore
     public void renewTimeLimit() {
         int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
         Response response = null;
