@@ -46,6 +46,8 @@
         <swarm.debug.params></swarm.debug.params>
         <swarm.logging.params></swarm.logging.params>
 
+        <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
+
         <!-- to debug of the SpecIT test suite enable failsafe debugging on port 5005 use
              -Dmaven.failsafe.debug -Dit.test=io.narayana.lra.participant.SpecIT#<test method>
              -->
@@ -180,7 +182,7 @@
                         <executions>
                             <execution>
                                 <id>start-swarm-lra-coordinator</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>${lra.coordinator.exec.plugin.phase}</phase>
                                 <goals>
                                     <goal>start</goal>
                                 </goals>
@@ -215,5 +217,30 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- way how to skip starting swarm coordinator for builds where tests are skipped -->
+        <profile>
+            <id>are.tests.skipped.skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
+            </properties>
+        </profile>
+        <profile>
+            <id>are.tests.skipped.maven.test.skip</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                </property>
+            </activation>
+            <properties>
+                <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
+            </properties>
+        </profile>
+
     </profiles>
 </project>
