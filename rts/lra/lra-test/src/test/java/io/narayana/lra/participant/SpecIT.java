@@ -258,7 +258,7 @@ public class SpecIT {
         assertEquals("connectionHangup: wrong compensation count", cnt1[1] + 1, cnt2[1]);
 
         // the coordinator should have received an exception so run recovery to force it to retry
-        waitForRecovery();
+        assertTrue("Still waiting for recovery after 3 attempts", waitForRecovery(3, lra));
 
         int[] cnt3 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
@@ -621,7 +621,6 @@ public class SpecIT {
     }
 
     @Test
-    @Ignore // JBTM-3028
     public void acceptTest() throws WebApplicationException {
         joinAndEnd(true, true, ACTIVITIES_PATH, ActivityController.ACCEPT_WORK);
     }
@@ -643,7 +642,7 @@ public class SpecIT {
         if (waitForRecovery) {
             // trigger a recovery scan which trigger a replay attempt on any participants
             // that have responded to complete/compensate requests with Response.Status.ACCEPTED
-            waitForRecovery();
+            assertTrue("Still waiting for recovery after 3 attempts", waitForRecovery(3, lra));
         }
 
         int countAfter = lraClient.getActiveLRAs().size();
@@ -845,7 +844,7 @@ public class SpecIT {
         }
 
         // this test leaves something left to recover so run a scan to clear the logs for the next test
-        waitForRecovery();
+        assertTrue("Still waiting for recovery after 3 attempts", waitForRecovery(3, lra));
     }
 
     private static LRAInfo getLra(List<LRAInfo> lras, String lraId) {
@@ -890,11 +889,25 @@ public class SpecIT {
         }
     }
 
-    private void waitForRecovery() {
-        // trigger a recovery scan to force a replay attempt on any pending participants
-        Response response = recoveryTarget.path(RECOVERY_COORDINATOR_PATH_NAME).path("recovery")
-                .request().get();
+    private boolean waitForRecovery(int noOfPasses, URL... lras) {
+        for (int i = 0; i < noOfPasses; i++) {
+            // trigger a recovery scan to force a replay attempt on any pending participants
+            Response response = recoveryTarget.path(RECOVERY_COORDINATOR_PATH_NAME).path("recovery")
+                    .request().get();
 
-        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
+            String recoveringLRAs = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
+            int recoveredCnt = 0;
+
+            for (URL lra : lras) {
+                if (!recoveringLRAs.contains(lra.toExternalForm())) {
+                    recoveredCnt += 1;
+                }
+            }
+
+            if (recoveredCnt == lras.length)
+                return true;
+        }
+
+        return false;
     }
 }
