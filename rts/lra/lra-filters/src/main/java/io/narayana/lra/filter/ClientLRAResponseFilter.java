@@ -35,7 +35,10 @@ public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
         Object incomingLRA = responseContext.getHeaders().getFirst(LRA_HTTP_HEADER);
-//        Object outgoingLRA = requestContext.getHeaders().getFirst(LRA_HTTP_HEADER);
+
+        if (incomingLRA == null) {
+            incomingLRA = requestContext.getProperty(LRA_HTTP_HEADER);
+        }
 
         /*
          * if the incoming response contains a context make it the current one

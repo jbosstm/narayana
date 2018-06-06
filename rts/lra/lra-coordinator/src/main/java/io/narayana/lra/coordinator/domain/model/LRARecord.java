@@ -239,8 +239,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private int tryDoEnd(boolean compensate) {
         URL endPath;
-        boolean isRecovering = status != null &&
-                (status.equals(CompensatorStatus.Compensating) || status.equals(CompensatorStatus.Completing));
 
         // cancel any timer associated with this participant
         if (scheduledAbort != null) {
@@ -271,8 +269,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         // NB trying to compensate when already completed is allowed (for nested LRAs)
 
-        Current.push(lraId); // make sure the lra id is set so that it can be included in the headers
-
         int httpStatus = -1;
 
         if (accepted) {
@@ -293,23 +289,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             WebTarget target = client.target(URI.create(endPath.toExternalForm()));
 
             try {
-                Response response;
-
                 // ask the participant to complete or compensate
-                if (isRecovering) {
-                    Future<Response> asyncResponse = target.request()
-                            .header(LRA_HTTP_HEADER, lraId.toExternalForm())
-                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
-                            .async()
-                            .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
-                    // the catch block below catches any Timeout exception
-                    response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
-                } else {
-                    response = target.request()
-                            .header(LRA_HTTP_HEADER, lraId.toExternalForm())
-                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
-                            .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
-                }
+                Future<Response> asyncResponse = target.request()
+                        .header(LRA_HTTP_HEADER, lraId.toExternalForm())
+                        .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                        .property(LRA_HTTP_HEADER, lraId) // make the context available to the jaxrs filters
+                        .async()
+                        .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
+                // the catch block below catches any Timeout exception
+                Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 httpStatus = response.getStatus();
 
@@ -332,8 +320,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 }
 
                 if (httpStatus == Response.Status.NOT_FOUND.getStatusCode()) {
+                    updateStatus(compensate);
                     return TwoPhaseOutcome.FINISH_OK; // the participant must have finished ok but we lost the response
                 }
+
                 if (response.hasEntity())
                     responseData = response.readEntity(String.class);
             } catch (Exception e) {
@@ -379,13 +369,17 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             return TwoPhaseOutcome.FINISH_ERROR;
         }
 
+        updateStatus(compensate);
+
+        // if the the request is still in progress (ie accepted is true) let recovery finish it
+        return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
+    }
+
+    private void updateStatus(boolean compensate) {
         if (compensate)
             status = accepted ? CompensatorStatus.Compensating : CompensatorStatus.Compensated;
         else
             status = accepted ? CompensatorStatus.Completing : CompensatorStatus.Completed;
-
-        // if the the request is still in progress (ie accepted is true) let recovery finish it
-        return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
     }
 
     private int reportFailure(boolean compensate, String endPath) {
@@ -438,12 +432,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             try {
                 WebTarget target = client.target(statusURI.toURI());
-                Current.push(lraId);
 
                 // since this method is called from the recovery thread do not block
                 Future<Response> asyncResponse = target.request()
                         .header(LRA_HTTP_HEADER, lraId.toExternalForm())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                        .property(LRA_HTTP_HEADER, lraId)  // make the context available to the jaxrs filters
                         .async()
                         .get();
 
@@ -482,15 +476,17 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                             if (forgetURI != null) {
                                 try {
-                                    Current.push(lraId);
                                     // let the participant know he can clean up
                                     WebTarget target2 = client.target(forgetURI.toURI());
-                                    Response response2 = target2.request()
+                                    Future<Response> asyncResponse2 = target2.request()
                                             .header(LRA_HTTP_HEADER, lraId.toExternalForm())
                                             .header(LRA_HTTP_RECOVERY_HEADER, recoveryURL.toExternalForm())
+                                            .property(LRA_HTTP_HEADER, lraId)  // make the context available to the jaxrs filters
+                                            .async()
                                             .delete();
 
-                                    if (response2.getStatus() == Response.Status.OK.getStatusCode())
+                                    if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
+                                            Response.Status.OK.getStatusCode())
                                         return TwoPhaseOutcome.FINISH_OK;
                                 } catch (Exception e) {
                                     if (LRALogger.logger.isInfoEnabled()) {

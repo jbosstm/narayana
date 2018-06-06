@@ -39,7 +39,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 import javax.ws.rs.NotFoundException;
@@ -167,7 +173,7 @@ public class SpecIT {
                     if (!oldLRAs.contains(lra)) {
                         System.out.printf("%s: WARNING: test did not close %s%n", testName.getMethodName(), lra.getLraId());
                         oldLRAs.add(lra);
-                        lraClient.closeLRA(new URL(lra.getLraId()));
+                        tryEndLRA(new URL(lra.getLraId()), false);
                     }
                 } catch (WebApplicationException | MalformedURLException e) {
                     System.out.printf("After Test: exception %s closing %s%n", e.getMessage(), lra.getLraId());
@@ -177,18 +183,47 @@ public class SpecIT {
         Current.popAll();
     }
 
+    private String tryEndLRA(URL lraId, boolean failTest) {
+        return tryEndLRA(false, lraId, 10000, true);
+    }
+
+    private String tryCancelLRA(URL lraId, boolean failTest) {
+        return tryEndLRA(true, lraId, 10000, true);
+    }
+
+    private String tryEndLRA(boolean cancel, URL lraId, long maxMsecWait, boolean failTest) {
+        if (maxMsecWait > 0) {
+            ExecutorService executor = Executors.newCachedThreadPool();
+            Callable<String> task = () -> cancel ? lraClient.cancelLRA(lraId) : lraClient.closeLRA(lraId);
+            Future<String> future = executor.submit(task);
+
+            try {
+                return future.get(maxMsecWait, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                if (failTest)
+                    fail("delayEndLRA received unexpected exception: " + e.getMessage());
+            } finally {
+                future.cancel(true);
+            }
+        } else {
+            return cancel ? lraClient.cancelLRA(lraId) : lraClient.closeLRA(lraId);
+        }
+
+        return null;
+    }
+
     @Test
     public void startLRA() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#startLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
     }
 
     @Test
     public void cancelLRA() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#cancelLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        lraClient.cancelLRA(lra);
+        tryCancelLRA(lra, false);
 
         List<LRAInfo> lras = lraClient.getAllLRAs();
 
@@ -199,7 +234,7 @@ public class SpecIT {
     public void closeLRA() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#closelLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         List<LRAInfo> lras = lraClient.getAllLRAs();
 
@@ -207,29 +242,42 @@ public class SpecIT {
     }
 
     @Test
-    public void delayCloseLRA () throws WebApplicationException {
+    public void closeLRAWaitForRecovery () throws WebApplicationException {
+        delayEndLRA(-1, "wait", "recovery");
+    }
+
+    @Test
+    public void closeLRAWaitIndefinitely () throws WebApplicationException {
+        delayEndLRA(1000,"wait", "-1");
+    }
+
+    private void delayEndLRA(long maxMsecWait, String how, String arg) throws WebApplicationException {
         int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
-        URL lra = lraClient.startLRA(null, "SpecTest#delayCloseLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        URL lra = lraClient.startLRA(null, "SpecTest#delayEndLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
-                .queryParam("how", "wait")
-                .queryParam("arg", "recovery");
+                .queryParam("how", how)
+                .queryParam("arg", arg);
         Response response = resourcePath
                 .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
-        lraClient.closeLRA(lra);
+
+        tryEndLRA(false, lra, maxMsecWait, false);
 
         // check that participant was told to complete
         int[] cnt2 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
-        assertEquals("delayCloseLRA: wrong completion count", cnt1[0] + 1, cnt2[0]);
-        assertEquals("delayCloseLRA: wrong compensation count", cnt1[1], cnt2[1]);
+        assertEquals("delayEndLRA: wrong completion count", cnt1[0] + 1, cnt2[0]);
+        assertEquals("delayEndLRA: wrong compensation count", cnt1[1], cnt2[1]);
+
+        // the delay will cause responsibility for ending the LRA to pass to the recovery system so run a scan:
+        waitForRecovery(1, lra);
 
         lras = lraClient.getActiveLRAs();
-        System.out.printf("join ok %d versus %d lras%n", count, lras.size());
-        assertEquals("join: wrong LRA count", count, lras.size());
+        System.out.printf("delayEndLRA ok %d versus %d lras%n", count, lras.size());
+        assertEquals("delayEndLRA: wrong LRA count", count, lras.size());
     }
 
     @Test
@@ -239,6 +287,7 @@ public class SpecIT {
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         URL lra = lraClient.startLRA(null, "SpecTest#connectionHangup", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        // tell the resource to generate a proccessing exception when asked to finish the LRA (simulates a connection hang)
         WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
                 .queryParam("how", "exception")
                 .queryParam("arg", "javax.ws.rs.ProcessingException");
@@ -246,7 +295,7 @@ public class SpecIT {
                 .request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        String status = lraClient.cancelLRA(lra);
+        String status = tryCancelLRA(lra, false);
 
         assertEquals("connectionHangup: canceled LRA should be compensating but is " + status,
                 CompensatorStatus.Compensating.name(), status);
@@ -278,7 +327,7 @@ public class SpecIT {
 
         assertTrue(lras.contains(new LRAInfoImpl(lra)));
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
     }
 
     @Test
@@ -288,7 +337,7 @@ public class SpecIT {
 
         assertTrue(lras.contains(new LRAInfoImpl(lra)));
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
     }
 
     //@Test
@@ -302,7 +351,7 @@ public class SpecIT {
 
         assertTrue(lraClient.isActiveLRA(lra));
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
     }
 
     // @Test
@@ -310,7 +359,7 @@ public class SpecIT {
     public void isCompensatedLRA() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#isCompensatedLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        lraClient.cancelLRA(lra);
+        tryCancelLRA(lra, false);
 
         assertTrue(lraClient.isCompensatedLRA(lra));
     }
@@ -320,7 +369,7 @@ public class SpecIT {
     public void isCompletedLRA() throws WebApplicationException {
         URL lra = lraClient.startLRA("SpecTest#isCompletedLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         assertTrue(lraClient.isCompletedLRA(lra));
     }
@@ -358,7 +407,7 @@ public class SpecIT {
         List<LRAInfo> lras = lraClient.getActiveLRAs();
 
         // close the LRA
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         // validate that the nested LRA was closed
         lras = lraClient.getActiveLRAs();
@@ -397,7 +446,7 @@ public class SpecIT {
         assertTrue(lras.contains(new LRAInfoImpl(lra)));
 
         // close the LRA
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         // check that LRA coordinator no longer knows about lraId
         lras = lraClient.getActiveLRAs();
@@ -417,7 +466,7 @@ public class SpecIT {
         Response response = msTarget.path(ACTIVITIES_PATH).path("work")
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         lras = lraClient.getActiveLRAs();
         System.out.printf("join ok %d versus %d lras%n", count, lras.size());
@@ -442,7 +491,7 @@ public class SpecIT {
 
         // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         // check that participant was not told to complete
         int cnt2 = completedCount(ACTIVITIES_PATH, true);
@@ -474,7 +523,7 @@ public class SpecIT {
 
         // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
 
-        lraClient.closeLRA(lra);
+        tryEndLRA(lra, false);
 
         // check that participant was not told to complete
         int cnt2 = completedCount(ACTIVITIES_PATH, true);
@@ -497,7 +546,7 @@ public class SpecIT {
 
         assertEquals(id, lraHeader.toString());
 
-        lraClient.closeLRA(new URL(lraHeader.toString()));
+        tryEndLRA(new URL(lraHeader.toString()), false);
     }
 
     @Test
@@ -635,9 +684,9 @@ public class SpecIT {
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         if (close)
-            lraClient.closeLRA(lra);
+            tryEndLRA(lra, false);
         else
-            lraClient.cancelLRA(lra);
+            tryCancelLRA(lra, false);
 
         if (waitForRecovery) {
             // trigger a recovery scan which trigger a replay attempt on any participants
@@ -781,9 +830,9 @@ public class SpecIT {
 
         // close the LRA
         if (how == CompletionType.compensate) {
-            lraClient.cancelLRA(lra);
+            tryCancelLRA(lra, false);
         } else if (how == CompletionType.complete) {
-            lraClient.closeLRA(lra);
+            tryEndLRA(lra, false);
         } else {
             /*
              * The test is calling for a mixed uutcome (a top level LRA L! and nestedCnt nested LRAs (L2, L3, ...)::
@@ -799,8 +848,8 @@ public class SpecIT {
              * - C2 is completed and then compensated
              * - C3, ... are completed
              */
-            lraClient.cancelLRA(urls[1]); // compensate the first nested LRA
-            lraClient.closeLRA(lra); // should not complete any nested LRAs (since they have already completed via the interceptor)
+            tryCancelLRA(urls[1], false); // compensate the first nested LRA
+            tryEndLRA(lra, false); // should not complete any nested LRAs (since they have already completed via the interceptor)
         }
 
         // validate that the top level and nested LRAs are gone

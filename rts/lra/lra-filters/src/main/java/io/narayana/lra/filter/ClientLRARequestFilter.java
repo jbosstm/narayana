@@ -31,6 +31,6 @@ public class ClientLRARequestFilter implements ClientRequestFilter {
     @Override
     public void filter(ClientRequestContext context) throws IOException {
         // NB the following overrides what the caller did with the LRA context header
-        Current.updateLRAContext(context.getHeaders());
+        Current.updateLRAContext(context);
     }
 }

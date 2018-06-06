@@ -560,8 +560,31 @@ public class ActivityController {
         activity.setHow(null);
         activity.setArg(null);
 
-        if ("wait".equals(how) && arg != null && "recovery".equals(arg)) {
-            lraClient.getRecoveringLRAs();
+        if ("wait".equals(how)) {
+            if (arg != null) {
+                if ("recovery".equals(arg)) {
+                    /*
+                     * during end processing we delay the response by triggering a recovery scan
+                     * which tests that the coordinator can handle slow participants and is able
+                     * to tolerate recovery running when there are outstanding participant
+                     * completion calls.
+                     */
+                    lraClient.getRecoveringLRAs(); // run a recovery scan
+                } else {
+                    int ms = 0;
+
+                    try {
+                        ms = Integer.getInteger(arg, 0);
+                    } catch (Exception ignore) {
+                    }
+
+                    try {
+                        Thread.sleep(ms <= 0 ? Long.MAX_VALUE : ms); // delay the end call
+                    } catch (InterruptedException e) {
+                        LRALogger.logger.info("endCheck wait interrupted");
+                    }
+                }
+            }
         } else if ("exception".equals(how)) {
             Exception cause = null;
 
