@@ -118,6 +118,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+        // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
         Method method = resourceInfo.getResourceMethod();
         MultivaluedMap<String, String> headers = containerRequestContext.getHeaders();
         LRA.Type type = null;
@@ -164,8 +165,16 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             return; // not transactional
         }
 
-        if (headers.containsKey(LRA_HTTP_HEADER))
-            incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER)); // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
+        // check the incomming request for an LRA context
+        if (headers.containsKey(LRA_HTTP_HEADER)) {
+            incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER));
+        } else {
+            Object lraContext = containerRequestContext.getProperty(LRA_HTTP_HEADER);
+
+            if (lraContext != null) {
+                incommingLRA = (URL) lraContext;
+            }
+        }
 
         if (endAnnotation && incommingLRA == null)
             return;
@@ -391,7 +400,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             if (suspendedLRA != null)
                 Current.push((URL) suspendedLRA);
 
-            Current.updateLRAContext(responseContext.getHeaders());
+            Current.updateLRAContext(responseContext);
 
             Current.popAll();
         }

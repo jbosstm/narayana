@@ -21,6 +21,8 @@
  */
 package io.narayana.lra.client;
 
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedMap;
 import java.net.URL;
 import java.util.HashMap;
@@ -123,13 +125,45 @@ public class Current {
         }
     }
 
-    public static void updateLRAContext(MultivaluedMap<String, Object> headers) {
+    /**
+     * If there is an LRA context on the calling thread then add it to the provided headers
+     *
+     * @param responseContext the header map to add the KRA context to
+     */
+    public static void updateLRAContext(ContainerResponseContext responseContext) {
         URL lraId = Current.peek();
 
         if (lraId != null)
-            headers.putSingle(LRA_HTTP_HEADER, lraId);
+            responseContext.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
         else
-            headers.remove(LRA_HTTP_HEADER);
+            responseContext.getHeaders().remove(LRA_HTTP_HEADER);
+    }
+
+    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
+        headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
+        push(lraId);
+    }
+
+    /**
+     * If there is an LRA context on the calling thread then make it available as
+     * a header on outgoing JAX-RS invocations
+     *
+     * @param context the context for the JAX-RS request
+     */
+    public static void updateLRAContext(ClientRequestContext context) {
+        URL lraId = Current.peek();
+
+        if (lraId != null) {
+            context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+        } else {
+            Object lraContext = context.getProperty(LRA_HTTP_HEADER);
+
+            if (lraContext != null) {
+                context.getHeaders().putSingle(LRA_HTTP_HEADER, lraContext);
+            } else {
+                context.getHeaders().remove(LRA_HTTP_HEADER);
+            }
+        }
     }
 
     public static void popAll() {
@@ -140,10 +174,4 @@ public class Current {
         headers.remove(LRA_HTTP_HEADER);
         popAll();
     }
-
-    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
-        headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
-        push(lraId);
-    }
-
 }
