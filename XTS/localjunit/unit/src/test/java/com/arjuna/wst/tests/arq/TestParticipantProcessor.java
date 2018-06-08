@@ -32,7 +32,7 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 public class TestParticipantProcessor extends ParticipantProcessor
 {
-    private Map messageIdMap = new HashMap() ;
+    private Map<String,ParticipantDetails> messageIdMap = new HashMap<>() ;
 
     public ParticipantDetails getParticipantDetails(final String messageId, final long timeout)
     {

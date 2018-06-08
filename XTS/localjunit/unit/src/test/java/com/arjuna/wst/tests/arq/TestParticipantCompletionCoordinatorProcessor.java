@@ -34,7 +34,7 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 
 public class TestParticipantCompletionCoordinatorProcessor extends ParticipantCompletionCoordinatorProcessor
 {
-    private Map messageIdMap = new HashMap() ;
+    private Map<String,ParticipantCompletionCoordinatorDetails> messageIdMap = new HashMap<>() ;
 
     public ParticipantCompletionCoordinatorDetails getParticipantCompletionCoordinatorDetails(final String messageId, final long timeout)
     {

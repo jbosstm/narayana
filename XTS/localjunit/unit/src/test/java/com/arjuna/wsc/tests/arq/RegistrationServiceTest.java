@@ -65,7 +65,7 @@ public class RegistrationServiceTest extends BaseWSCTest {
         return RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier);
     }
     
-    public void testKnownCoordinationTypeInternal()
+    public void testKnownProtocolIdentifierInternal()
             throws Exception
     {
         final String messageId = "testKnownCoordinationType" ;
@@ -82,7 +82,7 @@ public class RegistrationServiceTest extends BaseWSCTest {
         }
     }
 
-    public void testUnknownCoordinationTypeInternal()
+    public void testUnknownProtocolIdentifierInternal()
             throws Exception
     {
         final String messageId = "testUnknownCoordinationType" ;
@@ -91,6 +91,7 @@ public class RegistrationServiceTest extends BaseWSCTest {
         try
         {
             sendRegistration(messageId, protocolIdentifier);
+            fail("Expecting exception being thrown as identifier was " + protocolIdentifier);
         }
         catch (final InvalidProtocolException ipe) {}
         catch (final Throwable th)
@@ -100,42 +101,42 @@ public class RegistrationServiceTest extends BaseWSCTest {
     }
     
     @Test
-    public void testKnownCoordinationTypeSync()
+    public void testKnownProtocolIdentifierSync()
             throws Exception
     {
         final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.NO_ASYNC_REQUEST);
-        testKnownCoordinationTypeInternal();
+        testKnownProtocolIdentifierInternal();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
     }
 
     @Test
-    public void testUnknownCoordinationTypeSync()
+    public void testUnknownProtocolIdentifierSync()
             throws Exception
     {
         final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.NO_ASYNC_REQUEST);
-        testUnknownCoordinationTypeInternal();
+        testUnknownProtocolIdentifierInternal();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
     }
     
     @Test
-    public void testKnownCoordinationTypeAsync()
+    public void testKnownProtocolIdentifierAsync()
             throws Exception
     {
         final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.PLAIN_ASYNC_REQUEST);
-        testKnownCoordinationTypeInternal();
+        testKnownProtocolIdentifierInternal();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
     }
 
     @Test
-    public void testUnknownCoordinationTypeAsync()
+    public void testUnknownProtocolIdentifierAsync()
             throws Exception
     {
         final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.PLAIN_ASYNC_REQUEST);
-        testUnknownCoordinationTypeInternal();
+        testUnknownProtocolIdentifierInternal();
         XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
     }
 }

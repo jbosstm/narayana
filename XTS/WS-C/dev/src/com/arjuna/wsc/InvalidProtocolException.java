@@ -36,4 +36,14 @@ public class InvalidProtocolException extends Exception
     {
         super(message);
     }
+
+    public InvalidProtocolException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    public InvalidProtocolException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
 }
