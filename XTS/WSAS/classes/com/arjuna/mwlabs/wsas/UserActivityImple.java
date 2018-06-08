@@ -495,7 +495,7 @@ public class UserActivityImple implements UserActivity
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    wsasLogger.logger.warnv(ex, "Error on resuming activity from hierarchy {0}", tx);
 		    
                     purge();
                 }

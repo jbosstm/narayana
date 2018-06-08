@@ -36,4 +36,14 @@ public class InvalidStateException extends Exception
     {
         super(message);
     }
+
+    public InvalidStateException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public InvalidStateException(Throwable cause)
+    {
+        super(cause);
+    }
 }

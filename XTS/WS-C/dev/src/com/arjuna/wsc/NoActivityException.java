@@ -36,4 +36,14 @@ public class NoActivityException extends Exception
     {
         super(message);
     }
+
+    public NoActivityException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public NoActivityException(Throwable cause)
+    {
+        super(cause);
+    }
 }

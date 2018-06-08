@@ -58,7 +58,8 @@ public class TestNoExceptionBusinessAgreementWithCoordinatorCompletionParticipan
     public void complete () throws WrongStateException, SystemException
     {
     }
-    
+
+    @Deprecated
     public void unknown () throws SystemException
     {
     }
