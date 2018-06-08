@@ -74,6 +74,10 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 }
                 catch (final InvalidCreateParametersException invalidCreateParametersException)
                 {
+                    if (WSCLogger.logger.isTraceEnabled())
+                        WSCLogger.logger.tracev(invalidCreateParametersException, "{0}, type {1} and context {2}",
+                                WSCLogger.i18NLogger.get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1(), coordinationType, contextFactory);
+
 	                SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME);
                     soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode(WSCLogger.i18NLogger.get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1());
@@ -82,9 +86,9 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 catch (final Throwable th)
                 {
                     if (WSCLogger.logger.isTraceEnabled())
-                    {
-                        WSCLogger.logger.tracev("Unexpected exception thrown from create:", th) ;
-                    }
+                        WSCLogger.logger.tracev(th, "Unexpected exception thrown from create coordination context: type {1} and context {2}",
+                            coordinationType, contextFactory);
+
                     SOAPFactory factory = SOAPFactory.newInstance();
                     SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME) ;
                     soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_CANNOT_CREATE_CONTEXT_QNAME).addTextNode(th.getMessage());
@@ -94,9 +98,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
             else
             {
                 if (WSCLogger.logger.isTraceEnabled())
-                {
-                    WSCLogger.logger.tracev("CreateCoordinationContext called for unknown coordination type: {0}", new Object[] {coordinationType}) ;
-                }
+                    WSCLogger.logger.tracev("CreateCoordinationContext called for unknown coordination type: {0} [{1}]",
+                        coordinationType, WSCLogger.i18NLogger.get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1());
 
                 SOAPFactory factory = SOAPFactory.newInstance();
                 SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME) ;
@@ -106,7 +109,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
         }
         catch (SOAPException se)
         {
-            se.printStackTrace(System.err);
+            WSCLogger.i18NLogger.error_failure_to_create_coordination_context(
+                createCoordinationContext == null ? null : createCoordinationContext.getCoordinationType(),se);
             throw new ProtocolException(se);
         }
     }

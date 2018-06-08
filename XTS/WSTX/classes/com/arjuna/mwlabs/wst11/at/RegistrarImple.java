@@ -3,6 +3,7 @@ package com.arjuna.mwlabs.wst11.at;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wsas.logging.wsasI18NLogger;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
@@ -104,7 +105,8 @@ public class RegistrarImple implements Registrar
 		ActivityHierarchy hier = (ActivityHierarchy) tx;
 
 		if (hier == null)
-			throw new NoActivityException();
+			throw new NoActivityException("No activity for protocol "
+		        + protocolIdentifier + " and instance " + instanceIdentifier);
 
 		try
 		{
@@ -112,11 +114,11 @@ public class RegistrarImple implements Registrar
 		}
 		catch (com.arjuna.mw.wsas.exceptions.InvalidActivityException ex)
 		{
-			throw new NoActivityException();
+			throw new NoActivityException(ex);
 		}
 		catch (SystemException ex)
 		{
-			throw new InvalidProtocolException();
+			throw new InvalidProtocolException(ex);
 		}
 
 		// TODO check for AlreadyRegisteredException
@@ -137,7 +139,7 @@ public class RegistrarImple implements Registrar
 			}
 			catch (Exception ex)
 			{
-				throw new InvalidStateException();
+				throw new InvalidStateException("Cannot enlist durable 2PC participant with id " + participantId, ex);
 			}
 		}
 		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC.equals(protocolIdentifier))
@@ -156,7 +158,7 @@ public class RegistrarImple implements Registrar
 			}
 			catch (Exception ex)
 			{
-				throw new InvalidStateException();
+				throw new InvalidStateException("Cannot enlist volatile 2PC participant with id " + participantId, ex);
 			}
 		}
 		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION.equals(protocolIdentifier))
@@ -172,9 +174,7 @@ public class RegistrarImple implements Registrar
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace();
-
-				throw new InvalidStateException(ex.toString());
+				throw new InvalidStateException(ex.toString(), ex);
 			}
 		}
         else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION_RPC.equals(protocolIdentifier))
@@ -190,15 +190,13 @@ public class RegistrarImple implements Registrar
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
-
-                throw new InvalidStateException(ex.toString());
+                throw new InvalidStateException(ex.toString(), ex);
             }
         }
 		else {
             wstxLogger.i18NLogger.warn_mwlabs_wst_at_Registrar11Imple_1(AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier);
 
-            throw new InvalidProtocolException();
+            throw new InvalidProtocolException("Invalid identifier " + protocolIdentifier + " of protocol " + AtomicTransactionConstants.WSAT_PROTOCOL);
         }
 	}
 

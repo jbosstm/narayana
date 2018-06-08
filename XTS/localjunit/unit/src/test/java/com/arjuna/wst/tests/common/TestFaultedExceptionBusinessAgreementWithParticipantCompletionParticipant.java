@@ -57,6 +57,7 @@ public class TestFaultedExceptionBusinessAgreementWithParticipantCompletionParti
     {
     }
 
+    @Deprecated
     public void unknown () throws SystemException
     {
     }
