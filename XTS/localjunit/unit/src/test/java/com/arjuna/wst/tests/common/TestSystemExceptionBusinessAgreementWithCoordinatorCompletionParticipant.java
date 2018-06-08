@@ -64,6 +64,7 @@ public class TestSystemExceptionBusinessAgreementWithCoordinatorCompletionPartic
 	return Status.STATUS_ACTIVE;
     }
 
+    @Deprecated
     public void unknown () throws SystemException
     {
 	throw new SystemException();
