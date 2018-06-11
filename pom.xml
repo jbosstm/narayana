@@ -484,7 +484,7 @@
     <version.org.jboss.arquillian.container.tomcat>1.0.1.Final</version.org.jboss.arquillian.container.tomcat>
     <version.org.apache.tomcat>9.0.7</version.org.apache.tomcat>
     <version.org.jboss.shrinkwrap.resolver>2.2.2</version.org.jboss.shrinkwrap.resolver>
-    <version.org.jboss.jboss-transaction-spi>7.6.0.Final</version.org.jboss.jboss-transaction-spi>
+    <version.org.jboss.jboss-transaction-spi>7.6.1.Final-SNAPSHOT</version.org.jboss.jboss-transaction-spi>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1</version.javax.ws.rs-api>
     <version.org.mockito>1.10.19</version.org.mockito>

@@ -2596,7 +2596,34 @@ public class BasicAction extends StateManager
            */
 
         int overallTwoPhaseOutcome = TwoPhaseOutcome.PREPARE_READONLY;
-        
+
+        // 1PC optimization for first xa resource in list if no work was done at any subsequent resource
+        int overallBeforePrepareOutcome = TwoPhaseOutcome.PREPARE_OK;
+        AbstractRecord nextRecord = pendingList.peekFront();
+        while(nextRecord != null) {
+            AbstractRecord currentRecord = nextRecord;
+            nextRecord = pendingList.peekNext(currentRecord);
+
+            int individualTwoPhaseOutcome = currentRecord.beforeTopLevelPrepare();
+
+            if(individualTwoPhaseOutcome == TwoPhaseOutcome.NO_PRE_PREPARED) {
+                // beforeTopLevelPrepare method is not implemented or it wants to force us to not optimize with 1PC
+                overallBeforePrepareOutcome = TwoPhaseOutcome.NO_PRE_PREPARED;
+            } else if ( individualTwoPhaseOutcome != TwoPhaseOutcome.PREPARE_OK && individualTwoPhaseOutcome != TwoPhaseOutcome.PREPARE_READONLY) {
+                // error on processing -> finishing immediately and returning error upwards
+                return individualTwoPhaseOutcome;
+            }
+            // the before prepare call says the resource has done no work to be committed
+            if(individualTwoPhaseOutcome == TwoPhaseOutcome.PREPARE_READONLY && TxControl.dynamic1PC) {
+                pendingList.remove(currentRecord);
+                insertRecord(readonlyList, currentRecord);
+            }
+        }
+        // there is only one resource which did some work to be committed
+        if(pendingList.size() == 1 && overallBeforePrepareOutcome != TwoPhaseOutcome.NO_PRE_PREPARED) {
+            return overallTwoPhaseOutcome;
+        }
+
         /*
         * March down the pendingList and pass the head of the list to the
         * main work routine until either we run out of elements, or one of

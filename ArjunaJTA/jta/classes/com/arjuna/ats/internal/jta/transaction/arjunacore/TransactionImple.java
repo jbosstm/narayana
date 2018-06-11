@@ -49,6 +49,7 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.jboss.tm.ConnectableResource;
+import org.jboss.tm.XAResourceEndWithResult;
 import org.jboss.tm.XAResourceWrapper;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -68,6 +69,7 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
+import com.arjuna.ats.internal.jta.xa.PrePrepareState;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -1085,8 +1087,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private void doEnd(Xid _tranID, XAResource xar, int xaState, int txInfoState) throws XAException {
 		try {
-			xar.end(_tranID, xaState);
-			setXAResourceState(xar, txInfoState);
+		    PrePrepareState prePrepareStateToSet = PrePrepareState.END_ASSOCIATION_CALLED;
+		    if(xar instanceof XAResourceEndWithResult) {
+		        if(((XAResourceEndWithResult) xar).endWithResult(_tranID, xaState) == XAResource.XA_RDONLY) {
+		            prePrepareStateToSet = PrePrepareState.END_ASSOCIATION_READ_ONLY_RESULT;
+		        }
+		    } else {
+		        xar.end(_tranID, xaState);
+		    }
+		    setPrePrepareState(xar, prePrepareStateToSet);
+		    setXAResourceState(xar, txInfoState);
 		} catch (XAException e1) {
 			switch (e1.errorCode) {
 				case XAException.XA_RBROLLBACK:
@@ -1108,23 +1118,41 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		int state = TxInfo.UNKNOWN;
 
-		if (xaRes != null)
-		{
-			TxInfo info = (TxInfo) _resources.get(xaRes);
+		TxInfo txInfo = getXAResourceTxInfo(xaRes);
 
-			if (info == null)
-			{
-				info = (TxInfo) _duplicateResources.get(xaRes);
-			}
-
-			if (info != null)
-				state = info.getState();
-		}
+		if (txInfo != null)
+		    return txInfo.getState();
 
 		return state;
 	}
 
-	public void setXAResourceState(XAResource xaRes, int state)
+	public PrePrepareState getPrePrepareState(XAResource xaRes)
+	{
+	    TxInfo txInfo = getXAResourceTxInfo(xaRes);
+
+	    if (txInfo != null)
+	        return txInfo.getPrePrepareState();
+
+	    return PrePrepareState.NO_STATE;
+	}
+
+    public void setXAResourceState(XAResource xaRes, int state)
+    {
+        TxInfo txInfo = getXAResourceTxInfo(xaRes);
+
+        if (txInfo != null)
+            txInfo.setState(state);
+    }
+
+	public void setPrePrepareState(XAResource xaRes, PrePrepareState state)
+	{
+	    TxInfo txInfo = getXAResourceTxInfo(xaRes);
+
+	    if (txInfo != null)
+	        txInfo.setPrePrepareState(state);
+	}
+
+	public TxInfo getXAResourceTxInfo(XAResource xaRes)
 	{
 		if (xaRes != null)
 		{
@@ -1135,9 +1163,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 				info = (TxInfo) _duplicateResources.get(xaRes);
 			}
 
-			if (info != null)
-				info.setState(state);
+			return info;
 		}
+
+		return null;
 	}
 
 	public static final TransactionImple getTransaction()

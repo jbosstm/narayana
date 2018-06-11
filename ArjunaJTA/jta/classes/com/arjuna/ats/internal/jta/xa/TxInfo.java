@@ -46,7 +46,8 @@ public class TxInfo
     public static final int FAILED = 3;
     public static final int OPTIMIZED_ROLLBACK = 4;
     public static final int UNKNOWN = 5;
-    
+
+
     public TxInfo (Xid xid)
     {
         this(xid, TxInfo.ASSOCIATED);
@@ -83,8 +84,19 @@ public class TxInfo
 	    _state = TxInfo.UNKNOWN;
     }
 
+    public final PrePrepareState getPrePrepareState ()
+    {
+    return _prePrepareState;
+    }
+
+    public final void setPrePrepareState (PrePrepareState state)
+    {
+    this._prePrepareState = state;
+    }
+
     private Xid    _xid;
     private int    _state;
     private Thread _thread;
+    private PrePrepareState _prePrepareState = PrePrepareState.NO_STATE;
     
 }

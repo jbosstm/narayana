@@ -440,6 +440,28 @@ public abstract class AbstractRecord extends StateManager
 		}
 	}
 
+	/**
+	 * <p>
+	 * This method serves for optimization at the {@link BasicAction#doPrepare(boolean)} method.
+	 * This is optional to be implemented by any child Record class.
+	 * The main purpose is to optimize 1PC handling in way to know if
+	 * prepare call is needed before it's really called.
+	 * If we know the prepare could not be called on all except one resource
+	 * then we do not care of order the prepare call is executed.
+	 * The reason why the prepare is not needed is mostly because
+	 * no work was done and the prepare would return {@link TwoPhaseOutcome#PREPARE_READONLY}
+	 * by all means.
+	 *
+	 * @return integer of state that the call ended. The default value is {@link TwoPhaseOutcome#NO_PRE_PREPARED}
+	 *   which signalizes that there was no try to do any pre preparation work.
+	 *   If the implementation of this method want to announce there was not done any work
+	 *   on the its behalf then {@link TwoPhaseOutcome#PREPARE_READONLY} is expected to be returned.
+	 */
+	public int beforeTopLevelPrepare ()
+	{
+	    return TwoPhaseOutcome.NO_PRE_PREPARED;
+	}
+
 	
 	@SuppressWarnings("unchecked")
         public static AbstractRecord create (int type)

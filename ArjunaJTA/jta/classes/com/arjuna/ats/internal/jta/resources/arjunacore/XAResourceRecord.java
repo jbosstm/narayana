@@ -45,6 +45,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.internal.jta.xa.PrePrepareState;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
@@ -190,85 +191,106 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 		return TwoPhaseOutcome.PREPARE_OK; // do nothing
 	}
 
+	public int beforeTopLevelPrepare() {
+	    return topLevelPrepareErrorHandler(new RunnableWithXAException() {
+	        public int run() throws XAException {
+	            endAssociation(XAResource.TMSUCCESS, TxInfo.NOT_ASSOCIATED);
+	            return _theTransaction.getPrePrepareState(_theXAResource) == PrePrepareState.END_ASSOCIATION_READ_ONLY_RESULT ?
+	                TwoPhaseOutcome.PREPARE_READONLY : TwoPhaseOutcome.PREPARE_OK;
+	        }
+        });
+    }
+
 	public int topLevelPrepare()
 	{
-		if (jtaLogger.logger.isTraceEnabled()) {
-            jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + this + ", record id=" + order());
-        }
+		return topLevelPrepareErrorHandler(new RunnableWithXAException() {
+            public int run() throws XAException {
+                // we do not have information that endAssociation would be already called
+                if(_theTransaction.getPrePrepareState(_theXAResource) == PrePrepareState.NO_STATE)
+                    endAssociation(XAResource.TMSUCCESS, TxInfo.NOT_ASSOCIATED);
 
-		if (!_valid || (_theXAResource == null) || (_tranID == null))
-		{
-            jtaLogger.i18NLogger.warn_resources_arjunacore_preparenulltx("XAResourceRecord.prepare");
+                _prepared = true;
 
-                    removeConnection();
+                if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
+                {
+                    if (TxControl.isReadonlyOptimisation())
+                    {
+                        // we won't be called again, so we need to tidy up now
+                        removeConnection();
+                    }
 
-			return TwoPhaseOutcome.PREPARE_NOTOK;
-		}
+                    return TwoPhaseOutcome.PREPARE_READONLY;
+                }
+                else
+                    return TwoPhaseOutcome.PREPARE_OK;
+            }
+        });
+	}
 
-		try
-		{
-			endAssociation(XAResource.TMSUCCESS, TxInfo.NOT_ASSOCIATED);
+	private int topLevelPrepareErrorHandler(RunnableWithXAException whatToRunForErrorHandling)
+	{
+	    if (jtaLogger.logger.isTraceEnabled()) {
+	        jtaLogger.logger.trace("XAResourceRecord.topLevelPrepare for " + this + ", record id=" + order());
+	    }
 
-			_prepared = true;
+	    if (!_valid || (_theXAResource == null) || (_tranID == null))
+	    {
+	        jtaLogger.i18NLogger.warn_resources_arjunacore_preparenulltx("XAResourceRecord.prepare");
 
-			if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
-			{
-			    if (TxControl.isReadonlyOptimisation())
-			    {
-			        // we won't be called again, so we need to tidy up now
-			        removeConnection();
-			    }
+	        removeConnection();
 
-			    return TwoPhaseOutcome.PREPARE_READONLY;
-			}
-			else
-				return TwoPhaseOutcome.PREPARE_OK;
-		}
-		catch (XAException e1)
-		{
-		    addDeferredThrowable(e1);
-		   
-            jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
-                    _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
+	        return TwoPhaseOutcome.PREPARE_NOTOK;
+	    }
 
-			/*
-			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
-			 * XAER_PROTO.
-			 */
+	    try
+	    {
+	        return whatToRunForErrorHandling.run();
+	    }
+	    catch (XAException e1)
+	    {
+	        addDeferredThrowable(e1);
 
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
+	        jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
+	                _theXAResource.toString(), XAHelper.printXAErrorCode(e1), e1);
 
-			switch (e1.errorCode)
-			{
-			case XAException.XAER_RMERR:
-			case XAException.XAER_RMFAIL:
-			case XAException.XA_RBROLLBACK:
-			case XAException.XA_RBEND:
-			case XAException.XA_RBCOMMFAIL:
-			case XAException.XA_RBDEADLOCK:
-			case XAException.XA_RBINTEGRITY:
-			case XAException.XA_RBOTHER:
-			case XAException.XA_RBPROTO:
-			case XAException.XA_RBTIMEOUT:
-			case XAException.XAER_INVAL:
-			case XAException.XAER_PROTO:
-			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
-				return TwoPhaseOutcome.PREPARE_NOTOK;  // will not call rollback
-			default:
-				return TwoPhaseOutcome.HEURISTIC_HAZARD; // we're not really sure (shouldn't get here though).
-			}
-		}
-		catch (Exception e2)
-		{
-            jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
-                    _theXAResource.toString(), "-", e2);
+	        /*
+	         * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+	         * XAER_PROTO.
+	         */
 
-			if (_rollbackOptimization) // won't have rollback called on it
-				removeConnection();
+	        if (_rollbackOptimization) // won't have rollback called on it
+	            removeConnection();
 
-			return TwoPhaseOutcome.PREPARE_NOTOK;
-		}
+	        switch (e1.errorCode)
+	        {
+	        case XAException.XAER_RMERR:
+	        case XAException.XAER_RMFAIL:
+	        case XAException.XA_RBROLLBACK:
+	        case XAException.XA_RBEND:
+	        case XAException.XA_RBCOMMFAIL:
+	        case XAException.XA_RBDEADLOCK:
+	        case XAException.XA_RBINTEGRITY:
+	        case XAException.XA_RBOTHER:
+	        case XAException.XA_RBPROTO:
+	        case XAException.XA_RBTIMEOUT:
+	        case XAException.XAER_INVAL:
+	        case XAException.XAER_PROTO:
+	        case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
+	            return TwoPhaseOutcome.PREPARE_NOTOK;  // will not call rollback
+	        default:
+	            return TwoPhaseOutcome.HEURISTIC_HAZARD; // we're not really sure (shouldn't get here though).
+	        }
+	    }
+	    catch (Exception e2)
+	    {
+	        jtaLogger.i18NLogger.warn_resources_arjunacore_preparefailed(XAHelper.xidToString(_tranID),
+	                _theXAResource.toString(), "-", e2);
+
+	        if (_rollbackOptimization) // won't have rollback called on it
+	            removeConnection();
+
+	        return TwoPhaseOutcome.PREPARE_NOTOK;
+	    }
 	}
 
 	public int topLevelAbort()
@@ -1362,5 +1384,8 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
         if (deferredExceptions != null)
             list.addAll(deferredExceptions);
     }
-    
+
+    private static interface RunnableWithXAException {
+        int run() throws XAException;
+    }
 }
