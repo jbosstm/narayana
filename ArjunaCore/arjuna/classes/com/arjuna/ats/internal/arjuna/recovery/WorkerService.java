@@ -41,7 +41,10 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.Service;
 
 public class WorkerService implements Service
@@ -65,14 +68,17 @@ public class WorkerService implements Service
             out.println("PONG");
         }
         else
-	    if (request.equals(RecoveryDriver.SCAN) || (request.equals(RecoveryDriver.ASYNC_SCAN)))
+	    if (RecoveryDriver.isScan(request))
 	    {
+	    	boolean isAsync = RecoveryDriver.isAsyncScan(request);
+	    	boolean anyProblems = false;
+
             // hmm, we need to synchronize on the periodic recovery object in order to wake it up via notify.
             // but the periodic recovery object has to synchronize on this object and then call notify
             // in order to tell it that the last requested scan has completed. i.e. we have a two way
             // wakeup here. so we have to be careful to avoid a deadlock.
 
-            if (request.equals(RecoveryDriver.SCAN)) {
+            if (!isAsync) {
                 // do this before kicking the periodic recovery thread
                 synchronized (this) {
                     doWait = true;
@@ -83,7 +89,7 @@ public class WorkerService implements Service
 
             tsLogger.i18NLogger.info_recovery_WorkerService_3();
 
-		if (request.equals(RecoveryDriver.SCAN))
+		if (!isAsync)
 		{
             synchronized (this) {
                 if (doWait) {
@@ -101,12 +107,24 @@ public class WorkerService implements Service
                 }
             }
 		}
-		out.println("DONE");
+
+		if (RecoveryDriver.isVerboseScan(request)) {
+			for (final RecoveryModule recoveryModule : RecoveryManager.manager().getModules()) {
+				if (recoveryModule instanceof ExtendedRecoveryModule) {
+					if (!((ExtendedRecoveryModule) recoveryModule).isPeriodicWorkSuccessful()) {
+						anyProblems = true;
+					}
+					break;
+				}
+			}
+		}
+
+		out.println(anyProblems ? "ERROR" : "DONE");
 	    }
 	    else
 		out.println("ERROR");
 
-	    out.flush();
+        out.flush();
 	}
 	catch (IOException ex) {
         tsLogger.i18NLogger.warn_recovery_WorkerService_2();

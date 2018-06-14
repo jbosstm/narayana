@@ -55,6 +55,7 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
@@ -75,7 +76,7 @@ import org.jboss.tm.XAResourceWrapper;
  * Designed to be able to recover any XAResource.
  */
 
-public class XARecoveryModule implements RecoveryModule
+public class XARecoveryModule implements ExtendedRecoveryModule
 {
 	public XARecoveryModule()
 	{
@@ -87,6 +88,11 @@ public class XARecoveryModule implements RecoveryModule
 
     public Set<String> getContactedJndiNames() {
         return Collections.unmodifiableSet(contactedJndiNames);
+    }
+
+    @Override
+    public boolean isPeriodicWorkSuccessful() {
+        return !jtaLogger.isRecoveryProblems();
     }
 
     public void addXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
@@ -645,7 +651,9 @@ public class XARecoveryModule implements RecoveryModule
 				{
 				}
 
-				_xidScans.remove(xares);
+				if (_xidScans != null)
+					_xidScans.remove(xares);
+
 				return;
 			}
 

@@ -45,7 +45,10 @@ import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 public class RecoveryDriver
 {
     public static final String SCAN = "SCAN";
-    public static final String ASYNC_SCAN = "ASYNC_SCAN";
+    public static final String VERBOSE_SCAN = "VERBOSE_" + SCAN;
+    public static final String ASYNC_SCAN = "ASYNC_" + SCAN;
+    public static final String VERBOSE_ASYNC_SCAN = "VERBOSE_ASYNC_" + SCAN;
+
     public static final String PING = "PING";
     public static final String PONG = "PONG";
 
@@ -70,6 +73,18 @@ public class RecoveryDriver
 	_port = port;
 	_hostName = hostName;
 	_timeout = timeout;
+    }
+
+    public static boolean isScan(String request) {
+        return request != null && request.endsWith(SCAN);
+    }
+
+    public static boolean isAsyncScan(String request) {
+        return request != null && (request.equals(ASYNC_SCAN) || request.equals((VERBOSE_ASYNC_SCAN)));
+    }
+
+    public static boolean isVerboseScan(String request) {
+        return request != null && (request.equals(VERBOSE_SCAN) || request.equals((VERBOSE_ASYNC_SCAN)));
     }
 
     public final boolean synchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
