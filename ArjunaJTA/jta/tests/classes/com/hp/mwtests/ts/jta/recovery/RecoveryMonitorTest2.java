@@ -26,8 +26,8 @@ import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import org.junit.Test;
 
 import javax.transaction.xa.XAException;
@@ -41,24 +41,64 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test the RecoveryMonitor is verbose mode
  */
-public class RecoveryMonitorTest {
+public class RecoveryMonitorTest2 {
 
     @Test
-    public void testRecoveryMonitor() throws Exception {
+    public void testRecoveryMonitorWithSuccess() throws Exception {
+        XAResource dummy = new XAResource() {
+            @Override
+            public void commit(Xid xid, boolean b) throws XAException {
+            }
+
+            @Override
+            public void end(Xid xid, int i) throws XAException {
+            }
+
+            @Override
+            public void forget(Xid xid) throws XAException {
+            }
+
+            @Override
+            public int getTransactionTimeout() throws XAException {
+                return 0;
+            }
+
+            @Override
+            public boolean isSameRM(XAResource xaResource) throws XAException {
+                return false;
+            }
+
+            @Override
+            public int prepare(Xid xid) throws XAException {
+                return 0;
+            }
+
+            @Override
+            public Xid[] recover(int i) throws XAException {
+                return new Xid[0];
+            }
+
+            @Override
+            public void rollback(Xid xid) throws XAException {
+            }
+
+            @Override
+            public boolean setTransactionTimeout(int i) throws XAException {
+                return false;
+            }
+
+            @Override
+            public void start(Xid xid, int i) throws XAException {
+            }
+        };
+
         RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
-
-        // Ensure that test XAR is recoverable by adding the test XAResourceRecovery
-        ArrayList<String> rcvClassNames = new ArrayList<>();
-
-        rcvClassNames.add(XATestResourceXARecovery.class.getName());
-        jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryClassNames(rcvClassNames);
 
         TransactionImple tx = new TransactionImple(0); // begin a transaction
 
         // enlist a resource that behaves correctly
-        assertTrue(tx.enlistResource(new XATestResource(XATestResource.OK_JNDI_NAME, false)));
-        // enlist a resource that throws an exception from recover
-        assertTrue(tx.enlistResource(new XATestResource(XATestResource.FAULTY_JNDI_NAME, true)));
+        assertTrue(tx.enlistResource(dummy));
+        assertTrue(tx.enlistResource(dummy));
 
         tx.commit();
 
@@ -79,8 +119,8 @@ public class RecoveryMonitorTest {
             RecoveryMonitor.main(new String [] {"-verbose", "-port", rcPort, "-host", host});
 
             // check the output of the scan
-            assertEquals("ERROR", RecoveryMonitor.getResponse());
-            assertEquals("ERROR", RecoveryMonitor.getSystemOutput());
+            assertEquals("DONE", RecoveryMonitor.getResponse());
+            assertEquals("DONE", RecoveryMonitor.getSystemOutput());
         } finally {
             manager.terminate();
         }
