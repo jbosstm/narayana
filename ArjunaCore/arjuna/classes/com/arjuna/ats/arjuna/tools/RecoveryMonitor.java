@@ -43,9 +43,10 @@ import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
 
 public class RecoveryMonitor
 {
-    private static String response = "";
+	private static String response = "";
+	private static String systemOutput = "";
 
-    public static void main (String[] args)
+	public static void main (String[] args)
     {
 	String host = null;
 	int port = 0;
@@ -154,10 +155,12 @@ public class RecoveryMonitor
         response = fromServer.readLine();
 
         if (response.equals("DONE"))
-            System.out.println("RecoveryManager scan begun.");
+            systemOutput = asyncScan ? "RecoveryManager scan begun." : "DONE";
         else
-            System.err.println("RecoveryManager did not understand request: " + response);
-                  
+            systemOutput = verbose ? "ERROR" : "RecoveryManager did not understand request: " + response;
+
+        System.out.println(systemOutput);
+
 	    connectorSocket.close() ;
 	}
 	catch (java.net.ConnectException e)
@@ -180,5 +183,9 @@ public class RecoveryMonitor
 
 	public static String getResponse() {
 		return response;
+	}
+
+	public static String getSystemOutput() {
+		return systemOutput;
 	}
 }
