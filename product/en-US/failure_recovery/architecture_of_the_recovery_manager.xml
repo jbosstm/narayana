@@ -240,6 +240,18 @@
                         to instruct it to perform recovery, and the response occurs
                         only when recovery has completed.
                     </para>
+		    <para>When using the RecoveryMonitor program there is a -verbose
+			    option which will trigger a recovery scan and report any
+			    warnings or errors emitted from the XA recovery module
+			    by printing "ERROR" (otherwise "DONE" is printed).
+			    If the monitor is invoked programmatically, for example
+			    RecoveryMonitor.main(new String [] {"-verbose", "-port", ...});,
+			    then the status of the recovery pass is available by calling
+			    the static method RecoveryMonitor.getResponse();
+			    Note that only XA resource issues are reported using this mechanism
+			    which is sufficient to detect any resource recovery failures,
+			    including unavailablity of resources that impact orphan detection.
+                    </para>
                 </listitem>
             </itemizedlist>
         </section>
