@@ -78,6 +78,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private static final String CANCEL_ON_FAMILY_PROP = "CancelOnFamily";
     private static final String CANCEL_ON_PROP = "CancelOn";
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
+    private static final String SUSPENDED_LRA_PROP = "suspendLRA";
+    private static final String NEW_LRA_PROP = "newLRA";
 
     @Context
     protected ResourceInfo resourceInfo;
@@ -158,17 +160,31 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 || method.isAnnotationPresent(Status.class)
                 || method.isAnnotationPresent(Forget.class);
 
+        if (headers.containsKey(LRA_HTTP_HEADER)) {
+            try {
+                incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER));
+            } catch (MalformedURLException e) {
+                String msg = String.format("header %s contains an invalid URL %s",
+                        LRA_HTTP_HEADER, headers.getFirst(LRA_HTTP_HEADER));
+
+                throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
+            }
+        }
+
         if (type == null) {
             if(!endAnnotation)
                 Current.clearContext(headers);
+
+            if (incommingLRA != null) {
+                Current.push(incommingLRA);
+                Current.putState(SUSPENDED_LRA_PROP, incommingLRA);
+            }
 
             return; // not transactional
         }
 
         // check the incomming request for an LRA context
-        if (headers.containsKey(LRA_HTTP_HEADER)) {
-            incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER));
-        } else {
+        if (!headers.containsKey(LRA_HTTP_HEADER)) {
             Object lraContext = containerRequestContext.getProperty(LRA_HTTP_HEADER);
 
             if (lraContext != null) {
@@ -285,9 +301,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (newLRA != null) {
             if (suspendedLRA != null)
-                Current.putState("suspendedLRA", suspendedLRA);
+                Current.putState(SUSPENDED_LRA_PROP, suspendedLRA);
 
-            Current.putState("newLRA", newLRA);
+            Current.putState(NEW_LRA_PROP, newLRA);
         }
 
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected LRAClient");
@@ -348,8 +364,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         // a request is leaving the container so clear any context on the thread and fix up the LRA response header
 
-        Object suspendedLRA = Current.getState("suspendedLRA");
-        Object newLRA = Current.getState("newLRA");
+        Object suspendedLRA = Current.getState(SUSPENDED_LRA_PROP);
+        Object newLRA = Current.getState(NEW_LRA_PROP);
         URL current = Current.peek();
 
         try {

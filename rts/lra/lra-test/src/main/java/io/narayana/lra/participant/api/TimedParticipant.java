@@ -54,14 +54,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.participant.api.TimedParticipant.ACTIVITIES_PATH2;
 
 @ApplicationScoped
-@Path(ACTIVITIES_PATH2)
+@Path(TimedParticipant.ACTIVITIES_PATH2)
 @LRA(LRA.Type.SUPPORTS)
 public class TimedParticipant {
     public static final String ACTIVITIES_PATH2 = "timedactivities";
-    public static final String ACCEPT_WORK = "acceptWork";
+    public static final String ACCEPT_WORK = "/acceptWork";
+    public static final String TIMELIMIT_SUPPRTS_RESOURCE_METHOD = "/timeLimitSupportsLRA";
 
     private static final AtomicInteger completedCount = new AtomicInteger(0);
     private static final AtomicInteger compensatedCount = new AtomicInteger(0);
@@ -195,14 +195,14 @@ public class TimedParticipant {
     }
 
     @GET
-    @Path("/completedactivitycount")
+    @Path(ActivityController.COMPLETED_COUNT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response getCompleteCount() {
         return Response.ok(completedCount.get()).build();
     }
     @GET
-    @Path("/compensatedactivitycount")
+    @Path(ActivityController.COMPENSATED_COUNT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response getCompensatedCount() {
@@ -226,7 +226,7 @@ public class TimedParticipant {
     }
 
     @GET
-    @Path("/timeLimitSupportsLRA")
+    @Path(TIMELIMIT_SUPPRTS_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(value = LRA.Type.SUPPORTS)
     public Response timeLimitSupportsLRA(@HeaderParam(LRA_HTTP_HEADER) String lraId) {

@@ -74,15 +74,35 @@ import java.util.stream.IntStream;
 
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.participant.api.ActivityController.ACTIVITIES_PATH;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
 @ApplicationScoped
-@Path(ACTIVITIES_PATH)
+@Path(ActivityController.ACTIVITIES_PATH)
 @LRA(LRA.Type.SUPPORTS)
 public class ActivityController {
     public static final String ACTIVITIES_PATH = "activities";
-    public static final String ACCEPT_WORK = "acceptWork";
+
+    static final String MANDATORY_LRA_RESOURCE_PATH = "/mandatory";
+
+    private static final String COMPLETE_RESOURCE_METHOD = "/complete";
+    private static final String COMPENSATE_RESOURCE_METHOD = "/compensate";
+    private static final String STATUS_RESOURCE_METHOD = "/status";
+    private static final String FORGET_RESOURCE_METHOD = "/forget";
+    private static final String SUPPORTS_RESOURCE_METHOD = "/supports";
+
+    public static final String ACCEPT_WORK_RESOURCE_METHOD = "/acceptWork";
+    public static final String LEAVE_RESOURCE_METHOD = "/leave";
+
+    public static final String START_VIA_API_RESOURCE_METHOD = "/startViaApi";
+    public static final String WORK_RESOURCE_METHOD = "/work";
+    public static final String NESTED_ACTIVITY_RESOURCE_METHOD = "/nestedActivity";
+    public static final String MULTI_LEVEL_NESTED_ACTIVITY_RESOURCE_METHOD = "/multiLevelNestedActivity";
+    public static final String COMPLETED_COUNT_RESOURCE_METHOD = "/completedactivitycount";
+    public static final String COMPENSATED_COUNT_RESOURCE_METHOD = "/compensatedactivitycount";
+    public static final String CANCEL_ON_RESOURCE_METHOD = "/cancelOn";
+    public static final String CANCEL_ON_FAMILY_RESOURCE_METHOD = "/cancelOnFamily";
+    public static final String TIME_LIMIT_RESOURCE_METHOD = "/timeLimitRequiredLRA";
+    public static final String RENEW_TIME_LIMIT_RESOURCE_METHOD = "/renewTimeLimit";
 
     private static final AtomicInteger completedCount = new AtomicInteger(0);
     private static final AtomicInteger compensatedCount = new AtomicInteger(0);
@@ -101,7 +121,7 @@ public class ActivityController {
      * {@link CompensatorStatus}, or 404 if the participant is no longer present.
      */
     @GET
-    @Path("/status")
+    @Path(STATUS_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @LRA(LRA.Type.SUPPORTS) // remark: the status and forget methods should not start new LRAs
@@ -147,7 +167,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/leave")
+    @Path(LEAVE_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @Leave
     public Response leaveWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
@@ -163,7 +183,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/complete")
+    @Path(COMPLETE_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @Complete
     public Response completeWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
@@ -192,7 +212,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/compensate")
+    @Path(COMPENSATE_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @Compensate
     public Response compensateWork(@HeaderParam(LRA_HTTP_HEADER) String lraId, String userData) throws NotFoundException {
@@ -221,7 +241,7 @@ public class ActivityController {
     }
 
     @DELETE
-    @Path("/forget")
+    @Path(FORGET_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
     @LRA(LRA.Type.SUPPORTS) // remark: the status and forget methods should not start new LRAs
@@ -243,7 +263,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path(ACCEPT_WORK)
+    @Path(ACCEPT_WORK_RESOURCE_METHOD)
     @LRA(LRA.Type.REQUIRED)
     public Response acceptWork(
             @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
@@ -259,7 +279,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/supports")
+    @Path(SUPPORTS_RESOURCE_METHOD)
     @LRA(LRA.Type.SUPPORTS)
     public Response supportsLRACall(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
         assert lraId != null;
@@ -269,7 +289,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/startViaApi")
+    @Path(START_VIA_API_RESOURCE_METHOD)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response subActivity(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
         if (lraId != null)
@@ -285,7 +305,7 @@ public class ActivityController {
         // invoke a method that SUPPORTS LRAs. The filters should detect the LRA we just started via the injected client
         // and add it as a header before calling the method at path /supports (ie supportsLRACall()).
         // The supportsLRACall method will return LRA id in the body if it is present.
-        String id = restPutInvocation(lra,"supports", "");
+        String id = restPutInvocation(lra, SUPPORTS_RESOURCE_METHOD, "");
 
         // check that the invoked method saw the LRA
         if (id == null || !lraId.equals(id))
@@ -295,7 +315,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/work")
+    @Path(WORK_RESOURCE_METHOD)
     @LRA(LRA.Type.REQUIRED)
     public Response activityWithLRA(@HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
                                     @HeaderParam(LRA_HTTP_HEADER) String lraId,
@@ -308,6 +328,16 @@ public class ActivityController {
         activity.setArg(arg);
 
         return Response.ok(lraId).build();
+    }
+
+    @PUT
+    @Path(MANDATORY_LRA_RESOURCE_PATH)
+    @LRA(LRA.Type.MANDATORY)
+    public Response activityWithMandatoryLRA(@HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
+                                    @HeaderParam(LRA_HTTP_HEADER) String lraId,
+                                    @QueryParam("how") String how,
+                                    @QueryParam("arg") String arg) {
+        return activityWithLRA(rcvId, lraId, how, arg);
     }
 
     private String restPutInvocation(URL lraURL, String path, String bodyText) {
@@ -329,7 +359,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/nestedActivity")
+    @Path(NESTED_ACTIVITY_RESOURCE_METHOD)
     @LRA(LRA.Type.MANDATORY)
     @NestedLRA
     public Response nestedActivity(@HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
@@ -344,7 +374,7 @@ public class ActivityController {
     }
 
     @PUT
-    @Path("/multiLevelNestedActivity")
+    @Path(MULTI_LEVEL_NESTED_ACTIVITY_RESOURCE_METHOD)
     @LRA(LRA.Type.MANDATORY)
     public Response multiLevelNestedActivity(
             @HeaderParam(LRA_HTTP_RECOVERY_HEADER) String rcvId,
@@ -382,14 +412,15 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/completedactivitycount")
+    @Path(COMPLETED_COUNT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response getCompleteCount() {
         return Response.ok(completedCount.get()).build();
     }
+
     @GET
-    @Path("/compensatedactivitycount")
+    @Path(COMPENSATED_COUNT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response getCompensatedCount() {
@@ -397,7 +428,7 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/cancelOn")
+    @Path(CANCEL_ON_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(value = LRA.Type.REQUIRED, cancelOn = {Response.Status.NOT_FOUND, Response.Status.BAD_REQUEST})
     public Response cancelOn(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
@@ -407,7 +438,7 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/cancelOnFamily")
+    @Path(CANCEL_ON_FAMILY_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @LRA(value = LRA.Type.REQUIRED, cancelOnFamily = {Response.Status.Family.CLIENT_ERROR})
     public Response cancelOnFamily(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
@@ -417,7 +448,7 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/timeLimitRequiredLRA")
+    @Path(TIME_LIMIT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
     @LRA(value = LRA.Type.REQUIRED)
@@ -433,7 +464,7 @@ public class ActivityController {
     }
 
     @GET
-    @Path("/renewTimeLimit")
+    @Path(RENEW_TIME_LIMIT_RESOURCE_METHOD)
     @Produces(MediaType.APPLICATION_JSON)
     @TimeLimit(limit = 100, unit = TimeUnit.MILLISECONDS)
     @LRA(value = LRA.Type.REQUIRED)
