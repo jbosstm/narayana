@@ -22,6 +22,8 @@
 
 package io.narayana.lra.participant;
 
+import static io.narayana.lra.participant.api.StandardController.ACTIVITIES_PATH3;
+import static io.narayana.lra.participant.api.StandardController.NON_TRANSACTIONAL_WORK;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
@@ -58,6 +60,7 @@ import javax.ws.rs.core.Response;
 
 import io.narayana.lra.client.LRAInfoImpl;
 import io.narayana.lra.participant.api.ActivityController;
+import io.narayana.lra.participant.api.TimedParticipant;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.LRAClient;
 import org.eclipse.microprofile.lra.client.LRAInfo;
@@ -242,6 +245,18 @@ public class SpecIT {
     }
 
     @Test
+    // test service A -> service B -> service C where A starts a LRA, service C starts a nested LRA and B is not LRA aware
+    public void noLRATest() throws WebApplicationException {
+        URL lra = lraClient.startLRA(null, "SpecTest#noLRATest", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+
+        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH3).path(NON_TRANSACTIONAL_WORK);
+
+        Response response = resourcePath.request().header(LRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true, resourcePath);
+        lraClient.cancelLRA(lra);
+    }
+
+    @Test
     public void closeLRAWaitForRecovery () throws WebApplicationException {
         delayEndLRA(-1, "wait", "recovery");
     }
@@ -257,7 +272,7 @@ public class SpecIT {
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         URL lra = lraClient.startLRA(null, "SpecTest#delayEndLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
+        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
                 .queryParam("how", how)
                 .queryParam("arg", arg);
         Response response = resourcePath
@@ -288,7 +303,7 @@ public class SpecIT {
         int count = lras.size();
         URL lra = lraClient.startLRA(null, "SpecTest#connectionHangup", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         // tell the resource to generate a proccessing exception when asked to finish the LRA (simulates a connection hang)
-        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path("work")
+        WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
                 .queryParam("how", "exception")
                 .queryParam("arg", "javax.ws.rs.ProcessingException");
         Response response = resourcePath
@@ -376,7 +391,7 @@ public class SpecIT {
 
     @Test
     public void joinLRAViaBody() throws WebApplicationException {
-        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD).request().put(Entity.text(""));
 
         String lra = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
 
@@ -392,7 +407,7 @@ public class SpecIT {
         URL lra = lraClient.startLRA("SpecTest#nestedActivity", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
         Response response = msTarget
-                .path(ACTIVITIES_PATH).path("nestedActivity")
+                .path(ACTIVITIES_PATH).path(ActivityController.NESTED_ACTIVITY_RESOURCE_METHOD)
                 .request()
                 .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
                 .put(Entity.text(""));
@@ -463,7 +478,7 @@ public class SpecIT {
         int count = lras.size();
         URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path(ACTIVITIES_PATH).path("work")
+        Response response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
         tryEndLRA(lra, false);
@@ -478,15 +493,18 @@ public class SpecIT {
         int cnt1 = completedCount(ACTIVITIES_PATH, true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
-        response = msTarget.path(ACTIVITIES_PATH).path("leave").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.LEAVE_RESOURCE_METHOD)
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // lraClient.leaveLRA(lra, "some participant"); // ask the MS for the participant url so we can test LRAClient
@@ -504,16 +522,19 @@ public class SpecIT {
         int cnt1 = completedCount(ACTIVITIES_PATH, true);
         URL lra = lraClient.startLRA("SpecTest#leaveLRA", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
 
-        Response response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // perform a second request to the same method in the same LRA context to validate that multiple participants are not registered
-        response = msTarget.path(ACTIVITIES_PATH).path("work").request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
+        response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
+                .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
         // call a method annotated with @Leave (should remove the participant from the LRA)
         try {
-            response = msTarget.path(ACTIVITIES_PATH).path("leave").path(URLEncoder.encode(lra.toString(), "UTF-8"))
+            response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.LEAVE_RESOURCE_METHOD)
+                    .path(URLEncoder.encode(lra.toString(), "UTF-8"))
                     .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         } catch (UnsupportedEncodingException e) {
             throw new WebApplicationException(
@@ -534,7 +555,8 @@ public class SpecIT {
     @Test
     public void dependentLRA() throws WebApplicationException, MalformedURLException {
         // call a method annotated with NOT_SUPPORTED but one which programatically starts an LRA and returns it via a header
-        Response response = msTarget.path(ACTIVITIES_PATH).path("startViaApi").request().put(Entity.text(""));
+        Response response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.START_VIA_API_RESOURCE_METHOD)
+                .request().put(Entity.text(""));
         // check that the method started an LRA
         Object lraHeader = response.getHeaders().getFirst(NarayanaLRAClient.LRA_HTTP_HEADER);
 
@@ -551,12 +573,12 @@ public class SpecIT {
 
     @Test
     public void cancelOn() {
-        cancelCheck("cancelOn");
+        cancelCheck(ActivityController.CANCEL_ON_RESOURCE_METHOD);
     }
 
     @Test
     public void cancelOnFamily() {
-        cancelCheck("cancelOnFamily");
+        cancelCheck(ActivityController.CANCEL_ON_FAMILY_RESOURCE_METHOD);
     }
 
     @Test
@@ -566,7 +588,7 @@ public class SpecIT {
 
         try {
             response = msTarget.path(ACTIVITIES_PATH)
-                    .path("timeLimitRequiredLRA")
+                    .path(ActivityController.TIME_LIMIT_RESOURCE_METHOD)
                     .request()
                     .get();
 
@@ -601,7 +623,7 @@ public class SpecIT {
         Response response = null;
 
         try {
-            WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH2).path("timeLimitSupportsLRA");
+            WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH2).path(TimedParticipant.TIMELIMIT_SUPPRTS_RESOURCE_METHOD);
             response = resourcePath
                     .request()
                     .get();
@@ -671,7 +693,7 @@ public class SpecIT {
 
     @Test
     public void acceptTest() throws WebApplicationException {
-        joinAndEnd(true, true, ACTIVITIES_PATH, ActivityController.ACCEPT_WORK);
+        joinAndEnd(true, true, ACTIVITIES_PATH, ActivityController.ACCEPT_WORK_RESOURCE_METHOD);
     }
 
     private void joinAndEnd(boolean waitForRecovery, boolean close, String path, String path2) throws WebApplicationException {
@@ -707,7 +729,7 @@ public class SpecIT {
 
         try {
             response = msTarget.path(ACTIVITIES_PATH)
-                    .path("renewTimeLimit")
+                    .path(ActivityController.RENEW_TIME_LIMIT_RESOURCE_METHOD)
                     .request()
                     .get();
 
@@ -748,7 +770,9 @@ public class SpecIT {
         try {
             if (expected != -1 && response.getStatus() != expected) {
                 if (webTarget != null) {
-                    throw new WebApplicationException(webTarget.getUri().toString(), response);
+                    throw new WebApplicationException(
+                            String.format("%s: expected status %d got %d",
+                                    webTarget.getUri().toString(), expected, response.getStatus()), response);
                 }
 
                 throw new WebApplicationException(response);
@@ -766,7 +790,8 @@ public class SpecIT {
 
     private int completedCount(String basePath, boolean completed) {
         Response response = null;
-        String path = completed ? "completedactivitycount" : "compensatedactivitycount";
+        String path = completed ? ActivityController.COMPLETED_COUNT_RESOURCE_METHOD
+                : ActivityController.COMPENSATED_COUNT_RESOURCE_METHOD;
 
         try {
             response = msTarget.path(basePath).path(path).request().get();
@@ -792,7 +817,7 @@ public class SpecIT {
         String lraId = lra.toString();
 
         Response response = msTarget
-                .path(ACTIVITIES_PATH).path("multiLevelNestedActivity")
+                .path(ACTIVITIES_PATH).path(ActivityController.MULTI_LEVEL_NESTED_ACTIVITY_RESOURCE_METHOD)
                 .queryParam("nestedCnt", nestedCnt)
                 .request()
                 .header(NarayanaLRAClient.LRA_HTTP_HEADER, lra)
