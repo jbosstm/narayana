@@ -182,7 +182,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             if (incommingLRA != null) {
                 Current.push(incommingLRA);
-                Current.putState(SUSPENDED_LRA_PROP, incommingLRA);
+                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incommingLRA);
             }
 
             return; // not transactional
@@ -292,6 +292,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             lraTrace(containerRequestContext, null, "ServerLRAFilter before: removing header");
             // the method call needs to run without a transaction
             Current.clearContext(headers);
+
+            if (suspendedLRA != null) {
+                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, suspendedLRA);
+            }
+
             return; // non transactional
         } else {
             lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: adding header");
@@ -310,10 +315,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (newLRA != null) {
             if (suspendedLRA != null) {
-                Current.putState(SUSPENDED_LRA_PROP, suspendedLRA);
+                containerRequestContext.setProperty(SUSPENDED_LRA_PROP, incommingLRA);
             }
 
-            Current.putState(NEW_LRA_PROP, newLRA);
+            containerRequestContext.setProperty(NEW_LRA_PROP, newLRA);
         }
 
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected LRAClient");
@@ -374,8 +379,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         // a request is leaving the container so clear any context on the thread and fix up the LRA response header
 
-        Object suspendedLRA = Current.getState(SUSPENDED_LRA_PROP);
-        Object newLRA = Current.getState(NEW_LRA_PROP);
+        Object suspendedLRA = requestContext.getProperty(SUSPENDED_LRA_PROP);
+        Object newLRA = requestContext.getProperty(NEW_LRA_PROP);
         URL current = Current.peek();
 
         try {
@@ -408,6 +413,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     if (current.equals(newLRA)) {
                         newLRA = null; // don't try to cancle newKRA twice
                     }
+
+                    if (current.toExternalForm().equals(requestContext.getHeaders().getFirst(LRA_HTTP_HEADER))) {
+                        // the callers context is closed so invalidate it
+                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                    }
                 }
             }
 
@@ -415,6 +425,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA");
                 try {
                     lraClient.closeLRA((URL) newLRA);
+
+                    if (current.toExternalForm().equals(requestContext.getHeaders().getFirst(LRA_HTTP_HEADER))) {
+                        // the callers context is closed so invalidate it
+                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                    }
                 } catch (GenericLRAException | NotFoundException ignore) {
                     // the LRAClient implementation should have logged something
                 }
