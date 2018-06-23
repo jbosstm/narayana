@@ -46,6 +46,10 @@ public class ClientLRAResponseFilter implements ClientResponseFilter {
          */
         if (incomingLRA != null) {
             Current.push(new URL(incomingLRA.toString()));
+        } else {
+            // any previous context must have been ended by the invoked service otherwise incomingLRA
+            // would have been present
+            Current.pop();
         }
     }
 }
