@@ -434,6 +434,10 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	@Override
 	public synchronized void periodicWorkSecondPass() {
+		if (tsLogger.logger.isTraceEnabled()) {
+			tsLogger.logger.trace("CommitMarkableResourceRecordRecoveryModule second pass");
+		}
+
 		/**
 		 * This is the list of AtomicActions that were prepared but not
 		 * completed.
