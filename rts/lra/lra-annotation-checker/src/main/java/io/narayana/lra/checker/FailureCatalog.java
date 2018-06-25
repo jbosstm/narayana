@@ -51,11 +51,11 @@ public enum FailureCatalog {
     }
 
     public String formatCatalogContent() {
-        if(failureCatalog == null || failureCatalog.isEmpty()) {
+        if (failureCatalog == null || failureCatalog.isEmpty()) {
             return "";
         }
         StringBuffer buffer = new StringBuffer();
-        for(String failure: failureCatalog) {
+        for (String failure: failureCatalog) {
             buffer.append(" -> ").append(failure).append(END_LINE);
         }
         return buffer.toString();

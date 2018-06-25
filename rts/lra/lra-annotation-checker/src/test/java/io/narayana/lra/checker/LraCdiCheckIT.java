@@ -48,6 +48,8 @@ import io.narayana.lra.checker.cdi.LraAnnotationProcessingExtension;
  * @author Ondra Chaloupka <ochaloup@redhat.com>
  */
 public class LraCdiCheckIT {
+    private static final String BEAN_CHECK_MSG1 = "No failue on checking bean ";
+    private static final String BEAN_CHECK_MSG2 = " expected but the failure list is ";
 
     @Before
     public void cleanUp() throws Exception {
@@ -93,35 +95,35 @@ public class LraCdiCheckIT {
     @Test
     public void lraJoinFalseCorrect() throws Exception {
         initWeld(LraJoinFalseBean.class);
-        Assert.assertTrue("No failue on checking bean " + LraJoinFalseBean.class.getName() + " expected but the failure list is "
+        Assert.assertTrue(BEAN_CHECK_MSG1 + LraJoinFalseBean.class.getName() + BEAN_CHECK_MSG2
                 + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 
     @Test
     public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
         initWeld(LraJoinFalseMethodLRABean.class);
-        Assert.assertTrue("No failue on checking bean " + LraJoinFalseMethodLRABean.class.getName() + " expected but the failure list is "
+        Assert.assertTrue(BEAN_CHECK_MSG1 + LraJoinFalseMethodLRABean.class.getName() + BEAN_CHECK_MSG2
                 + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 
     @Test
     public void allCorrect() throws Exception {
         initWeld(CorrectBean.class);
-        Assert.assertTrue("No failue on checking bean " + CorrectBean.class.getName() + " expected but the failure list is "
+        Assert.assertTrue(BEAN_CHECK_MSG1 + CorrectBean.class.getName() + BEAN_CHECK_MSG2
             + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 
     @Test
     public void allCorrectLRAOnMethod() throws Exception {
         initWeld(CorrectMethodLRABean.class);
-        Assert.assertTrue("No failue on checking bean " + CorrectMethodLRABean.class.getName() + " expected but the failure list is "
+        Assert.assertTrue(BEAN_CHECK_MSG1 + CorrectMethodLRABean.class.getName() + BEAN_CHECK_MSG2
                 + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 
     @Test
     public void noLraContext() throws Exception {
         initWeld(CorrectMethodLRABean.class);
-        Assert.assertTrue("No failue on checking bean " + CorrectMethodLRABean.class.getName() + " expected but the failure list is "
+        Assert.assertTrue(BEAN_CHECK_MSG1 + CorrectMethodLRABean.class.getName() + BEAN_CHECK_MSG2
                 + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 

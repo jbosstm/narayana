@@ -58,8 +58,9 @@ public class SpecTest {
 
     @After
     public void tearDown() {
-        if(lraClient != null)
+        if (lraClient != null) {
             lraClient.close();
+        }
 
         lraClient = null;
     }
@@ -94,11 +95,13 @@ public class SpecTest {
 
      private String checkStatusAndClose(Response response, int expected, boolean readEntity) {
         try {
-            if (expected != -1 && response.getStatus() != expected)
+            if (expected != -1 && response.getStatus() != expected) {
                 throw new WebApplicationException(response);
+            }
 
-            if (readEntity)
+            if (readEntity) {
                 return response.readEntity(String.class);
+            }
         } finally {
             response.close();
         }

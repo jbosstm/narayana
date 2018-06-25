@@ -128,14 +128,16 @@ public class ActivityController {
     public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         Activity activity = activityService.getActivity(lraId);
 
-        if (activity.getStatus() == null)
+        if (activity.getStatus() == null) {
             throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
+        }
 
         if (activity.getAndDecrementAcceptCount() <= 0) {
-            if (activity.getStatus() == CompensatorStatus.Completing)
+            if (activity.getStatus() == CompensatorStatus.Completing) {
                 activity.setStatus(CompensatorStatus.Completed);
-            else if (activity.getStatus() == CompensatorStatus.Compensating)
+            } else if (activity.getStatus() == CompensatorStatus.Compensating) {
                 activity.setStatus(CompensatorStatus.Compensated);
+            }
         }
 
         return Response.ok(activity.getStatus().name()).build();
@@ -245,7 +247,7 @@ public class ActivityController {
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
     @LRA(LRA.Type.SUPPORTS) // remark: the status and forget methods should not start new LRAs
-    public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) {//throws NotFoundException {
+    public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) { //throws NotFoundException {
         completedCount.incrementAndGet();
 
         assert lraId != null;
@@ -271,8 +273,9 @@ public class ActivityController {
         assert lraId != null;
         Activity activity = addWork(lraId, rcvId);
 
-        if (activity == null)
+        if (activity == null) {
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+        }
 
         activity.setAcceptedCount(1); // tests that it is possible to asynchronously complete
         return Response.ok(lraId).build();
@@ -292,8 +295,9 @@ public class ActivityController {
     @Path(START_VIA_API_RESOURCE_METHOD)
     @LRA(LRA.Type.NOT_SUPPORTED)
     public Response subActivity(@HeaderParam(LRA_HTTP_HEADER) String lraId) {
-        if (lraId != null)
+        if (lraId != null) {
             throw new WebApplicationException(Response.Status.NOT_ACCEPTABLE);
+        }
 
         // manually start an LRA via the injection LRAClient api
         URL lra = lraClient.startLRA("subActivity", 0L, TimeUnit.SECONDS);
@@ -308,8 +312,9 @@ public class ActivityController {
         String id = restPutInvocation(lra, SUPPORTS_RESOURCE_METHOD, "");
 
         // check that the invoked method saw the LRA
-        if (id == null || !lraId.equals(id))
+        if (id == null || !lraId.equals(id)) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Entity.text("Unequal LRA ids")).build();
+        }
 
         return Response.ok(id).build();
     }
@@ -350,8 +355,9 @@ public class ActivityController {
             .header(LRAClient.LRA_HTTP_HEADER, lraURL)
             .put(Entity.text(bodyText));
 
-        if (response.hasEntity())
+        if (response.hasEntity()) {
             id = response.readEntity(String.class);
+        }
 
         checkStatusAndClose(response, Response.Status.OK.getStatusCode());
 
@@ -367,8 +373,9 @@ public class ActivityController {
         assert nestedLRAId != null;
         Activity activity = addWork(nestedLRAId, rcvId);
 
-        if (activity == null)
+        if (activity == null) {
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+        }
 
         return Response.ok(nestedLRAId).build();
     }
@@ -383,8 +390,9 @@ public class ActivityController {
         assert nestedLRAId != null;
         Activity activity = addWork(nestedLRAId, rcvId);
 
-        if (activity == null)
+        if (activity == null) {
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+        }
 
         URL lraURL;
 
@@ -577,8 +585,9 @@ public class ActivityController {
 
     private void checkStatusAndClose(Response response, int expected) {
         try {
-            if (response.getStatus() != expected)
+            if (response.getStatus() != expected) {
                 throw new WebApplicationException(response);
+            }
         } finally {
             response.close();
         }

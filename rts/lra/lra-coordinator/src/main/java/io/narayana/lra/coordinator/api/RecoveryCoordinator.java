@@ -69,14 +69,14 @@ public class RecoveryCoordinator {
     @ApiOperation(value = "Lookup the participant URL",
             notes = "Performing a GET on the recovery URL (returned from a join request) will return the original participant URL(s)",
             response = String.class)
-    @ApiResponses( {
-            @ApiResponse( code = 404, message = "The coordinator has no knowledge of this participant" ),
-            @ApiResponse( code = 200, message = "The participant associated with this recovery id is returned" )
-    } )
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "The coordinator has no knowledge of this participant"),
+            @ApiResponse(code = 200, message = "The participant associated with this recovery id is returned")
+    })
     public String getCompensator(
-            @ApiParam( value = "Identifies the LRAId that the participant joined", required = true )
+            @ApiParam(value = "Identifies the LRAId that the participant joined", required = true)
             @PathParam("LRAId") String lraId,
-            @ApiParam( value = "An identifier that was returned by the coordinator when a participant joined the LRA", required = true )
+            @ApiParam(value = "An identifier that was returned by the coordinator when a participant joined the LRA", required = true)
             @PathParam("RecCoordId") String rcvCoordId) throws NotFoundException {
 
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
@@ -99,14 +99,14 @@ public class RecoveryCoordinator {
                     " and return the old url. The old value is returned." +
                     "The full URL was returned when the participant first joined the LRA.",
             response = String.class)
-    @ApiResponses( {
-            @ApiResponse( code = 404, message = "The coordinator has no knowledge of this participant" ),
-            @ApiResponse( code = 200, message = "The coordinator has replaced the old participant with the new one " )
-    } )
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "The coordinator has no knowledge of this participant"),
+            @ApiResponse(code = 200, message = "The coordinator has replaced the old participant with the new one ")
+    })
     public String replaceCompensator(
-            @ApiParam( value = "Identifies the LRAId that the participant joined", required = true )
+            @ApiParam(value = "Identifies the LRAId that the participant joined", required = true)
             @PathParam("LRAId") String lraId,
-            @ApiParam( value = "An identifier that was returned by the coordinator when a participant joined the LRA", required = true )
+            @ApiParam(value = "An identifier that was returned by the coordinator when a participant joined the LRA", required = true)
             @PathParam("RecCoordId") String rcvCoordId,
             String newCompensatorUrl) throws NotFoundException {
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
@@ -142,9 +142,9 @@ public class RecoveryCoordinator {
     @ApiOperation(value = "List recovering Long Running Actions",
             notes = "Returns LRAs that are recovering (ie some compensators still need to be ran)",
             response = LRAStatus.class, responseContainer = "List")
-    @ApiResponses( {
-            @ApiResponse( code = 200, message = "The request was successful" )
-    } )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The request was successful")
+    })
     public List<LRAStatus> getRecoveringLRAs() {
         return lraService.getAllRecovering(true);
     }

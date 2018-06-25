@@ -1,7 +1,7 @@
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2017, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
+ * as indicated by the @author tags.See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
@@ -11,7 +11,7 @@
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -32,7 +32,7 @@ public class LRAStatus {
     //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
     //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
-    private String clientId ;
+    private String clientId;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
     private boolean isComplete;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
@@ -50,12 +50,12 @@ public class LRAStatus {
 
     public LRAStatus(Transaction lra) {
         this.lraId = lra.getId().toString();
-        this. clientId = lra.getClientId();
-        this. isComplete = lra.isComplete();
-        this. isCompensated = lra.isCompensated();
-        this. isRecovering = lra.isRecovering();
-        this. isActive = lra.isActive();
-        this. isTopLevel = lra.isTopLevel();
+        this.clientId = lra.getClientId();
+        this.isComplete = lra.isComplete();
+        this.isCompensated = lra.isCompensated();
+        this.isRecovering = lra.isRecovering();
+        this.isActive = lra.isActive();
+        this.isTopLevel = lra.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.status = lra.getLRAStatus();

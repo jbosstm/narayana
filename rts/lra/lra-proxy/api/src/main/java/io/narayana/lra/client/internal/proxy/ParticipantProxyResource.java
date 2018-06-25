@@ -38,10 +38,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
-
 @ApplicationScoped
-@Path(LRA_PROXY_PATH)
+@Path(ParticipantProxyResource.LRA_PROXY_PATH)
 public class ParticipantProxyResource {
     static final String LRA_PROXY_PATH = "lraproxy";
     @Inject
@@ -83,11 +81,13 @@ public class ParticipantProxyResource {
     }
 
     private URL toURL(String url, boolean decode) throws MalformedURLException, UnsupportedEncodingException {
-        if (url == null)
+        if (url == null) {
             return null;
+        }
 
-        if (decode)
+        if (decode) {
             url = URLDecoder.decode(url, "UTF-8");
+        }
 
         return new URL(url);
     }

@@ -86,14 +86,16 @@ public class TimedParticipant {
     public Response status(@HeaderParam(LRA_HTTP_HEADER) String lraId) throws NotFoundException {
         Activity activity = activityService.getActivity(lraId);
 
-        if (activity.getStatus() == null)
+        if (activity.getStatus() == null) {
             throw new IllegalLRAStateException(lraId, "LRA is not active", "getStatus");
+        }
 
         if (activity.getAndDecrementAcceptCount() <= 0) {
-            if (activity.getStatus() == CompensatorStatus.Completing)
+            if (activity.getStatus() == CompensatorStatus.Completing) {
                 activity.setStatus(CompensatorStatus.Completed);
-            else if (activity.getStatus() == CompensatorStatus.Compensating)
+            } else if (activity.getStatus() == CompensatorStatus.Compensating) {
                 activity.setStatus(CompensatorStatus.Compensated);
+            }
         }
 
         return Response.ok(activity.getStatus().name()).build();
@@ -163,7 +165,7 @@ public class TimedParticipant {
     @Path("/forget")
     @Produces(MediaType.APPLICATION_JSON)
     @Forget
-    public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) {//throws NotFoundException {
+    public Response forgetWork(@HeaderParam(LRA_HTTP_HEADER) String lraId) { //throws NotFoundException {
         completedCount.incrementAndGet();
 
         assert lraId != null;
@@ -187,8 +189,9 @@ public class TimedParticipant {
         assert lraId != null;
         Activity activity = addWork(lraId, rcvId);
 
-        if (activity == null)
+        if (activity == null) {
             return Response.status(Response.Status.EXPECTATION_FAILED).entity("Missing lra data").build();
+        }
 
         activity.setAcceptedCount(1); // tests that it is possible to asynchronously complete
         return Response.ok(lraId).build();

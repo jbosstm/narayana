@@ -69,8 +69,9 @@ public class LRAService {
 
     public Transaction getTransaction(URL lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
-            if (!recoveringLRAs.containsKey(lraId))
+            if (!recoveringLRAs.containsKey(lraId)) {
                 throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
+            }
 
             return recoveringLRAs.get(lraId);
         }
@@ -101,18 +102,19 @@ public class LRAService {
             return all;
         }
 
-        if (CompensatorStatus.Compensating.name().equals(state))
+        if (CompensatorStatus.Compensating.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
-        else if (CompensatorStatus.Compensated.name().equals(state))
+        } else if (CompensatorStatus.Compensated.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensated).collect(toList());
-        else if (CompensatorStatus.FailedToCompensate.name().equals(state))
+        } else if (CompensatorStatus.FailedToCompensate.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToCompensate).collect(toList());
-        else if (CompensatorStatus.Completing.name().equals(state))
+        } else if (CompensatorStatus.Completing.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
-        else if (CompensatorStatus.Completed.name().equals(state))
+        } else if (CompensatorStatus.Completed.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompleted).collect(toList());
-        else if (CompensatorStatus.FailedToComplete.name().equals(state))
+        } else if (CompensatorStatus.FailedToComplete.name().equals(state)) {
             return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToComplete).collect(toList());
+        }
 
         return null;
     }
@@ -122,8 +124,9 @@ public class LRAService {
     }
 
     public List<LRAStatus> getAllRecovering(boolean scan) {
-        if (scan)
+        if (scan) {
             RecoveryManager.manager().scan();
+        }
 
         return recoveringLRAs.values().stream().map(LRAStatus::new).collect(toList());
     }
@@ -191,10 +194,12 @@ public class LRAService {
             throw new InvalidLRAIdException(baseUri, "Invalid base uri", e);
         }
 
-        if (lra.currentLRA() != null)
-            if (LRALogger.logger.isInfoEnabled())
+        if (lra.currentLRA() != null) {
+            if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof("LRAServicve.startLRA LRA %s is already associated%n",
                         lra.currentLRA().get_uid().fileStringForm());
+            }
+        }
 
         int status = lra.begin(timelimit);
 
@@ -222,15 +227,18 @@ public class LRAService {
 
         Transaction transaction = getTransaction(lraId);
 
-        if (!transaction.isActive() && !transaction.isRecovering() && transaction.isTopLevel())
+        if (!transaction.isActive() && !transaction.isRecovering() && transaction.isTopLevel()) {
             throw new IllegalLRAStateException(lraId.toString(), "LRA is closing or closed", "endLRA");
+        }
 
         transaction.end(compensate);
 
-        if (transaction.currentLRA() != null)
-            if (LRALogger.logger.isInfoEnabled())
+        if (transaction.currentLRA() != null) {
+            if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof("LRAServicve.endLRA LRA %s ended but is still associated with %s%n",
                         lraId, transaction.currentLRA().get_uid().fileStringForm());
+            }
+        }
 
         finished(transaction, fromHierarchy);
 
@@ -247,13 +255,16 @@ public class LRAService {
 
         Transaction transaction = getTransaction(lraId);
 
-        if (!transaction.isActive())
+        if (!transaction.isActive()) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         try {
-            if (!transaction.forgetParticipant(compensatorUrl))
-                if (LRALogger.logger.isInfoEnabled())
+            if (!transaction.forgetParticipant(compensatorUrl)) {
+                if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("LRAServicve.forget %s failed%n", lraId);
+                }
+            }
 
             return Response.Status.OK.getStatusCode();
         } catch (Exception e) {
@@ -270,18 +281,21 @@ public class LRAService {
     public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
                                     String compensatorData) {
-        if (lra ==  null)
+        if (lra ==  null) {
             lraTrace(null, "Error missing LRA header in join request");
+        }
 
         lraTrace(lra, "join LRA");
 
         Transaction transaction = getTransaction(lra);
 
-        if (timeLimit < 0)
+        if (timeLimit < 0) {
             timeLimit = 0;
+        }
 
-        if (!transaction.isActive())
+        if (!transaction.isActive()) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         LRARecord participant;
 
@@ -293,8 +307,10 @@ public class LRAService {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
-        if (participant == null || participant.getRecoveryCoordinatorURL() == null) // probably already closing or cancelling
+        if (participant == null || participant.getRecoveryCoordinatorURL() == null) {
+            // probably already closing or cancelling
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         String recoveryURL = participant.getRecoveryCoordinatorURL().toExternalForm();
 
@@ -334,8 +350,9 @@ public class LRAService {
     public int renewTimeLimit(URL lraId, Long timelimit) {
         Transaction lra = lras.get(lraId);
 
-        if (lra == null)
+        if (lra == null) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         return lra.setTimeLimit(timelimit);
     }
@@ -352,8 +369,9 @@ public class LRAService {
     void enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init) {
         assert lraRecoveryModule == null;
 
-        if (LRALogger.logger.isDebugEnabled())
+        if (LRALogger.logger.isDebugEnabled()) {
             LRALogger.logger.debugf("LRAServicve.enableRecovery%n");
+        }
 
         lraRecoveryModule = new LRARecoveryModule(this);
         RecoveryManager.manager().addModule(lraRecoveryModule);
@@ -361,8 +379,9 @@ public class LRAService {
 
         lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
 
-        for (Transaction transaction : recoveringLRAs.values())
+        for (Transaction transaction : recoveringLRAs.values()) {
             transaction.getRecoveryCoordinatorUrls(participants);
+        }
     }
 
     /**
@@ -377,6 +396,8 @@ public class LRAService {
         RecoveryManager.manager().removeModule(lraRecoveryModule, false);
         lraRecoveryModule = null;
 
-        if (LRALogger.logger.isDebugEnabled())
-            LRALogger.logger.debugf("LRAServicve.disableRecovery%n");    }
+        if (LRALogger.logger.isDebugEnabled()) {
+            LRALogger.logger.debugf("LRAServicve.disableRecovery%n");
+        }
+    }
 }

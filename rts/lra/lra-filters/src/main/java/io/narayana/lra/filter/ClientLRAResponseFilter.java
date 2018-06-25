@@ -44,7 +44,8 @@ public class ClientLRAResponseFilter implements ClientResponseFilter {
          * if the incoming response contains a context make it the current one
          * (note we never popped the context in the request filter so we don't need to push outgoingLRA
          */
-        if (incomingLRA != null)
+        if (incomingLRA != null) {
             Current.push(new URL(incomingLRA.toString()));
+        }
     }
 }
