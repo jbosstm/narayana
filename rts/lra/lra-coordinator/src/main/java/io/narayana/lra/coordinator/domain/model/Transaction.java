@@ -109,11 +109,12 @@ public class Transaction extends AtomicAction {
         return LRA_TYPE;
     }
 
-    public boolean save_state (OutputObjectState os, int ot) {
+    public boolean save_state(OutputObjectState os, int ot) {
         if (!super.save_state(os, ot)
                 || !save_list(os, ot, pendingList)
-                || !save_list(os, ot, preparedList))
+                || !save_list(os, ot, preparedList)) {
             return false;
+        }
 
         try {
             os.packString(id == null ? null : id.toString());
@@ -143,14 +144,16 @@ public class Transaction extends AtomicAction {
             while (temp != null) {
                 list.putRear(temp);
 
-                if (!temp.doSave())
+                if (!temp.doSave()) {
                     return false;
+                }
 
                 try {
                     os.packInt(temp.typeIs());
 
-                    if (!temp.save_state(os, ot))
+                    if (!temp.save_state(os, ot)) {
                         return false;
+                    }
                 } catch (IOException e) {
                     return false;
                 }
@@ -181,11 +184,13 @@ public class Transaction extends AtomicAction {
             while ((record_type = os.unpackInt()) != RecordType.NONE_RECORD) {
                 AbstractRecord record = AbstractRecord.create(record_type);
 
-                if (record == null || !record.restore_state(os, ot) || !list.insert(record))
+                if (record == null || !record.restore_state(os, ot) || !list.insert(record)) {
                     return false;
+                }
 
-                if (record instanceof LRARecord)
+                if (record instanceof LRARecord) {
                     ((LRARecord) record).setLRAService(lraService);
+                }
 
             }
         } catch (IOException | NullPointerException e1) {
@@ -197,12 +202,13 @@ public class Transaction extends AtomicAction {
         return true;
     }
 
-    public boolean restore_state (InputObjectState os, int ot) {
+    public boolean restore_state(InputObjectState os, int ot) {
 
         if (!super.restore_state(os, ot)
                 || !restore_list(os, ot, pendingList)
-                || !restore_list(os, ot, preparedList))
+                || !restore_list(os, ot, preparedList)) {
             return false;
+        }
 
         try {
             String s = os.unpackString();
@@ -216,17 +222,27 @@ public class Transaction extends AtomicAction {
 
             return true;
         } catch (IOException e) {
-            if(LRALogger.logger.isDebugEnabled())
+            if (LRALogger.logger.isDebugEnabled()) {
                 LRALogger.logger.debugf(e, "Cannot restore state of objec type '%s'", ot);
+            }
+
             return false;
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Transaction)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Transaction)) {
+            return false;
+        }
+
+        if (!super.equals(o)) {
+            return false;
+        }
 
         Transaction that = (Transaction) o;
 
@@ -348,14 +364,18 @@ public class Transaction extends AtomicAction {
                 // compensators must be called in reverse order so reverse the pending list
                 int sz = pendingList == null ? 0 : pendingList.size();
 
-                for (int i = sz - 1; i > 0; i--)
+                for (int i = sz - 1; i > 0; i--) {
                     pendingList.putRear(pendingList.getFront());
+                }
 
                 // tell each participant that the lra canceled
                 updateState(CompensatorStatus.Compensating);
+
                 // since the phase2Abort route skips prepare we need to make sure the heuristic list exists
-                if (heuristicList == null)
+                if (heuristicList == null) {
                     heuristicList = new RecordList();
+                }
+
                 super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
                 res = super.status();
             } else {
@@ -371,22 +391,26 @@ public class Transaction extends AtomicAction {
         ObjectMapper mapper = new ObjectMapper();
 
         if (pending != null && pending.size() != 0) {
-            if (!nested)
+            if (!nested) {
                 pending.clear(); // TODO we will loose this data if we need recovery
+            }
         }
 
-        if (getSize(heuristicList) != 0 || getSize(failedList) != 0)
+        if (getSize(heuristicList) != 0 || getSize(failedList) != 0) {
             status = CompensatorStatus.Compensating;
-        else if (getSize(pendingList) != 0 || getSize(preparedList) != 0)
+        } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
             status = CompensatorStatus.Completing;
-        else
+        } else {
             status = toLRAStatus(res);
+        }
 
-        if (!isRecovering())
-            if (lraService != null)
+        if (!isRecovering()) {
+            if (lraService != null) {
                 lraService.finished(this, false);
-        else
+            }
+        } else {
             LRALogger.logger.warn("null LRAService in LRA#end");
+        }
 
         responseData = status == null ? null : status.name();
 
@@ -404,7 +428,7 @@ public class Transaction extends AtomicAction {
     }
 
     private Collection<String> getCompensatorResponse(ObjectMapper mapper, String data) {
-        if (data !=null && data.startsWith("[")) {
+        if (data != null && data.startsWith("[")) {
             try {
                 String[] ja = mapper.readValue(data, String[].class);
                 // TODO should recurse here since the encoded strings may themselves contain participant output
@@ -443,8 +467,9 @@ public class Transaction extends AtomicAction {
                                     long timeLimit, String compensatorData) throws UnsupportedEncodingException {
         LRARecord participant = findLRAParticipant(participantUrl, false);
 
-        if (participant != null)
+        if (participant != null) {
             return participant; // must have already been enlisted
+        }
 
         participant = enlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase, null,
                 timeLimit, compensatorData);
@@ -460,8 +485,9 @@ public class Transaction extends AtomicAction {
 
     public LRARecord enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
                                        long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        if (findLRAParticipant(participantUrl, false) != null)
+        if (findLRAParticipant(participantUrl, false) != null) {
             return null;    // already enlisted
+        }
 
         LRARecord p = new LRARecord(lraService, coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
@@ -471,9 +497,11 @@ public class Transaction extends AtomicAction {
         p.setRecoveryURL(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            if (!p.setTimeLimit(scheduler, timeLimit, this))
-                if (LRALogger.logger.isInfoEnabled())
+            if (!p.setTimeLimit(scheduler, timeLimit, this)) {
+                if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
+                }
+            }
 
             return p;
         }
@@ -490,13 +518,15 @@ public class Transaction extends AtomicAction {
     }
 
     public void forgetAllParticipants() {
-        if (pending != null)
+        if (pending != null) {
             pending.forEach(LRARecord::forget);
+        }
     }
 
     private void savePendingList() {
-        if (pendingList == null || pending != null)
+        if (pendingList == null || pending != null) {
             return;
+        }
 
         RecordListIterator i = new RecordListIterator(pendingList);
         AbstractRecord r;
@@ -514,14 +544,17 @@ public class Transaction extends AtomicAction {
         String pUrl = LRARecord.extractCompensator(id, participantUrl);
         LRARecord rec = findLRAParticipant(pUrl, remove, pendingList);
 
-        if (rec == null)
+        if (rec == null) {
             rec = findLRAParticipant(pUrl, remove, preparedList);
+        }
 
-        if (rec == null)
+        if (rec == null) {
             rec = findLRAParticipant(pUrl, remove, heuristicList);
+        }
 
-        if (rec == null)
+        if (rec == null) {
             rec = findLRAParticipant(pUrl, remove, failedList);
+        }
 
         return rec;
     }
@@ -531,8 +564,9 @@ public class Transaction extends AtomicAction {
             RecordListIterator i = new RecordListIterator(list);
             AbstractRecord r;
 
-            if (participantUrl.indexOf(',') != -1)
+            if (participantUrl.indexOf(',') != -1) {
                 participantUrl = LRARecord.extractCompensator(id, participantUrl);
+            }
 
             while ((r = i.iterate()) != null) {
                 if (r instanceof LRARecord) {
@@ -540,8 +574,9 @@ public class Transaction extends AtomicAction {
                     // can't use == because this may be a recovery scenario
                     if (rr.getParticipantPath().equals(participantUrl) ||
                             rr.getCompensator().equals(participantUrl)) {
-                        if (remove)
+                        if (remove) {
                             list.remove(rr);
+                        }
 
                         return rr;
                     }
@@ -575,8 +610,9 @@ public class Transaction extends AtomicAction {
     }
 
     private int lraStatusToHttpStatus() {
-        if (status == null)
+        if (status == null) {
             return Status.NO_CONTENT.getStatusCode(); // in progress, 204
+        }
 
         switch (status) {
             case Completed:
@@ -607,8 +643,9 @@ public class Transaction extends AtomicAction {
     }
 
     private int scheduleCancelation(Runnable runnable, Long timeLimit) {
-        if ((scheduledAbort != null && !scheduledAbort.cancel(false)) || status() != ActionStatus.RUNNING)
+        if ((scheduledAbort != null && !scheduledAbort.cancel(false)) || status() != ActionStatus.RUNNING) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         if (timeLimit > 0) {
             cancelOn = LocalDateTime.now().plusNanos(timeLimit * 1000000);
@@ -661,13 +698,16 @@ public class Transaction extends AtomicAction {
                 lraRecord.setRecoveryURL(recoveryURL);
 
 
-                if (!deactivate())
-                    if (LRALogger.logger.isInfoEnabled())
-                       LRALogger.logger.infof("Could not save new recovery URL");
+                if (!deactivate()) {
+                    if (LRALogger.logger.isInfoEnabled()) {
+                        LRALogger.logger.infof("Could not save new recovery URL");
+                    }
+                }
 
             } catch (InvalidLRAIdException e) {
-                if (LRALogger.logger.isInfoEnabled())
+                if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
+                }
             }
         }
     }

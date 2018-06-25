@@ -39,6 +39,7 @@ import org.hamcrest.Description;
  */
 public class HamcrestRegexpMatcher extends BaseMatcher<Object> {
     private final Pattern regexpPattern;
+    private static final String MATCH_ALL_REGEX = ".*";
 
     /**
      * Public API for this matcher. Expecting regular expression
@@ -53,10 +54,12 @@ public class HamcrestRegexpMatcher extends BaseMatcher<Object> {
 
     private HamcrestRegexpMatcher(final String regexpString) {
         String tunedRegexpString = regexpString;
-        if (!regexpString.startsWith(".*"))
-            tunedRegexpString = ".*" + tunedRegexpString;
-        if (!regexpString.endsWith(".*"))
-            tunedRegexpString = tunedRegexpString + ".*";
+        if (!regexpString.startsWith(MATCH_ALL_REGEX)) {
+            tunedRegexpString = MATCH_ALL_REGEX + tunedRegexpString;
+        }
+        if (!regexpString.endsWith(MATCH_ALL_REGEX)) {
+            tunedRegexpString = tunedRegexpString + MATCH_ALL_REGEX;
+        }
         this.regexpPattern = Pattern.compile(tunedRegexpString);
     }
 

@@ -124,26 +124,28 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // do not show weld info log messages
-        if(!getLog().isDebugEnabled()) {
+        if (!getLog().isDebugEnabled()) {
             LogManager lm = LogManager.getLogManager();
             Logger archiveDeployerLogger = Logger.getLogger("org.jboss.weld");
             archiveDeployerLogger.setLevel(Level.WARNING);
             lm.addLogger(archiveDeployerLogger);
         }
 
-        if(paths == null) paths = new String[] {project.getBuild().getOutputDirectory()};
+        if (paths == null) {
+            paths = new String[] {project.getBuild().getOutputDirectory()};
+        }
 
         // check argument validity
-        if(paths.length <= 0) {
+        if (paths.length <= 0) {
             throw new  MojoFailureException("No argument provided, nothing to be scanned");
         }
         String[] preprocessedPaths = paths;
 
         // filtering out paths that does not exist
-        if(!failWhenPathNotExist) {
+        if (!failWhenPathNotExist) {
             preprocessedPaths =
                 Arrays.asList(paths).stream().filter(path -> new File(path).exists()).toArray(String[]::new);
-            if(preprocessedPaths.length <= 0) {
+            if (preprocessedPaths.length <= 0) {
                 getLog().warn("No provided parameter as path for checking for LRA classes '" +
                     Arrays.asList(paths) + "' does exist");
                 return;
@@ -161,7 +163,7 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
 
         // scanning the arguments to say the classes to be processed
         List<Class<?>> clazzNames = new ArrayList<Class<?>>();
-        for(Entry<File, FileType> argEntry: pathsFileMap.entrySet()) {
+        for (Entry<File, FileType> argEntry: pathsFileMap.entrySet()) {
             switch (argEntry.getValue()) {
                 case DIRECTORY:
                     clazzNames.addAll(
@@ -170,6 +172,8 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
                 case JAR:
                     clazzNames.addAll(
                             CheckerUtil.loadFromJar(argEntry.getKey(), classLoader));
+                    break;
+                default:
                     break;
             }
         }
@@ -182,15 +186,15 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
             .setClassLoader(classLoader)
             .addBeanClasses(clazzNames.toArray(new Class[clazzNames.size()]));
 
-        try(WeldContainer container = weld.initialize()) {
+        try (WeldContainer container = weld.initialize()) {
             // weld intializes and works with extensions here
         } catch (org.jboss.weld.exceptions.DeploymentException ignore) {
-            if(!getLog().isDebugEnabled()) {
+            if (!getLog().isDebugEnabled()) {
                 getLog().debug("Error on Weld init happened but we are ignoring"
                         + "it as we care about LRA annotation and not about deploying", ignore);
             }
         } finally {
-            if(!FailureCatalog.INSTANCE.isEmpty()) {
+            if (!FailureCatalog.INSTANCE.isEmpty()) {
                 throw new MojoFailureException(
                     String.format("LRA annotation errors:%n%s", FailureCatalog.INSTANCE.formatCatalogContent()));
             }
@@ -199,15 +203,15 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
 
     private Map<File, FileType> classifyPaths(String[] pathsToClasify) throws MojoFailureException {
         Map<File, FileType> pathsFileMap = new HashMap<>();
-        for(String arg: pathsToClasify) {
+        for (String arg: pathsToClasify) {
             File file = new File(arg);
-            if(!file.exists()) {
+            if (!file.exists()) {
                 throw new IllegalArgumentException("Provided argument '" + arg + "' is not an existing file");
             }
 
-            if(file.isDirectory()) {
+            if (file.isDirectory()) {
                 pathsFileMap.put(file, FileType.DIRECTORY);
-            } else if(CheckerUtil.isZipFile(file)) {
+            } else if (CheckerUtil.isZipFile(file)) {
                 pathsFileMap.put(file, FileType.JAR);
             } else {
                 throw new MojoFailureException("Provided path '" + arg + "' is neither directory nor jar file");
@@ -222,12 +226,12 @@ public class LraCheckerMavenPlugin extends AbstractMojo {
         try {
             // classes which are expected to be scanned by Weld extension
             List<URL> pathUrls = new ArrayList<>();
-            for(String paramPath: pathsToBeClassLoaded) {
+            for (String paramPath: pathsToBeClassLoaded) {
                 currentPathProcessed = paramPath;
                 pathUrls.add(new File(paramPath).toURI().toURL());
             }
             // adding compile classpath as expected to be needed for Weld can initiate the classes for evaluation
-            for(String mavenCompilePath: project.getCompileClasspathElements()) {
+            for (String mavenCompilePath: project.getCompileClasspathElements()) {
                 currentPathProcessed = mavenCompilePath;
                 pathUrls.add(new File(mavenCompilePath).toURI().toURL());
             }

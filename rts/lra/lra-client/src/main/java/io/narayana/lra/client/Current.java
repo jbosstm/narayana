@@ -45,8 +45,9 @@ public class Current {
     public static Object putState(String key, Object value) {
         Current current = lraContexts.get();
 
-        if (current != null)
+        if (current != null) {
             return current.updateState(key, value);
+        }
 
         return null;
     }
@@ -54,22 +55,25 @@ public class Current {
     public static Object getState(String key) {
         Current current = lraContexts.get();
 
-        if (current != null && current.state != null)
+        if (current != null && current.state != null) {
             return current.state.get(key);
+        }
 
         return null;
     }
 
     public Object updateState(String key, Object value) {
-        if (state == null)
+        if (state == null) {
             state = new HashMap<>();
+        }
 
         return state.put(key, value);
     }
 
     private static void clearContext(Current current) {
-        if (current.state != null)
+        if (current.state != null) {
             current.state.clear();
+        }
 
         lraContexts.set(null);
     }
@@ -87,8 +91,9 @@ public class Current {
         if (current != null) {
             lraId = current.stack.pop(); // there must be at least one
 
-            if (current.stack.empty())
+            if (current.stack.empty()) {
                 clearContext(current);
+            }
         }
 
         return lraId;
@@ -99,13 +104,15 @@ public class Current {
         Current current = lraContexts.get();
 
         // NB URIs would have been preferable to URLs for testing equality
-        if (current == null || !current.stack.contains(lra))
+        if (current == null || !current.stack.contains(lra)) {
             return false;
+        }
 
         current.stack.remove(lra);
 
-        if (current.stack.empty())
+        if (current.stack.empty()) {
             clearContext(current);
+        }
 
         return true;
     }
@@ -120,8 +127,9 @@ public class Current {
         if (current == null) {
             lraContexts.set(new Current(lraId));
         } else {
-            if (!current.stack.peek().equals(lraId))
+            if (!current.stack.peek().equals(lraId)) {
                 current.stack.push(lraId);
+            }
         }
     }
 
@@ -133,10 +141,11 @@ public class Current {
     public static void updateLRAContext(ContainerResponseContext responseContext) {
         URL lraId = Current.peek();
 
-        if (lraId != null)
+        if (lraId != null) {
             responseContext.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
-        else
+        } else {
             responseContext.getHeaders().remove(LRA_HTTP_HEADER);
+        }
     }
 
     public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {

@@ -64,8 +64,12 @@ class ParticipantProxy {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ParticipantProxy)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParticipantProxy)) {
+            return false;
+        }
 
         ParticipantProxy that = (ParticipantProxy) o;
 
@@ -97,8 +101,9 @@ class ParticipantProxy {
     }
 
     Optional<CompensatorStatus> getStatus() throws InvalidLRAStateException {
-        if (future == null)
+        if (future == null) {
             return Optional.empty();
+        }
 
         if (future.isDone()) {
             try {

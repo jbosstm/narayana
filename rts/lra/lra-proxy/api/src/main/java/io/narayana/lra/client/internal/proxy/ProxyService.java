@@ -134,28 +134,35 @@ public class ProxyService implements LRAManagement {
 
         LRAParticipant participant = proxy.getParticipant();
 
-        if (participant == null && participantData != null && participantData.length() > 0)
+        if (participant == null && participantData != null && participantData.length() > 0) {
             participant = deserializeParticipant(lraId, participantData).orElse(null);
+        }
 
         if (participant != null) {
             Future<Void> future = null;
 
             try {
-                if (compensate)
-                    future = participant.compensateWork(lraId); // let any NotFoundException propagate back to the coordinator
-                else
-                    future = participant.completeWork(lraId); // let any NotFoundException propagate back to the coordinator
+                if (compensate) {
+                    // let any NotFoundException propagate back to the coordinator
+                    future = participant.compensateWork(lraId);
+                } else {
+                    // let any NotFoundException propagate back to the coordinator
+                    future = participant.completeWork(lraId);
+                }
             } catch (TerminationException e) {
-                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete).build();
+                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate
+                        : CompensatorStatus.FailedToComplete).build();
             } finally {
-                if (future == null)
+                if (future == null) {
                     participants.remove(proxy); // we definitively know the outcome
-                else
+                } else {
                     proxy.setFuture(future, compensate); // remember the future so that we can report its progress
+                }
             }
 
-            if (future != null)
+            if (future != null) {
                 return Response.accepted().build();
+            }
 
             return Response.ok().build();
         } else {
@@ -168,15 +175,17 @@ public class ProxyService implements LRAManagement {
     void notifyForget(URL lraId, String participantId) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
-        if (proxy != null)
+        if (proxy != null) {
             participants.remove(proxy);
+        }
     }
 
     CompensatorStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
-        if (proxy == null)
+        if (proxy == null) {
             throw new NotFoundException();
+        }
 
         Optional<CompensatorStatus> status = proxy.getStatus();
 
@@ -259,8 +268,9 @@ public class ProxyService implements LRAManagement {
             for (LRAParticipantDeserializer ds : deserializers) {
                 LRAParticipant participant = ds.deserialize(lraId, data);
 
-                if (participant != null)
+                if (participant != null) {
                     return Optional.of(participant);
+                }
             }
 
             LRAProxyLogger.i18NLogger.warn_cannotDeserializeParticipant(lraId.toExternalForm(),

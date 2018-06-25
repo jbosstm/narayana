@@ -7,7 +7,7 @@
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * the License, or(at your option) any later version.
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -203,8 +203,9 @@ public class SpecIT {
             try {
                 return future.get(maxMsecWait, TimeUnit.MILLISECONDS);
             } catch (TimeoutException | InterruptedException | ExecutionException e) {
-                if (failTest)
+                if (failTest) {
                     fail("delayEndLRA received unexpected exception: " + e.getMessage());
+                }
             } finally {
                 future.cancel(true);
             }
@@ -257,12 +258,12 @@ public class SpecIT {
     }
 
     @Test
-    public void closeLRAWaitForRecovery () throws WebApplicationException {
+    public void closeLRAWaitForRecovery() throws WebApplicationException {
         delayEndLRA(-1, "wait", "recovery");
     }
 
     @Test
-    public void closeLRAWaitIndefinitely () throws WebApplicationException {
+    public void closeLRAWaitIndefinitely() throws WebApplicationException {
         delayEndLRA(1000,"wait", "-1");
     }
 
@@ -296,13 +297,13 @@ public class SpecIT {
     }
 
     @Test
-    public void connectionHangup () throws WebApplicationException {
+    public void connectionHangup() throws WebApplicationException {
         int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         URL lra = lraClient.startLRA(null, "SpecTest#connectionHangup", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        // tell the resource to generate a proccessing exception when asked to finish the LRA (simulates a connection hang)
+        // tell the resource to generate a proccessing exception when asked to finish the LRA(simulates a connection hang)
         WebTarget resourcePath = msTarget.path(ACTIVITIES_PATH).path(ActivityController.WORK_RESOURCE_METHOD)
                 .queryParam("how", "exception")
                 .queryParam("arg", "javax.ws.rs.ProcessingException");
@@ -326,7 +327,7 @@ public class SpecIT {
 
         int[] cnt3 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
-        // there should have been a second compensate call (from the recovery coordinator)
+        // there should have been a second compensate call(from the recovery coordinator)
         assertEquals("connectionHangup: wrong completion count after recovery", cnt1[0], cnt3[0]);
         assertEquals("connectionHangup: wrong compensation count after recovery", cnt1[1] + 2, cnt3[1]);
 
@@ -447,7 +448,7 @@ public class SpecIT {
     }
 
     @Test
-    public void joinLRAViaHeader () throws WebApplicationException {
+    public void joinLRAViaHeader() throws WebApplicationException {
         int cnt1 = completedCount(ACTIVITIES_PATH, true);
 
         URL lra = lraClient.startLRA("SpecTest#joinLRAViaBody", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
@@ -473,7 +474,7 @@ public class SpecIT {
     }
 
     @Test
-    public void join () throws WebApplicationException {
+    public void join() throws WebApplicationException {
         List<LRAInfo> lras = lraClient.getActiveLRAs();
         int count = lras.size();
         URL lra = lraClient.startLRA("SpecTest#join", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
@@ -502,7 +503,7 @@ public class SpecIT {
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // call a method annotated with @Leave (should remove the participant from the LRA)
+        // call a method annotated with @Leave(should remove the participant from the LRA)
         response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.LEAVE_RESOURCE_METHOD)
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
@@ -531,7 +532,7 @@ public class SpecIT {
                 .request().header(NarayanaLRAClient.LRA_HTTP_HEADER, lra).put(Entity.text(""));
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        // call a method annotated with @Leave (should remove the participant from the LRA)
+        // call a method annotated with @Leave(should remove the participant from the LRA)
         try {
             response = msTarget.path(ACTIVITIES_PATH).path(ActivityController.LEAVE_RESOURCE_METHOD)
                     .path(URLEncoder.encode(lra.toString(), "UTF-8"))
@@ -599,7 +600,7 @@ public class SpecIT {
 
             /*
              * The call to activities/timeLimitRequiredLRA should have started an LRA whch should have timed out
-             * (because the called resource method sleeps for long than the @TimeLimit annotation specifies).
+             *(because the called resource method sleeps for long than the @TimeLimit annotation specifies).
              * Therefore the it should have compensated:
              */
             assertEquals("timeLimitRequiredLRA: complete was called instead of compensate",
@@ -607,8 +608,9 @@ public class SpecIT {
             assertEquals("timeLimitRequiredLRA: compensate should have been called",
                     cnt1[1] + 1, cnt2[1]);
         } finally {
-            if (response != null)
+            if (response != null) {
                 response.close();
+            }
         }
     }
 
@@ -654,8 +656,9 @@ public class SpecIT {
                     null, getLra(lras, lra.toExternalForm()));
         } finally {
 
-            if (response != null)
+            if (response != null) {
                 response.close();
+            }
         }
     }
 
@@ -705,10 +708,11 @@ public class SpecIT {
 
         checkStatusAndClose(response, Response.Status.OK.getStatusCode(), false);
 
-        if (close)
+        if (close) {
             tryEndLRA(lra, false);
-        else
+        } else {
             tryCancelLRA(lra, false);
+        }
 
         if (waitForRecovery) {
             // trigger a recovery scan which trigger a replay attempt on any participants
@@ -740,25 +744,28 @@ public class SpecIT {
 
             /*
              * The call to activities/timeLimit should have started an LRA whch should not have timed out
-             * (because the called resource method renews the timeLimit before sleeping for longer than
+             *(because the called resource method renews the timeLimit before sleeping for longer than
               * the @TimeLimit annotation specifies).
              * Therefore the it should not have compensated:
              */
             assertEquals("compensate was called instead of complete", cnt1[0] + 1, cnt2[0]);
             assertEquals("compensate should not have been called", cnt1[1], cnt2[1]);
         } finally {
-            if (response != null)
+            if (response != null) {
                 response.close();
+            }
         }
     }
 
     private String checkStatusAndClose(Response response, int expected, boolean readEntity) {
         try {
-            if (expected != -1 && response.getStatus() != expected)
+            if (expected != -1 && response.getStatus() != expected) {
                 throw new WebApplicationException(response);
+            }
 
-            if (readEntity)
+            if (readEntity) {
                 return response.readEntity(String.class);
+            }
         } finally {
             response.close();
         }
@@ -800,8 +807,9 @@ public class SpecIT {
 
             return Integer.parseInt(response.readEntity(String.class));
         } finally {
-            if (response != null)
+            if (response != null) {
                 response.close();
+            }
         }
 
     }
@@ -810,8 +818,9 @@ public class SpecIT {
 
         int[] cnt1 = {completedCount(ACTIVITIES_PATH, true), completedCount(ACTIVITIES_PATH, false)};
 
-        if (how == CompletionType.mixed && nestedCnt <= 1)
+        if (how == CompletionType.mixed && nestedCnt <= 1) {
             how = CompletionType.complete;
+        }
 
         URL lra = lraClient.startLRA("SpecTest#multiLevelNestedActivity", LRA_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         String lraId = lra.toString();
@@ -860,10 +869,10 @@ public class SpecIT {
             tryEndLRA(lra, false);
         } else {
             /*
-             * The test is calling for a mixed uutcome (a top level LRA L! and nestedCnt nested LRAs (L2, L3, ...)::
-             * L1 the mandatory call (PUT "activities/multiLevelNestedActivity") registers participant C1
+             * The test is calling for a mixed uutcome(a top level LRA L! and nestedCnt nested LRAs(L2, L3, ...)::
+             * L1 the mandatory call(PUT "activities/multiLevelNestedActivity") registers participant C1
              *   the resource makes nestedCnt calls to "activities/nestedActivity" each of which create nested LRAs
-             * L2, L3, ... each of which enlists a participant (C2, C3, ...) which are completed when the call returns
+             * L2, L3, ... each of which enlists a participant(C2, C3, ...) which are completed when the call returns
              * L2 is canceled  which causes C2 to compensate
              * L1 is closed which triggers the completion of C1
              *
@@ -874,7 +883,7 @@ public class SpecIT {
              * - C3, ... are completed
              */
             tryCancelLRA(urls[1], false); // compensate the first nested LRA
-            tryEndLRA(lra, false); // should not complete any nested LRAs (since they have already completed via the interceptor)
+            tryEndLRA(lra, false); // should not complete any nested LRAs(since they have already completed via the interceptor)
         }
 
         // validate that the top level and nested LRAs are gone
@@ -894,13 +903,13 @@ public class SpecIT {
             /*
              * the test starts LRA1 calls a @Mandatory method multiLevelNestedActivity which enlists in LRA1
              * multiLevelNestedActivity then calls an @Nested method which starts L2 and enlists another participant
-             *   when the method returns the nested participant is completed (ie completed count is incremented)
-             * Canceling L1 should then compensate the L1 enlistement (ie compensate count is incrememted)
-             * which will then tell L2 to compenstate (ie the compensate count is incrememted again)
+             *   when the method returns the nested participant is completed(ie completed count is incremented)
+             * Canceling L1 should then compensate the L1 enlistement(ie compensate count is incrememted)
+             * which will then tell L2 to compenstate(ie the compensate count is incrememted again)
              */
-            // each nested participant should have completed (the +nestedCnt)
+            // each nested participant should have completed(the +nestedCnt)
             assertEquals(cnt1[0] + nestedCnt, cnt3[0]);
-            // each nested participant should have compensated. The top level enlistement should have compensated (the +1)
+            // each nested participant should have compensated. The top level enlistement should have compensated(the +1)
             assertEquals(cnt2[1] + 1 + nestedCnt, cnt3[1]);
         } else {
             /*
@@ -908,10 +917,10 @@ public class SpecIT {
              * - the top level LRA was closed
              * - one of the nested LRAs was compensated the rest should have been completed
              */
-            assertEquals(1, cnt3[1] - cnt1[1]); // there should be just 1 compensation (the first nested LRA)
+            assertEquals(1, cnt3[1] - cnt1[1]); // there should be just 1 compensation(the first nested LRA)
             /*
              * Expect nestedCnt + 1 completions, 1 for the top level and one for each nested LRA
-             * (NB the first nested LRA is completed and compensated)
+             *(NB the first nested LRA is completed and compensated)
              * Note that the top level complete should not call complete again on the nested LRA
              */
             assertEquals(nestedCnt + 1, cnt3[0] - cnt1[0]); //
@@ -923,8 +932,9 @@ public class SpecIT {
 
     private static LRAInfo getLra(List<LRAInfo> lras, String lraId) {
         for (LRAInfo lraInfo : lras) {
-            if (lraInfo.getLraId().equals(lraId))
+            if (lraInfo.getLraId().equals(lraId)) {
                 return lraInfo;
+            }
         }
 
         return null;
@@ -957,8 +967,9 @@ public class SpecIT {
                 // means the LRA has gone
             }
         } finally {
-            if (response != null)
+            if (response != null) {
                 response.close();
+            }
 
         }
     }
@@ -978,8 +989,9 @@ public class SpecIT {
                 }
             }
 
-            if (recoveredCnt == lras.length)
+            if (recoveredCnt == lras.length) {
                 return true;
+            }
         }
 
         return false;

@@ -157,5 +157,5 @@ public @interface LRA {
      * @return the {@link Response.Status} HTTP status codes that will cause cancellation of the LRA
      */
     @Nonbinding
-    Response.Status [] cancelOn() default {};
+    Response.Status[] cancelOn() default {};
 }

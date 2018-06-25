@@ -96,11 +96,11 @@ public class LRAInfoImpl implements LRAInfo {
     }
 
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        else if (!(o instanceof LRAInfo))
+        } else if (!(o instanceof LRAInfo)) {
             return false;
-        else {
+        } else {
             LRAInfo lraStatus = (LRAInfo)o;
             return this.getLraId().equals(lraStatus.getLraId());
         }

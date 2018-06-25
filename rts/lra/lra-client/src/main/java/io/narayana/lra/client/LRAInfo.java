@@ -35,7 +35,7 @@ public class LRAInfo {
     //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
 //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
-    private String clientId ;
+    private String clientId;
 //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
     private boolean isComplete;
 //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
@@ -106,8 +106,12 @@ public class LRAInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LRAInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LRAInfo)) {
+            return false;
+        }
 
         LRAInfo lraStatus = (LRAInfo) o;
 

@@ -46,6 +46,9 @@ import org.apache.maven.plugin.logging.Log;
 public final class CheckerUtil {
     private static Log log;
 
+    private CheckerUtil() {
+    }
+
     public static void setMavenLog(Log log) {
         CheckerUtil.log = log;
     }
@@ -119,7 +122,11 @@ public final class CheckerUtil {
             log.debug("Error on loading class by URLClassLoder from: "
                 + Arrays.asList(((URLClassLoader) classLoader).getURLs()), e);
             String errMsg = "Can't load class '" + className + "' from '" + fileLoadingFrom.getPath() + "'";
-            if(log != null) log.error(errMsg); else System.err.println(errMsg);
+            if (log != null) {
+                log.error(errMsg);
+            } else {
+                System.err.println(errMsg);
+            }
             return null;
         }
     }
