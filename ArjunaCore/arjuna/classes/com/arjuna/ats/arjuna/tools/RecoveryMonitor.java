@@ -47,6 +47,11 @@ public class RecoveryMonitor
 	private static String systemOutput = "";
 
 	public static void main (String[] args)
+	{
+		System.exit(main2(args));
+	}
+
+	public static int main2 (String[] args)
     {
 	String host = null;
 	int port = 0;
@@ -54,13 +59,14 @@ public class RecoveryMonitor
 	int timeout = 20000;
         boolean test = false;
 	boolean verbose = false;
+	int status = 1; // program return status. By convention a nonzero value indicates abnormal termination
 
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-help") == 0)
 	    {
 		usage();
-		System.exit(0);
+		return status;
 	    }
 	    else if (args[i].compareTo("-verbose") == 0)
 		{
@@ -120,7 +126,7 @@ public class RecoveryMonitor
 				    System.out.println("Unknown option "+args[i]);
 				    usage();
 
-				    System.exit(0);
+				    return status;
 				}
 			    }
 			}
@@ -154,14 +160,17 @@ public class RecoveryMonitor
 
         response = fromServer.readLine();
 
-        if (response.equals("DONE"))
-            systemOutput = asyncScan ? "RecoveryManager scan begun." : "DONE";
-        else
-            systemOutput = verbose ? "ERROR" : "RecoveryManager did not understand request: " + response;
-
         System.out.println(systemOutput);
 
 	    connectorSocket.close() ;
+
+		if (response.equals("DONE")) {
+			systemOutput = asyncScan ? "RecoveryManager scan begun." : "DONE";
+			status = 0;
+		} else {
+			systemOutput = verbose ? "ERROR" : "RecoveryManager did not understand request: " + response;
+			status = 2;
+		}
 	}
 	catch (java.net.ConnectException e)
 	{
@@ -174,6 +183,8 @@ public class RecoveryMonitor
 
 	if ( test )
 	    System.out.println("Ready");
+
+	return status;
     }
 
     private static void usage ()
