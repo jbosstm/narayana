@@ -535,6 +535,9 @@ function xts_tests {
   cd $WORKSPACE
   ran_crt=1
 
+  CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+  sed -e 's#<management>#<system-properties>\n      <property name="wsat.async.registration" value="true"/>\n    </system-properties>\n\n    <management>#' "$CONF" > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
