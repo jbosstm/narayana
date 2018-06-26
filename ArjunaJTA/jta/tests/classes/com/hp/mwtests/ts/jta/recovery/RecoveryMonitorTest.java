@@ -30,9 +30,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import org.junit.Test;
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -76,11 +73,12 @@ public class RecoveryMonitorTest {
             String rcPort = String.valueOf(recoveryEnvironmentBean.getRecoveryPort()); // the recovery listener port
 
             // trigger a recovery scan with verbose output
-            RecoveryMonitor.main(new String [] {"-verbose", "-port", rcPort, "-host", host});
+            int status = RecoveryMonitor.main2(new String[] {"-verbose", "-port", rcPort, "-host", host});
 
             // check the output of the scan
             assertEquals("ERROR", RecoveryMonitor.getResponse());
             assertEquals("ERROR", RecoveryMonitor.getSystemOutput());
+            assertEquals(2, status);
         } finally {
             manager.terminate();
         }
