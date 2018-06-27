@@ -84,6 +84,16 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=1
+          export TOMCAT_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "TOMCAT" ]]; then
+        if [[ ! $PULL_DESCRIPTION == *!TOMCAT* ]]; then
+          comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
+          [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
+          export AS_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=1
         else
           export COMMENT_ON_PULL=""
@@ -115,7 +125,8 @@ function init_test_options {
         if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
+          export TOMCAT_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -215,14 +226,30 @@ function check_if_pull_closed
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
-	curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep -q "\"state\": \"closed\""
-	if [ $? -eq 1 ] 
-	then
-		echo "pull open"
-	else
-		echo "pull closed"
-		exit 0
-	fi
+        curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep -q "\"state\": \"closed\""
+        if [ $? -eq 1 ]
+        then
+            echo "pull open"
+        else
+            echo "pull closed"
+            exit 0
+        fi
+    fi
+}
+
+function check_if_pull_noci_label
+{
+    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+    if [ "$PULL_NUMBER" != "" ]
+    then
+        curl -ujbosstm-bot:$BOT_PASSWORD -s "https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/labels" | grep -q '"name": "NoCI"'
+        if [ $? -eq 1 ]
+        then
+            echo "NoCI label is not present at the pull request $PULL_NUMBER"
+        else
+            echo "pull request $PULL_NUMBER is defined with NoCI label, exiting this CI execution"
+            exit 0
+        fi
     fi
 }
 
@@ -262,7 +289,7 @@ function build_narayana {
     git checkout $SPI_BRANCH
     [ $? = 0 ] || fatal "git fetch of pull branch failed"
     cd ../
-    ./build.sh -f jboss-transaction-spi/pom.xml clean install
+    ./build.sh -f jboss-transaction-spi/pom.xml -B clean install
     [ $? = 0 ] || fatal "Build of SPI failed"
   fi
   
@@ -277,7 +304,7 @@ function build_narayana {
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? = 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
-  ./build.sh -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+  ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -308,8 +335,8 @@ function build_as {
     git rebase --abort
     rm -rf .git/rebase-apply
   else
-    echo "First time checkout of AS7"
-    git clone https://github.com/jbosstm/jboss-as.git -o jbosstm
+    echo "First time checkout of AS7 from jbosstm/jboss-as.git at branch 5_5_BRANCH"
+    git clone https://github.com/jbosstm/jboss-as.git -b 5_5_BRANCH -o jbosstm
     [ $? = 0 ] || fatal "git clone https://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
@@ -318,27 +345,37 @@ function build_as {
   fi
 
   [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-  [ $? = 0 ] || fatal "git fetch of pulls failed"
+  [ $? = 0 ] || fatal "git fetch of pulls of jbosstm failed"
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
-  [ $? = 0 ] || fatal "git fetch of pull branch failed"
+  [ $? = 0 ] || fatal "git fetch of pull branch $AS_BRANCH failed"
   [ -z "$AS_BRANCH" ] || comment_on_pull "$BUILD_URL using non-default AS_BRANCH: $AS_BRANCH"
 
   git fetch upstream
   echo "This is the JBoss-AS commit"
   echo $(git rev-parse upstream/master)
 
-  git pull --rebase --ff-only upstream master
-  [ $? = 0 ] || fatal "git rebase failed"
+  # rebasing against WFLY11 as it's version where Narayana 5.5 was used
+  git pull --rebase --ff-only upstream 11.x
+  [ $? = 0 ] || fatal "git rebase failed for WFLY 11.x branch"
+
+  if [ $REDUCE_SPACE = 1 ]; then
+    echo "Deleting git dir to reduce disk usage"
+    rm -rf .git
+  fi
 
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
-    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.32.Final-SNAPSHOT
-    ./build.sh -f testsuite/pom.xml -DallTests=true
+
+    JAVA_OPTS="$JAVA_OPTS" ./build.sh clean install -B $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
+    [ $? = 0 ] || fatal "AS build failed"
+
+    ./build.sh -f testsuite/integration/pom.xml -B -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -fae
+    [ $? = 0 ] || fatal "AS testsuite build failed"
   else
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.5.32.Final-SNAPSHOT
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
+    [ $? = 0 ] || fatal "AS build failed"
   fi
-  [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
@@ -348,7 +385,9 @@ function build_as {
 
 function init_jboss_home {
   cd $WORKSPACE
-  WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  # old: WILDFLY_VERSION_FROM_JBOSS_AS=`awk "/wildfly-parent/ {getline;print;}" ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+
   echo "AS version is ${WILDFLY_VERSION_FROM_JBOSS_AS}"
   JBOSS_HOME=${WORKSPACE}/jboss-as/build/target/wildfly-${WILDFLY_VERSION_FROM_JBOSS_AS}
   export JBOSS_HOME=`echo  $JBOSS_HOME`
@@ -361,14 +400,14 @@ function init_jboss_home {
 function osgi_tests {
   echo "#-1. OSGI Test"
   cd ${WORKSPACE}
-  ./build.sh -f osgi/jta/pom.xml -Parq-karaf-managed clean integration-test "$@"
+  ./build.sh -f osgi/jta/pom.xml -B -Parq-karaf-managed clean integration-test "$@"
   [ $? = 0 ] || fatal "OSGI Test failed"
 }
 
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
+  ./build.sh -f ./testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -376,7 +415,7 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/rts/pom.xml -Prts.integration.tests.profile "$@" test
+  ./build.sh -f ./testsuite/integration/rts/pom.xml -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -384,7 +423,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq $CODE_COVERAGE_ARGS "$@" test
+  MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -392,11 +431,11 @@ function jta_as_tests {
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f ./rts/at/integration/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./rts/at/integration/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 
   echo "#0. REST-AT To JTA Bridge Test"
-    ./build.sh -f ./rts/at/bridge/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+    ./build.sh -f ./rts/at/bridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
     [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
@@ -424,7 +463,7 @@ function blacktie {
   echo "SET WILDFLY_MASTER_VERSION=${WILDFLY_MASTER_VERSION}"
   [ ${WILDFLY_MASTER_VERSION} == ${WILDFLY_VERSION_FROM_JBOSS_AS} ] || echo "WARN: May need to upgrade version.org.wildfly.wildfly-parent in the narayana/blacktie pom.xml to ${WILDFLY_VERSION_FROM_JBOSS_AS}"
 
-  ./build.sh -f blacktie/wildfly-blacktie/pom.xml clean install "$@"
+  ./build.sh -f blacktie/wildfly-blacktie/pom.xml -B clean install "$@"
   [ $? = 0 ] || fatal "Blacktie Subsystem build failed"
   rm -rf ${WORKSPACE}/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ ! -e wildfly-${WILDFLY_MASTER_VERSION}.zip ] && (wget http://download.jboss.org/wildfly/${WILDFLY_MASTER_VERSION}/wildfly-${WILDFLY_MASTER_VERSION}.zip || fatal "Could not download wildfly")
@@ -446,7 +485,7 @@ function blacktie {
   fi
 
   # BUILD BLACKTIE
-  ./build.sh -f blacktie/pom.xml clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
+  ./build.sh -f blacktie/pom.xml -B clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
@@ -471,20 +510,20 @@ function blacktie {
 
 function jta_cdi_tests {
   echo "#0. JTA CDI Tests"
-  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
 function compensations_tests {
   echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./txframework/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "txframework build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
 }
 
@@ -499,20 +538,20 @@ function xts_tests {
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
-    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -B -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS/localjunit/pom.xml failed"
   else
-    ./build.sh -f XTS/localjunit/unit/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/unit/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit unit build failed"
-    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit disabled-context-propagation build failed"
-    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTX11 build failed"
-    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
-    ./build.sh -f XTS/localjunit/xtstest/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/xtstest/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit xtstest build failed"
-    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
 
@@ -540,7 +579,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
+  ./build.sh -f txbridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
@@ -560,7 +599,7 @@ function tomcat_tests {
 </tomcat-users>
 EOF
     echo "Executing Narayana Tomcat tests"
-    ./build.sh -f tomcat/tomcat-jta/pom.xml -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} install "$@"
+    ./build.sh -f tomcat/tomcat-jta/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} "$@" ${IPV6_OPTS} install "$@"
     RESULT=$?
     rm -r ${TOMCAT_NAME}
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed"
@@ -832,7 +871,7 @@ function perf_tests {
 function generate_code_coverage_report {
   echo "Generating code coverage report"
   cd ${WORKSPACE}
-  ./build.sh -pl code-coverage $CODE_COVERAGE_ARGS "$@" clean install
+  ./build.sh -B -pl code-coverage $CODE_COVERAGE_ARGS "$@" clean install
   [ $? = 0 ] || fatal "Code coverage report generation failed"
 }
 
@@ -842,6 +881,7 @@ ulimit -c unlimited
 ulimit -a
 
 check_if_pull_closed
+check_if_pull_noci_label
 
 init_test_options
 
@@ -872,13 +912,16 @@ for i in `ps -eaf | grep java | grep "standalone.*.xml" | grep -v grep | cut -c1
 MainClassPatterns="org.jboss.jbossts.qa com.arjuna.ats.arjuna.recovery.RecoveryManager"
 kill_qa_suite_processes $MainClassPatterns
 
-export MEM_SIZE=512m
-export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
+export MEM_SIZE=1024m
+[ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export ANT_OPTS="-Xms$MEM_SIZE -Xmx$MEM_SIZE"
 export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThreads=2"
 
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
+
+# Running at Narayana version 5.5 which belongs to appropriate WFLY 11
+AS_BRANCH=${AS_BRANCH:-5_5_BRANCH}
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
