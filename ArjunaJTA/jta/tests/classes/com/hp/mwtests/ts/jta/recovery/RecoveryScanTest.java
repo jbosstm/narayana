@@ -27,12 +27,17 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.transaction.UserTransaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,7 +46,53 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test the RecoveryMonitor is verbose mode
  */
-public class RecoveryMonitorTest2 {
+public class RecoveryScanTest {
+
+    private static RecoveryManager manager;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
+
+        // Ensure that test XAR is recoverable by adding the test XAResourceRecovery
+        ArrayList<String> rcvClassNames = new ArrayList<>();
+
+        rcvClassNames.add(XATestResourceXARecovery.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryClassNames(rcvClassNames);
+
+        recoveryEnvironmentBean.setRecoveryBackoffPeriod(1); // use a short interval between passes
+        recoveryEnvironmentBean.setRecoveryListener(true); // configure the RecoveryMonitor
+
+        manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+
+        manager.addModule(new XARecoveryModule()); // we only need to test the XARecoveryModule
+        manager.startRecoveryManagerThread(); // start periodic recovery
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        manager.terminate();
+        XATestResourceXARecovery.setUseFaultyResources(true);
+    }
+
+    @Test
+    public void testRecoveryMonitorWithFailure() throws Exception {
+        XATestResourceXARecovery.setUseFaultyResources(true);
+        UserTransaction ut = com.arjuna.ats.jta.UserTransaction.userTransaction();
+        ut.begin();
+        TransactionImple tx = TransactionImple.getTransaction();
+
+        // enlist a resource that behaves correctly
+        assertTrue(tx.enlistResource(new XATestResource(XATestResource.OK_JNDI_NAME, false)));
+        // enlist a resource that throws an exception from recover
+        assertTrue(tx.enlistResource(new XATestResource(XATestResource.FAULTY_JNDI_NAME, true)));
+
+        ut.commit();
+
+        manager.scan();
+
+        assertTrue(jtaLogger.isRecoveryProblems());
+    }
 
     @Test
     public void testRecoveryMonitorWithSuccess() throws Exception {
@@ -92,39 +143,25 @@ public class RecoveryMonitorTest2 {
             }
         };
 
-        RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
         XATestResourceXARecovery.setUseFaultyResources(false);
-
-        TransactionImple tx = new TransactionImple(0); // begin a transaction
+        UserTransaction ut = com.arjuna.ats.jta.UserTransaction.userTransaction();
+        ut.begin();
+        TransactionImple tx = TransactionImple.getTransaction();
 
         // enlist a resource that behaves correctly
         assertTrue(tx.enlistResource(dummy));
         assertTrue(tx.enlistResource(dummy));
 
-        tx.commit();
+        ut.commit();
 
-        recoveryEnvironmentBean.setRecoveryBackoffPeriod(1); // use a short interval between passes
-        recoveryEnvironmentBean.setRecoveryListener(true); // configure the RecoveryMonitor
+        manager.scan();
 
-        RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+        assertFalse(jtaLogger.isRecoveryProblems());
+    }
 
-        manager.addModule(new XARecoveryModule()); // we only need to test the XARecoveryModule
-
-        try {
-            manager.startRecoveryManagerThread(); // start periodic recovery
-
-            String host = recoveryEnvironmentBean.getRecoveryAddress(); // the recovery listener host
-            String rcPort = String.valueOf(recoveryEnvironmentBean.getRecoveryPort()); // the recovery listener port
-
-            // trigger a recovery scan with verbose output
-            RecoveryMonitor.main(new String[] {"-verbose", "-port", rcPort, "-host", host});
-
-            // check the output of the scan
-            assertEquals("DONE", RecoveryMonitor.getResponse());
-            assertEquals("DONE", RecoveryMonitor.getSystemOutput());
-            assertFalse(jtaLogger.isRecoveryProblems());
-        } finally {
-            manager.terminate();
-        }
+    @Test
+    public void testBoth() throws Exception{
+        testRecoveryMonitorWithFailure();
+        testRecoveryMonitorWithSuccess();
     }
 }
