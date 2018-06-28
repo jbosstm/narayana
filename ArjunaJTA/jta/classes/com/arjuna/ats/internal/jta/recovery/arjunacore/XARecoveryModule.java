@@ -164,6 +164,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         }
 
         contactedJndiNames.clear();
+        jtaLogger.setRecoveryProblems(false);
 
 		_uids = new InputObjectState();
 
