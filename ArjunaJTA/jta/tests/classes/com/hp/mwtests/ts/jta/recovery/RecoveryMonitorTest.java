@@ -28,11 +28,9 @@ import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.logging.jtaLogger;
 import org.junit.Test;
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 public class RecoveryMonitorTest {
 
     @Test
-    public void testRecoveryMonitor() throws Exception {
+    public void testRecoveryMonitorWithFailure() throws Exception {
         RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
 
         // Ensure that test XAR is recoverable by adding the test XAResourceRecovery
@@ -52,6 +50,7 @@ public class RecoveryMonitorTest {
 
         rcvClassNames.add(XATestResourceXARecovery.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setXaResourceRecoveryClassNames(rcvClassNames);
+        XATestResourceXARecovery.setUseFaultyResources(true);
 
         TransactionImple tx = new TransactionImple(0); // begin a transaction
 
@@ -76,11 +75,12 @@ public class RecoveryMonitorTest {
             String rcPort = String.valueOf(recoveryEnvironmentBean.getRecoveryPort()); // the recovery listener port
 
             // trigger a recovery scan with verbose output
-            RecoveryMonitor.main(new String [] {"-verbose", "-port", rcPort, "-host", host});
+            RecoveryMonitor.main(new String[] {"-verbose", "-port", rcPort, "-host", host});
 
             // check the output of the scan
             assertEquals("ERROR", RecoveryMonitor.getResponse());
             assertEquals("ERROR", RecoveryMonitor.getSystemOutput());
+            assertTrue(jtaLogger.isRecoveryProblems());
         } finally {
             manager.terminate();
         }
