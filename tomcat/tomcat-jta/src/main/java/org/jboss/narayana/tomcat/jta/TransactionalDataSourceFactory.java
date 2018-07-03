@@ -54,6 +54,69 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
     private static final String PROP_USERNAME = "username";
     private static final String PROP_PASSWORD = "password";
 
+    static XAResourceRecoveryHelper getXAResourceRecoveryHelper(XADataSource xaDataSource, Properties properties) {
+        return new XAResourceRecoveryHelper() {
+            private final Object lock = new Object();
+            private XAConnection connection;
+
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return true;
+            }
+
+            @Override
+            public synchronized XAResource[] getXAResources() throws Exception {
+                synchronized (lock) {
+                    initialiseConnection();
+                    try {
+                        return new XAResource[]{connection.getXAResource()};
+                    } catch (SQLException ex) {
+                        return new XAResource[0];
+                    }
+                }
+            }
+
+            private void initialiseConnection() throws SQLException {
+                // This will allow us to ensure that each recovery cycle gets a fresh connection
+                // It might be better to close at the end of the recovery pass to free up the connection but
+                // we don't have a hook
+                if (connection == null) {
+                    final String user = properties.getProperty(PROP_USERNAME);
+                    final String password = properties.getProperty(PROP_PASSWORD);
+
+                    if (user != null && password != null) {
+                        connection = xaDataSource.getXAConnection(user, password);
+                    } else {
+                        connection = xaDataSource.getXAConnection();
+                    }
+                    connection.addConnectionEventListener(new ConnectionEventListener() {
+                        @Override
+                        public void connectionClosed(ConnectionEvent event) {
+                            log.warn("The connection was closed: " + connection);
+                            synchronized (lock) {
+                                connection = null;
+                            }
+                        }
+
+                        @Override
+                        public void connectionErrorOccurred(ConnectionEvent event) {
+                            log.warn("A connection error occurred: " + connection);
+                            synchronized (lock) {
+                                try {
+                                    connection.close();
+                                } catch (SQLException e) {
+                                    // Ignore
+                                    log.warn("Could not close failing connection: " + connection);
+                                }
+                                connection = null;
+                            }
+                        }
+                    });
+                }
+            }
+        };
+    }
+
     @Override
     public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> environment) throws Exception {
         if (obj == null || !(obj instanceof Reference)) {
@@ -111,66 +174,7 @@ public class TransactionalDataSourceFactory implements ObjectFactory {
             // Register for recovery
             XARecoveryModule xaRecoveryModule = getXARecoveryModule();
             if (xaRecoveryModule != null) {
-                xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
-                    private final Object lock = new Object();
-                    private XAConnection connection;
-
-                    @Override
-                    public boolean initialise(String p) throws Exception {
-                        return true;
-                    }
-
-                    @Override
-                    public synchronized XAResource[] getXAResources() throws Exception {
-                        synchronized (lock) {
-                            initialiseConnection();
-                            try {
-                                return new XAResource[]{connection.getXAResource()};
-                            } catch (SQLException ex) {
-                                return new XAResource[0];
-                            }
-                        }
-                    }
-
-                    private void initialiseConnection() throws SQLException {
-                        // This will allow us to ensure that each recovery cycle gets a fresh connection
-                        // It might be better to close at the end of the recovery pass to free up the connection but
-                        // we don't have a hook
-                        if (connection == null) {
-                            final String user = properties.getProperty(PROP_USERNAME);
-                            final String password = properties.getProperty(PROP_PASSWORD);
-
-                            if (user != null && password != null) {
-                                connection = xaDataSource.getXAConnection(user, password);
-                            } else {
-                                connection = xaDataSource.getXAConnection();
-                            }
-                            connection.addConnectionEventListener(new ConnectionEventListener() {
-                                @Override
-                                public void connectionClosed(ConnectionEvent event) {
-                                    log.warn("The connection was closed: " + connection);
-                                    synchronized (lock) {
-                                        connection = null;
-                                    }
-                                }
-
-                                @Override
-                                public void connectionErrorOccurred(ConnectionEvent event) {
-                                    log.warn("A connection error occurred: " + connection);
-                                    synchronized (lock) {
-                                        try {
-                                            connection.close();
-                                        } catch (SQLException e) {
-                                            // Ignore
-                                            log.warn("Could not close failing connection: " + connection);
-                                        }
-                                        connection = null;
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                xaRecoveryModule.addXAResourceRecoveryHelper(getXAResourceRecoveryHelper(xaDataSource, properties));
             }
 
             return mds;
