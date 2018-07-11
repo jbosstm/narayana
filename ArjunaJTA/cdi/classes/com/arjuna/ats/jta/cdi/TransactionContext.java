@@ -134,7 +134,7 @@ public class TransactionContext implements Context {
         }
     }
 
-    private TransactionManager getTransactionManager() {
+    protected TransactionManager getTransactionManager() {
 
         //  ignore findbugs warning about incorrect lazy initialization of static field since the values are looked up via JNDI
         // (ie there is no object construction during initialization)
