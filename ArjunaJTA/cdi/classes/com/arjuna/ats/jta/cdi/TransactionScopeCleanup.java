@@ -31,7 +31,7 @@ public class TransactionScopeCleanup<T> implements Synchronization {
     }
 
     public void registerBean(Contextual<T> contextual, CreationalContext<T> creationalContext, T bean) {
-        beans.add(new TransactionScopedBean(contextual, creationalContext, bean));
+        beans.add(new TransactionScopedBean<>(contextual, creationalContext, bean));
     }
 
     @Override
