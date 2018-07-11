@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2013-2018, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -38,23 +38,60 @@ import javax.transaction.*;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author paul.robinson@redhat.com 01/05/2013
+ *
+ * @author <a href="https://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  */
 public class TransactionContext implements Context {
 
-    private static TransactionManager transactionManager;
+    private final Supplier<TransactionManager> transactionManagerSupplier;
 
-    private static TransactionSynchronizationRegistry transactionSynchronizationRegistry;
+    private final Supplier<TransactionSynchronizationRegistry> transactionSynchronizationRegistrySupplier;
+    
+    private final Map<Transaction, TransactionScopeCleanup> transactions = new HashMap<Transaction, TransactionScopeCleanup>();
 
-    private Map<Transaction, TransactionScopeCleanup> transactions = new HashMap<Transaction, TransactionScopeCleanup>();
+    /**
+     * Creates a new {@link TransactionContext}.
+     *
+     * @deprecated Please use the {@link #TransactionContext(Supplier,
+     * Supplier)} constructor instead.
+     */
+    @Deprecated
+    public TransactionContext() {
+        this(() -> jtaPropertyManager.getJTAEnvironmentBean().getTransactionManager(),
+             () -> jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistry());
+    }
 
+    /**
+     * Creates a new {@link TransactionContext}.
+     *
+     * @param transactionManagerSupplier a {@link Supplier} of a
+     * {@link TransactionManager}; must not be {@code null}
+     *
+     * @param transactionSynchronizationRegistrySupplier a {@link
+     * Supplier} of a {@link TransactionSynchronizationRegistry}; must
+     * not be {@code null}
+     *
+     * @exception NullPointerException if either parameter is {@code null}
+     */
+    public TransactionContext(Supplier<TransactionManager> transactionManagerSupplier,
+                              Supplier<TransactionSynchronizationRegistry> transactionSynchronizationRegistrySupplier) {
+        super();
+        this.transactionManagerSupplier = Objects.requireNonNull(transactionManagerSupplier);
+        this.transactionSynchronizationRegistrySupplier = Objects.requireNonNull(transactionSynchronizationRegistrySupplier);
+    }
+    
     @Override
     public Class<? extends Annotation> getScope() {
         return TransactionScoped.class;
     }
 
+    @Override
     public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
 
         if (!isActive()) {
@@ -65,7 +102,7 @@ public class TransactionContext implements Context {
         }
 
         PassivationCapable bean = (PassivationCapable) contextual;
-        TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
+        TransactionSynchronizationRegistry tsr = this.transactionSynchronizationRegistrySupplier.get();
         Object resource = tsr.getResource(bean.getId());
 
         if (resource != null) {
@@ -92,11 +129,13 @@ public class TransactionContext implements Context {
         }
     }
 
+    @Override
     public <T> T get(Contextual<T> contextual) {
 
         return get(contextual, null);
     }
 
+    @Override
     public boolean isActive() {
 
         Transaction transaction = getCurrentTransaction();
@@ -127,40 +166,10 @@ public class TransactionContext implements Context {
     private Transaction getCurrentTransaction() {
 
         try {
-            TransactionManager tm = getTransactionManager();
-            return tm.getTransaction();
+            return this.transactionManagerSupplier.get().getTransaction();
         } catch (SystemException e) {
             throw new RuntimeException(jtaLogger.i18NLogger.get_error_getting_current_tx(), e);
         }
     }
 
-    private TransactionManager getTransactionManager() {
-
-        //  ignore findbugs warning about incorrect lazy initialization of static field since the values are looked up via JNDI
-        // (ie there is no object construction during initialization)
-        if (transactionManager == null) {
-            try {
-                InitialContext initialContext = new InitialContext();
-                transactionManager = (TransactionManager) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
-            } catch (NamingException e) {
-                throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tm(), e);
-            }
-        }
-        return transactionManager;
-    }
-
-    private TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
-
-        //  ignore findbugs warning about incorrect lazy initialization of static field since the values are looked up via JNDI
-        // (ie there is no object construction during initialization)
-        if (transactionSynchronizationRegistry == null) {
-            try {
-                InitialContext initialContext = new InitialContext();
-                transactionSynchronizationRegistry = (TransactionSynchronizationRegistry) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext());
-            } catch (NamingException e) {
-                throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tsr(), e);
-            }
-        }
-        return transactionSynchronizationRegistry;
-    }
 }

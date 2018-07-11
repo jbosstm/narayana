@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2013-2018 Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -38,8 +38,6 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.inject.Inject;
 import javax.interceptor.InvocationContext;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -54,8 +52,10 @@ import com.arjuna.ats.jta.cdi.TransactionExtension;
 
 /**
  * @author paul.robinson@redhat.com 02/05/2013
+ *
+ * @author <a href="https://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  */
-
 public abstract class TransactionalInterceptorBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +70,8 @@ public abstract class TransactionalInterceptorBase implements Serializable {
     @Intercepted
     private Bean<?> interceptedBean;
 
-    private static TransactionManager transactionManager;
+    @Inject
+    private TransactionManager transactionManager;
 
     private final boolean userTransactionAvailable;
 
@@ -80,12 +81,11 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
     public Object intercept(InvocationContext ic) throws Exception {
 
-        final TransactionManager tm = getTransactionManager();
-        final Transaction tx = tm.getTransaction();
+        final Transaction tx = transactionManager.getTransaction();
 
         boolean previousUserTransactionAvailability = setUserTransactionAvailable(userTransactionAvailable);
         try {
-            return doIntercept(tm, tx, ic);
+            return doIntercept(transactionManager, tx, ic);
         } finally {
             resetUserTransactionAvailability(previousUserTransactionAvailability);
         }
@@ -199,13 +199,13 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
         Transactional transactional = getTransactional(ic);
 
-        for (Class dontRollbackOnClass : transactional.dontRollbackOn()) {
+        for (Class<?> dontRollbackOnClass : transactional.dontRollbackOn()) {
             if (dontRollbackOnClass.isAssignableFrom(e.getClass())) {
                 throw e;
             }
         }
 
-        for (Class rollbackOnClass : transactional.rollbackOn()) {
+        for (Class<?> rollbackOnClass : transactional.rollbackOn()) {
             if (rollbackOnClass.isAssignableFrom(e.getClass())) {
                 tx.setRollbackOnly();
                 throw e;
@@ -248,19 +248,6 @@ public abstract class TransactionalInterceptorBase implements Serializable {
         UserTransactionOperationsProvider userTransactionProvider =
             jtaPropertyManager.getJTAEnvironmentBean().getUserTransactionOperationsProvider();
         setAvailability(userTransactionProvider, previousUserTransactionAvailability);
-    }
-
-    protected TransactionManager getTransactionManager() {
-
-        if (transactionManager == null) {
-            try {
-                InitialContext initialContext = new InitialContext();
-                transactionManager = (TransactionManager) initialContext.lookup(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext());
-            } catch (NamingException e) {
-                throw new ContextNotActiveException(jtaLogger.i18NLogger.get_could_not_lookup_tm(), e);
-            }
-        }
-        return transactionManager;
     }
 
     private void setAvailability(UserTransactionOperationsProvider userTransactionProvider, boolean available) {
