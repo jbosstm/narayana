@@ -23,6 +23,7 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.client.Current;
+import io.narayana.lra.client.LRAInfoImpl;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.domain.model.LRAStatus;
 import io.narayana.lra.coordinator.domain.model.Transaction;
@@ -70,6 +71,7 @@ import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import static io.narayana.lra.client.NarayanaLRAClient.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.COORDINATOR_PATH_NAME;
@@ -78,6 +80,7 @@ import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
 import static io.narayana.lra.client.NarayanaLRAClient.PARENT_LRA_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.STATUS_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.TIMELIMIT_PARAM_NAME;
+import static java.util.stream.Collectors.toList;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 
 @ApplicationScoped
@@ -97,8 +100,8 @@ public class Coordinator {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns all LRAs",
             notes = "Gets both active and recovering LRAs",
-            response = LRAStatus.class, responseContainer = "List")
-    public List<LRAStatus> getAllLRAs(
+            response = LRAInfo.class, responseContainer = "List")
+    public List<LRAInfo> getAllLRAs(
             @ApiParam(value = "Filter the returned LRAs to only those in the give state (see CompensatorStatus)", required = false)
             @QueryParam(STATUS_PARAM_NAME) @DefaultValue("") String state) {
         List<LRAStatus> lras = lraService.getAll(state);
@@ -109,7 +112,14 @@ public class Coordinator {
                     String.format("Invalid query '%s' to get LRAs", state), null);
         }
 
-        return lras;
+        return lras.stream().map(Coordinator::convert).collect(toList());
+    }
+
+    private static LRAInfo convert(LRAStatus lra) {
+        return new LRAInfoImpl(lra.getLraId(), lra.getClientId(),
+                lra.getStatus() == null ? "" : lra.getStatus().name(),
+                lra.isComplete(), lra.isCompensated(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
+                lra.getStartTime(), lra.getFinishTime());
     }
 
     @GET
@@ -141,6 +151,28 @@ public class Coordinator {
     @GET
     @Path("{LraId}")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Obtain the status of an LRA as a JSON structure",
+            response = String.class)
+    @ApiResponses({
+            @ApiResponse(code = 404, message =
+                    "The coordinator has no knowledge of this LRA"),
+            @ApiResponse(code = 204, message =
+                    "The LRA exists and has not yet been asked to close or cancel "
+                            + " - compare this response with a 200 response.s"),
+            @ApiResponse(code = 200, message =
+                    "The LRA exists. The status is reported in the content body.")
+    })
+    public LRAInfo getLRAInfo(
+            @ApiParam(value = "The unique identifier of the LRA", required = true)
+            @PathParam("LraId")String lraId) throws NotFoundException {
+        LRAInfo lra = lraService.getLRA(toURL(lraId));
+
+        return lra;
+    }
+
+/*    @GET
+    @Path("{LraId}")
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Obtain the status of an LRA as a string",
             response = String.class)
     @ApiResponses({
@@ -153,7 +185,7 @@ public class Coordinator {
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
         return new LRAStatus(lraService.getTransaction(toURL(lraId)));
-    }
+    }*/
 
     // Performing a GET on /lra-io.narayana.lra.coordinator/<LraId> returns 200 if the lra is still active.
     @GET

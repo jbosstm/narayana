@@ -30,6 +30,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import io.narayana.lra.client.LRAInfoImpl;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -73,7 +75,8 @@ public class Transaction extends AtomicAction {
     private List<LRARecord> pending;
     private CompensatorStatus status; // reuse commpensator states for the LRA
     private String responseData;
-    private LocalDateTime cancelOn; // TODO make sure this acted upon during restore_state()
+    private LocalDateTime startTime;
+    private LocalDateTime finishTime; // TODO make sure this acted upon during restore_state()
     private ScheduledFuture<?> scheduledAbort;
     private boolean inFlight;
     private LRAService lraService;
@@ -86,7 +89,7 @@ public class Transaction extends AtomicAction {
         this.inFlight = true;
         this.parentId = parentId;
         this.clientId = clientId;
-        this.cancelOn = null;
+        this.finishTime = LocalDateTime.MAX;
         this.status = null; // means the LRA is active
 
         this.scheduler = Executors.newScheduledThreadPool(1);
@@ -100,9 +103,17 @@ public class Transaction extends AtomicAction {
         this.id = null;
         this.parentId = null;
         this.clientId = null;
-        this.cancelOn = null;
+        this.finishTime = LocalDateTime.MAX;
         this.status = null; // means the LRA is active
         this.scheduler = Executors.newScheduledThreadPool(1);
+    }
+
+    public LRAInfo getLRAInfo() {
+        return new LRAInfoImpl(id.toExternalForm(), clientId, status == null ? "" : status.name(),
+                isComplete(), isCompensated(), isRecovering(),
+                isActive(), isTopLevel(),
+                startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
+                finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 
     public static String getType() {
@@ -120,7 +131,8 @@ public class Transaction extends AtomicAction {
             os.packString(id == null ? null : id.toString());
             os.packString(parentId == null ? null : parentId.toString());
             os.packString(clientId);
-            os.packLong(cancelOn == null ? 0L : cancelOn.toInstant(ZoneOffset.UTC).toEpochMilli());
+            os.packLong(startTime == null ? 0L : startTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+            os.packLong(finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli());
 
             if (status == null) {
                 os.packBoolean(false);
@@ -216,8 +228,12 @@ public class Transaction extends AtomicAction {
             s = os.unpackString();
             parentId = s == null ? null : new URL(s);
             clientId = os.unpackString();
-            long millis = os.unpackLong();
-            cancelOn = millis == 0 ? null : LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC);
+            long startMillis = os.unpackLong();
+            startTime = startMillis == 0 ? null :
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(startMillis), ZoneOffset.UTC);
+            long finishMillis = os.unpackLong();
+            finishTime = finishMillis == 0 ? null :
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(finishMillis), ZoneOffset.UTC);
             status = os.unpackBoolean() ? CompensatorStatus.valueOf(os.unpackString()) : null;
 
             return true;
@@ -285,11 +301,11 @@ public class Transaction extends AtomicAction {
         status = toLRAStatus(actionStatus);
     }
 
-    public boolean isComplete() {
+    boolean isComplete() {
         return status != null && status.equals(CompensatorStatus.Completed);
     }
 
-    public boolean isCompensated() {
+    boolean isCompensated() {
         return status != null && status.equals(CompensatorStatus.Compensated);
     }
 
@@ -408,11 +424,11 @@ public class Transaction extends AtomicAction {
             if (lraService != null) {
                 lraService.finished(this, false);
             }
-        } else {
-            LRALogger.logger.warn("null LRAService in LRA#end");
         }
 
         responseData = status == null ? null : status.name();
+
+        finishTime = LocalDateTime.now();
 
         return res;
     }
@@ -632,6 +648,8 @@ public class Transaction extends AtomicAction {
     public int begin(Long timeLimit) {
         int res = super.begin(); // no timeout because the default timeunit (SECONDS) is too course
 
+        startTime = LocalDateTime.now();
+
         setTimeLimit(timeLimit);
 
         return res;
@@ -648,11 +666,11 @@ public class Transaction extends AtomicAction {
         }
 
         if (timeLimit > 0) {
-            cancelOn = LocalDateTime.now().plusNanos(timeLimit * 1000000);
+            finishTime = LocalDateTime.now().plusNanos(timeLimit * 1000000);
 
             scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
         } else {
-            cancelOn = null;
+            finishTime = null;
 
             scheduledAbort = null;
         }
@@ -672,7 +690,7 @@ public class Transaction extends AtomicAction {
         }
     }
 
-    public void getRecoveryCoordinatorUrls(Map<String, String> participants, RecordList list) {
+    private void getRecoveryCoordinatorUrls(Map<String, String> participants, RecordList list) {
         RecordListIterator iter = new RecordListIterator(list);
         AbstractRecord rec;
 
@@ -716,7 +734,7 @@ public class Transaction extends AtomicAction {
         return inFlight;
     }
 
-    protected CompensatorStatus timedOut(LRARecord lraRecord) {
+    void timedOut(LRARecord lraRecord) {
         // a participant has timed out so cancel the whole LRA
         ReentrantLock lock = lraService.tryLockTransaction(getId());
 
@@ -729,7 +747,5 @@ public class Transaction extends AtomicAction {
                 lock.unlock();
             }
         }  // else another thread finishing this LRA so it is too late to cancel
-
-        return status;
     }
 }

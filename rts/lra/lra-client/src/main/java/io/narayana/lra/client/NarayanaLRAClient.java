@@ -38,6 +38,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -116,6 +117,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     private URI base;
     private URI rcBase; // base uri of the recovery coordinator
+    private ClientBuilder clientBuilder;
     private Client client;
     private boolean isUseable;
     private boolean connectionInUse;
@@ -192,11 +194,27 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     }
 
     @Override
-    public void setCoordinatorURI(URI uri) {
-        if (client == null) {
-            client = ClientBuilder.newClient();
-        }
+    public void connectTimeout(long connect, TimeUnit unit) {
+        clientBuilder.connectTimeout(connect, unit);
 
+        if (client != null) {
+            client.close();
+            client = null;
+        }
+    }
+
+    @Override
+    public void readTimeout(long read, TimeUnit unit) {
+        clientBuilder.readTimeout(read, unit);
+
+        if (client != null) {
+            client.close();
+            client = null;
+        }
+    }
+
+    @Override
+    public void setCoordinatorURI(URI uri) {
         base = uri;
 
         isUseable = true;
@@ -214,6 +232,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     }
 
     private void init(String scheme, String host, int port) throws URISyntaxException {
+        clientBuilder = ClientBuilder.newBuilder();
         setCoordinatorURI(new URI(scheme, null, host, port, "/" + COORDINATOR_PATH_NAME, null, null));
         rcBase = new URI(scheme, null, host, port, "/" + RECOVERY_COORDINATOR_PATH_NAME, null, null);
     }
@@ -307,8 +326,12 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     private WebTarget getTarget() {
         // return target; // TODO can't share the target if a service makes multiple JAX-RS requests
-        client.close(); // hacking
+        if (client != null) {
+            client.close(); // hacking
+        }
+
         client = ClientBuilder.newClient();
+
         return client.target(base);
     }
 
@@ -425,6 +448,30 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     }
 
     @Override
+    public LRAInfo getLRAInfo(URL lraId) throws GenericLRAException {
+        Response response = null;
+
+        lraTracef(lraId, "getLRAInfo for LRA %s", lraId.toExternalForm());
+
+        try {
+            aquireConnection();
+
+            response = getTarget().path(lraId.toString())
+                    .request()
+                    .get();
+
+            if (!response.hasEntity()) {
+                throw new GenericLRAException(null, response.getStatus(),
+                        "missing entity body for getLRAInfo response", null);
+            }
+
+            return response.readEntity(LRAInfo.class);
+        } finally {
+            releaseConnection(response);
+        }
+    }
+
+    @Override
     public void renewTimeLimit(URL lraId, long limit, TimeUnit unit) {
         Response response = null;
 
@@ -538,7 +585,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     @Override
     public List<LRAInfo> getActiveLRAs() throws GenericLRAException {
-        return getLRAs("status", "");
+        return getLRAs(STATUS, "");
     }
 
     @Override
@@ -566,7 +613,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             ja.forEach(jsonValue ->
                     actions.add(toLRAInfo(((JsonObject) jsonValue))));
 
-            actions.addAll(getLRAs("status", CompensatorStatus.Compensating.name()));
+            actions.addAll(getLRAs(STATUS, CompensatorStatus.Compensating.name()));
 
             return actions;
         } finally {
@@ -610,17 +657,27 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     private LRAInfo toLRAInfo(JsonObject jo) {
         try {
+            long startTime = jo.getInt("startTime");
+            long fini = jo.getInt("finishTime");
+
             return new LRAInfoImpl(
                     jo.getString("lraId"),
                     jo.getString("clientId"),
-                    jo.getBoolean("completed"),
+                    jo.getString(STATUS),
+                    jo.getBoolean("complete"),
                     jo.getBoolean("compensated"),
                     jo.getBoolean("recovering"),
                     jo.getBoolean("active"),
-                    jo.getBoolean("topLevel"));
+                    jo.getBoolean("topLevel"),
+                    startTime,
+                    fini);
         } catch (Exception e) {
             LRALogger.i18NLogger.warn_failedParsingStatusFromJson(jo, e);
-            return new LRAInfoImpl(e);
+            return new LRAInfoImpl("JSON Parse Error: " + e.getMessage(),
+                    e.getMessage(),
+                    "Unknown",
+                    false, false, false, false, false,
+                    LocalDateTime.now().getSecond(), LocalDateTime.now().getSecond());
         }
     }
 

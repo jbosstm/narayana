@@ -23,48 +23,35 @@ package io.narayana.lra.client;
 
 import org.eclipse.microprofile.lra.client.LRAInfo;
 
-import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 public class LRAInfoImpl implements LRAInfo {
-    private Exception jsonParseError;
     private String lraId;
     private String clientId;
+    private String status;
     private boolean isComplete;
     private boolean isCompensated;
     private boolean isRecovering;
     private boolean isActive;
     private boolean isTopLevel;
+    private long startTime;
+    private long finishTime;
 
-    public LRAInfoImpl(String lraId) {
-        this.lraId = lraId;
-    }
-
-    public LRAInfoImpl(URL lraId) {
-        this.lraId = lraId.toString();
-    }
-
-    public LRAInfoImpl(String lraId, String clientId, boolean isComplete,
-                       boolean isCompensated, boolean isRecovering,
-                       boolean isActive, boolean isTopLevel) {
+    public LRAInfoImpl(String lraId, String clientId, String status,
+                boolean isComplete, boolean isCompensated, boolean isRecovering,
+                boolean isActive, boolean isTopLevel,
+                long startTime, long finishTime) {
         this.lraId = lraId;
         this.clientId = clientId;
+        this.status = status;
         this.isComplete = isComplete;
         this.isCompensated = isCompensated;
         this.isRecovering = isRecovering;
         this.isActive = isActive;
         this.isTopLevel = isTopLevel;
-        this.jsonParseError = null;
-    }
-
-    public LRAInfoImpl(Exception e) {
-        this.jsonParseError = e;
-        this.lraId = "JSON Parse Error: " + e.getMessage();
-        this.clientId = e.getMessage();
-        this.isComplete = false;
-        this.isCompensated = false;
-        this.isRecovering = false;
-        this.isActive = false;
-        this.isTopLevel = false;
+        this.startTime = startTime;
+        this.finishTime = finishTime;
     }
 
     public String getLraId() {
@@ -73,6 +60,10 @@ public class LRAInfoImpl implements LRAInfo {
 
     public String getClientId() {
         return this.clientId;
+    }
+
+    public String getStatus() {
+        return this.status;
     }
 
     public boolean isComplete() {
@@ -95,6 +86,24 @@ public class LRAInfoImpl implements LRAInfo {
         return this.isTopLevel;
     }
 
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getFinishTime() {
+        return finishTime;
+    }
+
+    public long getTimeNow() {
+        return LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+    }
+
+    @Override
+    public ZoneOffset getZoneOffset() {
+        return ZoneOffset.UTC;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -108,5 +117,21 @@ public class LRAInfoImpl implements LRAInfo {
 
     public int hashCode() {
         return this.getLraId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "LRAInfoImpl{" +
+                "lraId='" + lraId + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", status='" + status + '\'' +
+                ", isComplete=" + isComplete +
+                ", isCompensated=" + isCompensated +
+                ", isRecovering=" + isRecovering +
+                ", isActive=" + isActive +
+                ", isTopLevel=" + isTopLevel +
+                ", startTime=" + startTime +
+                ", finishTime=" + finishTime +
+                '}';
     }
 }
