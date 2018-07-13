@@ -34,7 +34,7 @@
         <version.arquillian>1.1.12.Final</version.arquillian>
 
         <version.narayana>${project.version}</version.narayana>
-        <version.microprofile.lra>0.0.1.Final</version.microprofile.lra>
+        <version.microprofile.lra>0.0.2.Final-SNAPSHOT</version.microprofile.lra>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -156,6 +156,7 @@
         <module>lra-filters</module>
         <module>lra-annotation-checker</module>
         <module>lra-test</module>
+        <module>lra-tck</module>
     </modules>
 
     <profiles>

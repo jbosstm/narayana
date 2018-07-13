@@ -22,6 +22,7 @@
 package io.narayana.lra.coordinator.domain.model;
 
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import java.io.IOException;
 
@@ -45,20 +46,28 @@ public class LRAStatus {
     private boolean isTopLevel;
     private int httpStatus;
     private String responseData;
+    long startTime;
+    long finishTime;
+    long timeNow;
 
     private CompensatorStatus status;
 
     public LRAStatus(Transaction lra) {
-        this.lraId = lra.getId().toString();
-        this.clientId = lra.getClientId();
-        this.isComplete = lra.isComplete();
-        this.isCompensated = lra.isCompensated();
-        this.isRecovering = lra.isRecovering();
-        this.isActive = lra.isActive();
-        this.isTopLevel = lra.isTopLevel();
+        LRAInfo info = lra.getLRAInfo();
+
+        this.lraId = info.getLraId();
+        this.clientId = info.getClientId();
+        this.isComplete = info.isComplete();
+        this.isCompensated = info.isCompensated();
+        this.isRecovering = info.isRecovering();
+        this.isActive = info.isActive();
+        this.isTopLevel = info.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.status = lra.getLRAStatus();
+        this.startTime = info.getStartTime();
+        this.finishTime = info.getFinishTime();
+        this.timeNow = info.getTimeNow();
     }
 
     public String getLraId() {
@@ -123,5 +132,21 @@ public class LRAStatus {
 
     public String getEncodedResponseData() throws IOException {
         return responseData;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getFinishTime() {
+        return finishTime;
+    }
+
+    public long getTimeNow() {
+        return timeNow;
     }
 }
