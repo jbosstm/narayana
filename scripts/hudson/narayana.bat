@@ -5,7 +5,6 @@ set NOPAUSE=true
 
 call:comment_on_pull "Started testing this pull request on Windows: %BUILD_URL%"
 
-call:build_mp
 IF NOT [%NOTMAIN%] == [] (call:build_spi_pr
 call build.bat clean install %* || (call:comment_on_pull "Tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 )
@@ -63,18 +62,6 @@ rem ------------------------------------------------------
 rem -                 Functions below                    -
 rem ------------------------------------------------------
 
-goto:eof
-
-:build_mp
-  echo "Cloning MicroProfile LRA"
-  rmdir /S /Q microprofile-lra
-  git clone https://github.com/jbosstm/microprofile-lra.git || (call:comment_on_pull "MP LRA clone Failed %BUILD_URL%" & exit -1)
-  if %ERRORLEVEL% NEQ 0 exit -1
-  cd microprofile-lra
-  git checkout microprofile-lra-v2
-  if %ERRORLEVEL% NEQ 0 exit -1
-  cd ..
-  call build.bat clean install "-f" "microprofile-lra\pom.xml" || (call:comment_on_pull "MP LRA build Failed %BUILD_URL%" & exit -1)
 goto:eof
 
 :build_spi_pr
