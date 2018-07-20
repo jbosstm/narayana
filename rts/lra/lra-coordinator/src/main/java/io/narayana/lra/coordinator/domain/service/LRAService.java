@@ -36,6 +36,7 @@ import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
@@ -77,6 +78,11 @@ public class LRAService {
         }
 
         return lras.get(lraId);
+    }
+
+    public LRAInfo getLRA(URL lraId) {
+        Transaction lra = getTransaction(lraId);
+        return lra.getLRAInfo();
     }
 
     public synchronized ReentrantLock lockTransaction(URL lraId) {
