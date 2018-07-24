@@ -35,7 +35,6 @@ import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
@@ -54,9 +53,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -314,10 +310,6 @@ public class Transaction extends AtomicAction {
                 (status.equals(CompensatorStatus.Compensating) || status.equals(CompensatorStatus.Completing));
     }
 
-    private int closeLRA() {
-        return end(false);
-    }
-
     private int cancelLRA() {
         return end(true);
     }
@@ -403,9 +395,6 @@ public class Transaction extends AtomicAction {
 
         updateState();
 
-        // gather up any response data
-        ObjectMapper mapper = new ObjectMapper();
-
         if (pending != null && pending.size() != 0) {
             if (!nested) {
                 pending.clear(); // TODO we will loose this data if we need recovery
@@ -441,23 +430,6 @@ public class Transaction extends AtomicAction {
 
     private int getSize(RecordList list) {
         return list == null ? 0 : list.size();
-    }
-
-    private Collection<String> getCompensatorResponse(ObjectMapper mapper, String data) {
-        if (data != null && data.startsWith("[")) {
-            try {
-                String[] ja = mapper.readValue(data, String[].class);
-                // TODO should recurse here since the encoded strings may themselves contain participant output
-                return Arrays.asList(ja);
-            } catch (IOException e) {
-                e.printStackTrace();
-                LRALogger.i18NLogger.warn_cannotGetCompensatorStatusData(data, getId(), e);
-                return Collections.emptyList();
-            }
-        } else {
-            return Collections.singletonList(data);
-        }
-
     }
 
     private CompensatorStatus toLRAStatus(int atomicActionStatus) {
