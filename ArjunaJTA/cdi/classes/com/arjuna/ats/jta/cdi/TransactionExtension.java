@@ -73,22 +73,14 @@ public class TransactionExtension implements Extension {
         
         Set<Bean<?>> beans = manager.getBeans(TransactionManager.class);
         if (beans.isEmpty()) {
-            try {
-                event.addBean(new JNDIBean<>(new CompositeName(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext()), TransactionManager.class));
-                maybeAddInitialContextBean = true;
-            } catch (final InvalidNameException invalidNameException) {
-                event.addDefinitionError(invalidNameException);
-            }
+            event.addBean(new JNDIBean<>(jtaPropertyManager.getJTAEnvironmentBean().getTransactionManagerJNDIContext(), TransactionManager.class));
+            maybeAddInitialContextBean = true;
         }
 
         beans = manager.getBeans(TransactionSynchronizationRegistry.class);
         if (beans.isEmpty()) {
-            try {
-                event.addBean(new JNDIBean<>(new CompositeName(jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext()), TransactionSynchronizationRegistry.class));
-                maybeAddInitialContextBean = true;
-            } catch (final InvalidNameException invalidNameException) {
-                event.addDefinitionError(invalidNameException);
-            }
+            event.addBean(new JNDIBean<>(jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext(), TransactionSynchronizationRegistry.class));
+            maybeAddInitialContextBean = true;
         }
 
         if (maybeAddInitialContextBean) {
