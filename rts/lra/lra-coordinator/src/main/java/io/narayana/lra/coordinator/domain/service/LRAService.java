@@ -289,9 +289,9 @@ public class LRAService {
                                     String compensatorData) {
         if (lra ==  null) {
             lraTrace(null, "Error missing LRA header in join request");
+        } else {
+            lraTrace(lra, "join LRA");
         }
-
-        lraTrace(lra, "join LRA");
 
         Transaction transaction = getTransaction(lra);
 
@@ -341,14 +341,12 @@ public class LRAService {
 
     private void lraTrace(URL lraId, String reason) {
         if (LRALogger.logger.isTraceEnabled()) {
-            LRALogger.logger.tracef("LRAServicve.forget %s failed%n", lraId);
-
-            if (lras.containsKey(lraId)) {
+            if (lraId != null && lras.containsKey(lraId)) {
                 Transaction lra = lras.get(lraId);
-                LRALogger.logger.tracef("LRAServicve: %s (%s) in state %s: %s%n",
+                LRALogger.logger.tracef("LRAService: '%s' (%s) in state %s: %s%n",
                         reason, lra.getClientId(), ActionStatus.stringForm(lra.status()), lra.getId());
             } else {
-                LRALogger.logger.tracef("LRAServicve: %s not found: %s%n", reason, lraId);
+                LRALogger.logger.tracef("LRAService: '%s', not found: %s%n", reason, lraId);
             }
         }
     }

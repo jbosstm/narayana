@@ -41,6 +41,7 @@ import javax.transaction.xa.XAResource;
 import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 /**
@@ -157,7 +158,10 @@ public class BasicXARecovery implements XAResourceRecovery
 			connections = new JDBC2RecoveryConnection[numberOfConnections];
 		}
 		try {
-			return getConnection().recoveryConnection().getResource();
+			RecoverableXAConnection recoveryConnection = getConnection().recoveryConnection();
+			if(recoveryConnection == null)
+				throw new IllegalStateException("Recovery connection of connection " + getConnection() + " is null");
+			return recoveryConnection.getResource();
 		} finally {
 			connectionIndex++;
 		}
