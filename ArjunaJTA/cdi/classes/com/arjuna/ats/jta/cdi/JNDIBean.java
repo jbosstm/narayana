@@ -48,14 +48,18 @@ import javax.naming.NamingException;
  */
 final class JNDIBean<T> extends AbstractBean<T> {
 
-    private final Name name;
+    private final String name;
 
     private final Class<? extends T> type;
-    
-    JNDIBean(final Name name, final Class<? extends T> type) {
+
+    JNDIBean(final String name, final Class<? extends T> type) {
         super();
-        this.name = (Name)Objects.requireNonNull(name).clone();
+        this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
+    }
+  
+    JNDIBean(final Name name, final Class<? extends T> type) {
+        this(Objects.requireNonNull(name).toString(), Objects.requireNonNull(type));
     }
     
     @Override
