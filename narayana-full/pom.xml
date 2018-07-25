@@ -135,13 +135,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Tomcat module javadocs -->
-    <dependency>
-      <groupId>org.jboss.narayana.tomcat</groupId>
-      <artifactId>tomcat-jta</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
 
     <!-- JMS module javadocs -->
     <dependency>
