@@ -32,7 +32,7 @@
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <javaee6.with.tools.version>1.0.0.M7</javaee6.with.tools.version>
 
-    <undertow.io.version>1.0.1.Final</undertow.io.version>
+    <undertow.io.version>2.0.11.Final</undertow.io.version>
 
     <!-- ssl debug: -Djavax.net.debug=ssl:handshake  http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Debug
      -->
