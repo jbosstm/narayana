@@ -849,6 +849,12 @@ function qa_tests {
   ok2=0;
   ok3=0;
   ok4=0;
+
+  # disable the qa tests with the openjdk_orb class loading issues https://issues.jboss.org/browse/WFLY-9569
+  if [ $JAVA_VERSION = "9" ]; then
+    OPENJDK_ORB=0
+  fi
+
   if [ $IBM_ORB = 1 ]; then
     qa_tests_once "orb=ibmorb" "$@" # run qa against the Sun orb
     ok3=$?
