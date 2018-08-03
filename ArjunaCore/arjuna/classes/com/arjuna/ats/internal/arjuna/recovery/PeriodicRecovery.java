@@ -164,9 +164,9 @@ public class PeriodicRecovery extends Thread
      */
    public void shutdown (boolean async)
    {
-       // stop the lsitener from adding threads which can exercise the worker
+       // closing the listener socket for not receiving more requests for the recovery scan
        if (_listener != null) {
-           _listener.stopListener();
+           _listener.closeListenerSockets();
        }
 
        synchronized (_stateLock) {
@@ -195,6 +195,11 @@ public class PeriodicRecovery extends Thread
                    tsLogger.logger.debug("PeriodicRecovery: shutdown scan wait complete");
                }
            }
+       }
+
+       // stopping the listener with closing all opened connections
+       if (_listener != null) {
+           _listener.stopListener();
        }
 
        // if the shutdown is synchronous then make sure the periodic recovery thread really has stopped running
