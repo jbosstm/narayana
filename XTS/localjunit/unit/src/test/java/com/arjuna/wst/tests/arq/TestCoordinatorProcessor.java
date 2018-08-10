@@ -33,7 +33,7 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 public class TestCoordinatorProcessor extends CoordinatorProcessor
 {
-    private Map messageIdMap = new HashMap() ;
+    private Map<String,CoordinatorDetails> messageIdMap = new HashMap<>() ;
 
     public CoordinatorDetails getCoordinatorDetails(final String messageId, final long timeout)
     {

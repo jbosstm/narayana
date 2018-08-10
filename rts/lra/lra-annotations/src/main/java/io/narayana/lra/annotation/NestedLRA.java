@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * <p>
  * Used on the interface or class. Defines that the container will create
  * a new LRA for each method invocation, regardless of whether or not there is
@@ -63,6 +65,7 @@ import java.lang.annotation.Target;
 @Inherited
 @InterceptorBinding
 @Retention(value = RetentionPolicy.RUNTIME)
+@Deprecated
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface NestedLRA {
 }

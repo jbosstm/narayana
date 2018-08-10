@@ -22,10 +22,13 @@
 package io.narayana.lra.annotation;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * The status of a participant. The status is only valid after the coordinator has told the participant to
  * complete or compensate. The name value of the enum should be returned by participant methods marked with
  * the {@link Status} annotation.
  */
+@Deprecated
 public enum CompensatorStatus {
     /**
      * the Compensator is currently compensating for the LRA

@@ -47,10 +47,11 @@ public class LRARecoveryModule implements RecoveryModule {
     public LRARecoveryModule(LRAService lraService) {
         this.lraService = lraService;
 
-        if (_recoveryStore == null)
+        if (_recoveryStore == null) {
             _recoveryStore = StoreManager.getRecoveryStore();
+        }
 
-        _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
+        _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
 
         RecordTypeManager.manager().add(new RecordTypeMap() {
             @Override
@@ -70,38 +71,42 @@ public class LRARecoveryModule implements RecoveryModule {
      */
     public void periodicWorkFirstPass() {
         // uids per transaction type
-        InputObjectState aa_uids = new InputObjectState() ;
+        InputObjectState aa_uids = new InputObjectState();
 
         try {
-            if (_recoveryStore.allObjUids( _transactionType, aa_uids ))
-                _transactionUidVector = processTransactions( aa_uids ) ;
-        } catch ( ObjectStoreException e ) {
-            if (LRALogger.logger.isInfoEnabled())
+            if (_recoveryStore.allObjUids(_transactionType, aa_uids)) {
+                _transactionUidVector = processTransactions(aa_uids);
+            }
+        } catch (ObjectStoreException e) {
+            if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof("LRARecoverModule: Object store exception: %s", e.getMessage());
+            }
         }
     }
 
     public void periodicWorkSecondPass() {
-        if (LRALogger.logger.isDebugEnabled())
+        if (LRALogger.logger.isDebugEnabled()) {
             LRALogger.logger.debug("AtomicActionRecoveryModule second pass");
+        }
 
-        processTransactionsStatus() ;
+        processTransactionsStatus();
     }
 
-    private void doRecoverTransaction( Uid recoverUid ) {
+    private void doRecoverTransaction(Uid recoverUid) {
         // Retrieve the transaction status from its original process.
-        int theStatus = _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
+        int theStatus = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, recoverUid);
 
-//        boolean inFlight = false; // TODO figure out how to determine isTransactionInMidFlight( theStatus ) ;
+//        boolean inFlight = false; // TODO figure out how to determine isTransactionInMidFlight(theStatus);
 
             try {
-                RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus) ;
-                String Status = ActionStatus.stringForm( theStatus ) ;
+                RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus);
+                String Status = ActionStatus.stringForm(theStatus);
                 boolean inFlight = lraService.hasTransaction(lra.getId());
 
                 if (inFlight // might have been loaded on start up
-                        && !lraService.getTransaction(lra.getId()).isInFlight())
+                        && !lraService.getTransaction(lra.getId()).isInFlight()) {
                     inFlight = false; // lraService knows about it but was loaded at start up time
+                }
 
                 if (LRALogger.logger.isDebugEnabled()) {
                     LRALogger.logger.debug("transaction type is " + _transactionType + " uid is " +
@@ -109,44 +114,47 @@ public class LRARecoveryModule implements RecoveryModule {
                             " in flight is " + inFlight);
                 }
 
-                if (!inFlight && lra.isRecovering())
+                if (!inFlight && lra.isRecovering()) {
                     lra.replayPhase2();
+                }
 
-            } catch ( Exception ex ) {
-                if (LRALogger.logger.isInfoEnabled())
+            } catch (Exception ex) {
+                if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("failed to recover Transaction %s: %s", recoverUid, ex.getMessage());
+                }
             }
     }
 
-    private Vector<Uid> processTransactions( InputObjectState uids ) {
-        Vector<Uid> uidVector = new Vector<>() ;
+    private Vector<Uid> processTransactions(InputObjectState uids) {
+        Vector<Uid> uidVector = new Vector<>();
 
-        if (LRALogger.logger.isDebugEnabled())
+        if (LRALogger.logger.isDebugEnabled()) {
             LRALogger.logger.debugf("processing transaction type %s", _transactionType);
+        }
 
-        boolean moreUids = true ;
+        boolean moreUids = true;
 
         while (moreUids) {
             try {
                 Uid uid = UidHelper.unpackFrom(uids);
 
-                if (uid.equals( Uid.nullUid() )) {
+                if (uid.equals(Uid.nullUid())) {
                     moreUids = false;
                 } else {
-                    Uid newUid = new Uid( uid ) ;
+                    Uid newUid = new Uid(uid);
 
                     if (LRALogger.logger.isDebugEnabled()) {
                         LRALogger.logger.debug("found transaction " + newUid);
                     }
 
-                    uidVector.addElement( newUid ) ;
+                    uidVector.addElement(newUid);
                 }
-            } catch ( Exception ex ) {
+            } catch (Exception ex) {
                 moreUids = false;
             }
         }
 
-        return uidVector ;
+        return uidVector;
     }
 
     private void processTransactionsStatus() {
@@ -161,8 +169,9 @@ public class LRARecoveryModule implements RecoveryModule {
                 Uid currentUid = (Uid) transactionUidEnum.nextElement();
 
                 try {
-                    if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
+                    if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN) {
                         doRecoverTransaction(currentUid);
+                    }
                 } catch (ObjectStoreException e) {
                     if (LRALogger.logger.isInfoEnabled()) {
                         LRALogger.logger.infof("failed to access transaction store %s: %s",
@@ -185,10 +194,11 @@ public class LRARecoveryModule implements RecoveryModule {
                 int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, currentUid);
                 RecoveringLRA lra = new RecoveringLRA(lraService, currentUid, status);
 
-                if (lra.isActivated())
+                if (lra.isActivated()) {
                     lras.put(lra.getId(), lra);
-                else
+                } else {
                     LRALogger.logger.infof("failed to activate LRA %s", currentUid);
+                }
             }
         }
     }
@@ -196,15 +206,15 @@ public class LRARecoveryModule implements RecoveryModule {
     LRAService lraService;
 
     // 'type' within the Object Store for LRAs.
-    private String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType() ;
+    private String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType();
 
     // Array of transactions found in the object store of the type LRA
-    private Vector _transactionUidVector = null ;
+    private Vector _transactionUidVector = null;
 
     // Reference to the Object Store.
-    private static RecoveryStore _recoveryStore = null ;
+    private static RecoveryStore _recoveryStore = null;
 
     // This object manages the interface to all TransactionStatusManager
     // processes(JVMs) on this system/node.
-    private TransactionStatusConnectionManager _transactionStatusConnectionMgr ;
+    private TransactionStatusConnectionManager _transactionStatusConnectionMgr;
 }

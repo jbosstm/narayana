@@ -21,6 +21,8 @@
  */
 package io.narayana.lra.client;
 
+import org.eclipse.microprofile.lra.client.GenericLRAException;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;

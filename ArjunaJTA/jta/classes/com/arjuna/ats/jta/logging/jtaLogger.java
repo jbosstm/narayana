@@ -33,8 +33,47 @@ package com.arjuna.ats.jta.logging;
 
 import org.jboss.logging.Logger;
 
-public class jtaLogger
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+public class jtaLogger implements InvocationHandler
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.ats.jta");
-    public static final jtaI18NLogger i18NLogger = Logger.getMessageLogger(jtaI18NLogger.class, "com.arjuna.ats.jta");
+    public static final jtaI18NLogger i18NLogger = (jtaI18NLogger) Proxy.newProxyInstance(
+            jtaI18NLogger.class.getClassLoader(),
+            new Class[] { jtaI18NLogger.class },
+            new jtaLogger(Logger.getMessageLogger(jtaI18NLogger.class, "com.arjuna.ats.jta")));
+
+    private jtaI18NLogger jtaI18NLoggerImpl;
+    private static boolean recoveryProblems;
+
+    private jtaLogger() {
+    }
+
+    private jtaLogger(jtaI18NLogger logger) {
+        jtaI18NLoggerImpl = logger;
+    }
+
+    public static boolean isRecoveryProblems() {
+        return recoveryProblems;
+    }
+
+    public static void setRecoveryProblems(boolean recoveryProblems) {
+        jtaLogger.recoveryProblems = recoveryProblems;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        try {
+            if (method.getName().startsWith("warn_recovery")) {
+                recoveryProblems = true;
+            }
+
+            return method.invoke(jtaI18NLoggerImpl, args);
+        } catch (InvocationTargetException e) {
+            throw e.getCause() != null ? e.getCause() : e;
+        }
+    }
 }

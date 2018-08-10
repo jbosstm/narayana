@@ -21,17 +21,18 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.participant.LRAParticipant;
-import io.narayana.lra.client.participant.LRAParticipantDeserializer;
-import io.narayana.lra.client.participant.JoinLRAException;
-import io.narayana.lra.client.participant.LRAManagement;
-import io.narayana.lra.client.participant.TerminationException;
+import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.participant.LRAParticipantDeserializer;
+import org.eclipse.microprofile.lra.participant.JoinLRAException;
+import org.eclipse.microprofile.lra.participant.LRAManagement;
+import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.faces.bean.ApplicationScoped;
+
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -47,7 +48,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -60,13 +60,16 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 
 @ApplicationScoped
 public class ProxyService implements LRAManagement {
-    private static final String COORDINATOR_PATH_NAME = "lra-coordinator"; // LRAClient.COORDINATOR_PATH_NAME
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
 
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
+    private static List<LRAParticipantDeserializer> deserializers;
 
     private Client lcClient;
     private WebTarget lcTarget;
@@ -74,9 +77,11 @@ public class ProxyService implements LRAManagement {
     private UriBuilder uriBuilder;
 
     @PostConstruct
-    void init() throws MalformedURLException {
-        if (participants == null) // TODO figure out why ProxyService is constructed twice
+    void init() {
+        if (participants == null) { // TODO figure out why ProxyService is constructed twice
             participants = new ArrayList<>();
+            deserializers = new ArrayList<>();
+        }
 
         int httpPort = Integer.getInteger("swarm.http.port", 8081);
         String httpHost = System.getProperty("swarm.http.host", "localhost");
@@ -88,10 +93,12 @@ public class ProxyService implements LRAManagement {
                 .host(httpHost)
                 .port(httpPort);
 
-        String lcHost = System.getProperty("lra.http.host", "localhost");
-        int lcPort = Integer.getInteger("lra.http.port", 8080);
+        String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
+        int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8080);
+        String lcPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
 
-        UriBuilder urib = UriBuilder.fromPath(COORDINATOR_PATH_NAME).scheme("http").host(lcHost).port(lcPort);
+
+        UriBuilder urib = UriBuilder.fromPath(lcPath).scheme("http").host(lcHost).port(lcPort);
 
         lcClient = ClientBuilder.newClient();
         lcTarget = lcClient.target(urib.build());
@@ -112,7 +119,6 @@ public class ProxyService implements LRAManagement {
     }
 
     private ParticipantProxy recreateProxy(URL lraId, String participantId) {
-        // TODO deserialize participantData - means that deserializers need to be registered at startup
         return new ParticipantProxy(lraId, participantId);
     }
 
@@ -128,28 +134,35 @@ public class ProxyService implements LRAManagement {
 
         LRAParticipant participant = proxy.getParticipant();
 
-        if (participant == null && participantData != null && participantData.length() > 0)
-            participant = deserializeParticipant(proxy.getDeserializer(), participantData).orElse(null);
+        if (participant == null && participantData != null && participantData.length() > 0) {
+            participant = deserializeParticipant(lraId, participantData).orElse(null);
+        }
 
         if (participant != null) {
             Future<Void> future = null;
 
             try {
-                if (compensate)
-                    future = participant.compensateWork(lraId); // let any NotFoundException propagate back to the coordinator
-                else
-                    future = participant.completeWork(lraId); // let any NotFoundException propagate back to the coordinator
+                if (compensate) {
+                    // let any NotFoundException propagate back to the coordinator
+                    future = participant.compensateWork(lraId);
+                } else {
+                    // let any NotFoundException propagate back to the coordinator
+                    future = participant.completeWork(lraId);
+                }
             } catch (TerminationException e) {
-                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete).build();
+                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate
+                        : CompensatorStatus.FailedToComplete).build();
             } finally {
-                if (future == null)
+                if (future == null) {
                     participants.remove(proxy); // we definitively know the outcome
-                else
+                } else {
                     proxy.setFuture(future, compensate); // remember the future so that we can report its progress
+                }
             }
 
-            if (future != null)
+            if (future != null) {
                 return Response.accepted().build();
+            }
 
             return Response.ok().build();
         } else {
@@ -162,15 +175,17 @@ public class ProxyService implements LRAManagement {
     void notifyForget(URL lraId, String participantId) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
-        if (proxy != null)
+        if (proxy != null) {
             participants.remove(proxy);
+        }
     }
 
     CompensatorStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
-        if (proxy == null)
+        if (proxy == null) {
             throw new NotFoundException();
+        }
 
         Optional<CompensatorStatus> status = proxy.getStatus();
 
@@ -179,15 +194,15 @@ public class ProxyService implements LRAManagement {
     }
 
     @Override
-    public String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer, URL lraId)
+    public String joinLRA(LRAParticipant participant, URL lraId)
             throws JoinLRAException {
-        return joinLRA(participant, deserializer, lraId, 0L, TimeUnit.SECONDS);
+        return joinLRA(participant, lraId, 0L, TimeUnit.SECONDS);
     }
 
     @Override
-    public String joinLRA(LRAParticipant participant, LRAParticipantDeserializer deserializer, URL lraId, Long timelimit, TimeUnit unit)
+    public String joinLRA(LRAParticipant participant, URL lraId, Long timelimit, TimeUnit unit)
             throws JoinLRAException {
-        ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant, deserializer);
+        ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
             String pId = proxy.getParticipantId();
@@ -221,6 +236,16 @@ public class ProxyService implements LRAManagement {
         }
     }
 
+    @Override
+    public void registerDeserializer(LRAParticipantDeserializer deserializer) {
+        deserializers.add(deserializer);
+    }
+
+    @Override
+    public void unregisterDeserializer(LRAParticipantDeserializer deserializer) {
+        deserializers.remove(deserializer);
+    }
+
     private static Optional<String> serializeParticipant(final Serializable object) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
@@ -234,20 +259,23 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    private static Optional<LRAParticipant> deserializeParticipant(final LRAParticipantDeserializer deserializer, final String objectAsString) {
+    private static Optional<LRAParticipant> deserializeParticipant(URL lraId, final String objectAsString) {
         final byte[] data = Base64.getDecoder().decode(objectAsString);
 
         try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
             return Optional.of((LRAParticipant) ois.readObject());
         } catch (final IOException | ClassNotFoundException e) {
-            if (deserializer != null) {
-                LRAParticipant LRAParticipant = deserializer.deserialize(objectAsString.getBytes());
+            for (LRAParticipantDeserializer ds : deserializers) {
+                LRAParticipant participant = ds.deserialize(lraId, data);
 
-                if (LRAParticipant != null)
-                    return Optional.of(LRAParticipant);
+                if (participant != null) {
+                    return Optional.of(participant);
+                }
             }
 
-            LRAProxyLogger.i18NLogger.error_cannotDeserializeParticipant(deserializer, e);
+            LRAProxyLogger.i18NLogger.warn_cannotDeserializeParticipant(lraId.toExternalForm(),
+                    deserializers.size() == 0 ? "null" : deserializers.get(0).getClass().getCanonicalName(),
+                    e.getMessage());
 
             return Optional.empty();
         }

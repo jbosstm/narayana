@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.jboss.narayana.jts</groupId>
     <artifactId>narayana-jts-all</artifactId>
-    <version>5.7.2.Final-SNAPSHOT</version>
+    <version>5.9.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -41,6 +41,12 @@
               <id>default-test</id>
               <configuration>
                 <skip>true</skip>
+                <systemProperties combine.children="append">
+                   <property>
+                     <name>java.util.logging.config.file</name>
+                     <value>${basedir}/src/test/resources/logging.properties</value>
+                   </property>
+                </systemProperties>
               </configuration>
             </execution>
           </executions>
@@ -193,7 +199,12 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <systemProperties combine.children="append"/>
+                  <systemProperties combine.children="append">
+                     <property>
+                       <name>java.util.logging.config.file</name>
+                       <value>${basedir}/src/test/resources/logging.properties</value>
+                     </property>
+                  </systemProperties>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>
@@ -252,7 +263,12 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <systemProperties combine.children="append" />
+                  <systemProperties combine.children="append">
+                     <property>
+                       <name>java.util.logging.config.file</name>
+                       <value>${basedir}/src/test/resources/logging.properties</value>
+                     </property>
+                  </systemProperties>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>
@@ -328,7 +344,12 @@
                 <configuration>
                   <argLine>${idlj.boot.args}</argLine>
                   <skip>false</skip>
-                  <systemProperties combine.children="append" />
+                  <systemProperties combine.children="append">
+                     <property>
+                       <name>java.util.logging.config.file</name>
+                       <value>${basedir}/src/test/resources/logging.properties</value>
+                     </property>
+                  </systemProperties>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>
@@ -394,7 +415,12 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <systemProperties combine.children="append" />
+                  <systemProperties combine.children="append">
+                     <property>
+                       <name>java.util.logging.config.file</name>
+                       <value>${basedir}/src/test/resources/logging.properties</value>
+                     </property>
+                  </systemProperties>
                   <excludes>
                     <exclude>**/common/**</exclude>
                     <exclude>**/ExampleXAResource.java</exclude>

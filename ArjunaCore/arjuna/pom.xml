@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.jboss.narayana.arjunacore</groupId>
     <artifactId>arjunacore-all</artifactId>
-    <version>5.7.2.Final-SNAPSHOT</version>
+    <version>5.9.1.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -143,12 +143,6 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>${version.com.h2database}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${version.org.apache.tomcat}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

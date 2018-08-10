@@ -404,7 +404,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                     }
                     catch (IOException ex)
                     {
-                        ex.printStackTrace();
+                        jtaLogger.i18NLogger.warn_unpacking_xid_state(xid, recoveryStore, SubordinateAtomicAction.getType(), ex);
 
                         finished = true;
                     }
@@ -476,7 +476,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            jtaLogger.i18NLogger.warn_reading_from_object_store(StoreManager.getRecoveryStore(), xid, ex);
         }
 
         return indoubt;

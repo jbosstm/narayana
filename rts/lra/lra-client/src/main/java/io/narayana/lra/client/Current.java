@@ -21,6 +21,8 @@
  */
 package io.narayana.lra.client;
 
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedMap;
 import java.net.URL;
 import java.util.HashMap;
@@ -43,8 +45,9 @@ public class Current {
     public static Object putState(String key, Object value) {
         Current current = lraContexts.get();
 
-        if (current != null)
+        if (current != null) {
             return current.updateState(key, value);
+        }
 
         return null;
     }
@@ -52,22 +55,25 @@ public class Current {
     public static Object getState(String key) {
         Current current = lraContexts.get();
 
-        if (current != null && current.state != null)
+        if (current != null && current.state != null) {
             return current.state.get(key);
+        }
 
         return null;
     }
 
     public Object updateState(String key, Object value) {
-        if (state == null)
+        if (state == null) {
             state = new HashMap<>();
+        }
 
         return state.put(key, value);
     }
 
     private static void clearContext(Current current) {
-        if (current.state != null)
+        if (current.state != null) {
             current.state.clear();
+        }
 
         lraContexts.set(null);
     }
@@ -85,8 +91,9 @@ public class Current {
         if (current != null) {
             lraId = current.stack.pop(); // there must be at least one
 
-            if (current.stack.empty())
+            if (current.stack.empty()) {
                 clearContext(current);
+            }
         }
 
         return lraId;
@@ -97,13 +104,15 @@ public class Current {
         Current current = lraContexts.get();
 
         // NB URIs would have been preferable to URLs for testing equality
-        if (current == null || !current.stack.contains(lra))
+        if (current == null || !current.stack.contains(lra)) {
             return false;
+        }
 
         current.stack.remove(lra);
 
-        if (current.stack.empty())
+        if (current.stack.empty()) {
             clearContext(current);
+        }
 
         return true;
     }
@@ -118,18 +127,52 @@ public class Current {
         if (current == null) {
             lraContexts.set(new Current(lraId));
         } else {
-            if (!current.stack.peek().equals(lraId))
+            if (!current.stack.peek().equals(lraId)) {
                 current.stack.push(lraId);
+            }
         }
     }
 
-    public static void updateLRAContext(MultivaluedMap<String, Object> headers) {
+    /**
+     * If there is an LRA context on the calling thread then add it to the provided headers
+     *
+     * @param responseContext the header map to add the KRA context to
+     */
+    public static void updateLRAContext(ContainerResponseContext responseContext) {
         URL lraId = Current.peek();
 
-        if (lraId != null)
-            headers.putSingle(LRA_HTTP_HEADER, lraId);
-        else
-            headers.remove(LRA_HTTP_HEADER);
+        if (lraId != null) {
+            responseContext.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+        } else {
+            responseContext.getHeaders().remove(LRA_HTTP_HEADER);
+        }
+    }
+
+    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
+        headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
+        push(lraId);
+    }
+
+    /**
+     * If there is an LRA context on the calling thread then make it available as
+     * a header on outgoing JAX-RS invocations
+     *
+     * @param context the context for the JAX-RS request
+     */
+    public static void updateLRAContext(ClientRequestContext context) {
+        URL lraId = Current.peek();
+
+        if (lraId != null) {
+            context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+        } else {
+            Object lraContext = context.getProperty(LRA_HTTP_HEADER);
+
+            if (lraContext != null) {
+                context.getHeaders().putSingle(LRA_HTTP_HEADER, lraContext);
+            } else {
+                context.getHeaders().remove(LRA_HTTP_HEADER);
+            }
+        }
     }
 
     public static void popAll() {
@@ -140,10 +183,4 @@ public class Current {
         headers.remove(LRA_HTTP_HEADER);
         popAll();
     }
-
-    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
-        headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
-        push(lraId);
-    }
-
 }

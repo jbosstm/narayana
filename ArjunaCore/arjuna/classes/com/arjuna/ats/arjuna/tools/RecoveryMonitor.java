@@ -43,14 +43,17 @@ import com.arjuna.ats.arjuna.recovery.RecoveryDriver;
 
 public class RecoveryMonitor
 {
-    
-    public static void main (String[] args)
+	private static String response = "";
+	private static String systemOutput = "";
+
+	public static void main (String[] args)
     {
 	String host = null;
 	int port = 0;
 	boolean asyncScan = false;
 	int timeout = 20000;
         boolean test = false;
+	boolean verbose = false;
 
 	for (int i = 0; i < args.length; i++)
 	{
@@ -59,6 +62,10 @@ public class RecoveryMonitor
 		usage();
 		System.exit(0);
 	    }
+	    else if (args[i].compareTo("-verbose") == 0)
+		{
+			verbose = true;
+		}
 	    else
 	    {
 		if (args[i].compareTo("-host") == 0)
@@ -137,20 +144,23 @@ public class RecoveryMonitor
                               
 	    PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
 
-	    if (asyncScan)
-		toServer.println(RecoveryDriver.ASYNC_SCAN);
-	    else
-		toServer.println(RecoveryDriver.SCAN);
+	    if (verbose) {
+			toServer.println(asyncScan ? RecoveryDriver.VERBOSE_ASYNC_SCAN : RecoveryDriver.VERBOSE_SCAN);
+		} else {
+			toServer.println(asyncScan ? RecoveryDriver.ASYNC_SCAN : RecoveryDriver.SCAN);
+		}
 
-	    toServer.flush() ;
-		  
-	    String response = fromServer.readLine();
+        toServer.flush() ;
 
-	    if (response.equals("DONE"))
-		System.out.println("RecoveryManager scan begun.");
-	    else
-		System.err.println("RecoveryManager did not understand request: "+response);
-                  
+        response = fromServer.readLine();
+
+        if (response.equals("DONE"))
+            systemOutput = asyncScan ? "RecoveryManager scan begun." : "DONE";
+        else
+            systemOutput = verbose ? "ERROR" : "RecoveryManager did not understand request: " + response;
+
+        System.out.println(systemOutput);
+
 	    connectorSocket.close() ;
 	}
 	catch (java.net.ConnectException e)
@@ -168,7 +178,14 @@ public class RecoveryMonitor
 
     private static void usage ()
     {
-	System.out.println("Usage: RecoveryMonitor -port <port number> [-host <host name>] [-async] [-timeout <wait time>] [-help]");
+	System.out.println("Usage: RecoveryMonitor -port <port number> [-host <host name>] [-verbose] [-async] [-timeout <wait time>] [-help]");
     }
- 
+
+	public static String getResponse() {
+		return response;
+	}
+
+	public static String getSystemOutput() {
+		return systemOutput;
+	}
 }

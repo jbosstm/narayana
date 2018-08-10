@@ -120,7 +120,7 @@ public class SubordinateJTAXAResourceOrphanFilter implements XAResourceOrphanFil
 						try {
 							uid = UidHelper.unpackFrom(states);
 						} catch (IOException ex) {
-							ex.printStackTrace();
+							jtaLogger.i18NLogger.warn_unpacking_xid_state(theXid, recoveryStore, transactionType, ex);
 
 							finished = true;
 						}
@@ -145,11 +145,9 @@ public class SubordinateJTAXAResourceOrphanFilter implements XAResourceOrphanFil
 					jtaLogger.i18NLogger.info_recovery_notaxid(XAHelper.xidToString(recoveredResourceXid));
 				}
 			} catch (ObjectStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				jtaLogger.i18NLogger.warn_reading_from_object_store(recoveryStore, theXid, e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				jtaLogger.i18NLogger.warn_reading_from_object_store(recoveryStore, theXid, e);
 			}
 		}
 		return false;

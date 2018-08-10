@@ -22,6 +22,8 @@
 
 package com.arjuna.wsc.tests.arq;
 
+import com.arjuna.webservices.SoapFault;
+import com.arjuna.wsc.CannotRegisterException;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -35,10 +37,13 @@ import org.junit.runner.RunWith;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 import com.arjuna.wsc.InvalidProtocolException;
+import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc.tests.TestUtil11;
 import com.arjuna.wsc.tests.WarDeployment;
 import com.arjuna.wsc11.RegistrationCoordinator;
+import org.jboss.jbossts.xts.environment.WSCEnvironmentBean;
+import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 @RunWith(Arquillian.class)
 public class RegistrationServiceTest extends BaseWSCTest {
@@ -48,12 +53,8 @@ public class RegistrationServiceTest extends BaseWSCTest {
         return WarDeployment.getDeployment();
     }
 
-    @Test
-    public void testKnownCoordinationType()
-            throws Exception
-            {
-        final String messageId = "testKnownCoordinationType" ;
-        final String protocolIdentifier = TestUtil.PROTOCOL_IDENTIFIER ;
+    private W3CEndpointReference sendRegistration(String messageId, String protocolIdentifier) 
+            throws CannotRegisterException, InvalidStateException, InvalidProtocolException, SoapFault {
         final CoordinationContextType coordinationContext = new CoordinationContextType() ;
         CoordinationContextType.Identifier identifierInstance = new CoordinationContextType.Identifier();
         coordinationContext.setCoordinationType(TestUtil.COORDINATION_TYPE) ;
@@ -61,39 +62,81 @@ public class RegistrationServiceTest extends BaseWSCTest {
         identifierInstance.setValue("identifier");
         coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifierInstance.getValue())) ;
         W3CEndpointReference participantEndpoint = TestUtil11.getProtocolParticipantEndpoint("participant");
+        return RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier);
+    }
+    
+    public void testKnownProtocolIdentifierInternal()
+            throws Exception
+    {
+        final String messageId = "testKnownCoordinationType" ;
+        final String protocolIdentifier = TestUtil.PROTOCOL_IDENTIFIER ;
+        
         try
         {
-            final W3CEndpointReference registerResponse = RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier) ;
-
+            final W3CEndpointReference registerResponse = sendRegistration(messageId, protocolIdentifier);
             assertNotNull(registerResponse) ;
         }
         catch (final Throwable th)
         {
             fail("Unexpected exception: " + th) ;
         }
-            }
+    }
 
-    @Test
-    public void testUnknownCoordinationType()
+    public void testUnknownProtocolIdentifierInternal()
             throws Exception
-            {
+    {
         final String messageId = "testUnknownCoordinationType" ;
         final String protocolIdentifier = TestUtil.UNKNOWN_PROTOCOL_IDENTIFIER ;
-        final CoordinationContextType coordinationContext = new CoordinationContextType() ;
-        CoordinationContextType.Identifier identifierInstance = new CoordinationContextType.Identifier();
-        coordinationContext.setCoordinationType(TestUtil.COORDINATION_TYPE) ;
-        coordinationContext.setIdentifier(identifierInstance) ;
-        identifierInstance.setValue("identifier");
-        coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifierInstance.getValue())) ;
-        W3CEndpointReference participantEndpoint = TestUtil11.getProtocolParticipantEndpoint("participant");
+        
         try
         {
-            RegistrationCoordinator.register(coordinationContext, messageId, participantEndpoint, protocolIdentifier) ;
+            sendRegistration(messageId, protocolIdentifier);
+            fail("Expecting exception being thrown as identifier was " + protocolIdentifier);
         }
         catch (final InvalidProtocolException ipe) {}
         catch (final Throwable th)
         {
             fail("Unexpected exception: " + th) ;
         }
-            }
+    }
+    
+    @Test
+    public void testKnownProtocolIdentifierSync()
+            throws Exception
+    {
+        final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.NO_ASYNC_REQUEST);
+        testKnownProtocolIdentifierInternal();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
+    }
+
+    @Test
+    public void testUnknownProtocolIdentifierSync()
+            throws Exception
+    {
+        final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.NO_ASYNC_REQUEST);
+        testUnknownProtocolIdentifierInternal();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
+    }
+    
+    @Test
+    public void testKnownProtocolIdentifierAsync()
+            throws Exception
+    {
+        final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.PLAIN_ASYNC_REQUEST);
+        testKnownProtocolIdentifierInternal();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
+    }
+
+    @Test
+    public void testUnknownProtocolIdentifierAsync()
+            throws Exception
+    {
+        final String previousValue = XTSPropertyManager.getWSCEnvironmentBean().getUseAsynchronousRequest();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(WSCEnvironmentBean.PLAIN_ASYNC_REQUEST);
+        testUnknownProtocolIdentifierInternal();
+        XTSPropertyManager.getWSCEnvironmentBean().setUseAsynchronousRequest(previousValue);
+    }
 }

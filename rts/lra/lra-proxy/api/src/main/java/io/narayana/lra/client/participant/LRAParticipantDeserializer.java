@@ -24,6 +24,10 @@ package io.narayana.lra.client.participant;
 /**
  * An object that knows how to recreate a participant from its' persistent form
  */
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.participant
+ */
+@Deprecated
 public interface LRAParticipantDeserializer {
     LRAParticipant deserialize(byte[] recoveryState);
 }

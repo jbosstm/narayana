@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.annotation
+ *
  * If a JAX-RS resource method is invoked in the context of an LRA and there are participant annotations on the class
  * it will join the LRA (as a participant). In addition, if it also contains a method annotated with @Leave then any
  * subsequent call to this @Leave method in the context of the same LRA will cause participant to leave the LRA.
@@ -37,5 +39,6 @@ import java.lang.annotation.Target;
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Deprecated
 public @interface Leave {
 }

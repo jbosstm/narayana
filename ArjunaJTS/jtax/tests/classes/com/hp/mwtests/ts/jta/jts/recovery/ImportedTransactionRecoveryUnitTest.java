@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,10 +49,13 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.xa.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
@@ -130,10 +134,11 @@ public class ImportedTransactionRecoveryUnitTest {
     @Test
     public void testMultipleXAResourceForImportedJcaTransaction() throws Exception {
         final Xid xid = XidUtils.getXid(new Uid(), true);
+        String parentNodeName = "parent1";
+        XATxConverter.setNodeName(((XidImple)xid).getXID(), parentNodeName);
         SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
-        TestXAResourceWrapper xar1 = new TestXAResourceWrapper("narayana", "narayana", "java:/test1")
-        {
+        TestXAResourceWrapper xar1 = new TestXAResourceWrapper("narayana", "narayana", "java:/test1") {
             boolean wasThrown = false;
             @Override
             public void commit(Xid xid, boolean onePhase) throws XAException {
@@ -145,8 +150,7 @@ public class ImportedTransactionRecoveryUnitTest {
                 }
             }
         };
-        TestXAResourceWrapper xar2 = new TestXAResourceWrapper("narayana", "narayana", "java:/test2")
-        {
+        TestXAResourceWrapper xar2 = new TestXAResourceWrapper("narayana", "narayana", "java:/test2") {
             boolean wasThrown = false;
             @Override
             public void commit(Xid xid, boolean onePhase) throws XAException {
@@ -167,6 +171,22 @@ public class ImportedTransactionRecoveryUnitTest {
             subordinateTransaction.doCommit());
 
         assertNotEquals("XAResources should be enlisted with different xids", xar1.getXid(), xar2.getXid());
+
+        // xid format verification of node names
+        assertEquals("Expecting the original Xid has redefined node from node identifier"
+            + "to parent node name by XATxConverter call", parentNodeName, XAUtils.getXANodeName(xid));
+        assertNull("Expecting the original xid has no subordinate name definied as it was not imported",
+            XATxConverter.getSubordinateNodeName(((XidImple)xid).getXID()));
+        // imported Xid verified here: the subordinate transaction parent node is node name
+        // and subordinate is the current node identifier
+        assertEquals("Expecting the subordinate Xid has defined parent node name as original Xid node name",
+            parentNodeName, XAUtils.getXANodeName(subordinateTransaction.baseXid()));
+        assertNull("Expecting null as JTS subordinate Xid does not support use of the subordinate node name",
+                XAUtils.getSubordinateNodeName(subordinateTransaction.baseXid()));
+        assertEquals("XAResource1 xid expects to have node name equal to the name of imported transaction node",
+            parentNodeName, XAUtils.getXANodeName(xar1.getXid()));
+        assertEquals("XAResource2 xid expects to have node name equal to the name of imported transaction node",
+            parentNodeName, XAUtils.getXANodeName(xar2.getXid()));
 
         ((XARecoveryModule) recoveryManager.getModules().get(0))
             .addXAResourceRecoveryHelper(new TestXARecoveryHelper(xar1, xar2));

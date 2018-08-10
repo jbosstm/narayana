@@ -10,6 +10,8 @@ import com.arjuna.webservices11.wsba.server.CoordinatorCompletionCoordinatorInit
 import com.arjuna.webservices11.wsba.server.ParticipantCompletionCoordinatorInitialisation;
 import com.arjuna.webservices11.wscoor.server.ActivationCoordinatorInitialisation;
 import com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorInitialisation;
+import com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorResponseInitialisation;
+import com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorFaultInitialisation;
 import com.arjuna.wsc11.messaging.deploy.CoordinationInitialisation;
 import com.arjuna.wst11.messaging.deploy.WSTCoordinatorInitialisation;
 import org.jboss.jbossts.xts.recovery.coordinator.CoordinatorRecoveryInitialisation;
@@ -25,6 +27,8 @@ public class CoordinatorSideInitialisation implements XTSInitialisation
 
         ActivationCoordinatorInitialisation.startup();
         RegistrationCoordinatorInitialisation.startup();
+        RegistrationCoordinatorResponseInitialisation.startup();
+        RegistrationCoordinatorFaultInitialisation.startup();
         CoordinationInitialisation.startup();
 
         // run WS-T startup code
@@ -77,6 +81,8 @@ public class CoordinatorSideInitialisation implements XTSInitialisation
 
         // run WS-C shutdown code
         CoordinationInitialisation.shutdown();
+        RegistrationCoordinatorFaultInitialisation.shutdown();
+        RegistrationCoordinatorResponseInitialisation.shutdown();
         RegistrationCoordinatorInitialisation.shutdown();
         ActivationCoordinatorInitialisation.shutdown();
 

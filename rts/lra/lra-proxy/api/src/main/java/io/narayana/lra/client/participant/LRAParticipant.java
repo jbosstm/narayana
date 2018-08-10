@@ -25,13 +25,16 @@ import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The API for notifying participants that a LRA is completing or cancelling.
  * A participant joins with an LRA via a call to
  * {@link LRAManagement#joinLRA(LRAParticipant, LRAParticipantDeserializer, URL, Long, TimeUnit)}
  */
+/**
+ * @deprecated as of 5.8.1.Final. The API has been moved under the Eclipse umbrella org.eclipse.microprofile.lra.participant
+ */
+@Deprecated
 public interface LRAParticipant extends Serializable {
     /**
      * Notifies the participant that the LRA is closing

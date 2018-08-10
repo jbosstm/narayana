@@ -963,7 +963,7 @@ public class ConnectionImple implements Connection
 					getModifier();
 
 					if (_theModifier == null) {
-						jdbcLogger.i18NLogger.info_closingconnectionnull(_theConnection.toString());
+						jdbcLogger.i18NLogger.info_closingconnectionnull(theConnection.toString());
 
 						// no indication about connections, so assume close immediately
 
@@ -982,7 +982,7 @@ public class ConnectionImple implements Connection
 	                         * terminated, so register a Synchronization here.
 	                         */
 
-							jdbcLogger.i18NLogger.debug_closingconnection(_theConnection.toString());
+							jdbcLogger.i18NLogger.debug_closingconnection(theConnection.toString());
 
 							jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistry().registerInterposedSynchronization(new ConnectionSynchronization(this));
 						}

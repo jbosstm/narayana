@@ -190,21 +190,33 @@ public class Listener extends Thread
         notifyAll();
     }
 
+    /**
+     * <p>
+     * Ensuring the socket does not accept more requests by closing it
+     * and setting flag to inform the listener is stopped.
+     * <p>
+     * Method does not close opened connections, run the {@link #stopListener()} method for that.
+     */
+    public synchronized void closeListenerSockets() {
+        _stop_listener = true;
+
+        try
+        {
+            _listener_socket.close();  // in case we're still in accept
+        }
+        catch (final Exception ex)
+        {
+        }
+    }
+
    /**
     * Halts running of the listener thread.
     */
 
    public synchronized void stopListener()
    {
-      _stop_listener = true;
+       closeListenerSockets();
 
-       try
-       {
-           _listener_socket.close();  // in case we're still in accept
-       }
-       catch (final Exception ex)
-       {
-       }
       // there is no need for this as the close will interrupt any i/o that is in progress
       // this.interrupt();
 

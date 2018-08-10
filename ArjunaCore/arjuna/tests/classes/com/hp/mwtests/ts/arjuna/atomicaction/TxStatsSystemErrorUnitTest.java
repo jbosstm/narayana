@@ -26,6 +26,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -152,22 +153,22 @@ public class TxStatsSystemErrorUnitTest {
 
         @Override
         public int nestedAbort() {
-            return 0;
+            return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
         public int nestedCommit() {
-            return 0;
+            return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
         public int nestedPrepare() {
-            return 0;
+            return TwoPhaseOutcome.PREPARE_OK;
         }
 
         @Override
         public int topLevelAbort() {
-            return 0;
+            return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
@@ -176,12 +177,12 @@ public class TxStatsSystemErrorUnitTest {
                 Thread.sleep(10);
             } catch (InterruptedException ignored) {
             }
-            return 0;
+            return TwoPhaseOutcome.FINISH_OK;
         }
 
         @Override
         public int topLevelPrepare() {
-            return 0;
+            return TwoPhaseOutcome.PREPARE_OK;
         }
 
         @Override

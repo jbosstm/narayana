@@ -22,8 +22,8 @@
 
 package io.narayana.lra.proxy.test.api;
 
-import io.narayana.lra.client.participant.JoinLRAException;
-import io.narayana.lra.client.participant.LRAManagement;
+import org.eclipse.microprofile.lra.participant.JoinLRAException;
+import org.eclipse.microprofile.lra.participant.LRAManagement;
 import io.narayana.lra.proxy.test.model.Activity;
 import io.narayana.lra.proxy.test.model.Participant;
 import io.narayana.lra.proxy.test.service.ActivityService;
@@ -68,7 +68,7 @@ public class LRAMgmtEgController {
         activityService.add(activity);
 
         activity.rcvUrl = lraManagement.joinLRA(
-                new Participant(activity), null, toURL(lraId), 0L, TimeUnit.SECONDS);
+                new Participant(activity), toURL(lraId), 0L, TimeUnit.SECONDS);
 
         return Response.ok(activity.id).build();
     }

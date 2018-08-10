@@ -26,16 +26,20 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
+import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
-
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 /**
  * i18n log messages for the jta module.
@@ -426,8 +430,8 @@ public interface jtaI18NLogger {
 	@Message(id = 16100, value = "Xid unset", format = MESSAGE_FORMAT)
 	public String get_xa_xidunset();
 
-	@Message(id = 16101, value = "Could not pack XidImple.", format = MESSAGE_FORMAT)
-	public String get_xid_packerror();
+	@Message(id = 16101, value = "Could not pack XidImple {0}", format = MESSAGE_FORMAT)
+	public String get_xid_packerror(Xid xid);
 
     @Message(id = 16102, value = "The transaction is not active! Uid is {0}", format = MESSAGE_FORMAT)
    	public String get_transaction_arjunacore_inactive(Uid arg0);
@@ -532,7 +536,39 @@ public interface jtaI18NLogger {
 
 	@Message(id = 16131, value = "Subordinate transaction was not recovered successfully {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
-    void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
+	void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
+
+	@Message(id = 16132, value = "Can't packt into output object state {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cant_pack_into_output_object_state(OutputObjectState os, @Cause() Exception e);
+
+	@Message(id = 16133, value = "Can't create a new instance of Xid of uid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cant_create_xid_of_branch(Uid id, Boolean branch, Integer eisName, @Cause() Exception e);
+
+	@Message(id = 16134, value = "Can't create a new instance of Xid of base xid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_cant_create_xid_of_xid(Xid id, Boolean branch, Integer eisName, @Cause() Exception e);
+
+	@Message(id = 16135, value = "Can't read object {0} store for xid {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_reading_from_object_store(RecoveryStore recoveryStore, Xid xid, @Cause() Exception e);
+
+	@Message(id = 16136, value = "Cannot unpact state of the xid {0} loaded from recovery store {1} of txn type {2}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_unpacking_xid_state(Xid xid, RecoveryStore recoveryStore, String type, @Cause() Exception e);
+
+	@Message(id = 16137, value = "Failed to get transaction status of {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	void error_failed_to_get_transaction_status(Transaction txn, @Cause() Exception e);
+
+	@Message(id = 16138, value = "Failed to enlist XA resource {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_failed_to_enlist_xa_resource(XAResource xares, @Cause() Exception e);
+
+	@Message(id = 16139, value = "Fail to cast class of transaction action {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	void error_transaction_class_cast_fail(StateManager action, @Cause() Exception e);
 
 
     /*

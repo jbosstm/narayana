@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.filter;
 
-import io.narayana.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.LRA;
 
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;

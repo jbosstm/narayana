@@ -67,7 +67,8 @@ public class RecordTypeManager
     {
         for (int i = 0; i < _map.size(); i++)
         {
-            if (_map.get(i).getRecordClass().equals(c))
+            Class<? extends AbstractRecord> recordClass = _map.get(i).getRecordClass();
+            if (recordClass != null && recordClass.equals(c))
                 return _map.get(i).getType();
         }
         

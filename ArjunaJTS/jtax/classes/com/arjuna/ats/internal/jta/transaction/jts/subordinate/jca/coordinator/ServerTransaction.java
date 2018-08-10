@@ -38,6 +38,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.xa.XidImple;
 
 /**
@@ -115,7 +116,7 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			jtaxLogger.i18NLogger.warn_cant_save_state(os, ot, e);
 		}
 
 		return false;
@@ -140,7 +141,7 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		}
 		catch (IOException ex)
 		{
-			ex.printStackTrace();
+			jtaxLogger.i18NLogger.warn_cant_restore_state(os, ot, ex);
 		}
 
 		return false;

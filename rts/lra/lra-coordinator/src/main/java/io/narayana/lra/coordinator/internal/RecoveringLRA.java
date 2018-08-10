@@ -27,18 +27,21 @@ import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
+import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 class RecoveringLRA extends Transaction {
     /**
      * Re-creates/activates an LRA for the specified transaction Uid.
      */
     RecoveringLRA(LRAService lraService, Uid rcvUid, int theStatus) {
-        super(lraService, rcvUid );
+        super(lraService, rcvUid);
 
-        _theStatus = theStatus ;
+        _theStatus = theStatus;
         _activated = activate(); // this should initialize the state
     }
 
@@ -46,39 +49,52 @@ class RecoveringLRA extends Transaction {
         return _activated;
     }
 
+    public void replayPhase2() {
+        // protect against recovery and application threads both trying to finish the LRA
+        ReentrantLock lock = tryLockTransaction();
+
+        if (lock == null) {
+            return;
+        }
+
+        try {
+            tryReplayPhase2();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     /**
      * Replays phase 2 of the commit protocol.
      */
-    public void replayPhase2() {
+    private void tryReplayPhase2() {
         if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debug("RecoveringLRA.replayPhase2 recovering "+get_uid()+" ActionStatus is "+ActionStatus.stringForm(_theStatus));
+            LRALogger.logger.debugf("RecoveringLRA.replayPhase2 recovering %s ActionStatus is %s",
+                    get_uid(), ActionStatus.stringForm(_theStatus));
         }
 
-        if ( _activated )
-        {
-            if ( (_theStatus == ActionStatus.PREPARED) ||
+        if (_activated) {
+            if ((_theStatus == ActionStatus.PREPARED) ||
                     (_theStatus == ActionStatus.COMMITTING) ||
                     (_theStatus == ActionStatus.COMMITTED) ||
                     (_theStatus == ActionStatus.H_COMMIT) ||
                     (_theStatus == ActionStatus.H_MIXED) ||
-                    (_theStatus == ActionStatus.H_HAZARD) )
-            {
+                    (_theStatus == ActionStatus.H_HAZARD)) {
                 // move any heuristics back onto the prepared list for another attempt:
                 moveTo(heuristicList, preparedList);
+                checkParticipant(preparedList);
 
-                super.phase2Commit( true ) ;
-            }
-            else if ( (_theStatus == ActionStatus.ABORTED) ||
+                super.phase2Commit(true);
+            } else if ((_theStatus == ActionStatus.ABORTED) ||
                     (_theStatus == ActionStatus.H_ROLLBACK) ||
                     (_theStatus == ActionStatus.ABORTING) ||
-                    (_theStatus == ActionStatus.ABORT_ONLY) )
-            {
+                    (_theStatus == ActionStatus.ABORT_ONLY)) {
                 // move any heuristics back onto the pending list for another attempt:
                 moveTo(heuristicList, pendingList);
+                checkParticipant(pendingList);
 
-                super.phase2Abort( true ) ;
-            }
-            else {
+                super.phase2Abort(true);
+            } else {
                 if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
                             + ActionStatus.stringForm(_theStatus));
@@ -86,8 +102,9 @@ class RecoveringLRA extends Transaction {
             }
 
             // if there are no more heuristics or failures then update the status of the LRA
-            if (heuristicList.size() == 0 && failedList.size() == 0)
+            if (heuristicList.size() == 0 && failedList.size() == 0) {
                 setLRAStatus(_theStatus);
+            }
 
             switch (getLRAStatus()) {
                 case Completed:
@@ -95,10 +112,13 @@ class RecoveringLRA extends Transaction {
                     getLraService().finished(this, false);
                     break;
                 default:
-                    /* FALLTHRU */
+                    if (LRALogger.logger.isInfoEnabled()) {
+                        LRALogger.logger.infof("RecoveringLRA.replayPhase2 for %s ended with status: %s",
+                                getId().toExternalForm(), getLRAStatus());
+                    }
+                    // FALLTHRU
             }
-        }
-        else {
+        } else {
             if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof(
                         "RecoveringLRA: LRA %s not activated, unable to replay phase 2 commit, will retry later",
@@ -109,18 +129,32 @@ class RecoveringLRA extends Transaction {
         }
     }
 
+    private void checkParticipant(RecordList participants) {
+        RecordListIterator i = new RecordListIterator(participants);
+        AbstractRecord r;
+
+        while ((r = i.iterate()) != null) {
+            if (r instanceof LRARecord) {
+                LRARecord rec = (LRARecord) r;
+
+                rec.setLraService(getLraService());
+            }
+        }
+    }
+
     private void moveTo(RecordList fromList, RecordList toList) {
         RecordListIterator i = new RecordListIterator(fromList);
         AbstractRecord record;
 
-        while ((record = fromList.getFront()) != null)
+        while ((record = fromList.getFront()) != null) {
             toList.putFront(record);
+        }
     }
 
-    private int _theStatus ; // Current transaction status
+    private int _theStatus; // Current transaction status
 
     // Flag to indicate that this transaction has been re-activated successfully.
-    private boolean _activated = false ;
+    private boolean _activated = false;
 }
 
 

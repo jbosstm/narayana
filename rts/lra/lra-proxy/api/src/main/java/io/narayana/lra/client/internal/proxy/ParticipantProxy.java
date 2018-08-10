@@ -21,11 +21,10 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.annotation.CompensatorStatus;
-import io.narayana.lra.client.participant.LRAParticipant;
-import io.narayana.lra.client.participant.LRAParticipantDeserializer;
-import io.narayana.lra.client.participant.TerminationException;
+import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.net.URL;
 import java.util.Optional;
@@ -36,15 +35,13 @@ class ParticipantProxy {
     private URL lraId;
     private String participantId;
     private LRAParticipant participant;
-    private LRAParticipantDeserializer deserializer;
     private Future<Void> future;
     private boolean compensate;
 
-    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant, LRAParticipantDeserializer deserializer) {
+    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant) {
         this.lraId = lraId;
         this.participantId = participantId;
         this.participant = participant;
-        this.deserializer = deserializer;
     }
 
     ParticipantProxy(URL lraId, String participantId) {
@@ -65,14 +62,14 @@ class ParticipantProxy {
         return participant;
     }
 
-    LRAParticipantDeserializer getDeserializer() {
-        return deserializer;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ParticipantProxy)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParticipantProxy)) {
+            return false;
+        }
 
         ParticipantProxy that = (ParticipantProxy) o;
 
@@ -104,8 +101,9 @@ class ParticipantProxy {
     }
 
     Optional<CompensatorStatus> getStatus() throws InvalidLRAStateException {
-        if (future == null)
+        if (future == null) {
             return Optional.empty();
+        }
 
         if (future.isDone()) {
             try {

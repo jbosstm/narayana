@@ -23,6 +23,8 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.AtomicAction;
@@ -153,7 +155,7 @@ public class AtomicActionUnitTest
 
 		@Override
 		public int typeIs() {
-			return 0;
+			return RecordType.USER_DEF_FIRST0;
 		}
 
 		public boolean wasCommitted() {
@@ -171,33 +173,33 @@ public class AtomicActionUnitTest
 
 		@Override
 		public int nestedAbort() {
-			return 0;
+			return TwoPhaseOutcome.FINISH_OK;
 		}
 
 		@Override
 		public int nestedCommit() {
-			return 0;
+			return TwoPhaseOutcome.FINISH_OK;
 		}
 
 		@Override
 		public int nestedPrepare() {
-			return 0;
+			return TwoPhaseOutcome.PREPARE_OK;
 		}
 
 		@Override
 		public int topLevelAbort() {
-			return 0;
+			return TwoPhaseOutcome.FINISH_OK;
 		}
 
 		@Override
 		public int topLevelCommit() {
 			wasCommitted = true;
-			return 0;
+			return TwoPhaseOutcome.FINISH_OK;
 		}
 
 		@Override
 		public int topLevelPrepare() {
-			return 0;
+			return TwoPhaseOutcome.PREPARE_OK;
 		}
 
 		@Override

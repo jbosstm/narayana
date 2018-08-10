@@ -38,6 +38,7 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
 import com.arjuna.ats.internal.jta.xa.XID;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -53,7 +54,7 @@ public class XATxConverter
 {
 	private static XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin =
             jtaPropertyManager.getJTAEnvironmentBean().getXAResourceRecordWrappingPlugin();
-    public static final int FORMAT_ID = 131077; // different from JTS ones.
+    public static final int FORMAT_ID = FormatConstants.JTA_FORMAT_ID; // different from JTS ones.
 
     static XID getXid (Uid uid, boolean branch, Integer eisName) throws IllegalStateException
     {
@@ -140,7 +141,7 @@ public class XATxConverter
 
     public static Uid getUid(XID xid)
     {
-        if (xid == null || xid.formatID != FORMAT_ID) {
+        if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
             return Uid.nullUid();
         }
 
@@ -150,11 +151,30 @@ public class XATxConverter
         return tx;
     }
 
+    public static void setNodeName(XID theXid, String nodeName) {
+        if (theXid == null || !FormatConstants.isNarayanaFormatId(theXid.formatID)) {
+            return ;
+        }
+
+        byte[] oldNodeName = getNodeName(theXid).getBytes(StandardCharsets.UTF_8);
+        byte[] newNodeName = nodeName.getBytes(StandardCharsets.UTF_8);
+
+        // length of the uid is of theXid.gtrid_length
+        byte[] dataUid = Arrays.copyOfRange(theXid.data, 0, theXid.gtrid_length - oldNodeName.length);
+        // length of real data is theXid.bqual_length
+        byte[] databranch = Arrays.copyOfRange(theXid.data, theXid.gtrid_length, theXid.bqual_length);
+
+        // redefine lenght of the gtrid based on the new node name
+        theXid.gtrid_length = dataUid.length + newNodeName.length;
+
+        // taking old data concatenating them with the new node name
+        System.arraycopy(dataUid, 0, theXid.data, 0, dataUid.length);
+        System.arraycopy(newNodeName, 0, theXid.data, dataUid.length, newNodeName.length);
+        System.arraycopy(databranch, 0, theXid.data, theXid.gtrid_length, databranch.length);
+    }
+
 	public static String getNodeName(XID xid) {
-		// Arjuna.XID()
-		// don't check the formatId - it may differ e.g. JTA vs. JTS.
-		if (xid.formatID != FORMAT_ID && xid.formatID != 131072
-				&& xid.formatID != 131080) {
+		if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
 			return null;
 		}
 
@@ -169,7 +189,7 @@ public class XATxConverter
 	}
 
 	public static void setSubordinateNodeName(XID theXid, String xaNodeName) {
-		if (theXid == null || theXid.formatID != FORMAT_ID) {
+		if (theXid == null || !FormatConstants.isNarayanaFormatId(theXid.formatID)) {
 			return;
 		}
 		int length = 0;
@@ -188,9 +208,7 @@ public class XATxConverter
 		theXid.bqual_length = Uid.UID_SIZE+4+4+length;
 	}
 	public static String getSubordinateNodeName(XID xid) {
-		// Arjuna.XID()
-		// don't check the formatId - it may differ e.g. JTA vs. JTS.
-		if (xid.formatID != FORMAT_ID) {
+		if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
 			return null;
 		}
 
@@ -214,7 +232,7 @@ public class XATxConverter
 
 
 	public static void setBranchUID(XID xid, Uid uid) {
-		if (xid == null || xid.formatID != FORMAT_ID) {
+		if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
 			return;
 		}
 
@@ -224,7 +242,7 @@ public class XATxConverter
 	
     public static Uid getBranchUid(XID xid)
     {
-        if (xid == null || xid.formatID != FORMAT_ID) {
+        if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
             return Uid.nullUid();
         }
 
@@ -237,9 +255,8 @@ public class XATxConverter
         return tx;
     }
 
-
 	public static void setEisName(XID theXid, Integer eisName) {
-		if (theXid == null || theXid.formatID != FORMAT_ID) {
+		if (theXid == null || !FormatConstants.isNarayanaFormatId(theXid.formatID)) {
 			return;
 		}
 		if (eisName == null) {
@@ -251,10 +268,10 @@ public class XATxConverter
 		theXid.data[offset + 2] = (byte) (eisName >>> 8);
 		theXid.data[offset + 3] = (byte) (eisName >>> 0);
 	}
-	
+
     public static Integer getEISName(XID xid)
     {
-        if(xid == null || xid.formatID != FORMAT_ID) {
+        if (xid == null || !FormatConstants.isNarayanaFormatId(xid.formatID)) {
             return -1;
         }
 

@@ -22,6 +22,8 @@ package com.arjuna.webservices.logging;
 
 import org.jboss.logging.annotations.*;
 
+import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+
 import javax.xml.namespace.QName;
 
 import static org.jboss.logging.Logger.Level.*;
@@ -289,7 +291,7 @@ public interface wscI18NLogger {
 	@Message(id = 42080, value = "Invalid create coordination context parameters", format = MESSAGE_FORMAT)
 	public String get_wsc11_messaging_ActivationCoordinatorProcessorImpl_1();
 
-	@Message(id = 42081, value = "Participant already registered", format = MESSAGE_FORMAT)
+	@Message(id = 42081, value = "Participant already registered for this protocol identifier", format = MESSAGE_FORMAT)
 	public String get_wsc11_messaging_RegistrationCoordinatorProcessorImpl_1();
 
 	@Message(id = 42082, value = "Invalid protocol identifier", format = MESSAGE_FORMAT)
@@ -304,6 +306,18 @@ public interface wscI18NLogger {
 	@Message(id = 42085, value = "Failed to create service instance: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_cannot_create_service_instance(Class arg0, @Cause() Throwable arg1);
+
+	@Message(id = 42086, value = "Empty messageId received by an async endpoint", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_empty_messageId_received_by_async_endpoint();
+
+	@Message(id = 42087, value = "Failure to register protocol {0} and instance {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_failure_to_register_protocol(String protocol, InstanceIdentifier instance, @Cause() Throwable t);
+
+	@Message(id = 42088, value = "Failure to create coordination context of type {0}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_failure_to_create_coordination_context(String coordinationType, @Cause() Throwable t);
 
     /*
         Allocate new messages directly above this notice.

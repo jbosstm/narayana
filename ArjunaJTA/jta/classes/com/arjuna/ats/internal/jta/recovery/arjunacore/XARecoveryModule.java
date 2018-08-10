@@ -55,6 +55,7 @@ import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
@@ -75,7 +76,7 @@ import org.jboss.tm.XAResourceWrapper;
  * Designed to be able to recover any XAResource.
  */
 
-public class XARecoveryModule implements RecoveryModule
+public class XARecoveryModule implements ExtendedRecoveryModule
 {
 	public XARecoveryModule()
 	{
@@ -87,6 +88,11 @@ public class XARecoveryModule implements RecoveryModule
 
     public Set<String> getContactedJndiNames() {
         return Collections.unmodifiableSet(contactedJndiNames);
+    }
+
+    @Override
+    public boolean isPeriodicWorkSuccessful() {
+        return !jtaLogger.isRecoveryProblems();
     }
 
     public void addXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
@@ -158,6 +164,7 @@ public class XARecoveryModule implements RecoveryModule
         }
 
         contactedJndiNames.clear();
+        jtaLogger.setRecoveryProblems(false);
 
 		_uids = new InputObjectState();
 
@@ -314,10 +321,10 @@ public class XARecoveryModule implements RecoveryModule
 
 				// JBTM-1255 moved stale check back to bottomUpRecovery
 				if (xids.contains(xid)) {
-					// This Xid will hopefully be recovered by the AtomicAction
-					// We do not remove it from the map as there is garbage collection in RecoveryXids already
-					// and it is possible that the Xid is recovered by both txbridge and XATerminator - the second
+					// This Xid is going to be recovered by the AtomicAction
+					// it is possible that the Xid is recovered by both txbridge and XATerminator - the second
 					// would get noxaresource error message
+					xids.remove(xid);
 					return theKey;
 				}
 			}
@@ -645,7 +652,9 @@ public class XARecoveryModule implements RecoveryModule
 				{
 				}
 
-				_xidScans.remove(xares);
+				if (_xidScans != null)
+					_xidScans.remove(xares);
+
 				return;
 			}
 
@@ -846,7 +855,16 @@ public class XARecoveryModule implements RecoveryModule
         }
         catch (XAException e1)
         {
-        	jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
+            if(e1.errorCode == XAException.XAER_NOTA)
+            {
+                if(jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug(_logName+".xaRecovery: XAER_NOTA received while rolling back " + XAHelper.xidToString(xid));
+                }
+            }
+            else
+            {
+                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
+            }
 
             switch (e1.errorCode)
             {

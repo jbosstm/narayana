@@ -1,7 +1,7 @@
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2017, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
+ * as indicated by the @author tags.See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
@@ -11,7 +11,7 @@
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -21,7 +21,8 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import io.narayana.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import java.io.IOException;
 
@@ -32,7 +33,7 @@ public class LRAStatus {
     //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
     //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
-    private String clientId ;
+    private String clientId;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
     private boolean isComplete;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
@@ -45,20 +46,28 @@ public class LRAStatus {
     private boolean isTopLevel;
     private int httpStatus;
     private String responseData;
+    long startTime;
+    long finishTime;
+    long timeNow;
 
     private CompensatorStatus status;
 
     public LRAStatus(Transaction lra) {
-        this.lraId = lra.getId().toString();
-        this. clientId = lra.getClientId();
-        this. isComplete = lra.isComplete();
-        this. isCompensated = lra.isCompensated();
-        this. isRecovering = lra.isRecovering();
-        this. isActive = lra.isActive();
-        this. isTopLevel = lra.isTopLevel();
+        LRAInfo info = lra.getLRAInfo();
+
+        this.lraId = info.getLraId();
+        this.clientId = info.getClientId();
+        this.isComplete = info.isComplete();
+        this.isCompensated = info.isCompensated();
+        this.isRecovering = info.isRecovering();
+        this.isActive = info.isActive();
+        this.isTopLevel = info.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.status = lra.getLRAStatus();
+        this.startTime = info.getStartTime();
+        this.finishTime = info.getFinishTime();
+        this.timeNow = info.getTimeNow();
     }
 
     public String getLraId() {
@@ -123,5 +132,21 @@ public class LRAStatus {
 
     public String getEncodedResponseData() throws IOException {
         return responseData;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getFinishTime() {
+        return finishTime;
+    }
+
+    public long getTimeNow() {
+        return timeNow;
     }
 }

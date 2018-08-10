@@ -1,0 +1,58 @@
+= LRA annotation checker Maven plugin
+
+The purpose of this Maven plugin is to provide verification of correct
+usage of LRA annotation used in the project.
+Plugin scans LRA annotation on your project and highlights the usage
+which contradicts to LRA specification
+https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA
+
+
+== Motivation: why to use this in your project
+
+Let's introduces few inaccuracies this plugin can help to discover
+
+* you use annotation `@Compensate` but forget to provide the complementary
+  `@Path` annotation declaring the JAX-RS endpoint to contact when the LRA fails
+* you defines the endpoint with LRA annotation `@Forget` defines with `@Path`
+  to be called by LRA coordinator when it's not needed to store the state
+  for case of compensation. But you forget that the endpoint will be called
+  with HTTP `DELETE` and the `@DELETE` JAX-RS annotation misses at the method
+* ...
+
+
+== How to use
+
+The plugin defines goal `check`, by default it's run at phase `process-classes`.
+
+Plugin parameters are
+
+`paths`::
+  list of file system paths to be scanned for classes using LRA annotations. If exists the provided path
+  has to be either pointing to a directory or to a jar file. If not provided the value default value
+  is path to `target/classes` (a.k.a `${project.build.directory}`).
+`failWhenPathNotExist`::
+  define if plugin fails (throws exception) when some of the provided `paths` param is an non-existing path.
+  expected value is boolean `true` or `false`. The default value is `true`.
+
+=== Usage example
+
+Add the following to your project `pom.xml`
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-annotation-checker-maven-plugin</artifactId>
+      <version>5.7.3.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>check</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+```
