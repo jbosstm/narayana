@@ -245,6 +245,8 @@ public class Container<T>
      * @param id the Uid of the object.
      */
     
+    // Note, we should probably have a recreate method
+    
     public synchronized T clone (T member, Uid id)
     {
         if (member == null)
