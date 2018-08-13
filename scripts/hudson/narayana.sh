@@ -308,7 +308,7 @@ function build_narayana {
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
   
   if [ $JAVA_VERSION = "9.0.4" ]; then
-    MAVEN_OPTS="--add-modules java.xml.bind" ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+    MAVEN_OPTS="--add-modules java.xml.bind,java.xml.ws" ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   else
     ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
   fi
@@ -560,6 +560,10 @@ function xts_tests {
   grep async-registration "$CONF"
   sed -e 's#<[^<]*async-registration[^>]*>##g' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e 's#\(<subsystem.*xts.*\)#\1\n            <async-registration enabled="true"/>#' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+
+  if [ $JAVA_VERSION = "9.0.4" ]; then
+    export MAVEN_OPTS="--add-modules java.xml.ws"
+  fi
 
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
