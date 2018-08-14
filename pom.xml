@@ -500,6 +500,7 @@
     <version.org.codehaus.plexus.plexus-archiver>3.0.3</version.org.codehaus.plexus.plexus-archiver>
     <!-- SUREFIRE-1424 we need to downgrade to 2.20 -->
     <version.surefire.plugin>2.20</version.surefire.plugin>
+    <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
     <version.doxia>1.7.5</version.doxia>
   </properties>
   <modules>
