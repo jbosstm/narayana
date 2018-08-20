@@ -216,9 +216,6 @@
                     <execution>
                         <id>jar-without-classifier</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
                         <configuration>
                             <excludes>
                                 <exclude>**</exclude>

@@ -113,11 +113,15 @@ function init_test_options {
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "JACOCO" ]]; then
-        export COMMENT_ON_PULL=""
-        export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-        export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-        export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
-        [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
+        if [[ ! $PULL_DESCRIPTION == *!JACOCO* ]]; then
+          comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
+          export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
+          export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
+        else
+          export COMMENT_ON_PULL=""
+        fi
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
@@ -294,8 +298,7 @@ function build_narayana {
   cd $WORKSPACE
 
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
-  [ $CODE_COVERAGE = 1 ] && NARAYANA_ARGS="${NARAYANA_ARGS} -pl !code-coverage"
-
+  
   if [ $IBM_ORB = 1 ]; then
     ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
@@ -888,7 +891,7 @@ function perf_tests {
 function generate_code_coverage_report {
   echo "Generating code coverage report"
   cd ${WORKSPACE}
-  ./build.sh -B -pl code-coverage $CODE_COVERAGE_ARGS "$@" clean install
+  ./build.sh -B -f code-coverage/pom.xml $CODE_COVERAGE_ARGS "$@" clean install
   [ $? = 0 ] || fatal "Code coverage report generation failed"
 }
 
