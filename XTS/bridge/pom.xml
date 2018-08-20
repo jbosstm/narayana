@@ -44,9 +44,6 @@
           </execution>
           <execution>
             <id>impl</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
             <configuration>
               <forceCreation>true</forceCreation>
               <excludes>
