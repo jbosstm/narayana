@@ -60,9 +60,6 @@
           <execution>
             <id>impl</id>
             <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
             <configuration>
               <forceCreation>true</forceCreation>
               <excludes>
