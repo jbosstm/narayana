@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>blacktie-admin-services</artifactId>
 	<name>Blacktie Administration Services</name>
-	<packaging>jar</packaging>
+	<packaging>ejb</packaging>
 	<description>A BlackTie component</description>
 	<developers>
 		<developer>
@@ -67,6 +67,16 @@
 	</licenses>
 	<build>
 		<plugins>
+      <plugin>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+                <addClasspath>true</addClasspath>
+            </manifest>
+        </archive>
+      </configuration>
+    </plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>

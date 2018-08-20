@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>20</version>
+    <version>28</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -152,18 +152,6 @@
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
       <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <!-- Needed for rts -->
-    <repository>
-      <id>download-java-net</id>
-      <name>download-java-net</name>
-      <url>http://download.java.net/maven/2/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -521,7 +509,6 @@
     <module>compensations</module>
     <module>osgi</module>
     <module>narayana-full</module>
-    <module>code-coverage</module>
     <module>vertx</module>
   </modules>
   <profiles>

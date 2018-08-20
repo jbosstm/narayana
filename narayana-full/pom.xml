@@ -136,7 +136,7 @@
     </dependency>
 
 
-    <!-- JMS module javadocs -->
+    <!-- javadoc dependencies -->
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jms</artifactId>
@@ -148,6 +148,42 @@
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <version>${version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${version.javax.enterprise}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>${version.javax.annotation}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>${version.org.apache.ant}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jacorb</groupId>
+      <artifactId>jacorb</artifactId>
+      <version>${version.jacorb}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-api</artifactId>
+      <version>${version.org.jboss.ws}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.integration</groupId>
+      <artifactId>jboss-corba-ots-spi</artifactId>
+      <version>${version.org.jboss.integration}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Ensure these are in the distribution -->
@@ -328,6 +364,30 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>community</id>
+      <dependencies>
+          <dependency>
+            <groupId>orson</groupId>
+            <artifactId>orson</artifactId>
+            <version>${version.orson}</version>
+            <scope>system</scope>
+            <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+          </dependency>
+          <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>${version.jfree}</version>
+            <scope>provided</scope>
+          </dependency>
+          <dependency>
+            <groupId>tanukisoft</groupId>
+            <artifactId>wrapper</artifactId>
+            <version>${version.tanukisoft}</version>
+            <scope>provided</scope>
+          </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
