@@ -136,7 +136,7 @@
     </dependency>
 
 
-    <!-- JMS module javadocs -->
+    <!-- javadoc dependencies -->
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>jms</artifactId>
@@ -148,6 +148,12 @@
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <version>${version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${version.javax.enterprise}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Ensure these are in the distribution -->
