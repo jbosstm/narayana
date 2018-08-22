@@ -33,6 +33,7 @@ import org.jboss.tm.usertx.UserTransactionOperationsProvider;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransactionOperationsProvider;
 
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordWrappingPlugin;
+import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jta.resources.XAResourceMap;
@@ -410,6 +411,11 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
      */
     public void setXaRecoveryNodes(List<String> xaRecoveryNodes)
     {
+        if(jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debugf("Setting up node identifiers '%s' for which recovery"
+                + " will be performed", xaRecoveryNodes);
+        }
+
         if(xaRecoveryNodes == null) {
             this.xaRecoveryNodes = new ArrayList<String>(); 
         } else {
