@@ -209,7 +209,7 @@ function init_test_options {
 
     get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
 
-    JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
+    JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]' | awk -F . '{if ($1==1) print $2; else print $1}')
 }
 
 function comment_on_pull
@@ -310,11 +310,7 @@ function build_narayana {
   fi
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
   
-  if [ $JAVA_VERSION = "9.0.4" ]; then
-    MAVEN_OPTS="--add-modules java.xml.bind,java.xml.ws" ./build.sh -B -Prelease-9,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
-  else
-    ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
-  fi
+  ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
 
   [ $? = 0 ] || fatal "narayana build failed"
 
@@ -430,11 +426,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  if [ $JAVA_VERSION = "9.0.4" ]; then
-    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
-  else
-    MAVEN_OPTS="-XX:MaxPermSize=512m -Xms1303m -Xmx1303m" ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
-  fi
+  ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -491,7 +483,7 @@ function blacktie {
 
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # START JBOSS
-    if [ $JAVA_VERSION = "9.0.4" ]; then
+    if [ $JAVA_VERSION -ge "9" ]; then
       # replace the openjdk-orb with the 8.0.8.Final
       wget https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Final/openjdk-orb-8.0.8.Final.jar -O blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/openjdk-orb-8.0.8.Final.jar
       sed -i s/8.0.6.Final/8.0.8.Final/g blacktie/wildfly-${WILDFLY_MASTER_VERSION}/modules/system/layers/base/javax/orb/api/main/module.xml
@@ -504,12 +496,6 @@ function blacktie {
 
   # BUILD BLACKTIE
   ./build.sh -f blacktie/pom.xml -B clean install -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
-  if [ $JAVA_VERSION = "9.0.4" ]; then
-    MAVEN_OPTS="-Xms1303m -Xmx1303m" ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
-  else
-    ./build.sh -f blacktie/pom.xml -B clean install $ORBARG -Djbossas.ip.addr=$JBOSSAS_IP_ADDR "$@"
-  fi
-
   if [ "$?" != "0" ]; then
   	ps -f
 	  for i in `ps -eaf | grep java | grep "standalone.*xml" | grep -v grep | cut -c10-15`; do kill -9 $i; done
@@ -563,10 +549,6 @@ function xts_tests {
   grep async-registration "$CONF"
   sed -e 's#<[^<]*async-registration[^>]*>##g' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e 's#\(<subsystem.*xts.*\)#\1\n            <async-registration enabled="true"/>#' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
-
-  if [ $JAVA_VERSION = "9.0.4" ]; then
-    export MAVEN_OPTS="--add-modules java.xml.ws"
-  fi
 
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
@@ -749,7 +731,7 @@ function qa_tests_once {
 
   if [ $orbtype = "openjdk" ]; then
     openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
-    if [ $JAVA_VERSION = "9.0.4" ]; then
+    if [ $JAVA_VERSION -ge "9" ]; then
         EXTRA_QA_SYSTEM_PROPERTIES="--patch-module java.corba=$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
     else
         EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
@@ -773,7 +755,7 @@ function qa_tests_once {
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  if [ $JAVA_VERSION = "9.0.4" ]; then
+  if [ $JAVA_VERSION -ge "9" ]; then
     orbtype="${orbtype}"
   fi
   ant get.drivers
@@ -858,7 +840,7 @@ function qa_tests {
   ok4=0;
 
   # disable the qa tests with the openjdk_orb class loading issues https://issues.jboss.org/browse/WFLY-9569
-  if [ $JAVA_VERSION = "9.0.4" ]; then
+  if [ $JAVA_VERSION -ge "9" ]; then
     OPENJDK_ORB=0
   fi
 

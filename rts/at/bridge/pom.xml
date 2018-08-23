@@ -204,7 +204,7 @@
         <jdk>[1.9,)</jdk>
       </activation>
       <properties>
-        <!-- j9 TODO: a couple of the rest bridge tests a failing with
+        <!-- a couple of the rest bridge tests a failing with
            java.lang.NoClassDefFoundError: javax/xml/bind/JAXBContext
         <modular.jdk.args>-add-modules=java.xml,java.xml.bind,java.xml.ws</modular.jdk.args>
         <modular.jdk.args>-add-modules java.se.ee</modular.jdk.args>

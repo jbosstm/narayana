@@ -419,7 +419,7 @@
     </jvm.args.byteman>
     <jvm.args.jacoco>-javaagent:${project.build.directory}/lib/jacocoagent.jar=destfile=${project.build.directory}/coverage-reports/jacoco-ut.exec,includes=*,append=true,output=file</jvm.args.jacoco>
     <!-- the need for -XX:MaxPermSize= was dropped as of Java SE 8 -->
-    <!-- j9 TODO -XX:ParallelGCThreads=2 is no not available in Java SE 9 -->
+    <!-- -XX:ParallelGCThreads=2 is no not available in Java SE 9 -->
     <jvm.args.memory>-Xms64m -Xmx1024m</jvm.args.memory>
     <jvm.args.debug></jvm.args.debug>
     <jvm.args.other>-server</jvm.args.other>
@@ -501,7 +501,7 @@
     <!-- SUREFIRE-1424 we need to downgrade to 2.20 -->
     <version.surefire.plugin>2.20</version.surefire.plugin>
     <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
-    <version.doxia>1.7.5</version.doxia>
+    <version.doxia>1.8.1</version.doxia>
   </properties>
   <modules>
     <module>tools</module>

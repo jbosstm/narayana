@@ -117,13 +117,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.jboss.narayana.blacktie.plugins</groupId>
 				<artifactId>blacktie-cpp-plugin</artifactId>
 				<configuration>
@@ -283,6 +276,7 @@
             </dependency>
 	</dependencies>
 	<properties>
+		<version.surefire.plugin>2.19.1</version.surefire.plugin>
 		<test.output.type>shared</test.output.type>
 		<test.excludes>**/cs.cxx</test.excludes>
 		<test.reports.dir>${project.build.directory}/surefire-reports</test.reports.dir>
@@ -324,7 +318,6 @@
                 </plugins>
             </build>
             <properties>
-                <version.surefire.plugin>2.19.1</version.surefire.plugin>
                 <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
                 <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch}-${project.version}.jar</java.corba.patch.jar>
                 <jvm.jdk9.args>
