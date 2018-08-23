@@ -39,9 +39,9 @@ ROOT="/"
 M2_HOME=""
 MAVEN_HOME=""
 
-JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]')
+JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]'| awk -F . '{if ($1==1) print $2; else print $1}')
 
-if [ $JAVA_VERSION = "9.0.4" ]; then
+if [ $JAVA_VERSION -ge "9" ]; then
   MAVEN_OPTS="$MAVEN_OPTS --add-modules java.corba"
   MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.bind"
   MAVEN_OPTS="$MAVEN_OPTS --add-modules java.xml.ws"
@@ -50,7 +50,7 @@ fi
 
 if [ -z "$MAVEN_OPTS" ]
 then
-	if [ $JAVA_VERSION = "9.0.4" ]; then
+	if [ $JAVA_VERSION -ge "9" ]; then
 		MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m"
 	else
     MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"

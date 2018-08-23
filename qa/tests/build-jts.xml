@@ -121,7 +121,7 @@
             <pathelement location="../ext/junit.jar"/>
             <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
             <pathelement location="${jts.build.dir}/jts/build/lib/jts_tests.jar"/>
-            <!-- TODO I added this for j9 since the orb type name is slightly inconsistent. Also retest on the other orbtypes -->
+            <!-- added this for j9 since the orb type name is slightly inconsistent. Also retest on the other orbtypes -->
             <pathelement location="${jts.idl.tests.jar}"/>
         </path>
 	</target>
