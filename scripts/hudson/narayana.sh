@@ -588,7 +588,7 @@ function tx_bridge_tests {
 function tomcat_tests {
     echo "Initializing Narayana Tomcat tests"
     cd ${WORKSPACE}
-    TOMCAT_VERSION=9.0.7
+    TOMCAT_VERSION=9.0.11
     wget -nc https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.zip
     rm -rf apache-tomcat-$TOMCAT_VERSION
     unzip apache-tomcat-$TOMCAT_VERSION.zip
