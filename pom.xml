@@ -159,18 +159,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <!-- Needed for rts -->
-    <repository>
-      <id>download-java-net</id>
-      <name>download-java-net</name>
-      <url>http://download.java.net/maven/2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
   </repositories>
   <distributionManagement>
     <repository>
