@@ -21,7 +21,7 @@ To build this project JDK 1.8 (or greater) is required.
 
 When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.8:
 
-	export JAVA_HOME=`/usr/libexec/java_home -v 1.8` 
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.8` 
 
 Building Naryana
 ----------------
