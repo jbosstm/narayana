@@ -103,6 +103,12 @@ public class LRARecoveryModule implements RecoveryModule {
                 String Status = ActionStatus.stringForm(theStatus);
                 boolean inFlight = lraService.hasTransaction(lra.getId());
 
+                if (!inFlight && lra.getLRAStatus() == null) {
+                    // it must have crashed before the end phase so add it back into the active list
+                    lraService.addTransaction(lra);
+                    inFlight = true;
+                }
+
                 if (inFlight // might have been loaded on start up
                         && !lraService.getTransaction(lra.getId()).isInFlight()) {
                     inFlight = false; // lraService knows about it but was loaded at start up time
