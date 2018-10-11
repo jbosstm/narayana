@@ -130,8 +130,8 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     }
 
     public static void setDefaultRecoveryEndpoint(URI recoveryEndpoint) {
-        LRALogger.logger.infof(
-                "LRAClient assuming the LRA coordinator and recovery coordinator are on the same endpoing");
+        LRALogger.logger.debugf(
+                "LRAClient assuming the LRA coordinator and recovery coordinator are on the same endpoint");
     }
 
     public static boolean isInitialised() {

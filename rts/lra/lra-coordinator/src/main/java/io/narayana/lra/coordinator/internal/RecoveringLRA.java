@@ -82,6 +82,7 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.H_HAZARD)) {
                 // move any heuristics back onto the prepared list for another attempt:
                 moveTo(heuristicList, preparedList);
+                moveTo(pendingList, preparedList);
                 checkParticipant(preparedList);
 
                 super.phase2Commit(true);
