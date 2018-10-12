@@ -34,7 +34,7 @@ import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
-        Object incomingLRA = responseContext.getHeaders().getFirst(LRA_HTTP_HEADER);
+        Object incomingLRA = Current.getLast(responseContext.getHeaders().get(LRA_HTTP_HEADER));
 
         if (incomingLRA == null) {
             incomingLRA = requestContext.getProperty(LRA_HTTP_HEADER);

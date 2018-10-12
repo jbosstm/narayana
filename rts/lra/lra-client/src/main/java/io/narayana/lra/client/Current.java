@@ -25,7 +25,9 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedMap;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -127,10 +129,20 @@ public class Current {
         if (current == null) {
             lraContexts.set(new Current(lraId));
         } else {
-            if (!current.stack.peek().equals(lraId)) {
+            if (!current.stack.contains(lraId)) {
                 current.stack.push(lraId);
             }
         }
+    }
+
+    public static List<Object> getContexts() {
+        Current current = lraContexts.get();
+
+        if (current == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(current.stack);
     }
 
     /**
@@ -142,7 +154,7 @@ public class Current {
         URL lraId = Current.peek();
 
         if (lraId != null) {
-            responseContext.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+            responseContext.getHeaders().put(LRA_HTTP_HEADER, getContexts());
         } else {
             responseContext.getHeaders().remove(LRA_HTTP_HEADER);
         }
@@ -182,5 +194,9 @@ public class Current {
     public static void clearContext(MultivaluedMap<String, String> headers) {
         headers.remove(LRA_HTTP_HEADER);
         popAll();
+    }
+
+    public static <T> T getLast(List<T> objects) {
+        return objects == null ? null : objects.stream().reduce((a, b) -> b).orElse(null);
     }
 }
