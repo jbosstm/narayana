@@ -166,10 +166,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (headers.containsKey(LRA_HTTP_HEADER)) {
             try {
-                incommingLRA = new URL(headers.getFirst(LRA_HTTP_HEADER));
+                incommingLRA = new URL(Current.getLast(headers.get(LRA_HTTP_HEADER)).toString());
             } catch (MalformedURLException e) {
                 String msg = String.format("header %s contains an invalid URL %s",
-                        LRA_HTTP_HEADER, headers.getFirst(LRA_HTTP_HEADER));
+                        LRA_HTTP_HEADER, Current.getLast(headers.get(LRA_HTTP_HEADER)));
 
                 throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
             }
@@ -414,7 +414,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         newLRA = null; // don't try to cancle newKRA twice
                     }
 
-                    if (current.toExternalForm().equals(requestContext.getHeaders().getFirst(LRA_HTTP_HEADER))) {
+                    if (current.toExternalForm().equals(
+                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
                         // the callers context is closed so invalidate it
                         requestContext.getHeaders().remove(LRA_HTTP_HEADER);
                     }
@@ -426,7 +427,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 try {
                     lraClient.closeLRA((URL) newLRA);
 
-                    if (current.toExternalForm().equals(requestContext.getHeaders().getFirst(LRA_HTTP_HEADER))) {
+                    if (current.toExternalForm().equals(Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
                         // the callers context is closed so invalidate it
                         requestContext.getHeaders().remove(LRA_HTTP_HEADER);
                     }

@@ -268,7 +268,7 @@ public class Coordinator {
 
         return Response.status(Response.Status.CREATED)
                 .entity(lraId)
-                .header(LRA_HTTP_HEADER, lraId)
+                .header(LRA_HTTP_HEADER, Current.getContexts())
                 .build();
     }
 

@@ -371,7 +371,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
     @Override
     public URL startLRA(String clientID, Long timeout, TimeUnit unit) throws GenericLRAException {
-        return startLRA(null, clientID, timeout, unit);
+        return startLRA(getCurrent(), clientID, timeout, unit);
     }
 
     @Override
@@ -412,7 +412,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             }
 
             // validate that there is an LRAInfo response header holding the LRAInfo id
-            Object lraObject = response.getHeaders().getFirst(LRA_HTTP_HEADER);
+            Object lraObject = Current.getLast(response.getHeaders().get(LRA_HTTP_HEADER));
 
             if (lraObject == null) {
                 LRALogger.i18NLogger.error_nullLraOnCreation(response);
