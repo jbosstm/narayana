@@ -98,6 +98,7 @@
     <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
     <mkdir dir="${org.jboss.jbossts.qa.ts.home}"/>
     <unzip src="../narayana-full/target/narayana-full-${narayana.version}-bin.zip" dest="${org.jboss.jbossts.qa.ts.home}"/>
+    <copy file="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-idlj.jar" tofile="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/jts/narayana-jts-openjdk.jar"/>
     <antcall target="init-jta"/>
     <antcall target="init-jts"/>
   </target>

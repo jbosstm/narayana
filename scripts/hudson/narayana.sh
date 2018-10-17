@@ -734,7 +734,10 @@ function qa_tests_once {
     if [ $JAVA_VERSION -lt "9" ]; then
         EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
     fi
-    orbtype="idlj"
+
+    if [ $JAVA_VERSION -lt "11" ]; then
+        orbtype="idlj"
+    fi
   fi
 
   if [[ x"$EXTRA_QA_SYSTEM_PROPERTIES" != "x" ]]; then
@@ -838,6 +841,11 @@ function qa_tests {
   ok2=0;
   ok3=0;
   ok4=0;
+
+  # if the jdk >= 11, we do not run with the sun orb since it has been removed
+  if [ $JAVA_VERSION -ge "11" ]; then
+	  SUN_ORB=0;
+  fi
 
   if [ $IBM_ORB = 1 ]; then
     qa_tests_once "orb=ibmorb" "$@" # run qa against the IBM orb

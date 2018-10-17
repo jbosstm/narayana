@@ -210,7 +210,7 @@
     <profile>
       <id>j9</id>
       <activation>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
 
       <dependencies>

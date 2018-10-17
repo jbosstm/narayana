@@ -370,10 +370,10 @@
     <profile>
       <id>j9</id>
         <activation>
-          <jdk>[1.9,)</jdk>
+          <jdk>[1.9,11)</jdk>
         </activation>
         <properties>
-          <jvm.args.jdk9>--add-opens=java.base/java.lang=ALL-UNNAMED</jvm.args.jdk9>
+          <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED</jvm.args.modular>
         </properties>
     </profile>
   </profiles>

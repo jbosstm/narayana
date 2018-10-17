@@ -77,6 +77,24 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         </plugins>
       </build>
     </profile>
+    <profile>
+	  <id>jdk11</id>
+          <activation>
+             <jdk>[11,)</jdk>
+          </activation>
+          <properties>
+             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+	  </properties>
+	  <dependencies>
+             <dependency>
+                <groupId>org.jboss.spec.javax.xml.bind</groupId>
+                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+		<scope>provided</scope>
+             </dependency>
+	  </dependencies>
+      </profile>
   </profiles>
 
   <modules>

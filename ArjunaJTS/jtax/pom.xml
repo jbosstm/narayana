@@ -166,7 +166,7 @@
     <profile>
       <id>j9</id>
       <activation>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
       <properties>
         <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
@@ -593,5 +593,14 @@
               </plugins>
           </build>
      </profile>
+     <profile>
+      <id>jdk11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <idlj.boot.args/>
+      </properties>
+    </profile>
   </profiles>
 </project>

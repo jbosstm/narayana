@@ -212,7 +212,7 @@
     <profile>
       <id>j9</id>
       <activation>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
 
       <properties>
@@ -276,7 +276,7 @@
         <property>
           <name>!jacorb-disabled</name>
         </property>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
       <properties>
         <jacorb.jdk9.args>
@@ -435,7 +435,7 @@
         <property>
           <name>!idlj-disabled</name>
         </property>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
       <dependencies>
         <dependency>
@@ -614,7 +614,7 @@
         <property>
           <name>!openjdk-disabled</name>
         </property>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9, 11)</jdk>
       </activation>
       <properties>
         <idlj.jdk9.args>--add-modules java.corba</idlj.jdk9.args>
@@ -894,6 +894,15 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>jdk11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <idlj.boot.args/>
+      </properties>
     </profile>
     <profile>
           <id>release</id>

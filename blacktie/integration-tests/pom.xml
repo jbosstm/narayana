@@ -286,7 +286,7 @@
           <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,11)</jdk>
             </activation>
             <build>
                 <plugins>
@@ -332,7 +332,6 @@
                   --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED
                 </jvm.jdk9.args>
                 <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
-                <test.reports.dir>${project.build.directory}/surefire-j9-reports</test.reports.dir>
             </properties>
           </profile>
         </profiles>

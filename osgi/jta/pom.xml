@@ -379,7 +379,6 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
                   <configuration combine.self="override">
-                    <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                     <forkMode>always</forkMode>
                     <!-- j9 JBTM-2777 disable the osgi test until KARAF-3518 resolved --> 
                     <excludes>

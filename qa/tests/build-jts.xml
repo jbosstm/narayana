@@ -29,6 +29,10 @@
       <equals arg1="${java.specification.version}" arg2="9"/>
     </condition>
 
+    <condition property="is.jdk11">
+      <equals arg1="${java.specification.version}" arg2="11"/>
+    </condition>
+
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
 	<property name="narayana.version" value="5.9.3.Final-SNAPSHOT"/>
@@ -74,13 +78,31 @@
             <property name="is.ibmorb" value="1"/>
         </then>
         <elseif>
-	         <equals arg1="${orbtype}" arg2="idlj" />
+	       <equals arg1="${orbtype}" arg2="idlj" />
         <then>
             <property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/${orbtype}/${orbtype}-tests/target/idlj-idl-${narayana.version}-tests.jar"/>
-		    <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
-            <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
+	    <property name="org.jboss.jbossts.qa.orb.home" value="${env.JAVA_HOME}"/>
+	    <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar"/>
             <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${jts.build.dir}/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
             <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path};${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+
+            <property name="is.sunorb" value="1"/>
+	    <echo message="${org.jboss.jbossts.qa.orb.classpath}"/>
+        </then>
+        </elseif>
+        <elseif>
+	       <equals arg1="${orbtype}" arg2="openjdk" />
+        <then>
+		<unzip src="../ext/openjdk-orb-sources.jar" dest="../ext/lib">
+		    <patternset>
+			    <include name="**/*.idl"/>
+		    </patternset>
+	    </unzip>
+            <property name="jts.idl.tests.jar" value="${jts.build.dir}/idl/idlj/idlj-tests/target/idlj-idl-${narayana.version}-tests.jar"/>
+	    <property name="org.jboss.jbossts.qa.orb.home" value="ext"/>
+	    <property name="org.jboss.jbossts.qa.orb.classpath" value="${org.jboss.jbossts.qa.orb.home}/lib/idl.jar;${org.jboss.jbossts.qa.orb.home}/lib/logkit-1.2.jar;ext/openjdk-orb.jar;ext/openjdk-orb-sources.jar"/>
+	    <property name="idl.params1" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl/;${jts.build.dir}/idl/src/test/idl/TestModule.idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
+	    <property name="idl.params2" value="include='${org.jboss.jbossts.qa.orb.home}/${orb.idl.path}/com/sun/tools/corba/se/idl;${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/idl',classpath='${org.jboss.jbossts.qa.orb.classpath}'"/>
 
             <property name="is.sunorb" value="1"/>
         </then>
@@ -113,7 +135,8 @@
             </fileset>
             <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
                 <include name="jboss-transaction-api_1.2_spec.jar"/>
-				<include name="jboss-logging.jar"/>
+	        <include name="jboss-logging.jar"/>
+                <include name="openjdk-orb.jar" if="is.jdk11" />
             </fileset>
             <pathelement location="${jts.build.dir}/orbportability/config"/>
             <!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
