@@ -22,15 +22,6 @@
 
   <profiles>
     <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-      <properties>
-        <surefire.reports.directory>surefire-j9-reports</surefire.reports.directory>
-      </properties>
-    </profile>
-    <profile>
       <id>codeCoverage</id>
       <dependencies>
         <dependency>

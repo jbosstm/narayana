@@ -32,7 +32,7 @@
             -javaagent:${byteman.home}/byteman.jar=port:9091,listener:true,sys:${byteman.home}/byteman-dtest.jar
         </byteman.server.jvm.args>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.jdk9}
+            ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
     </properties>
     <build>
@@ -292,10 +292,10 @@
         <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,11)</jdk>
             </activation>
             <properties>
-                <jvm.args.jdk9>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.jdk9>
+                <jvm.args.modular>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.modular>
             </properties>
             <build>
                 <plugins>
@@ -326,6 +326,44 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+	  <id>jdk11</id>
+          <activation>
+             <jdk>[11,)</jdk>
+          </activation>
+          <properties>
+             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+	     <version.jaxb>2.3.0</version.jaxb>
+	     <version.jaxws-ri>2.3.0</version.jaxws-ri>
+	  </properties>
+	  <dependencies>
+		  <dependency>
+			  <groupId>javax.xml.bind</groupId>
+			  <artifactId>jaxb-api</artifactId>
+			  <version>${version.jaxb}</version>
+                          <scope>provided</scope>
+		  </dependency>
+		  <dependency>
+			  <groupId>com.sun.xml.bind</groupId>
+			  <artifactId>jaxb-core</artifactId>
+			  <version>${version.jaxb}</version>
+                          <scope>provided</scope>
+		  </dependency>
+		  <dependency>
+			  <groupId>com.sun.xml.bind</groupId>
+			  <artifactId>jaxb-impl</artifactId>
+			  <version>${version.jaxb}</version>
+                          <scope>provided</scope>
+		  </dependency>
+		  <dependency>
+			  <groupId>com.sun.xml.ws</groupId>
+			  <artifactId>jaxws-ri</artifactId>
+			  <version>${version.jaxws-ri}</version>
+			  <type>pom</type>
+                          <scope>provided</scope>
+		  </dependency>
+	  </dependencies>
+      </profile>
 		<profile>
 			<id>arq</id>
 			<activation>

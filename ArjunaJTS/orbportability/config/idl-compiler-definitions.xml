@@ -79,7 +79,7 @@
 
     </orb>
 
-    <orb name="idlj-j9">
+    <orb name="openjdk">
 
 	<in-parameters>
 	    <param name="destdir" required="false"/>
@@ -90,7 +90,7 @@
 	    <param name="classpath" required="true" delimiter=";" classpath="true"/>
 	</in-parameters>
 
-	<idl-executable>idlj</idl-executable>
+	<idl-executable>java -cp ${classpath} com.sun.tools.corba.se.idl.toJavaPortable.Compile</idl-executable>
 
 	<out-parameters>
 	    <param>-td</param>

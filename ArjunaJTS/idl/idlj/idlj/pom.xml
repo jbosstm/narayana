@@ -126,10 +126,10 @@
         <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9, 11)</jdk>
             </activation>
             <properties>
-                <jvm.args.jdk9>--add-modules java.corba</jvm.args.jdk9>
+                <jvm.args.modular>--add-modules java.corba</jvm.args.modular>
             </properties>
             <build>
                 <plugins>
@@ -239,5 +239,71 @@
                 </plugins>
             </build>
         </profile>
+	<profile>
+            <id>jdk11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>idlj-idl-openjdk</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+              <plugins>
+                <plugin>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>copy-dependencies</id>
+                      <phase>initialize</phase>
+                      <goals>
+                        <goal>unpack</goal>
+                      </goals>
+                      <configuration>
+                        <artifactItems>
+                          <artifactItem>
+                            <groupId>org.jboss.narayana.jts</groupId>
+                            <artifactId>idlj-idl-openjdk</artifactId>
+                            <version>${project.version}</version>
+                            <type>test-jar</type>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                          </artifactItem>
+                          <artifactItem>
+                            <groupId>org.jboss.narayana.jts</groupId>
+                            <artifactId>idlj-idl-openjdk</artifactId>
+                            <version>${project.version}</version>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                          </artifactItem>
+                        </artifactItems>
+                      </configuration>
+                    </execution>
+                  </executions>
+                </plugin>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-shade-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <phase>package</phase>
+                      <goals>
+                        <goal>shade</goal>
+                      </goals>
+                      <configuration>
+                        <artifactSet>
+                          <includes>
+                            <include>org.jboss.narayana.jts:idlj-idl</include>
+                            <include>org.jboss.narayana.jts:idlj-idl-openjdk</include>
+                          </includes>
+                        </artifactSet>
+                      </configuration>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </build>
+	</profile>
     </profiles>
 </project>

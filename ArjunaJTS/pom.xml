@@ -47,13 +47,16 @@
   </modules>
   <profiles>
       <profile>
+        <id>j11</id>
+        <activation>
+          <jdk>[11,)</jdk>
+        </activation>
+      </profile>
+      <profile>
         <id>j9</id>
         <activation>
-          <jdk>[1.9,)</jdk>
+          <jdk>[1.9,11)</jdk>
         </activation>
-        <modules>
-            <module>narayana-jts-idlj</module>
-        </modules>
         <build>
           <plugins>
            <plugin>

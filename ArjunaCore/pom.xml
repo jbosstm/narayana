@@ -58,5 +58,15 @@
               </plugins>
           </build>
       </profile>
+      <profile>
+          <id>jdk11</id>
+          <activation>
+              <jdk>[11,)</jdk>
+          </activation>
+          <properties>
+              <maven.javadoc.skip>true</maven.javadoc.skip>
+	      <maven.antrun.skip>true</maven.antrun.skip>
+          </properties>
+      </profile>
     </profiles>
 </project>

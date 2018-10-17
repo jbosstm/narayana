@@ -264,6 +264,25 @@
           </dependency>
         </dependencies>
   </profile>
+  <profile>
+        <id>jdk11</id>
+        <activation>
+          <jdk>[11,)</jdk>
+        </activation>
+        <dependencies>
+          <dependency>
+            <groupId>org.jboss.openjdk-orb</groupId>
+	    <artifactId>openjdk-orb</artifactId>
+	    <version>${version.org.jboss.openjdk-orb}</version>
+	    <classifier>sources</classifier>
+          </dependency>
+          <dependency>
+            <groupId>org.jboss.openjdk-orb</groupId>
+	    <artifactId>openjdk-orb</artifactId>
+	    <version>${version.org.jboss.openjdk-orb}</version>
+          </dependency>
+        </dependencies>
+  </profile>
 	<profile>
 		<id>postgresql</id>
 		<dependencies>

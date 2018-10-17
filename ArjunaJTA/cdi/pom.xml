@@ -29,7 +29,7 @@
       -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
     </ipv6.server.jvm.args>
     <server.jvm.args>
-        ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
+        ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
     </server.jvm.args>
   </properties>
 
@@ -261,12 +261,21 @@
         <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,11)</jdk>
             </activation>
             <properties>
-                <jvm.args.jdk9>
+                <jvm.args.modular>
                     --add-exports java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
-                </jvm.args.jdk9>
+                </jvm.args.modular>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <properties>
+                <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
             </properties>
         </profile>
     </profiles>

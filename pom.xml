@@ -423,7 +423,7 @@
     <jvm.args.memory>-Xms64m -Xmx1024m</jvm.args.memory>
     <jvm.args.debug></jvm.args.debug>
     <jvm.args.other>-server</jvm.args.other>
-    <jvm.args.jdk9/>
+    <jvm.args.modular/>
 
     <!-- External dependencies versions -->
     <version.jnpserver>5.0.3.GA</version.jnpserver>
@@ -562,9 +562,8 @@
               <configuration combine.self="append">
                 <forkMode>pertest</forkMode>
                 <childDelegation>true</childDelegation>
-                <reportsDirectory>${project.build.directory}/surefire-j9-reports</reportsDirectory>
                 <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                <argLine>-Djdk.attach.allowAttachSelf=true ${jvm.args.jdk9}</argLine>
+                <argLine>-Djdk.attach.allowAttachSelf=true ${jvm.args.modular}</argLine>
               </configuration>
             </plugin>
             <plugin>
@@ -593,7 +592,7 @@
           <maven.compiler.target>1.9</maven.compiler.target>
           <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
           <version.org.jacorb.jacorb-idl-compiler>3.7</version.org.jacorb.jacorb-idl-compiler>
-          <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}</server.jvm.args>
+          <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
         </properties>
       </profile>
     <profile>
@@ -726,7 +725,7 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
-                  <argLine>${surefireArgLine} ${jvm.args.jdk9} -Djdk.attach.allowAttachSelf=true -Xss2048k</argLine>
+                  <argLine>${surefireArgLine} ${jvm.args.modular} -Djdk.attach.allowAttachSelf=true -Xss2048k</argLine>
                   <systemProperties>
                       <property>
                           <name>com.arjuna.ats.arjuna.common.propertiesFile</name>

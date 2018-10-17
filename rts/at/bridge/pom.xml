@@ -42,7 +42,7 @@
         <modular.jdk.args/>
         <modular.jdk.props/>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jdk9}
+            ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
     </properties>
 
@@ -201,7 +201,7 @@
     <profile>
       <id>j9</id>
       <activation>
-        <jdk>[1.9,)</jdk>
+        <jdk>[1.9,11)</jdk>
       </activation>
       <properties>
         <!-- a couple of the rest bridge tests a failing with
@@ -211,7 +211,7 @@
            but the following does not resolve it. Instead I changed the way the test looks
            up rts transaction status
            -->
-        <jvm.args.jdk9>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.jdk9>
+        <jvm.args.modular>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.modular>
       </properties>
       <build>
         <plugins>

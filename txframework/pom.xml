@@ -177,7 +177,7 @@
         <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,11)</jdk>
             </activation>
             <build>
                 <plugins>
@@ -208,6 +208,39 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+	  <id>jdk11</id>
+          <activation>
+             <jdk>[11,)</jdk>
+          </activation>
+          <properties>
+             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+	     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
+	     <version.jaxws-ri>2.3.0</version.jaxws-ri>
+	  </properties>
+	  <dependencies>
+             <dependency>
+                <groupId>org.jboss.spec.javax.xml.bind</groupId>
+                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+		<scope>provided</scope>
+             </dependency>
+	     <dependency>
+                <groupId>org.jboss.spec.javax.xml.ws</groupId>
+                <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+		<scope>provided</scope>
+             </dependency>
+	     <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-ri</artifactId>
+                <version>${version.jaxws-ri}</version>
+		<type>pom</type>
+		<scope>test</scope>
+             </dependency>
+	  </dependencies>
+      </profile>
         <profile>
             <id>arq</id>
             <activation>

@@ -94,7 +94,7 @@
         <profile>
             <id>j9</id>
             <activation>
-                <jdk>[1.9,)</jdk>
+                <jdk>[1.9,11)</jdk>
             </activation>
             <properties>
               <maven.compiler.source>1.8</maven.compiler.source>
