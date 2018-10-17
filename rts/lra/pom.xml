@@ -25,7 +25,7 @@
 
         <version.json.api>1.1</version.json.api>
         <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
-        <version.jackson>2.8.9</version.jackson>
+        <version.jackson>2.8.11.2</version.jackson>
 
         <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
         <version.jaxrs-api>2.0</version.jaxrs-api>
