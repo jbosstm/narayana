@@ -11,7 +11,7 @@
 
   <properties>
     <narayana.version>${project.version}</narayana.version>
-    <vertx.version>3.3.3</vertx.version>
+    <vertx.version>3.5.4</vertx.version>
   </properties>
 
   <dependencies>

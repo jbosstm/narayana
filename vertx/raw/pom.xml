@@ -32,7 +32,7 @@
     <!-- the main class -->
     <exec.mainClass>SharedHammer</exec.mainClass>
     <narayana.version>${project.version}</narayana.version>
-    <vertx.version>3.3.3</vertx.version>
+    <vertx.version>3.5.4</vertx.version>
     <jboss-logging.version>3.1.4.GA</jboss-logging.version>
   </properties>
 

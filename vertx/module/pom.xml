@@ -42,7 +42,7 @@
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vertx.version>3.3.3</vertx.version>
+    <vertx.version>3.5.4</vertx.version>
     <narayana.version>${project.version}</narayana.version>
     <jboss-logging.version>3.1.4.GA</jboss-logging.version>
 
