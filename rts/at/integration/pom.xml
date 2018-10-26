@@ -112,13 +112,6 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>${version.commons-logging}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <version>${version.org.jboss.arquillian.core}</version>
