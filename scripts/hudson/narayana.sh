@@ -729,11 +729,12 @@ function qa_tests_once {
   sed -e "s#^COMMAND_LINE_0=.*#COMMAND_LINE_0=${JAVA_HOME}/bin/java#" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   [ $? = 0 ] || fatal "sed TaskImpl.properties failed"
 
+  # store the origin orbtype
+  origin_orbtype=orbtype
+
   if [ $orbtype = "openjdk" ]; then
     openjdkjar="dist/narayana-full-${NARAYANA_CURRENT_VERSION}/lib/ext/openjdk-orb.jar"
-    if [ $JAVA_VERSION -ge "9" ]; then
-        EXTRA_QA_SYSTEM_PROPERTIES="--patch-module java.corba=$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
-    else
+    if [ $JAVA_VERSION -lt "9" ]; then
         EXTRA_QA_SYSTEM_PROPERTIES="-Xbootclasspath/p:$openjdkjar $EXTRA_QA_SYSTEM_PROPERTIES"
     fi
     orbtype="idlj"
@@ -755,14 +756,16 @@ function qa_tests_once {
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  if [ $JAVA_VERSION -ge "9" ]; then
-    orbtype="${orbtype}"
-  fi
   ant get.drivers
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
   [ $? = 0 ] || fatal "qa build failed"
+
+  # restore the orbtype if the jdk >= 9
+  if [ $JAVA_VERSION -ge "9" ]; then
+    orbtype="${origin_orbtype}"
+  fi
 
   if [ $orbtype = "jacorb" ]; then
     sed -e "s#^jacorb.log.default.verbosity=.*#jacorb.log.default.verbosity=2#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
@@ -839,13 +842,8 @@ function qa_tests {
   ok3=0;
   ok4=0;
 
-  # disable the qa tests with the openjdk_orb class loading issues https://issues.jboss.org/browse/WFLY-9569
-  if [ $JAVA_VERSION -ge "9" ]; then
-    OPENJDK_ORB=0
-  fi
-
   if [ $IBM_ORB = 1 ]; then
-    qa_tests_once "orb=ibmorb" "$@" # run qa against the Sun orb
+    qa_tests_once "orb=ibmorb" "$@" # run qa against the IBM orb
     ok3=$?
   else
     if [ $SUN_ORB = 1 ]; then
