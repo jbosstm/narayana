@@ -114,6 +114,19 @@ public class XARecoveryModule implements ExtendedRecoveryModule
                  */
                 if (isHelperInUse(xaResourceRecoveryHelper))
                     waitForScanState(ScanStates.IDLE);
+                else if (getScanState().equals(ScanStates.BETWEEN_PASSES)) {
+					synchronized (this) { // Because we need to remove the _resources
+						XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
+						if (xaResources != null) {
+							for (XAResource xar : xaResources) {
+								xaRecoverySecondPass(xar);
+								_resources.remove(xar);
+							}
+						} else {
+							System.out.println("Was null");
+						}
+					}
+				}
             }
 
             _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);

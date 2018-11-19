@@ -124,8 +124,7 @@ public class XARecoveryModuleHelpersUnitTest
 
     private void testTimelyXAResourceRecoveryHelperRemoval(final boolean somethingToRecover) throws Exception {
         final XARecoveryModule xaRecoveryModule = new XARecoveryModule();
-        final long xAResourcesSleepMillis = 2000;
-        final long betweenPassesSleepMillis = 100;
+        final long xAResourcesSleepMillis = 500;
         final long millis = System.currentTimeMillis();
 
         final SimpleResource testXAResource = new SimpleResource() {
@@ -182,13 +181,15 @@ public class XARecoveryModuleHelpersUnitTest
                 xaResourceRecoveryHelper2, xaRecoveryModule, xAResourcesSleepMillis / 2, true);
 
         xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
-        remover.start();
-        remover2.start();
 
         System.out.printf("Before pass 1 (%d)%n", System.currentTimeMillis() - millis);
         xaRecoveryModule.periodicWorkFirstPass();
+
+        remover.start();
+        remover2.start();
+
         System.out.printf("Finished pass 1 (%d)%n", System.currentTimeMillis() - millis);
-        Thread.sleep(betweenPassesSleepMillis);
+        Thread.sleep(xAResourcesSleepMillis); // See https://issues.jboss.org/browse/JBTM-2717
         System.out.printf("Starting pass 2 (%d)%n", System.currentTimeMillis() - millis);
         xaRecoveryModule.periodicWorkSecondPass();
 
