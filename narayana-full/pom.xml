@@ -391,15 +391,5 @@
           </dependency>
       </dependencies>
     </profile>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-      <properties>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-	<maven.antrun.skip>true</maven.antrun.skip>
-      </properties>
-    </profile>
   </profiles>
 </project>
