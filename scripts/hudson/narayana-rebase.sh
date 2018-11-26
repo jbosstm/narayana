@@ -33,7 +33,10 @@ function rebase_narayana {
   git rebase --abort
   rm -rf .git/rebase-apply
   git clean -f -d -x
-
+  
+  if [ "$jdk" = "jdk11.latest" ]; then
+    BRANCHPOINT=jdk11
+  else
   # Work out the branch point
   git branch -D 4.17
   git branch 4.17 origin/4.17
@@ -55,6 +58,7 @@ function rebase_narayana {
     export BRANCHPOINT=master
   else
     export BRANCHPOINT=4.17
+  fi
   fi
 
   # Update the pull to head  
