@@ -35,8 +35,6 @@ import io.narayana.lra.checker.bean.CorrectBean;
 import io.narayana.lra.checker.bean.CorrectMethodLRABean;
 import io.narayana.lra.checker.bean.ForgetWithoutDeleteBean;
 import io.narayana.lra.checker.bean.LeaveWithoutPutBean;
-import io.narayana.lra.checker.bean.LraJoinFalseBean;
-import io.narayana.lra.checker.bean.LraJoinFalseMethodLRABean;
 import io.narayana.lra.checker.bean.MultiForgetBean;
 import io.narayana.lra.checker.bean.NoPostOrGetBean;
 import io.narayana.lra.checker.cdi.LraAnnotationProcessingExtension;
@@ -90,20 +88,6 @@ public class LraCdiCheckIT {
     public void multiForgetAnnotations() throws Exception {
         initWeld(MultiForgetBean.class);
         assertFailureCatalogContains(MultiForgetBean.class, "multiple annotations.*" + Forget.class.getName());
-    }
-
-    @Test
-    public void lraJoinFalseCorrect() throws Exception {
-        initWeld(LraJoinFalseBean.class);
-        Assert.assertTrue(BEAN_CHECK_MSG1 + LraJoinFalseBean.class.getName() + BEAN_CHECK_MSG2
-                + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
-    }
-
-    @Test
-    public void lraJoinFalseCorrectLRAOnMethod() throws Exception {
-        initWeld(LraJoinFalseMethodLRABean.class);
-        Assert.assertTrue(BEAN_CHECK_MSG1 + LraJoinFalseMethodLRABean.class.getName() + BEAN_CHECK_MSG2
-                + FailureCatalog.INSTANCE.formatCatalogContent(), FailureCatalog.INSTANCE.isEmpty());
     }
 
     @Test

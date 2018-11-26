@@ -53,7 +53,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.narayana.microprofile.lra</groupId>
+            <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-tck</artifactId>
             <version>${version.microprofile.lra}</version>
         </dependency>

@@ -118,7 +118,7 @@ public class Coordinator {
     private static LRAInfo convert(LRAStatus lra) {
         return new LRAInfoImpl(lra.getLraId(), lra.getClientId(),
                 lra.getStatus() == null ? "" : lra.getStatus().name(),
-                lra.isComplete(), lra.isCompensated(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
+                lra.isCompleted(), lra.isCompensated(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
                 lra.getStartTime(), lra.getFinishTime());
     }
 

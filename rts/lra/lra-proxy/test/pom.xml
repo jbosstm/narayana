@@ -82,9 +82,9 @@
         </dependency>
         <!-- JAXRS 2 Client API -->
         <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-            <version>${version.jaxrs.api}</version>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${version.javax.ws.rs-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -100,7 +100,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.narayana.microprofile.lra</groupId>
+            <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-api</artifactId>
             <version>${version.microprofile.lra}</version>
         </dependency>

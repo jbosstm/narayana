@@ -193,7 +193,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         init(coordinatorUrl.getProtocol(), coordinatorUrl.getHost(), coordinatorUrl.getPort());
     }
 
-    @Override
     public void connectTimeout(long connect, TimeUnit unit) {
         clientBuilder.connectTimeout(connect, unit);
 
@@ -203,7 +202,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public void readTimeout(long read, TimeUnit unit) {
         clientBuilder.readTimeout(read, unit);
 
@@ -213,7 +211,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
+    // TODO call this via config
     public void setCoordinatorURI(URI uri) {
         base = uri;
 
@@ -226,7 +224,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
+    // TODO call this via config
     public void setRecoveryCoordinatorURI(URI uri) {
         setCoordinatorURI(uri); // same as the LRA coordinator
     }
@@ -335,7 +333,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return client.target(base);
     }
 
-    @Override
+    // TODO make sure this gets called
     public void setCurrentLRA(URL coordinatorUrl) {
         try {
             init(coordinatorUrl);
@@ -447,7 +445,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return lra;
     }
 
-    @Override
     public LRAInfo getLRAInfo(URL lraId) throws GenericLRAException {
         Response response = null;
 

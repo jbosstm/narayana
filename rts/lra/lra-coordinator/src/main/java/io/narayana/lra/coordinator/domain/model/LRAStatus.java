@@ -34,40 +34,31 @@ public class LRAStatus {
     private String lraId;
     //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
     private String clientId;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
-    private boolean isComplete;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
-    private boolean isCompensated;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA is recovering", required = false )
-    private boolean isRecovering;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA has been asked to complete or compensate yet", required = false )
-    private boolean isActive;
+
     //    @ApiModelProperty( value = "Indicates whether or not this LRA is top level", required = false )
     private boolean isTopLevel;
     private int httpStatus;
     private String responseData;
-    long startTime;
-    long finishTime;
-    long timeNow;
+    private long startTime;
+    private long finishTime;
+    private long timeNow;
 
     private CompensatorStatus status;
+    private boolean isRecovering;
 
     public LRAStatus(Transaction lra) {
         LRAInfo info = lra.getLRAInfo();
 
         this.lraId = info.getLraId();
         this.clientId = info.getClientId();
-        this.isComplete = info.isComplete();
-        this.isCompensated = info.isCompensated();
-        this.isRecovering = info.isRecovering();
-        this.isActive = info.isActive();
         this.isTopLevel = info.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.status = lra.getLRAStatus();
-        this.startTime = info.getStartTime();
-        this.finishTime = info.getFinishTime();
-        this.timeNow = info.getTimeNow();
+        this.isRecovering = lra.isRecovering();
+        this.startTime = lra.getStartTime();
+        this.finishTime = lra.getFinishTime();
+        this.timeNow = lra.getTimeNow();
     }
 
     public String getLraId() {
@@ -115,7 +106,7 @@ public class LRAStatus {
     }
 
     public boolean isActive() {
-        return isActive;
+        return status == null;
     }
 
     public boolean isTopLevel() {
@@ -132,10 +123,6 @@ public class LRAStatus {
 
     public String getEncodedResponseData() throws IOException {
         return responseData;
-    }
-
-    public boolean isComplete() {
-        return isComplete;
     }
 
     public long getStartTime() {

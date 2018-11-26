@@ -29,7 +29,21 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <name>Narayana: RESTful transactions</name>
   <description>RESTful transactions</description>
   <url>http://www.jboss.org/jbosstm</url>
- 
+  <dependencies>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.1.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.lra</groupId>
+      <artifactId>microprofile-lra-api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
   <properties>
     <version.wildfly-swarm>2017.2.0</version.wildfly-swarm>
     <!-- Impportant: the resteasy client version must match the one used by wildfly.swarm -->

@@ -108,8 +108,8 @@ public class Transaction extends AtomicAction {
         return new LRAInfoImpl(id.toExternalForm(), clientId, status == null ? "" : status.name(),
                 isComplete(), isCompensated(), isRecovering(),
                 isActive(), isTopLevel(),
-                startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
-                finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+                getStartTime(),
+                getFinishTime());
     }
 
     public static String getType() {
@@ -127,7 +127,7 @@ public class Transaction extends AtomicAction {
             os.packString(id == null ? null : id.toString());
             os.packString(parentId == null ? null : parentId.toString());
             os.packString(clientId);
-            os.packLong(startTime == null ? 0L : startTime.toInstant(ZoneOffset.UTC).toEpochMilli());
+            os.packLong(getStartTime());
             os.packLong(finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli());
 
             if (status == null) {
@@ -719,5 +719,19 @@ public class Transaction extends AtomicAction {
                 lock.unlock();
             }
         }  // else another thread finishing this LRA so it is too late to cancel
+    }
+
+    // return the time in milliseconds when this LRA was started relative to UTC
+    long getStartTime() {
+        return startTime == null ? 0L : startTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
+
+    // return the time in milliseconds when this LRA is due to finish relative to UtC
+    long getFinishTime() {
+        return finishTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+    }
+
+    public long getTimeNow() {
+        return LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 }

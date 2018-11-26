@@ -97,7 +97,7 @@ public class RunTck implements ServletContextListener {
 
         test.before();
 
-        TckResult results = test.runTck(lraClient, String.join(",", testnames), false);
+        TckResult results = test.runTck(String.join(",", testnames), false);
 
         test.after();
 

@@ -34,7 +34,6 @@ import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.annotation.TimeLimit;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
-import org.eclipse.microprofile.lra.client.LRAClient;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -85,7 +84,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private LRAClient lraClient;
+    private NarayanaLRAClient lraClient;
 
     public ServerLRAFilter() throws Exception {
         if (!NarayanaLRAClient.isInitialised()) {
@@ -105,7 +104,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             NarayanaLRAClient.setDefaultRecoveryEndpoint(new URI(rcUrl));
         }
 
-        lraClient = (LRAClient) Class.forName(NarayanaLRAClient.class.getCanonicalName()).getDeclaredConstructor().newInstance();
+        if (lraClient == null) {
+            lraClient = new NarayanaLRAClient();
+        }
     }
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
@@ -133,7 +134,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         String recoveryUrl = null;
         boolean nested;
         boolean isLongRunning = false;
-        boolean enlist;
+        boolean enlist = true;
 
         if (transactional == null) {
             transactional = method.getDeclaringClass().getDeclaredAnnotation(LRA.class);
@@ -201,7 +202,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             return;
         }
 
-        enlist = ((LRA) transactional).join();
         nested = resourceInfo.getResourceMethod().isAnnotationPresent(NestedLRA.class);
 
         switch (type) {
