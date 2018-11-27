@@ -327,6 +327,7 @@
     <properties>
         <version.org.wildfly.wildfly-parent>10.1.0.Final</version.org.wildfly.wildfly-parent>
         <version.org.wildfly.core>2.2.0.Final</version.org.wildfly.core>
+        <version.org.wildfly.arquillian>2.0.0.Final</version.org.wildfly.arquillian>
         <version.org.wildfly.build-tools>1.1.3.Final</version.org.wildfly.build-tools>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <src.main>src/main/cpp</src.main>
