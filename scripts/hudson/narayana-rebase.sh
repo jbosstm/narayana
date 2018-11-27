@@ -35,7 +35,7 @@ function rebase_narayana {
   git clean -f -d -x
   
   if [ "$jdk" = "jdk11.latest" ]; then
-    BRANCHPOINT=jdk11
+    BRANCHPOINT=jdk-11
   else
   # Work out the branch point
   git branch -D 4.17
