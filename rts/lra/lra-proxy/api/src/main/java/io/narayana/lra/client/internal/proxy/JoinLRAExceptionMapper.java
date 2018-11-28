@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import io.narayana.lra.client.participant.JoinLRAException;
+import org.eclipse.microprofile.lra.participant.JoinLRAException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

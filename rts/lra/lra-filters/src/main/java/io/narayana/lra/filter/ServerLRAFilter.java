@@ -432,7 +432,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         requestContext.getHeaders().remove(LRA_HTTP_HEADER);
                     }
                 } catch (GenericLRAException | NotFoundException ignore) {
-                    // the LRAClient implementation should have logged something
                 }
             }
 
