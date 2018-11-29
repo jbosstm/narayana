@@ -570,6 +570,14 @@ public interface jtaI18NLogger {
 	@LogMessage(level = ERROR)
 	void error_transaction_class_cast_fail(StateManager action, @Cause() Exception e);
 
+    @Message(id = 16140, value = "No subordinate transaction to  drive for commit with xid: {0}", format = MESSAGE_FORMAT)
+    String get_no_subordinate_txn_for_commit(Xid xid);
+
+    @Message(id = 16141, value = "Error committing transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_error_committing_transaction(Transaction txn, Xid xid);
+
+    @Message(id = 16142, value = "Not actived transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_not_activated_transaction(Transaction txn, Xid xid);
 
     /*
         Allocate new messages directly above this notice.

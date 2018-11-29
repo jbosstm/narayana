@@ -100,6 +100,14 @@ public abstract class AbstractBasicTests {
         return execute(url, true);
     }
 
+    protected String executeWithRuntimeException(String url) {
+        try {
+            return execute(url);
+        } catch (Exception e) {
+            throw new RuntimeException("Original exception '" + e.getClass().getName() + "' wrapped under RuntimeException", e);
+        }
+    }
+
     protected String execute(String url, boolean expectResponse) throws Exception {
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -120,4 +128,11 @@ public abstract class AbstractBasicTests {
         return null;
     }
 
+    protected String executeWithRuntimeException(String url, boolean expectResponse) {
+        try {
+            return execute(url, expectResponse);
+        } catch (Exception e) {
+            throw new RuntimeException("Original exception '" + e.getClass().getName() + "' wrapped under RuntimeException", e);
+        }
+    }
 }
