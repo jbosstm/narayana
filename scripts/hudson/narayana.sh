@@ -372,11 +372,8 @@ function build_as {
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
-    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -B $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
+    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./build.sh clean install -B $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -DallTests=true -fae
     [ $? = 0 ] || fatal "AS build failed"
-
-    ./build.sh -f testsuite/integration/pom.xml -B -DallTests=true $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -fae
-    [ $? = 0 ] || fatal "AS testsuite build failed"
   else
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
   fi
