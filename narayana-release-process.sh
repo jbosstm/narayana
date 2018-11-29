@@ -44,7 +44,6 @@ then
     exit
   fi
   git log -n 5
-  echo Mark version as released in Jira and create next version: https://issues.jboss.org/plugins/servlet/project-config/JBTM/versions
   echo Make sure you have the credentials in your .m2/settings.xml and ignore an error in the final module about missing javadocs
   echo Watch out for sed -i "" in the pre-release.sh as it is does not work on Cygwin
   read -p "Did the log before look OK?" ok
@@ -54,6 +53,7 @@ then
   else
     ok=y
   fi
+  ./scripts/release/update_jira.py -k JBTM -t 5.5.next -n $CURRENT
   set -e
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
 else

@@ -161,8 +161,10 @@ def main(jira_host, project_key, username, password, new_version, temp_version, 
     create_version(jira_host, username, password, project_key, temp_version)
     close_resolved_issues(jira_host, username, password, project_key, new_version)
     move_unresolved_issues(jira_host, username, password, project_key, new_version, temp_version)
+    """
     create_component_update_issue(jira_host, username, password, upstream_key,
                                   'Upgrade Narayana to {0}'.format(new_version), component)
+    """
 
 
 if __name__ == "__main__":
