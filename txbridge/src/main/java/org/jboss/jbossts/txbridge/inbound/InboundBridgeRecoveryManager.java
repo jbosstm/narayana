@@ -277,11 +277,18 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+")");
 
         if(xid.getFormatId() != BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
+            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - not ours. Abstaining.");
             return Vote.ABSTAIN; // it's not one of ours, ignore it.
         }
 
         if(!orphanedXAResourcesAreIdentifiable) {
             // recovery system not in stable state yet - we don't yet know if it's orphaned or not.
+            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - recovery incomplete. Leave alone.");
+            return Vote.LEAVE_ALONE;
+        }
+
+        if( InboundBridgeManager.isLive(xid) ) {
+            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - still live. Leave alone.");
             return Vote.LEAVE_ALONE;
         }
 
@@ -289,10 +296,13 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         synchronized(participantsAwaitingRecovery) {
             for(BridgeDurableParticipant participant : participantsAwaitingRecovery) {
                 if(participant.getXid().equals(xid)) {
+                    txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - awaiting recovery. Leave alone.");
                     return Vote.LEAVE_ALONE;
                 }
             }
         }
+
+        txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - passed to rollback.");
 
         // presumed abort:
         return Vote.ROLLBACK;
