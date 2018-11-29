@@ -63,6 +63,10 @@ public class InboundBridge
         getTransaction(); // ensures transaction is initialized
     }
 
+    public Xid getXid() {
+        return xid;
+    }
+
     /**
      * Associate the JTA transaction to the current Thread.
      * Typically used by a server side inbound handler.
