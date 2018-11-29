@@ -96,11 +96,19 @@ public abstract class AbstractBasicTests {
     }
 
 
-    protected void execute(String url) throws Exception {
-        execute(url, true);
+    protected String execute(String url) throws Exception {
+        return execute(url, true);
     }
 
-    protected void execute(String url, boolean expectResponse) throws Exception {
+    protected String executeWithRuntimeException(String url) {
+        try {
+            return execute(url);
+        } catch (Exception e) {
+            throw new RuntimeException("Original exception '" + e.getClass().getName() + "' wrapped under RuntimeException", e);
+        }
+    }
+
+    protected String execute(String url, boolean expectResponse) throws Exception {
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
             HttpGet httpget = new HttpGet(url);
@@ -115,6 +123,14 @@ public abstract class AbstractBasicTests {
                 throw e;
             }
         }
+        return null;
     }
 
+    protected String executeWithRuntimeException(String url, boolean expectResponse) {
+        try {
+            return execute(url, expectResponse);
+        } catch (Exception e) {
+            throw new RuntimeException("Original exception '" + e.getClass().getName() + "' wrapped under RuntimeException", e);
+        }
+    }
 }

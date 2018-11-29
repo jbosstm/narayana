@@ -26,6 +26,9 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;
 
+import javax.transaction.Transaction;
+import javax.transaction.xa.Xid;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
 import org.jboss.logging.Message;
@@ -444,6 +447,14 @@ public interface jtaI18NLogger {
 	@LogMessage(level = FATAL)
     void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
 
+    @Message(id = 16140, value = "No subordinate transaction to  drive for commit with xid: {0}", format = MESSAGE_FORMAT)
+    String get_no_subordinate_txn_for_commit(Xid xid);
+
+    @Message(id = 16141, value = "Error committing transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_error_committing_transaction(Transaction txn, Xid xid);
+
+    @Message(id = 16142, value = "Not actived transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_not_activated_transaction(Transaction txn, Xid xid);
 
     /*
         Allocate new messages directly above this notice.
