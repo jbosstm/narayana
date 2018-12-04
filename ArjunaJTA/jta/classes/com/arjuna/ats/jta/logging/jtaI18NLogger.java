@@ -33,6 +33,7 @@ import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
 
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -533,6 +534,15 @@ public interface jtaI18NLogger {
 	@Message(id = 16131, value = "Subordinate transaction was not recovered successfully {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = FATAL)
     void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
+
+    @Message(id = 16132, value = "No subordinate transaction to  drive for commit with xid: {0}", format = MESSAGE_FORMAT)
+    String get_no_subordinate_txn_for_commit(Xid xid);
+
+    @Message(id = 16133, value = "Error committing transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_error_committing_transaction(Transaction txn, Xid xid);
+
+    @Message(id = 16134, value = "Not actived transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    String get_not_activated_transaction(Transaction txn, Xid xid);
 
 
     /*

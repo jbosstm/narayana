@@ -38,8 +38,10 @@ import org.junit.*;
 import org.jboss.byteman.contrib.dtest.*;
 import org.junit.runner.RunWith;
 
+import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 import java.net.URL;
 
+import java.util.concurrent.Executors;
 
 /**
  * Crash Recovery test cases for the inbound side of the transaction bridge.
@@ -211,6 +213,36 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodCalled("recover");
         instrumentedTestXAResource.assertMethodCalled("rollback");
         instrumentedTestXAResource.assertMethodNotCalled("commit");
+    }
+
+
+    @Test
+    @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
+    public void testRecoveryLivingTransactions(@ArquillianResource URL baseURL) throws Exception {
+
+        InstrumentedClass durableParticipant = instrumentor.instrumentClass(BridgeDurableParticipant.class);
+        InstrumentedClass instrumentedTestXAResourceRecovered = instrumentor.instrumentClass(TestXAResourceRecovered.class);
+
+        instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
+        instrumentor.injectOnExit(BridgeDurableParticipant.class, "prepare", "waitFor(\"recoveryProcessed\")");
+
+        Executors.newSingleThreadExecutor().submit(() ->
+            executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false));
+
+        instrumentor.injectOnExit(PeriodicRecovery.class, "doWorkInternal", "signalWake(\"recoveryProcessed\", flag(\"alreadyProcessed\"))");
+
+        doRecovery();
+        doRecovery();
+
+        durableParticipant.assertMethodCalled("prepare");
+        durableParticipant.assertMethodNotCalled("rollback");
+        durableParticipant.assertMethodCalled("commit");
+
+        instrumentedTestXAResource.assertKnownInstances(1);
+        instrumentedTestXAResource.assertMethodCalled("prepare");
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
+        instrumentedTestXAResourceRecovered.assertMethodCalled("commit");
+        instrumentedTestXAResourceRecovered.assertMethodNotCalled("rollback");
     }
 
     // TODO: add test for 4log case i.e. commit

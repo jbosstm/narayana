@@ -94,8 +94,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             SubordinateTransaction tx = SubordinationManager
                     .getTransactionImporter().getImportedTransaction(xid);
 
-            if (tx == null)
-                throw new XAException(XAException.XAER_INVAL);
+            if (tx == null) {
+                XAException xaException = new XAException(jtaLogger.i18NLogger.get_no_subordinate_txn_for_commit(xid));
+                xaException.errorCode = XAException.XAER_INVAL;
+                throw xaException;
+            }
 
             if (tx.activated())
             {
@@ -103,14 +106,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                     tx.doOnePhaseCommit();
                 else
                     if (!tx.doCommit()) {
-                        throw new XAException(XAException.XAER_RMFAIL);
+                        XAException xaException = new XAException(jtaLogger.i18NLogger.get_error_committing_transaction(tx, xid));
+			xaException.errorCode = XAException.XAER_RMFAIL;
+			throw xaException;
                     }
 
                 SubordinationManager.getTransactionImporter()
                         .removeImportedTransaction(xid);
             }
             else
-                throw new XAException(XAException.XA_RETRY);
+            {
+                XAException xaException = new XAException(jtaLogger.i18NLogger.get_not_activated_transaction(tx, xid));
+                xaException.errorCode = XAException.XA_RETRY;
+                throw xaException;
+            }
         }
         catch (RollbackException e)
         {
