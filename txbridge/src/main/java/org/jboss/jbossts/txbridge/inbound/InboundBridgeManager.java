@@ -36,6 +36,8 @@ import com.arjuna.wsc.AlreadyRegisteredException;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -54,6 +56,8 @@ public class InboundBridgeManager
 {
     // maps WS-AT Tx Id to InboundBridge instance.
     private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
+
+    private static final Set<Xid> liveXids = new HashSet<>();
 
     /**
      * Return an InboundBridge instance that maps the current Thread's WS transaction context
@@ -105,8 +109,15 @@ public class InboundBridgeManager
         txbridgeLogger.logger.trace("InboundBridgeManager.removeMapping(externalTxId="+externalTxId+")");
 
         if(externalTxId != null) {
-            inboundBridgeMappings.remove(externalTxId);
+            InboundBridge inboundBridge = inboundBridgeMappings.remove(externalTxId);
+            if(inboundBridge != null) {
+                liveXids.remove(inboundBridge.getXid());
+            }
         }
+    }
+
+    public static synchronized boolean isLive(Xid xid) {
+        return liveXids.contains(xid);
     }
 
     /**
@@ -135,6 +146,7 @@ public class InboundBridgeManager
         Xid xid = XATxConverter.getXid(new Uid(), false, BridgeDurableParticipant.XARESOURCE_FORMAT_ID);
 
         BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
+
         // construct the participantId in such as way as we can recognise it at recovery time:
         String participantId = org.jboss.jbossts.txbridge.inbound.BridgeDurableParticipant.TYPE_IDENTIFIER+new Uid().toString();
         transactionManager.enlistForDurableTwoPhase(bridgeDurableParticipant, participantId);
@@ -142,6 +154,9 @@ public class InboundBridgeManager
         BridgeVolatileParticipant bridgeVolatileParticipant = new BridgeVolatileParticipant(externalTxId, xid);
         transactionManager.enlistForVolatileTwoPhase(bridgeVolatileParticipant, new Uid().toString());
 
-        inboundBridgeMappings.put(externalTxId, new InboundBridge(xid));
+        InboundBridge inboundBridge = new InboundBridge(xid);
+        inboundBridgeMappings.put(externalTxId, inboundBridge);
+        liveXids.add(inboundBridge.getXid());
+
     }
 }
