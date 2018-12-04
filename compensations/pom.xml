@@ -231,7 +231,7 @@
                                 -->
                                 <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
-                                <server.config>standalone.xml</server.config>
+                                <server.config>standalone-xts.xml</server.config>
                             </systemPropertyVariables>
                             <includes>
                                 <include>**/*TestLocal.java</include>
