@@ -26,7 +26,7 @@
     </taskdef>
 
     <condition property="is.jdk9">
-      <equals arg1="${ant.java.version}" arg2="1.9"/>
+      <equals arg1="${java.specification.version}" arg2="9"/>
     </condition>
 
 	<!-- set this property to the location of a JBossTS JTS build -->
