@@ -19,7 +19,7 @@
     <parent>
         <artifactId>narayana-jta-all</artifactId>
         <groupId>org.jboss.narayana.jta</groupId>
-        <version>5.5.34.Final</version>
+        <version>5.5.35.Final-SNAPSHOT</version>
     </parent>
     <artifactId>jms</artifactId>
     <name>Narayana: ArjunaJTA JMS</name>
