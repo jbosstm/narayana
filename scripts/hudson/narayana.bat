@@ -5,6 +5,11 @@ set NOPAUSE=true
 
 call:comment_on_pull "Started testing this pull request on Windows: %BUILD_URL%"
 
+java -version 2>tmp.txt
+findstr version tmp.txt > version.txt
+FOR /F delims^=^"^ tokens^=2 %%i in (version.txt) DO @set JAVA_VERSION=%%i
+if %JAVA_VERSION% == 9 set MAVEN_OPTS="--add-modules=java.corba,java.xml.bind,java.xml.ws"
+
 IF NOT [%NOTMAIN%] == [] (call:build_spi_pr
 call build.bat clean install %* || (call:comment_on_pull "Tests failed on Windows - Narayana Failed %BUILD_URL%" & exit -1)
 )
