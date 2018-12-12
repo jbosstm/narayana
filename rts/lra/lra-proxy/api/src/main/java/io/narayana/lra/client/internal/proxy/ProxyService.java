@@ -51,13 +51,13 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
@@ -196,11 +196,11 @@ public class ProxyService implements LRAManagement {
     @Override
     public String joinLRA(LRAParticipant participant, URL lraId)
             throws JoinLRAException {
-        return joinLRA(participant, lraId, 0L, TimeUnit.SECONDS);
+        return joinLRA(participant, lraId, 0L, ChronoUnit.SECONDS);
     }
 
     @Override
-    public String joinLRA(LRAParticipant participant, URL lraId, Long timelimit, TimeUnit unit)
+    public String joinLRA(LRAParticipant participant, URL lraId, Long timelimit, ChronoUnit unit)
             throws JoinLRAException {
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 

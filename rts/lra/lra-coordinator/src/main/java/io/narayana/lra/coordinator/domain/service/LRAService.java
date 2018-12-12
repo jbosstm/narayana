@@ -49,12 +49,15 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @ApplicationScoped
 public class LRAService {
@@ -101,11 +104,11 @@ public class LRAService {
 
     public List<LRAStatus> getAll(String state) {
         if (state == null || state.isEmpty()) {
-            List<LRAStatus> all = getAllActive();
+            Set<LRAStatus> all = getAllActive();
 
             all.addAll(getAllRecovering());
 
-            return all;
+            return new ArrayList<>(all);
         }
 
         if (CompensatorStatus.Compensating.name().equals(state)) {
@@ -125,8 +128,8 @@ public class LRAService {
         return null;
     }
 
-    public List<LRAStatus> getAllActive() {
-        return lras.values().stream().map(LRAStatus::new).collect(toList());
+    private Set<LRAStatus> getAllActive() {
+        return lras.values().stream().map(LRAStatus::new).collect(toSet());
     }
 
     public List<LRAStatus> getAllRecovering(boolean scan) {

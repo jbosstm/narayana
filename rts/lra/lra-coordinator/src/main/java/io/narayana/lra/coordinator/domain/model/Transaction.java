@@ -319,12 +319,24 @@ public class Transaction extends AtomicAction {
     }
 
     public int end(boolean compensate) {
-        ReentrantLock lock = lraService.lockTransaction(getId());
+        ReentrantLock lock = null;
 
         try {
+            lock = lraService.tryLockTransaction(getId());
+
+            if (lock == null) {
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.debugf("Transaction.endLRA Some other thread is finishing LRA %s", getId().toExternalForm());
+                }
+
+                return status();
+            }
+
             return doEnd(compensate);
         } finally {
-            lock.unlock();
+            if (lock != null) {
+                lock.unlock();
+            }
         }
     }
 
@@ -529,44 +541,68 @@ public class Transaction extends AtomicAction {
     }
 
     private LRARecord findLRAParticipant(String participantUrl, boolean remove) {
-        String pUrl = LRARecord.extractCompensator(id, participantUrl);
-        LRARecord rec = findLRAParticipant(pUrl, remove, pendingList);
+        LRARecord rec = null;
 
-        if (rec == null) {
-            rec = findLRAParticipant(pUrl, remove, preparedList);
-        }
+        try {
+            URL recoveryUrl = new URL(participantUrl);
 
-        if (rec == null) {
-            rec = findLRAParticipant(pUrl, remove, heuristicList);
-        }
+            rec = findLRAParticipantByRecoveryUrl(recoveryUrl, remove, pendingList, preparedList, heuristicList, failedList);
 
-        if (rec == null) {
-            rec = findLRAParticipant(pUrl, remove, failedList);
+        } catch (MalformedURLException ignore) {
+            String pUrl = LRARecord.extractCompensator(id, participantUrl);
+            rec = findLRAParticipant(pUrl, remove, pendingList, pendingList, preparedList, heuristicList, failedList);
         }
 
         return rec;
     }
 
-    private LRARecord findLRAParticipant(String participantUrl, boolean remove, RecordList list) {
-        if (list != null) {
-            RecordListIterator i = new RecordListIterator(list);
-            AbstractRecord r;
+    private LRARecord findLRAParticipant(String participantUrl, boolean remove, RecordList...lists) {
+        for (RecordList list : lists) {
+            if (list != null) {
+                RecordListIterator i = new RecordListIterator(list);
+                AbstractRecord r;
 
-            if (participantUrl.indexOf(',') != -1) {
-                participantUrl = LRARecord.extractCompensator(id, participantUrl);
-            }
+                if (participantUrl.indexOf(',') != -1) {
+                    participantUrl = LRARecord.extractCompensator(id, participantUrl);
+                }
 
-            while ((r = i.iterate()) != null) {
-                if (r instanceof LRARecord) {
-                    LRARecord rr = (LRARecord) r;
-                    // can't use == because this may be a recovery scenario
-                    if (rr.getParticipantPath().equals(participantUrl) ||
-                            rr.getCompensator().equals(participantUrl)) {
-                        if (remove) {
-                            list.remove(rr);
+                while ((r = i.iterate()) != null) {
+                    if (r instanceof LRARecord) {
+                        LRARecord rr = (LRARecord) r;
+                        // can't use == because this may be a recovery scenario
+                        if (rr.getParticipantPath().equals(participantUrl) ||
+                                rr.getCompensator().equals(participantUrl)) {
+                            if (remove) {
+                                list.remove(rr);
+                            }
+
+                            return rr;
                         }
+                    }
+                }
+            }
+        }
 
-                        return rr;
+        return null;
+    }
+
+    private LRARecord findLRAParticipantByRecoveryUrl(URL recoveryUrl, boolean remove, RecordList...lists) {
+        for (RecordList list : lists) {
+            if (list != null) {
+                RecordListIterator i = new RecordListIterator(list);
+                AbstractRecord r;
+
+                while ((r = i.iterate()) != null) {
+                    if (r instanceof LRARecord) {
+                        LRARecord rr = (LRARecord) r;
+                        // can't use == because this may be a recovery scenario
+                        if (rr.getRecoveryCoordinatorURL().equals(recoveryUrl)) {
+                            if (remove) {
+                                list.remove(rr);
+                            }
+
+                            return rr;
+                        }
                     }
                 }
             }

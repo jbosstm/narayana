@@ -33,7 +33,10 @@
     <name>MicroProfile TCK: LRA</name>
 
     <properties>
-            <jvm.options></jvm.options>
+        <jvm.options></jvm.options>
+        <!-- disable running the timeLimit TCK test since it is failing on JDK 9: JBTM-2942 -->
+        <lra.tck.tests>startLRA,cancelLRA,closeLRA,getActiveLRAs,getAllLRAs,isActiveLRA,nestedActivity,completeMultiLevelNestedActivity,compensateMultiLevelNestedActivity,mixedMultiLevelNestedActivity,joinLRAViaHeader,join,leaveLRA,leaveLRAViaAPI,dependentLRA,cancelOn,cancelOnFamily,acceptTest,noLRATest</lra.tck.tests>
+        <lra.tck.verbose>true</lra.tck.verbose>
     </properties>
 
     <build>
@@ -122,6 +125,8 @@
                                         <argument>-Dswarm.http.port=8080</argument>
                                         <argument>-Dlra.tck.run=TRUE</argument>
                                         <argument>-Dlra.tck.exit=TRUE</argument>
+                                        <argument>-Dlra.tck.tests=${lra.tck.tests}</argument>
+                                        <argument>-Dlra.tck.verbose=${lra.tck.verbose}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

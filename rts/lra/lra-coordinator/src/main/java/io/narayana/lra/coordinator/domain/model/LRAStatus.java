@@ -25,6 +25,7 @@ import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import java.io.IOException;
+import java.util.Objects;
 
 //@Data
 //@AllArgsConstructor
@@ -65,9 +66,6 @@ public class LRAStatus {
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.status = lra.getLRAStatus();
-        this.startTime = info.getStartTime();
-        this.finishTime = info.getFinishTime();
-        this.timeNow = info.getTimeNow();
     }
 
     public String getLraId() {
@@ -148,5 +146,24 @@ public class LRAStatus {
 
     public long getTimeNow() {
         return timeNow;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LRAStatus lraStatus = (LRAStatus) o;
+        return Objects.equals(lraId, lraStatus.lraId) &&
+                status == lraStatus.status;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(lraId);
     }
 }

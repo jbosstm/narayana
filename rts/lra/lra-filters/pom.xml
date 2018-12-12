@@ -31,9 +31,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.narayana.microprofile.lra</groupId>
+            <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-api</artifactId>
-            <version>${version.microprofile.lra}</version>
+            <version>${version.microprofile.lra.api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

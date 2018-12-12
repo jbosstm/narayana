@@ -99,7 +99,6 @@ public class LRAInfoImpl implements LRAInfo {
         return LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
     }
 
-    @Override
     public ZoneOffset getZoneOffset() {
         return ZoneOffset.UTC;
     }
