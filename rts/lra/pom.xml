@@ -33,8 +33,9 @@
         <version.junit>4.12</version.junit>
         <version.arquillian>1.1.12.Final</version.arquillian>
 
-        <version.narayana>${project.version}</version.narayana>
-        <version.microprofile.lra>0.0.3.Final</version.microprofile.lra>
+        <!--version.microprofile.lra.api>1.0-20181217.132756-202</version.microprofile.lra.api-->
+        <version.microprofile.lra.api>1.0-SNAPSHOT</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-20181217.132757-202</version.microprofile.lra.tck>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -47,6 +48,14 @@
             <id>jboss-public-releases-repository-group</id>
             <name>JBoss Public Releases Maven Repository Group</name>
             <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>repo.eclipse.org-snapshots</id>
+            <name>Eclipse MicroProfile Repository - Snapshots</name>
+            <url>https://repo.eclipse.org/content/repositories/microprofile-snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 

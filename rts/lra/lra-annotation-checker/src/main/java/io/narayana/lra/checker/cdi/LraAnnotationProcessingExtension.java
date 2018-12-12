@@ -97,13 +97,8 @@ public class LraAnnotationProcessingExtension implements Extension {
             return;
         }
 
-        // if any of the LRA annotations have set the join attribute to true (join to be true means
-        // handling it as full LRA participant which needs to be completed, compensated...)
-        // then have to process checks for compulsory LRA annotations
-        boolean isJoin = lraAnnotations.stream().anyMatch(lraAnn -> lraAnn.join());
-
         final String classAnnotatedWithLraName = classAnnotatedWithLra.getAnnotatedType().getJavaClass().getName();
-        if (!missing.isEmpty() && isJoin) {
+        if (!missing.isEmpty()) {
             FailureCatalog.INSTANCE.add("Class " + classAnnotatedWithLraName + " uses "
                 + LRA.class.getName() + " which requires methods handling LRA events. Missing annotations in the class: " + missing);
         }

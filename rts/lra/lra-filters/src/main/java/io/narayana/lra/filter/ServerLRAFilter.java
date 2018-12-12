@@ -31,10 +31,8 @@ import org.eclipse.microprofile.lra.annotation.LRA;
 import org.eclipse.microprofile.lra.annotation.Leave;
 import org.eclipse.microprofile.lra.annotation.NestedLRA;
 import org.eclipse.microprofile.lra.annotation.Status;
-import org.eclipse.microprofile.lra.annotation.TimeLimit;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
-import org.eclipse.microprofile.lra.client.LRAClient;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -54,9 +52,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static io.narayana.lra.client.NarayanaLRAClient.COMPENSATE;
 import static io.narayana.lra.client.NarayanaLRAClient.COMPLETE;
@@ -85,7 +84,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     protected ResourceInfo resourceInfo;
 
     @Inject
-    private LRAClient lraClient;
+    private NarayanaLRAClient lraClient;
 
     public ServerLRAFilter() throws Exception {
         if (!NarayanaLRAClient.isInitialised()) {
@@ -105,7 +104,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             NarayanaLRAClient.setDefaultRecoveryEndpoint(new URI(rcUrl));
         }
 
-        lraClient = (LRAClient) Class.forName(NarayanaLRAClient.class.getCanonicalName()).getDeclaredConstructor().newInstance();
+        lraClient = new NarayanaLRAClient();
     }
 
     private void checkForTx(LRA.Type type, URL lraId, boolean shouldNotBeNull) {
@@ -141,13 +140,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (transactional != null) {
             type = ((LRA) transactional).value();
-            isLongRunning = ((LRA) transactional).delayClose();
+            isLongRunning = !((LRA) transactional).terminal();
             Response.Status.Family[] cancel0nFamily = ((LRA) transactional).cancelOnFamily();
             Response.Status[] cancel0n = ((LRA) transactional).cancelOn();
-
-            if (((LRA) transactional).terminal()) {
-                containerRequestContext.setProperty(TERMINAL_LRA_PROP, Boolean.TRUE);
-            }
 
             if (cancel0nFamily.length != 0) {
                 containerRequestContext.setProperty(CANCEL_ON_FAMILY_PROP, cancel0nFamily);
@@ -201,7 +196,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             return;
         }
 
-        enlist = ((LRA) transactional).join();
+        enlist = true;
         nested = resourceInfo.getResourceMethod().isAnnotationPresent(NestedLRA.class);
 
         switch (type) {
@@ -306,8 +301,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
         }
 
-        if (isLongRunning) {
-            newLRA = null;
+        if (!isLongRunning) {
+            containerRequestContext.setProperty(TERMINAL_LRA_PROP, lraId);
         }
 
         // store state with the current thread. TODO for the async version use containerRequestContext.setProperty("lra", Current.peek());
@@ -351,7 +346,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
                 }
 
-                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl);
+                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.replaceAll("^\"|\"$", ""));
             } else {
                 lraTrace(containerRequestContext, lraId,
                         "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no participant annotations");
@@ -382,56 +377,30 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Object suspendedLRA = requestContext.getProperty(SUSPENDED_LRA_PROP);
         Object newLRA = requestContext.getProperty(NEW_LRA_PROP);
         URL current = Current.peek();
+        URL toClose = (URL) requestContext.getProperty(TERMINAL_LRA_PROP);
 
         try {
-            if (current != null) {
-                int status = responseContext.getStatus();
-                Response.Status.Family[] cancel0nFamily = (Response.Status.Family[]) requestContext.getProperty(CANCEL_ON_FAMILY_PROP);
-                Response.Status[] cancel0n = (Response.Status[]) requestContext.getProperty(CANCEL_ON_PROP);
-                Boolean closeCurrent = (Boolean) requestContext.getProperty(TERMINAL_LRA_PROP);
-
-                if (closeCurrent == null) {
-                    closeCurrent = false;
+            if (current != null && isJaxRsCancel(requestContext, responseContext)) {
+                lraClient.cancelLRA(current);
+                if (current.toExternalForm().equals(
+                        Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                    // the callers context was ended so invalidate it
+                    requestContext.getHeaders().remove(LRA_HTTP_HEADER);
                 }
 
-                if (cancel0nFamily != null) {
-                    if (Arrays.stream(cancel0nFamily).anyMatch(f -> Response.Status.Family.familyOf(status) == f)) {
-                        closeCurrent = true;
-                    }
-                }
-
-                if (cancel0n != null && !closeCurrent) {
-                    if (Arrays.stream(cancel0n).anyMatch(f -> status == f.getStatusCode())) {
-                        closeCurrent = true;
-                    }
-                }
-
-                if (closeCurrent) {
-                    lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA becasue http status is " + status);
-                    lraClient.cancelLRA(current);
-
-                    if (current.equals(newLRA)) {
-                        newLRA = null; // don't try to cancle newKRA twice
-                    }
-
-                    if (current.toExternalForm().equals(
-                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
-                        // the callers context is closed so invalidate it
-                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
-                    }
+                if (toClose != null && toClose.toExternalForm().equals(current.toExternalForm())) {
+                    toClose = null; // don't attempt to finish the LRA twice
                 }
             }
 
-            if (newLRA != null) {
-                lraTrace(requestContext, (URL) newLRA, "ServerLRAFilter after: closing LRA");
-                try {
-                    lraClient.closeLRA((URL) newLRA);
+            if (toClose != null) {
+                lraClient.closeLRA(toClose);
+                requestContext.getHeaders().remove(LRA_HTTP_HEADER);
 
-                    if (current.toExternalForm().equals(Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
-                        // the callers context is closed so invalidate it
-                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
-                    }
-                } catch (GenericLRAException | NotFoundException ignore) {
+                if (toClose.toExternalForm().equals(
+                        Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                    // the callers context was ended so invalidate it
+                    requestContext.getHeaders().remove(LRA_HTTP_HEADER);
                 }
             }
 
@@ -454,27 +423,36 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
     }
 
+    private boolean isJaxRsCancel(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+        int status = responseContext.getStatus();
+        Response.Status.Family[] cancel0nFamily = (Response.Status.Family[]) requestContext.getProperty(CANCEL_ON_FAMILY_PROP);
+        Response.Status[] cancel0n = (Response.Status[]) requestContext.getProperty(CANCEL_ON_PROP);
+
+        if (cancel0nFamily != null) {
+            if (Arrays.stream(cancel0nFamily).anyMatch(f -> Response.Status.Family.familyOf(status) == f)) {
+                return true;
+            }
+        }
+
+        if (cancel0n != null) {
+            return Arrays.stream(cancel0n).anyMatch(f -> status == f.getStatusCode());
+        }
+
+        return false;
+    }
+
     private long getTimeOut(Method method) {
-        Annotation timeLimit = method.getDeclaredAnnotation(TimeLimit.class);
+        long timeLimit = method.getAnnotation(LRA.class).timeLimit();
+        ChronoUnit timeUnit = method.getAnnotation(LRA.class).timeUnit();
 
-        if (timeLimit == null) {
-            timeLimit = method.getDeclaringClass().getDeclaredAnnotation(TimeLimit.class);
-        }
-
-        if (timeLimit == null) {
-            return NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS;
-        }
-
-        TimeLimit tl = (TimeLimit) timeLimit;
-
-        return tl.unit().toMillis(tl.limit());
+        return Duration.of(timeLimit, timeUnit).toMillis();
     }
 
     private URL startLRA(URL parentLRA, Method method, long timeout) {
         // timeout should already have been converted to milliseconds
         String clientId = method.getDeclaringClass().getName() + "#" + method.getName();
 
-        return lraClient.startLRA(parentLRA, clientId, timeout, TimeUnit.MILLISECONDS);
+        return lraClient.startLRA(parentLRA, clientId, timeout, ChronoUnit.MILLIS);
     }
 
     private void resumeTransaction(URL lraId) {

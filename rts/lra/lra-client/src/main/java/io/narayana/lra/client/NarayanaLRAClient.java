@@ -38,7 +38,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,7 +75,6 @@ import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
 import org.eclipse.microprofile.lra.annotation.Leave;
 import org.eclipse.microprofile.lra.annotation.Status;
-import org.eclipse.microprofile.lra.annotation.TimeLimit;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
@@ -193,7 +194,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         init(coordinatorUrl.getProtocol(), coordinatorUrl.getHost(), coordinatorUrl.getPort());
     }
 
-    @Override
     public void connectTimeout(long connect, TimeUnit unit) {
         clientBuilder.connectTimeout(connect, unit);
 
@@ -203,7 +203,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public void readTimeout(long read, TimeUnit unit) {
         clientBuilder.readTimeout(read, unit);
 
@@ -213,7 +212,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public void setCoordinatorURI(URI uri) {
         base = uri;
 
@@ -226,7 +224,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public void setRecoveryCoordinatorURI(URI uri) {
         setCoordinatorURI(uri); // same as the LRA coordinator
     }
@@ -335,7 +332,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return client.target(base);
     }
 
-    @Override
     public void setCurrentLRA(URL coordinatorUrl) {
         try {
             init(coordinatorUrl);
@@ -366,16 +362,29 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
      * @throws GenericLRAException  thrown when start of the LRA failed
      */
     public URL startLRA(String clientID, Long timeout) throws GenericLRAException {
-        return startLRA(clientID, timeout, TimeUnit.SECONDS);
+        return startLRA(clientID, timeout, ChronoUnit.SECONDS);
     }
 
     @Override
-    public URL startLRA(String clientID, Long timeout, TimeUnit unit) throws GenericLRAException {
+    public URL startLRA(String clientID, Long timeout, ChronoUnit unit, Class<?> resourceClass, URI baseUri, String compensatorData) throws GenericLRAException {
+        URL lra = startLRA(clientID, timeout, unit);
+        String recoveryUrl = joinLRA(lra, resourceClass, baseUri, compensatorData);
+
+        try {
+            return new URL(recoveryUrl);
+        } catch (MalformedURLException e) {
+            throw new GenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                    "join " + lra + " returned an invalid recovery URL", e);
+        }
+    }
+
+    @Override
+    public URL startLRA(String clientID, Long timeout, ChronoUnit unit) throws GenericLRAException {
         return startLRA(getCurrent(), clientID, timeout, unit);
     }
 
     @Override
-    public URL startLRA(URL parentLRA, String clientID, Long timeout, TimeUnit unit) throws GenericLRAException {
+    public URL startLRA(URL parentLRA, String clientID, Long timeout, ChronoUnit unit) throws GenericLRAException {
         Response response = null;
         URL lra;
 
@@ -398,7 +407,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             aquireConnection();
 
             response = getTarget().path(startLRAUrl)
-                    .queryParam(TIMELIMIT_PARAM_NAME, unit.toMillis(timeout))
+                    .queryParam(TIMELIMIT_PARAM_NAME, Duration.of(timeout, unit).toMillis())
                     .queryParam(CLIENT_ID_PARAM_NAME, clientID)
                     .queryParam(PARENT_LRA_PARAM_NAME, encodedParentLRA)
                     .request()
@@ -447,7 +456,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return lra;
     }
 
-    @Override
     public LRAInfo getLRAInfo(URL lraId) throws GenericLRAException {
         Response response = null;
 
@@ -471,17 +479,17 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
-    public void renewTimeLimit(URL lraId, long limit, TimeUnit unit) {
+    public void renewTimeLimit(URL lraId, long timeLimit, ChronoUnit timeUnit) {
         Response response = null;
+        long millis = Duration.of(timeLimit, timeUnit).toMillis();
 
-        lraTracef(lraId, "renew time limit to %s s of LRA", unit.toSeconds(limit));
+        lraTracef(lraId, "renew time limit to %s s of LRA", millis);
 
         try {
             aquireConnection();
 
             response = getTarget().path(String.format(renewFormat, getLRAId(lraId.toString())))
-                    .queryParam(TIMELIMIT_PARAM_NAME, unit.toMillis(limit))
+                    .queryParam(TIMELIMIT_PARAM_NAME, millis)
                     .request()
                     .header(LRA_HTTP_HEADER, lraId)
                     .put(Entity.text(""));
@@ -525,7 +533,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return url == null ? null : url.toExternalForm();
     }
 
-    @Override
     public String joinLRA(URL lraId, Long timelimit,
                           URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
                           String compensatorData) throws GenericLRAException {
@@ -548,18 +555,33 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return null;
     }
 
-    @Override
-    public URL updateCompensator(URL recoveryUrl, URL compensateUrl, URL completeUrl,
-                                 URL forgetUrl, URL statusUrl,
-                                 String compensatorData) throws GenericLRAException {
-        return null;// TODO
+    public URL updateCompensator(URL url, Class<?> aClass, URI uri, String s) throws GenericLRAException {
+        return null; // TODO
     }
 
-    @Override
-    public void leaveLRA(URL lraId, String compensatorUrl) throws GenericLRAException {
+    public void leaveLRA(URL lraId, String body) throws GenericLRAException {
         Response response = null;
 
-        lraTracef(lraId, "leaving LRA, compensator url: %s", compensatorUrl);
+        try {
+            aquireConnection();
+
+            response = getTarget().path(String.format(leaveFormat, getLRAId(lraId.toString())))
+                    .request()
+                    .header(LRA_HTTP_HEADER, lraId)
+                    .put(Entity.entity(body, MediaType.TEXT_PLAIN));
+
+            if (Response.Status.OK.getStatusCode() != response.getStatus()) {
+                LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(), response);
+                throw new GenericLRAException(null, response.getStatus(), "", null);
+            }
+        } finally {
+            releaseConnection(response);
+        }
+    }
+
+    public void leaveLRA(URL compensatorUrl) throws GenericLRAException {
+        Response response = null;
+        URL lraId = getCurrent();
 
         try {
             aquireConnection();
@@ -571,7 +593,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
             if (Response.Status.OK.getStatusCode() != response.getStatus()) {
                 LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(), response);
-                throw new GenericLRAException(lraId, response.getStatus(), "", null);
+                throw new GenericLRAException(compensatorUrl, response.getStatus(), "", null);
             }
         } finally {
             releaseConnection(response);
@@ -731,11 +753,10 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
                 if (checkMethod(paths, COMPENSATE, (Path) pathAnnotation,
                         method.getAnnotation(Compensate.class), uriPrefix) != 0) {
-                    TimeLimit timeLimit = method.getAnnotation(TimeLimit.class);
+                    long timeLimit = method.getAnnotation(Compensate.class).timeLimit();
+                    ChronoUnit timeUnit = method.getAnnotation(Compensate.class).timeUnit();
 
-                    if (timeLimit != null) {
-                        paths.put(TIMELIMIT_PARAM_NAME, Long.toString(timeLimit.unit().toMillis(timeLimit.limit())));
-                    }
+                    paths.put(TIMELIMIT_PARAM_NAME, Long.toString(Duration.of(timeLimit, timeUnit).toMillis()));
 
                     if (isAsyncCompletion(method)) {
                         asyncTermination[0] = true;
