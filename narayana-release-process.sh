@@ -152,7 +152,7 @@ fi
 docker login docker.io
 [ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
 git clone git@github.com:jbosstm/jboss-dockerfiles.git
-cd jboss-dockerfiles/lra/dockerfile
+cd jboss-dockerfiles/lra/lra-coordinator
 docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
 docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
 docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
