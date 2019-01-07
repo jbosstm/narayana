@@ -34,7 +34,7 @@
         <version.arquillian>1.1.12.Final</version.arquillian>
 
         <!--version.microprofile.lra.api>1.0-20181217.132756-202</version.microprofile.lra.api-->
-        <version.microprofile.lra.api>1.0-SNAPSHOT</version.microprofile.lra.api>
+        <version.microprofile.lra.api>1.0-20181217.132756-202</version.microprofile.lra.api>
         <version.microprofile.lra.tck>1.0-20181217.132757-202</version.microprofile.lra.tck>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
