@@ -864,7 +864,9 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
         try {
             if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-                throw new NotFoundException();
+                String responseContent = response.readEntity(String.class);
+                throw new NotFoundException("Failed to get status of LRA id " + lraId
+                        + (responseContent != null ? ": " + responseContent : ""));
             }
 
             if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
