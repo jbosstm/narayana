@@ -15,13 +15,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lra-tck-parent</artifactId>
-    <name>LRA TCK Parent</name>
-    <description>LRA TCK Parent</description>
+    <artifactId>lra-test</artifactId>
+    <name>LRA tests</name>
+    <description>LRA tests running LRA TCKs and Narayana LRA internal testsuite</description>
     <packaging>pom</packaging>
 
     <modules>
         <module>tck</module>
-        <module>runner</module>
     </modules>
 </project>

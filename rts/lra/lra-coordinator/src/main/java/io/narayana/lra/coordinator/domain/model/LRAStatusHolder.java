@@ -21,24 +21,25 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
-import org.eclipse.microprofile.lra.client.LRAInfo;
-
 import java.io.IOException;
 import java.util.Objects;
+
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
+
+import io.narayana.lra.client.NarayanaLRAInfo;
 
 //@Data
 //@AllArgsConstructor
 //@ApiModel( value = "LRA", description = "A Long Running Action" )
-public class LRAStatus {
+public class LRAStatusHolder {
     //    @ApiModelProperty( value = "The unique id of the LRA", required = true )
     private String lraId;
     //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
     private String clientId;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
-    private boolean isComplete;
+    private boolean isClose;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
-    private boolean isCompensated;
+    private boolean isCanceled;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA is recovering", required = false )
     private boolean isRecovering;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has been asked to complete or compensate yet", required = false )
@@ -51,21 +52,21 @@ public class LRAStatus {
     long finishTime;
     long timeNow;
 
-    private CompensatorStatus status;
+    private LRAStatus lraStatus;
 
-    public LRAStatus(Transaction lra) {
-        LRAInfo info = lra.getLRAInfo();
+    public LRAStatusHolder(Transaction lra) {
+        NarayanaLRAInfo info = lra.getLRAInfo();
 
         this.lraId = info.getLraId();
         this.clientId = info.getClientId();
-        this.isComplete = info.isComplete();
-        this.isCompensated = info.isCompensated();
+        this.isClose = info.isComplete();
+        this.isCanceled = info.isCompensated();
         this.isRecovering = info.isRecovering();
         this.isActive = info.isActive();
         this.isTopLevel = info.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
-        this.status = lra.getLRAStatus();
+        this.lraStatus = lra.getLRAStatus();
     }
 
     public String getLraId() {
@@ -76,36 +77,36 @@ public class LRAStatus {
         return clientId;
     }
 
-    public CompensatorStatus getStatus() {
-        return status;
+    public LRAStatus getStatus() {
+        return lraStatus;
     }
 
-    private boolean isInState(CompensatorStatus state) {
-        return status != null && status == state;
+    private boolean isInState(LRAStatus state) {
+        return lraStatus != null && lraStatus == state;
     }
 
     public boolean isCompensating() {
-        return isInState(CompensatorStatus.Compensating);
+        return isInState(LRAStatus.Cancelling);
     }
 
     public boolean isCompensated() {
-        return isInState(CompensatorStatus.Compensated);
+        return isInState(LRAStatus.Cancelled);
     }
 
     public boolean isCompleting() {
-        return isInState(CompensatorStatus.Completing);
+        return isInState(LRAStatus.Closing);
     }
 
     public boolean isCompleted() {
-        return isInState(CompensatorStatus.Completed);
+        return isInState(LRAStatus.Closed);
     }
 
     public boolean isFailedToComplete() {
-        return isInState(CompensatorStatus.FailedToComplete);
+        return isInState(LRAStatus.FailedToClose);
     }
 
     public boolean isFailedToCompensate() {
-        return isInState(CompensatorStatus.FailedToCompensate);
+        return isInState(LRAStatus.FailedToCancel);
     }
 
     public boolean isRecovering() {
@@ -133,7 +134,7 @@ public class LRAStatus {
     }
 
     public boolean isComplete() {
-        return isComplete;
+        return isClose;
     }
 
     public long getStartTime() {
@@ -156,9 +157,9 @@ public class LRAStatus {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        LRAStatus lraStatus = (LRAStatus) o;
+        LRAStatusHolder lraStatus = (LRAStatusHolder) o;
         return Objects.equals(lraId, lraStatus.lraId) &&
-                status == lraStatus.status;
+                this.lraStatus == lraStatus.lraStatus;
     }
 
     @Override

@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.coordinator.domain.model.LRAStatus;
+import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import io.swagger.annotations.Api;
@@ -141,11 +141,11 @@ public class RecoveryCoordinator {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "List recovering Long Running Actions",
             notes = "Returns LRAs that are recovering (ie some compensators still need to be ran)",
-            response = LRAStatus.class, responseContainer = "List")
+            response = LRAStatusHolder.class, responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 200, message = "The request was successful")
     })
-    public List<LRAStatus> getRecoveringLRAs() {
+    public List<LRAStatusHolder> getRecoveringLRAs() {
         return lraService.getAllRecovering(true);
     }
 }

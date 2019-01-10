@@ -22,11 +22,11 @@
 package io.narayana.lra.client.internal.proxy;
 
 import org.eclipse.microprofile.lra.participant.LRAParticipant;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.participant.JoinLRAException;
 import org.eclipse.microprofile.lra.participant.LRAManagement;
 import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -145,8 +145,8 @@ public class ProxyService implements LRAManagement {
                     future = participant.completeWork(lraId);
                 }
             } catch (TerminationException e) {
-                return Response.ok().entity(compensate ? CompensatorStatus.FailedToCompensate
-                        : CompensatorStatus.FailedToComplete).build();
+                return Response.ok().entity(compensate ? ParticipantStatus.FailedToCompensate
+                        : ParticipantStatus.FailedToComplete).build();
             } finally {
                 if (future == null) {
                     participants.remove(proxy); // we definitively know the outcome
@@ -175,14 +175,14 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    CompensatorStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
+    ParticipantStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
             throw new NotFoundException();
         }
 
-        Optional<CompensatorStatus> status = proxy.getStatus();
+        Optional<ParticipantStatus> status = proxy.getStatus();
 
         // null status implies that the participant is still active
         return status.orElseThrow(InvalidLRAStateException::new);

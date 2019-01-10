@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2017, Red Hat, Inc., and individual contributors
+ * Copyright 2018, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,35 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.proxy.test.model;
 
-import org.eclipse.microprofile.lra.participant.LRAParticipant;
-import org.eclipse.microprofile.lra.participant.TerminationException;
-import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+package io.narayana.lra.tck;
 
-import javax.ws.rs.NotFoundException;
-import java.io.Serializable;
 import java.net.URL;
-import java.util.concurrent.Future;
+import java.util.List;
 
-public class Participant implements LRAParticipant, Serializable {
-    private Activity activity;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 
-    public Participant(Activity activity) {
-        this.activity = activity;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
+import org.eclipse.microprofile.lra.tck.LRAInfo;
+import org.eclipse.microprofile.lra.tck.spi.ManagementSPI;
+
+import io.narayana.lra.client.NarayanaLRAClient;
+
+@Dependent
+public class LRATckManagementSPI implements ManagementSPI {
+
+    @Inject
+    NarayanaLRAClient narayanaLraClient;
+
+    @Override
+    public LRAInfo getStatus(URL lraId) throws NotFoundException {
+        return LRATckInfo.of(narayanaLraClient.getLRAInfo(lraId));
     }
 
     @Override
-    public Future<Void> completeWork(URL lraId) throws NotFoundException, TerminationException {
-        activity.status = ParticipantStatus.Completed;
-
-        return null;
+    public List<LRAInfo> getLRAs(LRAStatus status) {
+        return LRATckInfo.of(narayanaLraClient.getAllLRAs());
     }
 
-    @Override
-    public Future<Void> compensateWork(URL lraId) throws NotFoundException, TerminationException {
-        activity.status = ParticipantStatus.Compensated;
-
-        return null;
-    }
 }

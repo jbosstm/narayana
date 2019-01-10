@@ -30,16 +30,15 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import io.narayana.lra.client.LRAInfoImpl;
+import io.narayana.lra.client.NarayanaLRAInfo;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import io.narayana.lra.coordinator.domain.service.LRAService;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
-import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -69,7 +68,7 @@ public class Transaction extends AtomicAction {
     private URL parentId;
     private String clientId;
     private List<LRARecord> pending;
-    private CompensatorStatus status; // reuse commpensator states for the LRA
+    private LRAStatus status;
     private String responseData;
     private LocalDateTime startTime;
     private LocalDateTime finishTime; // TODO make sure this acted upon during restore_state()
@@ -86,7 +85,7 @@ public class Transaction extends AtomicAction {
         this.parentId = parentId;
         this.clientId = clientId;
         this.finishTime = LocalDateTime.MAX;
-        this.status = null; // means the LRA is active
+        this.status = LRAStatus.Active;
 
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
@@ -100,12 +99,12 @@ public class Transaction extends AtomicAction {
         this.parentId = null;
         this.clientId = null;
         this.finishTime = LocalDateTime.MAX;
-        this.status = null; // means the LRA is active
+        this.status = LRAStatus.Active;
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
-    public LRAInfo getLRAInfo() {
-        return new LRAInfoImpl(id.toExternalForm(), clientId, status == null ? "" : status.name(),
+    public NarayanaLRAInfo getLRAInfo() {
+        return new NarayanaLRAInfo(id.toExternalForm(), clientId, status == null ? "" : status.name(),
                 isComplete(), isCompensated(), isRecovering(),
                 isActive(), isTopLevel(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
@@ -230,7 +229,7 @@ public class Transaction extends AtomicAction {
             long finishMillis = os.unpackLong();
             finishTime = finishMillis == 0 ? null :
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(finishMillis), ZoneOffset.UTC);
-            status = os.unpackBoolean() ? CompensatorStatus.valueOf(os.unpackString()) : null;
+            status = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
 
             return true;
         } catch (IOException e) {
@@ -289,7 +288,7 @@ public class Transaction extends AtomicAction {
      *
      * @return null if the LRA is still active (not closing, cancelling, closed or cancelled
      */
-    public CompensatorStatus getLRAStatus() {
+    public LRAStatus getLRAStatus() {
         return status;
     }
 
@@ -298,16 +297,16 @@ public class Transaction extends AtomicAction {
     }
 
     boolean isComplete() {
-        return status != null && status.equals(CompensatorStatus.Completed);
+        return status != null && status.equals(LRAStatus.Closed);
     }
 
     boolean isCompensated() {
-        return status != null && status.equals(CompensatorStatus.Compensated);
+        return status != null && status.equals(LRAStatus.Cancelled);
     }
 
     public boolean isRecovering() {
         return status != null &&
-                (status.equals(CompensatorStatus.Compensating) || status.equals(CompensatorStatus.Completing));
+                (status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing));
     }
 
     private int cancelLRA() {
@@ -370,7 +369,7 @@ public class Transaction extends AtomicAction {
 
                 pending.forEach(r -> pendingList.putRear(r));
 
-                updateState(CompensatorStatus.Compensating);
+                updateState(LRAStatus.Cancelling);
 
                 super.phase2Abort(true);
 //                res = super.Abort();
@@ -388,8 +387,8 @@ public class Transaction extends AtomicAction {
                     pendingList.putRear(pendingList.getFront());
                 }
 
-                // tell each participant that the lra canceled
-                updateState(CompensatorStatus.Compensating);
+                // tell each participant that the LRA canceled
+                updateState(LRAStatus.Cancelling);
 
                 // since the phase2Abort route skips prepare we need to make sure the heuristic list exists
                 if (heuristicList == null) {
@@ -399,8 +398,8 @@ public class Transaction extends AtomicAction {
                 super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
                 res = super.status();
             } else {
-                // tell each participant that the lra completed ok
-                updateState(CompensatorStatus.Completing);
+                // tell each participant that the LRA completed ok
+                updateState(LRAStatus.Closing);
                 res = super.End(true);
             }
         }
@@ -414,9 +413,9 @@ public class Transaction extends AtomicAction {
         }
 
         if (getSize(heuristicList) != 0 || getSize(failedList) != 0) {
-            status = CompensatorStatus.Compensating;
+            status = LRAStatus.Cancelling;
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
-            status = CompensatorStatus.Completing;
+            status = LRAStatus.Closing;
         } else {
             status = toLRAStatus(res);
         }
@@ -427,14 +426,14 @@ public class Transaction extends AtomicAction {
             }
         }
 
-        responseData = status == null ? null : status.name();
+        responseData = isActive() ? null : status.name();
 
         finishTime = LocalDateTime.now();
 
         return res;
     }
 
-    private boolean updateState(CompensatorStatus nextState) {
+    private boolean updateState(LRAStatus nextState) {
         status = nextState;
 
         return (pendingList == null || pendingList.size() == 0) || deactivate();
@@ -444,22 +443,22 @@ public class Transaction extends AtomicAction {
         return list == null ? 0 : list.size();
     }
 
-    private CompensatorStatus toLRAStatus(int atomicActionStatus) {
+    private LRAStatus toLRAStatus(int atomicActionStatus) {
         switch (atomicActionStatus) {
             case ActionStatus.ABORTING:
-                return CompensatorStatus.Compensating;
+                return LRAStatus.Cancelling;
             case ActionStatus.ABORT_ONLY:
-                return CompensatorStatus.Compensating;
+                return LRAStatus.Cancelling;
             case ActionStatus.ABORTED:
-                return CompensatorStatus.Compensated;
+                return LRAStatus.Cancelled;
             case ActionStatus.COMMITTING:
-                return CompensatorStatus.Completing;
+                return LRAStatus.Closing;
             case ActionStatus.COMMITTED:
-                return CompensatorStatus.Completed;
+                return LRAStatus.Closed;
             case ActionStatus.H_ROLLBACK:
-                return CompensatorStatus.Compensated;
+                return LRAStatus.Cancelled;
             default:
-                return null;
+                return LRAStatus.Active;
         }
     }
 
@@ -510,7 +509,7 @@ public class Transaction extends AtomicAction {
     }
 
     public Boolean isActive() {
-        return status == null;
+        return status == null || status == LRAStatus.Active;
     }
 
     public boolean forgetParticipant(String participantUrl) {
@@ -634,19 +633,19 @@ public class Transaction extends AtomicAction {
     }
 
     private int lraStatusToHttpStatus() {
-        if (status == null) {
+        if (status == null || status == LRAStatus.Active) {
             return Status.NO_CONTENT.getStatusCode(); // in progress, 204
         }
 
         switch (status) {
-            case Completed:
-            case Compensated:
+            case Closed:
+            case Cancelled:
                 return Status.OK.getStatusCode(); // 200
-            case Compensating:
-            case Completing:
+            case Closing:
+            case Cancelling:
                 return Status.ACCEPTED.getStatusCode(); // 202
-            case FailedToComplete:
-            case FailedToCompensate:
+            case FailedToCancel:
+            case FailedToClose:
                 return Status.PRECONDITION_FAILED.getStatusCode(); // 412, probably not the correct code
             default:
                 return Status.INTERNAL_SERVER_ERROR.getStatusCode(); // 500
