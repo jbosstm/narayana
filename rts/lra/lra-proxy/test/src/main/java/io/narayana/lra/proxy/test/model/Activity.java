@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.proxy.test.model;
 
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -31,7 +31,7 @@ public class Activity implements Serializable {
     public String id;
     public URL rcvUrl;
     public String statusUrl;
-    public CompensatorStatus status;
+    public ParticipantStatus status;
     public boolean registered;
     public String registrationStatus;
     private String userData;
@@ -60,7 +60,7 @@ public class Activity implements Serializable {
 
     @Override
     public String toString() {
-        return "Activity{" +
+        return this.getClass().getSimpleName() + "{" +
                 "id='" + id + '\'' +
                 ", rcvUrl='" + rcvUrl + '\'' +
                 ", statusUrl='" + statusUrl + '\'' +

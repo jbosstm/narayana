@@ -21,12 +21,10 @@
  */
 package io.narayana.lra.client;
 
-import org.eclipse.microprofile.lra.client.LRAInfo;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class LRAInfoImpl implements LRAInfo {
+public class NarayanaLRAInfo {
     private String lraId;
     private String clientId;
     private String status;
@@ -38,7 +36,7 @@ public class LRAInfoImpl implements LRAInfo {
     private long startTime;
     private long finishTime;
 
-    public LRAInfoImpl(String lraId, String clientId, String status,
+    public NarayanaLRAInfo(String lraId, String clientId, String status,
                 boolean isComplete, boolean isCompensated, boolean isRecovering,
                 boolean isActive, boolean isTopLevel,
                 long startTime, long finishTime) {
@@ -106,10 +104,10 @@ public class LRAInfoImpl implements LRAInfo {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof LRAInfo)) {
+        } else if (!(o instanceof NarayanaLRAInfo)) {
             return false;
         } else {
-            LRAInfo lraStatus = (LRAInfo)o;
+            NarayanaLRAInfo lraStatus = (NarayanaLRAInfo)o;
             return this.getLraId().equals(lraStatus.getLraId());
         }
     }
@@ -120,7 +118,7 @@ public class LRAInfoImpl implements LRAInfo {
 
     @Override
     public String toString() {
-        return "LRAInfoImpl{" +
+        return this.getClass().getSimpleName() + "{" +
                 "lraId='" + lraId + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", status='" + status + '\'' +

@@ -21,10 +21,10 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.participant.LRAParticipant;
 import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.net.URL;
 import java.util.Optional;
@@ -88,19 +88,19 @@ class ParticipantProxy {
         this.compensate = compensate;
     }
 
-    private CompensatorStatus getExpectedStatus() {
-        return compensate ? CompensatorStatus.Compensated : CompensatorStatus.Completed;
+    private ParticipantStatus getExpectedStatus() {
+        return compensate ? ParticipantStatus.Compensated : ParticipantStatus.Completed;
     }
 
-    private CompensatorStatus getCurrentStatus() {
-        return compensate ? CompensatorStatus.Compensating : CompensatorStatus.Completing;
+    private ParticipantStatus getCurrentStatus() {
+        return compensate ? ParticipantStatus.Compensating : ParticipantStatus.Completing;
     }
 
-    private CompensatorStatus getFailedStatus() {
-        return compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete;
+    private ParticipantStatus getFailedStatus() {
+        return compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
     }
 
-    Optional<CompensatorStatus> getStatus() throws InvalidLRAStateException {
+    Optional<ParticipantStatus> getStatus() throws InvalidLRAStateException {
         if (future == null) {
             return Optional.empty();
         }

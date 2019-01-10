@@ -108,8 +108,8 @@ class RecoveringLRA extends Transaction {
             }
 
             switch (getLRAStatus()) {
-                case Completed:
-                case Compensated:
+                case Closed:
+                case Cancelled:
                     getLraService().finished(this, false);
                     break;
                 default:
@@ -144,7 +144,6 @@ class RecoveringLRA extends Transaction {
     }
 
     private void moveTo(RecordList fromList, RecordList toList) {
-        RecordListIterator i = new RecordListIterator(fromList);
         AbstractRecord record;
 
         while ((record = fromList.getFront()) != null) {

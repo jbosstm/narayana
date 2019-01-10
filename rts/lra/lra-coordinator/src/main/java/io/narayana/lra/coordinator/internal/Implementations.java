@@ -36,8 +36,7 @@ import io.narayana.lra.coordinator.domain.model.LRARecord;
  */
 
 class LRACompensatorMap implements RecordTypeMap {
-    @SuppressWarnings("unchecked")
-    public Class getRecordClass() {
+    public Class<LRARecord> getRecordClass() {
         return LRARecord.class;
     }
 

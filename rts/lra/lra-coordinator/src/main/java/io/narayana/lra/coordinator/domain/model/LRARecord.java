@@ -31,7 +31,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.client.Current;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
@@ -83,7 +83,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private String compensatorData;
     private ScheduledFuture<?> scheduledAbort;
     private LRAService lraService;
-    private CompensatorStatus status;
+    private LRAStatus status;
     boolean accepted;
 
     public LRARecord() {
@@ -254,7 +254,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             scheduledAbort = null;
         }
 
-        if (CompensatorStatus.Compensating.equals(status)) {
+        if (LRAStatus.Cancelling.equals(status)) {
             compensate = true;
         }
 
@@ -264,16 +264,16 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             endPath = compensateURI; // we are going to ask the participant to compensate
-            status = CompensatorStatus.Compensating;
+            status = LRAStatus.Cancelling;
         } else {
             if (isCompelete() || completeURI == null) {
-                status = CompensatorStatus.Completed;
+                status = LRAStatus.Closed;
 
                 return TwoPhaseOutcome.FINISH_OK; // the participant has already completed
             }
 
             endPath = completeURI;  // we are going to ask the participant to complete
-            status = CompensatorStatus.Completing;
+            status = LRAStatus.Closing;
         }
 
         // NB trying to compensate when already completed is allowed (for nested LRAs)
@@ -350,9 +350,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         if (httpStatus == Response.Status.OK.getStatusCode() && responseData != null) {
             // see if any content contains a failed status
-            if (compensate && CompensatorStatus.FailedToCompensate.name().equals(responseData)) {
+            if (compensate && LRAStatus.FailedToCancel.name().equals(responseData)) {
                 return reportFailure(true, endPath.toExternalForm());
-            } else if (!compensate && CompensatorStatus.FailedToComplete.name().equals(responseData)) {
+            } else if (!compensate && LRAStatus.FailedToClose.name().equals(responseData)) {
                 return reportFailure(false, endPath.toExternalForm());
             }
         }
@@ -366,7 +366,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             if (compensate) {
-                status = CompensatorStatus.Compensating; // recovery will figure out the status via the status url
+                status = LRAStatus.Cancelling; // recovery will figure out the status via the status url
 
                 /*
                  * We are mapping compensate onto Abort. TwoPhaseCoordinator uses presumed abort
@@ -376,7 +376,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             }
 
-            status = CompensatorStatus.Completing; // recovery will figure out the status via the status url
+            status = LRAStatus.Closing; // recovery will figure out the status via the status url
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -389,14 +389,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private void updateStatus(boolean compensate) {
         if (compensate) {
-            status = accepted ? CompensatorStatus.Compensating : CompensatorStatus.Compensated;
+            status = accepted ? LRAStatus.Cancelling : LRAStatus.Cancelled;
         } else {
-            status = accepted ? CompensatorStatus.Completing : CompensatorStatus.Completed;
+            status = accepted ? LRAStatus.Closing : LRAStatus.Closed;
         }
     }
 
     private int reportFailure(boolean compensate, String endPath) {
-        status = compensate ? CompensatorStatus.FailedToCompensate : CompensatorStatus.FailedToComplete;
+        status = compensate ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose;
 
         LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
                 endPath, compensate ? COMPENSATE_REL : COMPLETE_REL);
@@ -419,7 +419,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             Transaction transaction = lraService.getTransaction(nestedLraId);
 
             if (transaction != null) {
-                CompensatorStatus cStatus = transaction.getLRAStatus();
+                LRAStatus cStatus = transaction.getLRAStatus();
 
                 if (cStatus == null) {
                     LRALogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
@@ -428,14 +428,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 }
 
                 switch (cStatus) {
-                    case Completed:
-                    case Compensated:
+                    case Closed:
+                    case Cancelled:
                         return TwoPhaseOutcome.FINISH_OK;
-                    case Completing:
-                    case Compensating:
+                    case Closing:
+                    case Cancelling:
                         return TwoPhaseOutcome.HEURISTIC_HAZARD;
-                    case FailedToCompensate:
-                    case FailedToComplete:
+                    case FailedToClose:
+                    case FailedToCancel:
                         return TwoPhaseOutcome.FINISH_ERROR;
                     default:
                         return TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -469,18 +469,18 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     // the participant is available again and has reported its status
                     String s = response.readEntity(String.class);
 
-                    status = CompensatorStatus.valueOf(s);
+                    status = LRAStatus.valueOf(s);
 
                     switch (status) {
-                        case Completed:
-                        case Compensated:
+                        case Closed:
+                        case Cancelled:
                             return TwoPhaseOutcome.FINISH_OK;
-                        case Completing:
-                        case Compensating:
+                        case Closing:
+                        case Cancelling:
                             // still in progress - make sure recovery keeps retrying it
                             return TwoPhaseOutcome.HEURISTIC_HAZARD;
-                        case FailedToCompensate:
-                        case FailedToComplete:
+                        case FailedToCancel:
+                        case FailedToClose:
                             // the participant could not finish - log a warning and forget
                             LRALogger.logger.warnf(
                                     "LRARecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
@@ -590,7 +590,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 httpStatus = Response.Status.BAD_REQUEST.getStatusCode();
             } else {
-                LRAStatus inVMStatus = lraService.endLRA(cId, isCompensate, true);
+                LRAStatusHolder inVMStatus = lraService.endLRA(cId, isCompensate, true);
 
                 httpStatus = inVMStatus.getHttpStatus();
 
@@ -613,11 +613,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private boolean isCompelete() {
-        return status != null && status == CompensatorStatus.Completed;
+        return status != null && status == LRAStatus.Closed;
     }
 
     private boolean isCompensated() {
-        return status != null && status == CompensatorStatus.Compensated;
+        return status != null && status == LRAStatus.Cancelled;
     }
 
     String getResponseData() {
@@ -658,7 +658,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 unpackStatus(os);
                 participantPath = os.unpackString();
                 compensatorData = os.unpackString();
-                accepted = status == CompensatorStatus.Completing || status == CompensatorStatus.Compensating;
+                accepted = status == LRAStatus.Closing || status == LRAStatus.Cancelling;
             } catch (IOException e) {
                 return false;
             }
@@ -677,7 +677,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private void unpackStatus(InputObjectState os) throws IOException {
-        status = os.unpackBoolean() ? CompensatorStatus.values()[os.unpackInt()] : null;
+        status = os.unpackBoolean() ? LRAStatus.values()[os.unpackInt()] : null;
     }
 
     private void packURL(OutputObjectState os, URL url) throws IOException {

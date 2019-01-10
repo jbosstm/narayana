@@ -24,19 +24,20 @@ package io.narayana.lra.coordinator.domain.service;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.NarayanaLRAInfo;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
 import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.internal.Implementations;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
-import io.narayana.lra.coordinator.domain.model.LRAStatus;
+import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
-import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
@@ -83,7 +84,7 @@ public class LRAService {
         return lras.get(lraId);
     }
 
-    public LRAInfo getLRA(URL lraId) {
+    public NarayanaLRAInfo getLRA(URL lraId) {
         Transaction lra = getTransaction(lraId);
         return lra.getLRAInfo();
     }
@@ -102,45 +103,45 @@ public class LRAService {
         return lock.tryLock() ? lock : null;
     }
 
-    public List<LRAStatus> getAll(String state) {
+    public List<LRAStatusHolder> getAll(String state) {
         if (state == null || state.isEmpty()) {
-            Set<LRAStatus> all = getAllActive();
+            Set<LRAStatusHolder> all = getAllActive();
 
             all.addAll(getAllRecovering());
 
             return new ArrayList<>(all);
         }
 
-        if (CompensatorStatus.Compensating.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
-        } else if (CompensatorStatus.Compensated.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensated).collect(toList());
-        } else if (CompensatorStatus.FailedToCompensate.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToCompensate).collect(toList());
-        } else if (CompensatorStatus.Completing.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompensating).collect(toList());
-        } else if (CompensatorStatus.Completed.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isCompleted).collect(toList());
-        } else if (CompensatorStatus.FailedToComplete.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatus::new).filter(LRAStatus::isFailedToComplete).collect(toList());
+        if (LRAStatus.Cancelling.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensating).collect(toList());
+        } else if (LRAStatus.Cancelled.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensated).collect(toList());
+        } else if (LRAStatus.FailedToCancel.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToCompensate).collect(toList());
+        } else if (LRAStatus.Closing.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensating).collect(toList());
+        } else if (LRAStatus.Closed.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompleted).collect(toList());
+        } else if (LRAStatus.FailedToClose.name().equals(state)) {
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToComplete).collect(toList());
         }
 
         return null;
     }
 
-    private Set<LRAStatus> getAllActive() {
-        return lras.values().stream().map(LRAStatus::new).collect(toSet());
+    private Set<LRAStatusHolder> getAllActive() {
+        return lras.values().stream().map(LRAStatusHolder::new).collect(toSet());
     }
 
-    public List<LRAStatus> getAllRecovering(boolean scan) {
+    public List<LRAStatusHolder> getAllRecovering(boolean scan) {
         if (scan) {
             RecoveryManager.manager().scan();
         }
 
-        return recoveringLRAs.values().stream().map(LRAStatus::new).collect(toList());
+        return recoveringLRAs.values().stream().map(LRAStatusHolder::new).collect(toList());
     }
 
-    public List<LRAStatus> getAllRecovering() {
+    public List<LRAStatusHolder> getAllRecovering() {
         return getAllRecovering(false);
     }
 
@@ -231,7 +232,7 @@ public class LRAService {
         }
     }
 
-    public LRAStatus endLRA(URL lraId, boolean compensate, boolean fromHierarchy) {
+    public LRAStatusHolder endLRA(URL lraId, boolean compensate, boolean fromHierarchy) {
         lraTrace(lraId, "end LRA");
 
         Transaction transaction = getTransaction(lraId);
@@ -256,7 +257,7 @@ public class LRAService {
             transaction.forgetAllParticipants(); // instruct compensators to clean up
         }
 
-        return new LRAStatus(transaction);
+        return new LRAStatusHolder(transaction);
     }
 
     public int leave(URL lraId, String compensatorUrl) {

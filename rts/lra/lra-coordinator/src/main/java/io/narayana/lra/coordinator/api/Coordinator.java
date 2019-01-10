@@ -23,9 +23,9 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.client.Current;
-import io.narayana.lra.client.LRAInfoImpl;
+import io.narayana.lra.client.NarayanaLRAInfo;
 import io.narayana.lra.client.NarayanaLRAClient;
-import io.narayana.lra.coordinator.domain.model.LRAStatus;
+import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -67,11 +67,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
-import org.eclipse.microprofile.lra.client.LRAInfo;
 
 import static io.narayana.lra.client.NarayanaLRAClient.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.client.NarayanaLRAClient.COORDINATOR_PATH_NAME;
@@ -100,11 +99,11 @@ public class Coordinator {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns all LRAs",
             notes = "Gets both active and recovering LRAs",
-            response = LRAInfo.class, responseContainer = "List")
-    public List<LRAInfo> getAllLRAs(
+            response = NarayanaLRAInfo.class, responseContainer = "List")
+    public List<NarayanaLRAInfo> getAllLRAs(
             @ApiParam(value = "Filter the returned LRAs to only those in the give state (see CompensatorStatus)", required = false)
             @QueryParam(STATUS_PARAM_NAME) @DefaultValue("") String state) {
-        List<LRAStatus> lras = lraService.getAll(state);
+        List<LRAStatusHolder> lras = lraService.getAll(state);
 
         if (lras == null) {
             LRALogger.i18NLogger.error_invalidQueryForGettingLraStatuses(state);
@@ -115,9 +114,9 @@ public class Coordinator {
         return lras.stream().map(Coordinator::convert).collect(toList());
     }
 
-    private static LRAInfo convert(LRAStatus lra) {
-        return new LRAInfoImpl(lra.getLraId(), lra.getClientId(),
-                lra.getStatus() == null ? "" : lra.getStatus().name(),
+    private static NarayanaLRAInfo convert(LRAStatusHolder lra) {
+        return new NarayanaLRAInfo(lra.getLraId(), lra.getClientId(),
+                lra.getStatus().name(),
                 lra.isComplete(), lra.isCompensated(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
                 lra.getStartTime(), lra.getFinishTime());
     }
@@ -139,7 +138,7 @@ public class Coordinator {
     public Response getLRAStatus(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        CompensatorStatus status = lraService.getTransaction(toURL(lraId)).getLRAStatus();
+        LRAStatus status = lraService.getTransaction(toURL(lraId)).getLRAStatus();
 
         if (status == null) {
             return Response.noContent().build(); // 204 means the LRA is still active
@@ -162,10 +161,10 @@ public class Coordinator {
             @ApiResponse(code = 200, message =
                     "The LRA exists. The status is reported in the content body.")
     })
-    public LRAInfo getLRAInfo(
+    public NarayanaLRAInfo getLRAInfo(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        LRAInfo lra = lraService.getLRA(toURL(lraId));
+        NarayanaLRAInfo lra = lraService.getLRA(toURL(lraId));
 
         return lra;
     }
@@ -296,11 +295,11 @@ public class Coordinator {
     public Response getNestedLRAStatus(@PathParam("NestedLraId")String nestedLraId) {
         if (!lraService.hasTransaction(nestedLraId)) {
             // it must have compensated TODO maybe it's better to keep nested LRAs in separate collection
-            return Response.ok(CompensatorStatus.Compensated.name()).build();
+            return Response.ok(LRAStatus.Cancelled.name()).build();
         }
 
         Transaction lra = lraService.getTransaction(toURL(nestedLraId));
-        CompensatorStatus status = lra.getLRAStatus();
+        LRAStatus status = lra.getLRAStatus();
 
         if (status == null || lra.getLRAStatus() == null) {
             LRALogger.i18NLogger.error_cannotGetStatusOfNestedLra(nestedLraId, lra.getId());
@@ -377,7 +376,7 @@ public class Coordinator {
 
 
     private Response endLRA(URL lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
-        LRAStatus status = lraService.endLRA(lraId, compensate, fromHierarchy);
+        LRAStatusHolder status = lraService.endLRA(lraId, compensate, fromHierarchy);
 
         return Response.ok(status.getStatus().name()).build();
 //        return compensatorData == null

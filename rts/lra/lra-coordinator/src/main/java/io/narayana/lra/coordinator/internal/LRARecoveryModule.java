@@ -169,7 +169,7 @@ public class LRARecoveryModule implements RecoveryModule {
         // get an NPE
         if (_transactionUidVector != null) {
             // Process the Vector of transaction Uids
-            Enumeration transactionUidEnum = _transactionUidVector.elements();
+            Enumeration<?> transactionUidEnum = _transactionUidVector.elements();
 
             while (transactionUidEnum.hasMoreElements()) {
                 Uid currentUid = (Uid) transactionUidEnum.nextElement();

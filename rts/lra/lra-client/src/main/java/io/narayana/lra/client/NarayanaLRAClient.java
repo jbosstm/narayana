@@ -46,7 +46,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -68,18 +67,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.lra.annotation.Compensate;
-import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.Leave;
 import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 import org.eclipse.microprofile.lra.client.LRAClient;
-import org.eclipse.microprofile.lra.client.LRAInfo;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the prefered mechanism is to use
@@ -443,7 +442,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return lra;
     }
 
-    public LRAInfo getLRAInfo(URL lraId) throws GenericLRAException {
+    public NarayanaLRAInfo getLRAInfo(URL lraId) throws GenericLRAException {
         Response response = null;
 
         lraTracef(lraId, "getLRAInfo for LRA %s", lraId.toExternalForm());
@@ -460,7 +459,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                         "missing entity body for getLRAInfo response", null);
             }
 
-            return response.readEntity(LRAInfo.class);
+            return response.readEntity(NarayanaLRAInfo.class);
         } finally {
             releaseConnection(response);
         }
@@ -588,18 +587,15 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
-    public List<LRAInfo> getAllLRAs() throws GenericLRAException {
+    public List<NarayanaLRAInfo> getAllLRAs() throws GenericLRAException {
         return getLRAs(null, null);
     }
 
-    @Override
-    public List<LRAInfo> getActiveLRAs() throws GenericLRAException {
+    public List<NarayanaLRAInfo> getActiveLRAs() throws GenericLRAException {
         return getLRAs(STATUS, "");
     }
 
-    @Override
-    public List<LRAInfo> getRecoveringLRAs() throws GenericLRAException {
+    public List<NarayanaLRAInfo> getRecoveringLRAs() throws GenericLRAException {
         Client rcClient = null;
 
         try {
@@ -613,7 +609,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                 throw new GenericLRAException(null, response.getStatus(), "missing entity body", null);
             }
 
-            List<LRAInfo> actions = new ArrayList<>();
+            List<NarayanaLRAInfo> actions = new ArrayList<>();
 
             String lras = response.readEntity(String.class);
 
@@ -623,7 +619,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             ja.forEach(jsonValue ->
                     actions.add(toLRAInfo(((JsonObject) jsonValue))));
 
-            actions.addAll(getLRAs(STATUS, CompensatorStatus.Compensating.name()));
+            actions.addAll(getLRAs(STATUS, ParticipantStatus.Compensating.name()));
 
             return actions;
         } finally {
@@ -633,7 +629,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    private List<LRAInfo> getLRAs(String queryName, String queryValue) {
+    private List<NarayanaLRAInfo> getLRAs(String queryName, String queryValue) {
         Response response = null;
 
         try {
@@ -649,7 +645,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                 throw new GenericLRAException(null, response.getStatus(), "missing entity body", null);
             }
 
-            List<LRAInfo> actions = new ArrayList<>();
+            List<NarayanaLRAInfo> actions = new ArrayList<>();
 
             String lras = response.readEntity(String.class);
 
@@ -665,12 +661,12 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    private LRAInfo toLRAInfo(JsonObject jo) {
+    private NarayanaLRAInfo toLRAInfo(JsonObject jo) {
         try {
             long startTime = jo.getInt("startTime");
             long fini = jo.getInt("finishTime");
 
-            return new LRAInfoImpl(
+            return new NarayanaLRAInfo(
                     jo.getString("lraId"),
                     jo.getString("clientId"),
                     jo.getString(STATUS),
@@ -683,7 +679,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                     fini);
         } catch (Exception e) {
             LRALogger.i18NLogger.warn_failedParsingStatusFromJson(jo, e);
-            return new LRAInfoImpl("JSON Parse Error: " + e.getMessage(),
+            return new NarayanaLRAInfo("JSON Parse Error: " + e.getMessage(),
                     e.getMessage(),
                     "Unknown",
                     false, false, false, false, false,
@@ -691,10 +687,9 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public Boolean isActiveLRA(URL lraId) throws GenericLRAException {
         try {
-            return !getStatus(lraId).isPresent(); // empty means the LRA has not entered the termination phase
+            return getStatus(lraId) == LRAStatus.Active;
         } catch (GenericLRAException e) {
             if (e.getStatusCode() == Response.Status.NOT_FOUND.getStatusCode()) {
                 return false;
@@ -704,14 +699,12 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         }
     }
 
-    @Override
     public Boolean isCompensatedLRA(URL lraId) throws GenericLRAException {
-        return isStatus(lraId, CompensatorStatus.Compensated);
+        return isStatus(lraId, LRAStatus.Cancelled);
     }
 
-    @Override
     public Boolean isCompletedLRA(URL lraId) throws GenericLRAException {
-        return isStatus(lraId, CompensatorStatus.Completed);
+        return isStatus(lraId, LRAStatus.Closed);
     }
 
     /**
@@ -829,20 +822,13 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return 1;
     }
 
-    private boolean isStatus(URL lraId, CompensatorStatus testStatus) {
-        Optional<CompensatorStatus> status = getStatus(lraId);
-
-        // return status.map(s -> s == testStatus).orElseGet(() -> testStatus == null);
-
-        if (!status.isPresent()) {
-            return testStatus == null;
-        }
-
-        return status.get() == testStatus;
+    private boolean isStatus(URL lraId, LRAStatus testStatus) {
+        LRAStatus status = getStatus(lraId);
+        return status == testStatus;
     }
 
     @Override
-    public Optional<CompensatorStatus> getStatus(URL lraId) throws GenericLRAException {
+    public LRAStatus getStatus(URL lraId) throws GenericLRAException {
         Response response = null;
 
         try {
@@ -870,7 +856,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             }
 
             if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
-                return Optional.empty();
+                return LRAStatus.Active;
             }
 
             if (response.getStatus() != Response.Status.OK.getStatusCode()) {
@@ -889,8 +875,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
             }
 
             // convert the returned String into a status
-            Optional<CompensatorStatus> status;
-
             try {
                 return fromString(response.readEntity(String.class));
             } catch (IllegalArgumentException e) {
@@ -911,12 +895,11 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
      * @return the corresponding status or empty
      * @throws IllegalArgumentException if the status is not a valid enum constant
      */
-    private static Optional<CompensatorStatus> fromString(String status) {
-        if (status != null) {
-            return Optional.of(CompensatorStatus.valueOf(status));
+    private static LRAStatus fromString(String status) {
+        if (status == null) {
+            throw new IllegalArgumentException("The status parameter is null");
         }
-
-        return Optional.empty();
+        return LRAStatus.valueOf(status);
     }
 
     private static StringBuilder makeLink(StringBuilder b, String uriPrefix, String key, String value) {
