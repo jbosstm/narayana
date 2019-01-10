@@ -24,3 +24,4 @@ tomcat/tomcat-deployment
 tomcat-deployment/
 narayana-tomcat/
 CosServices.cfg
+audit.log
