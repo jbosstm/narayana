@@ -427,7 +427,7 @@
 
     <!-- External dependencies versions -->
     <version.jnpserver>5.0.3.GA</version.jnpserver>
-    <version.com.github.spotbugs.spotbugs-maven-plugin>3.1.0-RC7</version.com.github.spotbugs.spotbugs-maven-plugin>
+    <version.com.github.spotbugs.spotbugs-maven-plugin>3.1.10</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.jandex>1.1.0.Final</version.org.jboss.jandex>
