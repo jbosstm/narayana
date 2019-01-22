@@ -363,6 +363,22 @@
                           <scope>provided</scope>
 		  </dependency>
 	  </dependencies>
+	  <build>
+		  <plugins>
+			  <plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<!--
+						    This test is disabled due to the JVM crash.
+						    And it is known JDK issue https://bugs.openjdk.java.net/browse/JDK-8210457
+						-->
+						<exclude>**/InboundCrashRecoveryTests.java</exclude>
+					</excludes>
+				</configuration>
+			  </plugin>
+		  </plugins>
+	  </build>
       </profile>
 		<profile>
 			<id>arq</id>
