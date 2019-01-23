@@ -33,9 +33,9 @@
         <version.junit>4.12</version.junit>
         <version.arquillian>1.1.12.Final</version.arquillian>
 
-        <!--version.microprofile.lra.api>1.0-20181217.132756-202</version.microprofile.lra.api-->
-        <version.microprofile.lra.api>1.0-20181217.132756-202</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-20181217.132757-202</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0-20190122.071206-242</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-SNAPSHOT</version.microprofile.lra.tck>
+        <!--<version.microprofile.lra.tck>1.0-20190122.071207-242</version.microprofile.lra.tck>-->
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -154,13 +154,6 @@
                         <version>${version.wildfly.swarm.checkstyle}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
         </plugins>
     </build>

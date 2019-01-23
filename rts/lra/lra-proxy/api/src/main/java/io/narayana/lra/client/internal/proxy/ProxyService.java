@@ -22,7 +22,6 @@
 package io.narayana.lra.client.internal.proxy;
 
 import org.eclipse.microprofile.lra.participant.LRAParticipant;
-import org.eclipse.microprofile.lra.participant.LRAParticipantDeserializer;
 import org.eclipse.microprofile.lra.participant.JoinLRAException;
 import org.eclipse.microprofile.lra.participant.LRAManagement;
 import org.eclipse.microprofile.lra.participant.TerminationException;
@@ -42,10 +41,8 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URI;
@@ -69,7 +66,6 @@ public class ProxyService implements LRAManagement {
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
 
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
-    private static List<LRAParticipantDeserializer> deserializers;
 
     private Client lcClient;
     private WebTarget lcTarget;
@@ -80,7 +76,6 @@ public class ProxyService implements LRAManagement {
     void init() {
         if (participants == null) { // TODO figure out why ProxyService is constructed twice
             participants = new ArrayList<>();
-            deserializers = new ArrayList<>();
         }
 
         int httpPort = Integer.getInteger("swarm.http.port", 8081);
@@ -194,14 +189,15 @@ public class ProxyService implements LRAManagement {
     }
 
     @Override
-    public String joinLRA(LRAParticipant participant, URL lraId)
+    public URL joinLRA(LRAParticipant participant, URL lraId)
             throws JoinLRAException {
         return joinLRA(participant, lraId, 0L, ChronoUnit.SECONDS);
     }
 
     @Override
-    public String joinLRA(LRAParticipant participant, URL lraId, Long timelimit, ChronoUnit unit)
+    public URL joinLRA(LRAParticipant participant, URL lraId, Long timelimit, ChronoUnit unit)
             throws JoinLRAException {
+        // TODO if lraId == null then register a join all nw LRAs
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
@@ -230,20 +226,10 @@ public class ProxyService implements LRAManagement {
                 throw new JoinLRAException(lraId, response.getStatus(), "Unable to join with this LRA", null);
             }
 
-            return response.readEntity(String.class);
+            return new URL(response.readEntity(String.class));
         } catch (Exception e) {
             throw new JoinLRAException(lraId, 0, "Exception whilst joining with this LRA", e);
         }
-    }
-
-    @Override
-    public void registerDeserializer(LRAParticipantDeserializer deserializer) {
-        deserializers.add(deserializer);
-    }
-
-    @Override
-    public void unregisterDeserializer(LRAParticipantDeserializer deserializer) {
-        deserializers.remove(deserializer);
     }
 
     private static Optional<String> serializeParticipant(final Serializable object) {
@@ -260,7 +246,8 @@ public class ProxyService implements LRAManagement {
     }
 
     private static Optional<LRAParticipant> deserializeParticipant(URL lraId, final String objectAsString) {
-        final byte[] data = Base64.getDecoder().decode(objectAsString);
+        return Optional.empty(); // TODO
+/*        final byte[] data = Base64.getDecoder().decode(objectAsString);
 
         try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
             return Optional.of((LRAParticipant) ois.readObject());
@@ -278,6 +265,6 @@ public class ProxyService implements LRAManagement {
                     e.getMessage());
 
             return Optional.empty();
-        }
+        }*/
     }
 }
