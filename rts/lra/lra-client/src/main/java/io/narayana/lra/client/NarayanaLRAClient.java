@@ -366,19 +366,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     }
 
     @Override
-    public URL startLRA(String clientID, Long timeout, ChronoUnit unit, Class<?> resourceClass, URI baseUri, String compensatorData) throws GenericLRAException {
-        URL lra = startLRA(clientID, timeout, unit);
-        String recoveryUrl = joinLRA(lra, resourceClass, baseUri, compensatorData);
-
-        try {
-            return new URL(recoveryUrl);
-        } catch (MalformedURLException e) {
-            throw new GenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                    "join " + lra + " returned an invalid recovery URL", e);
-        }
-    }
-
-    @Override
     public URL startLRA(String clientID, Long timeout, ChronoUnit unit) throws GenericLRAException {
         return startLRA(getCurrent(), clientID, timeout, unit);
     }
@@ -523,7 +510,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
      *
      * @throws GenericLRAException if the LRA coordinator failed to enlist the participant
      */
-    public String joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader,
+    public URL joinLRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader,
                                         String compensatorData) throws GenericLRAException {
         lraTracef(lraUrl, "joining LRA with participant link: %s", linkHeader);
         return enlistCompensator(lraUrl, timelimit, linkHeader, compensatorData);
@@ -533,7 +520,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return url == null ? null : url.toExternalForm();
     }
 
-    public String joinLRA(URL lraId, Long timelimit,
+    public URL joinLRA(URL lraId, Long timelimit,
                           URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
                           String compensatorData) throws GenericLRAException {
         return enlistCompensator(lraId, timelimit, "",
@@ -542,7 +529,8 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                 compensatorData);
     }
 
-    public String joinLRA(URL lraId, Class<?> resourceClass, URI baseUri,
+    @Override
+    public URL joinLRA(URL lraId, Class<?> resourceClass, URI baseUri,
                           String compensatorData) throws GenericLRAException {
         Map<String, String> terminateURIs = getTerminationUris(resourceClass, baseUri);
         String timeLimitStr = terminateURIs.get(NarayanaLRAClient.TIMELIMIT_PARAM_NAME);
@@ -945,7 +933,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return b.append(link);
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String uriPrefix,
+    private URL enlistCompensator(URL lraUrl, long timelimit, String uriPrefix,
                                      String compensateUrl, String completeUrl,
                                      String forgetUrl, String leaveUrl, String statusUrl,
                                      String compensatorData) {
@@ -972,10 +960,11 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
         return enlistCompensator(lraUrl, timelimit, linkHeaderValue.toString(), compensatorData);
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader, String compensatorData) {
+    private URL enlistCompensator(URL lraUrl, long timelimit, String linkHeader, String compensatorData) {
         // register with the coordinator
         // put the lra id in an http header
         Response response = null;
+        String responseEntity = null;
 
         if (timelimit < 0) {
             timelimit = 0L;
@@ -1004,7 +993,15 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                         "unable to register participant", null);
             }
 
-            return response.readEntity(String.class);
+            try {
+                responseEntity = response.readEntity(String.class).replaceAll("^\"|\"$", "");
+                return new URL(responseEntity);
+            } catch (MalformedURLException e) {
+                LRALogger.logger.infof("join %s returned an invalid recovery URL: %", lraUrl, responseEntity);
+                throw new GenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                        "join " + lraUrl + " returned an invalid recovery URL: " + responseEntity, e);
+            }
+
         } finally {
             releaseConnection(response);
         }

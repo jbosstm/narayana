@@ -24,11 +24,12 @@ package io.narayana.lra.proxy.test.model;
 import org.eclipse.microprofile.lra.annotation.CompensatorStatus;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Activity implements Serializable {
     public String id;
-    public String rcvUrl;
+    public URL rcvUrl;
     public String statusUrl;
     public CompensatorStatus status;
     public boolean registered;

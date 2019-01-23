@@ -281,7 +281,7 @@ public class LRAService {
         }
     }
 
-    public String joinLRA(URL lraId, Long timelimit,
+    public URL joinLRA(URL lraId, Long timelimit,
                    URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
                    String compensatorData) throws GenericLRAException {
         return lraClient.joinLRA(lraId, timelimit, compensateUrl, completeUrl, forgetUrl, leaveUrl, statusUrl, compensatorData);

@@ -129,7 +129,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         URL suspendedLRA = null;
         URL incommingLRA = null;
-        String recoveryUrl = null;
+        URL recoveryUrl = null;
         boolean nested;
         boolean isLongRunning = false;
         boolean enlist;
@@ -140,7 +140,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (transactional != null) {
             type = ((LRA) transactional).value();
-            isLongRunning = !((LRA) transactional).terminal();
+            isLongRunning = !((LRA) transactional).end();
             Response.Status.Family[] cancel0nFamily = ((LRA) transactional).cancelOnFamily();
             Response.Status[] cancel0n = ((LRA) transactional).cancelOn();
 
@@ -346,7 +346,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
                 }
 
-                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.replaceAll("^\"|\"$", ""));
+                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toExternalForm().replaceAll("^\"|\"$", ""));
             } else {
                 lraTrace(containerRequestContext, lraId,
                         "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no participant annotations");
