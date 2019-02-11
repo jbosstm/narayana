@@ -314,7 +314,7 @@
             <id>codeCoverage</id>
             <properties>
                 <server.jvm.args>
-                    ${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${jvm.args.debug} ${jvm.args.jacoco}
+                    ${jvm.args.other} ${jvm.args.memory} ${jvm.args.byteman} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}
                 </server.jvm.args>
             </properties>
             <build>

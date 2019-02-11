@@ -41,7 +41,7 @@
             -Djboss.bind.address.unsecure=[::1] -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
         <server.jvm.args>
-            ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
+            ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
     </properties>
 
@@ -352,7 +352,7 @@
             <properties>
                 <server.jvm.args>
                     ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug}
-                    ${jvm.args.jacoco}
+                    ${jvm.args.jacoco} ${jvm.args.modular}
                 </server.jvm.args>
             </properties>
         </profile>
