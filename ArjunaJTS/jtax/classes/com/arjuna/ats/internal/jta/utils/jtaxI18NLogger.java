@@ -35,7 +35,6 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
@@ -282,22 +281,22 @@ public interface jtaxI18NLogger {
 	@LogMessage(level = WARN)
 	void warn_could_not_enlist_xar(XAResource xar, Object[] params, @Cause() Exception e1);
 
-	@Message(id = 24062, value = "ORB '{0}' occured on one phase commit for xid {1}", format = MESSAGE_FORMAT)
+	@Message(id = 24062, value = "ORB ''{0}'' occured on one phase commit for xid {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_jtax_resources_jts_orbspecific_cant_commit_onephase(Xid xid, Class<? extends Throwable> corbaException, @Cause() Throwable e);
 	
-	@Message(id = 24063, value = "Can't save state of xid {0}", format = MESSAGE_FORMAT)
+	@Message(id = 24063, value = "Cannot save state of xid {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_jtax_resources_jts_cant_save_state(Xid xid, @Cause() Throwable e);
 
 	@Message(id = 24064, value = "The current transaction {0} does not match this transaction", format = MESSAGE_FORMAT)
 	public String warn_get_jtax_transaction_jts_wrongstatetx(AtomicTransaction txn, @Cause() Exception e);
 
-	@Message(id = 24065, value = "Can't save state of output object state {0} of object type {1}", format = MESSAGE_FORMAT)
+	@Message(id = 24065, value = "Cannot save state of output object state {0} of object type {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_cant_save_state(OutputObjectState os, int ot, @Cause() IOException e);
 
-	@Message(id = 24066, value = "Can't restore state of input object state {0} of object type {1}", format = MESSAGE_FORMAT)
+	@Message(id = 24066, value = "Cannot restore state of input object state {0} of object type {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_cant_restore_state(InputObjectState os, int ot, @Cause() IOException ex);
 

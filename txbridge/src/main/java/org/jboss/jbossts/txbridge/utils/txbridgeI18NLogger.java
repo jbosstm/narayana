@@ -116,7 +116,7 @@ public interface txbridgeI18NLogger
     @LogMessage(level = ERROR)
     public void error_obm_unabletoenlist(@Cause() Throwable arg0);
 
-    @Message(id = 33018, value = "Error on prepareVolatile of bridge wrapper '{0}'", format = MESSAGE_FORMAT)
+    @Message(id = 33018, value = "Error on prepareVolatile of bridge wrapper {0}", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
     public void error_bridge_wrapper_prepare_volatile(BridgeWrapper bridgeWrapper);
 

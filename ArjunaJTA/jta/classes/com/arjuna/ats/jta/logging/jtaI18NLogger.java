@@ -274,7 +274,7 @@ public interface jtaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_transaction_arjunacore_delistresource(String arg0, String arg1, @Cause() Throwable arg2);
 
-//	@Message(id = 16057, value = "Can't enlist the resource because the transaction is marked for rollback", format = MESSAGE_FORMAT)
+//	@Message(id = 16057, value = "Cannot enlist the resource because the transaction is marked for rollback", format = MESSAGE_FORMAT)
 //	@LogMessage(level = WARN)
 //	public void warn_transaction_arjunacore_elistwhenmarkedrollback();
 
@@ -364,7 +364,7 @@ public interface jtaI18NLogger {
 	@Message(id = 16082, value = "Synchronizations are not allowed! Transaction status is", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_syncsnotallowed();
 
-	@Message(id = 16083, value = "Can't register synchronization because the transaction is in aborted state", format = MESSAGE_FORMAT)
+	@Message(id = 16083, value = "Cannot register synchronization because the transaction is in aborted state", format = MESSAGE_FORMAT)
 	public String get_transaction_arjunacore_syncwhenaborted();
 
 	@Message(id = 16084, value = "The transaction implementation threw a SystemException", format = MESSAGE_FORMAT)
@@ -538,19 +538,19 @@ public interface jtaI18NLogger {
 	@LogMessage(level = FATAL)
 	void warn_could_not_recover_subordinate(Uid uid, @Cause() Exception e);
 
-	@Message(id = 16132, value = "Can't packt into output object state {0}", format = MESSAGE_FORMAT)
+	@Message(id = 16132, value = "Cannot packt into output object state {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_cant_pack_into_output_object_state(OutputObjectState os, @Cause() Exception e);
 
-	@Message(id = 16133, value = "Can't create a new instance of Xid of uid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
+	@Message(id = 16133, value = "Cannot create a new instance of Xid of uid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_cant_create_xid_of_branch(Uid id, Boolean branch, Integer eisName, @Cause() Exception e);
 
-	@Message(id = 16134, value = "Can't create a new instance of Xid of base xid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
+	@Message(id = 16134, value = "Cannot create a new instance of Xid of base xid {0}, is branch: {1}, eisname: {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_cant_create_xid_of_xid(Xid id, Boolean branch, Integer eisName, @Cause() Exception e);
 
-	@Message(id = 16135, value = "Can't read object {0} store for xid {1}", format = MESSAGE_FORMAT)
+	@Message(id = 16135, value = "Cannot read object {0} store for xid {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_reading_from_object_store(RecoveryStore recoveryStore, Xid xid, @Cause() Exception e);
 
@@ -573,10 +573,10 @@ public interface jtaI18NLogger {
     @Message(id = 16140, value = "No subordinate transaction to  drive for commit with xid: {0}", format = MESSAGE_FORMAT)
     String get_no_subordinate_txn_for_commit(Xid xid);
 
-    @Message(id = 16141, value = "Error committing transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    @Message(id = 16141, value = "Error committing transaction ''{0}'' for xid: {1}", format = MESSAGE_FORMAT)
     String get_error_committing_transaction(Transaction txn, Xid xid);
 
-    @Message(id = 16142, value = "Not actived transaction '{0}' for xid: {1}", format = MESSAGE_FORMAT)
+    @Message(id = 16142, value = "Not actived transaction ''{0}'' for xid: {1}", format = MESSAGE_FORMAT)
     String get_not_activated_transaction(Transaction txn, Xid xid);
 
     /*

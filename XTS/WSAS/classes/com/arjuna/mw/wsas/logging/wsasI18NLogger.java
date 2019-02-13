@@ -80,7 +80,7 @@ public interface wsasI18NLogger {
 	@Message(id = 41011, value = "State incompatible to start activity:", format = MESSAGE_FORMAT)
 	public String get_activity_ActivityImple_1();
 
-	@Message(id = 41012, value = "Cannot remove child activity from parent as parent's status is:", format = MESSAGE_FORMAT)
+	@Message(id = 41012, value = "Cannot remove child activity from parent as parent''s status is:", format = MESSAGE_FORMAT)
 	public String get_activity_ActivityImple_10();
 
 	@Message(id = 41013, value = "Activity cannot complete as it has active children:", format = MESSAGE_FORMAT)
@@ -98,7 +98,7 @@ public interface wsasI18NLogger {
 	@Message(id = 41017, value = "Cannot enlist null child!", format = MESSAGE_FORMAT)
 	public String get_activity_ActivityImple_6();
 
-	@Message(id = 41018, value = "Cannot enlist child activity with parent as parent's status is:", format = MESSAGE_FORMAT)
+	@Message(id = 41018, value = "Cannot enlist child activity with parent as parent''s status is:", format = MESSAGE_FORMAT)
 	public String get_activity_ActivityImple_7();
 
 	@Message(id = 41019, value = "Cannot remove null child!", format = MESSAGE_FORMAT)
