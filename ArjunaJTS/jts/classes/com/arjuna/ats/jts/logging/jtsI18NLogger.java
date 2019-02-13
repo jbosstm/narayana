@@ -33,7 +33,6 @@ import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
-import com.arjuna.ArjunaOTS.ArjunaSubtranAwareResource;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -1079,7 +1078,7 @@ public interface jtsI18NLogger {
 	@LogMessage(level = INFO)
 	public void info_rollback_aborted_transaction(String arg0);
 
-	@Message(id = 22264, value = "can't read subordinate uid from object store {0} on input object state {1}", format = MESSAGE_FORMAT)
+	@Message(id = 22264, value = "cannot read subordinate uid from object store {0} on input object state {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
 	public void info_fail_to_read_subordinate_uid(RecoveryStore recstore, InputObjectState states, @Cause() Exception e);
 

@@ -564,7 +564,7 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_coordinator_TxControl_2(String arg0);
 
-	@Message(id = 12132, value = "Supplied name of node contains reserved character '-'. Using {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12132, value = "Supplied name of node contains reserved character ''-''. Using {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_coordinator_TxControl_3(String arg0);
 
@@ -882,15 +882,15 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_common_ClassloadingUtility_3(String arg0, String arg1, @Cause() Throwable arg2);
 
-	@Message(id = 12218, value = "can't create new instance of {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12218, value = "cannot create new instance of {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_common_ClassloadingUtility_4(String arg0, @Cause() Throwable arg1);
 
-	@Message(id = 12219, value = "can't access {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12219, value = "cannot access {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_common_ClassloadingUtility_5(String arg0, @Cause() Throwable arg1);
 
-	@Message(id = 12220, value = "can't initialize from string {0}", format = MESSAGE_FORMAT)
+	@Message(id = 12220, value = "cannot initialize from string {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_common_ClassloadingUtility_6(String arg0, @Cause() Throwable arg1);
 
@@ -1330,11 +1330,11 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_TransactionStatusConnector_1();
 
-	@Message(id = 12328, value = "Connection lost to TransactionStatusManagers' process", format = MESSAGE_FORMAT)
+	@Message(id = 12328, value = "Connection lost to TransactionStatusManagers'' process", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_recovery_TransactionStatusConnector_2();
 
-	@Message(id = 12329, value = "Connection lost to TransactionStatusManagers' process", format = MESSAGE_FORMAT)
+	@Message(id = 12329, value = "Connection lost to TransactionStatusManagers'' process", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	public void warn_recovery_TransactionStatusConnector_3();
 

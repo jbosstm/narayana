@@ -282,7 +282,7 @@ public interface wstxI18NLogger {
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Volatile2PC_prepare_is_null();
 
-    @Message(id = 45065, value = "Can't prepare participant {0}.", format = MESSAGE_FORMAT)
+    @Message(id = 45065, value = "Cannot prepare participant {0}.", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Volatile2PC_prepare(Volatile2PCParticipant participant, @Cause() Throwable t);
 
@@ -294,7 +294,7 @@ public interface wstxI18NLogger {
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Volatile2PC_cancel_is_null();
 
-    @Message(id = 45068, value = "can't commit durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @Message(id = 45068, value = "cannot commit durable participant {0} : {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Durable2PC_confirm (
             String id, Durable2PCParticipant participant, @Cause() Throwable t);
@@ -303,12 +303,12 @@ public interface wstxI18NLogger {
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Durable2PC_confirm_is_null(String id);
 
-    @Message(id = 45070, value = "can't prepare durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @Message(id = 45070, value = "cannot prepare durable participant {0} : {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = ERROR)
     public void error_wst_at_participants_Durable2PC_prepare (
             String id, Durable2PCParticipant participant, @Cause() Throwable t);
 
-    @Message(id = 45071, value = "can't commit one phase durable participant {0} : {1}", format = MESSAGE_FORMAT)
+    @Message(id = 45071, value = "cannot commit one phase durable participant {0} : {1}", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_wst_at_participants_Durable2PC_commit_one_phase (
             String id, Durable2PCParticipant participant, @Cause() Throwable t);

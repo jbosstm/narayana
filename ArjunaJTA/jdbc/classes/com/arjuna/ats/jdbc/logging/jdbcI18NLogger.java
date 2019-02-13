@@ -136,7 +136,7 @@ public interface jdbcI18NLogger {
 	@Message(id = 17025, value = "Could not resolve JNDI XADataSource", format = MESSAGE_FORMAT)
 	public String get_jndierror();
 
-//	@Message(id = 17026, value = "Can't load ConnectionImple class {0}", format = MESSAGE_FORMAT)
+//	@Message(id = 17026, value = "Cannot load ConnectionImple class {0}", format = MESSAGE_FORMAT)
 //	public String get_nojdbcimple(String arg0);
 
 	@Message(id = 17027, value = "An exception occurred during initialisation.", format = MESSAGE_FORMAT)
@@ -185,15 +185,15 @@ public interface jdbcI18NLogger {
 	@Message(id = 17039, value = "BasicXARecovery did not have enough connection configuration", format = MESSAGE_FORMAT)
 	String insufficientConnectionInformation();
 
-	@Message(id = 17040, value = "Cannot create JDBCXARecovery datasource of jndi name '{0}", format = MESSAGE_FORMAT)
+	@Message(id = 17040, value = "Cannot create JDBCXARecovery datasource of jndi name ''{0}''", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
 	void error_cannot_create_datasource(String jndiName, @Cause Throwable arg0);
 
-	@Message(id = 17041, value = "Cannot create JDBCXARecovery connection of datasource '{0}', user: {1}, password: {2}", format = MESSAGE_FORMAT)
+	@Message(id = 17041, value = "Cannot create JDBCXARecovery connection of datasource ''{0}'', user: {1}, password: {2}", format = MESSAGE_FORMAT)
 	@LogMessage(level = ERROR)
 	void error_cannot_create_connection(XADataSource ds, String user, String password, @Cause Throwable arg0);
 
-	@Message(id = 17042, value = "Could not resolve JNDI '{0}' of XADataSource from jndi properties '{1}'", format = MESSAGE_FORMAT)
+	@Message(id = 17042, value = "Could not resolve JNDI ''{0}'' of XADataSource from jndi properties ''{1}''", format = MESSAGE_FORMAT)
 	String get_cant_resolve_ds_jndi_lookup(String jndi, Hashtable jndiProperties);
 
     /*

@@ -264,13 +264,13 @@ public interface wscI18NLogger {
 	@Message(id = 42071, value = "Callback execution failed", format = MESSAGE_FORMAT)
 	public String get_ActivationCoordinator_1();
 
-	@Message(id = 42072, value = "Callback wasn't triggered", format = MESSAGE_FORMAT)
+	@Message(id = 42072, value = "Callback was not triggered", format = MESSAGE_FORMAT)
 	public String get_ActivationCoordinator_2();
 
 	@Message(id = 42073, value = "Callback execution failed", format = MESSAGE_FORMAT)
 	public String get_RegistrationCoordinator_1();
 
-	@Message(id = 42074, value = "Callback wasn't triggered", format = MESSAGE_FORMAT)
+	@Message(id = 42074, value = "Callback was not triggered", format = MESSAGE_FORMAT)
 	public String get_RegistrationCoordinator_2();
 
 	@Message(id = 42075, value = "Invalid create coordination context parameters", format = MESSAGE_FORMAT)
