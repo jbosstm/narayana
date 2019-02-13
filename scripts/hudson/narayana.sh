@@ -216,10 +216,12 @@ function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then echo $1; return; fi
 
+    [ "x$jdk" != "x" ] && local JDK_VERSION=", on $jdk"
+
     PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
-        JSON="{ \"body\": \"$1\" }"
+        JSON="{ \"body\": \"${1}${JDK_VERSION}\" }"
         curl -d "$JSON" -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
     else
         echo "Not a pull request, so not commenting"
