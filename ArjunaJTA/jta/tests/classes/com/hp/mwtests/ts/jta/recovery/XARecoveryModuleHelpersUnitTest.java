@@ -35,7 +35,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.lang.reflect.Field;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -86,9 +85,9 @@ public class XARecoveryModuleHelpersUnitTest
             }
         }.start();
 
-        Future<String> future = pool.submit(new Callable<String>() {
+        Future<?> future = pool.submit(new Runnable() {
             @Override
-            public String call() throws Exception {
+            public void run() {
                 final XAResourceRecoveryHelper xaResourceRecoveryHelper = new XAResourceRecoveryHelper() {
                     @Override
                     public boolean initialise(String p) throws Exception { return true; }
@@ -97,29 +96,30 @@ public class XARecoveryModuleHelpersUnitTest
                     public XAResource[] getXAResources() throws Exception { return new XAResource[0]; }
                 };
 
-                return addHelper(xaRecoveryModule, xaResourceRecoveryHelper, 3);
+                addAndAssertTimelyXAResourceRecoveryHelperRemoval3(xaResourceRecoveryHelper, xaRecoveryModule);
             }
         });
 
-        String errMsg = future.get();
-        assertNull(errMsg, errMsg);
+        // waiting for the thread to be finished
+        future.get();
     }
 
-    private String addHelper(XARecoveryModule xaRecoveryModule, XAResourceRecoveryHelper xaResourceRecoveryHelper, int expectedState) {
-        if (getScanState(xaRecoveryModule) != expectedState)
-            return "Wrong state for addHelper in pass 2a";
+    // this method is used in the BMUnit 'recovery-helper' script
+    private void addAndAssertTimelyXAResourceRecoveryHelperRemoval3(XAResourceRecoveryHelper xaResourceRecoveryHelper, XARecoveryModule xaRecoveryModule) {
+        assertEquals(String.format("Before adding recovery helper '%s' to module '%s' is expected the state to be 'SECOND_PASS'",
+                xaResourceRecoveryHelper, xaRecoveryModule), 3, getScanState(xaRecoveryModule));
 
         xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
 
-        if (getScanState(xaRecoveryModule) != expectedState)
-            return "Wrong state for addHelper in pass 2b";
+        assertEquals(String.format("After adding recovery helper '%s' to module '%s' is expected the state to be 'SECOND_PASS'",
+                xaResourceRecoveryHelper, xaRecoveryModule),
+                3, getScanState(xaRecoveryModule));
 
         xaRecoveryModule.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
 
-        if (getScanState(xaRecoveryModule) != expectedState)
-            return "Wrong state for addHelper in pass 2c";
-
-        return null;
+        assertEquals(String.format("After removing recovery helper '%s' to module '%s' is expected the state still to be 'IDLE'",
+                xaResourceRecoveryHelper, xaRecoveryModule),
+                0, getScanState(xaRecoveryModule));
     }
 
     private void testTimelyXAResourceRecoveryHelperRemoval(final boolean somethingToRecover) throws Exception {

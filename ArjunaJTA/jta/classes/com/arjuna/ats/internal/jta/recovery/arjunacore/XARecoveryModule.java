@@ -49,7 +49,6 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
@@ -99,38 +98,51 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         _xaResourceRecoveryHelpers.add(xaResourceRecoveryHelper);
     }
 
-    public void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
-        synchronized (scanState) {
-            // the first pass collects xa resources from recovery helpers - wait for it to finish
-        	// we can't just wait for BETWEEN_PHASES or even SECOND_PASS because its possible
-        	// that we would miss seeing those states when there is contention
-            waitForNotScanState(ScanStates.FIRST_PASS);
-            
-            if (!getScanState().equals(ScanStates.IDLE)) {
-                /*
-                 * check whether any resources found in the first pass were provided by
-                 * the target xaResourceRecoveryHelper and if so then we need to wait for second pass
-                 * of the scanner to finish
-                 */
-                if (isHelperInUse(xaResourceRecoveryHelper))
+    public synchronized void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
+        switch (getScanState()) {
+            case FIRST_PASS:
+                waitForNotScanState(ScanStates.FIRST_PASS);
+                this.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+                return;
+            case SECOND_PASS:
+                if (isHelperInUse(xaResourceRecoveryHelper)) {
                     waitForScanState(ScanStates.IDLE);
-                else if (getScanState().equals(ScanStates.BETWEEN_PASSES)) {
-					synchronized (this) { // Because we need to remove the _resources
-						XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
-						if (xaResources != null) {
-							for (XAResource xar : xaResources) {
-								xaRecoverySecondPass(xar);
-								_resources.remove(xar);
-							}
-						} else {
-							System.out.println("Was null");
-						}
-					}
-				}
-            }
+                    // we are idle now and we can reiterate the call
+                    this.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+                    return;
+                }
+                // although in the middle of the second pass we know the XAResources
+                //   are not originated from the helper, we are safe to remove them
+                break;
+            case BETWEEN_PASSES:
+                // if we are in the between passes we still be sure the XAResources
+                //  are not originated from the helper we are going to remove
+                if (isHelperInUse(xaResourceRecoveryHelper)) {
+                    waitForScanState(ScanStates.IDLE);
+                    // we are idle now and we can reiterate the call
+                    this.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+                    return;
+                }
 
-            _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
+                // XAResources managed by "the recovery helper to be removed" are not active
+                //   we can finish them by simulating the second pass recovery, then removing the helper
+                XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
+                if (xaResources != null) {
+                    for (XAResource xar : xaResources) {
+                        xaRecoverySecondPass(xar);
+                        _resources.remove(xar);
+                    }
+                } else {
+                    jtaLogger.logger.debugf("nothing to remove - xa resources of recovery helper '%s' were null",
+                            xaResourceRecoveryHelper);
+                }
+                break;
+            case IDLE:
+                // the periodic recovery is sleeping, we can remove helper safely
+                break;
         }
+
+        _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
     }
 
     public void addXAResourceOrphanFilter(XAResourceOrphanFilter xaResourceOrphanFilter) {
@@ -170,7 +182,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			endState = ScanStates.BETWEEN_PASSES; // Ensure if originally we are between periodic recovery scans we continue in that state and leave XAResource in STARTRSCAN
 		}
 
-		setScanState(ScanStates.FIRST_PASS); // synchronized uses a reentrant lock
+		setScanState(ScanStates.FIRST_PASS);
 
         if(jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debugv("{0} - first pass", _logName);
@@ -1057,24 +1069,24 @@ public class XARecoveryModule implements ExtendedRecoveryModule
     private boolean waitForScanState(ScanStates state) {
         try {
             do {
-                scanState.wait();
+                this.wait();
             } while (!getScanState().equals(state));
 
             return true;
         } catch (InterruptedException e) {
-            tsLogger.logger.warn("problem waiting for scanLock whilst in state " + state.name(), e);
+            jtaLogger.i18NLogger.warn_intteruptedExceptionOnWaitingXARecoveryModuleLock(this, state.name(), e);
             return false;
         }
     }
     private boolean waitForNotScanState(ScanStates state) {
         try {
 			while (getScanState().equals(state)) {
-				scanState.wait();
+				this.wait();
 			} 
 
             return true;
         } catch (InterruptedException e) {
-            tsLogger.logger.warn("problem waiting for scanLock whilst in state " + state.name(), e);
+            jtaLogger.i18NLogger.warn_intteruptedExceptionOnWaitingXARecoveryModuleLock(this, state.name(), e);
             return false;
         }
     }
@@ -1083,12 +1095,10 @@ public class XARecoveryModule implements ExtendedRecoveryModule
      * Update the status of the scanner
      * @param state the new state
      */
-    private void setScanState(ScanStates state) {
-        synchronized (scanState) {
-            tsLogger.logger.debugf("XARecoveryModule state change %s->%s%n", getScanState(), state);
-            scanState.set(state.ordinal());
-            scanState.notifyAll();
-        }
+    private synchronized void setScanState(ScanStates state) {
+        jtaLogger.logger.debugf("XARecoveryModule state change %s->%s%n", getScanState(), state);
+        scanState.set(state.ordinal());
+        this.notifyAll();
     }
 
     private ScanStates getScanState() {
@@ -1120,6 +1130,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         BETWEEN_PASSES,
         SECOND_PASS
     }
+
     private AtomicInteger scanState = new AtomicInteger(ScanStates.IDLE.ordinal());
 
 	private final List<XAResourceRecovery> _xaRecoverers;

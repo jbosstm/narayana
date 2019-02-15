@@ -28,6 +28,7 @@ public class TestXAResource implements XAResource {
 	private Xid xid;
 	private int commitCount;
 	private int rollbackCount;
+	private int recoveryCount;
 
 	public TestXAResource(Xid xid) {
 		this.xid = xid;
@@ -37,6 +38,7 @@ public class TestXAResource implements XAResource {
 	}
 
 	public Xid[] recover(int flag) throws XAException {
+		recoveryCount++;
 		return new Xid[] { xid };
 	}
 
@@ -88,6 +90,10 @@ public class TestXAResource implements XAResource {
 
 	public int rollbackCount() {
 		return rollbackCount;
+	}
+
+	public int recoveryCount() {
+		return recoveryCount;
 	}
 
 }
