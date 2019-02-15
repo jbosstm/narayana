@@ -14,7 +14,7 @@ ENDRULE
 # pause the test until bottomUpRecovery is triggered
 RULE Recovery Helper await rendezvous
 CLASS com.hp.mwtests.ts.jta.recovery.XARecoveryModuleHelpersUnitTest
-METHOD addHelper
+METHOD addAndAssertTimelyXAResourceRecoveryHelperRemoval3
 AT ENTRY
 IF TRUE
 DO debug("Recovery Helper: await rendezvous"),

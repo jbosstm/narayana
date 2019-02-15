@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 
 /**
  * i18n log messages for the jta module.
@@ -578,6 +579,10 @@ public interface jtaI18NLogger {
 
     @Message(id = 16142, value = "Not actived transaction ''{0}'' for xid: {1}", format = MESSAGE_FORMAT)
     String get_not_activated_transaction(Transaction txn, Xid xid);
+
+    @Message(id = 16143, value = "Problem during waiting for lock '{0}' whilst in state {1}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_intteruptedExceptionOnWaitingXARecoveryModuleLock(XARecoveryModule recModule, String state, @Cause() InterruptedException arg0);
 
     /*
         Allocate new messages directly above this notice.

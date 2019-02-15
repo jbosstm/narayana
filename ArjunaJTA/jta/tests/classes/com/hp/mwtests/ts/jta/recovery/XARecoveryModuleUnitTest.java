@@ -36,6 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -43,6 +44,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -95,13 +102,11 @@ public class XARecoveryModuleUnitTest
         // Make sure the file doesn't exist
         assertFalse(new File("XARR.txt").exists());
 
-        ArrayList<String> r = new ArrayList<String>();
-
         AtomicAction aa = new AtomicAction();
         aa.begin();
         assertEquals(AddOutcome.AR_ADDED, aa.add(new XAResourceRecord(null, new XARRTestResource(), new XidImple(aa), null)));
 
-        Class c = BasicAction.class;
+        Class<BasicAction> c = BasicAction.class;
         Method method = c.getDeclaredMethod("prepare", boolean.class);
         method.setAccessible(true);
         int result = (Integer) method.invoke(aa, new Object[] { true });
@@ -110,13 +115,8 @@ public class XARecoveryModuleUnitTest
         // Make sure the file exists
         assertTrue(new File("XARR.txt").exists());
 
-//        AtomicActionRecoveryModule aaRecoveryModule = new AtomicActionRecoveryModule();
-//        aaRecoveryModule.periodicWorkFirstPass();
-//        aaRecoveryModule.periodicWorkSecondPass();
-
         RecordTypeManager.manager().add(new RecordTypeMap() {
-                @SuppressWarnings("unchecked")
-                public Class getRecordClass ()
+                public Class<XAResourceRecord> getRecordClass ()
                 {
                     return XAResourceRecord.class;
                 }
@@ -189,7 +189,7 @@ public class XARecoveryModuleUnitTest
     public void testFailures () throws Exception
     {
         XARecoveryModule xarm = new XARecoveryModule();       
-        Class[] parameterTypes = new Class[2];
+        Class<?>[] parameterTypes = new Class[2];
         Uid u = new Uid();
         Xid x = new XidImple();
         
@@ -240,24 +240,84 @@ public class XARecoveryModuleUnitTest
     @Test
     public void testXAResourceRecoveryHelperRegistration() {
 
+        TestXAResource testXAResource = new TestXAResource(new XidImple());
         XARecoveryModule xaRecoveryModule = new XARecoveryModule();
-        XAResourceRecoveryHelper xaResourceRecoveryHelper = new DummyXAResourceRecoveryHelper();
+        XAResourceRecoveryHelper xaResourceRecoveryHelper
+            = new RegistrationTestXAResourceRecoveryHelper().set(testXAResource);
 
         xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+        xaRecoveryModule.periodicWorkFirstPass();
+        xaRecoveryModule.periodicWorkSecondPass();
+        assertEquals("XAResource.recover() has to be called once for each pass, "
+                + "the resource was provided by xa resource recovery helper",
+                2, testXAResource.recoveryCount());
+
         xaRecoveryModule.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+        xaRecoveryModule.periodicWorkFirstPass();
+        xaRecoveryModule.periodicWorkSecondPass();
+        assertEquals("Recovery helper should be removed and the test xa resource should not be provided",
+                2, testXAResource.recoveryCount());
+    }
+    
+    @Test
+    public void testXAResourceRecoveryHelperDeregisterLocking() throws InterruptedException, ExecutionException {
+
+        Xid testXid = new XidImple();
+        TestXAResource testXAResource = new TestXAResource(testXid);
+        XAResourceRecord recoveryRecord = new XAResourceRecord(null, testXAResource, testXid, null);
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        XAResourceRecoveryHelper xaResourceRecoveryHelper
+            = new RegistrationTestXAResourceRecoveryHelper().set(testXAResource);
+
+        // registration of the recovery helper to setup the testXAResource during first pass
+        xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+
+        // start with recovery and going to state ScanState.BETWEEN_PASSES 
+        xaRecoveryModule.periodicWorkFirstPass();
+
+        // as we get the XAResource to further use the XARecoveryModule.isHelperInUse
+        //   should returning false during removing xarecovery helper
+        XAResource newXAResource = xaRecoveryModule.getNewXAResource(recoveryRecord);
+        assertEquals("Expecting to get the resource registered by helper because the first pass was run just now",
+                testXAResource, newXAResource);
+
+        // simulating two processes - periodic recovery and other stopping TM processing
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Future<?> futureRemove = executor
+                .submit(() -> xaRecoveryModule.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper));
+        Future<?> futureRecovery = executor
+                .submit(() -> xaRecoveryModule.periodicWorkSecondPass());
+        try {
+            futureRemove.get(60, TimeUnit.SECONDS);
+            futureRecovery.get(60, TimeUnit.SECONDS);
+        } catch (TimeoutException timeoutE) {
+            executor.shutdownNow(); // Cancel currently executing tasks
+            fail("Remove and recovery calls were not finished. "
+                    + "They are potentionally (dead)locking each other.");
+        }
     }
 
-    class DummyXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
+    private class RegistrationTestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
+        private XAResource[] xaResourceToReturn;
+
         @Override
         public boolean initialise(String p) throws Exception
         {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            return false;
         }
 
         @Override
         public XAResource[] getXAResources() throws Exception
         {
-            return new XAResource[0];  //To change body of implemented methods use File | Settings | File Templates.
+            return xaResourceToReturn;
+        }
+
+        public RegistrationTestXAResourceRecoveryHelper set(XAResource... xaResources) {
+            if(xaResources == null) {
+                xaResourceToReturn = new XAResource[] {};
+            }
+            xaResourceToReturn = xaResources;
+            return this;
         }
     }
 
@@ -280,7 +340,7 @@ public class XARecoveryModuleUnitTest
         
         xarm.addXAResourceOrphanFilter(xaResourceOrphanFilter);
         
-        Class[] parameterTypes = new Class[2];
+        Class<?>[] parameterTypes = new Class[2];
         
         parameterTypes[0] = XAResource.class;
         parameterTypes[1] = Xid.class;
