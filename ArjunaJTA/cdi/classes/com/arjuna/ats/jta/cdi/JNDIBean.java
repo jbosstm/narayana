@@ -57,11 +57,11 @@ final class JNDIBean<T> extends AbstractBean<T> {
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
     }
-  
+
     JNDIBean(final Name name, final Class<? extends T> type) {
         this(Objects.requireNonNull(name).toString(), Objects.requireNonNull(type));
     }
-    
+
     @Override
     public final T create(final CreationalContext<T> cc) {
         try {
@@ -79,6 +79,11 @@ final class JNDIBean<T> extends AbstractBean<T> {
     @Override
     public final Class<? extends Annotation> getScope() {
         return Singleton.class;
+    }
+
+    @Override
+    protected String getTypeName() {
+        return type.getName();
     }
 
 }

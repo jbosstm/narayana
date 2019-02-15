@@ -97,7 +97,12 @@ public class TransactionExtension implements Extension {
                             return Singleton.class;
                         }
 
-                        @Override
+                    @Override
+                    protected String getTypeName() {
+                        return InitialContext.class.getName();
+                    }
+
+                    @Override
                         public final InitialContext create(final CreationalContext<InitialContext> cc) {
                             try {
                                 return new InitialContext();

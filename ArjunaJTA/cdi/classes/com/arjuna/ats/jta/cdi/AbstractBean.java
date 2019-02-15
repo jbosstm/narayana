@@ -32,6 +32,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.PassivationCapable;
 import javax.enterprise.util.AnnotationLiteral;
 
 /**
@@ -50,7 +51,7 @@ import javax.enterprise.util.AnnotationLiteral;
  * @author <a href="https://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */
-abstract class AbstractBean<T> implements Bean<T> {
+abstract class AbstractBean<T> implements Bean<T>, PassivationCapable {
 
     protected AbstractBean() {
         super();
@@ -106,5 +107,20 @@ abstract class AbstractBean<T> implements Bean<T> {
         private static final Default INSTANCE = new DefaultLiteral();
         
     }
-    
+
+    @Override
+    public String getId() {
+        final String COMMA = ",";
+        final String CLASS_DELIMITER = "%";
+        return JNDIBean.class.getName() + CLASS_DELIMITER
+                + getTypeName() + CLASS_DELIMITER
+                + getName() + COMMA
+                + getScope().getName() + COMMA
+                + isAlternative() + COMMA
+                + getQualifiers() + COMMA
+                + getStereotypes() + COMMA
+                + getTypes();
+    }
+
+    protected abstract String getTypeName();
 }
