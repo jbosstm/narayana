@@ -23,7 +23,7 @@ package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
 /**
  * JDBC store implementation driver-specific code. This version for Postgres
- * Plus JDBC Drivers.
+ * Plus edb-jdbc17.jar JDBC Driver and earlier.
  */
 public class postgres_driver extends postgresql_driver {
 }
