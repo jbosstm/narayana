@@ -7,7 +7,7 @@
 
   <groupId>org.jboss.narayana.vertx</groupId>
   <artifactId>echo-test</artifactId>
-  <version>5.9.3.Final</version>
+  <version>5.9.4.Final-SNAPSHOT</version>
 
   <properties>
     <narayana.version>${project.version}</narayana.version>
