@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client;
+package io.narayana.lra;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();

@@ -30,7 +30,6 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import io.narayana.lra.client.NarayanaLRAInfo;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -103,8 +102,8 @@ public class Transaction extends AtomicAction {
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
-    public NarayanaLRAInfo getLRAInfo() {
-        return new NarayanaLRAInfo(id.toExternalForm(), clientId, status == null ? "" : status.name(),
+    public LRAData getLRAData() {
+        return new LRAData(id.toExternalForm(), clientId, status == null ? "" : status.name(),
                 isClosed(), isCancelled(), isRecovering(),
                 isActive(), isTopLevel(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),

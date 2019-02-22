@@ -171,6 +171,7 @@
         <module>lra-filters</module>
         <module>lra-annotation-checker</module>
         <module>lra-test</module>
+        <module>lra-service-base</module>
     </modules>
 
     <profiles>

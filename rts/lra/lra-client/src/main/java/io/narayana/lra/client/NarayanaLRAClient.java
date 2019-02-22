@@ -21,8 +21,17 @@
  */
 package io.narayana.lra.client;
 
+import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.COMPENSATE;
+import static io.narayana.lra.LRAConstants.COMPLETE;
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.FORGET;
+import static io.narayana.lra.LRAConstants.LEAVE;
+import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.STATUS;
+import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 import static javax.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
 
@@ -66,6 +75,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.narayana.lra.Current;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
@@ -86,19 +96,6 @@ import org.eclipse.microprofile.lra.client.LRAClient;
  */
 @RequestScoped
 public class NarayanaLRAClient implements LRAClient, Closeable {
-    public static final String COORDINATOR_PATH_NAME = "lra-coordinator";
-    public static final String RECOVERY_COORDINATOR_PATH_NAME = "lra-recovery-coordinator";
-
-    public static final String COMPLETE = "complete";
-    public static final String COMPENSATE = "compensate";
-    public static final String STATUS = "status";
-    public static final String LEAVE = "leave";
-    public static final String FORGET = "forget";
-
-    public static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
-    public static final String CLIENT_ID_PARAM_NAME = "ClientID";
-    public static final String PARENT_LRA_PARAM_NAME = "ParentLRA";
-    public static final String STATUS_PARAM_NAME = "Status";
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 0L;
 
@@ -251,47 +248,6 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     @PreDestroy
     public void preDestroy() {
         isUseable = false;
-    }
-
-    /**
-     * Transforming the LRA id to {@link URL} format.
-     *
-     * @param lraId  LRA id to be transformed to URL
-     */
-    public static URL lraToURL(String lraId) {
-        return lraToURL(lraId, "Invalid LRA id");
-    }
-
-    /**
-     * Transforming the LRA id to {@link URL} format.
-     *
-     * @param lraId  LRA id to be transformed to URL
-     * @param errorMessage  error message which will be included under
-     *   {@link GenericLRAException} message
-     */
-    public static URL lraToURL(String lraId, String errorMessage) {
-        try {
-            return new URL(lraId);
-        } catch (MalformedURLException e) {
-            LRALogger.i18NLogger.error_urlConstructionFromStringLraId(lraId, e);
-            throw new GenericLRAException(null, BAD_REQUEST.getStatusCode(), errorMessage + ": lra=" + lraId, e);
-        }
-    }
-
-    /**
-     * Transforming the LRA id to {@link URL} format with use of the {@link URLEncoder}.
-     *
-     * @param lraId  LRA id to be transformed to URL
-     * @param errorMessage  error message which will be included under
-     *   {@link GenericLRAException} message
-     */
-    public static String encodeURL(URL lraId, String errorMessage) {
-        try {
-            return URLEncoder.encode(lraId.toString(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LRALogger.i18NLogger.error_invalidFormatToEncodeUrl(lraId, e);
-            throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), errorMessage, e);
-        }
     }
 
     /**
@@ -532,7 +488,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     public URL joinLRA(URL lraId, Class<?> resourceClass, URI baseUri,
                           String compensatorData) throws GenericLRAException {
         Map<String, String> terminateURIs = getTerminationUris(resourceClass, baseUri);
-        String timeLimitStr = terminateURIs.get(NarayanaLRAClient.TIMELIMIT_PARAM_NAME);
+        String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
         long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
         if (terminateURIs.containsKey(LINK_TEXT)) {
@@ -930,11 +886,11 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
 
         Map<String, String> terminateURIs = new HashMap<>();
 
-        terminateURIs.put(NarayanaLRAClient.COMPENSATE, compensateUrl);
-        terminateURIs.put(NarayanaLRAClient.COMPLETE, completeUrl);
-        terminateURIs.put(NarayanaLRAClient.LEAVE, leaveUrl);
-        terminateURIs.put(NarayanaLRAClient.STATUS, statusUrl);
-        terminateURIs.put(NarayanaLRAClient.FORGET, forgetUrl);
+        terminateURIs.put(COMPENSATE, compensateUrl);
+        terminateURIs.put(COMPLETE, completeUrl);
+        terminateURIs.put(LEAVE, leaveUrl);
+        terminateURIs.put(STATUS, statusUrl);
+        terminateURIs.put(FORGET, forgetUrl);
 
         // register with the coordinator
         // put the lra id in an http header

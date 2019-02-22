@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.filter;
 
-import io.narayana.lra.client.Current;
+import io.narayana.lra.Current;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;

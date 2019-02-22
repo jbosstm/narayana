@@ -26,8 +26,6 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
-import io.narayana.lra.client.NarayanaLRAInfo;
-
 //@Data
 //@AllArgsConstructor
 //@ApiModel( value = "LRA", description = "A Long Running Action" )
@@ -51,13 +49,14 @@ public class LRAStatusHolder {
     private LRAStatus lraStatus;
 
     public LRAStatusHolder(Transaction lra) {
-        NarayanaLRAInfo info = lra.getLRAInfo();
 
-        this.lraId = info.getLraId();
-        this.clientId = info.getClientId();
-        this.isRecovering = info.isRecovering();
-        this.isActive = info.isActive();
-        this.isTopLevel = info.isTopLevel();
+        LRAData data = lra.getLRAData();
+
+        this.lraId = data.getLraId();
+        this.clientId = data.getClientId();
+        this.isRecovering = data.isRecovering();
+        this.isActive = data.isActive();
+        this.isTopLevel = data.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.lraStatus = lra.getLRAStatus();
