@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-tck</artifactId>
-            <version>${version.microprofile.lra.api}</version>
+            <version>${version.microprofile.lra.tck}</version>
             <scope>test</scope>
         </dependency>
 
