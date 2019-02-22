@@ -22,9 +22,9 @@
 
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.client.Current;
-import io.narayana.lra.client.NarayanaLRAInfo;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.Current;
+import io.narayana.lra.LRAIdConverter;
+import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -72,15 +72,18 @@ import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
-import static io.narayana.lra.client.NarayanaLRAClient.CLIENT_ID_PARAM_NAME;
-import static io.narayana.lra.client.NarayanaLRAClient.COORDINATOR_PATH_NAME;
-
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.client.NarayanaLRAClient.PARENT_LRA_PARAM_NAME;
-import static io.narayana.lra.client.NarayanaLRAClient.STATUS_PARAM_NAME;
-import static io.narayana.lra.client.NarayanaLRAClient.TIMELIMIT_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.COMPENSATE;
+import static io.narayana.lra.LRAConstants.COMPLETE;
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.STATUS;
+import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
@@ -99,8 +102,8 @@ public class Coordinator {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Returns all LRAs",
             notes = "Gets both active and recovering LRAs",
-            response = NarayanaLRAInfo.class, responseContainer = "List")
-    public List<NarayanaLRAInfo> getAllLRAs(
+            response = LRAData.class, responseContainer = "List")
+    public List<LRAData> getAllLRAs(
             @ApiParam(value = "Filter the returned LRAs to only those in the give state (see CompensatorStatus)", required = false)
             @QueryParam(STATUS_PARAM_NAME) @DefaultValue("") String state) {
         List<LRAStatusHolder> lras = lraService.getAll(state);
@@ -114,8 +117,8 @@ public class Coordinator {
         return lras.stream().map(Coordinator::convert).collect(toList());
     }
 
-    private static NarayanaLRAInfo convert(LRAStatusHolder lra) {
-        return new NarayanaLRAInfo(lra.getLraId(), lra.getClientId(),
+    private static LRAData convert(LRAStatusHolder lra) {
+        return new LRAData(lra.getLraId(), lra.getClientId(),
                 lra.getStatus().name(),
                 lra.isClosed(), lra.isCancelled(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
                 lra.getStartTime(), lra.getFinishTime());
@@ -161,12 +164,11 @@ public class Coordinator {
             @ApiResponse(code = 200, message =
                     "The LRA exists. The status is reported in the content body.")
     })
-    public NarayanaLRAInfo getLRAInfo(
+    public LRAData getLRAInfo(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
-            @PathParam("LraId")String lraId) throws NotFoundException {
-        NarayanaLRAInfo lra = lraService.getLRA(toURL(lraId));
+            @PathParam("LraId") String lraId) throws NotFoundException {
 
-        return lra;
+        return lraService.getLRA(toURL(lraId));
     }
 
 /*    @GET
@@ -239,7 +241,7 @@ public class Coordinator {
         URL parentLRAUrl = null;
 
         if (parentLRA != null && !parentLRA.isEmpty()) {
-            parentLRAUrl = NarayanaLRAClient.lraToURL(parentLRA, "Invalid parent LRA id");
+            parentLRAUrl = LRAIdConverter.lraToURL(parentLRA, "Invalid parent LRA id");
         }
 
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
@@ -249,7 +251,7 @@ public class Coordinator {
             // register with the parentLRA as a participant
             Client client = ClientBuilder.newClient();
             String compensatorUrl = String.format("%s/%s", coordinatorUrl,
-                    NarayanaLRAClient.encodeURL(lraId, "Invalid parent LRA id"));
+                    LRAIdConverter.encodeURL(lraId, "Invalid parent LRA id"));
             Response response;
 
             if (lraService.hasTransaction(parentLRAUrl)) {
@@ -433,9 +435,9 @@ public class Coordinator {
             Map<String, String> terminateURIs = new HashMap<>();
 
             try {
-                terminateURIs.put(NarayanaLRAClient.COMPENSATE, new URL(compensatorData + "compensate").toExternalForm());
-                terminateURIs.put(NarayanaLRAClient.COMPLETE, new URL(compensatorData + "complete").toExternalForm());
-                terminateURIs.put(NarayanaLRAClient.STATUS, new URL(compensatorData + "status").toExternalForm());
+                terminateURIs.put(COMPENSATE, new URL(compensatorData + "compensate").toExternalForm());
+                terminateURIs.put(COMPLETE, new URL(compensatorData + "complete").toExternalForm());
+                terminateURIs.put(STATUS, new URL(compensatorData + "status").toExternalForm());
             } catch (MalformedURLException e) {
                 if (LRALogger.logger.isTraceEnabled()) {
                     LRALogger.logger.tracef(e, "Cannot join to LRA id '%s' with body as compensator url '%s' is invalid",
@@ -487,7 +489,7 @@ public class Coordinator {
     private Response joinLRA(URL lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("http://%s/%s/",
-                context.getRequestUri().getAuthority(), NarayanaLRAClient.RECOVERY_COORDINATOR_PATH_NAME);
+                context.getRequestUri().getAuthority(), RECOVERY_COORDINATOR_PATH_NAME);
 
         StringBuilder recoveryUrl = new StringBuilder();
 

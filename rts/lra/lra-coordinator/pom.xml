@@ -74,13 +74,8 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-filters</artifactId>
-            <version>${narayana.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-client</artifactId>
-            <version>${narayana.version}</version>
+            <artifactId>lra-service-base</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- For swarm plugin to run -->

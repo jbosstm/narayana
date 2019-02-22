@@ -44,7 +44,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
                 .addPackages(true, org.eclipse.microprofile.lra.participant.LRAParticipant.class.getPackage());
         // adding Narayana LRA implementation under the WildFly Swarm deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
-                .addPackages(true, io.narayana.lra.logging.LRALogger.class.getPackage());
+                .addPackages(true, io.narayana.lra.Current.class.getPackage());
 
         // adding Narayana LRA filters under the WildFly Swarm deployment
         String filtersAsset = String.format("%s%n%s",

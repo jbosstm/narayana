@@ -28,7 +28,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
-import io.narayana.lra.client.Current;
+import io.narayana.lra.Current;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;

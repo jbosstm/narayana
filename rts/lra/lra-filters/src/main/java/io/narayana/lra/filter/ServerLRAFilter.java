@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.filter;
 
-import io.narayana.lra.client.Current;
+import io.narayana.lra.Current;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -57,16 +57,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
 
-import static io.narayana.lra.client.NarayanaLRAClient.COMPENSATE;
-import static io.narayana.lra.client.NarayanaLRAClient.COMPLETE;
-import static io.narayana.lra.client.NarayanaLRAClient.LEAVE;
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static io.narayana.lra.client.NarayanaLRAClient.STATUS;
-import static io.narayana.lra.client.NarayanaLRAClient.FORGET;
+import static io.narayana.lra.LRAConstants.COMPENSATE;
+import static io.narayana.lra.LRAConstants.COMPLETE;
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.FORGET;
+import static io.narayana.lra.LRAConstants.LEAVE;
+import static io.narayana.lra.LRAConstants.STATUS;
+import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_HOST_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PATH_KEY;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PORT_KEY;
@@ -90,7 +92,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!NarayanaLRAClient.isInitialised()) {
             String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
             int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8082);
-            String lraCoordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, NarayanaLRAClient.COORDINATOR_PATH_NAME);
+            String lraCoordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, COORDINATOR_PATH_NAME);
 
             String lraCoordinatorUrl = String.format("http://%s:%d/%s", lcHost, lcPort, lraCoordinatorPath);
 
@@ -324,7 +326,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
             Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
-            String timeLimitStr = terminateURIs.get(NarayanaLRAClient.TIMELIMIT_PARAM_NAME);
+            String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
             if (terminateURIs.containsKey("Link")) {

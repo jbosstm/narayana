@@ -23,8 +23,7 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import io.narayana.lra.client.NarayanaLRAClient;
-import io.narayana.lra.client.NarayanaLRAInfo;
+import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
@@ -35,7 +34,6 @@ import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
@@ -43,7 +41,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -69,9 +66,6 @@ public class LRAService {
     private static Map<String, String> participants = new ConcurrentHashMap<>();
     private LRARecoveryModule lraRecoveryModule;
 
-    @Inject
-    private NarayanaLRAClient lraClient;
-
     public Transaction getTransaction(URL lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
             if (!recoveringLRAs.containsKey(lraId)) {
@@ -84,9 +78,9 @@ public class LRAService {
         return lras.get(lraId);
     }
 
-    public NarayanaLRAInfo getLRA(URL lraId) {
+    public LRAData getLRA(URL lraId) {
         Transaction lra = getTransaction(lraId);
-        return lra.getLRAInfo();
+        return lra.getLRAData();
     }
 
     public synchronized ReentrantLock lockTransaction(URL lraId) {
@@ -280,12 +274,6 @@ public class LRAService {
         } catch (Exception e) {
             return Response.Status.BAD_REQUEST.getStatusCode();
         }
-    }
-
-    public URL joinLRA(URL lraId, Long timelimit,
-                   URL compensateUrl, URL completeUrl, URL forgetUrl, URL leaveUrl, URL statusUrl,
-                   String compensatorData) throws GenericLRAException {
-        return lraClient.joinLRA(lraId, timelimit, compensateUrl, completeUrl, forgetUrl, leaveUrl, statusUrl, compensatorData);
     }
 
     public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
