@@ -60,6 +60,12 @@
             <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-tck</artifactId>
             <version>${version.microprofile.lra.tck}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${version.resteasy-client}</version>
             <scope>test</scope>
         </dependency>
 
@@ -187,6 +193,7 @@
             <activation>
                 <property>
                     <name>skipTests</name>
+                    <value>true</value>
                 </property>
             </activation>
             <properties>
@@ -198,6 +205,7 @@
             <activation>
                 <property>
                     <name>maven.test.skip</name>
+                    <value>true</value>
                 </property>
             </activation>
             <properties>

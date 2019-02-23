@@ -105,7 +105,7 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
     private static final String startLRAUrl = "/start";///?ClientId=abc&timeout=300000";
     private static final String recoveryQueryUrl = "/recovery";
     private static final String getAllLRAsUrl = "/";
-    private static final String getRecoveringLRAsUrl = "?status=Compensating";
+    private static final String getRecoveringLRAsUrl = "?status=Cancelling";
     private static final String getActiveLRAsUrl = "?status=";
 
     private static final String confirmFormat = "/%s/close";
@@ -670,8 +670,8 @@ public class NarayanaLRAClient implements LRAClient, Closeable {
                     jo.getString("lraId"),
                     jo.getString("clientId"),
                     jo.getString(STATUS),
-                    jo.getBoolean("complete"),
-                    jo.getBoolean("compensated"),
+                    jo.getBoolean("closed"),
+                    jo.getBoolean("cancelled"),
                     jo.getBoolean("recovering"),
                     jo.getBoolean("active"),
                     jo.getBoolean("topLevel"),

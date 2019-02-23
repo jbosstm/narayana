@@ -28,8 +28,8 @@ public class NarayanaLRAInfo {
     private String lraId;
     private String clientId;
     private String status;
-    private boolean isComplete;
-    private boolean isCompensated;
+    private boolean isClosed;
+    private boolean isCancelled;
     private boolean isRecovering;
     private boolean isActive;
     private boolean isTopLevel;
@@ -37,14 +37,14 @@ public class NarayanaLRAInfo {
     private long finishTime;
 
     public NarayanaLRAInfo(String lraId, String clientId, String status,
-                boolean isComplete, boolean isCompensated, boolean isRecovering,
+                boolean isClosed, boolean isCancelled, boolean isRecovering,
                 boolean isActive, boolean isTopLevel,
                 long startTime, long finishTime) {
         this.lraId = lraId;
         this.clientId = clientId;
         this.status = status;
-        this.isComplete = isComplete;
-        this.isCompensated = isCompensated;
+        this.isClosed = isClosed;
+        this.isCancelled = isCancelled;
         this.isRecovering = isRecovering;
         this.isActive = isActive;
         this.isTopLevel = isTopLevel;
@@ -64,12 +64,12 @@ public class NarayanaLRAInfo {
         return this.status;
     }
 
-    public boolean isComplete() {
-        return this.isComplete;
+    public boolean isClosed() {
+        return this.isClosed;
     }
 
-    public boolean isCompensated() {
-        return this.isCompensated;
+    public boolean isCancelled() {
+        return this.isCancelled;
     }
 
     public boolean isRecovering() {
@@ -122,8 +122,8 @@ public class NarayanaLRAInfo {
                 "lraId='" + lraId + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", status='" + status + '\'' +
-                ", isComplete=" + isComplete +
-                ", isCompensated=" + isCompensated +
+                ", isClosed=" + isClosed +
+                ", isCancelled=" + isCancelled +
                 ", isRecovering=" + isRecovering +
                 ", isActive=" + isActive +
                 ", isTopLevel=" + isTopLevel +
