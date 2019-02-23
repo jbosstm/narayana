@@ -105,7 +105,7 @@ public class Transaction extends AtomicAction {
 
     public NarayanaLRAInfo getLRAInfo() {
         return new NarayanaLRAInfo(id.toExternalForm(), clientId, status == null ? "" : status.name(),
-                isComplete(), isCompensated(), isRecovering(),
+                isClosed(), isCancelled(), isRecovering(),
                 isActive(), isTopLevel(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli());
@@ -296,11 +296,11 @@ public class Transaction extends AtomicAction {
         status = toLRAStatus(actionStatus);
     }
 
-    boolean isComplete() {
+    boolean isClosed() {
         return status != null && status.equals(LRAStatus.Closed);
     }
 
-    boolean isCompensated() {
+    boolean isCancelled() {
         return status != null && status.equals(LRAStatus.Cancelled);
     }
 

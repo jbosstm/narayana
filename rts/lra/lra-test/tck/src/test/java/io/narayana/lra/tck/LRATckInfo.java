@@ -66,13 +66,13 @@ public class LRATckInfo implements LRAInfo {
     }
 
     @Override
-    public boolean isComplete() {
-        return narayanaLraInfoInstance.isComplete();
+    public boolean isClosed() {
+        return narayanaLraInfoInstance.isClosed();
     }
 
     @Override
-    public boolean isCompensated() {
-        return narayanaLraInfoInstance.isCompensated();
+    public boolean isCancelled() {
+        return narayanaLraInfoInstance.isCancelled();
     }
 
     @Override

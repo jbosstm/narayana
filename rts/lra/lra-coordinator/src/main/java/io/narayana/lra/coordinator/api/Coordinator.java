@@ -117,7 +117,7 @@ public class Coordinator {
     private static NarayanaLRAInfo convert(LRAStatusHolder lra) {
         return new NarayanaLRAInfo(lra.getLraId(), lra.getClientId(),
                 lra.getStatus().name(),
-                lra.isComplete(), lra.isCompensated(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
+                lra.isClosed(), lra.isCancelled(), lra.isRecovering(), lra.isActive(), lra.isTopLevel(),
                 lra.getStartTime(), lra.getFinishTime());
     }
 

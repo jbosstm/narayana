@@ -36,10 +36,6 @@ public class LRAStatusHolder {
     private String lraId;
     //    @ApiModelProperty( value = "The client id associated with this LRA", required = false )
     private String clientId;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA has completed", required = false )
-    private boolean isClose;
-    //    @ApiModelProperty( value = "Indicates whether or not this LRA has compensated", required = false )
-    private boolean isCanceled;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA is recovering", required = false )
     private boolean isRecovering;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has been asked to complete or compensate yet", required = false )
@@ -59,8 +55,6 @@ public class LRAStatusHolder {
 
         this.lraId = info.getLraId();
         this.clientId = info.getClientId();
-        this.isClose = info.isComplete();
-        this.isCanceled = info.isCompensated();
         this.isRecovering = info.isRecovering();
         this.isActive = info.isActive();
         this.isTopLevel = info.isTopLevel();
@@ -85,27 +79,27 @@ public class LRAStatusHolder {
         return lraStatus != null && lraStatus == state;
     }
 
-    public boolean isCompensating() {
+    public boolean isCancelling() {
         return isInState(LRAStatus.Cancelling);
     }
 
-    public boolean isCompensated() {
+    public boolean isCancelled() {
         return isInState(LRAStatus.Cancelled);
     }
 
-    public boolean isCompleting() {
+    public boolean isClosing() {
         return isInState(LRAStatus.Closing);
     }
 
-    public boolean isCompleted() {
+    public boolean isClosed() {
         return isInState(LRAStatus.Closed);
     }
 
-    public boolean isFailedToComplete() {
+    public boolean isFailedToClose() {
         return isInState(LRAStatus.FailedToClose);
     }
 
-    public boolean isFailedToCompensate() {
+    public boolean isFailedToCancel() {
         return isInState(LRAStatus.FailedToCancel);
     }
 
@@ -131,10 +125,6 @@ public class LRAStatusHolder {
 
     public String getEncodedResponseData() throws IOException {
         return responseData;
-    }
-
-    public boolean isComplete() {
-        return isClose;
     }
 
     public long getStartTime() {

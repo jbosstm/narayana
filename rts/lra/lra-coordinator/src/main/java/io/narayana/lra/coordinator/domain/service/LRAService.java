@@ -113,17 +113,17 @@ public class LRAService {
         }
 
         if (LRAStatus.Cancelling.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensating).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCancelling).collect(toList());
         } else if (LRAStatus.Cancelled.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensated).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCancelled).collect(toList());
         } else if (LRAStatus.FailedToCancel.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToCompensate).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToCancel).collect(toList());
         } else if (LRAStatus.Closing.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompensating).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isClosing).collect(toList());
         } else if (LRAStatus.Closed.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isCompleted).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isClosed).collect(toList());
         } else if (LRAStatus.FailedToClose.name().equals(state)) {
-            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToComplete).collect(toList());
+            return recoveringLRAs.values().stream().map(LRAStatusHolder::new).filter(LRAStatusHolder::isFailedToClose).collect(toList());
         }
 
         return null;
