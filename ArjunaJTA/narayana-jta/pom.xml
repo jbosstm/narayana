@@ -268,14 +268,5 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-      <properties>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-      </properties>
-    </profile>
   </profiles>
 </project>
