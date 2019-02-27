@@ -14,6 +14,7 @@
     <name>LRA tests: MicroProfile TCK</name>
 
     <properties>
+        <skipTests>true</skipTests>
         <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
         <lra.coordinator.port>8080</lra.coordinator.port>
         <lra.coordinator.trace.params></lra.coordinator.trace.params>
