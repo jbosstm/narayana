@@ -37,7 +37,7 @@ import java.util.Properties;
  * @author <a href="claudio.vesco@previnet.it">Claudio Vesco</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:dimitris@jboss.org">Dimitris Andreadis</a>
- * @version <tt>$Revision$</tt>
+ * @version <code>$Revision$</code>
  */
 public final class StringPropertyReplacer
 {
