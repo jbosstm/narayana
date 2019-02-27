@@ -186,7 +186,35 @@
       <version>${version.org.jboss.integration}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <version>${version.org.jboss.resteasy}</version>
+      <scope>provided</scope>
+      <!-- filter out unwanted jars -->
+      <exclusions>
+        <exclusion>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>${version.commons-httpclient}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client</artifactId>
+        <version>${version.org.jboss.resteasy}</version>
+        <scope>provided</scope>
+    </dependency>
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -342,6 +370,12 @@
                       <packages>org.jboss.narayana.tomcat.jta</packages>
                     </group>
                   </groups>
+		  <additionalJOptions>
+		      <additionalJOption>${jvm.args.modular}</additionalJOption>
+	          </additionalJOptions>
+		  <dependencySourceExcludes>
+		      <dependencySourceExclude>javax.enterprise:cdi-api</dependencySourceExclude>
+		  </dependencySourceExcludes>
                 </configuration>
               </execution>
             </executions>
@@ -391,5 +425,64 @@
           </dependency>
       </dependencies>
     </profile>
+    <profile>
+	  <id>jdk9+</id>
+          <activation>
+             <jdk>[9,)</jdk>
+          </activation>
+          <properties>
+             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+	     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
+	     <version.jaxws-ri>2.3.0</version.jaxws-ri>
+	  </properties>
+	  <dependencies>
+	     <dependency>
+                <groupId>org.jboss.spec.javax.xml.bind</groupId>
+                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+		<scope>provided</scope>
+             </dependency>
+	     <dependency>
+                <groupId>org.jboss.spec.javax.xml.ws</groupId>
+                <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+		<scope>provided</scope>
+             </dependency>
+	     <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-ri</artifactId>
+                <version>${version.jaxws-ri}</version>
+		<type>pom</type>
+		<scope>provided</scope>
+		<exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.ws</groupId>
+                        <artifactId>policy</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.stream.buffer</groupId>
+                        <artifactId>streambuffer</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jvnet.staxex</groupId>
+                        <artifactId>stax-ex</artifactId>
+                    </exclusion>
+                </exclusions>
+             </dependency>
+          </dependencies>
+      </profile>
   </profiles>
 </project>
