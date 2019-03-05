@@ -15,6 +15,7 @@
 
     <properties>
         <skipTests>true</skipTests>
+        <no.lra.coordinator>true</no.lra.coordinator>
         <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
         <lra.coordinator.port>8080</lra.coordinator.port>
         <lra.coordinator.trace.params></lra.coordinator.trace.params>
@@ -138,7 +139,8 @@
             <id>start.lra.coodinator.before.it.tests</id>
             <activation>
                 <property>
-                    <name>!no.lra.coordinator</name>
+                    <name>no.lra.coordinator</name>
+                    <value>false</value>
                 </property>
             </activation>
             <build>
