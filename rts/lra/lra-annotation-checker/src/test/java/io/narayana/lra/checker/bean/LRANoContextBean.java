@@ -22,7 +22,7 @@
 
 package io.narayana.lra.checker.bean;
 
-import org.eclipse.microprofile.lra.annotation.LRA;
+import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 /**
  * LRA bean where no context is expected and thus no handling
