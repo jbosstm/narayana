@@ -39,7 +39,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <test.logs.to.file>false</test.logs.to.file>
-        <skipITs>false</skipITs>
+        <skipITs>true</skipITs> <!-- integration tests are disabled by default, use profile to run 'arq' -->
     </properties>
 
     <repositories>
@@ -97,11 +97,6 @@
             <artifactId>shrinkwrap-impl-base</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <scope>test</scope>
-        </dependency>-->
     </dependencies>
 
     <build>
@@ -176,13 +171,21 @@
 
     <profiles>
       <profile>
+          <!-- profile to tests starting a server runtime aka. using Arquillian - for example TCK ones-->
+          <id>arq</id>
+          <activation>
+              <activeByDefault>false</activeByDefault>
+          </activation>
+          <properties>
+              <skipITs>false</skipITs>
+          </properties>
+      </profile>
+
+      <profile>
           <id>j9</id>
           <activation>
              <jdk>[1.9,11)</jdk>
           </activation>
-          <properties>
-             <skipITs>false</skipITs>
-          </properties>
           <build>
             <plugins>
               <plugin>
