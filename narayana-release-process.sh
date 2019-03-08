@@ -14,7 +14,12 @@
 
 if [[ $(uname) == CYGWIN* ]]
 then
-  read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT mvn.cmd needs this" ELEV
+  docker-machine env --shell bash
+  if [[ $? != 0 ]]; then
+    exit
+  fi
+  eval "$(docker-machine env --shell bash)"
+  read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT docker needs this" ELEV
   if [[ $ELEV == n* ]]
   then
     exit
