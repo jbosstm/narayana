@@ -30,6 +30,7 @@ if [ "$?" -ne "1" ]; then
   fi
 fi
 
+ORIG_WORKING_DIR=`pwd`
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
 GREP="grep"
@@ -66,7 +67,7 @@ MAVEN_SEARCH_PATH="\
     maven"
 
 #  Default arguments
-MVN_OPTIONS="-B -s tools/maven/conf/settings.xml $BPA"
+MVN_OPTIONS="-B -s \"${DIRNAME}/tools/maven/conf/settings.xml\" $BPA"
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
@@ -215,6 +216,9 @@ main() {
     export MVN MAVEN_HOME MVN_OPTS MVN_GOAL
 
     echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
+
+    # workaround in case 'mvn -f' is not supported, for example WFLY Swarm plugin (THORN-2049)
+    if [ "$PRESERVE_WORKING_DIR" = "true" ]; then cd "$ORIG_WORKING_DIR"; fi
 
     #  Execute in debug mode, or simply execute.
     if [ "x$MVN_DEBUG" != "x" ]; then

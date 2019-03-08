@@ -14,8 +14,7 @@
     <name>LRA tests: MicroProfile TCK</name>
 
     <properties>
-        <skipTests>true</skipTests>
-        <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
+        <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase> <!-- not starting coordinator by default, need -Parq -->
         <lra.coordinator.port>8080</lra.coordinator.port>
         <lra.coordinator.trace.params></lra.coordinator.trace.params>
         <lra.coordinator.debug.params></lra.coordinator.debug.params> <!-- has content when -Ddebug.coordinator is specified -->
@@ -187,29 +186,11 @@
             </build>
         </profile>
 
-        <!-- way how to skip starting swarm coordinator for builds where tests are skipped -->
         <profile>
-            <id>are.tests.skipped.skipTests</id>
-            <activation>
-                <property>
-                    <name>skipTests</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <!-- when arq profile is activated we expect to start coordinator -->
+            <id>arq</id>
             <properties>
-                <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
-            </properties>
-        </profile>
-        <profile>
-            <id>are.tests.skipped.maven.test.skip</id>
-            <activation>
-                <property>
-                    <name>maven.test.skip</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
+                <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
             </properties>
         </profile>
     </profiles>

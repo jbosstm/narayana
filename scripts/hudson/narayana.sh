@@ -17,16 +17,6 @@ function is_ibm {
   [[ $jvendor == *"IBM Corporation"* ]]
 }
 
-function get_pull_description {
-    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
-
-    if [ "$PULL_NUMBER" != "" ]; then
-        echo $(curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep \"body\":)
-    else
-        echo ""
-    fi
-}
-
 function get_pull_xargs {
   rval=0
   res=$(echo $1 | sed 's/\\r\\n/ /g')
@@ -65,121 +55,130 @@ function init_test_options {
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
     [ $IBM_ORB ] || IBM_ORB=0
 
-    PULL_DESCRIPTION=$(get_pull_description)
-    
     AS_TESTS=0
 
-    if ! get_pull_xargs "$PULL_DESCRIPTION" $PROFILE; then # see if the PR description overrides the profile
+    if ! get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0
+        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
     elif [[ $PROFILE == "MAIN" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!MAIN* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=1
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "TOMCAT" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!TOMCAT* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!TOMCAT* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
           export AS_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-          export TOMCAT_TESTS=1
+          export TOMCAT_TESTS=1 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "AS_TESTS" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!AS_TESTS* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!AS_TESTS* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "RTS" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!RTS* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!RTS* ]]; then
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "JACOCO" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!JACOCO* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!JACOCO* ]]; then
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-          export TOMCAT_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          export TOMCAT_TESTS=1 LRA_TESTS=1 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "XTS" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!XTS* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "QA_JTA" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!QA_JTA* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTA* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "QA_JTS_JACORB" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JACORB* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JACORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "QA_JTS_JDKORB" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_JDKORB* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!QA_JTS_OPENJDKORB* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_OPENJDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
-          export JTA_AS_TESTS=0 TOMCAT_TESTS=0
+          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "BLACKTIE" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!BLACKTIE* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!BLACKTIE* ]]; then
           comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 TOMCAT_TESTS=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
     elif [[ $PROFILE == "PERF" ]]; then
-        if [[ ! $PULL_DESCRIPTION == *!PERF* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!PERF* ]]; then
           echo "not commenting on pull comment_on_pull Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
-          export TOMCAT_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "LRA" ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
+          comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
+          export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0 LRA_TESTS=1
         else
           export COMMENT_ON_PULL=""
         fi
@@ -196,6 +195,7 @@ function init_test_options {
     [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
     [ $RTS_AS_TESTS ] || RTS_AS_TESTS=0 # RTS tests
     [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
+    [ $LRA_TESTS ] || LRA_TESTS=0 # LRA Test
     [ $TOMCAT_TESTS ] || TOMCAT_TESTS=0 # Narayana Tomcat tests
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
@@ -207,16 +207,32 @@ function init_test_options {
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
 
-    get_pull_xargs "$PULL_DESCRIPTION" $PROFILE # see if the PR description overrides any of the defaults 
+    get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults 
 
     JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]' | awk -F . '{if ($1==1) print $2; else print $1}')
+}
+
+function initGithubVariables
+{
+     [ "$PULL_NUMBER" = "" ] &&\
+         PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
+
+     if [ "$PULL_NUMBER" != "" ]
+     then
+         [ "x${PULL_DESCRIPTION}" = "x" ] &&\
+             PULL_DESCRIPTION=$(curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER)
+         [ "x${PULL_DESCRIPTION_BODY}" = "x" ] &&\
+             PULL_DESCRIPTION_BODY=$(printf '%s' "$PULL_DESCRIPTION" | grep \"body\":)
+     else
+             PULL_DESCRIPTION=""
+             PULL_DESCRIPTION_BODY=""
+     fi
 }
 
 function comment_on_pull
 {
     if [ "$COMMENT_ON_PULL" = "" ]; then echo $1; return; fi
 
-    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
         JSON="{ \"body\": \"$1\" }"
@@ -228,33 +244,29 @@ function comment_on_pull
 
 function check_if_pull_closed
 {
-    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
-	curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER | grep -q "\"state\": \"closed\""
-	if [ $? -eq 1 ] 
-	then
-		echo "pull open"
-	else
-		echo "pull closed"
-		exit 0
-	fi
+      if [[ $PULL_DESCRIPTION =~ "\"state\": \"closed\"" ]]
+      then
+          echo "pull closed"
+          exit 0
+      else
+          echo "pull open"
+      fi
     fi
 }
 
 function check_if_pull_noci_label
 {
-    PULL_NUMBER=$(echo $GIT_BRANCH | awk -F 'pull' '{ print $2 }' | awk -F '/' '{ print $2 }')
     if [ "$PULL_NUMBER" != "" ]
     then
-        curl -ujbosstm-bot:$BOT_PASSWORD -s "https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/labels" | grep -q '"name": "NoCI"'
-	if [ $? -eq 1 ]
-	then
-		echo "NoCI label is not present at the pull request $PULL_NUMBER"
-	else
-		echo "pull request $PULL_NUMBER is defined with NoCI label, exiting this CI execution"
-		exit 0
-	fi
+        if [[ $PULL_DESCRIPTION =~ "\"name\": \"NoCI\"" ]]
+        then
+            echo "pull request $PULL_NUMBER is defined with NoCI label, exiting this CI execution"
+            exit 0
+        else
+            echo "NoCI label is not present at the pull request $PULL_NUMBER"
+        fi
     fi
 }
 
@@ -439,6 +451,15 @@ function rts_tests {
     [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
+function lra_tests {
+  echo "#0. LRA Test"
+  # we can't use 'mvn -f' option beacuse of Swarm plugin issue THORN-2049
+  cd ./rts/lra/
+  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" verify
+  [ $? = 0 ] || fatal "LRA Test failed"
+  cd - # back to original directory
+}
+
 function blacktie {
   echo "#0. BlackTie"
   if [ -z "${JBOSSAS_IP_ADDR+x}" ]; then
@@ -469,7 +490,7 @@ function blacktie {
   [ ! -e wildfly-${WILDFLY_MASTER_VERSION}.zip ] && (wget http://download.jboss.org/wildfly/${WILDFLY_MASTER_VERSION}/wildfly-${WILDFLY_MASTER_VERSION}.zip || fatal "Could not download wildfly")
   unzip wildfly-${WILDFLY_MASTER_VERSION}.zip -d blacktie/
   [ $? = 0 ] || fatal "Could not unzip wildfly"
-  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-5.9.4.Final-SNAPSHOT-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
+  unzip ${WORKSPACE}/blacktie/wildfly-blacktie/build/target/wildfly-blacktie-build-${NARAYANA_CURRENT_VERSION}-bin.zip -d $PWD/blacktie/wildfly-${WILDFLY_MASTER_VERSION}
   [ $? = 0 ] || fatal "Could not unzip blacktie into widfly"
   # INITIALIZE JBOSS
   ant -f blacktie/scripts/hudson/initializeJBoss.xml -DJBOSS_HOME=$WORKSPACE/blacktie/wildfly-${WILDFLY_MASTER_VERSION} initializeJBoss
@@ -939,6 +960,7 @@ ulimit -u unlimited
 ulimit -c unlimited
 ulimit -a
 
+initGithubVariables
 check_if_pull_closed
 check_if_pull_noci_label
 
@@ -993,6 +1015,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
+[ $LRA_TESTS = 1 ] && lra_tests "$@"
 [ $TOMCAT_TESTS = 1 ] && tomcat_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
