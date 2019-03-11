@@ -1,6 +1,10 @@
 Narayana
 ========
 
+Website: http://narayana.io
+
+Twitter: https://twitter.com/narayana_io, using twitter handle [#narayanaio](https://twitter.com/search?q=%23narayanaio)
+
 Getting help
 ------------
 If you need help with using Narayana, please visit our forums at:
@@ -67,24 +71,49 @@ If you would like to build an individual module (say arjuna) with its dependenci
 	
 Other interesting specific components can be built using:
 
-ArjunaCore - ./build.[sh|bat] -am -pl :arjunacore
+ArjunaCore: `./build.[sh|bat] -am -pl :arjunacore`
 
-NarayanaJTA -  ./build.[sh|bat] -am -pl :narayana-jta
+NarayanaJTA: `./build.[sh|bat] -am -pl :narayana-jta`
 
-NarayanaJTS (jacorb) - ./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true
+NarayanaJTS (jacorb): `./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true`
 
-NarayanaJTS (idlj) - ./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true
+NarayanaJTS (idlj): `./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true`
 
-NarayanaJTS (ibmorb) - ./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true (requires IBM jdk)
+NarayanaJTS (ibmorb): `./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true` (requires IBM jdk)
 
-XTS - ./build.[sh|bat] -am -pl :jboss-xts
+XTS: `./build.[sh|bat] -am -pl :jboss-xts`
 
-STM - ./build.[sh|bat] -am -pl :stm
+STM: `./build.[sh|bat] -am -pl :stm`
+
+LRA: `./build.[sh|bat] -am -f rts/lra`
+
+Testing Narayana
+---------------
+
+There are three types of tests in the Narayana repository.
+
+* Unit tests which are run with maven surefire and they do not need any special setup.
+  Unit tests are run automatically when Narayana is build and if it's not specified otherwise (e.g. with maven flag `-DskipTests`)
+* Integration tests are run with maven surefire or maven failsafe. They are run with use of the Arquillian
+  and you need to explicitly enable them by activating profile `arq` (maven flag `-Parq`).
+  There is a difficulty that each module have different requirements for the integration tests to be run.
+  Most of them requires environmental variable `JBOSS_HOME` to be defined and points to an existing
+  directory of [WildFly](http://wildfly.org/downloads/). But some of them requires additional steps
+  for WildFly being configured. The best way to find out details is to check the [narayana.sh script](scripts/hudson/narayana.sh)
+  which is used to run CI tests.
+* Integration qa suite resides in the directory `qa/` and contains form of integration tests.
+  These are built but not run automatically. See [qa/README.txt](qa/README.txt) for usage. In brevity launching tests
+  is about running commands:
+
+      cd qa/
+      ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
+      ant -f run-tests.xml ci-tests
+
 
 Code Coverage Testing
 ---------------------
 
-  ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
+      ./build.[sh|bat] -PcodeCoverage (the output is in ${project.build.directory}/coverage.html)
 
 Checkstyle
 ----------
@@ -105,19 +134,12 @@ To get your developer life easier use the checkstyle plugins for your IDE
   [checkstyle.xml](https://github.com/wildfly/wildfly-checkstyle-config/blob/master/src/main/resources/wildfly-checkstyle/checkstyle.xml)
   file https://github.com/wildfly/wildfly-checkstyle-config
 * install checkstyle plugin to your favourite IDE
-** IntelliJ IDEA: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
-** Eclipse: http://eclipse-cs.sourceforge.net
+    - IntelliJ IDEA: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
+    - Eclipse: http://eclipse-cs.sourceforge.net
 * configure plugin to consume the *checkstyle.xml* and being applied to the particular module
 
 The WildFly provides a formatter complying with the checkstyle rules. If interested check the IDE configs
 at project [wildfly-core](https://github.com/wildfly/wildfly-core/tree/master/ide-configs).
-
-Build QA
---------
-
-	cd qa/
-	ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
-	ant -f run-tests.xml ci-tests
 
 Now The Gory Details.
 ---------------------
@@ -141,6 +163,3 @@ Maven is provided in the tools/maven section, though later versions of this may 
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 http://maven.apache.org/
 
-
-A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
-tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.
