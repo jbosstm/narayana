@@ -40,13 +40,21 @@ TEMP_WORKING_DIR=~/tmp/narayana/$CURRENT/sources/
 mkdir -p $TEMP_WORKING_DIR
 cd $TEMP_WORKING_DIR || fatal
 
-for REPO in documentation quickstart performance narayana jboss-dockerfiles
+for REPO in documentation quickstart performance narayana 'git@github.com:jboss-dockerfiles/narayana.git jboss-dockerfiles'
 do
     echo ""
     echo "=== TAGGING AND UPDATING $REPO ==="
     echo ""
 
-    git clone git@github.com:jbosstm/$REPO.git || fatal
+    if ! [[ "$REPO" =~ 'github.com' ]]; then
+      REPO_TO_CLONE="git@github.com:jbosstm/$REPO.git"
+    else
+      # for repositories in different namespace than Narayana expecting the repo is followed by name of repository to be cloned to
+      REPO_TO_CLONE="$REPO"
+      REPO=${REPO##* }
+    fi
+
+    git clone $REPO_TO_CLONE || fatal
     cd $REPO
     git checkout $BRANCH || fatal
 
