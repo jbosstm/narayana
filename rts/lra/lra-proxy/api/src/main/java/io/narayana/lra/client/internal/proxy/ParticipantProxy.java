@@ -26,31 +26,31 @@ import org.eclipse.microprofile.lra.participant.LRAParticipant;
 import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 class ParticipantProxy {
-    private URL lraId;
+    private URI lraId;
     private String participantId;
     private LRAParticipant participant;
     private Future<Void> future;
     private boolean compensate;
 
-    ParticipantProxy(URL lraId, String participantId, LRAParticipant participant) {
+    ParticipantProxy(URI lraId, String participantId, LRAParticipant participant) {
         this.lraId = lraId;
         this.participantId = participantId;
         this.participant = participant;
     }
 
-    ParticipantProxy(URL lraId, String participantId) {
+    ParticipantProxy(URI lraId, String participantId) {
         this.lraId = lraId;
         this.participantId = participantId;
     }
 
 
-    private URL getLraId() {
+    private URI getLraId() {
         return lraId;
     }
 

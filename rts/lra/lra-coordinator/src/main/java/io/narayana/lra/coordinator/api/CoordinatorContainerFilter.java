@@ -32,8 +32,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 
@@ -42,12 +42,12 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
-        URL lraId = null;
+        URI lraId = null;
 
         if (headers.containsKey(LRA_HTTP_HEADER)) {
             try {
-                lraId = new URL(Current.getLast(headers.get(LRA_HTTP_HEADER)));
-            } catch (MalformedURLException e) {
+                lraId = new URI(Current.getLast(headers.get(LRA_HTTP_HEADER)));
+            } catch (URISyntaxException e) {
                 String msg = String.format("header %s contains an invalid URL %s",
                         LRA_HTTP_HEADER, Current.getLast(headers.get(LRA_HTTP_HEADER)));
 
@@ -59,7 +59,7 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
             Object lraContext = requestContext.getProperty(LRA_HTTP_HEADER);
 
             if (lraContext != null) {
-                lraId = (URL) lraContext;
+                lraId = (URI) lraContext;
             }
         }
 

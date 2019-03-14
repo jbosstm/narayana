@@ -34,8 +34,8 @@ import javax.ws.rs.core.Response;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 
 @ApplicationScoped
@@ -49,23 +49,23 @@ public class ParticipantProxyResource {
     @PUT
     public Response complete(@PathParam("lraId")String lraId,
                          @PathParam("pId")String participantId,
-                         String participantData) throws MalformedURLException, UnsupportedEncodingException {
-        return proxyService.notifyParticipant(toURL(lraId, true), participantId, participantData, false);
+                         String participantData) throws URISyntaxException, UnsupportedEncodingException {
+        return proxyService.notifyParticipant(toURI(lraId, true), participantId, participantData, false);
     }
 
     @Path("{lraId}/{pId}/compensate")
     @PUT
     public Response compensate(@PathParam("lraId")String lraId,
                                @PathParam("pId")String participantId,
-                               String participantData) throws MalformedURLException, UnsupportedEncodingException {
-        return proxyService.notifyParticipant(toURL(lraId, true), participantId, participantData, true);
+                               String participantData) throws URISyntaxException, UnsupportedEncodingException {
+        return proxyService.notifyParticipant(toURI(lraId, true), participantId, participantData, true);
     }
 
     @Path("{lraId}/{pId}")
     @DELETE
     public void forget(@PathParam("lraId")String lraId,
-                       @PathParam("pId")String participantId) throws MalformedURLException, UnsupportedEncodingException {
-        proxyService.notifyForget(toURL(lraId, true), participantId);
+                       @PathParam("pId")String participantId) throws URISyntaxException, UnsupportedEncodingException {
+        proxyService.notifyForget(toURI(lraId, true), participantId);
     }
 
     @Path("{lraId}/{pId}")
@@ -73,14 +73,14 @@ public class ParticipantProxyResource {
     public String status(@PathParam("lraId")String lraId,
                        @PathParam("pId")String participantId) throws UnsupportedEncodingException, InvalidLRAStateException {
         try {
-            return proxyService.getStatus(toURL(lraId, true), participantId).name();
-        } catch (MalformedURLException e) {
+            return proxyService.getStatus(toURI(lraId, true), participantId).name();
+        } catch (URISyntaxException e) {
             LRAProxyLogger.i18NLogger.error_gettingParticipantStatus(participantId, lraId, e);
             throw new InvalidLRAStateException("Caller provided an invalid LRA: " + lraId, e);
         }
     }
 
-    private URL toURL(String url, boolean decode) throws MalformedURLException, UnsupportedEncodingException {
+    private URI toURI(String url, boolean decode) throws URISyntaxException, UnsupportedEncodingException {
         if (url == null) {
             return null;
         }
@@ -89,6 +89,6 @@ public class ParticipantProxyResource {
             url = URLDecoder.decode(url, "UTF-8");
         }
 
-        return new URL(url);
+        return new URI(url);
     }
 }

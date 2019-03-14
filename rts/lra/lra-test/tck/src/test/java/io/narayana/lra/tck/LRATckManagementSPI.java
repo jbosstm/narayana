@@ -22,7 +22,7 @@
 
 package io.narayana.lra.tck;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 
 import javax.enterprise.context.Dependent;
@@ -42,7 +42,7 @@ public class LRATckManagementSPI implements ManagementSPI {
     NarayanaLRAClient narayanaLraClient;
 
     @Override
-    public LRAInfo getStatus(URL lraId) throws NotFoundException {
+    public LRAInfo getStatus(URI lraId) throws NotFoundException {
         return LRATckInfo.of(narayanaLraClient.getLRAInfo(lraId));
     }
 

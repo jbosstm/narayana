@@ -115,7 +115,7 @@ class RecoveringLRA extends Transaction {
                 default:
                     if (LRALogger.logger.isInfoEnabled()) {
                         LRALogger.logger.infof("RecoveringLRA.replayPhase2 for %s ended with status: %s",
-                                getId().toExternalForm(), getLRAStatus());
+                                getId().toASCIIString(), getLRAStatus());
                     }
                     // FALLTHRU
             }

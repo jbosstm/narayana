@@ -45,6 +45,8 @@ import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.Instant;
@@ -63,8 +65,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
     private final ScheduledExecutorService scheduler;
-    private URL id;
-    private URL parentId;
+    private URI id;
+    private URI parentId;
     private String clientId;
     private List<LRARecord> pending;
     private LRAStatus status;
@@ -75,11 +77,11 @@ public class Transaction extends AtomicAction {
     private boolean inFlight;
     private LRAService lraService;
 
-    public Transaction(LRAService lraService, String baseUrl, URL parentId, String clientId) throws MalformedURLException {
+    public Transaction(LRAService lraService, String baseUrl, URI parentId, String clientId) throws URISyntaxException {
         super(new Uid());
 
         this.lraService = lraService;
-        this.id = new URL(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
+        this.id = new URI(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
         this.inFlight = true;
         this.parentId = parentId;
         this.clientId = clientId;
@@ -103,7 +105,7 @@ public class Transaction extends AtomicAction {
     }
 
     public LRAData getLRAData() {
-        return new LRAData(id.toExternalForm(), clientId, status == null ? "" : status.name(),
+        return new LRAData(id.toASCIIString(), clientId, status == null ? "" : status.name(),
                 isClosed(), isCancelled(), isRecovering(),
                 isActive(), isTopLevel(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
@@ -218,9 +220,9 @@ public class Transaction extends AtomicAction {
 
         try {
             String s = os.unpackString();
-            id = s == null ? null : new URL(s);
+            id = s == null ? null : new URI(s);
             s = os.unpackString();
-            parentId = s == null ? null : new URL(s);
+            parentId = s == null ? null : new URI(s);
             clientId = os.unpackString();
             long startMillis = os.unpackLong();
             startTime = startMillis == 0 ? null :
@@ -231,7 +233,7 @@ public class Transaction extends AtomicAction {
             status = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
 
             return true;
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             if (LRALogger.logger.isDebugEnabled()) {
                 LRALogger.logger.debugf(e, "Cannot restore state of objec type '%s'", ot);
             }
@@ -270,7 +272,7 @@ public class Transaction extends AtomicAction {
         return LRA_TYPE;
     }
 
-    public URL getId() {
+    public URI getId() {
         return id;
     }
 
@@ -324,7 +326,8 @@ public class Transaction extends AtomicAction {
 
             if (lock == null) {
                 if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.debugf("Transaction.endLRA Some other thread is finishing LRA %s", getId().toExternalForm());
+                    LRALogger.logger.debugf("Transaction.endLRA Some other thread is finishing LRA %s",
+                            getId().toASCIIString());
                 }
 
                 return status();
@@ -461,8 +464,8 @@ public class Transaction extends AtomicAction {
         }
     }
 
-    public LRARecord enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                    long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+    public LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
+                                       long timeLimit, String compensatorData) throws UnsupportedEncodingException {
         LRARecord participant = findLRAParticipant(participantUrl, false);
 
         if (participant != null) {
@@ -481,18 +484,18 @@ public class Transaction extends AtomicAction {
         return participant;
     }
 
-    public LRARecord enlistParticipant(URL coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
+    public LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
                                        long timeLimit, String compensatorData) throws UnsupportedEncodingException {
         if (findLRAParticipant(participantUrl, false) != null) {
             return null;    // already enlisted
         }
 
-        LRARecord p = new LRARecord(lraService, coordinatorUrl.toExternalForm(), participantUrl, compensatorData);
+        LRARecord p = new LRARecord(lraService, coordinatorUrl.toASCIIString(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
-        String txId = URLEncoder.encode(coordinatorUrl.toExternalForm(), "UTF-8");
+        String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), "UTF-8");
 
-        p.setRecoveryURL(recoveryUrlBase, txId, pid);
+        p.setRecoveryURI(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
             if (!p.setTimeLimit(scheduler, timeLimit, this)) {
@@ -542,11 +545,11 @@ public class Transaction extends AtomicAction {
         LRARecord rec = null;
 
         try {
-            URL recoveryUrl = new URL(participantUrl);
+            URI recoveryUrl = new URL(participantUrl).toURI();
 
             rec = findLRAParticipantByRecoveryUrl(recoveryUrl, remove, pendingList, preparedList, heuristicList, failedList);
 
-        } catch (MalformedURLException ignore) {
+        } catch (MalformedURLException | URISyntaxException ignore) {
             String pUrl = LRARecord.extractCompensator(id, participantUrl);
             rec = findLRAParticipant(pUrl, remove, pendingList, pendingList, preparedList, heuristicList, failedList);
         }
@@ -584,7 +587,7 @@ public class Transaction extends AtomicAction {
         return null;
     }
 
-    private LRARecord findLRAParticipantByRecoveryUrl(URL recoveryUrl, boolean remove, RecordList...lists) {
+    private LRARecord findLRAParticipantByRecoveryUrl(URI recoveryUrl, boolean remove, RecordList...lists) {
         for (RecordList list : lists) {
             if (list != null) {
                 RecordListIterator i = new RecordListIterator(list);
@@ -594,7 +597,7 @@ public class Transaction extends AtomicAction {
                     if (r instanceof LRARecord) {
                         LRARecord rr = (LRARecord) r;
                         // can't use == because this may be a recovery scenario
-                        if (rr.getRecoveryCoordinatorURL().equals(recoveryUrl)) {
+                        if (rr.getRecoveryCoordinatorURI().equals(recoveryUrl)) {
                             if (remove) {
                                 list.remove(rr);
                             }
@@ -704,7 +707,7 @@ public class Transaction extends AtomicAction {
             if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
                 LRARecord lraRecord = (LRARecord) rec;
 
-                participants.put(lraRecord.getRecoveryCoordinatorURL().toExternalForm(), lraRecord.getParticipantPath());
+                participants.put(lraRecord.getRecoveryCoordinatorURI().toASCIIString(), lraRecord.getParticipantPath());
             }
         }
     }
@@ -714,12 +717,12 @@ public class Transaction extends AtomicAction {
         getRecoveryCoordinatorUrls(participants, preparedList);
     }
 
-    public void updateRecoveryURL(String compensatorUrl, String recoveryURL) {
-        LRARecord lraRecord = findLRAParticipant(compensatorUrl, false);
+    public void updateRecoveryURI(String compensatorUri, String recoveryUri) {
+        LRARecord lraRecord = findLRAParticipant(compensatorUri, false);
 
         if (lraRecord != null) {
             try {
-                lraRecord.setRecoveryURL(recoveryURL);
+                lraRecord.setRecoveryURI(recoveryUri);
 
 
                 if (!deactivate()) {

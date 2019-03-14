@@ -45,8 +45,8 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,14 +59,14 @@ import static java.util.stream.Collectors.toSet;
 
 @ApplicationScoped
 public class LRAService {
-    private Map<URL, Transaction> lras = new ConcurrentHashMap<>();
-    private Map<URL, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
-    private Map<URL, ReentrantLock> locks = new ConcurrentHashMap<>();
+    private Map<URI, Transaction> lras = new ConcurrentHashMap<>();
+    private Map<URI, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
+    private Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     private static Map<String, String> participants = new ConcurrentHashMap<>();
     private LRARecoveryModule lraRecoveryModule;
 
-    public Transaction getTransaction(URL lraId) throws NotFoundException {
+    public Transaction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
             if (!recoveringLRAs.containsKey(lraId)) {
                 throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
@@ -78,12 +78,12 @@ public class LRAService {
         return lras.get(lraId);
     }
 
-    public LRAData getLRA(URL lraId) {
+    public LRAData getLRA(URI lraId) {
         Transaction lra = getTransaction(lraId);
         return lra.getLRAData();
     }
 
-    public synchronized ReentrantLock lockTransaction(URL lraId) {
+    public synchronized ReentrantLock lockTransaction(URI lraId) {
         ReentrantLock lock = locks.computeIfAbsent(lraId, k -> new ReentrantLock());
 
         lock.lock();
@@ -91,7 +91,7 @@ public class LRAService {
         return lock;
     }
 
-    public synchronized ReentrantLock tryLockTransaction(URL lraId) {
+    public synchronized ReentrantLock tryLockTransaction(URI lraId) {
         ReentrantLock lock = locks.computeIfAbsent(lraId, k -> new ReentrantLock());
 
         return lock.tryLock() ? lock : null;
@@ -154,7 +154,7 @@ public class LRAService {
         }
     }
 
-    public void remove(String state, URL lraId) {
+    public void remove(String state, URI lraId) {
         lraTrace(lraId, "remove LRA");
 
         if (lras.containsKey(lraId)) {
@@ -172,16 +172,16 @@ public class LRAService {
         }
     }
 
-    public void updateRecoveryURL(URL lraId, String compensatorUrl, String recoveryURL, boolean persist) {
-        assert recoveryURL != null;
+    public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
+        assert recoveryURI != null;
         assert compensatorUrl != null;
 
-        participants.put(recoveryURL, compensatorUrl);
+        participants.put(recoveryURI, compensatorUrl);
 
         if (persist && lraId != null) {
             Transaction transaction = getTransaction(lraId);
 
-            transaction.updateRecoveryURL(compensatorUrl, recoveryURL);
+            transaction.updateRecoveryURI(compensatorUrl, recoveryURI);
         }
     }
 
@@ -189,12 +189,12 @@ public class LRAService {
         return participants.get(rcvCoordId);
     }
 
-    public synchronized URL startLRA(String baseUri, URL parentLRA, String clientId, Long timelimit) {
+    public synchronized URI startLRA(String baseUri, URI parentLRA, String clientId, Long timelimit) {
         Transaction lra;
 
         try {
             lra = new Transaction(this, baseUri, parentLRA, clientId);
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException e) {
             throw new InvalidLRAIdException(baseUri, "Invalid base uri", e);
         }
 
@@ -226,7 +226,7 @@ public class LRAService {
         }
     }
 
-    public LRAStatusHolder endLRA(URL lraId, boolean compensate, boolean fromHierarchy) {
+    public LRAStatusHolder endLRA(URI lraId, boolean compensate, boolean fromHierarchy) {
         lraTrace(lraId, "end LRA");
 
         Transaction transaction = getTransaction(lraId);
@@ -254,7 +254,7 @@ public class LRAService {
         return new LRAStatusHolder(transaction);
     }
 
-    public int leave(URL lraId, String compensatorUrl) {
+    public int leave(URI lraId, String compensatorUrl) {
         lraTrace(lraId, "leave LRA");
 
         Transaction transaction = getTransaction(lraId);
@@ -276,7 +276,7 @@ public class LRAService {
         }
     }
 
-    public synchronized int joinLRA(StringBuilder recoveryUrl, URL lra, long timeLimit,
+    public synchronized int joinLRA(StringBuilder recoveryUrl, URI lra, long timeLimit,
                                     String compensatorUrl, String linkHeader, String recoveryUrlBase,
                                     String compensatorData) {
         if (lra ==  null) {
@@ -305,33 +305,33 @@ public class LRAService {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
-        if (participant == null || participant.getRecoveryCoordinatorURL() == null) {
+        if (participant == null || participant.getRecoveryCoordinatorURI() == null) {
             // probably already closing or cancelling
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
-        String recoveryURL = participant.getRecoveryCoordinatorURL().toExternalForm();
+        String recoveryURI = participant.getRecoveryCoordinatorURI().toASCIIString();
 
-        updateRecoveryURL(lra, participant.getParticipantURL(), recoveryURL, false);
+        updateRecoveryURI(lra, participant.getParticipantURI(), recoveryURI, false);
 
-        recoveryUrl.append(recoveryURL);
+        recoveryUrl.append(recoveryURI);
 
         return Response.Status.OK.getStatusCode();
     }
 
-    public boolean hasTransaction(URL id) {
+    public boolean hasTransaction(URI id) {
         return lras.containsKey(id);
     }
 
     public boolean hasTransaction(String id) {
         try {
-            return lras.containsKey(new URL(id));
-        } catch (MalformedURLException e) {
+            return lras.containsKey(new URI(id));
+        } catch (URISyntaxException e) {
             return false;
         }
     }
 
-    private void lraTrace(URL lraId, String reason) {
+    private void lraTrace(URI lraId, String reason) {
         if (LRALogger.logger.isTraceEnabled()) {
             if (lraId != null && lras.containsKey(lraId)) {
                 Transaction lra = lras.get(lraId);
@@ -343,7 +343,7 @@ public class LRAService {
         }
     }
 
-    public int renewTimeLimit(URL lraId, Long timelimit) {
+    public int renewTimeLimit(URI lraId, Long timelimit) {
         Transaction lra = lras.get(lraId);
 
         if (lra == null) {
@@ -353,7 +353,7 @@ public class LRAService {
         return lra.setTimeLimit(timelimit);
     }
 
-    public boolean isLocal(URL lraId) {
+    public boolean isLocal(URI lraId) {
         return hasTransaction(lraId);
     }
 

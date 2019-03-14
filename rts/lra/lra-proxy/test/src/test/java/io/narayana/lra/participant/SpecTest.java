@@ -67,10 +67,10 @@ public class SpecTest {
 
     @Test
     public void testLRAMgmt() {
-        URL lraId = lraClient.startLRA("testStartLRA");
+        URI lraId = lraClient.startLRA("testStartLRA");
 
         Response response = msTarget.path(LRAM_PATH).path(LRAM_WORK)
-                .queryParam("lraId", lraId.toExternalForm())
+                .queryParam("lraId", lraId.toASCIIString())
                 .request().put(Entity.text(""));
 
         String activityId = checkStatusAndClose(response, Response.Status.OK.getStatusCode(), true);
