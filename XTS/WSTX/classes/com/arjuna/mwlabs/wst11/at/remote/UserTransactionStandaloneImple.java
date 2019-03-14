@@ -163,9 +163,9 @@ public class UserTransactionStandaloneImple extends UserTransaction
 	}
 
     /**
-     * method provided for the benefit of UserSubordinateTransactionImple to allow it
+     * method provided for the benefit of {@link UserSubordinateTransactionImple} to allow it
      * to begin a subordinate transaction which requires an existing context to be
-     * installed on the thread before it will start and instal la new transaction
+     * installed on the thread before it will start and install a new transaction
      *
      * @param timeout
      * @throws com.arjuna.wst.WrongStateException
@@ -176,8 +176,13 @@ public class UserTransactionStandaloneImple extends UserTransaction
         throw new SystemException("UserTransactionStandaloneImple does not support subordinate transactions");
     }
 
+    @Override
+    public int getTimeout() {
+        return timeout;
+    }
+
 	/*
-	 * enlist the client for the completiopn protocol so it can commit or ro0ll back the transaction
+	 * enlist the client for the completion protocol so it can commit or roll back the transaction
 	 */
 
 	private final void enlistCompletionParticipants ()
@@ -257,6 +262,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
 
 
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
+            this.timeout = timeout;
             final String messageId = MessageId.getMessageId() ;
             final CoordinationContext currentContext = (current != null ? getContext(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
@@ -447,4 +453,5 @@ public class UserTransactionStandaloneImple extends UserTransaction
 	protected String _activationCoordinatorService;
 	private Hashtable _completionCoordinators = new Hashtable();
     private UserSubordinateTransactionImple _userSubordinateTransaction;
+    private int timeout = -1;
 }

@@ -20,20 +20,18 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.service;
 
-import org.jboss.logging.Logger;
-import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
-import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
-
-import javax.ejb.Remote;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAException;
+
+import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
+import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
+import org.jboss.logging.Logger;
 
 
 /**
@@ -48,6 +46,9 @@ import javax.transaction.xa.XAException;
 public class TestServiceImpl {
     private static Logger log = Logger.getLogger(TestServiceImpl.class);
 
+    @Resource(lookup = "java:/TransactionManager")
+    private TransactionManager tm;
+
     @WebMethod
     public void doNothing() {
         log.trace("doNothing()");
@@ -55,7 +56,6 @@ public class TestServiceImpl {
 
     @WebMethod(exclude = true)
     public void enlistSynchronization(int count) {
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
         try {
             for (int i = 0; i < count; i++) {
                 TestSynchronization testSynchronization = new TestSynchronization();
@@ -68,7 +68,6 @@ public class TestServiceImpl {
 
     @WebMethod(exclude = true)
     public void enlistXAResource(int count) {
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
         try {
             for (int i = 0; i < count; i++) {
                 TestXAResource testXAResource = new TestXAResource();

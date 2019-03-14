@@ -59,4 +59,8 @@ public class UserSubordinateTransactionImple extends UserTransaction
     public String transactionIdentifier() {
         return UserTransactionImple.getUserTransaction().transactionIdentifier();
     }
+
+    public int getTimeout() {
+        return UserTransactionImple.getUserTransaction().getTimeout();
+    }
 }

@@ -35,6 +35,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import org.jboss.logging.Logger;
 
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.TransactionManager;
@@ -217,7 +218,8 @@ public final class InboundBridge implements XAResource, SerializableXAResourceDe
         final Transaction transaction;
 
         try {
-            transaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
+            transaction = SubordinationManager.getTransactionImporter()
+                    .importTransaction(xid, TxControl.getDefaultTimeout());
         } catch (XAException e) {
             LOG.warn(e.getMessage(), e);
             throw new InboundBridgeException("Failed to import transaction.", e);

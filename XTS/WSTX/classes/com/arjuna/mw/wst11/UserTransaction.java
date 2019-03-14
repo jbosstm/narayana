@@ -129,4 +129,10 @@ public abstract class UserTransaction
         throws UnknownTransactionException, SecurityException, SystemException, WrongStateException;
 
     public abstract String transactionIdentifier ();
+
+    /**
+     * Returning timeout of the transaction
+     * as it was defined when it begun.
+     */
+    public abstract int getTimeout();
 }
