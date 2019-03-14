@@ -21,7 +21,10 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.common;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,8 +36,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONArray;
-
-import com.arjuna.ats.jta.TransactionManager;
 
 
 /**
@@ -66,7 +67,7 @@ public class AdvancedInboundBridgeResource {
         try {
             loggingXAResource = new LoggingXAResource();
 
-            Transaction t = TransactionManager.transactionManager().getTransaction();
+            Transaction t = getTransactionManager().getTransaction();
             t.enlistResource(loggingXAResource);
 
         } catch (Exception e) {
@@ -87,4 +88,22 @@ public class AdvancedInboundBridgeResource {
         return Response.ok().build();
     }
 
+    /**
+     * Trying to find transaction manager in JNDI. If there is not found
+     * then returning Narayana implementation.
+     */
+    private TransactionManager getTransactionManager() {
+        try {
+            TransactionManager tm = (TransactionManager) new InitialContext().lookup("java:/TransactionManager");
+            if (tm == null) {
+                tm = (TransactionManager) new InitialContext().lookup("java:jboss/TransactionManager");
+            }
+            if (tm != null) {
+                return tm;
+            }
+        } catch (NamingException ne) {
+            // exception => not able to get transaction manager from container
+        }
+        return com.arjuna.ats.jta.TransactionManager.transactionManager();
+    }
 }

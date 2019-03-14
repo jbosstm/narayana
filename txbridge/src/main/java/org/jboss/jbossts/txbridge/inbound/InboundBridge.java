@@ -24,6 +24,7 @@
 package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.jta.TransactionManager;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import org.jboss.jbossts.txbridge.utils.txbridgeLogger;
 
@@ -46,6 +47,7 @@ public class InboundBridge
      * Identifier for the subordinate transaction.
      */
     private final Xid xid;
+    private final int timeout;
 
     /**
      * Create a new InboundBridge to manage the given subordinate JTA transaction.
@@ -54,11 +56,12 @@ public class InboundBridge
      * @throws XAException
      * @throws SystemException
      */
-    InboundBridge(Xid xid) throws XAException, SystemException
+    InboundBridge(Xid xid, int timeout) throws XAException, SystemException
     {
         txbridgeLogger.logger.trace("InboundBridge.<ctor>(Xid="+xid+")");
 
         this.xid = xid;
+        this.timeout = timeout;
 
         getTransaction(); // ensures transaction is initialized
     }
@@ -116,7 +119,9 @@ public class InboundBridge
     private Transaction getTransaction()
             throws XAException, SystemException
     {
-        Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        int importingTimeout = timeout > 0 ? timeout : TxControl.getDefaultTimeout();
+        Transaction tx = SubordinationManager.getTransactionImporter()
+                .importTransaction(xid, importingTimeout);
 
         switch (tx.getStatus())
         {

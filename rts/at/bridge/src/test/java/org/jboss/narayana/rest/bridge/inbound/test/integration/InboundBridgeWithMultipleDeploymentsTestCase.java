@@ -21,6 +21,8 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.integration;
 
+import static org.junit.Assert.assertTrue;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -97,29 +99,22 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
         JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
         JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
-        if (firstLoggingXAResourceInvocations.length() == 5) {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.prepare", firstLoggingXAResourceInvocations.get(3));
-            Assert.assertEquals("LoggingXAResource.commit", firstLoggingXAResourceInvocations.get(4));
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.prepare", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.commit", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.rollback", 0);
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(3));
-        } else {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.prepare", firstLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.commit", firstLoggingXAResourceInvocations.get(3));
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.prepare", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.commit", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.rollback", 0);
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.prepare", secondLoggingXAResourceInvocations.get(3));
-            Assert.assertEquals("LoggingXAResource.commit", secondLoggingXAResourceInvocations.get(4));
-        }
+        boolean isSameRMCalled = containsJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.isSameRM", 1);
+        isSameRMCalled = containsJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.isSameRM", 1) || isSameRMCalled;
+        assertTrue("One of the XAResources had to be invoked with call XAResource.isSameRM "
+                + "but no one was called with that", isSameRMCalled);
     }
 
 
@@ -133,25 +128,22 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
         JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
         JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
-        if (firstLoggingXAResourceInvocations.length() == 4) {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.rollback", firstLoggingXAResourceInvocations.get(3));
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.prepare", 0);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.commit", 0);
+        assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.rollback", 1);
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(2));
-        } else {
-            Assert.assertEquals("LoggingXAResource.start", firstLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.end", firstLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.rollback", firstLoggingXAResourceInvocations.get(2));
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.prepare", 0);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.commit", 0);
+        assertJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.rollback", 1);
 
-            Assert.assertEquals("LoggingXAResource.start", secondLoggingXAResourceInvocations.get(0));
-            Assert.assertEquals("LoggingXAResource.isSameRM", secondLoggingXAResourceInvocations.get(1));
-            Assert.assertEquals("LoggingXAResource.end", secondLoggingXAResourceInvocations.get(2));
-            Assert.assertEquals("LoggingXAResource.rollback", secondLoggingXAResourceInvocations.get(3));
-        }
+        boolean isSameRMCalled = containsJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.isSameRM", 1);
+        isSameRMCalled = containsJsonArray(secondLoggingXAResourceInvocations, "LoggingXAResource.isSameRM", 1) || isSameRMCalled;
+        assertTrue("One of the XAResources had to be invoked with call XAResource.isSameRM "
+                + "but no one was called with that", isSameRMCalled);
     }
 
     @Override

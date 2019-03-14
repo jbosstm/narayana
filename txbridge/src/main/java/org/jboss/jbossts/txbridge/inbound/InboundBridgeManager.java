@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 
 import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.UnknownTransactionException;
@@ -75,10 +76,12 @@ public class InboundBridgeManager
     {
         txbridgeLogger.logger.trace("InboundBridgeManager.getInboundBridge()");
 
-        String externalTxId = UserTransactionFactory.userTransaction().toString();
+        UserTransaction wsUserTransaction = UserTransactionFactory.userTransaction();
+        String externalTxId = wsUserTransaction.toString();
+        int wsTxnTimeout = wsUserTransaction.getTimeout();
 
         if(!inboundBridgeMappings.containsKey(externalTxId)) {
-            createMapping(externalTxId);
+            createMapping(externalTxId, wsTxnTimeout);
         }
 
         return inboundBridgeMappings.get(externalTxId);
@@ -129,7 +132,7 @@ public class InboundBridgeManager
      * @throws com.arjuna.wst.SystemException
      * @throws AlreadyRegisteredException
      */
-    private static synchronized void createMapping(String externalTxId)
+    private static synchronized void createMapping(String externalTxId, int timeout)
             throws XAException, WrongStateException, UnknownTransactionException,
             com.arjuna.wst.SystemException, javax.transaction.SystemException, AlreadyRegisteredException
     {
@@ -154,7 +157,7 @@ public class InboundBridgeManager
         BridgeVolatileParticipant bridgeVolatileParticipant = new BridgeVolatileParticipant(externalTxId, xid);
         transactionManager.enlistForVolatileTwoPhase(bridgeVolatileParticipant, new Uid().toString());
 
-        InboundBridge inboundBridge = new InboundBridge(xid);
+        InboundBridge inboundBridge = new InboundBridge(xid, timeout);
         inboundBridgeMappings.put(externalTxId, inboundBridge);
         liveXids.add(inboundBridge.getXid());
     }

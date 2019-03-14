@@ -201,6 +201,11 @@ public class UserTransactionImple extends UserTransaction
         }
     }
 
+    @Override
+    public int getTimeout() {
+        return timeout;
+    }
+
 	/*
 	 * Not sure if this is right as it doesn't map to registering a participant
 	 * with the coordinator.
@@ -284,6 +289,7 @@ public class UserTransactionImple extends UserTransaction
 
 
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
+            this.timeout = timeout;
             final String messageId = MessageId.getMessageId() ;
             final CoordinationContext currentContext = (current != null ? getContext(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
@@ -494,4 +500,5 @@ public class UserTransactionImple extends UserTransaction
 	protected String _activationCoordinatorService;
 	private Hashtable _completionCoordinators = new Hashtable();
     private UserSubordinateTransactionImple _userSubordinateTransaction;
+    private int timeout = -1;
 }

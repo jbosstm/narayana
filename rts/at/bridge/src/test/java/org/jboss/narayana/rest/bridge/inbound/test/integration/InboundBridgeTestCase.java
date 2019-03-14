@@ -72,11 +72,11 @@ public class InboundBridgeTestCase extends AbstractTestCase {
 
         JSONArray jsonArray = getResourceInvocations(ADVANCED_INBOUND_BRIDGE_RESOURCE_URL);
 
-        Assert.assertEquals(4, jsonArray.length());
-        Assert.assertEquals("LoggingXAResource.start", jsonArray.get(0));
-        Assert.assertEquals("LoggingXAResource.end", jsonArray.get(1));
-        Assert.assertEquals("LoggingXAResource.prepare", jsonArray.get(2));
-        Assert.assertEquals("LoggingXAResource.commit", jsonArray.get(3));
+        assertJsonArray(jsonArray, "LoggingXAResource.start", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.end", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.prepare", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.commit", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.rollback", 0);
     }
 
     @Test
@@ -87,10 +87,11 @@ public class InboundBridgeTestCase extends AbstractTestCase {
 
         JSONArray jsonArray = getResourceInvocations(ADVANCED_INBOUND_BRIDGE_RESOURCE_URL);
 
-        Assert.assertEquals(3, jsonArray.length());
-        Assert.assertEquals("LoggingXAResource.start", jsonArray.get(0));
-        Assert.assertEquals("LoggingXAResource.end", jsonArray.get(1));
-        Assert.assertEquals("LoggingXAResource.rollback", jsonArray.get(2));
+        assertJsonArray(jsonArray, "LoggingXAResource.start", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.end", 1);
+        assertJsonArray(jsonArray, "LoggingXAResource.prepare", 0);
+        assertJsonArray(jsonArray, "LoggingXAResource.commit", 0);
+        assertJsonArray(jsonArray, "LoggingXAResource.rollback", 1);
     }
 
     @Test
@@ -109,12 +110,11 @@ public class InboundBridgeTestCase extends AbstractTestCase {
         Assert.assertEquals("LoggingRestATResource.terminateParticipant(" + TxStatusMediaType.TX_COMMITTED + ")",
                 loggingRestATResourceInvocations.get(1));
 
-        Assert.assertEquals(4, loggingXAResourceInvocations.length());
-        Assert.assertEquals("LoggingXAResource.start", loggingXAResourceInvocations.get(0));
-        Assert.assertEquals("LoggingXAResource.end", loggingXAResourceInvocations.get(1));
-        Assert.assertEquals("LoggingXAResource.prepare", loggingXAResourceInvocations.get(2));
-        Assert.assertEquals("LoggingXAResource.commit", loggingXAResourceInvocations.get(3));
-
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.prepare", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.commit", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.rollback", 0);
     }
 
     @Test
@@ -131,10 +131,10 @@ public class InboundBridgeTestCase extends AbstractTestCase {
         Assert.assertEquals("LoggingRestATResource.terminateParticipant(" + TxStatusMediaType.TX_ROLLEDBACK + ")",
                 loggingRestATResourceInvocations.get(0));
 
-        Assert.assertEquals(3, loggingXAResourceInvocations.length());
-        Assert.assertEquals("LoggingXAResource.start", loggingXAResourceInvocations.get(0));
-        Assert.assertEquals("LoggingXAResource.end", loggingXAResourceInvocations.get(1));
-        Assert.assertEquals("LoggingXAResource.rollback", loggingXAResourceInvocations.get(2));
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.start", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.end", 1);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.prepare", 0);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.commit", 0);
+        assertJsonArray(loggingXAResourceInvocations, "LoggingXAResource.rollback", 1);
     }
-
 }
