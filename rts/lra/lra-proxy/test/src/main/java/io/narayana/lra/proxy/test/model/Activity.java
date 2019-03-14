@@ -24,12 +24,12 @@ package io.narayana.lra.proxy.test.model;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Activity implements Serializable {
     public String id;
-    public URL rcvUrl;
+    public URI rcvUrl;
     public String statusUrl;
     public ParticipantStatus status;
     public boolean registered;

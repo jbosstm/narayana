@@ -27,7 +27,7 @@ import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
-import java.net.URL;
+import java.net.URI;
 import java.util.concurrent.Future;
 
 public class Participant implements LRAParticipant, Serializable {
@@ -38,14 +38,14 @@ public class Participant implements LRAParticipant, Serializable {
     }
 
     @Override
-    public Future<Void> completeWork(URL lraId) throws NotFoundException, TerminationException {
+    public Future<Void> completeWork(URI lraId) throws NotFoundException, TerminationException {
         activity.status = ParticipantStatus.Completed;
 
         return null;
     }
 
     @Override
-    public Future<Void> compensateWork(URL lraId) throws NotFoundException, TerminationException {
+    public Future<Void> compensateWork(URI lraId) throws NotFoundException, TerminationException {
         activity.status = ParticipantStatus.Compensated;
 
         return null;

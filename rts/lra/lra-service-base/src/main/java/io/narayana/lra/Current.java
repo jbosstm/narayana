@@ -24,7 +24,7 @@ package io.narayana.lra;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedMap;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,10 +36,10 @@ import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();
 
-    private Stack<URL> stack;
+    private Stack<URI> stack;
     private Map<String, Object> state;
 
-    private Current(URL url) {
+    private Current(URI url) {
         stack = new Stack<>();
         stack.push(url);
     }
@@ -80,15 +80,15 @@ public class Current {
         lraContexts.set(null);
     }
 
-    public static URL peek() {
+    public static URI peek() {
         Current current = lraContexts.get();
 
         return current != null ? current.stack.peek() : null;
     }
 
-    public static URL pop() {
+    public static URI pop() {
         Current current = lraContexts.get();
-        URL lraId = null;
+        URI lraId = null;
 
         if (current != null) {
             lraId = current.stack.pop(); // there must be at least one
@@ -102,7 +102,7 @@ public class Current {
     }
 
 
-    public static boolean pop(URL lra) {
+    public static boolean pop(URI lra) {
         Current current = lraContexts.get();
 
         // NB URIs would have been preferable to URLs for testing equality
@@ -123,7 +123,7 @@ public class Current {
      * push the current context onto the stack of contexts for this thread
      * @param lraId id of context to push (must not be null)
      */
-    public static void push(URL lraId) {
+    public static void push(URI lraId) {
         Current current = lraContexts.get();
 
         if (current == null) {
@@ -151,7 +151,7 @@ public class Current {
      * @param responseContext the header map to add the KRA context to
      */
     public static void updateLRAContext(ContainerResponseContext responseContext) {
-        URL lraId = Current.peek();
+        URI lraId = Current.peek();
 
         if (lraId != null) {
             responseContext.getHeaders().put(LRA_HTTP_HEADER, getContexts());
@@ -160,7 +160,7 @@ public class Current {
         }
     }
 
-    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
+    public static void updateLRAContext(URI lraId, MultivaluedMap<String, String> headers) {
         headers.putSingle(LRA_HTTP_HEADER, lraId.toString());
         push(lraId);
     }
@@ -172,7 +172,7 @@ public class Current {
      * @param context the context for the JAX-RS request
      */
     public static void updateLRAContext(ClientRequestContext context) {
-        URL lraId = Current.peek();
+        URI lraId = Current.peek();
 
         if (lraId != null) {
             context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);

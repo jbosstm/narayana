@@ -26,12 +26,18 @@ import io.narayana.lra.Current;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
 
 public class ClientLRAResponseFilter implements ClientResponseFilter {
+    @Context
+    protected ResourceInfo resourceInfo;
+
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
         Object incomingLRA = Current.getLast(responseContext.getHeaders().get(LRA_HTTP_HEADER));
@@ -45,7 +51,16 @@ public class ClientLRAResponseFilter implements ClientResponseFilter {
          * (note we never popped the context in the request filter so we don't need to push outgoingLRA
          */
         if (incomingLRA != null) {
-            Current.push(new URL(incomingLRA.toString()));
+            try {
+                Current.push(new URI(incomingLRA.toString()));
+            } catch (URISyntaxException e) {
+                throw new IOException(
+                        String.format("The JAX-RS '%s' filter for method '%s'#'%s' contained an invalid LRA context ('%s')",
+                                ClientLRAResponseFilter.class.getName(),
+                                resourceInfo.getResourceClass().getName(),
+                                resourceInfo.getResourceMethod().getName(),
+                                incomingLRA.toString()), e);
+            }
         } else {
             // any previous context must have been ended by the invoked service otherwise incomingLRA
             // would have been present

@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -107,17 +106,17 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    private ParticipantProxy getProxy(URL lraId, String participantId) {
+    private ParticipantProxy getProxy(URI lraId, String participantId) {
         int i = participants.indexOf(new ParticipantProxy(lraId, participantId));
 
         return (i == -1 ? null : participants.get(i));
     }
 
-    private ParticipantProxy recreateProxy(URL lraId, String participantId) {
+    private ParticipantProxy recreateProxy(URI lraId, String participantId) {
         return new ParticipantProxy(lraId, participantId);
     }
 
-    Response notifyParticipant(URL lraId, String participantId, String participantData, boolean compensate) {
+    Response notifyParticipant(URI lraId, String participantId, String participantData, boolean compensate) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
@@ -161,13 +160,13 @@ public class ProxyService implements LRAManagement {
 
             return Response.ok().build();
         } else {
-            LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toExternalForm());
+            LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toASCIIString());
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    void notifyForget(URL lraId, String participantId) {
+    void notifyForget(URI lraId, String participantId) {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy != null) {
@@ -175,7 +174,7 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    ParticipantStatus getStatus(URL lraId, String participantId) throws InvalidLRAStateException {
+    ParticipantStatus getStatus(URI lraId, String participantId) throws InvalidLRAStateException {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
@@ -189,20 +188,20 @@ public class ProxyService implements LRAManagement {
     }
 
     @Override
-    public URL joinLRA(LRAParticipant participant, URL lraId)
+    public URI joinLRA(LRAParticipant participant, URI lraId)
             throws JoinLRAException {
         return joinLRA(participant, lraId, 0L, ChronoUnit.SECONDS);
     }
 
     @Override
-    public URL joinLRA(LRAParticipant participant, URL lraId, Long timelimit, ChronoUnit unit)
+    public URI joinLRA(LRAParticipant participant, URI lraId, Long timelimit, ChronoUnit unit)
             throws JoinLRAException {
         // TODO if lraId == null then register a join all nw LRAs
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
             String pId = proxy.getParticipantId();
-            String lra = URLEncoder.encode(lraId.toExternalForm(), "UTF-8");
+            String lra = URLEncoder.encode(lraId.toASCIIString(), "UTF-8");
             UriBuilder clone = uriBuilder.clone();
 
             URI participantUri = clone.build(lra, pId);
@@ -226,7 +225,7 @@ public class ProxyService implements LRAManagement {
                 throw new JoinLRAException(lraId, response.getStatus(), "Unable to join with this LRA", null);
             }
 
-            return new URL(response.readEntity(String.class));
+            return new URI(response.readEntity(String.class));
         } catch (Exception e) {
             throw new JoinLRAException(lraId, 0, "Exception whilst joining with this LRA", e);
         }
@@ -245,7 +244,7 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    private static Optional<LRAParticipant> deserializeParticipant(URL lraId, final String objectAsString) {
+    private static Optional<LRAParticipant> deserializeParticipant(URI lraId, final String objectAsString) {
         return Optional.empty(); // TODO
 /*        final byte[] data = Base64.getDecoder().decode(objectAsString);
 

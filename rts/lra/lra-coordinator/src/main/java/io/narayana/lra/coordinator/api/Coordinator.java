@@ -23,7 +23,6 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.LRAIdConverter;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
@@ -59,10 +58,12 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static java.util.stream.Collectors.toList;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
 import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
 
@@ -141,7 +143,7 @@ public class Coordinator {
     public Response getLRAStatus(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        LRAStatus status = lraService.getTransaction(toURL(lraId)).getLRAStatus();
+        LRAStatus status = lraService.getTransaction(toURI(lraId)).getLRAStatus();
 
         if (status == null) {
             return Response.noContent().build(); // 204 means the LRA is still active
@@ -168,7 +170,7 @@ public class Coordinator {
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId") String lraId) throws NotFoundException {
 
-        return lraService.getLRA(toURL(lraId));
+        return lraService.getLRA(toURI(lraId));
     }
 
 /*    @GET
@@ -185,7 +187,7 @@ public class Coordinator {
     public LRAStatus getDetailedLRAStatus(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        return new LRAStatus(lraService.getTransaction(toURL(lraId)));
+        return new LRAStatus(lraService.getTransaction(toURI(lraId)));
     }*/
 
     // Performing a GET on /lra-io.narayana.lra.coordinator/<LraId> returns 200 if the lra is still active.
@@ -201,7 +203,7 @@ public class Coordinator {
     public Boolean isActiveLRA(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        return lraService.getTransaction(toURL(lraId)).isActive();
+        return lraService.getTransaction(toURI(lraId)).isActive();
     }
 
     // Performing a POST on /lra-io.narayana.lra.coordinator/start?ClientID=<ClientID> will start a new lra with a default timeout and
@@ -238,24 +240,33 @@ public class Coordinator {
             @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA,
             @HeaderParam(LRA_HTTP_HEADER) String parentId) throws WebApplicationException, InvalidLRAIdException {
 
-        URL parentLRAUrl = null;
+        URI parentLRAUrl = null;
 
         if (parentLRA != null && !parentLRA.isEmpty()) {
-            parentLRAUrl = LRAIdConverter.lraToURL(parentLRA, "Invalid parent LRA id");
+            parentLRAUrl = toURI(parentLRA, "Invalid parent LRA id");
         }
 
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
-        URL lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
+        URI lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
 
         if (parentLRAUrl != null) {
             // register with the parentLRA as a participant
             Client client = ClientBuilder.newClient();
-            String compensatorUrl = String.format("%s/%s", coordinatorUrl,
-                    LRAIdConverter.encodeURL(lraId, "Invalid parent LRA id"));
+            String compensatorUrl = null;
+            URL url = null;
+
+            try {
+                url = lraId.toURL();
+                compensatorUrl = String.format("%s/%s", coordinatorUrl,
+                        URLEncoder.encode(url.toString(), "UTF-8"));
+            } catch (UnsupportedEncodingException | MalformedURLException e) {
+                LRALogger.i18NLogger.error_invalidFormatToEncodeUrl(url, e);
+                throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), "Invalid parent LRA id", e);
+            }
             Response response;
 
             if (lraService.hasTransaction(parentLRAUrl)) {
-                response = joinLRAViaBody(parentLRAUrl.toExternalForm(), timelimit, null, compensatorUrl);
+                response = joinLRAViaBody(parentLRAUrl.toASCIIString(), timelimit, null, compensatorUrl);
             } else {
                 response = client.target(parentLRA).request().put(Entity.text(compensatorUrl));
             }
@@ -289,7 +300,7 @@ public class Coordinator {
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") Long timelimit,
             @PathParam("LraId")String lraId) throws NotFoundException {
 
-        return Response.status(lraService.renewTimeLimit(toURL(lraId), timelimit)).build();
+        return Response.status(lraService.renewTimeLimit(toURI(lraId), timelimit)).build();
     }
 
     @GET
@@ -300,11 +311,11 @@ public class Coordinator {
             return Response.ok(LRAStatus.Cancelled.name()).build();
         }
 
-        Transaction lra = lraService.getTransaction(toURL(nestedLraId));
+        Transaction lra = lraService.getTransaction(toURI(nestedLraId));
         LRAStatus status = lra.getLRAStatus();
 
         if (status == null || lra.getLRAStatus() == null) {
-            LRALogger.i18NLogger.error_cannotGetStatusOfNestedLra(nestedLraId, lra.getId());
+            LRALogger.i18NLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
             throw new IllegalLRAStateException(nestedLraId, "The LRA is still active", "getNestedLRAStatus");
         }
 
@@ -314,19 +325,19 @@ public class Coordinator {
     @PUT
     @Path("{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return endLRA(toURL(nestedLraId), false, true);
+        return endLRA(toURI(nestedLraId), false, true);
     }
 
     @PUT
     @Path("{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return endLRA(toURL(nestedLraId), true, true);
+        return endLRA(toURI(nestedLraId), true, true);
     }
 
     @PUT
     @Path("{NestedLraId}/forget")
     public Response forgetNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        lraService.remove(null, toURL(nestedLraId));
+        lraService.remove(null, toURI(nestedLraId));
 
         return Response.ok().build();
     }
@@ -354,7 +365,7 @@ public class Coordinator {
     public Response closeLRA(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String txId) throws NotFoundException {
-        return endLRA(toURL(txId), false, false);
+        return endLRA(toURI(txId), false, false);
     }
 
     @PUT
@@ -373,11 +384,11 @@ public class Coordinator {
     public Response cancelLRA(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        return endLRA(toURL(lraId), true, false);
+        return endLRA(toURI(lraId), true, false);
     }
 
 
-    private Response endLRA(URL lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
+    private Response endLRA(URI lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
         LRAStatusHolder status = lraService.endLRA(lraId, compensate, fromHierarchy);
 
         return Response.ok(status.getStatus().name()).build();
@@ -426,7 +437,7 @@ public class Coordinator {
         boolean isLink = isLink(compensatorData);
 
         if (compensatorLink != null) {
-            return joinLRA(toURL(lraId), timeLimit, null, compensatorLink, compensatorData);
+            return joinLRA(toURI(lraId), timeLimit, null, compensatorLink, compensatorData);
         }
 
         if (!isLink) { // interpret the content as a standard participant url
@@ -456,7 +467,7 @@ public class Coordinator {
             compensatorData = linkHeaderValue.toString();
         }
 
-        return joinLRA(toURL(lraId), timeLimit, null, compensatorData, null);
+        return joinLRA(toURI(lraId), timeLimit, null, compensatorData, null);
     }
 
 
@@ -486,7 +497,7 @@ public class Coordinator {
         }
     }
 
-    private Response joinLRA(URL lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData)
+    private Response joinLRA(URI lraId, long timeLimit, String compensatorUrl, String linkHeader, String userData)
             throws NotFoundException {
         final String recoveryUrlBase = String.format("http://%s/%s/",
                 context.getRequestUri().getAuthority(), RECOVERY_COORDINATOR_PATH_NAME);
@@ -502,7 +513,7 @@ public class Coordinator {
                     .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl)
                     .build();
         } catch (URISyntaxException e) {
-            LRALogger.i18NLogger.error_invalidRecoveryUrlToJoinLRA(recoveryUrl.toString(), lraId);
+            LRALogger.i18NLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
             throw new GenericLRAException(lraId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "Invalid recovery URL", e);
         }
     }
@@ -522,33 +533,43 @@ public class Coordinator {
     public Response leaveLRA(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
             @PathParam("LraId") String lraId,
-            String compensatorUrl) throws NotFoundException, MalformedURLException {
+            String compensatorUrl) throws NotFoundException, URISyntaxException {
         String reqUri = context.getRequestUri().toString();
 
         reqUri =  reqUri.substring(0, reqUri.lastIndexOf('/'));
 
-        int status = lraService.leave(new URL(reqUri), compensatorUrl);
+        int status = 0;
+
+        status = lraService.leave(new URI(reqUri), compensatorUrl);
 
         return Response.status(status).build();
     }
 
-    private URL toURL(String lraId) {
+    private URI toURI(String lraId) {
+        return toURI(lraId, "Invalid LRA id format");
+    }
+
+    private URI toURI(String lraId, String message) {
         URL url;
 
         try {
             // see if it already in the correct format
             url = new URL(lraId);
             url.toURI();
-
         } catch (Exception e) {
             try {
                 url = new URL(String.format("%s%s/%s", context.getBaseUri(), COORDINATOR_PATH_NAME, lraId));
             } catch (MalformedURLException e1) {
                 LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e1);
-                throw new InvalidLRAIdException(lraId, "Invalid LRA id format", e1);
+                throw new InvalidLRAIdException(lraId, message, e1);
             }
         }
 
-        return url;
+        try {
+            return url.toURI();
+        } catch (URISyntaxException e) {
+            LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
+            throw new InvalidLRAIdException(lraId, message, e);
+        }
     }
 }

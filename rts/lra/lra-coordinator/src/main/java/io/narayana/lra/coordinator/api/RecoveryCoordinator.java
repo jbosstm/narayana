@@ -44,8 +44,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
@@ -113,24 +113,18 @@ public class RecoveryCoordinator {
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
 
         if (compensatorUrl != null) {
-            URL lra = null;
+            URI lra = null;
 
             try {
-                lra = new URL(lraId);
-            } catch (MalformedURLException e) {
-                LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensator(lraId, compensatorUrl, e);
+                lra = new URI(lraId);
+            } catch (URISyntaxException e) {
+                LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensatorURI(lraId, compensatorUrl, e);
                 throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
             }
 
-            lraService.updateRecoveryURL(lra, newCompensatorUrl, rcvCoordId, true);
+            lraService.updateRecoveryURI(lra, newCompensatorUrl, rcvCoordId, true);
 
-            try {
-                return context.getRequestUri().toURL().toExternalForm();
-            } catch (MalformedURLException e) { // cannot happen
-                LRALogger.i18NLogger.error_invalidFormatOfRequestUri(context.getRequestUri(), lraId, compensatorUrl, e);
-                throw new GenericLRAException(lra,
-                        Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e.getCause());
-            }
+            return context.getRequestUri().toASCIIString();
         }
 
         LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);

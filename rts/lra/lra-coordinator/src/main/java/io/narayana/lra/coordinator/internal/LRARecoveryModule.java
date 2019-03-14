@@ -38,7 +38,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -188,7 +188,7 @@ public class LRARecoveryModule implements RecoveryModule {
         }
     }
 
-    public void getRecoveringLRAs(Map<URL, Transaction> lras) {
+    public void getRecoveringLRAs(Map<URI, Transaction> lras) {
 
         periodicWorkFirstPass();
 

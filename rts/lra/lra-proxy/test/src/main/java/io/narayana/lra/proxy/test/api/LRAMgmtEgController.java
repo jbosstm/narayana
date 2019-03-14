@@ -37,8 +37,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.temporal.ChronoUnit;
 
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
@@ -60,7 +60,7 @@ public class LRAMgmtEgController {
 
     @PUT
     @Path(LRAM_WORK)
-    public Response lramTest(@QueryParam("lraId") String lraId) throws MalformedURLException, JoinLRAException {
+    public Response lramTest(@QueryParam("lraId") String lraId) throws URISyntaxException, JoinLRAException {
         assert lraId != null;
 
         Activity activity = new Activity(lraId);
@@ -68,7 +68,7 @@ public class LRAMgmtEgController {
         activityService.add(activity);
 
         activity.rcvUrl = lraManagement.joinLRA(
-                new Participant(activity), toURL(lraId), 0L, ChronoUnit.SECONDS);
+                new Participant(activity), toURI(lraId), 0L, ChronoUnit.SECONDS);
 
         return Response.ok(activity.id).build();
     }
@@ -80,7 +80,7 @@ public class LRAMgmtEgController {
         return activityService.getActivity(activityId, false).toString();
     }
 
-    private URL toURL(String url) throws MalformedURLException {
-        return url == null ? null : new URL(url);
+    private URI toURI(String uri) throws URISyntaxException {
+        return uri == null ? null : new URI(uri);
     }
 }

@@ -28,6 +28,7 @@ import static org.jboss.logging.Logger.Level.WARN;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.json.JsonObject;
@@ -181,6 +182,18 @@ public interface lraI18NLogger {
     @Message(id = 25034, value = "LRA participant completion for asynchronous method %s#%s should return %d and not %d")
     @LogMessage(level = WARN)
     void warn_lraParticipantqForAsync(String clazz, String method, int statusCorrect, int statusWrong);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 25035, value = "Cannot get status of nested lra '%s' as outer one '%s' is still active")
+    void error_cannotGetStatusOfNestedLraURI(String nestedLraId, URI lraId);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 25036, value = "Invalid recovery url '%s' to join lra '%s'")
+    void error_invalidRecoveryUrlToJoinLRAURI(String recoveryUrl, URI lraId);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 25037, value = "Invalid format of lra id '%s' to replace compensator '%s'")
+    void error_invalidFormatOfLraIdReplacingCompensatorURI(String recoveryUrl, String lraId, @Cause URISyntaxException e);
 
     /*
         Allocate new messages directly above this notice.
