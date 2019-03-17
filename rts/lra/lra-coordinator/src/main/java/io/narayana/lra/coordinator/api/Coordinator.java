@@ -84,8 +84,8 @@ import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)

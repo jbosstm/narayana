@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
 
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();

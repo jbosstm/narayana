@@ -40,7 +40,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
         // adding LRA spec interfaces under the WildFly Swarm deployment
                 .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage())
-                .addPackages(true, org.eclipse.microprofile.lra.client.LRAClient.class.getPackage())
+                .addPackages(true, org.eclipse.microprofile.lra.client.InvalidLRAIdException.class.getPackage())
                 .addPackages(true, org.eclipse.microprofile.lra.participant.LRAParticipant.class.getPackage());
         // adding Narayana LRA implementation under the WildFly Swarm deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
@@ -54,9 +54,6 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
                .addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
                .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
                     "META-INF/services/javax.ws.rs.client.ClientBuilder");
-
-        // adding LRA TCK implementation of interfaces
-        archive.addPackages(false, io.narayana.lra.tck.LRATckInfo.class.getPackage());
 
         return archive;
     }

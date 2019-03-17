@@ -62,17 +62,28 @@ import static io.narayana.lra.LRAConstants.FORGET;
 import static io.narayana.lra.LRAConstants.LEAVE;
 import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_HEADER;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_HTTP_RECOVERY_HEADER;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_HOST_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PATH_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_RECOVERY_PORT_KEY;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @Provider
 public class ServerLRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
+    /**
+     * Key for looking up the config property that specifies which JAX-RS path a
+     * recovery coordinator is running on
+     */
+    private static String LRA_RECOVERY_HOST_KEY = "lra.http.recovery.host";
+
+    /**
+     * Key for looking up the config property that specifies which JAX-RS path a
+     * recovery coordinator is running on
+     */
+    private static String LRA_RECOVERY_PORT_KEY = "lra.http.recovery.port";
+
+    /**
+     * Key for looking up the config property that specifies which JAX-RS path a
+     * recovery coordinator is running on
+     */
+    private static  String LRA_RECOVERY_PATH_KEY = "lra.coordinator.recovery.path";
 
     private static final String CANCEL_ON_FAMILY_PROP = "CancelOnFamily";
     private static final String CANCEL_ON_PROP = "CancelOn";
@@ -88,9 +99,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     public ServerLRAFilter() throws Exception {
         if (!NarayanaLRAClient.isInitialised()) {
-            String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
-            int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8082);
-            String lraCoordinatorPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, COORDINATOR_PATH_NAME);
+            String lcHost = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost");
+            int lcPort = Integer.getInteger(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, 8082);
+            String lraCoordinatorPath = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PATH_KEY, COORDINATOR_PATH_NAME);
 
             String lraCoordinatorUrl = String.format("http://%s:%d/%s", lcHost, lcPort, lraCoordinatorPath);
 
@@ -101,7 +112,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             String rcUrl = String.format("http://%s:%d/%s", rcHost, rcPort, rcPath);
 
             NarayanaLRAClient.setDefaultCoordinatorEndpoint(new URI(lraCoordinatorUrl));
-            NarayanaLRAClient.setDefaultRecoveryEndpoint(new URI(rcUrl));
         }
 
         lraClient = new NarayanaLRAClient();
@@ -316,7 +326,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             containerRequestContext.setProperty(NEW_LRA_PROP, newLRA);
         }
 
-        lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected LRAClient");
+        lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected NarayanaLRAClient");
         lraClient.setCurrentLRA(lraId); // make the current LRA available to the called method
 
         // TODO make sure it is possible to do compensations inside a new LRA

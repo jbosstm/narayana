@@ -17,12 +17,12 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URL;
 
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY;
+import static io.narayana.lra.client.NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.GET_ACTIVITY_PATH;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_WORK;
 
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 import static org.junit.Assert.assertTrue;
 
 public class SpecTest {
