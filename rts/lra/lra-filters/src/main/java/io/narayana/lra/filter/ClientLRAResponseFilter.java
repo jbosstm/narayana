@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
 
 public class ClientLRAResponseFilter implements ClientResponseFilter {
     @Context

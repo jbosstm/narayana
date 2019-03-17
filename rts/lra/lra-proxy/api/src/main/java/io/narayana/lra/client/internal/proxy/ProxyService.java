@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
+import io.narayana.lra.client.NarayanaLRAClient;
 import org.eclipse.microprofile.lra.participant.LRAParticipant;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.participant.JoinLRAException;
@@ -56,13 +57,10 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_HOST_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PATH_KEY;
-import static org.eclipse.microprofile.lra.client.LRAClient.LRA_COORDINATOR_PORT_KEY;
 
 @ApplicationScoped
 public class ProxyService implements LRAManagement {
-    private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";  // LRAClient.TIMELIMIT_PARAM_NAME
+    private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
 
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
 
@@ -87,9 +85,9 @@ public class ProxyService implements LRAManagement {
                 .host(httpHost)
                 .port(httpPort);
 
-        String lcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
-        int lcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8080);
-        String lcPath = System.getProperty(LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
+        String lcHost = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost");
+        int lcPort = Integer.getInteger(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, 8080);
+        String lcPath = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
 
 
         UriBuilder urib = UriBuilder.fromPath(lcPath).scheme("http").host(lcHost).port(lcPort);

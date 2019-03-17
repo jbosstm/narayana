@@ -84,7 +84,6 @@
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-client</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
