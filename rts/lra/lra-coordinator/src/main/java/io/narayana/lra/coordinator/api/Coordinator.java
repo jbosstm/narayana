@@ -224,7 +224,7 @@ public class Coordinator {
                     + "consulting the coordinator and all compensators, respectively.",
             response = String.class)
     @ApiResponses({
-            @ApiResponse(code = 200, message = "The request was successful and the response body contains the id of the new LRA"),
+            @ApiResponse(code = 201, message = "The request was successful and the response body contains the id of the new LRA"),
             @ApiResponse(code = 500, message = "A new LRA could not be started")
     })
 
