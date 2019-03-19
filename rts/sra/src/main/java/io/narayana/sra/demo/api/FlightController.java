@@ -74,7 +74,7 @@ public class FlightController extends SRAParticipant {
 
     @Override
     protected SRAStatus updateParticipantState(SRAStatus status, String bookingId) {
-        System.out.printf("SRA: %s: Updating flight participant state to: ", bookingId, status);
+        System.out.printf("SRA: %s: Updating flight participant state to: %s", bookingId, status);
         switch (status) {
             case TransactionCommitted:
                 flightService.updateBookingStatus(bookingId, BookingStatus.CONFIRMED);
