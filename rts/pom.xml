@@ -95,11 +95,15 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
              </dependency>
 	  </dependencies>
       </profile>
+    <profile>
+    <id>community</id>
+      <modules>
+        <module>lra</module>
+        <module>sra</module>
+      </modules>
+    </profile>
   </profiles>
-
   <modules>
     <module>at</module>
-    <module>lra</module>
-    <module>sra</module>
   </modules>
 </project>
