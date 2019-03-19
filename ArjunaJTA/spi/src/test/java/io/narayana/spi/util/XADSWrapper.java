@@ -121,9 +121,8 @@ public class XADSWrapper implements XADataSource, Serializable, Referenceable, D
         return xaDataSource.getLoginTimeout();
     }
 
-    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return getParentLogger();
+        return xaDataSource.getParentLogger();
     }
 
     // DataSource implementation
