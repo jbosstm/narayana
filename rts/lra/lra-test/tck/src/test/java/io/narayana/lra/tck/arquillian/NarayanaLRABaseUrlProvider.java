@@ -49,7 +49,7 @@ public class NarayanaLRABaseUrlProvider implements ResourceProvider {
             return new URL(String.format("http://%s:%s", hostname, port));
         } catch (MalformedURLException murle) {
             throw new IllegalStateException(String.format("Cannot compose URL from host '%s' and port '%s' "
-                    + "provided with testsuite parameters 'lra.tck.suite.host' and 'lra.tck.suite.port'.", murle));
+                    + "provided with testsuite parameters 'lra.tck.suite.host' and 'lra.tck.suite.port'.", hostname, port), murle);
         }
     }
 

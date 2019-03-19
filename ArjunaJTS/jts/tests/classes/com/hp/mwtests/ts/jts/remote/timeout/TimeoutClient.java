@@ -31,8 +31,6 @@
 
 package com.hp.mwtests.ts.jts.remote.timeout;
 
-import java.util.Date;
-
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.Control;
@@ -112,7 +110,7 @@ public class TimeoutClient
             {
             	long timeNow = System.currentTimeMillis();
             	long setTime = (timeNow - startTime);
-            	long timeoutTime = (timeout * 1000 *mfactor);
+            	long timeoutTime = (timeout * 1000L * mfactor);
             	long sleepTime =  timeoutTime - setTime; 
             	if (sleepTime > 0) {
             		System.out.println("Now sleeping for " + sleepTime*mfactor + " milliseconds.");

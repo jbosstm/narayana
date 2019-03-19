@@ -174,7 +174,7 @@ public class TripController extends SRAParticipant {
 
     @Override
     protected SRAStatus updateParticipantState(SRAStatus status, String activityId) {
-        System.out.printf("SRA: %s: Updating trip participant state to: ", activityId, status);
+        System.out.printf("SRA: %s: Updating trip participant state to: %s", activityId, status);
         return status;
     }
 }
