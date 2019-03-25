@@ -55,6 +55,12 @@ public class JAXRSResource {
     }
 }
             </programlisting>
+
+            <para>
+                REST-AT transaction context does not provide timeout.
+                When REST-AT transaction is bridged to JTA then the bridged JTA transaction
+                is created with the default timeout defined by the container.
+            </para>
         </section>
         <section id="_outbound_bridge">
             <title>Outbound Bridge</title>

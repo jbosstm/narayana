@@ -92,6 +92,12 @@
             with the handlers registered only on the former. This limitation may be addressed in future
             versions.
         </para>
+        <para>
+            If WS-AT transaction context contains transaction timeout then the bridged JTA
+            transaction is created with this timeout. If the context does not provide
+            the information then the bridged JTA transaction is created
+            with the default timeout defined by the container.
+        </para>
     </section>
     <section>
         <title>Outbound Bridging</title>
