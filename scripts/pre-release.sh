@@ -72,7 +72,11 @@ do
       exit
     fi
     set -e
-    git commit -am "Updated to $CURRENT" || fatal
+    # when there is nothing to commit then do not commit
+    toCommit=`git log origin/master..HEAD --oneline | wc -l`
+    if [ $toCommit -ge 1 ]; then
+      git commit -am "Updated to $CURRENT" || fatal
+    fi
     git tag $CURRENT || fatal
 
     if [[ "$(uname)" == "Darwin" ]] # MacOS
@@ -89,7 +93,10 @@ do
       exit
     fi
     set -e
-    git commit -am "Updated to $NEXT" || fatal
+    toCommit=`git log origin/master..HEAD --oneline | wc -l`
+    if [ $toCommit -ge 1 ]; then
+      git commit -am "Updated to $NEXT" || fatal
+    fi
     git push origin $BRANCH --tags || fatal
     cd ..
 done
