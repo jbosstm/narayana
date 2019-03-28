@@ -129,8 +129,16 @@ cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 MAVEN_OPTS="-XX:MaxPermSize=512m" 
-mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$PWD/ext/ -Pcommunity
-mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$PWD/ext/ -Prelease,community
+
+if [[ $(uname) == CYGWIN* ]]
+then
+  ORSON_PATH=`cygpath -w $PWD/ext/`
+else
+  ORSON_PATH=$PWD/ext/
+fi
+
+mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
