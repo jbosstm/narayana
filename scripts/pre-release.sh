@@ -73,7 +73,7 @@ do
     fi
     set -e
     # when there is nothing to commit then do not commit
-    toCommit=`git log origin/master..HEAD --oneline | wc -l`
+    toCommit=`git diff | wc -l`
     if [ $toCommit -ge 1 ]; then
       git commit -am "Updated to $CURRENT" || fatal
     fi
@@ -93,7 +93,7 @@ do
       exit
     fi
     set -e
-    toCommit=`git log origin/master..HEAD --oneline | wc -l`
+    toCommit=`git diff | wc -l`
     if [ $toCommit -ge 1 ]; then
       git commit -am "Updated to $NEXT" || fatal
     fi
