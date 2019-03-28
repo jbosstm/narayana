@@ -127,6 +127,7 @@ git checkout $CURRENT
 if [[ $? != 0 ]]
 then
   echo Tag did not exist
+  exit
 fi
 mvn clean install -Prelease
 cd -
@@ -135,6 +136,7 @@ git checkout $CURRENT
 if [[ $? != 0 ]]
 then
   echo Tag did not exist
+  exit
 fi
 MAVEN_OPTS="-XX:MaxPermSize=512m" 
 
@@ -146,11 +148,36 @@ else
 fi
 
 mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+if [[ $? != 0 ]]
+then
+  echo Could not install narayana
+  exit
+fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+if [[ $? != 0 ]]
+then
+  echo Could not deploy narayana to nexus
+  exit
+fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
+if [[ $? != 0 ]]
+then
+  echo Could not deploy blacktie cpp-plugin to nexus
+  exit
+fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
+if [[ $? != 0 ]]
+then
+  echo Could not deploy jatmibroker to nexus
+  exit
+fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
 ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
+if [[ $? != 0 ]]
+then
+  echo COULD NOT BUILD RELEASE PKGS
+  exit
+fi
 cd -
 
 echo "build and retrieve the centos54x64 and vc9x32 binaries from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/"
@@ -177,6 +204,7 @@ git checkout $CURRENT
 if [[ $? != 0 ]]
 then
   echo Tag did not exist
+  exit
 fi
 docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
 docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
