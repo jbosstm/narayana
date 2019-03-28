@@ -124,10 +124,18 @@ fi
 
 cd ~/tmp/narayana/$CURRENT/sources/documentation/
 git checkout $CURRENT
+if [[ $? != 0 ]]
+then
+  echo Tag did not exist
+fi
 mvn clean install -Prelease
 cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
+if [[ $? != 0 ]]
+then
+  echo Tag did not exist
+fi
 MAVEN_OPTS="-XX:MaxPermSize=512m" 
 
 if [[ $(uname) == CYGWIN* ]]
@@ -166,6 +174,10 @@ docker login docker.io
 [ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
 cd ~/tmp/narayana/$CURRENT/sources/jboss-dockerfiles/lra/lra-coordinator
 git checkout $CURRENT
+if [[ $? != 0 ]]
+then
+  echo Tag did not exist
+fi
 docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
 docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
 docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
