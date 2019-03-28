@@ -92,14 +92,14 @@ then
   set -e 
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
   git fetch upstream --tags
-  ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
+  #./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
 else
   set -e
 fi
 
 if [ -z "$WFLYISSUE" ]
 then
-  ./scripts/release/update_upstream.py -s WFLY -n $CURRENT
+  #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
   read -p "Enter WFLY issue: " WFLYISSUE
   if [ ! -d "jboss-as" ]
   then
