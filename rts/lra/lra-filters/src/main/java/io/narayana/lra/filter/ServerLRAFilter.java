@@ -270,7 +270,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 //                    previous = AtomicAction.suspend();
                 suspendedLRA = incommingLRA;
                 lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRES_NEW start new LRA");
-                newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
+                URI parent = nested ? incommingLRA : null;
+                newLRA = lraId = startLRA(parent, method, getTimeOut(method));
 
                 break;
             case SUPPORTS:
@@ -394,26 +395,38 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         try {
             if (current != null && isJaxRsCancel(requestContext, responseContext)) {
-                lraClient.cancelLRA(current);
-                if (current.toASCIIString().equals(
-                        Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
-                    // the callers context was ended so invalidate it
-                    requestContext.getHeaders().remove(LRA_HTTP_HEADER);
-                }
+                try {
+                    lraClient.cancelLRA(current);
+                } catch (NotFoundException ignore) {
+                    // must already be cancelled (if the intercepted method caused it to cancel)
+                    // or completed (if the intercepted method caused it to complete)
+                } finally {
+                    if (current.toASCIIString().equals(
+                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                        // the callers context was ended so invalidate it
+                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                    }
 
-                if (toClose != null && toClose.toASCIIString().equals(current.toASCIIString())) {
-                    toClose = null; // don't attempt to finish the LRA twice
+                    if (toClose != null && toClose.toASCIIString().equals(current.toASCIIString())) {
+                        toClose = null; // don't attempt to finish the LRA twice
+                    }
                 }
             }
 
             if (toClose != null) {
-                lraClient.closeLRA(toClose);
-                requestContext.getHeaders().remove(LRA_HTTP_HEADER);
-
-                if (toClose.toASCIIString().equals(
-                        Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
-                    // the callers context was ended so invalidate it
+                try {
+                    lraClient.closeLRA(toClose);
+                } catch (NotFoundException ignore) {
+                    // must already be cancelled (if the intercepted method caused it to cancel)
+                    // or completed (if the intercepted method caused it to complete
+                } finally {
                     requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+
+                    if (toClose.toASCIIString().equals(
+                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                        // the callers context was ended so invalidate it
+                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                    }
                 }
             }
 
