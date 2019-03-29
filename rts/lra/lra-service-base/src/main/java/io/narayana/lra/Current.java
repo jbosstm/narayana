@@ -175,7 +175,9 @@ public class Current {
         URI lraId = Current.peek();
 
         if (lraId != null) {
-            context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+            if (!context.getHeaders().containsKey(LRA_HTTP_HEADER)) {
+                context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
+            }
         } else {
             Object lraContext = context.getProperty(LRA_HTTP_HEADER);
 
