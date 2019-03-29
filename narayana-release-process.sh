@@ -126,7 +126,7 @@ cd ~/tmp/narayana/$CURRENT/sources/documentation/
 git checkout $CURRENT
 if [[ $? != 0 ]]
 then
-  echo Tag did not exist
+  echo 1>&2 documentation: Tag '$CURRENT' did not exist
   exit
 fi
 mvn clean install -Prelease
@@ -135,7 +135,7 @@ cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 if [[ $? != 0 ]]
 then
-  echo Tag did not exist
+  echo 1>&2 narayana: Tag '$CURRENT' did not exist
   exit
 fi
 MAVEN_OPTS="-XX:MaxPermSize=512m" 
@@ -150,32 +150,32 @@ fi
 mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
 if [[ $? != 0 ]]
 then
-  echo Could not install narayana
+  echo 1>&2 Could not install narayana
   exit
 fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
-  echo Could not deploy narayana to nexus
+  echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 if [[ $? != 0 ]]
 then
-  echo Could not deploy blacktie cpp-plugin to nexus
+  echo 1>&2 Could not deploy blacktie cpp-plugin to nexus
   exit
 fi
 mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 if [[ $? != 0 ]]
 then
-  echo Could not deploy jatmibroker to nexus
+  echo 1>&2 Could not deploy jatmibroker to nexus
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
 ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
 if [[ $? != 0 ]]
 then
-  echo COULD NOT BUILD RELEASE PKGS
+  echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
   exit
 fi
 cd -
@@ -203,7 +203,7 @@ cd ~/tmp/narayana/$CURRENT/sources/jboss-dockerfiles/lra/lra-coordinator
 git checkout $CURRENT
 if [[ $? != 0 ]]
 then
-  echo Tag did not exist
+  echo 1>&2 jboss-dockerfiles: Tag $CURRENT did not exist
   exit
 fi
 docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
