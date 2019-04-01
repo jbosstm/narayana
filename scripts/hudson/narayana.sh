@@ -808,7 +808,7 @@ function qa_tests_once {
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
 
     # run the ant target (QA_TESTMETHODS is a list of method names in QA_TESTGROUP to be executed)
-    if [ $QA_TRACE = 1 ]; then
+    if [ "x$QA_TRACE" = "x1" ]; then
         set_qa_log_level TRACE
     else
         set_qa_log_level INFO
