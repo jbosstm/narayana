@@ -82,7 +82,7 @@ public class JNDIManager
 
 				xaDataSourceToBind = xaDataSource;
 			}
-			else if (driver.equals("oracle.jdbc.driver.OracleDriver"))
+			else if (driver.equals("oracle.jdbc.driver.OracleDriver") || driver.equals("oracle.jdbc.OracleDriver"))
 			{
 				if (databaseName == null)
 				{
@@ -118,7 +118,7 @@ public class JNDIManager
 
                 xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
-			else if( driver.equals("com.mysql.jdbc.Driver")) {
+			else if( driver.equals("com.mysql.jdbc.Driver") || driver.equals("com.mysql.cj.jdbc.Driver")) {
 
 				// Note: MySQL XA only works on InnoDB tables.
 				// set 'default-storage-engine=innodb' in e.g. /etc/my.cnf
@@ -126,7 +126,7 @@ public class JNDIManager
 				// doing this config on a per connection basis instead is
 				// possible but would require lots of code changes :-(
 
-                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper(driver.equals("com.mysql.jdbc.Driver") ? "com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" : "com.mysql.cj.jdbc.MysqlXADataSource");
 
                 wrapper.setProperty("databaseName", databaseName);
                 wrapper.setProperty("serverName", host);
