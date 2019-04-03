@@ -19,10 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package com.arjuna.ats.jta.cdi;
 
-import java.util.Set;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
+import java.util.function.Supplier;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
@@ -31,16 +33,13 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Event;
 
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.Instance;
 
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 
 import javax.inject.Inject;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.NoInitialContextException;
 
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -51,8 +50,9 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionScoped;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * A {@link DelegatingTransactionManager} in {@linkplain
@@ -69,8 +69,28 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 @ApplicationScoped
 class NarayanaTransactionManager extends DelegatingTransactionManager {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization} purposes.
+   */
+  private static final long serialVersionUID = 596L; // 596 ~= 5.9.6.Final
+
+  /**
+   * An {@link Event} that can {@linkplain Event#fire(Object) fire}
+   * {@link Transaction}s when the {@linkplain TransactionScoped
+   * transaction scope} is initialized.
+   *
+   * @see #NarayanaTransactionManager(Instance, Event, Event)
+   */
   private final Event<Transaction> transactionScopeInitializedBroadcaster;
 
+  /**
+   * An {@link Event} that can {@linkplain Event#fire(Object) fire}
+   * {@link Object}s when the {@linkplain TransactionScoped
+   * transaction scope} is destroyed.
+   *
+   * @see #NarayanaTransactionManager(Instance, Event, Event)
+   */
   private final Event<Object> transactionScopeDestroyedBroadcaster;
 
   /**
@@ -83,22 +103,24 @@ class NarayanaTransactionManager extends DelegatingTransactionManager {
    *
    * @deprecated This constructor exists only to conform with <a
    * href="http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#unproxyable">section
-   * 3.15 of the CDI specification</a>.
+   * 3.15 of the CDI specification</a>.  Please use the {@link
+   * #NarayanaTransactionManager(Instance, Event, Event)} constructor
+   * instead.
+   *
+   * @see #NarayanaTransactionManager(Instance, Event, Event)
    */
   @Deprecated
   NarayanaTransactionManager() {
-    super(null);
-    this.transactionScopeDestroyedBroadcaster = null;
-    this.transactionScopeInitializedBroadcaster = null;
+    this((Supplier<JTAEnvironmentBean>)null, null, null);
   }
-  
+
   /**
    * Creates a new {@link NarayanaTransactionManager}.
    *
-   * @param beanManager a {@link BeanManager} to use to find a
-   * relevant {@link TransactionManager} to which to delegate all
-   * operations; may be {@code null} in which case JNDI and other
-   * mechanisms may be used instead
+   * @param jtaEnvironmentBeanInstance an {@link Instance} providing
+   * access to a {@link JTAEnvironmentBean} used to help with delegate
+   * computation; may be {@code null} in which case all method
+   * invocations will throw {@link IllegalStateException}s
    *
    * @param transactionScopeInitializedBroadcaster an {@link Event}
    * for broadcasting the {@linkplain Initialized initialization} of
@@ -109,7 +131,7 @@ class NarayanaTransactionManager extends DelegatingTransactionManager {
    * broadcasting the {@linkplain Destroyed destruction} of the {@link
    * TransactionScoped transaction scope}; may be {@code null}
    *
-   * @see com.arjuna.ats.jta.TransactionManager#transactionManager()
+   * @see JTAEnvironmentBean#getTransactionManager()
    *
    * @see #begin()
    *
@@ -120,92 +142,117 @@ class NarayanaTransactionManager extends DelegatingTransactionManager {
    * @see TransactionScoped
    */
   @Inject
-  NarayanaTransactionManager(final BeanManager beanManager,
+  NarayanaTransactionManager(final Instance<JTAEnvironmentBean> jtaEnvironmentBeanInstance,
                              @Initialized(TransactionScoped.class)
                              final Event<Transaction> transactionScopeInitializedBroadcaster,
                              @Destroyed(TransactionScoped.class)
                              final Event<Object> transactionScopeDestroyedBroadcaster) {
-    super(getDelegate(beanManager));
+    this(jtaEnvironmentBeanInstance == null ? (Supplier<? extends JTAEnvironmentBean>)null : jtaEnvironmentBeanInstance.isUnsatisfied() ? () -> BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class) : jtaEnvironmentBeanInstance::get,
+         transactionScopeInitializedBroadcaster,
+         transactionScopeDestroyedBroadcaster);
+  }
+
+  /**
+   * Creates a new {@link NarayanaTransactionManager}.
+   *
+   * @param jtaEnvironmentBeanSupplier a {@link Supplier} providing
+   * access to a {@link JTAEnvironmentBean} used to help with delegate
+   * computation; may be {@code null} in which case all method
+   * invocations will throw {@link IllegalStateException}s; may be
+   * {@linkplain Instance#isUnsatisfied() unsatisfied} in which case
+   * the return value of an invocation of {@link
+   * BeanPopulator#getDefaultInstance(Class)} will be supplied instead
+   *
+   * @param transactionScopeInitializedBroadcaster an {@link Event}
+   * for broadcasting the {@linkplain Initialized initialization} of
+   * the {@linkplain TransactionScoped transaction scope}; may be
+   * {@code null}
+   *
+   * @param transactionScopeDestroyedBroadcaster an {@link Event} for
+   * broadcasting the {@linkplain Destroyed destruction} of the {@link
+   * TransactionScoped transaction scope}; may be {@code null}
+   */
+  private NarayanaTransactionManager(final Supplier<? extends JTAEnvironmentBean> jtaEnvironmentBeanSupplier,
+                                     final Event<Transaction> transactionScopeInitializedBroadcaster,
+                                     final Event<Object> transactionScopeDestroyedBroadcaster) {
+    super(getDelegate(jtaEnvironmentBeanSupplier));
     this.transactionScopeInitializedBroadcaster = transactionScopeInitializedBroadcaster;
     this.transactionScopeDestroyedBroadcaster = transactionScopeDestroyedBroadcaster;
   }
 
-  private static final TransactionManager getDelegate(final BeanManager beanManager) {
-
-    final Context initialContext;
-    Context temp = null;
+  /**
+   * Returns an appropriately initialized {@link
+   * NarayanaTransactionManager} when invoked as part of the Java
+   * serialization mechanism.
+   *
+   * @return a non-{@code null} {@link NarayanaTransactionManager}
+   *
+   * @exception ObjectStreamException if a serialization error occurs
+   *
+   * @see #NarayanaTransactionManager(Instance, Event, Event)
+   *
+   * @see <a
+   * href="https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html#a5903">Section
+   * 3.7 of the Java Serialization Specification</a>
+   */
+  private Object readResolve() throws ObjectStreamException {
+    // Note that this readResolve() method must NOT be declared final,
+    // though normally this would be permitted, or certain
+    // interceptor-based tests fail in Wildfly.
+    Supplier<? extends JTAEnvironmentBean> supplier = null;
     try {
-      temp = new InitialContext();
-    } catch (final NoInitialContextException noInitialContextException) {
-      // Expected in certain combinations of JNDI
-      // implementations and CDI SE situations.
-    } catch (final NamingException namingException) {
-      throw new CreationException(namingException.getMessage(), namingException);
-    } finally {
-      initialContext = temp;
-    }
-    
-    TransactionManager candidateTransactionManager = null;
-    if (initialContext != null) {
-      JTAEnvironmentBean jtaEnvironmentBean = null;
-      try {
-        // Acquire a JTAEnvironmentBean which will give us what name
-        // to use to look up a TransactionManager in JNDI.
-        final Set<Bean<?>> beans;
-        if (beanManager == null) {
-          beans = null;
-        } else {
-          beans = beanManager.getBeans(JTAEnvironmentBean.class);
-        }
-        if (beans == null || beans.isEmpty()) {
-          jtaEnvironmentBean = jtaPropertyManager.getJTAEnvironmentBean();
-        } else {
-          final Bean<?> bean = beanManager.resolve(beans);
-          assert bean != null;
-          jtaEnvironmentBean = (JTAEnvironmentBean)beanManager.getReference(bean, JTAEnvironmentBean.class, beanManager.createCreationalContext(bean));
-        }
-      } catch (final RuntimeException runtimeException) {
-        try {
-          initialContext.close();
-        } catch (final NamingException namingException) {
-          runtimeException.addSuppressed(namingException);
-          throw runtimeException;
-        }
+      final Instance<JTAEnvironmentBean> instance = CDI.current().select(JTAEnvironmentBean.class);
+      if (instance != null && !instance.isUnsatisfied()) {
+        supplier = instance::get;
       }
-      assert jtaEnvironmentBean != null;
-      
-      // Do the JNDI lookup.
-      CreationException e = null;
-      try {
-        candidateTransactionManager = (TransactionManager)initialContext.lookup(jtaEnvironmentBean.getTransactionManagerJNDIContext());
-      } catch (final NoInitialContextException noInitialContextException) {
-        // Expected in standalone CDI SE situations.
-      } catch (final NamingException namingException) {
-        e = new CreationException(namingException.getMessage(), namingException);
-        throw e;
-      } finally {
-        try {
-          initialContext.close();
-        } catch (final NamingException namingException) {
-          if (e != null) {
-            e.addSuppressed(namingException);
-          } else {
-            e = new CreationException(namingException.getMessage(), namingException);
-          }
-          throw e;
-        }
-      }
-      
-    }
+    } catch (final IllegalStateException cdiCurrentFailed) {
 
-    // If JNDI failed, or there was no InitialContext that could be
-    // interrogated at all, fall back to the last possible backup
-    // strategy.  This is a common case in CDI SE environments.
-    if (candidateTransactionManager == null) {
-      candidateTransactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
     }
-    
-    return candidateTransactionManager;
+    if (supplier == null) {
+      supplier = () -> BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
+    }
+    return new NarayanaTransactionManager(supplier,
+                                          this.transactionScopeInitializedBroadcaster,
+                                          this.transactionScopeDestroyedBroadcaster);
+  }
+
+  /**
+   * Returns a {@link TransactionManager} to use as a delegate {@link
+   * TransactionManager} for a {@link NarayanaTransactionManager}
+   * instance.
+   *
+   * <p>This method may return {@code null}.</p>
+   *
+   * @param jtaEnvironmentBeanSupplier a {@link Supplier} capable of
+   * supplying a {@link JTAEnvironmentBean}; may be {@code null}
+   *
+   * @return a {@link TransactionManager}, or {@code null}
+   *
+   * @exception CreationException if an error occurs
+   *
+   * @see JTASupplier#get(String, Supplier)
+   */
+  private static final TransactionManager getDelegate(final Supplier<? extends JTAEnvironmentBean> jtaEnvironmentBeanSupplier) {
+    final TransactionManager returnValue;
+    if (jtaEnvironmentBeanSupplier == null) {
+      returnValue = null;
+    } else {
+      final JTAEnvironmentBean jtaEnvironmentBean = jtaEnvironmentBeanSupplier.get();
+      if (jtaEnvironmentBean == null) {
+        returnValue = null;
+      } else {
+        TransactionManager temp = null;
+        try {
+          temp = JTASupplier.get(jtaEnvironmentBean.getTransactionManagerJNDIContext(),
+                                 jtaEnvironmentBean::getTransactionManager);
+        } catch (final NamingException namingException) {
+          throw new CreationException(namingException.getMessage(), namingException);
+        } finally {
+          returnValue = temp;
+        }
+      }
+    }
+    return returnValue;
   }
 
   /**
