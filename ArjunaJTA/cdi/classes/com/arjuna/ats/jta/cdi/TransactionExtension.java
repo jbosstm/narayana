@@ -22,16 +22,11 @@
 
 package com.arjuna.ats.jta.cdi;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -50,7 +45,8 @@ import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNotSupported
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequired;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequiresNew;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorSupports;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * @author paul.robinson@redhat.com 01/05/2013
@@ -61,14 +57,14 @@ public class TransactionExtension implements Extension {
 
     public static final String TX_INTERCEPTOR = "-tx-interceptor";
 
-    private final Map<Bean<?>, AnnotatedType<?>> beanToAnnotatedTypeMapping = new HashMap<>();    
-    
+    private final Map<Bean<?>, AnnotatedType<?>> beanToAnnotatedTypeMapping = new HashMap<>();
+
     public Map<Bean<?>, AnnotatedType<?>> getBeanToAnnotatedTypeMapping() {
         return beanToAnnotatedTypeMapping;
     }
-  
-    public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {        
-        
+
+    public void register(@Observes BeforeBeanDiscovery bbd, BeanManager bm) {
+
         bbd.addScope(TransactionScoped.class, true, true);
 
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorMandatory.class), TransactionalInterceptorMandatory.class.getName() + TX_INTERCEPTOR);
@@ -78,7 +74,9 @@ public class TransactionExtension implements Extension {
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorRequiresNew.class), TransactionalInterceptorRequiresNew.class.getName() + TX_INTERCEPTOR);
         bbd.addAnnotatedType(bm.createAnnotatedType(TransactionalInterceptorSupports.class), TransactionalInterceptorSupports.class.getName() + TX_INTERCEPTOR);
 
+        bbd.addAnnotatedType(bm.createAnnotatedType(NarayanaTransactionSynchronizationRegistry.class), NarayanaTransactionSynchronizationRegistry.class.getName());
         bbd.addAnnotatedType(bm.createAnnotatedType(NarayanaTransactionManager.class), NarayanaTransactionManager.class.getName());
+
     }
 
     /**
@@ -91,20 +89,14 @@ public class TransactionExtension implements Extension {
         beanToAnnotatedTypeMapping.put(pmb.getBean(), pmb.getAnnotatedBeanClass());
     }
 
-    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {        
-
-        Set<Bean<?>> beans = manager.getBeans(TransactionSynchronizationRegistry.class);
-        if (beans == null || beans.isEmpty()) {
-            event.addBean(new JNDIBean<>(jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistryJNDIContext(), TransactionSynchronizationRegistry.class, Singleton.class));
-        }
-        
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
         event.addContext(new TransactionContext(() -> {
             final Bean<?> tmBean = manager.resolve(manager.getBeans(TransactionManager.class));
-            return (TransactionManager)manager.getReference(tmBean, TransactionManager.class, manager.createCreationalContext(tmBean));
+            return (TransactionManager) manager.getReference(tmBean, TransactionManager.class, manager.createCreationalContext(tmBean));
         },
         () -> {
             final Bean<?> tsrBean = manager.resolve(manager.getBeans(TransactionSynchronizationRegistry.class));
-            return (TransactionSynchronizationRegistry)manager.getReference(tsrBean, TransactionSynchronizationRegistry.class, manager.createCreationalContext(tsrBean));
+            return (TransactionSynchronizationRegistry) manager.getReference(tsrBean, TransactionSynchronizationRegistry.class, manager.createCreationalContext(tsrBean));
         }));
     }
 
