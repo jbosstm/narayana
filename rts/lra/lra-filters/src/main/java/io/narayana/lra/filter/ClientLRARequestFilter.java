@@ -25,12 +25,10 @@ import io.narayana.lra.Current;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
-import java.io.IOException;
 
 public class ClientLRARequestFilter implements ClientRequestFilter {
     @Override
-    public void filter(ClientRequestContext context) throws IOException {
-        // NB the following overrides what the caller did with the LRA context header
+    public void filter(ClientRequestContext context) {
         Current.updateLRAContext(context);
     }
 }
