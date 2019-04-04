@@ -172,19 +172,24 @@ public class Current {
      * @param context the context for the JAX-RS request
      */
     public static void updateLRAContext(ClientRequestContext context) {
+        MultivaluedMap<String, Object> headers = context.getHeaders();
+
+        if (headers.containsKey(LRA_HTTP_HEADER)) {
+            // LRA context is explicitly set
+            return;
+        }
+
         URI lraId = Current.peek();
 
         if (lraId != null) {
-            if (!context.getHeaders().containsKey(LRA_HTTP_HEADER)) {
-                context.getHeaders().putSingle(LRA_HTTP_HEADER, lraId);
-            }
+            headers.putSingle(LRA_HTTP_HEADER, lraId);
         } else {
             Object lraContext = context.getProperty(LRA_HTTP_HEADER);
 
             if (lraContext != null) {
-                context.getHeaders().putSingle(LRA_HTTP_HEADER, lraContext);
+                headers.putSingle(LRA_HTTP_HEADER, lraContext);
             } else {
-                context.getHeaders().remove(LRA_HTTP_HEADER);
+                headers.remove(LRA_HTTP_HEADER);
             }
         }
     }
