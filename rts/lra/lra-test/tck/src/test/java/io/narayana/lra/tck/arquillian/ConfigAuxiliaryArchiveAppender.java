@@ -40,7 +40,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
         // adding LRA spec interfaces under the WildFly Swarm deployment
                 .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage())
-                .addPackages(true, org.eclipse.microprofile.lra.client.InvalidLRAIdException.class.getPackage())
+                .addPackages(true, io.narayana.lra.InvalidLRAIdException.class.getPackage())
                 .addPackages(true, org.eclipse.microprofile.lra.participant.LRAParticipant.class.getPackage());
         // adding Narayana LRA implementation under the WildFly Swarm deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())

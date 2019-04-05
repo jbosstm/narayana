@@ -23,6 +23,8 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import io.narayana.lra.IllegalLRAStateException;
+import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -34,8 +36,6 @@ import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
-import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;

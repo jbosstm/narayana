@@ -64,6 +64,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.GenericLRAException;
+import io.narayana.lra.IllegalLRAStateException;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 
 import io.narayana.lra.logging.LRALogger;
@@ -72,10 +74,8 @@ import org.eclipse.microprofile.lra.annotation.Forget;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 import org.eclipse.microprofile.lra.annotation.Status;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
-import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the prefered mechanism is to use
@@ -286,7 +286,7 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             // validate that there is an LRAInfo response header holding the LRAInfo id
-            Object lraObject = Current.getLast(response.getHeaders().get(LRA_HTTP_HEADER));
+            Object lraObject = Current.getLast(response.getHeaders().get(LRA_HTTP_CONTEXT_HEADER));
 
             if (lraObject == null) {
                 LRALogger.i18NLogger.error_nullLraOnCreation(response);
@@ -358,7 +358,7 @@ public class NarayanaLRAClient implements Closeable {
 
             response = getTarget().path(String.format(leaveFormat, getLRAId(lraId.toString())))
                     .request()
-                    .header(LRA_HTTP_HEADER, lraId)
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId)
                     .put(Entity.entity(body, MediaType.TEXT_PLAIN));
 
             if (Response.Status.OK.getStatusCode() != response.getStatus()) {
@@ -636,7 +636,7 @@ public class NarayanaLRAClient implements Closeable {
                     .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                     .request()
                     .header(LINK_TEXT, linkHeader)
-                    .header(LRA_HTTP_HEADER, lraId)
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId)
                     .put(Entity.entity(compensatorData == null ? linkHeader : compensatorData, MediaType.TEXT_PLAIN));
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {

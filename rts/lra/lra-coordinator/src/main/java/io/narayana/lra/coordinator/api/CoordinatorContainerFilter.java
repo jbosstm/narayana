@@ -22,7 +22,7 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
+import io.narayana.lra.GenericLRAException;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 @Provider
 public class CoordinatorContainerFilter implements ContainerRequestFilter, ContainerResponseFilter {
@@ -44,19 +44,19 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
         URI lraId = null;
 
-        if (headers.containsKey(LRA_HTTP_HEADER)) {
+        if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
-                lraId = new URI(Current.getLast(headers.get(LRA_HTTP_HEADER)));
+                lraId = new URI(Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
             } catch (URISyntaxException e) {
                 String msg = String.format("header %s contains an invalid URL %s",
-                        LRA_HTTP_HEADER, Current.getLast(headers.get(LRA_HTTP_HEADER)));
+                        LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
 
                 throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
             }
         }
 
-        if (!headers.containsKey(LRA_HTTP_HEADER)) {
-            Object lraContext = requestContext.getProperty(LRA_HTTP_HEADER);
+        if (!headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
+            Object lraContext = requestContext.getProperty(LRA_HTTP_CONTEXT_HEADER);
 
             if (lraContext != null) {
                 lraId = (URI) lraContext;

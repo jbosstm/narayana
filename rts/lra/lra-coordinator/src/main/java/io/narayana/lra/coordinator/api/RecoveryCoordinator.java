@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
+import io.narayana.lra.GenericLRAException;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -29,7 +30,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;

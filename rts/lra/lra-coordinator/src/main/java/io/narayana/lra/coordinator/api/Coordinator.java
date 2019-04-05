@@ -23,6 +23,9 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.GenericLRAException;
+import io.narayana.lra.IllegalLRAStateException;
+import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
@@ -69,9 +72,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
-import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
-import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
 
 import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
@@ -84,7 +84,7 @@ import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @ApplicationScoped
@@ -238,7 +238,7 @@ public class Coordinator {
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") Long timelimit,
             @ApiParam(value = "The enclosing LRA if this new LRA is nested", required = false)
             @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA,
-            @HeaderParam(LRA_HTTP_HEADER) String parentId) throws WebApplicationException, InvalidLRAIdException {
+            @HeaderParam(LRA_HTTP_CONTEXT_HEADER) String parentId) throws WebApplicationException, InvalidLRAIdException {
 
         URI parentLRAUrl = null;
 
@@ -280,7 +280,7 @@ public class Coordinator {
 
         return Response.status(Response.Status.CREATED)
                 .entity(lraId)
-                .header(LRA_HTTP_HEADER, Current.getContexts())
+                .header(LRA_HTTP_CONTEXT_HEADER, Current.getContexts())
                 .build();
     }
 
