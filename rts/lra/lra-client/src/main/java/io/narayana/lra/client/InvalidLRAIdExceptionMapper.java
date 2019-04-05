@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.client;
 
-import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import io.narayana.lra.InvalidLRAIdException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

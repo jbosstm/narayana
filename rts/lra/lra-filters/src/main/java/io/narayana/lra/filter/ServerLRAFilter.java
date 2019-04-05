@@ -22,6 +22,8 @@
 package io.narayana.lra.filter;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.GenericLRAException;
+import io.narayana.lra.IllegalLRAStateException;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -31,8 +33,6 @@ import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 import org.eclipse.microprofile.lra.annotation.ws.rs.NestedLRA;
 import org.eclipse.microprofile.lra.annotation.Status;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
-import org.eclipse.microprofile.lra.client.IllegalLRAStateException;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -62,7 +62,7 @@ import static io.narayana.lra.LRAConstants.FORGET;
 import static io.narayana.lra.LRAConstants.LEAVE;
 import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @Provider
@@ -169,15 +169,25 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 || method.isAnnotationPresent(Status.class)
                 || method.isAnnotationPresent(Forget.class);
 
-        if (headers.containsKey(LRA_HTTP_HEADER)) {
+        if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
-                incommingLRA = new URI(Current.getLast(headers.get(LRA_HTTP_HEADER)).toString());
+                incommingLRA = new URI(Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)).toString());
             } catch (URISyntaxException e) {
                 String msg = String.format("header %s contains an invalid URL %s",
-                        LRA_HTTP_HEADER, Current.getLast(headers.get(LRA_HTTP_HEADER)));
+                        LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
 
                 throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
             }
+        }
+
+        if (method.isAnnotationPresent(Leave.class)) {
+            // leave the LRA
+            String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo().getBaseUri());
+
+            lraTrace(containerRequestContext, incommingLRA, "leaving LRA");
+            lraClient.leaveLRA(incommingLRA, compensatorId);
+
+            // let the participant know which lra he left by leaving the header intact
         }
 
         if (type == null) {
@@ -194,8 +204,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
 
         // check the incomming request for an LRA context
-        if (!headers.containsKey(LRA_HTTP_HEADER)) {
-            Object lraContext = containerRequestContext.getProperty(LRA_HTTP_HEADER);
+        if (!headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
+            Object lraContext = containerRequestContext.getProperty(LRA_HTTP_CONTEXT_HEADER);
 
             if (lraContext != null) {
                 incommingLRA = (URI) lraContext;
@@ -327,6 +337,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             containerRequestContext.setProperty(NEW_LRA_PROP, newLRA);
         }
 
+        Current.push(lraId);
+
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available to injected NarayanaLRAClient");
         lraClient.setCurrentLRA(lraId); // make the current LRA available to the called method
 
@@ -367,16 +379,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
         }
 
-        if (method.isAnnotationPresent(Leave.class)) {
-            // leave the LRA
-            String compensatorId = getCompensatorId(lraId, containerRequestContext.getUriInfo().getBaseUri());
-
-            lraTrace(containerRequestContext, lraId, "leaving LRA");
-            lraClient.leaveLRA(lraId, compensatorId);
-
-            // let the participant know which lra he left by leaving the header intact
-        }
-
         lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: making LRA available as a thread local");
     }
 
@@ -402,9 +404,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     // or completed (if the intercepted method caused it to complete)
                 } finally {
                     if (current.toASCIIString().equals(
-                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_CONTEXT_HEADER)))) {
                         // the callers context was ended so invalidate it
-                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                        requestContext.getHeaders().remove(LRA_HTTP_CONTEXT_HEADER);
                     }
 
                     if (toClose != null && toClose.toASCIIString().equals(current.toASCIIString())) {
@@ -420,12 +422,12 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     // must already be cancelled (if the intercepted method caused it to cancel)
                     // or completed (if the intercepted method caused it to complete
                 } finally {
-                    requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                    requestContext.getHeaders().remove(LRA_HTTP_CONTEXT_HEADER);
 
                     if (toClose.toASCIIString().equals(
-                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_HEADER)))) {
+                            Current.getLast(requestContext.getHeaders().get(LRA_HTTP_CONTEXT_HEADER)))) {
                         // the callers context was ended so invalidate it
-                        requestContext.getHeaders().remove(LRA_HTTP_HEADER);
+                        requestContext.getHeaders().remove(LRA_HTTP_CONTEXT_HEADER);
                     }
                 }
             }

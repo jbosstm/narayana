@@ -26,9 +26,14 @@ import io.narayana.lra.Current;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
+
 public class ClientLRARequestFilter implements ClientRequestFilter {
     @Override
     public void filter(ClientRequestContext context) {
+        if (Current.peek() != null) {
+            context.setProperty(LRA_HTTP_CONTEXT_HEADER, Current.peek());
+        }
         Current.updateLRAContext(context);
     }
 }

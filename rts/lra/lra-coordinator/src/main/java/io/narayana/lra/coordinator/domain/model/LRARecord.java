@@ -29,11 +29,12 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.GenericLRAException;
+import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.client.GenericLRAException;
-import org.eclipse.microprofile.lra.client.InvalidLRAIdException;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -58,7 +59,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
@@ -82,7 +83,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private String compensatorData;
     private ScheduledFuture<?> scheduledAbort;
     private LRAService lraService;
-    private LRAStatus status;
+    private ParticipantStatus status;
     boolean accepted;
 
     public LRARecord() {
@@ -106,6 +107,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 if (parseException[0] != null) {
                     throw new InvalidLRAIdException(lraId, "Invalid link URI", parseException[0]);
+                } else if (compensateURI == null) {
+                    throw new InvalidLRAIdException(lraId, "Invalid link URI: missing compensator");
                 }
             } else {
                 this.compensateURI = new URI(String.format("%s/compensate", linkURI));
@@ -253,7 +256,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             scheduledAbort = null;
         }
 
-        if (LRAStatus.Cancelling.equals(status)) {
+        if (ParticipantStatus.Compensating.equals(status)) {
             compensate = true;
         }
 
@@ -263,16 +266,16 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             endPath = compensateURI; // we are going to ask the participant to compensate
-            status = LRAStatus.Cancelling;
+            status = ParticipantStatus.Compensating;
         } else {
             if (isCompelete() || completeURI == null) {
-                status = LRAStatus.Closed;
+                status = ParticipantStatus.Completed;
 
                 return TwoPhaseOutcome.FINISH_OK; // the participant has already completed
             }
 
             endPath = completeURI;  // we are going to ask the participant to complete
-            status = LRAStatus.Closing;
+            status = ParticipantStatus.Completing;
         }
 
         // NB trying to compensate when already completed is allowed (for nested LRAs)
@@ -300,9 +303,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             try {
                 // ask the participant to complete or compensate
                 Future<Response> asyncResponse = target.request()
-                        .header(LRA_HTTP_HEADER, lraId.toASCIIString())
+                        .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                        .property(LRA_HTTP_HEADER, lraId) // make the context available to the jaxrs filters
+                        .property(LRA_HTTP_CONTEXT_HEADER, lraId) // make the context available to the jaxrs filters
                         .async()
                         .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
                 // the catch block below catches any Timeout exception
@@ -365,7 +368,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             if (compensate) {
-                status = LRAStatus.Cancelling; // recovery will figure out the status via the status url
+                status = ParticipantStatus.Compensating; // recovery will figure out the status via the status url
 
                 /*
                  * We are mapping compensate onto Abort. TwoPhaseCoordinator uses presumed abort
@@ -375,7 +378,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             }
 
-            status = LRAStatus.Closing; // recovery will figure out the status via the status url
+            status = ParticipantStatus.Completing; // recovery will figure out the status via the status url
 
             return TwoPhaseOutcome.FINISH_ERROR;
         }
@@ -388,14 +391,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private void updateStatus(boolean compensate) {
         if (compensate) {
-            status = accepted ? LRAStatus.Cancelling : LRAStatus.Cancelled;
+            status = accepted ? ParticipantStatus.Compensating : ParticipantStatus.Compensated;
         } else {
-            status = accepted ? LRAStatus.Closing : LRAStatus.Closed;
+            status = accepted ? ParticipantStatus.Completing : ParticipantStatus.Completed;
         }
     }
 
     private int reportFailure(boolean compensate, String endPath) {
-        status = compensate ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose;
+        status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
         LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
                 endPath, compensate ? COMPENSATE_REL : COMPLETE_REL);
@@ -449,9 +452,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 // since this method is called from the recovery thread do not block
                 Future<Response> asyncResponse = target.request()
-                        .header(LRA_HTTP_HEADER, lraId.toASCIIString())
+                        .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                        .property(LRA_HTTP_HEADER, lraId)  // make the context available to the jaxrs filters
+                        .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                         .async()
                         .get();
 
@@ -468,35 +471,31 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     // the participant is available again and has reported its status
                     String s = response.readEntity(String.class);
 
-                    status = LRAStatus.valueOf(s);
+                    status = ParticipantStatus.valueOf(s);
 
                     switch (status) {
-                        case Closed:
-                        case Cancelled:
+                        case Completed:
+                        case Compensated:
                             return TwoPhaseOutcome.FINISH_OK;
-                        case Closing:
-                        case Cancelling:
+                        case Completing:
+                        case Compensating:
                             // still in progress - make sure recovery keeps retrying it
                             return TwoPhaseOutcome.HEURISTIC_HAZARD;
-                        case FailedToCancel:
-                        case FailedToClose:
+                        case FailedToCompensate:
+                        case FailedToComplete:
                             // the participant could not finish - log a warning and forget
                             LRALogger.logger.warnf(
                                     "LRARecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
                                     compensate, target.getUri(), status);
 
                             if (forgetURI != null) {
-                                forgetURI = statusURI; // forget is equivalent to HTTP delete on the status URI
-                            }
-
-                            if (forgetURI != null) {
                                 try {
                                     // let the participant know he can clean up
                                     WebTarget target2 = client.target(forgetURI);
                                     Future<Response> asyncResponse2 = target2.request()
-                                            .header(LRA_HTTP_HEADER, lraId.toASCIIString())
+                                            .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                                             .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                                            .property(LRA_HTTP_HEADER, lraId)  // make the context available to the jaxrs filters
+                                            .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                                             .async()
                                             .delete();
 
@@ -612,11 +611,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private boolean isCompelete() {
-        return status != null && status == LRAStatus.Closed;
+        return status != null && status == ParticipantStatus.Completed;
     }
 
     private boolean isCompensated() {
-        return status != null && status == LRAStatus.Cancelled;
+        return status != null && status == ParticipantStatus.Compensated;
     }
 
     String getResponseData() {
@@ -657,7 +656,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 unpackStatus(os);
                 participantPath = os.unpackString();
                 compensatorData = os.unpackString();
-                accepted = status == LRAStatus.Closing || status == LRAStatus.Cancelling;
+                accepted = status == ParticipantStatus.Completing || status == ParticipantStatus.Compensating;
             } catch (IOException | URISyntaxException e) {
                 return false;
             }
@@ -676,7 +675,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private void unpackStatus(InputObjectState os) throws IOException {
-        status = os.unpackBoolean() ? LRAStatus.values()[os.unpackInt()] : null;
+        status = os.unpackBoolean() ? ParticipantStatus.values()[os.unpackInt()] : null;
     }
 
     private void packURI(OutputObjectState os, URI url) throws IOException {
