@@ -69,10 +69,6 @@
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
     <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
-    <maven.surefire.plugin.version>2.14</maven.surefire.plugin.version>
-    <maven.failsafe.plugin.version>2.14</maven.failsafe.plugin.version>
-    <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
-    <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
     <maven.dependency.plugin.version>2.7</maven.dependency.plugin.version>
   </properties>
 
@@ -222,18 +218,8 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.plugin.version}</version>
-        <configuration>
-          <includes>
-            <include>**/unit/*Test*.java</include>
-          </includes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven.failsafe.plugin.version}</version>
+        <version>${version.maven-failsafe-plugin}</version>
         <configuration>
           <systemProperties>
             <property>
@@ -250,27 +236,6 @@
             <goals>
               <goal>integration-test</goal>
               <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${maven.surefire.report.plugin.version}</version>
-        <executions>
-          <execution>
-            <id>generate-test-report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report-only</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>generate-integration-test-report</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>failsafe-report-only</goal>
             </goals>
           </execution>
         </executions>
@@ -306,7 +271,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <version>${maven.failsafe.plugin.version}</version>
+            <version>${version.maven-failsafe-plugin}</version>
             <configuration>
               <skipTests>true</skipTests>
             </configuration>
@@ -315,22 +280,4 @@
       </build>
     </profile>
   </profiles>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${maven.surefire.report.plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.javadoc.plugin.version}</version>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
