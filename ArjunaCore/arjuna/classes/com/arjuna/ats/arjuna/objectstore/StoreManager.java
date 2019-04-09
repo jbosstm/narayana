@@ -156,6 +156,10 @@ public class StoreManager
             throw new FatalError(tsLogger.i18NLogger.get_StoreManager_invalidtype() + " " + storeType, ex);
         }
 
+        if(store == null) {
+            throw new FatalError(tsLogger.i18NLogger.init_StoreManager_instantiate_class_failure(name, storeType));
+        }
+
         store.start();
 
         return store;
