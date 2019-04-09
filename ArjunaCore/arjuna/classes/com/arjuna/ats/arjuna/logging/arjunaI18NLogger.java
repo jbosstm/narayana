@@ -1563,6 +1563,9 @@ public interface arjunaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_osb_MBeanCtorFail(@Cause() Throwable arg0);
 
+    @Message(id = 12391, value = "Could not initialize object store '{0}' of type '{1}'", format = MESSAGE_FORMAT)
+    public String init_StoreManager_instantiate_class_failure(String name, String type);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
