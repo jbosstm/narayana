@@ -129,7 +129,10 @@ then
   echo 1>&2 documentation: Tag '$CURRENT' did not exist
   exit
 fi
-mvn clean install -Prelease
+
+rm -rf $PWD/localm2repo
+mvn clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
+rm -rf $PWD/localrepo
 cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
@@ -147,25 +150,26 @@ else
   ORSON_PATH=$PWD/ext/
 fi
 
-mvn clean install -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+rm -rf $PWD/localm2repo
+mvn clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not install narayana
   exit
 fi
-mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
-mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
+mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy blacktie cpp-plugin to nexus
   exit
 fi
-mvn clean deploy -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
+mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy jatmibroker to nexus
