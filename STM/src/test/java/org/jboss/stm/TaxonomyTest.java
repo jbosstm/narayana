@@ -53,157 +53,6 @@ public class TaxonomyTest extends TestCase {
     }
 
     /**
-     * aborting changes made by a closed nested transaction should not be visible to the parent
-     */
-    public void testIsClosedNestedAbort() throws Exception {
-        AtomicInt ai = new RecoverableContainer<AtomicInt>().enlist(new AtomicIntImpl());
-        AtomicAction outer = new AtomicAction();
-        AtomicAction inner = new AtomicAction();
-
-        ai.set(1); // initialise the shared memory
-        outer.begin(); // start a top level transaction
-        {
-            ai.set(2); // modify state
-            inner.begin(); // start a nested transacction
-            {
-                ai.set(3); // and modify the state
-
-                inner.abort();
-            }
-            outer.commit();
-        }
-
-        // since the child aborted and nesting follows the closed mode the value should still be 2
-        assertEquals(2, ai.get());
-    }
-
-    /**
-     * committing changes made by a closed nested transaction should be visible to the parent
-     */
-    public void testIsClosedNestedCommit() throws Exception {
-        AtomicInt ai = new RecoverableContainer<AtomicInt>().enlist(new AtomicIntImpl());
-        AtomicAction parent = new AtomicAction();
-        AtomicAction child = new AtomicAction();
-
-        ai.set(1); // initialise the shared memory
-        parent.begin(); // start a top level transaction
-        {
-            ai.set(2); // update the memory in the context of the parent transaction
-            child.begin(); // start a child transaction
-            {
-                ai.set(3); // update the memory in a child transaction
-                // NB the parent would still see the value as 2 (not shown in this test)
-                child.commit();
-            }
-            // but now the parent should see the value as 3 (since the child committed)
-            assertEquals(3, ai.get());
-            // NB other transactions would not see the value 3 however until the parent commits
-            // (not demonstrated in this test)
-        }
-        parent.commit();
-
-        assertEquals(3, ai.get());
-    }
-
-    /**
-     * changes made by a closed nested transaction should not be visible to the parent
-     */
-    public void testIsClosedNestedVisible() throws Exception {
-        AtomicInt ai = new RecoverableContainer<AtomicInt>().enlist(new AtomicIntImpl());
-        AtomicAction outer = new AtomicAction();
-        AtomicAction inner = new AtomicAction();
-        final AtomicBoolean aiUpdated = new AtomicBoolean(false);
-
-        Thread ot = new Thread(() -> {
-            try {
-                waitForCondition(aiUpdated); // wait for the other thread to set the value
-
-                assertEquals(2, ai.get());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        try {
-            ai.set(1);
-            outer.begin();
-            {
-                ai.set(2);
-
-                ot.start();
-
-                outer.addThread(ot);
-
-                inner.begin();
-                {
-                    ai.set(3);
-                    // the outer transaction should still see the value as 2
-                    updateCondition(aiUpdated); // tell the other thread to continue
-
-                    inner.abort();
-                }
-
-                outer.removeThread(ot);
-                outer.commit();
-            }
-        } finally {
-            updateCondition(aiUpdated);
-        }
-
-        assertEquals(2, ai.get());
-    }
-
-    /**
-     * changes made by a parent transaction should not be visible to a closed nested transaction
-     */
-    public void testIsClosedNestedParentNotVisible() throws Exception {
-        AtomicInt ai = new RecoverableContainer<AtomicInt>().enlist(new AtomicIntImpl());
-        AtomicAction outer = new AtomicAction();
-        AtomicAction inner = new AtomicAction();
-        final AtomicBoolean aiUpdated = new AtomicBoolean(false);
-
-        Thread ot = new Thread(() -> {
-            try {
-                waitForCondition(aiUpdated); // wait for the other thread to set the value
-
-                assertEquals(2, ai.get());
-                ai.set(4);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        try {
-            ai.set(1);
-            outer.begin();
-            {
-                ai.set(2);
-
-                ot.start();
-
-                outer.addThread(ot);
-
-                inner.begin();
-                {
-                    ai.set(3);
-                    // the outer transaction should still see the value as 2
-                    updateCondition(aiUpdated); // tell the other thread to continue
-
-                    assertEquals(3, ai.get()); // must not see the value 4
-                    inner.abort();
-                }
-
-                outer.removeThread(ot);
-                outer.commit();
-            }
-        } finally {
-            updateCondition(aiUpdated);
-        }
-
-        assertEquals(2, ai.get());
-    }
-
-    /**
      * Weak Isolation – non transactional code may interfere with transactional code
      * Strong Isolation – non transactional code is upgraded to transactional operations
      *
@@ -229,7 +78,7 @@ public class TaxonomyTest extends TestCase {
                     aiImple.set(10);
                     updateCondition(aiUpdatedInOtherThread); // tell the other thread the update happened
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         });
@@ -249,6 +98,8 @@ public class TaxonomyTest extends TestCase {
                 assertEquals(10, ai.get());
                 tx.commit(); // commit the changes made to the shared memory
             }
+
+            ot.join();
         } finally {
             updateCondition(aiUpdated);
         }
