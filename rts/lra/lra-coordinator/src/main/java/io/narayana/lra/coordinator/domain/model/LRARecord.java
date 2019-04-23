@@ -61,6 +61,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
@@ -71,6 +72,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private Transaction lra;
     private URI lraId;
+    private URI parentId;
     private URI recoveryURI;
     private String participantPath;
 
@@ -120,6 +122,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
 
             this.lraId = new URI(lraId);
+            this.parentId = lraService.getTransaction(this.lraId).getParentId();
+
             this.lraService = lraService;
             this.participantPath = linkURI;
 
@@ -305,8 +309,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // ask the participant to complete or compensate
                 Future<Response> asyncResponse = target.request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                        .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .property(LRA_HTTP_CONTEXT_HEADER, lraId) // make the context available to the jaxrs filters
+                        .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to jaxrs filters
                         .async()
                         .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
                 // the catch block below catches any Timeout exception
@@ -454,6 +460,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // since this method is called from the recovery thread do not block
                 Future<Response> asyncResponse = target.request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                        .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                         .async()
@@ -495,6 +502,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     WebTarget target2 = client.target(forgetURI);
                                     Future<Response> asyncResponse2 = target2.request()
                                             .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                                            .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                                             .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                                             .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                                             .async()
