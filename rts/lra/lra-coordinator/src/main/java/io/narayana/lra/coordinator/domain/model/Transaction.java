@@ -757,4 +757,8 @@ public class Transaction extends AtomicAction {
             }
         }  // else another thread finishing this LRA so it is too late to cancel
     }
+
+    URI getParentId() {
+        return parentId;
+    }
 }
