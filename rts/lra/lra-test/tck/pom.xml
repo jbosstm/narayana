@@ -168,6 +168,8 @@
                                         <argument>-Djava.net.preferIPv4Stack=true</argument>
                                         <argument>${lra.coordinator.debug.params}</argument>
                                         <argument>${lra.coordinator.trace.params}</argument>
+                                        <argument>-DRecoveryEnvironmentBean.periodicRecoveryPeriod=10</argument>
+                                        <argument>-DRecoveryEnvironmentBean.recoveryBackoffPeriod=3</argument>
                                         <argument>-jar</argument>
                                         <argument>${project.basedir}/../../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
                                     </arguments>
