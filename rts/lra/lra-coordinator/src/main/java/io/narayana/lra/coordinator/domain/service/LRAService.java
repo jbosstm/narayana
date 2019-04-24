@@ -23,8 +23,6 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import io.narayana.lra.IllegalLRAStateException;
-import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -43,6 +41,7 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -195,7 +194,8 @@ public class LRAService {
         try {
             lra = new Transaction(this, baseUri, parentLRA, clientId);
         } catch (URISyntaxException e) {
-            throw new InvalidLRAIdException(baseUri, "Invalid base uri", e);
+            throw new WebApplicationException(e, Response.status(Response.Status.PRECONDITION_FAILED)
+                    .entity(String.format("Invalid base URI: '%s'", baseUri)).build());
         }
 
         if (lra.currentLRA() != null) {
@@ -232,7 +232,8 @@ public class LRAService {
         Transaction transaction = getTransaction(lraId);
 
         if (!transaction.isActive() && !transaction.isRecovering() && transaction.isTopLevel()) {
-            throw new IllegalLRAStateException(lraId.toString(), "LRA is closing or closed", "endLRA");
+            throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED)
+                    .entity(String.format("%s: LRA is closing or closed: endLRA", lraId)).build());
         }
 
         transaction.end(compensate);

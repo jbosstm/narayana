@@ -30,7 +30,6 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -39,6 +38,7 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -731,7 +731,7 @@ public class Transaction extends AtomicAction {
                     }
                 }
 
-            } catch (InvalidLRAIdException e) {
+            } catch (WebApplicationException e) {
                 if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("Could not save new recovery URL: %s", e.getMessage());
                 }

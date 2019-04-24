@@ -29,13 +29,12 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.GenericLRAException;
-import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -59,6 +58,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
@@ -106,9 +107,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 });
 
                 if (parseException[0] != null) {
-                    throw new InvalidLRAIdException(lraId, "Invalid link URI", parseException[0]);
+                    throw new WebApplicationException(lraId + ": Invalid link URI: " + parseException[0], BAD_REQUEST);
                 } else if (compensateURI == null) {
-                    throw new InvalidLRAIdException(lraId, "Invalid link URI: missing compensator");
+                    throw new WebApplicationException(lraId + ": Invalid link URI: missing compensator", BAD_REQUEST);
                 }
             } else {
                 this.compensateURI = new URI(String.format("%s/compensate", linkURI));
@@ -126,7 +127,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             this.compensatorData = compensatorData;
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId, linkURI);
-            throw new InvalidLRAIdException(lraId, "Invalid LRA id", e);
+            throw new WebApplicationException(lraId +  ": Invalid LRA id: " + e.getMessage(), BAD_REQUEST);
         }
     }
 
@@ -163,8 +164,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             try {
                 link = Link.valueOf(lnk);
             } catch (Exception e) {
-                throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                        String.format("Invalid compensator join request: cannot parse link '%s'", linkStr), e);
+                throw new WebApplicationException(Response.status(PRECONDITION_FAILED.getStatusCode())
+                        .entity(String.format("Invalid compensator join request: cannot parse link '%s'", linkStr)).build());
             }
 
             if (COMPENSATE_REL.equals(link.getRel())) {
@@ -461,7 +462,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // if the attempt times out the catch block below will return a heuristic
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
-                if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
+                if (response.getStatus() == PRECONDITION_FAILED.getStatusCode()) {
                     // the participant never got the end request resend it
                     return -1;
                 }
@@ -586,7 +587,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                             endPath.toASCIIString());
                 }
 
-                httpStatus = Response.Status.BAD_REQUEST.getStatusCode();
+                httpStatus = BAD_REQUEST.getStatusCode();
             } else {
                 LRAStatusHolder inVMStatus = lraService.endLRA(cId, isCompensate, true);
 
@@ -804,7 +805,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         try {
             this.recoveryURI = new URI(recoveryURI);
         } catch (URISyntaxException e) {
-            throw new InvalidLRAIdException(recoveryURI, "Invalid recovery id", e);
+            throw new WebApplicationException(recoveryURI + ": Invalid recovery id: " + e.getMessage(), BAD_REQUEST);
         }
     }
 

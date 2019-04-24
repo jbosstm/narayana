@@ -23,9 +23,6 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.GenericLRAException;
-import io.narayana.lra.IllegalLRAStateException;
-import io.narayana.lra.InvalidLRAIdException;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
@@ -84,6 +81,8 @@ import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
@@ -112,8 +111,8 @@ public class Coordinator {
 
         if (lras == null) {
             LRALogger.i18NLogger.error_invalidQueryForGettingLraStatuses(state);
-            throw new GenericLRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),
-                    String.format("Invalid query '%s' to get LRAs", state), null);
+            throw new WebApplicationException(Response.status(BAD_REQUEST)
+                    .entity(String.format("Invalid query '%s' to get LRAs", state)).build());
         }
 
         return lras.stream().map(Coordinator::convert).collect(toList());
@@ -238,7 +237,7 @@ public class Coordinator {
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") Long timelimit,
             @ApiParam(value = "The enclosing LRA if this new LRA is nested", required = false)
             @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA,
-            @HeaderParam(LRA_HTTP_CONTEXT_HEADER) String parentId) throws WebApplicationException, InvalidLRAIdException {
+            @HeaderParam(LRA_HTTP_CONTEXT_HEADER) String parentId) throws WebApplicationException {
 
         URI parentLRAUrl = null;
 
@@ -261,7 +260,7 @@ public class Coordinator {
                         URLEncoder.encode(url.toString(), "UTF-8"));
             } catch (UnsupportedEncodingException | MalformedURLException e) {
                 LRALogger.i18NLogger.error_invalidFormatToEncodeUrl(url, e);
-                throw new GenericLRAException(lraId, BAD_REQUEST.getStatusCode(), "Invalid parent LRA id", e);
+                throw new WebApplicationException("Invalid parent LRA id", e, BAD_REQUEST);
             }
             Response response;
 
@@ -316,7 +315,9 @@ public class Coordinator {
 
         if (status == null || lra.getLRAStatus() == null) {
             LRALogger.i18NLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
-            throw new IllegalLRAStateException(nestedLraId, "The LRA is still active", "getNestedLRAStatus");
+            throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED)
+                    .entity(String.format("LRA is in the wrong state for operation '%s': %s",
+                            "getNestedLRAStatus", "The LRA is still  active")).build());
         }
 
         return Response.ok(lra.getLRAStatus().name()).build();
@@ -455,7 +456,7 @@ public class Coordinator {
                             lraId, compensatorData);
                 }
 
-                return Response.status(Response.Status.PRECONDITION_FAILED).build();
+                return Response.status(PRECONDITION_FAILED).build();
             }
 
             // register with the coordinator
@@ -514,7 +515,7 @@ public class Coordinator {
                     .build();
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
-            throw new GenericLRAException(lraId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "Invalid recovery URL", e);
+            throw new WebApplicationException("Invalid recovery URL", e, INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -561,7 +562,7 @@ public class Coordinator {
                 url = new URL(String.format("%s%s/%s", context.getBaseUri(), COORDINATOR_PATH_NAME, lraId));
             } catch (MalformedURLException e1) {
                 LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e1);
-                throw new InvalidLRAIdException(lraId, message, e1);
+                throw new WebApplicationException(message, e1, BAD_REQUEST);
             }
         }
 
@@ -569,7 +570,7 @@ public class Coordinator {
             return url.toURI();
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
-            throw new InvalidLRAIdException(lraId, message, e);
+            throw new WebApplicationException(message, e, BAD_REQUEST);
         }
     }
 }
