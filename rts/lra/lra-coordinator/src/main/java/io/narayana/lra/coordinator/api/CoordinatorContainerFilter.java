@@ -22,8 +22,8 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.GenericLRAException;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 @Provider
@@ -51,7 +52,8 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
                 String msg = String.format("header %s contains an invalid URL %s",
                         LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
 
-                throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
+                throw new WebApplicationException(Response.status(PRECONDITION_FAILED.getStatusCode())
+                        .entity(String.format("%s: %s", msg, e.getMessage())).build());
             }
         }
 

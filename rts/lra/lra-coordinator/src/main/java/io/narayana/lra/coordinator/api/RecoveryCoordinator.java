@@ -21,7 +21,6 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.GenericLRAException;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -40,6 +39,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -49,6 +49,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 @ApplicationScoped
 @Path(RECOVERY_COORDINATOR_PATH_NAME)
@@ -119,7 +120,9 @@ public class RecoveryCoordinator {
                 lra = new URI(lraId);
             } catch (URISyntaxException e) {
                 LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensatorURI(lraId, compensatorUrl, e);
-                throw new GenericLRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
+
+                throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR.getStatusCode())
+                            .entity(String.format("%s: %s", lraId, e.getMessage())).build());
             }
 
             lraService.updateRecoveryURI(lra, newCompensatorUrl, rcvCoordId, true);

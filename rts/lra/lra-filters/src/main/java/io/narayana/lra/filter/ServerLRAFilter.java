@@ -22,8 +22,6 @@
 package io.narayana.lra.filter;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.GenericLRAException;
-import io.narayana.lra.IllegalLRAStateException;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -119,11 +117,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     private void checkForTx(LRA.Type type, URI lraId, boolean shouldNotBeNull) {
         if (lraId == null && shouldNotBeNull) {
-            throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but no tx", null);
+            throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                    type.name() + " but no tx");
         } else if (lraId != null && !shouldNotBeNull) {
-            throw new GenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                    type.name() + " but found tx", null);
+            throwGenericLRAException(lraId, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                    type.name() + " but found tx");
         }
     }
 
@@ -176,7 +174,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 String msg = String.format("header %s contains an invalid URL %s",
                         LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
 
-                throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg, e);
+                throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg);
             }
         }
 
@@ -238,8 +236,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -249,8 +247,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             case NOT_SUPPORTED:
                 if (nested) {
                     // nested does not make sense
-                    throw new GenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation", null);
+                    throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
+                            type.name() + " but found Nested annnotation");
                 }
 
                 enlist = false;
@@ -359,17 +357,16 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             toURI(terminateURIs.get(LEAVE)),
                             toURI(terminateURIs.get(STATUS)),
                             null);
-                } catch (IllegalLRAStateException e) {
-                    lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                    throw e;
                 } catch (NotFoundException e) {
                     throw e;
                 } catch (WebApplicationException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                    throw new GenericLRAException(lraId, e.getResponse().getStatus(), e.getMessage(), e);
+                    throw e;
                 } catch (URISyntaxException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                    throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage(), e);
+
+                    throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                            .entity(String.format("%s: %s", lraId, e.getMessage())).build());
                 }
 
                 headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString().replaceAll("^\"|\"$", ""));
@@ -491,8 +488,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
 
         if (!terminateURIs.containsKey("Link")) {
-            throw new GenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Missing complete or compensate annotations", null);
+            throwGenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
+                    "Missing complete or compensate annotations");
         }
 
         return terminateURIs.get("Link");
@@ -511,5 +508,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Method method = resourceInfo.getResourceMethod();
         LRALogger.i18NLogger.warn_lraFilterContainerRequest(reason,
             method.getDeclaringClass().getName() + "#" + method.getName(), lraId == null ? "context" : lraId.toString());
+    }
+
+    private void throwGenericLRAException(URI lraId, int statusCode, String message) throws WebApplicationException {
+        throw new WebApplicationException(Response.status(statusCode)
+                .entity(String.format("%s: %s", lraId, message)).build());
     }
 }
