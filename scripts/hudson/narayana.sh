@@ -556,7 +556,7 @@ function compensations_tests {
 }
 
 function xts_tests {
-  echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS, xtstest and CRASH RECOVERY TESTS"
+  echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS and CRASH RECOVERY TESTS"
 
   [ $XTS_TRACE ] && enable_xts_trace
 
@@ -583,7 +583,7 @@ function xts_tests {
     ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
     ./build.sh -f XTS/localjunit/xtstest/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
-    [ $? = 0 ] || fatal "XTS localjunit xtstest build failed"
+    [ $? = 0 ] || fatal "XTS localjunit xtstest build failed (no test run)"
     ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
