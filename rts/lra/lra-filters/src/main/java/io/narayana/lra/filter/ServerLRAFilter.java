@@ -29,7 +29,6 @@ import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
-import org.eclipse.microprofile.lra.annotation.ws.rs.NestedLRA;
 import org.eclipse.microprofile.lra.annotation.Status;
 
 import javax.inject.Inject;
@@ -138,7 +137,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         URI suspendedLRA = null;
         URI incommingLRA = null;
         URI recoveryUrl = null;
-        boolean nested;
         boolean isLongRunning = false;
         boolean enlist;
 
@@ -215,42 +213,22 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
 
         enlist = true;
-        nested = resourceInfo.getResourceMethod().isAnnotationPresent(NestedLRA.class);
 
         switch (type) {
             case MANDATORY: // a txn must be present
                 checkForTx(type, incommingLRA, true);
 
-                if (nested) {
-                    // a new LRA is nested under the incomming LRA
-                    suspendedLRA = incommingLRA;
-                    lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: MANDATORY start new LRA");
-                    newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
-                } else {
-                    lraId = incommingLRA;
-                    resumeTransaction(incommingLRA); // txId is not null
-                }
+                lraId = incommingLRA;
+                resumeTransaction(incommingLRA); // txId is not null
                 break;
             case NEVER: // a txn must not be present
                 checkForTx(type, incommingLRA, false);
-
-                if (nested) {
-                    // nested does not make sense
-                    throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation");
-                }
 
                 enlist = false;
                 lraId = null;
 
                 break;
             case NOT_SUPPORTED:
-                if (nested) {
-                    // nested does not make sense
-                    throwGenericLRAException(null, Response.Status.PRECONDITION_FAILED.getStatusCode(),
-                            type.name() + " but found Nested annnotation");
-                }
-
                 enlist = false;
                 suspendedLRA = incommingLRA;
                 lraId = null;
@@ -258,16 +236,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 break;
             case REQUIRED:
                 if (incommingLRA != null) {
-                    if (nested) {
-                        // if there is an LRA present nest a new LRA under it
-                        suspendedLRA = incommingLRA;
-                        lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRED start new LRA");
-                        newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
-                    } else {
-                        lraId = incommingLRA;
-                        resumeTransaction(incommingLRA);
-                    }
-
+                    lraId = incommingLRA;
+                    resumeTransaction(incommingLRA);
                 } else {
                     lraTrace(containerRequestContext, null, "ServerLRAFilter before: REQUIRED start new LRA");
                     newLRA = lraId = startLRA(null, method, getTimeOut(method));
@@ -278,24 +248,18 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 //                    previous = AtomicAction.suspend();
                 suspendedLRA = incommingLRA;
                 lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRES_NEW start new LRA");
-                URI parent = nested ? incommingLRA : null;
-                newLRA = lraId = startLRA(parent, method, getTimeOut(method));
+                newLRA = lraId = startLRA(null, method, getTimeOut(method));
 
                 break;
             case SUPPORTS:
                 lraId = incommingLRA;
 
-                if (nested) {
-                    // if there is an LRA present a new LRA is nested under it otherwise a new top level LRA is begun
-                    if (incommingLRA != null) {
-                        suspendedLRA = incommingLRA;
-                    }
+                resumeTransaction(incommingLRA);
 
-                    lraTrace(containerRequestContext, incommingLRA, "ServerLRAFilter before: SUPPORTS start new LRA");
-                    newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
-                } else if (incommingLRA != null) {
-                    resumeTransaction(incommingLRA);
-                }
+                break;
+            case NESTED:
+                suspendedLRA = incommingLRA;
+                newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
 
                 break;
             default:
