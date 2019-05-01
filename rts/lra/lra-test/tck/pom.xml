@@ -80,11 +80,10 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-          <groupId>org.wildfly.swarm</groupId>
-          <artifactId>arquillian</artifactId>
-          <scope>test</scope>
+            <groupId>io.thorntail</groupId>
+            <artifactId>arquillian</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
