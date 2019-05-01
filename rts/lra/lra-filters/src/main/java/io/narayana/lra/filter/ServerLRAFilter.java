@@ -31,7 +31,6 @@ import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 import org.eclipse.microprofile.lra.annotation.Status;
 
-import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -74,7 +73,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     @Context
     protected ResourceInfo resourceInfo;
 
-    @Inject
     private NarayanaLRAClient lraClient;
 
     public ServerLRAFilter() throws Exception {
@@ -335,9 +333,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Object suspendedLRA = requestContext.getProperty(SUSPENDED_LRA_PROP);
         URI current = Current.peek();
         URI toClose = (URI) requestContext.getProperty(TERMINAL_LRA_PROP);
+        boolean isCancel = isJaxRsCancel(requestContext, responseContext);
 
         try {
-            if (current != null && isJaxRsCancel(requestContext, responseContext)) {
+            if (current != null && isCancel) {
                 try {
                     lraClient.cancelLRA(current);
                 } catch (NotFoundException ignore) {
@@ -358,7 +357,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             if (toClose != null) {
                 try {
-                    lraClient.closeLRA(toClose);
+                    if (isCancel) {
+                        lraClient.cancelLRA(toClose);
+                    } else {
+                        lraClient.closeLRA(toClose);
+                    }
                 } catch (NotFoundException ignore) {
                     // must already be cancelled (if the intercepted method caused it to cancel)
                     // or completed (if the intercepted method caused it to complete
