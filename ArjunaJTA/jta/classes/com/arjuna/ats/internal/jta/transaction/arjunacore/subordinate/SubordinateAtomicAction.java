@@ -242,6 +242,22 @@ public class SubordinateAtomicAction extends
 	    if (status == ActionStatus.ABORT_ONLY || doBeforeCompletion())
 	    {
 	        status = super.End(true);
+
+	        switch (super.getHeuristicDecision())
+	        {
+	        // commit was processed correctly but some of the resources failed to finish
+	        // for 2PC this means no trouble as in case of a crash at this time
+	        // there is recovery which works with prepared transaction
+	        // for 1PC where there is nothing prepared and nothing stored at object store
+	        // we need to inform parent about error by setting up heuristic state
+	        case TwoPhaseOutcome.PREPARE_OK:
+	        case TwoPhaseOutcome.FINISH_OK:
+	            if (super.failedList != null && super.failedList.size() > 0) {
+	                status = ActionStatus.H_COMMIT;
+	            }
+	        default:
+	            break;
+	        }
 	    }
 	    else
 	    {

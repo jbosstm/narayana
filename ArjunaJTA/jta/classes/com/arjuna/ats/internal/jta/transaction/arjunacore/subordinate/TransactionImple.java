@@ -262,9 +262,11 @@ public class TransactionImple extends
 			{
 			case ActionStatus.COMMITTED:
 			case ActionStatus.COMMITTING:
-			case ActionStatus.H_COMMIT:
 				TransactionImple.removeTransaction(this);
 				break;
+			case ActionStatus.H_COMMIT:
+				TransactionImple.removeTransaction(this);
+				throw new javax.transaction.HeuristicMixedException(jtaLogger.i18NLogger.get_onephase_heuristic_commit_failure(super._theTransaction));
 			case ActionStatus.ABORTED:
 	                 case ActionStatus.ABORTING:
 	                 case ActionStatus.H_ROLLBACK:
