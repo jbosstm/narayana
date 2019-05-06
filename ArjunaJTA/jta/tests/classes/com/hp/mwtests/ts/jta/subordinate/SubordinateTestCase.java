@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.resource.spi.XATerminator;
+import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
@@ -537,6 +538,48 @@ public class SubordinateTestCase
         }
 
         assertTrue("commit should throw an exception and not get to here", false);
+    }
+
+    /**
+     * <p>
+     * Running subordinate one phase commit where the subordinate transaction
+     * contains two resources. The subordinate transaction was considered to be convenient for 1PC
+     * but the resources on behalf runs 2PC.
+     * </p>
+     * <p>
+     * Top-level transaction contains a XAResource which represents a subordinate transaction.
+     * As there is only one then 1PC is run. But under the subordinate transaction there are
+     * two XA resources. Thus those two run 2PC.
+     * When failure during commit happens there has to be announced to the top-level
+     * transaction that failure happens. As top-level run only commit and did not store
+     * any information to object storage the heuristic is correct outcome.
+     * </p>
+     */
+    @Test
+    public void testFailOnCommitRmFailTwoResourcesOnePhase () throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource1 = new TestXAResource();
+        final TestXAResource xaResource2 = new TestXAResource();
+        xaResource2.setCommitException(new XAException(XAException.XAER_RMFAIL));
+
+        t.enlistResource(xaResource1);
+        t.enlistResource(xaResource2);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        try
+        {
+            xaTerminator.commit(xid, true);
+            fail("1PC commit should throw an exception and not get to here");
+        }
+        catch (final XAException ex)
+        {
+            assertEquals("RMFAIL means commit to be retried during 2PC. On 1PC we consider it as a heuristic failure.",
+                    ex.getCause().getClass(), HeuristicMixedException.class);
+        }
     }
 
     @Test

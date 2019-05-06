@@ -20,19 +20,28 @@
  */
 package com.hp.mwtests.ts.jta.jts.subordinate;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import org.junit.After;
 import org.junit.Before;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
+import com.hp.mwtests.ts.jta.subordinate.TestXAResource;
+
 import org.junit.Test;
 
+import javax.resource.spi.XATerminator;
 import javax.transaction.HeuristicMixedException;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -105,6 +114,34 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
     public SubordinateTransaction createTransaction() {
             return new TransactionImple(0); // implicit begin
     }
-    
-    
+
+    /**
+     * <p>
+     * Behaviour of JTS is different to JTA. As data on participant is saved after each action run
+     * for the participant in JTS. Object store data is store only after end
+     * of the whole prepare phase in JTA.
+     * </p>
+     * <p>
+     * RMFAIL means that recovery is expected to finish what was started.
+     * </p>
+     */
+    @Override
+    @Test
+    public void testFailOnCommitRmFailTwoResourcesOnePhase () throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource1 = new TestXAResource();
+        final TestXAResource xaResource2 = new TestXAResource();
+        xaResource2.setCommitException(new XAException(XAException.XAER_RMFAIL));
+
+        t.enlistResource(xaResource1);
+        t.enlistResource(xaResource2);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        xaTerminator.commit(xid, true);
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+    }
 }
