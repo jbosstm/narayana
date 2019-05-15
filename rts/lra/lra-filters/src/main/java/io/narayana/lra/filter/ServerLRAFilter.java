@@ -22,6 +22,7 @@
 package io.narayana.lra.filter;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
@@ -33,6 +34,9 @@ import org.eclipse.microprofile.lra.annotation.Status;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -376,6 +380,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
             }
 
+            checkForRecovery(requestContext);
+
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
                     NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
                 LRALogger.i18NLogger.warn_lraParticipantqForAsync(
@@ -392,6 +398,30 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             Current.updateLRAContext(responseContext);
 
             Current.popAll();
+        }
+    }
+
+    private void checkForRecovery(ContainerRequestContext requestContext) {
+        // if the request is expecting a recovery check
+        if (requestContext.getUriInfo().getQueryParameters().containsKey(LRAConstants.RECOVERY_PARAM) &&
+                requestContext.getHeaders().containsKey(LRA_HTTP_RECOVERY_HEADER)) {
+            // then trigger a recovery scan
+            Client recoveryCoordinatorClient = ClientBuilder.newClient();
+            String recoveryHeader = requestContext.getHeaders().getFirst(LRA_HTTP_RECOVERY_HEADER);
+
+            try {
+                URI recoveryUrl = new URI(recoveryHeader);
+                String recoveryCoordinatorUrl = String.format("http://%s:%d/%s/recovery",
+                        recoveryUrl.getHost(), recoveryUrl.getPort(), LRAConstants.RECOVERY_COORDINATOR_PATH_NAME);
+                WebTarget recoveryTarget = recoveryCoordinatorClient.target(URI.create(recoveryCoordinatorUrl));
+
+                // send the request to the recovery coordinator
+                recoveryTarget.request().get().close();
+            } catch (URISyntaxException ignore) {
+                LRALogger.i18NLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryHeader, null);
+            } finally {
+                recoveryCoordinatorClient.close();
+            }
         }
     }
 
