@@ -216,7 +216,7 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
                             participantIterator.remove();
                         }
                     } catch (Exception e) {
-                        // we foudn a helper but it failed to convert the participant record -- log a warning
+                        // we found a helper but it failed to convert the participant record -- log a warning
                         // but leave the participant in the table for next time in case the helper has merely
                         // suffered a transient failure
                         found = true;

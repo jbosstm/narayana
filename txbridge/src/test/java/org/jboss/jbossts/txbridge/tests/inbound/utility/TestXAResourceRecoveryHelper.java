@@ -20,12 +20,15 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
-import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
-import org.jboss.logging.Logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,10 +37,14 @@ import javax.ejb.Startup;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
+
+import org.jboss.logging.Logger;
+
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 
 /**
  * Implementation of XAResourceRecoveryHelper for use in txbridge recovery tests.
@@ -53,7 +60,7 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
     private static final TestXAResourceRecoveryHelper instance = new TestXAResourceRecoveryHelper();
     private static final TestXAResourceRecovered xaResourceInstance = new TestXAResourceRecovered();
 
-    private final Set<Xid> preparedXids = new HashSet<Xid>();
+    private final List<Xid> preparedXids = new ArrayList<Xid>();
 
     public static TestXAResourceRecoveryHelper getInstance() {
         return instance;
@@ -151,7 +158,8 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
 
     private void writeToDisk() {
         File logFile = getLogFile();
-        log.trace("logging " + preparedXids.size() + " records to " + logFile.getAbsolutePath());
+        log.tracef("logging %s records to %s with content %s",
+                preparedXids.size(), logFile.getAbsolutePath(), preparedXids);
 
         try {
             FileOutputStream fos = new FileOutputStream(logFile);
@@ -160,13 +168,14 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
             oos.close();
             fos.close();
         } catch (IOException e) {
-            log.error(e);
+            log.errorf(e, "cannot write records %s to %s",
+                    preparedXids, logFile.getAbsolutePath());
         }
     }
 
     private void recoverFromDisk() {
         File logFile = getLogFile();
-        log.trace("recovering from " + logFile.getAbsolutePath());
+        log.trace("recovering records from " + logFile.getAbsolutePath());
 
         if (!logFile.exists()) {
             return;
@@ -175,15 +184,14 @@ public class TestXAResourceRecoveryHelper implements XAResourceRecoveryHelper {
         try {
             FileInputStream fis = new FileInputStream(logFile);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            Set<Xid> xids = (Set<Xid>) ois.readObject();
+            List<Xid> xids = (List<Xid>) ois.readObject();
             preparedXids.addAll(xids);
-            log.trace("Recovered " + xids + " Xids");
+            log.tracef("recovered records %s", xids);
             ois.close();
             fis.close();
         } catch (Exception e) {
-            log.error(e);
+            log.errorf(e, "cannot recover records from %s", logFile.getAbsolutePath());
         }
-
     }
 
     private File getLogFile() {

@@ -46,7 +46,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
             recoveryState = ATParticipantHelper.getRecoveryState(useSerialization, participant);
             recoveryStateValid = true;
         } catch (Exception exception) {
-            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_1(id);
+            WSTLogger.i18NLogger.warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_1(id, exception);
             // if we continue here then we cannot recover this transaction if we crash during
             // commit processing. we should strictly fail here to play safe but . . .
 

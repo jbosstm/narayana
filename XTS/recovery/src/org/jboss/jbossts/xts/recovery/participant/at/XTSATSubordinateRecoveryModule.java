@@ -7,12 +7,21 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 
 import java.io.ObjectInputStream;
 
+import org.jboss.jbossts.xts.recovery.logging.RecoveryLogger;
+
 /**
  * A recovery module which recovers durable participants registered by subordinate coordinators
  */
 
 public class XTSATSubordinateRecoveryModule implements XTSATRecoveryModule
 {
+    public XTSATSubordinateRecoveryModule()
+    {
+        if (RecoveryLogger.logger.isDebugEnabled()) {
+            RecoveryLogger.logger.debug("XTSATSubordinateRecoveryModule created");
+        }
+    }
+
     public Durable2PCParticipant deserialize(String id, ObjectInputStream stream) throws Exception {
         if (id.startsWith(SubordinateATCoordinator.PARTICIPANT_PREFIX)) {
             // throw an exception because we don't expect these participants to use serialization

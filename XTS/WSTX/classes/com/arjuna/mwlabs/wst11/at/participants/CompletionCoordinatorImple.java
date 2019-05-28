@@ -40,48 +40,34 @@ public class CompletionCoordinatorImple implements CompletionCoordinatorParticip
 
 	    _cm.confirm();
 	}
-	catch (com.arjuna.mw.wsas.exceptions.InvalidActivityException ex)
+	catch (com.arjuna.mw.wsas.exceptions.InvalidActivityException |
+	       com.arjuna.mw.wscf.exceptions.NoCoordinatorException ex)
 	{
-	    throw new UnknownTransactionException();
-	}
-	catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wsas.exceptions.ProtocolViolationException ex)
-	{
-	    //	    throw new HeuristicHazardException();
-
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wscf.exceptions.NoCoordinatorException ex)
-	{
-	    throw new UnknownTransactionException();
+	    UnknownTransactionException ute = new UnknownTransactionException();
+	    ute.addSuppressed(ex);
+	    throw ute;
 	}
 	catch (com.arjuna.mw.wscf.model.twophase.exceptions.CoordinatorCancelledException ex)
 	{
-	    throw new TransactionRolledBackException();
+	    TransactionRolledBackException tre = new TransactionRolledBackException();
+	    tre.addSuppressed(ex);
+	    throw tre;
 	}
-	catch (com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicMixedException ex)
+	catch (com.arjuna.mw.wsas.exceptions.WrongStateException |
+	       com.arjuna.mw.wsas.exceptions.ProtocolViolationException |
+	       com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicMixedException |
+	       com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicHazardException |
+	       com.arjuna.mw.wsas.exceptions.NoPermissionException ex)
 	{
-	    //	    throw new HeuristicMixedException();
-
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicHazardException ex)
-	{
-	    //	    throw new HeuristicHazardException();
-
-	    throw new SystemException(ex.toString());
-
-	}
-	catch (com.arjuna.mw.wsas.exceptions.NoPermissionException ex)
-	{
-	    throw new SystemException(ex.toString());
+	    SystemException se = new SystemException(ex.toString());
+	    se.addSuppressed(ex);
+	    throw se;
 	}
 	catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
 	{
-	    throw new SystemException(ex.toString());
+	    SystemException se = new SystemException(ex.toString());
+	    se.addSuppressed(ex);
+	    throw se;
 	}
 	finally
 	{
@@ -99,41 +85,29 @@ public class CompletionCoordinatorImple implements CompletionCoordinatorParticip
 
 	    _cm.cancel();
 	}
-	catch (com.arjuna.mw.wsas.exceptions.InvalidActivityException ex)
+	catch (com.arjuna.mw.wsas.exceptions.InvalidActivityException |
+	        com.arjuna.mw.wscf.exceptions.NoCoordinatorException ex)
 	{
-	    throw new UnknownTransactionException();
+	    UnknownTransactionException ute = new UnknownTransactionException();
+	    ute.addSuppressed(ex);
+	    throw ute;
 	}
-	catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
+	catch (com.arjuna.mw.wsas.exceptions.WrongStateException |
+	       com.arjuna.mw.wsas.exceptions.ProtocolViolationException |
+	       com.arjuna.mw.wscf.model.twophase.exceptions.CoordinatorConfirmedException |
+	       com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicMixedException |
+	       com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicHazardException |
+	       com.arjuna.mw.wsas.exceptions.NoPermissionException ex)
 	{
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wsas.exceptions.ProtocolViolationException ex)
-	{
-	    throw new SystemException();
-	}
-	catch (com.arjuna.mw.wscf.exceptions.NoCoordinatorException ex)
-	{
-	    throw new UnknownTransactionException();
-	}
-	catch (com.arjuna.mw.wscf.model.twophase.exceptions.CoordinatorConfirmedException ex)
-	{
-	    throw new SystemException();
-	}
-	catch (com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicMixedException ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wscf.model.twophase.exceptions.HeuristicHazardException ex)
-	{
-	    throw new SystemException(ex.toString());
-	}
-	catch (com.arjuna.mw.wsas.exceptions.NoPermissionException ex)
-	{
-	    throw new SystemException(ex.toString());
+	    SystemException se = new SystemException(ex.toString());
+	    se.addSuppressed(ex);
+	    throw se;
 	}
 	catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
 	{
-	    throw new SystemException(ex.toString());
+	    SystemException se = new SystemException(ex.toString());
+	    se.addSuppressed(ex);
+	    throw se;
 	}
 	finally
 	{

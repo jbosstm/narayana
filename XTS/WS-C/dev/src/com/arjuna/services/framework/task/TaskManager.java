@@ -117,7 +117,7 @@ public class TaskManager
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.tracev("Shutdown in progress, ignoring task") ;
+                    WSCLogger.logger.tracef("Shutdown in progress, ignoring task '%s'", task) ;
                 }
                 return false ;
             }
@@ -132,8 +132,8 @@ public class TaskManager
             {
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.tracev("queueTask: notifying waiting workers ({0})",
-                            new Object[] {new Integer(waitingCount)}) ;
+                    WSCLogger.logger.tracef("queueTask: notifying waiting workers (%s) for task '%s'",
+                            new Integer(waitingCount), task) ;
                 }
                 taskList.notify() ;
             }
@@ -150,13 +150,13 @@ public class TaskManager
         {
             if (debugEnabled)
             {
-                WSCLogger.logger.tracev("queueTask: creating worker") ;
+                WSCLogger.logger.tracef("queueTask: creating worker for task '%s'", task) ;
             }
             createWorker() ;
         }
         else if (debugEnabled)
         {
-            WSCLogger.logger.tracev("queueTask: queueing task for execution") ;
+            WSCLogger.logger.tracef("queueTask: queueing task '%s' for execution", task) ;
         }
         
         return true ;
@@ -429,14 +429,14 @@ public class TaskManager
                     }
                     if (debugEnabled)
                     {
-                        WSCLogger.logger.tracev("getTask: returning task") ;
+                        WSCLogger.logger.tracev("getTask: returning task {0}", task) ;
                     }
                     return task ;
                 }
                 waitingCount++ ;
                 if (debugEnabled)
                 {
-                    WSCLogger.logger.tracev("getTask: waiting for task") ;
+                    WSCLogger.logger.tracev("getTask: waiting for task for {0} number of times", waitingCount) ;
                 }
                 try
                 {

@@ -3543,11 +3543,14 @@ public class BasicAction extends StateManager
     {
         if (TxControl.onePhase)
         {
-            return (((pendingList == null) || (pendingList.size() == 1)) ? true
-                    : false);
+            if(pendingList == null) {
+                return true;
+            }
+            if (pendingList.size() == 1) {
+                return pendingList.peekFront().isPermittedTopLevelOnePhaseCommit();
+            }
         }
-        else
-            return false;
+        return false;
     }
 
     /*

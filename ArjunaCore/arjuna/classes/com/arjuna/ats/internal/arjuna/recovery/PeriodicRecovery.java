@@ -768,7 +768,7 @@ public class PeriodicRecovery extends Thread
             }
 
             if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debug(" ");
+                tsLogger.logger.debugf("Recovery module '%s' first pass processed", m);
             }
         }
 
@@ -814,7 +814,7 @@ public class PeriodicRecovery extends Thread
             }
 
             if (tsLogger.logger.isDebugEnabled()) {
-                tsLogger.logger.debugf("PeriodicRecovery: recovery module '%s' second pass processed", m);
+                tsLogger.logger.debugf("Recovery module '%s' second pass processed", m);
             }
         }
 

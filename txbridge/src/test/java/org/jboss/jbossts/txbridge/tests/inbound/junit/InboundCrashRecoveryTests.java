@@ -149,6 +149,58 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("commit");
     }
 
+    /**
+     * <ul>
+     *   <li>A test client is deployed on the WFLY</li>
+     *   <li>Test case calls HTTP call to the client</li>
+     *   <li>The client starts JTA transaction</li>
+     *   <li>The client invokes WebService call to the WFLY. The WS is the single participant of the original transaction.</li>
+     *   <li>The WebService did some work - in this case it enlists
+     *       2 mock <code>TestXAResource</code>s in the business method</li>
+     *   <li>The call comes back to client which commits the transaction</li>
+     *   <li>The 1PC is about to start but 1PC is disabled (JBTM-3138) for the WCSF participant.
+     *       The prepare and commit calls hits the WS participant.</li>
+     *   <li>The WS participant process the 2PC on subordinate resources:<br/>
+     *       - <code>BridgeDurableParticipant</code><br/>
+     *       - <code>BridgeVolatileParticipant</code><br/>
+     *       - Two <code>TestXAResource</code></br></li>
+     *   <li>The commit phase starts. The first <code>TestXAResource</code>s is committed,
+     *       before the second <code>TestXAResource</code> could be committed the JVM crashes</li>
+     *   <li>The recovery is expected to commit the second <code>TestXAResource</code> later on</li>
+     * </ul>
+     */
+    @Test
+    @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
+    public void testCrashCommitOnePhase(@ArquillianResource URL baseURL) throws Exception {
+
+        instrumentor.injectOnCall(TestServiceImpl.class, "doNothing", "$0.enlistXAResource(2)");
+        instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
+        instrumentor.installRule(RuleConstructor.createRule("crashOnSecondTestResource")
+            .onClass(TestXAResource.class)
+            .inMethod("commit")
+            .atEntry()
+            .ifCondition("NOT flag(\"testxaresourcecrash\")")
+            .doAction("debug(\"killing TestXAResource\"); killJVM()"));
+
+        execute(baseURL + TestClient.URL_PATTERN, false);
+
+        instrumentedTestXAResource.assertSumMethodCallCount("prepare", 2);
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
+        // commit called twice, first TestXAResource commits,
+        // the second enters the commit and immediately kills JVM
+        instrumentedTestXAResource.assertMethodCalled("commit");
+
+        rebootServer(controller);
+
+        doRecovery();
+        doRecovery();
+
+        instrumentedTestXAResource.assertMethodNotCalled("prepare");
+        instrumentedTestXAResource.assertMethodCalled("recover");
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
+        instrumentedTestXAResource.assertSumMethodCallCount("commit", 2);
+    }
+
     @Test
     @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
     public void testCrashTwoLogs(@ArquillianResource URL baseURL) throws Exception {

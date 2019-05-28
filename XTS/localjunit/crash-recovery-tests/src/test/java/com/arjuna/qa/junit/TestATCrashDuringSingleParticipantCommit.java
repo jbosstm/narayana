@@ -5,9 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class TestATCrashDuringOnePhaseCommit extends BaseCrashTest {
-	public TestATCrashDuringOnePhaseCommit() {
-		scriptName ="ATCrashDuringOnePhaseCommit";
+public class TestATCrashDuringSingleParticipantCommit extends BaseCrashTest {
+    /**
+     * One phase commit is not permitted for XTS. The single participant
+     * runs the two phase commit as well.
+     */
+	public TestATCrashDuringSingleParticipantCommit() {
+		scriptName ="ATCrashDuringCommit";
 	}
 
 	@Test
