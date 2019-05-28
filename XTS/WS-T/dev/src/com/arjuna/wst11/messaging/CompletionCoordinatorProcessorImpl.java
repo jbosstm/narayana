@@ -88,6 +88,11 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                     final MAP responseAddressingContext =
                         AddressingHelper.createResponseContext(map, messageId) ;
                     CompletionInitiatorClient.getClient().sendAborted(participant.getParticipant(), responseAddressingContext, instanceIdentifier) ;
+                    if (WSTLogger.logger.isTraceEnabled())
+                    {
+                        WSTLogger.logger.tracev(trbe, "Participant {0} commit failed to be aborted on instance {1}",
+                                participant.getParticipant(), instanceIdentifier) ;
+                    }
                     return ;
                 }
                 catch (final UnknownTransactionException ute)
@@ -96,6 +101,11 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
                             WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_1()) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(participant.getParticipant(), faultAddressingContext, soapFault, instanceIdentifier) ;
+                    if (WSTLogger.logger.isTraceEnabled())
+                    {
+                        WSTLogger.logger.tracev(ute, "Participant {0} commit unknown failure on instance {1}: {2}",
+                                participant.getParticipant(), instanceIdentifier, WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_1(), ute) ;
+                    }
                     return ;
                 }
                 catch (final SystemException se)
@@ -105,13 +115,19 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                     final String message = MessageFormat.format(pattern, new Object[] {se}) ;
                     final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
                     CompletionInitiatorClient.getClient().sendSoapFault(participant.getParticipant(), faultAddressingContext, soapFault, instanceIdentifier) ;
+                    if (WSTLogger.logger.isTraceEnabled())
+                    {
+                        WSTLogger.logger.tracev(se, "Participant {0} commit system failure on instance {1}: {2}",
+                                participant.getParticipant(), instanceIdentifier, WSTLogger.i18NLogger.get_wst11_messaging_CompletionCoordinatorProcessorImpl_1()) ;
+                    }
                     return ;
                 }
                 catch (final Throwable th)
                 {
                     if (WSTLogger.logger.isTraceEnabled())
                     {
-                        WSTLogger.logger.tracev("Unexpected exception thrown from commit:", th) ;
+                        WSTLogger.logger.tracev(th, "Unexpected exception thrown from commit for participant {0} on instance {1}",
+                                participant.getParticipant(), instanceIdentifier) ;
                     }
                     final MAP faultAddressingContext = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                     final SoapFault soapFault = new SoapFault11(th) ;

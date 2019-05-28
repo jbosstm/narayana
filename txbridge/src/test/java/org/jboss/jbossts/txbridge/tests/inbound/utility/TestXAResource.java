@@ -20,8 +20,6 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.utility;
 
-import org.jboss.logging.Logger;
-
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -32,7 +30,6 @@ import javax.transaction.xa.XAException;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-01
  */
 public class TestXAResource extends TestXAResourceCommon implements XAResource {
-    private static Logger log = Logger.getLogger(TestXAResource.class);
 
     @Override
     public void commit(Xid xid, boolean b) throws XAException {

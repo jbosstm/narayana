@@ -417,6 +417,22 @@ public abstract class AbstractRecord extends StateManager
 	}
 
 	/**
+	 * <p>
+	 * Defines if the participant record permits
+	 * the use of the one phase commit optimization.
+	 * <p>
+	 * By default it's expected this to be true
+	 * but the children records can override this
+	 * if it's necessary for them to forbid 1PC to be run.
+	 *
+	 * @return true if 1PC could be run for the participant,
+	 *         otherwise false
+	 */
+	public boolean isPermittedTopLevelOnePhaseCommit() {
+	    return true;
+	}
+
+	/**
 	 * Perform a top-level one phase commit.
 	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.

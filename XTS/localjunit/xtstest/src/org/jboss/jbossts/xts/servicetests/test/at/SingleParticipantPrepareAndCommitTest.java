@@ -21,10 +21,6 @@
 
 package org.jboss.jbossts.xts.servicetests.test.at;
 
-import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
-import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
-import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
-import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
 import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
 import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;

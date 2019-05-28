@@ -410,6 +410,17 @@ public class ParticipantRecord extends
 	}
 
 	/**
+	 * The WSCF does not implement 1PC properly and it fails to run it safely
+	 * in data consistent manner. Returning false to disable 1PC optimization
+	 * for the WSCF records.
+	 * See JBTM-396 and JBTM-3138.
+	 */
+
+	public boolean isPermittedTopLevelOnePhaseCommit() {
+		return false;
+	}
+
+	/**
 	 * The record is being driven through top-level commit and is the only
 	 * resource.
 	 *
