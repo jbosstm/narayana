@@ -32,6 +32,17 @@ public final class PropertiesFactory {
 
     private static AbstractPropertiesFactory delegatePropertiesFactory;
 
+    /**
+     * Allow the properties factory delegate to be supplied externally. This
+     * is useful for containers like Quarkus that need to statically initialise
+     * properties during a deployment phase.
+     *
+     * @param propertiesFactory a factory for providing default values for properties
+     */
+    public static void setDelegatePropertiesFactory(AbstractPropertiesFactory propertiesFactory) {
+        delegatePropertiesFactory = propertiesFactory;
+    }
+
     public static Properties getDefaultProperties() {
         initPropertiesFactory();
         return delegatePropertiesFactory.getDefaultProperties();
