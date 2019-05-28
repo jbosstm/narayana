@@ -225,6 +225,11 @@ public class ParticipantRecord extends
 				{
 					return TwoPhaseOutcome.HEURISTIC_COMMIT;
 				}
+				catch(SystemCommunicationException ex)
+				{
+					// if the participant is dead it will retry anyway
+					return TwoPhaseOutcome.FINISH_ERROR;
+				}
 				catch (SystemException ex)
 				{
 					return TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -363,7 +368,7 @@ public class ParticipantRecord extends
                 {
                     // if prepare timed out then we return error so it goes back on the
                     // prepare list and is rolled back
-                    return TwoPhaseOutcome.FINISH_ERROR;
+                    return TwoPhaseOutcome.PREPARE_NOTOK;
                 }
 				catch (SystemException ex)
 				{
