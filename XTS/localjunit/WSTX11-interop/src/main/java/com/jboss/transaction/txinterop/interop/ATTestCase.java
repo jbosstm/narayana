@@ -20,8 +20,6 @@
  */
 package com.jboss.transaction.txinterop.interop;
 
-import javax.inject.Named;
-
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.ServiceRegistry;

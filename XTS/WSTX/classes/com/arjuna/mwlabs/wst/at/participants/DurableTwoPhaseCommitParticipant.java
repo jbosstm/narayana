@@ -69,7 +69,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
     /**
      * tell the participant to prepare
      *
-     * @return the participant's vote or a cancel vote the aprticipant is null
+     * @return the participant's vote or a cancel vote the participant is null
      *
      */
     public Vote prepare () throws InvalidParticipantException,
@@ -103,7 +103,6 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			else
 				return new VoteCancel();
 		}
-		//	catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 		catch (com.arjuna.wst.WrongStateException ex)
 		{
 			wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_prepare(_id, _resource, ex);
@@ -111,28 +110,18 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			wse.addSuppressed(ex);
 			throw wse;
 		}
-		/*
-		 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex {
-		 * throw new HeuristicHazardException(ex.toString()); } catch
-		 * (com.arjuna.mw.wst.exceptions.HeuristicMixedException ex) { throw new
-		 * HeuristicMixedException(ex.toString()); }
-		 */
-		//	catch (com.arjuna.mw.wst.exceptions.SystemException ex)
+		catch (com.arjuna.wst.stub.SystemCommunicationException ex) {
+		    wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(_id, _resource);
+		    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+		    sce.addSuppressed(ex);
+		    throw sce;
+		}
 		catch (com.arjuna.wst.SystemException ex)
 		{
-            if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
-                wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(_id, _resource);
-                SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
-                sce.addSuppressed(ex);
-                throw sce;
-            }
-            else
-            {
-                wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_prepare(_id, _resource, ex);
-                SystemException se = new SystemException(ex.toString());
-                se.addSuppressed(ex);
-                throw se;
-            }
+		    wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_prepare(_id, _resource, ex);
+		    SystemException se = new SystemException(ex.toString());
+		    se.addSuppressed(ex);
+		    throw se;
         }
 	}
 
@@ -153,7 +142,6 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 					_resource.commit();
 				}
 			}
-			//	    catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
 				wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm(_id, _resource, ex);
@@ -161,30 +149,19 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 				wse.addSuppressed(wse);
 				throw wse;
 			}
-			/*
-			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
-			 * throw new HeuristicHazardException(ex.toString()); } catch
-			 * (com.arjuna.mw.wst.exceptions.HeuristicMixedException ex) { throw
-			 * new HeuristicMixedException(ex.toString()); } catch
-			 * (com.arjuna.mw.wst.exceptions.HeuristicRollbackException ex) {
-			 * throw new HeuristicCancelException(ex.toString()); }
-			 */
-			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
+			catch (com.arjuna.wst.stub.SystemCommunicationException ex) {
+                // log an error here -- we will end up writing a heuristic transaction record too
+                wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(_id, _resource);
+                SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+                sce.addSuppressed(ex);
+                throw sce;
+			}
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException)
-				{
-                    // log an error here -- we will end up writing a heuristic transaction record too
-                    wstxLogger.i18NLogger.warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(_id, _resource);
-                    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
-                    sce.addSuppressed(ex);
-                    throw sce;
-                } else {
-                    wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm(_id, _resource, ex);
-                    SystemException se = new SystemException(ex.toString());
-                    se.addSuppressed(ex);
-                    throw se;
-                }
+			    wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_confirm(_id, _resource, ex);
+			    SystemException se = new SystemException(ex.toString());
+			    se.addSuppressed(ex);
+			    throw se;
             }
 		}
 		else
@@ -209,36 +186,24 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 				if (!_rolledback)
 					_resource.rollback();
 			}
-			//	    catch (com.arjuna.mw.wst.exceptions.WrongStateException ex)
 			catch (com.arjuna.wst.WrongStateException ex)
 			{
 				WrongStateException wse = new WrongStateException(ex.toString());
 				wse.addSuppressed(ex);
 				throw wse;
 			}
-			/*
-			 * catch (com.arjuna.mw.wst.exceptions.HeuristicHazardException ex) {
-			 * throw new HeuristicHazardException(ex.toString()); } catch
-			 * (com.arjuna.mw.wst.exceptions.HeuristicMixedException ex) { throw
-			 * new HeuristicMixedException(ex.toString()); } catch
-			 * (com.arjuna.mw.wst.exceptions.HeuristicCommitException ex) {
-			 * throw new HeuristicConfirmException(ex.toString()); }
-			 */
-			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
+			catch (com.arjuna.wst.stub.SystemCommunicationException ex) {
+			    // log an error here -- if the participant is dead it will retry anyway
+			    wstxLogger.i18NLogger.error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(_id);
+			    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
+			    sce.addSuppressed(ex);
+			    throw sce;
+			}
 			catch (com.arjuna.wst.SystemException ex)
 			{
-                if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException)
-                {
-                    // log an error here -- if the participant is dead it will retry anyway
-                    wstxLogger.i18NLogger.error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(_id);
-                    SystemCommunicationException sce = new SystemCommunicationException(ex.toString());
-                    sce.addSuppressed(ex);
-                    throw sce;
-                } else {
-                    SystemException se = new SystemException(ex.toString());
-                    se.addSuppressed(ex);
-                    throw se;
-                }
+			    SystemException se = new SystemException(ex.toString());
+			    se.addSuppressed(ex);
+			    throw se;
 			}
 		}
 		else
@@ -299,17 +264,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 					{
 						confirm();
 					}
-					catch (HeuristicHazardException ex)
-					{
-						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
-						throw ex;
-					}
-					catch (HeuristicMixedException ex)
-					{
-						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
-						throw ex;
-					}
-					catch (HeuristicCancelException ex)
+					catch (HeuristicHazardException | HeuristicMixedException |  HeuristicCancelException ex)
 					{
 						wstxLogger.i18NLogger.error_wst_at_participants_Durable2PC_one_phase_failed(_id, _resource, ex);
 						throw ex;

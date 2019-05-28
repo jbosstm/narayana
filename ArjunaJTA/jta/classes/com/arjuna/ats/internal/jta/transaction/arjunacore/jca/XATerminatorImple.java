@@ -196,8 +196,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             SubordinateTransaction tx = SubordinationManager
                     .getTransactionImporter().getImportedTransaction(xid);
 
-            if (tx == null)
-                throw new XAException(XAException.XAER_INVAL);
+            if (tx == null) {
+                XAException xaException = new XAException(jtaLogger.i18NLogger.get_no_subordinate_txn_for("forget", xid));
+                xaException.errorCode = XAException.XAER_INVAL;
+                throw xaException;
+            }
 
             tx.doForget();
         }
@@ -243,8 +246,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         try
         {
 
-            if (tx == null)
-                throw new XAException(XAException.XAER_INVAL);
+            if (tx == null) {
+                XAException xaException = new XAException(jtaLogger.i18NLogger.get_no_subordinate_txn_for("prepare", xid));
+                xaException.errorCode = XAException.XAER_INVAL;
+                throw xaException;
+            }
 
             switch (tx.doPrepare())
             {
@@ -522,8 +528,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         try
         {
 
-            if (tx == null)
-                throw new XAException(XAException.XAER_INVAL);
+            if (tx == null) {
+                XAException xaException = new XAException(jtaLogger.i18NLogger.get_no_subordinate_txn_for("rollback", xid));
+                xaException.errorCode = XAException.XAER_INVAL;
+                throw xaException;
+            }
 
             if (tx.activated())
             {
@@ -590,8 +599,9 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             SubordinateTransaction tx = SubordinationManager
                     .getTransactionImporter().getImportedTransaction(xid);
 
-            if (tx == null)
-                throw new UnexpectedConditionException();
+            if (tx == null) {
+                throw new UnexpectedConditionException(jtaLogger.i18NLogger.get_no_subordinate_txn_for("beforeCompletion", xid));
+            }
 
            return tx.doBeforeCompletion();
         }

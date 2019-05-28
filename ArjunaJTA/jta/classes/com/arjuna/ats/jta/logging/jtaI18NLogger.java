@@ -584,6 +584,9 @@ public interface jtaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_intteruptedExceptionOnWaitingXARecoveryModuleLock(XARecoveryModule recModule, String state, @Cause() InterruptedException arg0);
 
+    @Message(id = 16144, value = "No subordinate transaction to drive {0}, xid: {1}", format = MESSAGE_FORMAT)
+    String get_no_subordinate_txn_for(String actionToDrive, Xid xid);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

@@ -857,7 +857,7 @@ public interface wstI18NLogger {
 
 	@Message(id = 43219, value = "Could not save recovery state for non-serializable durable WS-AT participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_1(String arg0);
+	public void warn_recovery_participant_at_ATParticipantRecoveryRecord_saveState_1(String arg0, @Cause() Throwable cause);
 
 	@Message(id = 43220, value = "XML stream exception saving recovery state for participant {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
