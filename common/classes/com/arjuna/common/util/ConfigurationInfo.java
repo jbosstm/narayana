@@ -20,20 +20,15 @@
  */
 package com.arjuna.common.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import com.arjuna.common.logging.commonLogger;
 
 /**
  * Utility class providing access to build time and runtime configuration reporting functions.
  *
  * Replaces the old per-module Info (and in some cases Configuration and report) classes.
+ *
+ * The actual build information is injected during the build via the
+ * org.jboss.maven.plugins:maven-injection-plugin plugin
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2009-10
  */
@@ -51,24 +46,21 @@ public class ConfigurationInfo
      * @return the version control tag of the source used, or "unknown".
      */
     public static String getSourceId() {
-        getBuildTimeProperties();
-        return sourceId;
+        return ""; // the bytecode for the method is replaced at build time
     }
 
     /**
      * @return the name (not path) of the properties file
      */
     public static String getPropertiesFile() {
-        getBuildTimeProperties();
-        return propertiesFile;
+        return ""; // the bytecode for the method is replaced at build time
     }
 
     /**
      * @return the build identification line indicating the os name and version and build date
      */
     public static String getBuildId() {
-        getBuildTimeProperties();
-        return buildId;
+        return ""; // the bytecode for the method is replaced at build time
     }
 
     /**
@@ -85,71 +77,4 @@ public class ConfigurationInfo
         String beans = BeanPopulator.printState();
         System.out.print(beans);
     }
-
-    // initialize build time properties from data in the jar's META-INF/MANIFEST.MF
-    private static synchronized void getBuildTimeProperties() {
-        if (isInitialized) {
-            return;
-        }
-
-        /*
-        our classloader's classpath may contain more than one .jar, each with a manifest.
-        we need to ensure we get our own .jar's manifest, even if the jar is not first on the path.
-        we also need to deal with vfs, which does weird things to pathToThisClass e.g.
-          normal: jar:file:/foo/bar.jar!/com/arjuna/common/util/ConfigurationInfo.class
-          vfszip:/foo/bar.jar/com/arjuna/common/util/ConfigurationInfo.class
-        In short, this path finding code is magic and should be approached very cautiously.
-         */
-        String classFileName = ConfigurationInfo.class.getSimpleName()+".class";
-        String pathToThisClass = ConfigurationInfo.class.getResource(classFileName).toString();
-
-        // we need to strip off the class name bit so we can replace it with the manifest name:
-        int suffixLength = (ConfigurationInfo.class.getCanonicalName()+".class").length();
-        // now derive the path to the .jar which contains the class and thus hopefully the right manifest:
-        String basePath = pathToThisClass.substring(0, pathToThisClass.length()-suffixLength);
-        if (basePath.endsWith("/"))
-            basePath = basePath.substring(0, basePath.length()-1);
-
-        String pathToManifest = basePath+"/META-INF/MANIFEST.MF";
-
-        InputStream is = null;
-        try {
-            is = new URL(pathToManifest).openStream();
-            Manifest manifest = new Manifest(is);
-            Attributes attributes = manifest.getMainAttributes();
-
-            Attributes.Name name = new Attributes.Name("arjuna-properties-file");
-            if(attributes.containsKey(name)) {
-                propertiesFile = attributes.getValue(name);
-            }
-
-            name = new Attributes.Name("arjuna-scm-revision");
-            if(attributes.containsKey(name)) {
-                sourceId = attributes.getValue(name);
-            }
-
-            name = new Attributes.Name("arjuna-builder");
-            if(attributes.containsKey(name)) {
-                buildId = attributes.getValue(name);
-            }
-
-        } catch(FileNotFoundException exception) {
-            commonLogger.i18NLogger.warn_could_not_find_manifest(pathToManifest, exception);
-        } catch(Exception exception) {
-            commonLogger.i18NLogger.warn_could_not_find_manifest(pathToManifest, exception);
-        } finally {
-            if(is!= null) {
-                try {
-                    is.close();
-                } catch(IOException e) {}
-            }
-        }
-
-        isInitialized = true;
-    }
-
-    private static String sourceId = "unknown";
-    private static String propertiesFile = "arjuna-properties.xml";
-    private static String buildId = "arjuna-builder";
-    private static boolean isInitialized = false;
 }
