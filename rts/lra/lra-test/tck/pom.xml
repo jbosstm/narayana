@@ -22,7 +22,7 @@
         
         <lra.tck.suite.host>localhost</lra.tck.suite.host>
         <lra.tck.suite.port>8180</lra.tck.suite.port>
-        <lra.tck.suite.swarm.trace.params></lra.tck.suite.swarm.trace.params>
+        <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
 
@@ -45,7 +45,7 @@
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
                         <lra.tck.suite.host>${lra.tck.suite.host}</lra.tck.suite.host>
                         <lra.tck.suite.port>${lra.tck.suite.port}</lra.tck.suite.port>
-                        <lra.tck.suite.swarm.trace.params>${lra.tck.suite.swarm.trace.params}</lra.tck.suite.swarm.trace.params>
+                        <lra.tck.suite.thorntail.trace.params>${lra.tck.suite.thorntail.trace.params}</lra.tck.suite.thorntail.trace.params>
                         <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
                         <lra.tck.suite.debug.params>${lra.tck.suite.debug.params}</lra.tck.suite.debug.params>
                     </systemPropertyVariables>
@@ -118,7 +118,7 @@
                 </property>
             </activation>
             <properties>
-                <lra.coordinator.trace.params>-Dswarm.logging=TRACE</lra.coordinator.trace.params>
+                <lra.coordinator.trace.params>-Dthorntail.logging=TRACE</lra.coordinator.trace.params>
             </properties>
         </profile>
         <profile>
@@ -129,7 +129,7 @@
                 </property>
             </activation>
             <properties>
-                <lra.tck.suite.swarm.trace.params>-Dswarm.logging=TRACE</lra.tck.suite.swarm.trace.params>
+                <lra.tck.suite.thorntail.trace.params>-Dthorntail.logging=TRACE</lra.tck.suite.thorntail.trace.params>
             </properties>
         </profile>
         <profile>
@@ -159,8 +159,8 @@
                                     <waitForInterrupt>false</waitForInterrupt>
                                     <!--<processLogFile>${project.build.directory}/failsafe-reports/lra-coordinator-startup.log</processLogFile>-->
                                     <environment>
-                                        <swarm.http.port>${lra.coordinator.port}</swarm.http.port>
-                                        <swarm.transactions.node-identifier>2</swarm.transactions.node-identifier>
+                                        <thorntail.http.port>${lra.coordinator.port}</thorntail.http.port>
+                                        <thorntail.transactions.node-identifier>2</thorntail.transactions.node-identifier>
                                     </environment>
                                     <arguments>
                                         <argument>${java.home}/bin/java</argument>
@@ -168,7 +168,7 @@
                                         <argument>${lra.coordinator.debug.params}</argument>
                                         <argument>${lra.coordinator.trace.params}</argument>
                                         <argument>-jar</argument>
-                                        <argument>${project.basedir}/../../lra-coordinator/target/lra-coordinator-swarm.jar</argument>
+                                        <argument>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

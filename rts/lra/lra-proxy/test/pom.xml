@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
   ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
-  -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
@@ -21,14 +18,14 @@
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <swarm.http.port>8081</swarm.http.port>
+        <thorntail.http.port>8081</thorntail.http.port>
         <lra.http.host>localhost</lra.http.host>
         <lra.http.port>8080</lra.http.port>
-        <service.http.port>${swarm.http.port}</service.http.port>
+        <service.http.port>${thorntail.http.port}</service.http.port>
 
-        <swarm.debug.params></swarm.debug.params>
-        <swarm.logging.params></swarm.logging.params>
-        <swarm.debug.port>8787</swarm.debug.port>
+        <thorntail.debug.params/>
+        <thorntail.logging.params/>
+        <thorntail.debug.port>8787</thorntail.debug.port>
 
         <skipITs>true</skipITs>
     </properties>
@@ -37,9 +34,9 @@
         <finalName>lra-proxy-test</finalName>
         <plugins>
             <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId>
-                <version>${version.wildfly-swarm}</version>
+                <groupId>io.thorntail</groupId>
+                <artifactId>thorntail-maven-plugin</artifactId>
+                <version>${version.wildfly-thorntail}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -49,7 +46,7 @@
                 </executions>
                 <configuration>
                     <environment>
-                        <swarm.http.port>${swarm.http.port}</swarm.http.port>
+                        <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
                     </environment>
                     <properties>
                         <lra.http.host>${lra.http.host}</lra.http.host>

@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
@@ -19,7 +16,7 @@
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <narayana.nodename.property>CoreEnvironmentBean.nodeIdentifier</narayana.nodename.property>
-        <swarm.http.port>8080</swarm.http.port>
+        <thorntail.http.port>8080</thorntail.http.port>
     </properties>
 
     <build>
@@ -31,9 +28,9 @@
             <artifactId>nexus-staging-maven-plugin</artifactId>
           </plugin>
             <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId>
-                <version>${version.wildfly-swarm}</version>
+                <groupId>io.thorntail</groupId>
+                <artifactId>thorntail-maven-plugin</artifactId>
+                <version>${version.wildfly-thorntail}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -43,10 +40,10 @@
                 </executions>
                 <configuration>
                     <environment>
-                        <swarm.http.port>${swarm.http.port}</swarm.http.port>
+                        <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
                     </environment>
                     <properties>
-                        <lra.http.port>${swarm.http.port}</lra.http.port>
+                        <lra.http.port>${thorntail.http.port}</lra.http.port>
                     </properties>
                 </configuration>
             </plugin>
@@ -55,15 +52,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaxrs</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>cdi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>swagger</artifactId>
         </dependency>
 
@@ -78,24 +75,11 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- For swarm plugin to run -->
+        <!-- For thorntail plugin to run -->
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-impl-base</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- Testing -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${version.resteasy-client}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>arquillian</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

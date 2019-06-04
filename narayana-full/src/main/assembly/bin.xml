@@ -203,7 +203,7 @@
 			<destName>xts_third_party_licenses.txt</destName>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator/target/lra-coordinator-swarm.jar</source>
+			<source>../rts/lra/lra-coordinator/target/lra-coordinator-thorntail.jar</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>

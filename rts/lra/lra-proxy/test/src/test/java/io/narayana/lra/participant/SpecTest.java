@@ -28,8 +28,8 @@ import static org.junit.Assert.assertTrue;
 public class SpecTest {
     private static URL MICRSERVICE_BASE_URL;
 
-    private static final int COORDINATOR_SWARM_PORT = 8080;
-    private static final int TEST_SWARM_PORT = 8081;
+    private static final int COORDINATOR_THORNTAIL_PORT = 8080;
+    private static final int TEST_THORNTAIL_PORT = 8081;
 
     private static NarayanaLRAClient lraClient;
     private static Client msClient;
@@ -39,8 +39,8 @@ public class SpecTest {
     @BeforeClass
     public static void setupClass() throws Exception {
         System.out.println("Getting ready to connect - waiting for coordinator to startup...");
-        int servicePort = Integer.getInteger("service.http.port", TEST_SWARM_PORT);
-        int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, COORDINATOR_SWARM_PORT);
+        int servicePort = Integer.getInteger("service.http.port", TEST_THORNTAIL_PORT);
+        int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, COORDINATOR_THORNTAIL_PORT);
         String rcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
 
         MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);

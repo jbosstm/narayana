@@ -30,7 +30,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
  * The appender provides way to bundle LRA interfaces implementation classes to the deployment
- * as the Swarm container does not bundle the LRA classes to the fat jar until
+ * as the Thorntail container does not bundle the LRA classes to the fat jar until
  * there is no fraction for it.
  */
 public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender {
@@ -38,14 +38,14 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
     @Override
     public Archive<?> createAuxiliaryArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-        // adding LRA spec interfaces under the WildFly Swarm deployment
+        // adding LRA spec interfaces under the Thorntail deployment
                 .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage())
                 .addPackages(true, org.eclipse.microprofile.lra.participant.LRAParticipant.class.getPackage());
-        // adding Narayana LRA implementation under the WildFly Swarm deployment
+        // adding Narayana LRA implementation under the Thorntail deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
                 .addPackages(true, io.narayana.lra.Current.class.getPackage());
 
-        // adding Narayana LRA filters under the WildFly Swarm deployment
+        // adding Narayana LRA filters under the Thorntail deployment
         String filtersAsset = String.format("%s%n%s",
                 io.narayana.lra.filter.ClientLRAResponseFilter.class.getName(),
                 io.narayana.lra.filter.ClientLRARequestFilter.class.getName());

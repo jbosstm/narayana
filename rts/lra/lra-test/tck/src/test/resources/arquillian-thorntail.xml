@@ -6,8 +6,8 @@
     <container qualifier="managedContainer" default="true" mode="suite">
         <configuration>
             <property name="host">localhost</property>
-            <property name="port">${swarm.arquillian.daemon.port:12345}</property>
-            <property name="javaVmArguments">${lra.tck.suite.swarm.trace.params} ${lra.tck.suite.debug.params} -Dswarm.http.host=${lra.tck.suite.host} -Dswarm.http.port=${lra.tck.suite.port} -Dlra.tck.coordinator.hostname=localhost -Dlra.tck.coordinator.port=${lra.coordinator.port} -Dlra.http.host=localhost -Dlra.http.port=${lra.coordinator.port}</property>
+            <property name="port">${thorntail.arquillian.daemon.port:12345}</property>
+            <property name="javaVmArguments">${lra.tck.suite.thorntail.trace.params} ${lra.tck.suite.debug.params} -Dthorntail.http.host=${lra.tck.suite.host} -Dthorntail.http.port=${lra.tck.suite.port} -Dlra.tck.coordinator.hostname=localhost -Dlra.tck.coordinator.port=${lra.coordinator.port} -Dlra.http.host=localhost -Dlra.http.port=${lra.coordinator.port}</property>
         </configuration>
     </container>
 </arquillian>
