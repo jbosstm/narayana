@@ -587,8 +587,6 @@
           </plugins>
         </build>
         <properties>
-          <maven.compiler.source>1.9</maven.compiler.source>
-          <maven.compiler.target>1.9</maven.compiler.target>
           <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
           <version.org.jacorb.jacorb-idl-compiler>3.7</version.org.jacorb.jacorb-idl-compiler>
           <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
