@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
   ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
-  -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.narayana.rts</groupId>
@@ -20,9 +17,6 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.wildfly-swarm>2018.5.0</version.wildfly-swarm>
-        <version.wildfly.swarm.checkstyle>3</version.wildfly.swarm.checkstyle>
-
         <version.json.api>1.1</version.json.api>
         <version.jackson>2.8.11.2</version.jackson>
 
@@ -62,9 +56,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.wildfly.swarm</groupId>
+                <groupId>io.thorntail</groupId>
                 <artifactId>bom-all</artifactId>
-                <version>${version.wildfly-swarm}</version>
+                <version>${version.wildfly-thorntail}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -122,7 +116,7 @@
                     <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
                     <skipITs>${skipITs}</skipITs>
                     <systemProperties>
-                        <arquillian.xml>arquillian-swarm.xml</arquillian.xml>
+                        <arquillian.xml>arquillian-thorntail.xml</arquillian.xml>
                     </systemProperties>
                 </configuration>
                 <executions>
@@ -144,26 +138,18 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>checkstyle/checkstyle.xml</configLocation>
-                    <skip>false</skip>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.wildfly.swarm</groupId>
-                        <artifactId>checkstyle-config</artifactId>
-                        <version>${version.wildfly.swarm.checkstyle}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+           </plugin>
         </plugins>
     </build>
 

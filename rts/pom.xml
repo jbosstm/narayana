@@ -31,9 +31,9 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <url>http://www.jboss.org/jbosstm</url>
  
   <properties>
-    <version.wildfly-swarm>2017.2.0</version.wildfly-swarm>
-    <!-- Impportant: the resteasy client version must match the one used by wildfly.swarm -->
-    <version.resteasy-client>3.1.3.Final</version.resteasy-client>
+    <version.wildfly-thorntail>2.3.0.Final</version.wildfly-thorntail>
+    <!-- Impportant: the resteasy client version must match the one used by wildfly.thorntail -->
+    <version.resteasy-client>3.6.2.Final</version.resteasy-client>
     <version.json.api>1.1</version.json.api>
     <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
 

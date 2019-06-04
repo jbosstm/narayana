@@ -75,8 +75,8 @@ public class ProxyService implements LRAManagement {
             participants = new ArrayList<>();
         }
 
-        int httpPort = Integer.getInteger("swarm.http.port", 8081);
-        String httpHost = System.getProperty("swarm.http.host", "localhost");
+        int httpPort = Integer.getInteger("thorntail.http.port", 8081);
+        String httpHost = System.getProperty("thorntail.http.host", "localhost");
 
         // TODO if the proxy is restarted on a different endpoint it should notify the recovery coordinator
 

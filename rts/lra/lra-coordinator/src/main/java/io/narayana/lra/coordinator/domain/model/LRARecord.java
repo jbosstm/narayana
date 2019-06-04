@@ -701,7 +701,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private static int getTypeId() {
-        return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we depend on swarm for narayana which is using an earlier version
+        return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we depend on thorntail for narayana which is using an earlier version
     }
 
     public int typeIs() {
