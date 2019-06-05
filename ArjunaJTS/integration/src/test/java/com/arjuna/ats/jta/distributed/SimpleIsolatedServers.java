@@ -287,8 +287,11 @@ public class SimpleIsolatedServers {
 		{
 			new Thread(new Runnable() {
 				public void run() {
-					getLocalServer("2000").doRecoveryManagerScan(true);
-					lock.incrementCount();
+				    try {
+				        getLocalServer("2000").doRecoveryManagerScan(true);
+				    } finally {
+				        lock.incrementCount();
+				    }
 				}
 			}, "RecMan2000").start();
 		}
@@ -296,15 +299,20 @@ public class SimpleIsolatedServers {
 		{
 			new Thread(new Runnable() {
 				public void run() {
-					getLocalServer("1000").doRecoveryManagerScan(true);
-					lock.incrementCount();
+				    try {
+				        getLocalServer("1000").doRecoveryManagerScan(true);
+				    } finally {
+				        lock.incrementCount();
+				    }
 				}
 			}, "RecMan1000").start();
 		}
 
 		synchronized (lock) {
-			while (lock.getCount() < 2) {
+			int numberOfNotificationToGet = 2;
+			while (numberOfNotificationToGet > 0 && lock.getCount() < 2) {
 				lock.wait(300000);
+				numberOfNotificationToGet--;
 			}
 			
 			if (lock.getCount() < 2) {
