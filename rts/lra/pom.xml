@@ -28,8 +28,8 @@
         <version.thorntail>2.4.0.Final</version.thorntail>
         <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->
 
-        <version.microprofile.lra.api>1.0-20190430.132220-362</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-20190430.132221-362</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0-20190515.061205-378</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-20190515.061206-378</version.microprofile.lra.tck>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
