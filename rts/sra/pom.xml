@@ -17,24 +17,13 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.thorntail</groupId>
-                <artifactId>bom</artifactId>
-                <version>${version.wildfly-thorntail}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <finalName>lra-test</finalName>
         <plugins>
             <plugin>
                 <groupId>io.thorntail</groupId>
                 <artifactId>thorntail-maven-plugin</artifactId>
-                <version>${version.wildfly-thorntail}</version>
+                <version>${version.thorntail}</version>
                 <executions>
                     <execution>
                         <goals>

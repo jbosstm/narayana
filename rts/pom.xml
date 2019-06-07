@@ -31,9 +31,11 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <url>http://www.jboss.org/jbosstm</url>
  
   <properties>
-    <version.wildfly-thorntail>2.3.0.Final</version.wildfly-thorntail>
+    <version.thorntail>2.4.0.Final</version.thorntail>
     <!-- Impportant: the resteasy client version must match the one used by wildfly.thorntail -->
     <version.resteasy-client>3.6.2.Final</version.resteasy-client>
+    <version.resteasy>3.6.2.Final</version.resteasy>
+
     <version.json.api>1.1</version.json.api>
     <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
 
@@ -47,6 +49,18 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.thorntail</groupId>
+          <artifactId>bom-all</artifactId>
+          <version>${version.thorntail}</version>
+          <scope>import</scope>
+          <type>pom</type>
+      </dependency> 
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>
