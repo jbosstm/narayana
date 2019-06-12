@@ -419,7 +419,7 @@ function osgi_tests {
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -427,7 +427,7 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/rts/pom.xml -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/rts/pom.xml -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -435,7 +435,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ./ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -443,11 +443,11 @@ function jta_as_tests {
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f ./rts/at/integration/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f rts/at/integration/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 
   echo "#0. REST-AT To JTA Bridge Test"
-    ./build.sh -f ./rts/at/bridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+    ./build.sh -f rts/at/bridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
     [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
@@ -538,20 +538,20 @@ function blacktie {
 
 function jta_cdi_tests {
   echo "#0. JTA CDI Tests"
-  ./build.sh -f ./ArjunaJTA/cdi/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/cdi/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
 function compensations_tests {
   echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f txframework/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "txframework build failed"
-  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f ./compensations/pom.xml -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
 }
 
