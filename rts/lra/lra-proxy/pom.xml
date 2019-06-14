@@ -21,7 +21,6 @@
 
     <modules>
         <module>api</module>
-        <module>test</module>
     </modules>
 
     <profiles>

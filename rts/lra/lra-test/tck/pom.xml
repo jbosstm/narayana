@@ -41,6 +41,10 @@
                     <includes>
                         <include>**/*Test*.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/*TckInvalidParticipantSignaturesTests.java</exclude>
+                        <exclude>**/*TckParticipantTests.java</exclude>
+                    </excludes>
                     <systemPropertyVariables combine.children="append">
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
                         <lra.tck.suite.host>${lra.tck.suite.host}</lra.tck.suite.host>

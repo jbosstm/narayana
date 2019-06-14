@@ -39,8 +39,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
     public Archive<?> createAuxiliaryArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
         // adding LRA spec interfaces under the Thorntail deployment
-                .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage())
-                .addPackages(true, org.eclipse.microprofile.lra.participant.LRAParticipant.class.getPackage());
+                .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage());
         // adding Narayana LRA implementation under the Thorntail deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
                 .addPackages(true, io.narayana.lra.Current.class.getPackage());
