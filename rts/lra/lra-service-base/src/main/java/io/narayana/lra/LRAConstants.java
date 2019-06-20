@@ -36,4 +36,5 @@ public abstract class LRAConstants {
     public static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
     public static final String PARENT_LRA_PARAM_NAME = "ParentLRA";
     public static final String RECOVERY_PARAM = "recoveryCount";
+    public static final String HTTP_METHOD_NAME = "method"; // the name of the HTTP method used to invoke participants
 }

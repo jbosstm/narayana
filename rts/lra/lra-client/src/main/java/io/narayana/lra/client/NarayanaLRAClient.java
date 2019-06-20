@@ -53,7 +53,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -66,6 +70,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.LRAConstants;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 
 import io.narayana.lra.logging.LRALogger;
@@ -400,7 +405,7 @@ public class NarayanaLRAClient implements Closeable {
 
             if (pathAnnotation != null) {
 
-                if (checkMethod(paths, COMPENSATE, pathAnnotation,
+                if (checkMethod(paths, method, COMPENSATE, pathAnnotation,
                         method.getAnnotation(Compensate.class), uriPrefix) != 0) {
                     long timeLimit = method.getAnnotation(Compensate.class).timeLimit();
                     ChronoUnit timeUnit = method.getAnnotation(Compensate.class).timeUnit();
@@ -412,18 +417,18 @@ public class NarayanaLRAClient implements Closeable {
                     }
                 }
 
-                if (checkMethod(paths, COMPLETE, pathAnnotation,
+                if (checkMethod(paths, method, COMPLETE, pathAnnotation,
                         method.getAnnotation(Complete.class), uriPrefix) != 0) {
                     if (isAsyncCompletion(method)) {
                         asyncTermination[0] = true;
                     }
                 }
-                checkMethod(paths, STATUS, pathAnnotation,
+                checkMethod(paths, method, STATUS, pathAnnotation,
                         method.getAnnotation(Status.class), uriPrefix);
-                checkMethod(paths, FORGET, pathAnnotation,
+                checkMethod(paths, method, FORGET, pathAnnotation,
                         method.getAnnotation(Forget.class), uriPrefix);
 
-                checkMethod(paths, LEAVE, pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
+                checkMethod(paths, method, LEAVE, pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
             }
         });
 
@@ -470,7 +475,7 @@ public class NarayanaLRAClient implements Closeable {
     }
 
     private static int checkMethod(Map<String, String> paths,
-                                   String rel,
+                                   Method method, String rel,
                                    Path pathAnnotation,
                                    Annotation annotationClass,
                                    String uriPrefix) {
@@ -488,7 +493,22 @@ public class NarayanaLRAClient implements Closeable {
             return 0;
         }
 
-        paths.put(rel, uriPrefix + pathAnnotation.value());
+        String httpMethod = null;
+
+        // search for a matching JAX-RS method
+        for (Annotation annotation : method.getDeclaredAnnotations()) {
+            String name = annotation.annotationType().getName();
+
+            if (name.equals(GET.class.getName()) ||
+                    name.equals(PUT.class.getName()) ||
+                    name.equals(POST.class.getName()) ||
+                    name.equals(DELETE.class.getName())) {
+                String url = String.format("%s%s?%s=%s", uriPrefix, pathAnnotation.value(), LRAConstants.HTTP_METHOD_NAME, name);
+
+                paths.put(rel, url);
+                break;
+            }
+        }
 
         return 1;
     }

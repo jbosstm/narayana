@@ -29,12 +29,17 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -307,14 +312,16 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             try {
                 // ask the participant to complete or compensate
-                Future<Response> asyncResponse = target.request()
+                AsyncInvoker asyncInvoker = target.request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .property(LRA_HTTP_CONTEXT_HEADER, lraId) // make the context available to the jaxrs filters
                         .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to jaxrs filters
-                        .async()
-                        .put(Entity.entity(compensatorData, MediaType.APPLICATION_JSON));
+                        .async();
+
+                Future<Response> asyncResponse = getAsyncResponse(target, PUT.class.getName(), asyncInvoker, compensatorData, MediaType.WILDCARD);
+
                 // the catch block below catches any Timeout exception
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -458,13 +465,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 WebTarget target = client.target(statusURI);
 
                 // since this method is called from the recovery thread do not block
-                Future<Response> asyncResponse = target.request()
+                AsyncInvoker asyncInvoker = target.request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
-                        .async()
-                        .get();
+                        .async();
+
+                Future<Response> asyncResponse = getAsyncResponse(target, GET.class.getName(), asyncInvoker,
+                        "", MediaType.TEXT_PLAIN);
 
                 // if the attempt times out the catch block below will return a heuristic
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
@@ -500,13 +509,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                 try {
                                     // let the participant know he can clean up
                                     WebTarget target2 = client.target(forgetURI);
-                                    Future<Response> asyncResponse2 = target2.request()
+                                    AsyncInvoker asyncInvoker2 = target2.request()
                                             .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                                             .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                                             .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                                             .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
-                                            .async()
-                                            .delete();
+                                            .async();
+
+                                    Future<Response> asyncResponse2 = getAsyncResponse(
+                                            target, DELETE.class.getName(), asyncInvoker2, "", MediaType.TEXT_PLAIN);
 
                                     if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
                                             Response.Status.OK.getStatusCode()) {
@@ -553,6 +564,50 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         return -1;
+    }
+
+    private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String compensatorData, String mediaType) {
+        String queryString = target.getUri().getQuery();
+
+        if (queryString != null) {
+            String[] queries = queryString.split("&");
+
+            for (String pair : queries) {
+                if (pair.contains("=")) {
+                    String[] qp = pair.split("=");
+
+                    if (qp[0].equals(LRAConstants.HTTP_METHOD_NAME)) {
+                        switch (qp[1]) {
+                            case "javax.ws.rs.GET":
+                                return asyncInvoker.get();
+                            case "javax.ws.rs.PUT":
+                                return asyncInvoker.put(Entity.text(null));
+                              //  return asyncInvoker.put(Entity.entity(compensatorData, mediaType));
+                            case "javax.ws.rs.POST":
+                                //return asyncInvoker.post(Entity.entity(compensatorData, mediaType));
+                                return asyncInvoker.post(Entity.text(null));
+                            case "javax.ws.rs.DELETE":
+                                return asyncInvoker.delete();
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        switch (method) {
+            case "javax.ws.rs.GET":
+                return asyncInvoker.get();
+            case "javax.ws.rs.PUT":
+                return asyncInvoker.put(Entity.entity(compensatorData, mediaType));
+            case "javax.ws.rs.POST":
+                return asyncInvoker.post(Entity.entity(compensatorData, mediaType));
+            case "javax.ws.rs.DELETE":
+                return asyncInvoker.delete();
+            default:
+                return asyncInvoker.get();
+        }
     }
 
     // see if the participant is an LRA in the same VM as the coordinator

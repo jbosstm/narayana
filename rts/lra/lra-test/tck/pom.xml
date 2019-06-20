@@ -25,7 +25,7 @@
         <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
-        <lra.tck.consistency.delay>2000</lra.tck.consistency.delay>
+        <lra.tck.consistency.delay>0</lra.tck.consistency.delay>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -46,9 +46,6 @@
                         <!-- exclude non JAX-RS tests pending PR 1450 -->
                         <exclude>**/TckInvalidParticipantSignaturesTests.java</exclude>
                         <exclude>**/TckParticipantTests.java</exclude>
-                        <!-- https://github.com/eclipse/microprofile-lra/issues/146 allows participant methods to be
-                             invoked with any http method. The implementation needs to catch up -->
-                        <exclude>**/TckContextTests.java</exclude>
                     </excludes>
                     <systemPropertyVariables combine.children="append">
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
