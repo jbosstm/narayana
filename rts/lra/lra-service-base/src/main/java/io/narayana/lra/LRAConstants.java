@@ -29,6 +29,7 @@ public abstract class LRAConstants {
     public static final String COMPENSATE = "compensate";
     public static final String STATUS = "status";
     public static final String LEAVE = "leave";
+    public static final String AFTER = "after";
     public static final String FORGET = "forget";
 
     public static final String STATUS_PARAM_NAME = "Status";

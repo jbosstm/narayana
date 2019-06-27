@@ -149,7 +149,9 @@ public class LRAService {
             // the LRA is top level or it's a nested LRA that was closed by a
             // parent LRA (ie when fromHierarchy is true) then it's okay to forget about the LRA
 
-            remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
+            if (transaction.afterLRANotification()) {
+                remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
+            }
         }
     }
 

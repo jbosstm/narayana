@@ -37,8 +37,12 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
+import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -53,6 +57,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -69,6 +74,7 @@ public class Transaction extends AtomicAction {
     private URI parentId;
     private String clientId;
     private List<LRARecord> pending;
+    private List<URI> afterLRAListeners;
     private LRAStatus status;
     private String responseData;
     private LocalDateTime startTime;
@@ -410,6 +416,17 @@ public class Transaction extends AtomicAction {
 
         if (pending != null && pending.size() != 0) {
             if (!nested) {
+                pending.forEach(r -> {
+                    URI endNotification = r.getEndNotificationUri();
+
+                    if (endNotification != null) {
+                        if (afterLRAListeners == null) {
+                            afterLRAListeners = new ArrayList<>();
+                        }
+
+                        afterLRAListeners.add(endNotification);
+                    }
+                });
                 pending.clear(); // TODO we will loose this data if we need recovery
             }
         }
@@ -760,5 +777,35 @@ public class Transaction extends AtomicAction {
 
     URI getParentId() {
         return parentId;
+    }
+
+    public boolean afterLRANotification() {
+        boolean notifiedAll = true;
+
+        if (afterLRAListeners != null) {
+            Client client = ClientBuilder.newClient();
+
+            try {
+                Iterator<URI> listeners = afterLRAListeners.iterator();
+
+                while (listeners.hasNext()) {
+                    URI uri = listeners.next();
+
+                    Response response = client.target(uri)
+                            .request()
+                            .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
+                            .put(Entity.text(status.name()));
+                    if (response.getStatus() == 200) {
+                        listeners.remove();
+                    } else {
+                        notifiedAll = false;
+                    }
+                }
+            } finally {
+                client.close();
+            }
+        }
+
+        return notifiedAll;
     }
 }
