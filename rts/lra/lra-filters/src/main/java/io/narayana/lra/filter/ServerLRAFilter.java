@@ -223,7 +223,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         // if there is an LRA present nest a new LRA under it
                         suspendedLRA = incommingLRA;
                         lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRED start new LRA");
-                        newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(method));
+                        newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(transactional));
                     } else {
                         lraId = incommingLRA;
                         resumeTransaction(incommingLRA);
@@ -232,7 +232,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 } else {
                     lraTrace(containerRequestContext, null, "ServerLRAFilter before: REQUIRED start new LRA");
-                    newLRA = lraId = startLRA(null, method, getTimeOut(method));
+                    newLRA = lraId = startLRA(null, method, getTimeOut(transactional));
                 }
 
                 break;
@@ -240,7 +240,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 //                    previous = AtomicAction.suspend();
                 suspendedLRA = incommingLRA;
                 lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRES_NEW start new LRA");
-                newLRA = lraId = startLRA(null, method, getTimeOut(method));
+                newLRA = lraId = startLRA(null, method, getTimeOut(transactional));
 
                 break;
             case SUPPORTS:
@@ -459,9 +459,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         return false;
     }
 
-    private long getTimeOut(Method method) {
-        long timeLimit = method.getAnnotation(LRA.class).timeLimit();
-        ChronoUnit timeUnit = method.getAnnotation(LRA.class).timeUnit();
+    private long getTimeOut(LRA transactional) {
+        long timeLimit = transactional.timeLimit();
+        ChronoUnit timeUnit = transactional.timeUnit();
 
         return Duration.of(timeLimit, timeUnit).toMillis();
     }

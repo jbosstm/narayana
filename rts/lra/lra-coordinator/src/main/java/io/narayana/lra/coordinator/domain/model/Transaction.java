@@ -61,11 +61,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static io.narayana.lra.coordinator.domain.model.LRARecord.PARTICIPANT_TIMEOUT;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -141,6 +146,15 @@ public class Transaction extends AtomicAction {
             } else {
                 os.packBoolean(true);
                 os.packString(status.name());
+            }
+
+            if (afterLRAListeners == null) {
+                os.packInt(0);
+            } else {
+                os.packInt(afterLRAListeners.size());
+                for (URI uri : afterLRAListeners) {
+                    os.packString(uri.toASCIIString());
+                }
             }
         } catch (IOException e) {
             return false;
@@ -237,6 +251,17 @@ public class Transaction extends AtomicAction {
             finishTime = finishMillis == 0 ? null :
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(finishMillis), ZoneOffset.UTC);
             status = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
+
+            int cnt = os.unpackInt();
+
+            if (cnt == 0) {
+                afterLRAListeners = null;
+            } else {
+                afterLRAListeners = new ArrayList<>();
+                for (int i = 0; i < cnt; i++) {
+                    afterLRAListeners.add(new URI(os.unpackString()));
+                }
+            }
 
             return true;
         } catch (IOException | URISyntaxException e) {
@@ -347,6 +372,31 @@ public class Transaction extends AtomicAction {
         }
     }
 
+    private void updateAfterLRAListeners(RecordList list) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
+
+        if (afterLRAListeners == null) {
+            afterLRAListeners = new ArrayList<>();
+        } else {
+            afterLRAListeners.clear();
+        }
+
+        RecordListIterator i = new RecordListIterator(list);
+        AbstractRecord r;
+
+        while ((r = i.iterate()) != null) {
+            if (r instanceof LRARecord) {
+                URI endNotification = ((LRARecord) r).getEndNotificationUri();
+
+                if (endNotification != null) {
+                    afterLRAListeners.add(endNotification);
+                }
+            }
+        }
+    }
+
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
     private int doEnd(boolean compensate) {
         inFlight = false;
@@ -377,6 +427,7 @@ public class Transaction extends AtomicAction {
 
                 pending.forEach(r -> pendingList.putRear(r));
 
+                updateAfterLRAListeners(pendingList);
                 updateState(LRAStatus.Cancelling);
 
                 super.phase2Abort(true);
@@ -395,6 +446,7 @@ public class Transaction extends AtomicAction {
                     pendingList.putRear(pendingList.getFront());
                 }
 
+                updateAfterLRAListeners(pendingList);
                 // tell each participant that the LRA canceled
                 updateState(LRAStatus.Cancelling);
 
@@ -406,6 +458,7 @@ public class Transaction extends AtomicAction {
                 super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
                 res = super.status();
             } else {
+                updateAfterLRAListeners(pendingList);
                 // tell each participant that the LRA completed ok
                 updateState(LRAStatus.Closing);
                 res = super.End(true);
@@ -416,17 +469,6 @@ public class Transaction extends AtomicAction {
 
         if (pending != null && pending.size() != 0) {
             if (!nested) {
-                pending.forEach(r -> {
-                    URI endNotification = r.getEndNotificationUri();
-
-                    if (endNotification != null) {
-                        if (afterLRAListeners == null) {
-                            afterLRAListeners = new ArrayList<>();
-                        }
-
-                        afterLRAListeners.add(endNotification);
-                    }
-                });
                 pending.clear(); // TODO we will loose this data if we need recovery
             }
         }
@@ -465,17 +507,17 @@ public class Transaction extends AtomicAction {
     private LRAStatus toLRAStatus(int atomicActionStatus) {
         switch (atomicActionStatus) {
             case ActionStatus.ABORTING:
-                return LRAStatus.Cancelling;
+                // FALLTHRU
             case ActionStatus.ABORT_ONLY:
-                return LRAStatus.Cancelling;
-            case ActionStatus.ABORTED:
-                return LRAStatus.Cancelled;
+                // FALLTHRU
             case ActionStatus.COMMITTING:
-                return LRAStatus.Closing;
-            case ActionStatus.COMMITTED:
-                return LRAStatus.Closed;
+                return status == LRAStatus.Cancelling ? LRAStatus.Cancelling : LRAStatus.Closing;
+            case ActionStatus.ABORTED:
+                // FALLTHRU
             case ActionStatus.H_ROLLBACK:
-                return LRAStatus.Cancelled;
+                return status == LRAStatus.Cancelling ? LRAStatus.Cancelled : LRAStatus.Closed;
+            case ActionStatus.COMMITTED:
+                return status == LRAStatus.Cancelling ? LRAStatus.Cancelled : LRAStatus.Closed;
             default:
                 return LRAStatus.Active;
         }
@@ -790,15 +832,34 @@ public class Transaction extends AtomicAction {
 
                 while (listeners.hasNext()) {
                     URI uri = listeners.next();
+                    Response response = null;
 
-                    Response response = client.target(uri)
-                            .request()
-                            .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
-                            .put(Entity.text(status.name()));
-                    if (response.getStatus() == 200) {
-                        listeners.remove();
-                    } else {
+                    try {
+                        Future<Response> asyncResponse = client.target(uri)
+                                .request()
+                                .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
+                                .async()
+                                .put(Entity.text(status.name()));
+
+                        response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+
+                        if (response.getStatus() == 200) {
+                            listeners.remove();
+                        } else {
+                            notifiedAll = false;
+                        }
+
+                        response = null;
+                    } catch (WebApplicationException | InterruptedException | ExecutionException | TimeoutException e) {
                         notifiedAll = false;
+
+                        if (LRALogger.logger.isInfoEnabled()) {
+                            LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", uri, e.getMessage());
+                        }
+                    } finally {
+                        if (response != null) {
+                            response.close();
+                        }
                     }
                 }
             } finally {
