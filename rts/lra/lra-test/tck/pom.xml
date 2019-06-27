@@ -42,6 +42,7 @@
                         <!-- exclude non JAX-RS tests pending PR 1450 -->
                         <exclude>**/TckInvalidParticipantSignaturesTests.java</exclude>
                         <exclude>**/TckParticipantTests.java</exclude>
+                        <exclude>**/TckInvalidSignaturesTests.java</exclude>
                     </excludes>
                     <systemPropertyVariables combine.children="append">
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>

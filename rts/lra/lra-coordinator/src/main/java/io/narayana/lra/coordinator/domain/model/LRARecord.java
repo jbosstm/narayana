@@ -63,6 +63,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static io.narayana.lra.LRAConstants.AFTER;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
@@ -85,6 +86,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private URI compensateURI;
     private URI statusURI;
     private URI forgetURI;
+    private URI afterURI;
 
     private String responseData;
     private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
@@ -115,7 +117,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 if (parseException[0] != null) {
                     throw new WebApplicationException(lraId + ": Invalid link URI: " + parseException[0], BAD_REQUEST);
-                } else if (compensateURI == null) {
+                } else if (compensateURI == null && afterURI == null) {
                     throw new WebApplicationException(lraId + ": Invalid link URI: missing compensator", BAD_REQUEST);
                 }
             } else {
@@ -197,6 +199,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 completeURI = new URI(uri);
             } else if ("status".equals(rel)) {
                 statusURI = new URI(uri);
+            } else if (AFTER.equals(rel)) {
+                afterURI = new URI(uri);
             } else if ("forget".equals(rel)) {
                 forgetURI = new URI(uri);
             } else if ("participant".equals(rel)) {
@@ -268,6 +272,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         if (ParticipantStatus.Compensating.equals(status)) {
             compensate = true;
+        }
+
+        if (compensateURI == null) {
+            return TwoPhaseOutcome.FINISH_OK;
         }
 
         if (compensate) {
@@ -364,12 +372,27 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
         }
 
-        if (httpStatus == Response.Status.OK.getStatusCode() && responseData != null) {
-            // see if any content contains a failed status
-            if (compensate && LRAStatus.FailedToCancel.name().equals(responseData)) {
-                return reportFailure(true, endPath.toASCIIString());
-            } else if (!compensate && LRAStatus.FailedToClose.name().equals(responseData)) {
-                return reportFailure(false, endPath.toASCIIString());
+        if (responseData != null) {
+            String failureReason = null;
+
+            if (httpStatus == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
+                // the body should contain a valid ParticipantStatus
+                try {
+                    failureReason = ParticipantStatus.valueOf(responseData).name();
+                } catch (IllegalArgumentException ignore) {
+                    // ignore the body and let recovery discover the status of the participant
+                }
+            } else if (httpStatus == Response.Status.OK.getStatusCode()) {
+                // see if any content contains a failed status
+                if (compensate && LRAStatus.FailedToCancel.name().equals(responseData)) {
+                    failureReason = responseData;
+                } else if (!compensate && LRAStatus.FailedToClose.name().equals(responseData)) {
+                    failureReason = responseData;
+                } // else recovery will discover the status
+            }
+
+            if (failureReason != null) {
+                return reportFailure(compensate, endPath.toASCIIString(), failureReason);
             }
         }
 
@@ -411,11 +434,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
     }
 
-    private int reportFailure(boolean compensate, String endPath) {
+    private int reportFailure(boolean compensate, String endPath, String failureReason) {
         status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
-        LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s",
-                endPath, compensate ? COMPENSATE_REL : COMPLETE_REL);
+        LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s (cause %s)",
+                endPath, compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
 
         // permanently failed so tell recovery to ignore us in the future. TODO could move it to
         // another list for reporting
@@ -478,11 +501,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // if the attempt times out the catch block below will return a heuristic
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
-                if (response.getStatus() == PRECONDITION_FAILED.getStatusCode()) {
-                    // the participant never got the end request resend it
-                    return -1;
-                }
-
+                // 200 is the only valid response code for reporting the participant status
+                // NB 412 used to be used before the ParticipantStatus#Active state was added to the state model
                 if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.hasEntity()) {
                     // the participant is available again and has reported its status
@@ -694,6 +714,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 packURI(os, compensateURI);
                 packURI(os, recoveryURI);
                 packURI(os, completeURI);
+                packURI(os, afterURI);
                 packURI(os, statusURI);
                 packURI(os, forgetURI);
                 packStatus(os);
@@ -715,6 +736,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 compensateURI = unpackURI(os);
                 recoveryURI = unpackURI(os);
                 completeURI = unpackURI(os);
+                afterURI = unpackURI(os);
                 statusURI = unpackURI(os);
                 forgetURI = unpackURI(os);
                 unpackStatus(os);
@@ -886,5 +908,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public void setLraService(LRAService lraService) {
         this.lraService = lraService;
+    }
+
+    public URI getEndNotificationUri() {
+        return afterURI;
     }
 }

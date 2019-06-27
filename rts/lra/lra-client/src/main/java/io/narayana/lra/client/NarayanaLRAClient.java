@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.client;
 
+import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
 import static io.narayana.lra.LRAConstants.COMPLETE;
@@ -77,6 +78,7 @@ import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
+import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 import org.eclipse.microprofile.lra.annotation.Status;
 
@@ -352,11 +354,11 @@ public class NarayanaLRAClient implements Closeable {
      * @throws WebApplicationException if the LRA coordinator failed to enlist the participant
      */
     public URI joinLRA(URI lraId, Long timelimit,
-                       URI compensateUri, URI completeUri, URI forgetUri, URI leaveUri, URI statusUri,
+                       URI compensateUri, URI completeUri, URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
                        String compensatorData) throws WebApplicationException {
         return enlistCompensator(lraId, timelimit, "",
                 compensateUri, completeUri,
-                forgetUri, leaveUri, statusUri,
+                forgetUri, leaveUri, afterUri, statusUri,
                 compensatorData);
     }
 
@@ -428,6 +430,7 @@ public class NarayanaLRAClient implements Closeable {
                         method.getAnnotation(Forget.class), uriPrefix);
 
                 checkMethod(paths, method, LEAVE, pathAnnotation, method.getAnnotation(Leave.class), uriPrefix);
+                checkMethod(paths, method, AFTER, pathAnnotation, method.getAnnotation(AfterLRA.class), uriPrefix);
             }
         });
 
@@ -491,8 +494,6 @@ public class NarayanaLRAClient implements Closeable {
             // ie ones that do not use the @Compensate annotation
             return 0;
         }
-
-        String httpMethod = null;
 
         // search for a matching JAX-RS method
         for (Annotation annotation : method.getDeclaredAnnotations()) {
@@ -619,11 +620,12 @@ public class NarayanaLRAClient implements Closeable {
 
     private URI enlistCompensator(URI lraUri, long timelimit, String uriPrefix,
                                   URI compensateUri, URI completeUri,
-                                  URI forgetUri, URI leaveUri, URI statusUri,
+                                  URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
                                   String compensatorData) {
         validateURI(completeUri, true, "Invalid complete URL: %s");
         validateURI(compensateUri, true, "Invalid compensate URL: %s");
         validateURI(leaveUri, true, "Invalid status URL: %s");
+        validateURI(afterUri, true, "Invalid after URL: %s");
         validateURI(forgetUri, true, "Invalid forgetUri URL: %s");
         validateURI(statusUri, true, "Invalid status URL: %s");
 
@@ -632,6 +634,7 @@ public class NarayanaLRAClient implements Closeable {
         terminateURIs.put(COMPENSATE, compensateUri);
         terminateURIs.put(COMPLETE, completeUri);
         terminateURIs.put(LEAVE, leaveUri);
+        terminateURIs.put(AFTER, afterUri);
         terminateURIs.put(STATUS, statusUri);
         terminateURIs.put(FORGET, forgetUri);
 

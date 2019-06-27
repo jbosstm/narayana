@@ -54,6 +54,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
 
+import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
 import static io.narayana.lra.LRAConstants.COMPLETE;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
@@ -305,6 +306,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             toURI(terminateURIs.get(COMPLETE)),
                             toURI(terminateURIs.get(FORGET)),
                             toURI(terminateURIs.get(LEAVE)),
+                            toURI(terminateURIs.get(AFTER)),
                             toURI(terminateURIs.get(STATUS)),
                             null);
                 } catch (NotFoundException e) {
