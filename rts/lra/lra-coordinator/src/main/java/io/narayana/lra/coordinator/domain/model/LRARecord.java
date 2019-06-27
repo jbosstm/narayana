@@ -331,7 +331,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 Future<Response> asyncResponse = getAsyncResponse(target, PUT.class.getName(), asyncInvoker, compensatorData, MediaType.WILDCARD);
 
                 // the catch block below catches any Timeout exception
-                Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+                Response response = asyncResponse.get(1000, TimeUnit.SECONDS);
 
                 httpStatus = response.getStatus();
 
@@ -365,6 +365,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             } catch (Exception e) {
                  LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
                             target.getUri(), e.getMessage());
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
+                            target.getUri(), e);
+                }
             } finally {
                 client.close();
             }
