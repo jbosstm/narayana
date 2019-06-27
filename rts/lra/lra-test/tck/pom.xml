@@ -21,7 +21,7 @@
         <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
-        <lra.tck.consistency.delay>0</lra.tck.consistency.delay>
+        <lra.tck.consistency.delay>20000</lra.tck.consistency.delay>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

@@ -116,6 +116,8 @@
                                         <argument>${lra.coordinator.trace.params}</argument>
                                         <argument>-jar</argument>
                                         <argument>${lra.coordinator.jar.path}</argument>
+                                        <argument>-DRecoveryEnvironmentBean.periodicRecoveryPeriod=10</argument>
+                                        <argument>-DRecoveryEnvironmentBean.recoveryBackoffPeriod=5</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

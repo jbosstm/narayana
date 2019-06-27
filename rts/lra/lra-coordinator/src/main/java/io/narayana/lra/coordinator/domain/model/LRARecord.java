@@ -72,7 +72,7 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
-    private static long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
+    static long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
     private static final String COMPENSATE_REL = "compensate";
     private static final String COMPLETE_REL = "complete";
 
@@ -363,10 +363,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     responseData = response.readEntity(String.class);
                 }
             } catch (Exception e) {
-                if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
+                 LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
                             target.getUri(), e.getMessage());
-                }
             } finally {
                 client.close();
             }
@@ -488,9 +486,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // if the attempt times out the catch block below will return a heuristic
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
-                // 200 is the only valid response code for reporting the participant status
-                // NB 412 used to be used before the ParticipantStatus#Active state was added to the state model
-                if (response.getStatus() == Response.Status.OK.getStatusCode() &&
+                // 200 and 410 are the only valid response code for reporting the participant status
+                if (response.getStatus() == Response.Status.GONE.getStatusCode()) {
+                    return TwoPhaseOutcome.FINISH_OK;
+                } else if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.hasEntity()) {
                     // the participant is available again and has reported its status
                     String s = response.readEntity(String.class);
