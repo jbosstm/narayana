@@ -503,7 +503,9 @@ public class NarayanaLRAClient implements Closeable {
                     name.equals(PUT.class.getName()) ||
                     name.equals(POST.class.getName()) ||
                     name.equals(DELETE.class.getName())) {
-                String url = String.format("%s%s?%s=%s", uriPrefix, pathAnnotation.value(), LRAConstants.HTTP_METHOD_NAME, name);
+                String pathValue = pathAnnotation.value();
+                pathValue = pathValue.startsWith("/") ? pathValue : "/" + pathValue;
+                String url = String.format("%s%s?%s=%s", uriPrefix, pathValue, LRAConstants.HTTP_METHOD_NAME, name);
 
                 paths.put(rel, url);
                 break;
