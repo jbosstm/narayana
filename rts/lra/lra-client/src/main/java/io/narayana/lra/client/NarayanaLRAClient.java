@@ -388,13 +388,12 @@ public class NarayanaLRAClient implements Closeable {
      * @param baseUri  base URI used on creation of the termination map.
      * @return map of URI
      */
-    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, String path) {
         Map<String, String> paths = new HashMap<>();
         final boolean[] asyncTermination = {false};
-        Path resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
-        String resourcePath = resourcePathAnnotation == null
+        String resourcePath = path == null
                 ? ""
-                : resourcePathAnnotation.value().replaceAll("^/+", "");
+                : path.substring(0, path.lastIndexOf("/"));
 
         final String uriPrefix = String.format("%s:%s%s",
                 baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath)

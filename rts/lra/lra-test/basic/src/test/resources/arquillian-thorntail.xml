@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian" xsi:schemaLocation="http://jboss.org/schema/arquillian
+    http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <container qualifier="managedContainer" default="true" mode="suite">
+        <configuration>
+            <property name="host">localhost</property>
+            <property name="port">${thorntail.arquillian.daemon.port:12345}</property>
+            <property name="javaVmArguments">-Dthorntail.http.host=${application.host} -Dthorntail.http.port=${application.port} -Dlra.http.host=localhost -Dlra.http.port=${lra.coordinator.port}</property>
+        </configuration>
+    </container>
+</arquillian>
