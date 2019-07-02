@@ -155,7 +155,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (method.isAnnotationPresent(Leave.class)) {
             // leave the LRA
-            String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo().getBaseUri());
+            String compensatorId = getCompensatorId(incommingLRA,
+                containerRequestContext.getUriInfo().getBaseUri(),
+                containerRequestContext.getUriInfo().getPath());
 
             lraTrace(containerRequestContext, incommingLRA, "leaving LRA");
             lraClient.leaveLRA(incommingLRA, compensatorId);
@@ -290,8 +292,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // TODO make sure it is possible to do compensations inside a new LRA
         if (!endAnnotation) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
+            String path = containerRequestContext.getUriInfo().getPath();
 
-            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, path);
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
@@ -461,8 +464,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // nothing to do
     }
 
-    private String getCompensatorId(URI lraId, URI baseUri) {
-        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri);
+    private String getCompensatorId(URI lraId, URI baseUri, String path) {
+        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, path);
 
         if (!terminateURIs.containsKey("Link")) {
             throwGenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),

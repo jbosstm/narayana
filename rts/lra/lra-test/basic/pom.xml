@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>lra-test</artifactId>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <version>5.9.6.Final-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>basic</artifactId>
+  <name>LRA tests: basic</name>
+
+  <properties>
+    <application.host>localhost</application.host>
+    <application.port>8180</application.port>
+
+    <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar
+    </lra.coordinator.jar.path>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <application.host>${application.host}</application.host>
+            <application.port>${application.port}</application.port>
+            <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <!-- when arq profile is activated we expect to start coordinator -->
+      <id>arq</id>
+      <properties>
+        <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>
