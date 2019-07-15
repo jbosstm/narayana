@@ -372,27 +372,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
         }
 
-        if (responseData != null) {
-            String failureReason = null;
-
-            if (httpStatus == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
-                // the body should contain a valid ParticipantStatus
-                try {
-                    failureReason = ParticipantStatus.valueOf(responseData).name();
-                } catch (IllegalArgumentException ignore) {
-                    // ignore the body and let recovery discover the status of the participant
-                }
-            } else if (httpStatus == Response.Status.OK.getStatusCode()) {
-                // see if any content contains a failed status
-                if (compensate && LRAStatus.FailedToCancel.name().equals(responseData)) {
-                    failureReason = responseData;
-                } else if (!compensate && LRAStatus.FailedToClose.name().equals(responseData)) {
-                    failureReason = responseData;
-                } // else recovery will discover the status
-            }
-
-            if (failureReason != null) {
-                return reportFailure(compensate, endPath.toASCIIString(), failureReason);
+        if (responseData != null &&
+                httpStatus == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
+            // the body should contain a valid ParticipantStatus
+            try {
+                return reportFailure(compensate, endPath.toASCIIString(),
+                        ParticipantStatus.valueOf(responseData).name());
+            } catch (IllegalArgumentException ignore) {
+                // ignore the body and let recovery discover the status of the participant
             }
         }
 
@@ -700,10 +687,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private boolean isCompensated() {
         return status != null && status == ParticipantStatus.Compensated;
-    }
-
-    String getResponseData() {
-        return responseData;
     }
 
     @Override
