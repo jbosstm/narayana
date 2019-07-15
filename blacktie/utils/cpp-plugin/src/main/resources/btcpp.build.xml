@@ -24,7 +24,9 @@
 <compilerarg value="-c" />
 <compilerarg value="-fmessage-length=0" />
 <compilerarg value="-fPIC" />
+<compilerarg value="-fpermissive" />
 '>
+<!--permissive mode for tx ISO C++ forbids comparison between pointer and integer permissive -->
 <!ENTITY linker-args-gcc '
 <linkerarg value="-E" />
 '>
@@ -224,7 +226,7 @@
 
 		<property name="proto.lroot" value="${project.build.directory}/cxx/compile" />
 		<property name="proto.iroot" value="${project.build.directory}/cxx/compile/include" />
-		<property name="proto.broot" value="${project.build.directory}/cxx/compile/bin" />
+		<property name="proto.broot" value="/usr/bin" />
 		<property name="protoc" value="${proto.broot}/protoc${exe}" />
 
 		<available file="${protoc}" property="protoc.exe.exists"/>
@@ -372,7 +374,8 @@
 				<define name="WIN32" if="is-msvc"/>
 				<define name="SunOS" if="isSunOS"/>
 			</defineset>
-
+            
+			<includepath path="/usr/include/apr-1/" />
 			<includepath path="src/main/include" />
 			<includepath path="${src.idl.main}/include" />
 			<includepath path="target/cxx/compile/include" />
@@ -497,6 +500,7 @@
 
 			<libset dir="${project.build.directory}/cxx/compile/lib" libs="${compile.libs}" if="compile.libs"/>
 			<libset dir="${project.build.directory}/cxx/test/lib" libs="${test.libs}" if="test.libs"/>
+			<libset libs="cppunit log4cxx xerces-c apr-1 protobuf" if="is-gcc" />
 			<libset libs="stdc++ pthread rt" if="is-gcc" />
 			<libset libs="pthread" if="is-xlC" />
 						<libset libs="ws2_32" if="is-msvc" />

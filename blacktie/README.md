@@ -44,6 +44,9 @@ MemoryLeaksCheckwithValgrind](https://community.jboss.org/docs/DOC-13540)
 
 You will need to install the gcc-c++ packages: yum install gcc-c++
 
+sudo dnf install cppunit log4cxx xerces-c apr protobuf cppunit-devel log4cxx-devel xerces-c-devel apr-devel protobuf-devel
+
+
 ## Build product
 
 Change directory to a location where you would like to check out BlackTie, the

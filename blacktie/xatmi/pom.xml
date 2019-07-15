@@ -90,13 +90,6 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>cppunit.contrib</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>cppunit</artifactId>
-            <scope>test</scope>
-            <type>zip</type>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
             <classifier>${bpa}</classifier>
             <artifactId>blacktie-core</artifactId>
@@ -115,6 +108,13 @@
             <groupId>org.jboss.narayana.blacktie</groupId>
             <classifier>${bpa}</classifier>
             <artifactId>blacktie-codec</artifactId>
+        </dependency>
+        <!--TODO making compiler happy-->
+        <dependency>
+            <groupId>org.jboss.narayana.blacktie</groupId>
+            <classifier>${bpa}</classifier>
+            <artifactId>blacktie-tx-test-utilities</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <profiles>

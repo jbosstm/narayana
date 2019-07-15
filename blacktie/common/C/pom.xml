@@ -430,33 +430,10 @@
                                     </tasks>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>rename libapr-1.so</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <echo message="rename libapr-1.so"/>
-                                        <exec executable="find">
-                                            <arg line="${project.build.directory} -name lib -type d -exec sh -c &quot; cd '{}' &amp;&amp; mv libapr-1.so libapr-1.so.0 &amp;&amp; ln -s libapr-1.so.0 libapr-1.so &quot; ;"/>
-                                        </exec>
-                                    </tasks>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-    <dependencies>
-        <dependency>
-            <groupId>apache-log4cxx.contrib</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>log4cxx</artifactId>
-            <version>902683</version>
-        </dependency>
-    </dependencies>
 </project>

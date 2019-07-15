@@ -180,26 +180,6 @@
                 <version>5.3.3.Final</version>
             </dependency>
             <dependency>
-                <groupId>cppunit.contrib</groupId>
-                <classifier>${bpa}</classifier>
-                <artifactId>cppunit</artifactId>
-                <version>1.12</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>apache-xercesc.contrib</groupId>
-                <classifier>${bpa}</classifier>
-                <artifactId>xercesc</artifactId>
-                <version>3.0.1</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>apr-1.contrib</groupId>
-                <classifier>${bpa}</classifier>
-                <artifactId>apr-1</artifactId>
-                <version>1.5.2.BT2</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.narayana.blacktie.plugins</groupId>
                 <artifactId>blacktie-cpp-plugin</artifactId>
                 <version>${project.version}</version>

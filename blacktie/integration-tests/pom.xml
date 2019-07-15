@@ -268,12 +268,6 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-            <dependency>
-                <groupId>apr-1.contrib</groupId>
-                <classifier>${bpa}</classifier>
-                <artifactId>apr-1</artifactId>
-			<scope>test</scope>
-            </dependency>
 	</dependencies>
 	<properties>
 		<version.surefire.plugin>2.19.1</version.surefire.plugin>

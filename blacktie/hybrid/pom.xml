@@ -70,18 +70,6 @@
     </licenses>
     <dependencies>
         <dependency>
-            <groupId>cppunit.contrib</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>cppunit</artifactId>
-            <scope>test</scope>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>apr-1.contrib</groupId>
-            <classifier>${bpa}</classifier>
-            <artifactId>apr-1</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.narayana.blacktie</groupId>
             <classifier>${bpa}</classifier>
             <artifactId>blacktie-tx</artifactId>
