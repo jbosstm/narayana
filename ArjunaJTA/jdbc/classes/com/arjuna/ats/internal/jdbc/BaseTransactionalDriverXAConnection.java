@@ -77,9 +77,6 @@ public abstract class BaseTransactionalDriverXAConnection implements ConnectionC
 
         if (_theTransaction != null) {
             valid = _theTransaction.equals(tx);
-            if (!valid) {
-                valid = _theTransaction.equals(tx);
-            }
         }
 
         return valid;
