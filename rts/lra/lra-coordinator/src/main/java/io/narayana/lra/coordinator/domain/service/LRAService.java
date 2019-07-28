@@ -247,8 +247,6 @@ public class LRAService {
             }
         }
 
-        finished(transaction, fromHierarchy);
-
         if (transaction.isTopLevel()) {
             // forget any nested LRAs
             transaction.forgetAllParticipants(); // instruct compensators to clean up

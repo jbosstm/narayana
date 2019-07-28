@@ -33,6 +33,7 @@ import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 import static javax.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
 
@@ -677,7 +678,7 @@ public class NarayanaLRAClient implements Closeable {
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
                 LRALogger.i18NLogger.error_tooLateToJoin(lraId, response);
-                throw new WebApplicationException(lraId + ": Too late to join with this LRA ", BAD_REQUEST);
+                throw new WebApplicationException(lraId + ": Too late to join with this LRA ", NOT_FOUND);
             } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
                 LRALogger.logger.infof("Failed enlisting to LRA '%s', coordinator '%s' responded with status '%s'",
                         lraId, base, Response.Status.NOT_FOUND.getStatusCode());

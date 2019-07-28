@@ -43,6 +43,8 @@
                         <exclude>**/TckInvalidParticipantSignaturesTests.java</exclude>
                         <exclude>**/TckParticipantTests.java</exclude>
                         <exclude>**/TckInvalidSignaturesTests.java</exclude>
+                        <!-- https://github.com/eclipse/microprofile-lra/pull/192 -->
+                        <exclude>**/TckTests.java</exclude>
                     </excludes>
                     <systemPropertyVariables combine.children="append">
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
