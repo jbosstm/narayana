@@ -36,10 +36,18 @@
     </build>
 
     <dependencies>
-        <!-- WildFly Swarm Fractions -->
+        <!-- WildFly Thorntail Fractions -->
         <dependency>
             <groupId>io.thorntail</groupId>
-            <artifactId>microprofile</artifactId>
+            <artifactId>jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>transactions</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jaxrs-jsonp</artifactId>
         </dependency>
 
         <!-- REST-AT coordinator -->
