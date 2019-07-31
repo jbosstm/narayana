@@ -126,7 +126,7 @@ public class Coordinator {
     }
 
     @GET
-    @Path("{LraId}")
+    @Path("{LraId}/status")
     @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "Obtain the status of an LRA as a string",
             response = String.class)
@@ -141,11 +141,22 @@ public class Coordinator {
     })
     public Response getLRAStatus(
             @ApiParam(value = "The unique identifier of the LRA", required = true)
-            @PathParam("LraId")String lraId) throws NotFoundException {
-        LRAStatus status = lraService.getTransaction(toURI(lraId)).getLRAStatus();
+            @PathParam("LraId")String lraId,
+            @QueryParam("effectivelyActive") @DefaultValue("false") boolean isEffectivelyActive) throws NotFoundException {
+        Transaction transaction = lraService.getTransaction(toURI(lraId));
+        LRAStatus status = transaction.getLRAStatus();
 
         if (status == null) {
             return Response.noContent().build(); // 204 means the LRA is still active
+        }
+
+        if (isEffectivelyActive) {
+            // effectively active means that LRA is either in LRAStatus.Active status or it's a nested LRA in one
+            // of the final states (LRAStatus.Cancelled or LRAStatus.Closed)
+
+            if (!transaction.isTopLevel() && (status == LRAStatus.Cancelled || status == LRAStatus.Closed)) {
+                return Response.noContent().build();
+            }
         }
 
         return Response.ok(status.name()).build();

@@ -354,7 +354,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     }
                 }
 
-                if (httpStatus == Response.Status.NOT_FOUND.getStatusCode()) {
+                if (httpStatus == Response.Status.GONE.getStatusCode()) {
                     updateStatus(compensate);
                     return TwoPhaseOutcome.FINISH_OK; // the participant must have finished ok but we lost the response
                 }
@@ -524,7 +524,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                             .async();
 
                                     Future<Response> asyncResponse2 = getAsyncResponse(
-                                            target, DELETE.class.getName(), asyncInvoker2, "", MediaType.TEXT_PLAIN);
+                                            target2, DELETE.class.getName(), asyncInvoker2, "", MediaType.TEXT_PLAIN);
 
                                     if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
                                             Response.Status.OK.getStatusCode()) {
