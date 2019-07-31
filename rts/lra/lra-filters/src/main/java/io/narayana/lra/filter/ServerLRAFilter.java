@@ -117,6 +117,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         URI incommingLRA = null;
         URI recoveryUrl;
         boolean isLongRunning = false;
+        boolean requiresActiveLRA = false;
 
         if (transactional == null) {
             transactional = method.getDeclaringClass().getDeclaredAnnotation(LRA.class);
@@ -196,8 +197,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             case MANDATORY: // a txn must be present
                 checkForTx(type, incommingLRA, true);
 
-                    lraId = incommingLRA;
-                    resumeTransaction(incommingLRA); // txId is not null
+                lraId = incommingLRA;
+                resumeTransaction(incommingLRA); // txId is not null
+                requiresActiveLRA = true;
 
                 break;
             case NEVER: // a txn must not be present
@@ -225,6 +227,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     } else {
                         lraId = incommingLRA;
                         resumeTransaction(incommingLRA);
+                        requiresActiveLRA = true;
                     }
 
                 } else {
@@ -313,7 +316,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     throw e;
                 } catch (WebApplicationException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
-                    throw e;
+                    containerRequestContext.abortWith(e.getResponse());
+                    return;
                 } catch (URISyntaxException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
 
@@ -322,6 +326,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
 
                 headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString().replaceAll("^\"|\"$", ""));
+            } else if (requiresActiveLRA) {
+                // this is not a participant so we need to verify that the LRA is active manually
+                if (!lraClient.isEffectivelyActive(lraId)) {
+                    containerRequestContext.abortWith(
+                        Response.status(Response.Status.PRECONDITION_FAILED).build());
+                    return;
+                }
             } else {
                 lraTrace(containerRequestContext, lraId,
                         "ServerLRAFilter: skipping resource " + method.getDeclaringClass().getName() + " - no participant annotations");

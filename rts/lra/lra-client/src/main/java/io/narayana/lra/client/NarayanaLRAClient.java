@@ -476,6 +476,20 @@ public class NarayanaLRAClient implements Closeable {
         return false;
     }
 
+    /** Returns true if this LRA is either in Active state or
+     * it is a nested LRA that is in one of the final states (Cancelled/Closed)
+     *
+     * @param lraId the LRA queried for the status
+     * @return true if LRA is Active or nested with status Cancelled or Closed
+     */
+    public boolean isEffectivelyActive(URI lraId) {
+        try {
+            return getStatus(lraId, true) == LRAStatus.Active;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
     private static int checkMethod(Map<String, String> paths,
                                    Method method, String rel,
                                    Path pathAnnotation,
@@ -515,7 +529,7 @@ public class NarayanaLRAClient implements Closeable {
         return 1;
     }
 
-    private LRAStatus getStatus(URI uri) throws WebApplicationException {
+    public LRAStatus getStatus(URI uri, boolean effectivelyActive) throws WebApplicationException {
         Response response;
         URL lraId;
 
@@ -532,7 +546,13 @@ public class NarayanaLRAClient implements Closeable {
         try {
             aquireConnection();
 
-            response = getTarget().path(getLRAId(lraId.toString()))
+            WebTarget target = getTarget().path(getLRAId(lraId.toString())).path("status");
+
+            if (effectivelyActive) {
+                target = target.queryParam("effectivelyActive", true);
+            }
+
+            response = target
                     .request()
                     .accept(MediaType.TEXT_PLAIN_TYPE)
                     .get();
@@ -681,7 +701,7 @@ public class NarayanaLRAClient implements Closeable {
             } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
                 LRALogger.logger.infof("Failed enlisting to LRA '%s', coordinator '%s' responded with status '%s'",
                         lraId, base, Response.Status.NOT_FOUND.getStatusCode());
-                throw new NotFoundException(uri.toASCIIString());
+                throw new WebApplicationException(uri.toASCIIString(), Response.Status.GONE);
             } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 LRALogger.i18NLogger.error_failedToEnlist(lraId, base, response.getStatus());
 
