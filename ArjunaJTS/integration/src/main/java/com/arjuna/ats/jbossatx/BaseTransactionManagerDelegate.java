@@ -40,6 +40,7 @@ import org.jboss.tm.listener.TransactionListener;
 import org.jboss.tm.listener.TransactionListenerRegistry;
 import org.jboss.tm.listener.EventType;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -54,6 +55,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration, TransactionListenerRegistry
 {
     private static final String LISTENER_MAP_KEY = "__TX_LISTENERS";
+
+    protected static final String LISTENERS_ENABLED_PROP = "com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate.LISTENERS_ENABLED";
+    /**
+     * Listeners should not be used
+     */
+    private static final boolean LISTENERS_ENABLED  = Boolean.getBoolean(LISTENERS_ENABLED_PROP);
 
     /**
      * Delegate transaction manager.
@@ -198,6 +205,12 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     // return all the event listeners associated with this thread
     private Collection<TransactionListener> getListeners(Transaction transaction, boolean create)
     {
+        if(!LISTENERS_ENABLED) {
+            if(create) {
+                throw new IllegalStateException("Transaction listeners are disabled and should not be used. If you need them they can be enabled via -D" + LISTENERS_ENABLED_PROP + "=true");
+            }
+            return null;
+        }
         com.arjuna.ats.jta.transaction.Transaction txn = (com.arjuna.ats.jta.transaction.Transaction) transaction;
         Object resource;
 
