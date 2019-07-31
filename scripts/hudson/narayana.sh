@@ -166,7 +166,7 @@ function init_test_options {
         fi
     elif [[ $PROFILE == "PERF" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!PERF* ]]; then
-          echo "not commenting on pull comment_on_pull Started testing this pull request with PERF profile: $BUILD_URL"
+          comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
@@ -1026,7 +1026,7 @@ if [[ -z $PROFILE ]]; then
 elif [[ $PROFILE == "BLACKTIE" ]]; then
     comment_on_pull "$PROFILE profile tests passed on Linux - Job complete $BUILD_URL"
 elif [[ $PROFILE == "PERF" ]]; then
-    echo "not commenting on pull comment_on_pull $PROFILE profile tests passed - Job complete $BUILD_URL"
+    comment_on_pull "$PROFILE profile job finished $BUILD_URL"
 else
     comment_on_pull "$PROFILE profile tests passed - Job complete $BUILD_URL"
 fi
