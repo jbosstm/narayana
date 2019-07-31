@@ -85,7 +85,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
         SecurityException, IllegalStateException, SystemException
     {
-        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+        notifyAssociationListeners(getTransaction(), EventType.DISASSOCIATING);
         transactionManager.commit() ;
     }
 
@@ -120,7 +120,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
             suspend(); // This is what AtomicAction does
         } else {
             transactionManager.resume(transaction) ;
-            notifyAssociationListeners(transaction, EnumSet.of(EventType.ASSOCIATED));
+            notifyAssociationListeners(transaction, EventType.ASSOCIATED);
         }
     }
 
@@ -130,7 +130,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     public void rollback()
         throws IllegalStateException, SecurityException, SystemException
     {
-        notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+        notifyAssociationListeners(getTransaction(), EventType.DISASSOCIATING);
         transactionManager.rollback() ;
     }
 
@@ -189,7 +189,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         throws SystemException
     {
         if (getStatus() != Status.STATUS_NO_TRANSACTION)
-            notifyAssociationListeners(getTransaction(), EnumSet.of(EventType.DISASSOCIATING));
+            notifyAssociationListeners(getTransaction(), EventType.DISASSOCIATING);
 
         return transactionManager.suspend();
     }
@@ -223,13 +223,14 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     }
 
     // notify any listeners for this transaction that there has been an event
-    private void notifyAssociationListeners(Transaction transaction, EnumSet<EventType> reasons)
+    private void notifyAssociationListeners(Transaction transaction, EventType reason)
     {
         if (transaction != null) {
             Collection<TransactionListener> listeners = getListeners(transaction, false);
-            TransactionEvent event = new TransactionEvent(transaction, reasons);
 
-            if (listeners != null) {
+            if (listeners != null && !listeners.isEmpty()) {
+
+                TransactionEvent event = new TransactionEvent(transaction, EnumSet.of(reason));
                 for (TransactionListener s : listeners)
                     s.onEvent(event);
             }
