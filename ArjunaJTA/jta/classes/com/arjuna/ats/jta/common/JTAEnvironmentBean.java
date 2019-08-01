@@ -120,6 +120,8 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
 	private boolean strictJTA12DuplicateXAENDPROTOErr = false;
 
+	private boolean transactionToThreadListenersEnabled = false;
+
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -1316,4 +1318,24 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setStrictJTA12DuplicateXAENDPROTOErr(boolean strictJTA12DuplicateXAENDPROTOErr) {
         this.strictJTA12DuplicateXAENDPROTOErr = strictJTA12DuplicateXAENDPROTOErr;
     }
+
+    /**
+     * Returns true if the listeners announcing of the change of the thread transaction association happens.
+     * This functionality was deprecated with introduction of WFTC for WFLY. WFTC implements the listeners differently.
+     * The thread transaction association listener is needed by JPA WFLY integration. 
+     *
+     * @return true to if listeners handling is permitted, false to when is not enabled
+     */
+	public boolean isTransactionToThreadListenersEnabled() {
+		return transactionToThreadListenersEnabled;
+	}
+
+	/**
+	 * Define if transaction to thread associtaion listeners should be enabled.
+	 * 
+	 * @param transactionToThreadListenersEnabled true to enable listeners handling, false to disable
+	 */
+	public void setTransactionToThreadListenersEnabled(boolean transactionToThreadListenersEnabled) {
+		this.transactionToThreadListenersEnabled = transactionToThreadListenersEnabled;
+	}
 }
