@@ -926,6 +926,20 @@ function perf_tests {
   rm -rf performance
   git clone https://github.com/jbosstm/performance
   cd performance/
+  if [ -n "$PULL_NUMBER" ]; 
+  then
+    echo $PULL_DESCRIPTION | grep https://github.com/jbosstm/performance/pull/
+    if [[ "$?" -eq 0 ]]; then
+      PERF_PR_NUMBER=$(echo $PULL_DESCRIPTION | sed "s#.*https://github.com/jbosstm/performance/pull/\([0-9]*\).*#\1#g")
+      git fetch origin +refs/pull/*/head:refs/remotes/origin/pull/*/head
+      [ $? = 0 ] || fatal "git fetch of pulls failed"
+      git checkout remotes/origin/pull/$PERF_PR_NUMBER/head
+      [ $? = 0 ] || fatal "git fetch of pull branch failed"
+      git pull --rebase --ff-only origin master
+      [ $? = 0 ] || fatal "git rebase failed"
+    fi
+  fi
+  
   ./scripts/run_bm.sh
   res=$?
   cd $WORKSPACE
