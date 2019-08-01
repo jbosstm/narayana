@@ -29,7 +29,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.distributed.JndiProvider;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import com.arjuna.orbportability.common.OrbPortabilityEnvironmentBean;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import org.jboss.tm.TransactionManagerLocator;
 import org.jboss.tm.listener.EventType;
@@ -132,7 +131,10 @@ public class SPIUnitTest {
         TransactionManager tm = TransactionManagerLocator.locateTransactionManager();
         Transaction prevTxn = null;
 
+        // transaction-to-thread listeners were deactivated by default in JBTM-3166
+        boolean wasListenersEnabled = jtaPropertyManager.getJTAEnvironmentBean().isTransactionToThreadListenersEnabled();
         try {
+        	jtaPropertyManager.getJTAEnvironmentBean().setTransactionToThreadListenersEnabled(true);
             TransactionListenerRegistry tlr = TransactionListenerRegistryLocator.getTransactionListenerRegistry();
             TxListener listener = new TxListener(tlr);
 
@@ -153,6 +155,7 @@ public class SPIUnitTest {
         } catch (Throwable e) {
             throw new RuntimeException("TransactionListenerRegistry test failure: ", e);
         } finally {
+        	jtaPropertyManager.getJTAEnvironmentBean().setTransactionToThreadListenersEnabled(wasListenersEnabled);
             if (prevTxn != null) {
                 try {
                     tm.resume(prevTxn);

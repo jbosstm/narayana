@@ -24,6 +24,8 @@ import org.jboss.logging.annotations.*;
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.annotations.Message.Format.*;
 
+import javax.transaction.Transaction;
+
 /**
  * i18n log messages for the atsintegration module.
  *
@@ -165,6 +167,24 @@ public interface jbossatxI18NLogger {
 	@LogMessage(level = INFO)
 	void info_jta_RecoveryManagerService_resume();
 
+	@Message(id = 32036, value = "Unsupported transaction type. Transaction type is {0}", format = MESSAGE_FORMAT)
+	public String get_unsupported_transaction_type(Class<? extends Transaction> transactionClass);
+
+	@Message(id = 32037, value = "Transaction listeners are disabled and should not be used. If you need them they can be enabled via -D{0}=true", format = MESSAGE_FORMAT)
+	public String get_transaction_listeners_disabled(String transactionListenersPropertyName);
+
+	@Message(id = 32038, value = "Invalid transaction local resource [{0}] associated with key {1}.", format = MESSAGE_FORMAT)
+	public String get_invalid_transaction_local_resource(Object localResource, String key);
+
+	@Message(id = 32039, value = "Cannot lock a TransactionLocal after the Transaction [{0}] has ended", format = MESSAGE_FORMAT)
+	public String get_cannot_lock_transactionlocal(Transaction txn);
+
+	@Message(id = 32040, value = "Cannot store value in a TransactionLocal after the Transaction [{0}] has ended", format = MESSAGE_FORMAT)
+	public String get_cannot_store_transactionlocal(Transaction txn);
+	
+	@Message(id = 32041, value = "Unlock called from wrong thread.  Locking thread: {0}, current thread: {1}", format = MESSAGE_FORMAT)
+	public String get_cannot_store_transactionlocal(Thread lockingThread, Thread currentThread);
+	
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

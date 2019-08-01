@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;

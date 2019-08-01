@@ -36,9 +36,12 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.distributed.spi.TxListener;
 import org.jboss.tm.listener.*;
 import org.jboss.tm.usertx.client.ServerVMClientUserTransaction;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
@@ -54,6 +57,21 @@ public class TransactionListenerRegistryTest {
 		BMTROLLBACK,
 		CMTSUSPEND
 	};
+
+	private static boolean wasListenersEnabled;
+
+	@BeforeClass
+	public static void setUp() {
+		// transaction to thread listener is deprecated and deactivated by default with JBTM-3166
+		wasListenersEnabled = jtaPropertyManager.getJTAEnvironmentBean().isTransactionToThreadListenersEnabled();
+		jtaPropertyManager.getJTAEnvironmentBean().setTransactionToThreadListenersEnabled(true);
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		jtaPropertyManager.getJTAEnvironmentBean().setTransactionToThreadListenersEnabled(wasListenersEnabled);
+	}
+	
   
   @Test
   public void testResume() throws SystemException, InvalidTransactionException {

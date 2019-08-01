@@ -31,6 +31,11 @@ import javax.transaction.TransactionManager;
 import javax.transaction.Status;
 
 import org.jboss.tm.listener.TransactionTypeNotSupported;
+
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+
 import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionLocalDelegate;
 import org.jboss.tm.TransactionTimeoutConfiguration;
@@ -40,7 +45,6 @@ import org.jboss.tm.listener.TransactionListener;
 import org.jboss.tm.listener.TransactionListenerRegistry;
 import org.jboss.tm.listener.EventType;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -55,12 +59,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration, TransactionListenerRegistry
 {
     private static final String LISTENER_MAP_KEY = "__TX_LISTENERS";
-
-    protected static final String LISTENERS_ENABLED_PROP = "com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate.LISTENERS_ENABLED";
-    /**
-     * Listeners should not be used
-     */
-    private static final boolean LISTENERS_ENABLED  = Boolean.getBoolean(LISTENERS_ENABLED_PROP);
 
     /**
      * Delegate transaction manager.
@@ -171,7 +169,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
             throw new NullPointerException(); // we could interpret this as meaning register for all transactions
 
         if (!(transaction instanceof com.arjuna.ats.jta.transaction.Transaction))
-            throw new TransactionTypeNotSupported("Unsupported transaction type");
+            throw new TransactionTypeNotSupported(jbossatxLogger.i18NLogger.get_unsupported_transaction_type(transaction.getClass()));
 
         Collection<TransactionListener> listeners = getListeners(transaction, true);
 
@@ -205,9 +203,10 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
     // return all the event listeners associated with this thread
     private Collection<TransactionListener> getListeners(Transaction transaction, boolean create)
     {
-        if(!LISTENERS_ENABLED) {
+        if(!jtaPropertyManager.getJTAEnvironmentBean().isTransactionToThreadListenersEnabled()) {
             if(create) {
-                throw new IllegalStateException("Transaction listeners are disabled and should not be used. If you need them they can be enabled via -D" + LISTENERS_ENABLED_PROP + "=true");
+                throw new IllegalStateException(jbossatxLogger.i18NLogger.get_transaction_listeners_disabled(
+                		JTAEnvironmentBean.class.getName()+".transactionToThreadListenersEnabled"));
             }
             return null;
         }
@@ -229,7 +228,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
 
         if (resource != null && !(resource instanceof ConcurrentLinkedQueue)) {
             // another container subsystem has inadvertently used our key
-            throw new IllegalStateException("Invalid transaction local resource associated with key");
+            throw new IllegalStateException(jbossatxLogger.i18NLogger.get_invalid_transaction_local_resource(resource, LISTENER_MAP_KEY));
         }
 
         return (Collection<TransactionListener>) resource;
@@ -307,7 +306,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
         if(transactionImple.isAlive()) {
             transactionImple.putTxLocalResource(transactionLocal, value);
         } else {
-            throw new IllegalStateException("Can't store value in a TransactionLocal after the Transaction has ended");
+            throw new IllegalStateException(jbossatxLogger.i18NLogger.get_cannot_store_transactionlocal(transactionImple));
         }
     }
 
@@ -330,7 +329,7 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
             }
         }
 
-        throw new IllegalStateException("Can't lock a TransactionLocal after the Transaction has ended");
+        throw new IllegalStateException(jbossatxLogger.i18NLogger.get_cannot_lock_transactionlocal(transactionImple));
     }
 
     /**
@@ -473,8 +472,8 @@ public abstract class BaseTransactionManagerDelegate implements TransactionManag
                 final Thread currentThread = Thread.currentThread() ;
                 if (currentThread != lockingThread)
                 {
-                    throw new IllegalStateException("Unlock called from wrong thread.  Locking thread: " + lockingThread +
-                            ", current thread: " + currentThread) ;
+                    throw new IllegalStateException(
+                    		jbossatxLogger.i18NLogger.get_cannot_store_transactionlocal(lockingThread, currentThread)) ;
                 }
 
                 if (--lockCount == 0)
