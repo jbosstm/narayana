@@ -73,7 +73,7 @@ class NarayanaTransactionManager extends DelegatingTransactionManager {
    * The version of this class for {@linkplain Serializable
    * serialization} purposes.
    */
-  private static final long serialVersionUID = 596L; // 596 ~= 5.9.6.Final
+  private static final long serialVersionUID = 596L; // 596 ~= 5.9.7.Final-SNAPSHOT
 
   /**
    * An {@link Event} that can {@linkplain Event#fire(Object) fire}
