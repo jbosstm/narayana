@@ -22,11 +22,7 @@
 package io.narayana.lra.client.internal.proxy;
 
 import io.narayana.lra.client.NarayanaLRAClient;
-import org.eclipse.microprofile.lra.participant.LRAParticipant;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
-import org.eclipse.microprofile.lra.participant.JoinLRAException;
-import org.eclipse.microprofile.lra.participant.LRAManagement;
-import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +30,7 @@ import javax.annotation.PreDestroy;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -59,7 +56,7 @@ import java.util.concurrent.Future;
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
 
 @ApplicationScoped
-public class ProxyService implements LRAManagement {
+public class ProxyService {
     private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
 
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
@@ -124,7 +121,7 @@ public class ProxyService implements LRAManagement {
             proxy = recreateProxy(lraId, participantId);
         }
 
-        LRAParticipant participant = proxy.getParticipant();
+        LRAProxyParticipant participant = proxy.getParticipant();
 
         if (participant == null && participantData != null && participantData.length() > 0) {
             participant = deserializeParticipant(lraId, participantData).orElse(null);
@@ -141,7 +138,7 @@ public class ProxyService implements LRAManagement {
                     // let any NotFoundException propagate back to the coordinator
                     future = participant.completeWork(lraId);
                 }
-            } catch (TerminationException e) {
+            } catch (Exception e) {
                 return Response.ok().entity(compensate ? ParticipantStatus.FailedToCompensate
                         : ParticipantStatus.FailedToComplete).build();
             } finally {
@@ -185,16 +182,12 @@ public class ProxyService implements LRAManagement {
         return status.orElseThrow(InvalidLRAStateException::new);
     }
 
-    @Override
-    public URI joinLRA(LRAParticipant participant, URI lraId)
-            throws JoinLRAException {
+    public URI joinLRA(LRAProxyParticipant participant, URI lraId) {
         return joinLRA(participant, lraId, 0L, ChronoUnit.SECONDS);
     }
 
-    @Override
-    public URI joinLRA(LRAParticipant participant, URI lraId, Long timelimit, ChronoUnit unit)
-            throws JoinLRAException {
-        // TODO if lraId == null then register a join all nw LRAs
+    public URI joinLRA(LRAProxyParticipant participant, URI lraId, Long timelimit, ChronoUnit unit) {
+        // TODO if lraId == null then register a join all new LRAs
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
@@ -218,14 +211,17 @@ public class ProxyService implements LRAManagement {
                     .put(Entity.entity(participantData.orElse(""), MediaType.TEXT_PLAIN));
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                throw new JoinLRAException(lraId, response.getStatus(), "Too late to join with this LRA", null);
+                throw new WebApplicationException(Response.status(response.getStatus())
+                    .entity(lraId + ": " + "Too late to join with this LRA").build());
             } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                throw new JoinLRAException(lraId, response.getStatus(), "Unable to join with this LRA", null);
+                throw new WebApplicationException(Response.status(response.getStatus())
+                    .entity(lraId + ": " + "Unable to join with this LRA").build());
             }
 
             return new URI(response.readEntity(String.class));
         } catch (Exception e) {
-            throw new JoinLRAException(lraId, 0, "Exception whilst joining with this LRA", e);
+            throw new WebApplicationException(e, Response.status(0)
+                .entity(lraId + ": " + "Exception whilst joining with this LRA").build());
         }
     }
 
@@ -242,7 +238,7 @@ public class ProxyService implements LRAManagement {
         }
     }
 
-    private static Optional<LRAParticipant> deserializeParticipant(URI lraId, final String objectAsString) {
+    private static Optional<LRAProxyParticipant> deserializeParticipant(URI lraId, final String objectAsString) {
         return Optional.empty(); // TODO
 /*        final byte[] data = Base64.getDecoder().decode(objectAsString);
 

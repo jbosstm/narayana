@@ -195,6 +195,14 @@ public interface lraI18NLogger {
     @Message(id = 25037, value = "Invalid format of lra id '%s' to replace compensator '%s'")
     void error_invalidFormatOfLraIdReplacingCompensatorURI(String recoveryUrl, String lraId, @Cause URISyntaxException e);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25038, value = "LRA participant `%s` returned immediate state (Compensating/Completing) from CompletionStage. LRA id: %s")
+    void warn_participantReturnsImmediateStateFromCompletionStage(String participantId, String lraId);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 25039, value = "Cannot process non JAX-RS LRA participant")
+    void error_cannotProcessParticipant(@Cause ReflectiveOperationException e);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

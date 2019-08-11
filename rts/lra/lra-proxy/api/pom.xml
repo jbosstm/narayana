@@ -22,6 +22,7 @@
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <narayana.nodename.property>CoreEnvironmentBean.nodeIdentifier</narayana.nodename.property>
+        <version.jandex>2.1.1.Final</version.jandex>
     </properties>
 
     <build>
@@ -47,6 +48,12 @@
             <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
             <version>${version.jaxrs.api}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- jandex -->
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jandex</artifactId>
+            <version>${version.jandex}</version>
         </dependency>
         <!-- jboss logging -->
         <dependency>

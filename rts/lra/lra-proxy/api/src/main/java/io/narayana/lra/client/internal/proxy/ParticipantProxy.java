@@ -21,10 +21,8 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
-import org.eclipse.microprofile.lra.participant.LRAParticipant;
-import org.eclipse.microprofile.lra.participant.TerminationException;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 
 import java.net.URI;
 import java.util.Optional;
@@ -34,11 +32,11 @@ import java.util.concurrent.Future;
 class ParticipantProxy {
     private URI lraId;
     private String participantId;
-    private LRAParticipant participant;
+    private LRAProxyParticipant participant;
     private Future<Void> future;
     private boolean compensate;
 
-    ParticipantProxy(URI lraId, String participantId, LRAParticipant participant) {
+    ParticipantProxy(URI lraId, String participantId, LRAProxyParticipant participant) {
         this.lraId = lraId;
         this.participantId = participantId;
         this.participant = participant;
@@ -58,7 +56,7 @@ class ParticipantProxy {
         return participantId;
     }
 
-    LRAParticipant getParticipant() {
+    LRAProxyParticipant getParticipant() {
         return participant;
     }
 
@@ -111,11 +109,7 @@ class ParticipantProxy {
 
                 return Optional.of(getExpectedStatus());
             } catch (ExecutionException e) {
-                if (!TerminationException.class.equals(e.getCause().getClass())) {
-                    // the participant threw an unexpected exception
-                    LRAProxyLogger.i18NLogger.error_participantExceptionOnCompletion(participant.getClass().getName(), e);
-                }
-
+                LRAProxyLogger.i18NLogger.error_participantExceptionOnCompletion(participant.getClass().getName(), e);
                 return Optional.of(getFailedStatus());
             } catch (InterruptedException e) {
                 // the only recourse is to retry of mark as failed

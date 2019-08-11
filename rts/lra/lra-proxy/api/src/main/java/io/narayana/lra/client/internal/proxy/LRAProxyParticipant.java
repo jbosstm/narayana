@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2017, Red Hat, Inc., and individual contributors
+ * Copyright 2019, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,34 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.proxy.test.model;
-
-import io.narayana.lra.client.internal.proxy.LRAProxyParticipant;
-import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+package io.narayana.lra.client.internal.proxy;
 
 import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.concurrent.Future;
 
-public class Participant implements LRAProxyParticipant, Serializable {
-    private Activity activity;
+public interface LRAProxyParticipant extends Serializable {
 
-    public Participant(Activity activity) {
-        this.activity = activity;
-    }
+    Future<Void> completeWork(URI lraId) throws NotFoundException;
 
-    @Override
-    public Future<Void> completeWork(URI lraId) throws NotFoundException {
-        activity.status = ParticipantStatus.Completed;
-
-        return null;
-    }
-
-    @Override
-    public Future<Void> compensateWork(URI lraId) throws NotFoundException {
-        activity.status = ParticipantStatus.Compensated;
-
-        return null;
-    }
+    Future<Void> compensateWork(URI lraId) throws NotFoundException;
 }

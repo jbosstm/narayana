@@ -24,14 +24,17 @@ package io.narayana.lra.filter;
 import io.narayana.lra.Current;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
+import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
+import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
-import org.eclipse.microprofile.lra.annotation.Status;
 
+import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -102,6 +105,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     type.name() + " but found tx");
         }
     }
+
+    @Inject
+    private LRAParticipantRegistry lraParticipantRegistry;
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
@@ -302,8 +308,14 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
-            if (terminateURIs.containsKey("Link")) {
+            LRAParticipant participant = lraParticipantRegistry.getParticipant(resourceInfo.getResourceClass().getName());
+
+            if (terminateURIs.containsKey("Link") || participant != null) {
                 try {
+                    if (participant != null) {
+                        participant.augmentTerminationURIs(terminateURIs, baseUri);
+                    }
+
                     recoveryUrl = lraClient.joinLRA(lraId, timeLimit,
                             toURI(terminateURIs.get(COMPENSATE)),
                             toURI(terminateURIs.get(COMPLETE)),
