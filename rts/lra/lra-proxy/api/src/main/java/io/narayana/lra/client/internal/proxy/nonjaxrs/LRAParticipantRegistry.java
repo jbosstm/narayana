@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2017, Red Hat, Inc., and individual contributors
+ * Copyright 2019, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,19 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client.internal.proxy;
+package io.narayana.lra.client.internal.proxy.nonjaxrs;
 
-import org.eclipse.microprofile.lra.participant.JoinLRAException;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
+/**
+ * This class is tracking individual collected LRA participants that
+ * contain one or more non-JAX-RS participant methods in their definitions.
+ */
+public class LRAParticipantRegistry {
 
-public class JoinLRAExceptionMapper implements ExceptionMapper<JoinLRAException> {
-    @Override
-    public Response toResponse(JoinLRAException exception) {
-        return Response.status(exception.getStatusCode())
-                .entity(String.format("%s: %s", exception.getLraId() != null
-                        ? exception.getLraId()
-                        : "not present", exception.getMessage())).build();
+    private final Map<String, LRAParticipant> lraParticipants;
+
+    // required for Weld to be able to create proxy
+    LRAParticipantRegistry() {
+        lraParticipants = new HashMap<>();
+    }
+
+    LRAParticipantRegistry(Map<String, LRAParticipant> lraParticipants) {
+        this.lraParticipants = new HashMap<>(lraParticipants);
+    }
+
+    public LRAParticipant getParticipant(String id) {
+            return lraParticipants.get(id);
     }
 }

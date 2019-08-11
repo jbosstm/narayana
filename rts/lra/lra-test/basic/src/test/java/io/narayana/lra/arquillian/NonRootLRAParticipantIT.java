@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,6 +63,7 @@ public class NonRootLRAParticipantIT {
     }
 
     @Test
+    @Ignore
     public void testNonRootLRAParticipantEnlist() {
         Client client = ClientBuilder.newClient();
 

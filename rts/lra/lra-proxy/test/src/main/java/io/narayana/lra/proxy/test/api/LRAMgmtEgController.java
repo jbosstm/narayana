@@ -22,8 +22,7 @@
 
 package io.narayana.lra.proxy.test.api;
 
-import org.eclipse.microprofile.lra.participant.JoinLRAException;
-import org.eclipse.microprofile.lra.participant.LRAManagement;
+import io.narayana.lra.client.internal.proxy.ProxyService;
 import io.narayana.lra.proxy.test.model.Activity;
 import io.narayana.lra.proxy.test.model.Participant;
 import io.narayana.lra.proxy.test.service.ActivityService;
@@ -44,7 +43,7 @@ import java.time.temporal.ChronoUnit;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
 
 /**
- * for testing {@link LRAManagement}
+ * for testing {@link io.narayana.lra.client.internal.proxy.ProxyService}
  */
 @Path(LRAM_PATH)
 public class LRAMgmtEgController {
@@ -53,14 +52,14 @@ public class LRAMgmtEgController {
     public static final String GET_ACTIVITY_PATH = "getActivity";
 
     @Inject
-    private LRAManagement lraManagement;
+    private ProxyService lraManagement;
 
     @Inject
     private ActivityService activityService;
 
     @PUT
     @Path(LRAM_WORK)
-    public Response lramTest(@QueryParam("lraId") String lraId) throws URISyntaxException, JoinLRAException {
+    public Response lramTest(@QueryParam("lraId") String lraId) throws URISyntaxException {
         assert lraId != null;
 
         Activity activity = new Activity(lraId);

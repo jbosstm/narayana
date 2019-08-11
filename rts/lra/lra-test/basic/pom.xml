@@ -16,8 +16,7 @@
     <application.host>localhost</application.host>
     <application.port>8180</application.port>
 
-    <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar
-    </lra.coordinator.jar.path>
+    <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar</lra.coordinator.jar.path>
   </properties>
 
   <build>
@@ -31,6 +30,7 @@
             <application.port>${application.port}</application.port>
             <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
           </systemPropertyVariables>
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
         </configuration>
       </plugin>
     </plugins>
