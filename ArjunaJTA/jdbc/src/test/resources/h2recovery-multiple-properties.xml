@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="DB_1_DatabaseUser">sa</entry>
+    <entry key="DB_1_DatabasePassword">sa</entry>
+    <entry key="DB_1_DatabaseDynamicClass"></entry>
+    <entry key="DB_1_DatabaseURL">h2DataSource</entry>
+    <entry key="DB_2_DatabaseUser">sa</entry>
+    <entry key="DB_2_DatabasePassword">sa</entry>
+    <entry key="DB_2_DatabaseDynamicClass"></entry>
+    <entry key="DB_2_DatabaseURL">h2DataSource</entry>
+</properties>

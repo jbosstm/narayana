@@ -35,6 +35,7 @@ import java.sql.SQLException;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class BasicXARecoveryTest {
@@ -68,6 +69,17 @@ public class BasicXARecoveryTest {
         assertTrue(bxar.hasMoreResources());
         XAResource xar2 = bxar.getXAResource();
         assertEquals(xar1, xar2);
+    }
 
+    @Test
+    public void testWithNumberOfConnections () throws SQLException, NamingException {
+        BasicXARecovery bxar = new BasicXARecovery();
+        bxar.initialise("h2recovery-multiple-properties.xml;2");
+        assertTrue(bxar.hasMoreResources());
+        XAResource xar1 = bxar.getXAResource();
+        assertTrue(bxar.hasMoreResources());
+        assertTrue(bxar.hasMoreResources());
+        XAResource xar2 = bxar.getXAResource();
+        assertNotEquals(xar1, xar2);
     }
 }

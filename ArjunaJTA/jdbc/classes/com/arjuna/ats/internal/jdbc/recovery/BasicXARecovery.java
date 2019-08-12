@@ -120,7 +120,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		if (breakPosition != -1)
 		{
-			fileName = parameter.substring(0, breakPosition - 1);
+			fileName = parameter.substring(0, breakPosition);
 
 			try
 			{
