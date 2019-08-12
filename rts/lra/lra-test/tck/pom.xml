@@ -21,7 +21,8 @@
         <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
-        <lra.tck.consistency.delay>20000</lra.tck.consistency.delay>
+        <lra.tck.consistency.shortDelay>0</lra.tck.consistency.shortDelay>
+        <lra.tck.consistency.longDelay>20000</lra.tck.consistency.longDelay>
 
         <version.org.jboss.weld.se>3.0.3.Final</version.org.jboss.weld.se>
 
@@ -47,7 +48,8 @@
                         <lra.tck.suite.thorntail.trace.params>${lra.tck.suite.thorntail.trace.params}</lra.tck.suite.thorntail.trace.params>
                         <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
                         <lra.tck.suite.debug.params>${lra.tck.suite.debug.params}</lra.tck.suite.debug.params>
-                        <lra.tck.consistency.delay>${lra.tck.consistency.delay}</lra.tck.consistency.delay>
+                        <lra.tck.consistency.longDelay>${lra.tck.consistency.longDelay}</lra.tck.consistency.longDelay>
+                        <lra.tck.consistency.shortDelay>${lra.tck.consistency.shortDelay}</lra.tck.consistency.shortDelay>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

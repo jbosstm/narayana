@@ -71,6 +71,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static io.narayana.lra.coordinator.domain.model.LRARecord.PARTICIPANT_TIMEOUT;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -79,7 +80,7 @@ public class Transaction extends AtomicAction {
     private URI parentId;
     private String clientId;
     private List<LRARecord> pending;
-    private List<URI> afterLRAListeners;
+    private List<AfterLRAListener> afterLRAListeners;
     private LRAStatus status;
     private String responseData;
     private LocalDateTime startTime;
@@ -152,8 +153,9 @@ public class Transaction extends AtomicAction {
                 os.packInt(0);
             } else {
                 os.packInt(afterLRAListeners.size());
-                for (URI uri : afterLRAListeners) {
-                    os.packString(uri.toASCIIString());
+                for (AfterLRAListener participant : afterLRAListeners) {
+                    os.packString(participant.notificationURI.toASCIIString());
+                    os.packString(participant.recoveryId.toASCIIString());
                 }
             }
         } catch (IOException e) {
@@ -259,7 +261,7 @@ public class Transaction extends AtomicAction {
             } else {
                 afterLRAListeners = new ArrayList<>();
                 for (int i = 0; i < cnt; i++) {
-                    afterLRAListeners.add(new URI(os.unpackString()));
+                    afterLRAListeners.add(new AfterLRAListener(new URI(os.unpackString()), new URI(os.unpackString())));
                 }
             }
 
@@ -389,9 +391,10 @@ public class Transaction extends AtomicAction {
         while ((r = i.iterate()) != null) {
             if (r instanceof LRARecord) {
                 URI endNotification = ((LRARecord) r).getEndNotificationUri();
+                URI recoveryCoordinatorURI = ((LRARecord) r).getRecoveryCoordinatorURI();
 
-                if (endNotification != null) {
-                    afterLRAListeners.add(endNotification);
+                if (endNotification != null && recoveryCoordinatorURI != null) {
+                    afterLRAListeners.add(new AfterLRAListener(endNotification, recoveryCoordinatorURI));
                 }
             }
         }
@@ -828,16 +831,17 @@ public class Transaction extends AtomicAction {
             Client client = ClientBuilder.newClient();
 
             try {
-                Iterator<URI> listeners = afterLRAListeners.iterator();
+                Iterator<AfterLRAListener> listeners = afterLRAListeners.iterator();
 
                 while (listeners.hasNext()) {
-                    URI uri = listeners.next();
+                    AfterLRAListener participant = listeners.next();
                     Response response = null;
 
                     try {
-                        Future<Response> asyncResponse = client.target(uri)
+                        Future<Response> asyncResponse = client.target(participant.notificationURI)
                                 .request()
                                 .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
+                                .header(LRA_HTTP_RECOVERY_HEADER, participant.recoveryId.toASCIIString())
                                 .async()
                                 .put(Entity.text(status.name()));
 
@@ -854,7 +858,7 @@ public class Transaction extends AtomicAction {
                         notifiedAll = false;
 
                         if (LRALogger.logger.isInfoEnabled()) {
-                            LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", uri, e.getMessage());
+                            LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", participant.notificationURI, e.getMessage());
                         }
                     } finally {
                         if (response != null) {
@@ -868,5 +872,15 @@ public class Transaction extends AtomicAction {
         }
 
         return notifiedAll;
+    }
+
+    static class AfterLRAListener {
+        public AfterLRAListener(URI notificationURI, URI recoveryId) {
+            this.notificationURI = notificationURI;
+            this.recoveryId = recoveryId;
+        }
+
+        final URI notificationURI;
+        final URI recoveryId;
     }
 }
