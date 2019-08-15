@@ -26,8 +26,8 @@
         <version.junit>4.12</version.junit>
 
         <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->
-        <version.microprofile.lra.api>1.0-20190812.092710-499</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-20190812.092711-499</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0-RC1</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-RC1</version.microprofile.lra.tck>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -138,13 +138,13 @@
     </build>
 
     <modules>
+        <module>lra-service-base</module>
         <module>lra-client</module>
         <module>lra-coordinator</module>
         <module>lra-filters</module>
         <module>lra-proxy</module>
         <module>lra-annotation-checker</module>
         <module>lra-test</module>
-        <module>lra-service-base</module>
     </modules>
 
     <profiles>
