@@ -141,10 +141,10 @@
         <module>lra-service-base</module>
         <module>lra-client</module>
         <module>lra-coordinator</module>
-        <module>lra-filters</module>
         <module>lra-proxy</module>
         <module>lra-annotation-checker</module>
         <module>lra-test</module>
+        <module>narayana-lra</module>
     </modules>
 
     <profiles>

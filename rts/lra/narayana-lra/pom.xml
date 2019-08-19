@@ -10,8 +10,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lra-filters</artifactId>
-    <name>LRA Participant Filters</name>
+    <artifactId>narayana-lra</artifactId>
+    <name>Narayana LRA</name>
     <packaging>jar</packaging>
 
     <build>
