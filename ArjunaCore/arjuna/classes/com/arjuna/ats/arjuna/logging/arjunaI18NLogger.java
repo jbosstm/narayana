@@ -1566,6 +1566,12 @@ public interface arjunaI18NLogger {
     @Message(id = 12391, value = "Could not initialize object store '{0}' of type '{1}'", format = MESSAGE_FORMAT)
     public String init_StoreManager_instantiate_class_failure(String name, String type);
 
+    @Message(id = 12392, value = "AbstractRecord.create {0} failed to create record class {1} (memory: used {2}MB, {3}MB free).",
+           format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_coordinator_AbstractRecord_create_failure(
+        Integer arg1, String arg2, Long arg3, Long arg4, @Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
