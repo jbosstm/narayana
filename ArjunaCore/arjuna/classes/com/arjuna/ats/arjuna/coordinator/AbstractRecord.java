@@ -473,21 +473,14 @@ public abstract class AbstractRecord extends StateManager
         }
 	    catch (final Throwable ex)
 	    {
-			try {
-				Class rt = RecordType.typeToClass(type);
-				String className = (rt == null) ? "null" : rt.getName();
-				int mb = 1024 * 1024;
-				Runtime runtime = Runtime.getRuntime();
-				long used = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-				long free = runtime.freeMemory() / mb;
+            Class rt = RecordType.typeToClass(type);
+            String className = (rt == null) ? "null" : rt.getName();
 
-				tsLogger.i18NLogger.warn_coordinator_AbstractRecord_create_failure(
-						type, className, used, free, ex);
-			} catch (final Throwable t) {
-				ex.printStackTrace();
-			}
+            tsLogger.i18NLogger.warn_coordinator_AbstractRecord_create_failure(type, className);
 
-			return null;
+            ex.printStackTrace();
+
+            return null;
 	    }
 	}
 
