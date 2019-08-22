@@ -69,6 +69,7 @@
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
                 <source>../jtax/classes</source>
+                <!-- when adding any record here consider adding it for community profile as well -->
               </sources>
             </configuration>
           </execution>

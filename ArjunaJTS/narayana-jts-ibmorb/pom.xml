@@ -69,6 +69,7 @@
                 <source>../orbportability/classes</source>
                 <source>../jts/classes</source>
                 <source>../jtax/classes</source>
+                <!-- when adding any record here consider adding it for community profile as well -->
               </sources>
             </configuration>
           </execution>
@@ -384,6 +385,16 @@
             </goals>
             <configuration>
               <sources>
+                <source>../../common/classes</source>
+                <source>../../ArjunaCore/arjuna/classes</source>
+                <source>../../ArjunaCore/txoj/classes</source>
+                <source>../../ArjunaJTA/jta/classes</source>
+                <source>../../ArjunaJTA/jdbc/classes</source>
+                <source>../../ArjunaJTA/jms/src/main/java</source>
+                <source>../../ArjunaJTA/cdi/classes</source>
+                <source>../orbportability/classes</source>
+                <source>../jts/classes</source>
+                <source>../jtax/classes</source>
                 <source>../jts/services/classes</source>
               </sources>
             </configuration>
