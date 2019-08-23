@@ -52,7 +52,7 @@ public abstract class DelegatingTransactionSynchronizationRegistry implements Se
      * The version of this class for {@linkplain Serializable
      * serialization} purposes.
      */
-    private static final long serialVersionUID = 596L; // 596 ~= 5.9.7.Final
+    private static final long serialVersionUID = 596L; // 596 ~= 5.9.8.Final-SNAPSHOT
 
     /**
      * The {@link TransactionSynchronizationRegistry} to which all
