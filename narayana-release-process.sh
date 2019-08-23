@@ -106,26 +106,34 @@ then
     echo "You must enter the WFLY issue, try to start again with $CURRENT $NEXT <WFLYISSUE"
     exit
   fi
-  if [ ! -d "jboss-as" ]
-  then
-    (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
-  fi
-  (cd jboss-as; git fetch upstream; git checkout -b ${WFLYISSUE}; git reset --hard upstream/master)
-  cd jboss-as
+fi
+if [ ! -d "jboss-as" ]
+then
+  (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
+fi
+cd jboss-as
+git fetch jbosstm
+git branch | grep $WFLYISSUE
+if [[ $? != 0 ]]
+then
+  git fetch upstream; 
+  git checkout -b ${WFLYISSUE}
+  git reset --hard upstream/master
   CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   if [[ $(uname) == CYGWIN* ]]
   then
     sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
   else
-    sed -i "" "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
+    sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
   fi
   git add pom.xml
   git commit -m "${WFLYISSUE} Upgrade Narayana to $CURRENT"
   git push --set-upstream jbosstm ${WFLYISSUE}
   git checkout 5_BRANCH
   git reset --hard jbosstm/5_BRANCH
-  cd -
+  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE
 fi
+cd ..
 
 cd ~/tmp/narayana/$CURRENT/sources/documentation/
 git checkout $CURRENT
