@@ -25,24 +25,31 @@ package io.narayana.lra.arquillian;
 import io.narayana.lra.arquillian.resource.JaxRsApplication;
 import io.narayana.lra.arquillian.resource.NonRootLRAParticipant;
 import io.narayana.lra.arquillian.resource.RootResource;
+import io.narayana.lra.arquillian.resource.TestLRAParticipant;
+import io.narayana.lra.client.NarayanaLRAClient;
 import org.eclipse.microprofile.lra.annotation.Compensate;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+
+import static org.eclipse.microprofile.lra.annotation.LRAStatus.Closing;
+import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class NonRootLRAParticipantIT {
@@ -52,11 +59,8 @@ public class NonRootLRAParticipantIT {
 
     @Deployment
     public static WebArchive deploy() {
-        File[] files = Maven.resolver().loadPomFromFile("pom.xml")
-            .importRuntimeDependencies().resolve().withTransitivity().asFile();
-
         return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantIT.class.getSimpleName() + ".war")
-            .addClasses(NonRootLRAParticipant.class, RootResource.class, JaxRsApplication.class)
+            .addClasses(TestLRAParticipant.class, NonRootLRAParticipant.class, RootResource.class, JaxRsApplication.class)
             .addPackages(true, Compensate.class.getPackage())
             .addPackages(true, "io.narayana.lra")
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
@@ -76,5 +80,33 @@ public class NonRootLRAParticipantIT {
         int counterValue = response.readEntity(Integer.class);
         Assert.assertEquals("Non root JAX-RS participant should have been enlisted and invoked",
             1, counterValue);
+    }
+
+    /*
+     * Test that a participant can join an LRA using the Narayana specific client API
+     * Test that the LRA has the correct status of Closing if a participant
+     * returns 202 Accepted when asked to complete.
+     * @throws URISyntaxException if arquillian URL is invalid
+     */
+    @Test
+    public void testFinishLRA() throws URISyntaxException {
+        NarayanaLRAClient client = new NarayanaLRAClient(); // the narayana client API for using LRAs
+        URI lraId = client.startLRA("testFinishLRA");
+        URI compensateURI = new URI(baseURL.toExternalForm() + "/participant/compensate");
+        URI completeURI = new URI(baseURL.toExternalForm() + "/participant/complete");
+
+        // enlist the participant with these compensate and complete URIs into the LRA
+        client.joinLRA(lraId, 0L, compensateURI, completeURI, null, null, null, null, null);
+        client.closeLRA(lraId);
+
+        try {
+            LRAStatus status = client.getStatus(lraId, false);
+
+            Assert.assertEquals("wrong state", Closing, status);
+        } catch (WebApplicationException e) {
+            fail("testFinishLRA: received unexpected response code (" + e.getResponse().getStatus()
+                    + ") getting LRA status " + e.getMessage());
+        }
+
     }
 }

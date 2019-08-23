@@ -477,7 +477,7 @@ public class Transaction extends AtomicAction {
         }
 
         if (getSize(heuristicList) != 0 || getSize(failedList) != 0) {
-            status = LRAStatus.Cancelling;
+            status = compensate ? LRAStatus.Cancelling : LRAStatus.Closing;
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
             status = LRAStatus.Closing;
         } else {
