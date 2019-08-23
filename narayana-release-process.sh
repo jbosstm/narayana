@@ -100,7 +100,12 @@ fi
 if [ -z "$WFLYISSUE" ]
 then
   #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
-  read -p "Enter WFLY issue: " WFLYISSUE
+  read -p "Create a WFLY issue at https://issues.jboss.org/secure/CreateIssue.jspa and enter the number: " WFLYISSUE
+  if [ -z "$WFLYISSUE" ]
+  then
+    echo "You must enter the WFLY issue, try to start again with $CURRENT $NEXT <WFLYISSUE"
+    exit
+  fi
   if [ ! -d "jboss-as" ]
   then
     (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
