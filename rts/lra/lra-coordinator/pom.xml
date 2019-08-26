@@ -22,11 +22,6 @@
     <build>
         <finalName>lra-coordinator</finalName>
         <plugins>
-          <plugin>
-            <inherited>false</inherited>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-          </plugin>
             <plugin>
                 <groupId>io.thorntail</groupId>
                 <artifactId>thorntail-maven-plugin</artifactId>
@@ -87,6 +82,11 @@
           <id>release</id>
           <build>
               <plugins>
+                <plugin>
+                  <inherited>false</inherited>
+                  <groupId>org.sonatype.plugins</groupId>
+                  <artifactId>nexus-staging-maven-plugin</artifactId>
+                </plugin>
                 <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-install-plugin</artifactId>
