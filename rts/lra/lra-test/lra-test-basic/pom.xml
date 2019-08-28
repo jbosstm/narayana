@@ -9,8 +9,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>basic</artifactId>
-  <name>LRA tests: basic</name>
+  <artifactId>lra-test-basic</artifactId>
+  <name>LRA tests: Basic</name>
+  <description>LRA basic integration tests</description>
 
   <properties>
     <application.host>localhost</application.host>
@@ -19,6 +20,27 @@
     <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar</lra.coordinator.jar.path>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>narayana-lra</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.thorntail</groupId>
+      <artifactId>cdi</artifactId>
+      <version>${version.thorntail}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-test-arquillian-extension</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  
   <build>
     <plugins>
       <plugin>

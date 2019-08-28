@@ -136,7 +136,8 @@
     </profiles>
 
     <modules>
-        <module>tck</module>
-        <module>basic</module>
+        <module>lra-test-tck</module>
+        <module>lra-test-basic</module>
+        <module>lra-test-arquillian-extension</module>
     </modules>
 </project>

@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package io.narayana.lra.tck.arquillian;
+package io.narayana.lra.arquillian;
 
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRACDIExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
@@ -41,7 +41,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
         // adding LRA spec interfaces under the Thorntail deployment
                 .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage());
-        // adding Narayana LRA implementation under the WildFly Swarm deployment
+        // adding Narayana LRA implementation under the Thorntail deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
                 .addPackages(true, io.narayana.lra.Current.class.getPackage())
                 .addPackage(LRACDIExtension.class.getPackage())

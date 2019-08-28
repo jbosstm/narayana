@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package io.narayana.lra.tck.arquillian;
+package io.narayana.lra.arquillian;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
@@ -29,9 +29,9 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 /**
  * Extension defined under <code>resources/META-INF/org.jboss.arquillian.core.spi.LoadableExtension</code>
  * to be loaded by Arquillian.<br/>
- * The services here extends the Arquillian functionality for being able to run the LRA TCK with Narayana.
+ * The services here extends the Arquillian functionality for being able to run the LRA tests with Narayana.
  */
-public class ArquillianLRATckExtension implements LoadableExtension {
+public class ArquillianLRAExtension implements LoadableExtension {
 
    @Override
    public void register(ExtensionBuilder builder) {
