@@ -47,6 +47,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
+          <includes>
+            <include>${failsafe.test}</include>
+          </includes>
           <systemPropertyVariables>
             <application.host>${application.host}</application.host>
             <application.port>${application.port}</application.port>

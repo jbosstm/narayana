@@ -37,7 +37,7 @@
                         <dependency>org.eclipse.microprofile.lra:microprofile-lra-tck</dependency>
                     </dependenciesToScan>
                     <includes>
-                        <include>**/*Test*.java</include>
+                        <include>${failsafe.test}</include>
                     </includes>
                     <systemPropertyVariables combine.children="append">
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>

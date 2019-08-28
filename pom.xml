@@ -407,6 +407,7 @@
 
   <properties>
     <!-- IP stack configs. -->
+    <failsafe.test>**/*Test*.java</failsafe.test>
     <testLogToFile>true</testLogToFile>
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>

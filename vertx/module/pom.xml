@@ -228,7 +228,7 @@
             </property>
           </systemProperties>
           <includes>
-            <include>**/integration/**</include>
+            <include>${failsafe.test}</include>
           </includes>
         </configuration>
         <executions>

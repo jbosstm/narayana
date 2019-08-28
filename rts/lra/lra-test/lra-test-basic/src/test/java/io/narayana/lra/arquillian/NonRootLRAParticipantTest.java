@@ -45,14 +45,14 @@ import static org.eclipse.microprofile.lra.annotation.LRAStatus.Closing;
 import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
-public class NonRootLRAParticipantIT {
+public class NonRootLRAParticipantTest {
 
     @ArquillianResource
     private URL baseURL;
 
     @Deployment
     public static WebArchive deploy() {
-        return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantIT.class.getSimpleName() + ".war");
+        return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantTest.class.getSimpleName() + ".war");
     }
 
     @Test
