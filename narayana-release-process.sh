@@ -12,6 +12,23 @@
 # 1 argument: same as 0 argument but taken in care WFLYISSUE thus script don't try to create new issue
 # 3 arguments: `./narayana-release-process.sh CURRENT NEXT WFLYISSUE`
 
+command -v mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting."; exit 1; }
+command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
+command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct (http://awestruct.org/getting_started) but it's not installed.  Aborting."; exit 1; }
+read -p "Have you created a WFLY issue at https://issues.jboss.org/secure/CreateIssue.jspa and have the number?" WISSUEOK
+if [[ $WISSUEOK == n* ]]
+then
+  exit
+fi
+if [ $# -ne 3 ]; then
+  echo 1>&2 "$0: usage: CURRENT NEXT WFLYISSUE"
+  exit 2
+else
+  CURRENT=$1
+  NEXT=$2
+  WFLYISSUE=$3
+fi
+
 if [[ $(uname) == CYGWIN* ]]
 then
   docker-machine env --shell bash
@@ -35,42 +52,32 @@ if [[ $M2OK == n* ]]
 then
   exit
 fi
-
-command -v mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting."; exit 1; }
-command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
-command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct (http://awestruct.org/getting_started) but it's not installed.  Aborting."; exit 1; }
-
-if [ $# -eq 0 ]; then
-  . scripts/pre-release-vars.sh
-  CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
-  NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
-  NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
-elif [ $# -eq 1 ]; then
-  . scripts/pre-release-vars.sh
-  CURRENT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/-SNAPSHOT//"`
-  NEXT=`echo $CURRENT_SNAPSHOT_VERSION | sed "s/.Final//"`
-  NEXT="${NEXT%.*}.$((${NEXT##*.}+1))".Final
-  WFLYISSUE=$1
-elif [ $# -lt 2 ]; then
-  echo 1>&2 "$0: not enough arguments: CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
-  exit 2
-elif [ $# -gt 3 ]; then
-  echo 1>&2 "$0: too many arguments: CURRENT NEXT <WFLYISSUE>(versions should end in .Final or similar)"
-  exit 2
-else
-  CURRENT=$1
-  NEXT=$2
-  WFLYISSUE=$3
+read -p "You will need: docker.io account with permission to push under https://hub.docker.com/u/jbosstm/. Do you have these? y/n: " ENVOK
+if [[ $ENVOK == n* ]]
+then
+  exit
+fi
+read -p "Until ./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT is fixed you will need to go to https://issues.jboss.org/projects/JBTM?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=released-unreleased, rename (Actions -> Edit) 5.next to $CURRENT, create a new 5.next version, Actions -> Release on the new $CURRENT. Have you done this? y/n " JIRAOK
+if [[ $JIRAOK == n* ]]
+then
+  exit
 fi
 
-set +e
+# Do this early to prevent later interactive need
+docker login docker.io
+[ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
+
+#if [ -z "$WFLYISSUE" ]
+#then
+  #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
+#  exit
+#fi
+
 git fetch upstream --tags
+set +e
 git tag | grep $CURRENT
 if [[ $? != 0 ]]
 then
-  set -e
-  JENKINS_JOBS=narayana,narayana-catelyn,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py
-  set +e
   git status | grep "nothing to commit"
   if [[ $? != 0 ]]
   then
@@ -89,24 +96,24 @@ then
   then
     exit
   fi
-  set -e 
+  set -e
+  echo "Checking if there were any failed jobs, this may be interactive so please stand by"
+  JENKINS_JOBS=narayana,narayana-catelyn,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py
+  echo "Executing pre-release script, this may be interactive so please stand by"
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
+  echo "This script is only interactive at the very end now, press enter to continue"
+  read
+  # Start the blacktie builds now
+  wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/build?delay=0sec
+wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/build?delay=0sec
   git fetch upstream --tags
   #./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
+  echo "This script is only interactive at the very end now, press enter to continue"
+  read
 else
   set -e
 fi
 
-if [ -z "$WFLYISSUE" ]
-then
-  #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
-  read -p "Create a WFLY issue at https://issues.jboss.org/secure/CreateIssue.jspa and enter the number: " WFLYISSUE
-  if [ -z "$WFLYISSUE" ]
-  then
-    echo "You must enter the WFLY issue, try to start again with $CURRENT $NEXT <WFLYISSUE"
-    exit
-  fi
-fi
 if [ ! -d "jboss-as" ]
 then
   (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
@@ -131,7 +138,7 @@ then
   git push --set-upstream jbosstm ${WFLYISSUE}
   git checkout 5_BRANCH
   git reset --hard jbosstm/5_BRANCH
-  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE
+  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE %
 fi
 cd ..
 
@@ -197,25 +204,7 @@ then
 fi
 cd -
 
-echo "build and retrieve the centos54x64 and vc9x32 binaries from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/"
-wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/build?delay=0sec
-wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/build?delay=0sec
-echo "Press enter when the artifacts are available"
-read
-
-wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
-wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
-scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
-scp blacktie-${CURRENT}-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
-
 # Building and pushing the lra coordinator docker image
-read -p "You will need: docker.io account with permission to push under https://hub.docker.com/u/jbosstm/. Do you have these? y/n: " ENVOK
-if [[ $ENVOK == n* ]]
-then
-  exit
-fi
-docker login docker.io
-[ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
 cd ~/tmp/narayana/$CURRENT/sources/jboss-dockerfiles/lra/lra-coordinator
 git checkout $CURRENT
 if [[ $? != 0 ]]
@@ -229,3 +218,9 @@ docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
 docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
 docker push  docker.io/jbosstm/lra-coordinator:latest
 
+echo "Press enter when the centos54x64 and vc9x32 artifacts are available from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ are available"
+read
+wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
+wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
+scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
+scp blacktie-${CURRENT}-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
