@@ -22,21 +22,14 @@
 
 package io.narayana.lra.arquillian;
 
-import io.narayana.lra.arquillian.resource.JaxRsApplication;
-import io.narayana.lra.arquillian.resource.NonRootLRAParticipant;
-import io.narayana.lra.arquillian.resource.RootResource;
-import io.narayana.lra.arquillian.resource.TestLRAParticipant;
 import io.narayana.lra.client.NarayanaLRAClient;
-import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,15 +52,10 @@ public class NonRootLRAParticipantIT {
 
     @Deployment
     public static WebArchive deploy() {
-        return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantIT.class.getSimpleName() + ".war")
-            .addClasses(TestLRAParticipant.class, NonRootLRAParticipant.class, RootResource.class, JaxRsApplication.class)
-            .addPackages(true, Compensate.class.getPackage())
-            .addPackages(true, "io.narayana.lra")
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+        return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantIT.class.getSimpleName() + ".war");
     }
 
     @Test
-    @Ignore
     public void testNonRootLRAParticipantEnlist() {
         Client client = ClientBuilder.newClient();
 

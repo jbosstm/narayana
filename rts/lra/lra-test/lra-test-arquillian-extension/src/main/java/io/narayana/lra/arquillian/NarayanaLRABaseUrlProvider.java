@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package io.narayana.lra.tck.arquillian;
+package io.narayana.lra.arquillian;
 
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;

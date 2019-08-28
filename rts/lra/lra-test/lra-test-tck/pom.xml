@@ -24,8 +24,6 @@
         <lra.tck.consistency.shortDelay>0</lra.tck.consistency.shortDelay>
         <lra.tck.consistency.longDelay>20000</lra.tck.consistency.longDelay>
 
-        <version.org.jboss.weld.se>3.0.3.Final</version.org.jboss.weld.se>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -63,7 +61,6 @@
             <version>${version.microprofile.lra.tck}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
@@ -87,21 +84,10 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>arquillian</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-shaded</artifactId>
-            <version>${version.org.jboss.weld.se}</version>
-            <scope>test</scope>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-test-arquillian-extension</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
