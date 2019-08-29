@@ -280,7 +280,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         int httpStatus = -1;
 
         if (accepted) {
-            // the participant has previously returned a HTTP 200 Accepted response
+            // the participant has previously returned a HTTP 202 Accepted response
             // to indicate that it is in progress in which case the status URI
             // must be valid so try that first for the status
             int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
@@ -467,6 +467,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // 200 and 410 are the only valid response code for reporting the participant status
                 if (response.getStatus() == Response.Status.GONE.getStatusCode()) {
                     return TwoPhaseOutcome.FINISH_OK;
+                } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 } else if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.hasEntity()) {
                     // the participant is available again and has reported its status

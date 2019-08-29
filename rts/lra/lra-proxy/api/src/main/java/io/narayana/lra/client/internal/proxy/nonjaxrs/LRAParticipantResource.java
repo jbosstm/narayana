@@ -103,10 +103,10 @@ public class LRAParticipantResource {
     @PUT
     @Path("{participantId}/" + AFTER)
     @AfterLRA
-    public void afterLRA(@PathParam("participantId") String participantId,
+    public Response afterLRA(@PathParam("participantId") String participantId,
                          @HeaderParam(LRA_HTTP_ENDED_CONTEXT_HEADER) URI lraId,
                          LRAStatus lraStatus) {
-        getParticipant(participantId).afterLRA(lraId, lraStatus);
+        return getParticipant(participantId).afterLRA(lraId, lraStatus);
     }
 
     private LRAParticipant getParticipant(String participantId) {
