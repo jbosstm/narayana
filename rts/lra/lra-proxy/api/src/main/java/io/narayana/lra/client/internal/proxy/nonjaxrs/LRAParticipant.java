@@ -48,7 +48,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import static io.narayana.lra.LRAConstants.AFTER;
@@ -71,7 +70,7 @@ public class LRAParticipant {
     private Method afterLRAMethod;
     private Object instance;
 
-    private Map<URI, Optional<?>> participantStatusMap = new HashMap<>();
+    private Map<URI, ParticipantResult> participantStatusMap = new HashMap<>();
 
     LRAParticipant(Class<?> javaClass) {
         this.javaClass = javaClass;
@@ -111,8 +110,11 @@ public class LRAParticipant {
         return invokeParticipantMethod(forgetMethod, lraId, parentId, FORGET);
     }
 
-    synchronized void afterLRA(URI lraId, LRAStatus lraStatus) {
-        invokeMethod(AFTER, afterLRAMethod, getInstance(), lraId, lraStatus);
+    synchronized Response afterLRA(URI lraId, LRAStatus lraStatus) {
+        Object result = invokeMethod(AFTER, afterLRAMethod, getInstance(), lraId, lraStatus);
+
+        // return the result if it is a Response
+        return result instanceof Response ? (Response) result : Response.ok().build();
     }
 
     /**
@@ -213,9 +215,7 @@ public class LRAParticipant {
         Class<?> returnType = method.getReturnType();
 
         if (returnType.equals(CompletionStage.class)) {
-            Type genericReturnType = method.getGenericReturnType();
-            ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-            verifyReturnType((Class<?>) parameterizedType.getActualTypeArguments()[0], method.toGenericString(), true);
+            verifyReturnType(getCompletionStageActualType(method), method.toGenericString(), true);
             return;
         }
 
@@ -234,12 +234,11 @@ public class LRAParticipant {
     }
 
     private Response processCompletionStageResult(Method method, URI lraId, URI parentId, String type) {
-        Optional<?> optional = participantStatusMap.get(lraId);
-        if (optional.isPresent()) {
+        ParticipantResult participantResult = participantStatusMap.get(lraId);
+        if (participantResult.isReady()) {
             participantStatusMap.remove(lraId);
 
-            // only Optionals with ParticipantResult instances are put into the participantStatusMap so this cast is safe
-            Object result = optional.get();
+            Object result = participantResult.getValue();
 
             if (shouldInvokeParticipantMethod(result)) {
                 LRALogger.i18NLogger.warn_participantReturnsImmediateStateFromCompletionStage(
@@ -247,7 +246,7 @@ public class LRAParticipant {
                 return invokeParticipantMethod(method, lraId, parentId, type);
             }
 
-            return processResult(result, lraId, method, type);
+            return processResult(result, participantResult.getType(), type);
         } else {
             // participant is still compensating / compeleting
             return Response.accepted().build();
@@ -306,21 +305,27 @@ public class LRAParticipant {
     }
 
     private Response processResult(Object result, URI lraId, Method method, String type) {
-        Response.ResponseBuilder builder = Response.status(Response.Status.OK);
-
         if (result instanceof CompletionStage) {
             // store the CompletionStage result and respond compensating / completing
-            participantStatusMap.put(lraId, Optional.empty());
+            participantStatusMap.put(lraId, new ParticipantResult(getCompletionStageActualType(method)));
             ((CompletionStage<?>) result)
-                .thenAccept(res -> participantStatusMap.replace(lraId, Optional.of(res)))
+                .thenAccept(res -> participantStatusMap.get(lraId).setValue(res))
                 .exceptionally(throwable -> {
-                    participantStatusMap.replace(lraId, Optional.of(throwable));
+                    participantStatusMap.get(lraId).setValue(throwable);
                     return null;
                 });
-            return builder.status(Response.Status.ACCEPTED).build();
+            return Response.status(Response.Status.ACCEPTED).build();
         }
 
-        if (method.getReturnType().equals(Void.TYPE)) {
+        return processResult(result, method.getReturnType(), type);
+    }
+
+    private Response processResult(Object result, Class<?> resultType, String type) {
+        Response.ResponseBuilder builder = Response.status(Response.Status.OK);
+
+        // when the return type is void (Void.TYPE) or CompletionStage<Void> (Void.class)
+        // the result is equal to null so we need to first check the result type
+        if (resultType.equals(Void.TYPE) || resultType.equals(Void.class)) {
             // void return type and no exception was thrown
             builder.entity(type.equals(COMPLETE) ? ParticipantStatus.Completed.name() : ParticipantStatus.Compensated.name());
         } else if (result == null) {
@@ -334,11 +339,9 @@ public class LRAParticipant {
             }
         } else if (result instanceof Response) {
             return (Response) result;
-        } else if (result instanceof Throwable) {
-            builder.entity(processThrowable((Throwable) result, type));
         } else {
-            throw new IllegalStateException(
-                method.toGenericString() + ": invalid type of returned object: " + result.getClass());
+            // the result must be a Throwable as no other option exists (signatures are checked during deployment)
+            builder.entity(processThrowable((Throwable) result, type));
         }
 
         return builder.build();
@@ -403,5 +406,39 @@ public class LRAParticipant {
             statusMethod != null ||
             forgetMethod != null ||
             afterLRAMethod != null;
+    }
+
+    private static Class<?> getCompletionStageActualType(Method method) {
+        Type genericReturnType = method.getGenericReturnType();
+        ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+        return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+    }
+
+    private static final class ParticipantResult {
+
+        private boolean ready;
+        private Class<?> type;
+        private Object value;
+
+        ParticipantResult(Class<?> type) {
+            this.type = type;
+        }
+
+        boolean isReady() {
+            return ready;
+        }
+
+        void setValue(Object value) {
+            this.value = value;
+            this.ready = true;
+        }
+
+        Class<?> getType() {
+            return type;
+        }
+
+        Object getValue() {
+            return value;
+        }
     }
 }
