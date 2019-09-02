@@ -62,7 +62,7 @@ class NarayanaTransactionSynchronizationRegistry extends DelegatingTransactionSy
    * The version of this class for {@linkplain Serializable
    * serialization} purposes.
    */
-  private static final long serialVersionUID = 596L; // 596 ~= 5.9.8.Final
+  private static final long serialVersionUID = 596L; // 596 ~= 5.9.9.Final-SNAPSHOT
 
   /**
    * Creates a new, <strong>nonfunctional</strong> {@link

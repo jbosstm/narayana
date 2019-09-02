@@ -52,7 +52,7 @@ public abstract class DelegatingTransactionManager implements Serializable, Tran
    * The version of this class for {@linkplain Serializable
    * serialization} purposes.
    */
-  private static final long serialVersionUID = 596L; // 596 ~= 5.9.8.Final
+  private static final long serialVersionUID = 596L; // 596 ~= 5.9.9.Final-SNAPSHOT
 
   /**
    * The {@link TransactionManager} to which all operations will be
