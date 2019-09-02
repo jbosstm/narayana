@@ -441,7 +441,7 @@ public class Coordinator {
                     + " the status of the participant. The link rel names are"
                     + " complete, compensate and status.",
                     required = false)
-            @HeaderParam("Link") String compensatorLink,
+            @HeaderParam("Link") @DefaultValue("") String compensatorLink,
             @ApiParam(value = "opaque data that will be stored with the coordinator and passed back to\n"
                     + "the participant when the LRA is closed or cancelled.\n")
                     String compensatorData) throws NotFoundException {
