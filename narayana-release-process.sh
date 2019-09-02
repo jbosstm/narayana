@@ -220,6 +220,7 @@ docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
 docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
 docker push  docker.io/jbosstm/lra-coordinator:latest
 
+xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ &
 echo "Press enter when the centos54x64 and vc9x32 artifacts are available from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ are available"
 read
 wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
