@@ -328,7 +328,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to jaxrs filters
                         .async();
 
-                Future<Response> asyncResponse = getAsyncResponse(target, PUT.class.getName(), asyncInvoker, compensatorData, MediaType.WILDCARD);
+                Future<Response> asyncResponse = getAsyncResponse(target, PUT.class.getName(), asyncInvoker, compensatorData);
 
                 // the catch block below catches any Timeout exception
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
@@ -480,8 +480,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                         .async();
 
-                Future<Response> asyncResponse = getAsyncResponse(target, GET.class.getName(), asyncInvoker,
-                        "", MediaType.TEXT_PLAIN);
+                Future<Response> asyncResponse = getAsyncResponse(target, GET.class.getName(), asyncInvoker, compensatorData);
 
                 // if the attempt times out the catch block below will return a heuristic
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
@@ -523,7 +522,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                             .async();
 
                                     Future<Response> asyncResponse2 = getAsyncResponse(
-                                            target2, DELETE.class.getName(), asyncInvoker2, "", MediaType.TEXT_PLAIN);
+                                            target2, DELETE.class.getName(), asyncInvoker2, compensatorData);
 
                                     if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
                                             Response.Status.OK.getStatusCode()) {
@@ -572,7 +571,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return -1;
     }
 
-    private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String compensatorData, String mediaType) {
+    private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String compensatorData) {
         String queryString = target.getUri().getQuery();
 
         if (queryString != null) {
@@ -587,11 +586,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                             case "javax.ws.rs.GET":
                                 return asyncInvoker.get();
                             case "javax.ws.rs.PUT":
-                                return asyncInvoker.put(Entity.text(null));
-                              //  return asyncInvoker.put(Entity.entity(compensatorData, mediaType));
+                                return asyncInvoker.put(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
                             case "javax.ws.rs.POST":
-                                //return asyncInvoker.post(Entity.entity(compensatorData, mediaType));
-                                return asyncInvoker.post(Entity.text(null));
+                                return asyncInvoker.post(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
                             case "javax.ws.rs.DELETE":
                                 return asyncInvoker.delete();
                             default:
@@ -606,9 +603,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             case "javax.ws.rs.GET":
                 return asyncInvoker.get();
             case "javax.ws.rs.PUT":
-                return asyncInvoker.put(Entity.entity(compensatorData, mediaType));
+                return asyncInvoker.put(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
             case "javax.ws.rs.POST":
-                return asyncInvoker.post(Entity.entity(compensatorData, mediaType));
+                return asyncInvoker.post(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
             case "javax.ws.rs.DELETE":
                 return asyncInvoker.delete();
             default:
