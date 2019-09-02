@@ -81,6 +81,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     @Context
     protected ResourceInfo resourceInfo;
 
+    @Inject
+    private LRAParticipantRegistry lraParticipantRegistry;
+
     private NarayanaLRAClient lraClient;
 
     public ServerLRAFilter() throws Exception {
@@ -94,6 +97,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         }
 
         lraClient = new NarayanaLRAClient();
+
+        if (lraParticipantRegistry == null) {
+            LRALogger.i18NLogger.warn_nonJaxRsParticipantsNotAllowed();
+        }
     }
 
     private void checkForTx(LRA.Type type, URI lraId, boolean shouldNotBeNull) {
@@ -105,9 +112,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     type.name() + " but found tx");
         }
     }
-
-    @Inject
-    private LRAParticipantRegistry lraParticipantRegistry;
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
@@ -308,7 +312,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
-            LRAParticipant participant = lraParticipantRegistry.getParticipant(resourceInfo.getResourceClass().getName());
+            LRAParticipant participant = lraParticipantRegistry != null ?
+                lraParticipantRegistry.getParticipant(resourceInfo.getResourceClass().getName()) : null;
 
             if (terminateURIs.containsKey("Link") || participant != null) {
                 try {

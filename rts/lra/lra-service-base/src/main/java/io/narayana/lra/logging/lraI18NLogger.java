@@ -203,6 +203,10 @@ public interface lraI18NLogger {
     @Message(id = 25039, value = "Cannot process non JAX-RS LRA participant")
     void error_cannotProcessParticipant(@Cause ReflectiveOperationException e);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25040, value = "CDI cannot be detected, non JAX-RS LRA participants will not be processed")
+    void warn_nonJaxRsParticipantsNotAllowed();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
