@@ -62,6 +62,7 @@ import com.arjuna.ats.txoj.common.txojPropertyManager;
 import com.arjuna.ats.txoj.exceptions.LockStoreException;
 import com.arjuna.ats.txoj.lockstore.LockStore;
 import com.arjuna.ats.txoj.logging.txojLogger;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * This class provides (transactional) concurrency control for application
@@ -987,17 +988,22 @@ public class LockManager extends StateManager
                 {
                     try
                     {
+                        if (txojLogger.logger.isTraceEnabled()) {
+                            txojLogger.logger.trace("LockManager::initialise() lockStoreType is " + lockStoreType);
+                        }
+
                         if (lockStoreType.equals(BasicLockStore.class.getName())) {
                             lockStore = new BasicLockStore();
                         } else {
-                            ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+                            ObjectStoreEnvironmentBean objectStoreEnvironmentBean =
+                                    BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class);
                             objectStoreEnvironmentBean.setLocalOSRoot(systemKey);
                             lockStore = new BasicPersistentLockStore(objectStoreEnvironmentBean);
                         }
                     }
                     catch (final Exception ex)
                     {
-                        lockStore = null;
+                        txojLogger.i18NLogger.warn_LockManager_14(ex);
                     }
                 }
 

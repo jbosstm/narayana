@@ -225,6 +225,10 @@ public interface txojI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_OptimisticLockRecord_2(LockManager man);
 
+	@Message(id = 15052, value = "LockManager::initialise() could not initialise lock store", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	public void warn_LockManager_14(@Cause() Throwable arg0);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
