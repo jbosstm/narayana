@@ -60,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -97,7 +96,7 @@ public class Transaction extends AtomicAction {
         this.inFlight = true;
         this.parentId = parentId;
         this.clientId = clientId;
-        this.finishTime = LocalDateTime.MAX;
+        this.finishTime = null;
         this.status = LRAStatus.Active;
 
         this.scheduler = Executors.newScheduledThreadPool(1);
@@ -111,7 +110,7 @@ public class Transaction extends AtomicAction {
         this.id = null;
         this.parentId = null;
         this.clientId = null;
-        this.finishTime = LocalDateTime.MAX;
+        this.finishTime = null;
         this.status = LRAStatus.Active;
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
@@ -351,7 +350,7 @@ public class Transaction extends AtomicAction {
         return lraService.tryLockTransaction(getId());
     }
 
-    public int end(boolean compensate) {
+    public int end(boolean cancel) {
         ReentrantLock lock = null;
 
         try {
@@ -366,7 +365,11 @@ public class Transaction extends AtomicAction {
                 return status();
             }
 
-            return doEnd(compensate);
+            if (status == LRAStatus.Cancelling) {
+                return doEnd(true);
+            }
+
+            return doEnd(cancel);
         } finally {
             if (lock != null) {
                 lock.unlock();
@@ -401,7 +404,7 @@ public class Transaction extends AtomicAction {
     }
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
-    private int doEnd(boolean compensate) {
+    private int doEnd(boolean cancel) {
         inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();
@@ -411,18 +414,18 @@ public class Transaction extends AtomicAction {
             scheduledAbort = null;
         }
 
-        // nested compensators need to be remembered in case the enclosing LRA decides to compensate
+        // nested compensators need to be remembered in case the enclosing LRA decides to cancel
         // also save the list so that we can retrieve any response data after committing compensators
         // if (nested)
         savePendingList();
 
         if ((res != ActionStatus.RUNNING) && (res != ActionStatus.ABORT_ONLY)) {
-            if (nested && compensate) {
+            if (nested && cancel) {
                 /*
                  * Note that we do not hook into ActionType.NESTED because that would mean that after a
                  * nested txn is committed its participants are merged
                  * with the parent and they can then only be aborted if the parent aborts whereas in
-                 * the LRA model nested LRAs can be compensated whilst the enclosing LRA is completed
+                 * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
                  */
 
                 // repopulate the pending list TODO it won't neccessarily be present during recovery
@@ -441,7 +444,7 @@ public class Transaction extends AtomicAction {
                 status = toLRAStatus(status());
             }
         } else {
-            if (compensate || status() == ActionStatus.ABORT_ONLY) {
+            if (cancel || status() == ActionStatus.ABORT_ONLY) {
                 // compensators must be called in reverse order so reverse the pending list
                 int sz = pendingList == null ? 0 : pendingList.size();
 
@@ -462,7 +465,7 @@ public class Transaction extends AtomicAction {
                 res = super.status();
             } else {
                 updateAfterLRAListeners(pendingList);
-                // tell each participant that the LRA completed ok
+                // tell each participant that the LRA closed ok
                 updateState(LRAStatus.Closing);
                 res = super.End(true);
             }
@@ -477,7 +480,7 @@ public class Transaction extends AtomicAction {
         }
 
         if (getSize(heuristicList) != 0 || getSize(failedList) != 0) {
-            status = compensate ? LRAStatus.Cancelling : LRAStatus.Closing;
+            status = cancel ? LRAStatus.Cancelling : LRAStatus.Closing;
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
             status = LRAStatus.Closing;
         } else {
@@ -560,10 +563,8 @@ public class Transaction extends AtomicAction {
         p.setRecoveryURI(recoveryUrlBase, txId, pid);
 
         if (add(p) != AddOutcome.AR_REJECTED) {
-            if (!p.setTimeLimit(scheduler, timeLimit, this)) {
-                if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.infof("Transaction.enlistParticipant unable to start timer for %s", participantUrl);
-                }
+            if (timeLimit > 0) {
+                setTimeLimit(timeLimit);
             }
 
             return p;
@@ -732,32 +733,51 @@ public class Transaction extends AtomicAction {
     }
 
     private int scheduleCancelation(Runnable runnable, Long timeLimit) {
-        if ((scheduledAbort != null && !scheduledAbort.cancel(false)) || status() != ActionStatus.RUNNING) {
+        if (status() != ActionStatus.RUNNING) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
         if (timeLimit > 0) {
-            finishTime = LocalDateTime.now().plusNanos(timeLimit * 1000000);
+            if (finishTime != null) {
+                // check whether the new time limit is less than the current one
+                LocalDateTime ft = LocalDateTime.now().plusNanos(timeLimit * 1000000);
+
+                if (ft.isAfter(finishTime)) {
+                    // the existing timer finishes before the requested one so there is nothing to do
+                    return Response.Status.OK.getStatusCode();
+                }
+
+                // it is earlier so cancel the current timer
+                finishTime = ft;
+
+                if (scheduledAbort != null) {
+                    scheduledAbort.cancel(false);
+                }
+            } else {
+                finishTime = LocalDateTime.now().plusNanos(timeLimit * 1000000);
+            }
 
             scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
-        } else {
-            finishTime = null;
-
-            scheduledAbort = null;
         }
 
         return Response.Status.OK.getStatusCode();
     }
 
     private void abortLRA() {
-        int status = status();
+        int actionStatus = status();
 
-        if (status == ActionStatus.RUNNING || status == ActionStatus.ABORT_ONLY) {
+        scheduledAbort = null;
+
+        if (actionStatus == ActionStatus.RUNNING || actionStatus == ActionStatus.ABORT_ONLY) {
             if (LRALogger.logger.isDebugEnabled()) {
                 LRALogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
             }
 
-            CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
+            // just update the status for now and wait for the external LRA close and cancel from there instead
+            status = LRAStatus.Cancelling;
+
+            // when JBTM-3189 is fixed uncomment the following async cancelLRA call
+            //CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
         }
     }
 

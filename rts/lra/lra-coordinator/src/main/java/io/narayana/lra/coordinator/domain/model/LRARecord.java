@@ -53,13 +53,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -71,12 +68,11 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
-    private static String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
-    static long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
+    private static final String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
+    static final long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
     private static final String COMPENSATE_REL = "compensate";
     private static final String COMPLETE_REL = "complete";
 
-    private Transaction lra;
     private URI lraId;
     private URI parentId;
     private URI recoveryURI;
@@ -89,12 +85,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private URI afterURI;
 
     private String responseData;
-    private LocalTime cancelOn; // TODO make sure this acted upon during restore_state()
     private String compensatorData;
-    private ScheduledFuture<?> scheduledAbort;
     private LRAService lraService;
     private ParticipantStatus status;
-    boolean accepted;
+    private boolean accepted;
 
     public LRARecord() {
     }
@@ -220,17 +214,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return TwoPhaseOutcome.PREPARE_OK;
     }
 
-    private void topLevelAbortFromTimer() {
-        if (lra != null) {
-            lra.timedOut(this);
-        } else {
-            doEnd(true);
-        }
-    }
-
     @Override
     // NB if a participant needs to know
-    // if the lra completed then it can ask the io.narayana.lra.coordinator. A 404 status implies:
+    // if the lra closed then it can ask the io.narayana.lra.coordinator. A 404 status implies:
     // - all compensators completed ok, or
     // - all compensators compensated ok
     // This participant can infer which possibility happened since it will have been told to complete or compensate
@@ -262,13 +248,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private int tryDoEnd(boolean compensate) {
         URI endPath;
-
-        // cancel any timer associated with this participant
-        if (scheduledAbort != null) {
-            // NB this could have been called from the scheduler so don't cancel our self!
-            scheduledAbort.cancel(false);
-            scheduledAbort = null;
-        }
 
         if (ParticipantStatus.Compensating.equals(status)) {
             compensate = true;
@@ -831,30 +810,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         return 0;
-    }
-
-    boolean setTimeLimit(ScheduledExecutorService scheduler, long timeLimit, Transaction lra) {
-        this.lra = lra;
-
-        return scheduleCancelation(this::topLevelAbortFromTimer, scheduler, timeLimit);
-    }
-
-    private boolean scheduleCancelation(Runnable runnable, ScheduledExecutorService scheduler, Long timeLimit) {
-        if ((scheduledAbort != null && !scheduledAbort.cancel(false))) {
-            return false;
-        }
-
-        if (timeLimit > 0) {
-            cancelOn = LocalTime.now().plusNanos(timeLimit * 1000000);
-
-            scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
-        } else {
-            cancelOn = null;
-
-            scheduledAbort = null;
-        }
-
-        return true;
     }
 
     public URI getRecoveryCoordinatorURI() {
