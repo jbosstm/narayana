@@ -89,7 +89,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     public ServerLRAFilter() throws Exception {
         if (!NarayanaLRAClient.isInitialised()) {
             String lcHost = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost");
-            int lcPort = Integer.getInteger(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, 8082);
+            int lcPort = Integer.getInteger(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, 8080);
             String lraCoordinatorPath = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PATH_KEY, COORDINATOR_PATH_NAME);
             String lraCoordinatorUrl = String.format("http://%s:%d/%s", lcHost, lcPort, lraCoordinatorPath);
 
