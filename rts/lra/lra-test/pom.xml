@@ -104,6 +104,7 @@
                                     <workingDir>${basedir}</workingDir>
                                     <healthCheckUrl>http://localhost:${lra.coordinator.port}/lra-coordinator</healthCheckUrl>
                                     <waitForInterrupt>false</waitForInterrupt>
+                                    <waitAfterLaunch>90</waitAfterLaunch>
                                     <!--<processLogFile>${project.build.directory}/failsafe-reports/lra-coordinator-startup.log</processLogFile>-->
                                     <environment>
                                         <thorntail.http.port>${lra.coordinator.port}</thorntail.http.port>
