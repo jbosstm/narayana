@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function fatal {
   if [[ -z $PROFILE ]]; then
       comment_on_pull "Tests failed ($BUILD_URL): $1"
