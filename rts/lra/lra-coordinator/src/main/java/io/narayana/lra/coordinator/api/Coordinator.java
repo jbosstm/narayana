@@ -448,7 +448,7 @@ public class Coordinator {
         // test to see if the join request contains any participant specific data
         boolean isLink = isLink(compensatorData);
 
-        if (compensatorLink != null) {
+        if (compensatorLink != null && !compensatorLink.isEmpty()) {
             return joinLRA(toURI(lraId), timeLimit, null, compensatorLink, compensatorData);
         }
 
