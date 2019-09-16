@@ -114,16 +114,20 @@ public class CachedTest
             t[i].start();
         }
 
+        boolean passed = true;
         for (int j = 0; j < threads; j++) {
             System.err.println("j: "+j);
             t[j].join();
-            assertTrue(((ThreadWriter) t[j]).passed);
+            passed = passed && ((ThreadWriter) t[j]).passed;
         }
 
         long ftime = Calendar.getInstance().getTime().getTime();
         long timeTaken = ftime - stime;
 
         store.sync();
+        
+        
+        assertTrue(passed);
 
         System.err.println("time for " + threads + " users is " + timeTaken);
     }
