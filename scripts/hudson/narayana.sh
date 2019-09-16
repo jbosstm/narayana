@@ -780,6 +780,8 @@ function qa_tests_once {
   fi
   # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
   ant get.drivers
+  [ $? = 0 ] || fatal "get drivers failed"
+  
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
