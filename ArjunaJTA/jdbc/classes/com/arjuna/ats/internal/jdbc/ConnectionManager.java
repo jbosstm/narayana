@@ -53,7 +53,7 @@ public class ConnectionManager {
     /*
      * Connections are pooled for the duration of a transaction.
      */
-    public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
+    public static Connection create (String dbUrl, Properties info) throws SQLException
     {
         String user = info.getProperty(TransactionalDriver.userName, "");
         String passwd = info.getProperty(TransactionalDriver.password, "");
@@ -161,13 +161,13 @@ public class ConnectionManager {
         }
     }
 
-    public synchronized static void remove(ConnectionImple conn) {
+    public static void remove(ConnectionImple conn) {
         synchronized (_connections) {
             _connections.remove(conn);
         }
     }
 
-    public synchronized static void release(ConnectionImple conn) {
+    public static void release(ConnectionImple conn) {
         synchronized (_connections) {
             _connections.notify();
         }
