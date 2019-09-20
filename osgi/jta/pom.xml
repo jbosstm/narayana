@@ -213,6 +213,7 @@
 						   org.apache.karaf.shell.api.action.lifecycle;resolution:=optional,
 						   javax.enterprise.util;resolution:=optional,
 						   javax.interceptor;resolution:=optional,
+						   javax.security.cert;resolution:=optional,
 						   javax.enterprise.context;resolution:=optional
 					   </Import-Package>
 					   <Embed-Transitive>true</Embed-Transitive>
@@ -225,6 +226,7 @@
 						   arjuna;inline=false,
 						   narayana-jts-integration;inline=false,
 						   artemis*;inline=false,
+						   activemq*;inline=false,
 						   netty*;inline=false
 					   </Embed-Dependency>
 					   <Provide-Capability>
