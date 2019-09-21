@@ -203,7 +203,7 @@
 			<destName>xts_third_party_licenses.txt</destName>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator/target/lra-coordinator-thorntail.jar</source>
+			<source>../rts/lra/lra-coordinator/target/lra-coordinator-runner.jar</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
@@ -310,6 +310,10 @@
 			<directory>../rest-tx/quickstarts
 			</directory>
 			<outputDirectory>quickstarts/rest-tx</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../rts/lra/lra-coordinator/target/lib</directory>
+			<outputDirectory>rts/lra/lib</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly> 

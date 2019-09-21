@@ -14,7 +14,7 @@
     <name>LRA tests: MicroProfile TCK</name>
 
     <properties>        
-        <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-thorntail.jar</lra.coordinator.jar.path>
+        <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
         
         <lra.tck.suite.host>localhost</lra.tck.suite.host>
         <lra.tck.suite.port>8180</lra.tck.suite.port>

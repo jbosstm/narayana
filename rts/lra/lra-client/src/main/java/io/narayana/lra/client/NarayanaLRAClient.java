@@ -714,7 +714,7 @@ public class NarayanaLRAClient implements Closeable {
                 responseEntity = response.readEntity(String.class).replaceAll("^\"|\"$", "");
                 return new URI(responseEntity);
             } catch (URISyntaxException e) {
-                LRALogger.logger.infof("join %s returned an invalid recovery URI: %", lraId, responseEntity);
+                LRALogger.logger.infof("join %s returned an invalid recovery URI: %s", lraId, responseEntity);
                 throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
                         "join " + lraId + " returned an invalid recovery URI: " + responseEntity);
                 return null;

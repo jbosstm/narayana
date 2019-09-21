@@ -32,6 +32,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  
   <properties>
     <version.thorntail>2.4.0.Final</version.thorntail>
+    <version.quarkus>0.22.0</version.quarkus>
     <!-- Impportant: the resteasy client version must match the one used by wildfly.thorntail -->
     <version.resteasy-client>3.6.2.Final</version.resteasy-client>
     <version.resteasy>3.6.2.Final</version.resteasy>
