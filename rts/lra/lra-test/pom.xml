@@ -26,7 +26,7 @@
         <lra.coordinator.trace.params></lra.coordinator.trace.params>
         <lra.coordinator.debug.params></lra.coordinator.debug.params> <!-- has content when -Ddebug.coordinator is specified -->
         <lra.coordinator.debug.port>8787</lra.coordinator.debug.port>
-        <lra.coordinator.jar.path>${project.basedir}/../lra-coordinator/target/lra-coordinator-thorntail.jar</lra.coordinator.jar.path>
+        <lra.coordinator.jar.path>${project.basedir}/../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
     </properties>
     
     <dependencies>
@@ -115,10 +115,10 @@
                                         <argument>-Djava.net.preferIPv4Stack=true</argument>
                                         <argument>${lra.coordinator.debug.params}</argument>
                                         <argument>${lra.coordinator.trace.params}</argument>
-                                        <argument>-jar</argument>
-                                        <argument>${lra.coordinator.jar.path}</argument>
                                         <argument>-DRecoveryEnvironmentBean.periodicRecoveryPeriod=10</argument>
                                         <argument>-DRecoveryEnvironmentBean.recoveryBackoffPeriod=5</argument>
+                                        <argument>-jar</argument>
+                                        <argument>${lra.coordinator.jar.path}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
