@@ -1571,6 +1571,11 @@ public interface arjunaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_coordinator_AbstractRecord_create_failure(Integer arg1, String arg2);
 
+	@Message(id = 12393, value = "The Artemis journal was requested to be AIO version but this is not available on your machine",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+    public void warn_not_asyncIO();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
