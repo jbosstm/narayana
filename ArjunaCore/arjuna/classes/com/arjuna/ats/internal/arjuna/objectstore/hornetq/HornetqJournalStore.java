@@ -121,6 +121,9 @@ public class HornetqJournalStore
                     envBean.getMaxIO(),
                     envBean.isLogRates());
         } else {
+            if (envBean.isAsyncIO()) {
+                tsLogger.i18NLogger.warn_not_asyncIO();
+            }
             sequentialFileFactory = new NIOSequentialFileFactory(
                     storeDir,
                     true,
