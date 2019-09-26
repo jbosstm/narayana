@@ -82,7 +82,7 @@ public class IsolatableServersClassLoader extends ClassLoader {
 		return super.findClass(name);
 	}
 
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
+	public synchronized Class<?> loadClass(String name) throws ClassNotFoundException {
 		if (!name.matches(ignoredPackage + ".[A-Za-z0-9]*") && otherIgnoredPackage != null && name.startsWith(otherIgnoredPackage)) {
 			throw new ClassNotFoundException(name);
 		}
