@@ -207,6 +207,11 @@
 			<fileMode>0755</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
+		<file>
+			<source>../rts/lra/lra-coordinator/target/lra-coordinator.war</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>rts/lra/</outputDirectory>
+		</file>
 	</files>
 	<fileSets>
 		<fileSet>
