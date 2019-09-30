@@ -258,6 +258,12 @@
           </exclusion>
         </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.stm</groupId>
+      <artifactId>stm</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -335,7 +341,7 @@
                 <configuration>
                   <includeDependencySources>true</includeDependencySources>
                   <docfilessubdirs>true</docfilessubdirs>
-                  <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11</subpackages>
+                  <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11:org.jboss.stm</subpackages>
                   <!-- use this instead of excludePackageNames because of MJAVADOC-299 -->
                   <additionalparam>
                     -private
@@ -364,6 +370,10 @@
                     <group>
                       <title>RTS</title>
                       <packages>org.jboss.jbossts.star*</packages>
+                    </group>
+                    <group>
+                      <title>STM</title>
+                      <packages>org.jboss.narayana.stm*</packages>
                     </group>
                     <group>
                       <title>Tomcat JTA</title>
