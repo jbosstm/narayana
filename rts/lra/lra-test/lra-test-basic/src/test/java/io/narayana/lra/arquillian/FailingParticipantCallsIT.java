@@ -24,6 +24,7 @@ package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
+import org.eclipse.microprofile.lra.tck.service.spi.LraRecoveryService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -52,7 +53,8 @@ public class FailingParticipantCallsIT {
 
     @Deployment
     public static WebArchive deploy() {
-        return ShrinkWrap.create(WebArchive.class, FailingParticipantCallsIT.class.getSimpleName() + ".war");
+        return ShrinkWrap.create(WebArchive.class, FailingParticipantCallsIT.class.getSimpleName() + ".war")
+            .addClasses(LraRecoveryService.class);
     }
 
     @Before
@@ -90,7 +92,7 @@ public class FailingParticipantCallsIT {
             }
         }
 
-        new NarayanaLRARecovery().waitForRecovery(lra);
+        new NarayanaLRARecovery().triggerRecovery(lra);
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())

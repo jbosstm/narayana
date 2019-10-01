@@ -1,73 +1,46 @@
-/*
- * JBoss, Home of Professional Open Source.
- * Copyright 2020, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-
 package io.narayana.lra.arquillian.spi;
 
 import io.narayana.lra.LRAConstants;
-import io.narayana.lra.logging.LRALogger;
+import io.narayana.lra.client.NarayanaLRAClient;
+import org.eclipse.microprofile.lra.tck.service.spi.LraRecoveryService;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
-public class NarayanaLRARecovery {
+@ApplicationScoped
+public class NarayanaLRARecovery implements LraRecoveryService {
 
-    public void waitForCallbacks(URI lraId) {
-        // no action is needed, tck callbacks calls are sufficiently fast for TCK
+    @Override
+    public void triggerRecovery() {
+        recoverLRAs(
+            System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost"),
+            Integer.parseInt(System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, "8080")));
     }
 
-    // TODO remove once this class implements LRARecoveryService
-    public void waitForRecovery(URI lraId) {
-        int counter = 0;
-
-        do {
-            LRALogger.logger.info("Recovery attempt #" + ++counter);
-        } while (!waitForEndPhaseReplay(lraId));
-        LRALogger.logger.info("LRA " + lraId + " has finished the recovery " + counter);
-    }
-
-    public boolean waitForEndPhaseReplay(URI lraId) {
+    @Override
+    public void triggerRecovery(URI lraId) {
         String host = lraId.getHost();
         int port = lraId.getPort();
         if (!recoverLRAs(host, port, lraId)) {
-            // first recovery scan probably collided with periodic recovery which started
+            // first recovery scan probably collided with periodic recovevery which started
             // before the test execution so try once more
-            return recoverLRAs(host, port, lraId);
+            recoverLRAs(host, port, lraId);
         }
-
-        return true;
     }
 
     /**
      * Invokes LRA coordinator recovery REST endpoint and returns whether the recovery of intended LRAs happended
      *
-     * @param host  the LRA coordinator host address
-     * @param port  the LRA coordinator port
-     * @param lraId the LRA id of the LRA that is intended to be recovered
-     * @return true the intended LRA recovered, false otherwise
+     * @param host the LRA coordinator host address
+     * @param port the LRA coordinator port
+     * @param lraIds the LRA ids of the LRAs that are intended to be recovered
+     * @return true all intended LRAs recovered, false otherwise
      */
-    private boolean recoverLRAs(String host, int port, URI lraId) {
+    private boolean recoverLRAs(String host, int port, URI... lraIds) {
         // trigger a recovery scan
         Client recoveryCoordinatorClient = ClientBuilder.newClient();
 
@@ -81,9 +54,11 @@ public class NarayanaLRARecovery {
             String json = response.readEntity(String.class);
             response.close();
 
-            if (json.contains(lraId.toASCIIString())) {
-                // intended LRA didn't recover
-                return false;
+            for (URI lraId : lraIds) {
+                if (json.contains(lraId.toASCIIString())) {
+                    // intended LRA didn't recover
+                    return false;
+                }
             }
 
             return true;
