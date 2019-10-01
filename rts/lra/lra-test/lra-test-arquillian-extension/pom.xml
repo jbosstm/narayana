@@ -21,6 +21,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.microprofile.lra</groupId>
+      <artifactId>microprofile-lra-tck</artifactId>
+      <version>${version.microprofile.lra.tck}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>narayana-lra</artifactId>
       <version>${project.version}</version>
@@ -35,11 +40,6 @@
       <artifactId>shrinkwrap-api</artifactId>
       <version>${version.org.jboss.shrinkwrap}</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.thorntail</groupId>
-      <artifactId>arquillian</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
