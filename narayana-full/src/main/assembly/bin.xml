@@ -208,7 +208,7 @@
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator/target/lra-coordinator.war</source>
+			<source>../rts/lra/lra-coordinator-jar/target/lra-coordinator.jar</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>

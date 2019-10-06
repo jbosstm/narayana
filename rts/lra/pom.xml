@@ -143,6 +143,8 @@
     <modules>
         <module>lra-service-base</module>
         <module>lra-client</module>
+        <module>lra-coordinator-jar</module>
+        <module>lra-coordinator-thorntail</module>
         <module>lra-coordinator</module>
         <module>lra-proxy</module>
         <module>lra-annotation-checker</module>

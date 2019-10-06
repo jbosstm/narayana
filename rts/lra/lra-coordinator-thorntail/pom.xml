@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss.narayana.rts</groupId>
+        <artifactId>lra-parent</artifactId>
+        <version>5.9.9.Final-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>lra-coordinator-thorntail</artifactId>
+    <name>Thorntail LRA Coordinator</name>
+    <packaging>jar</packaging>
+
+    <build>
+        <finalName>lra-coordinator</finalName>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-coordinator-jar</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+      <profile>
+          <id>release</id>
+          <build>
+              <plugins>
+                <plugin>
+                  <inherited>false</inherited>
+                  <groupId>org.sonatype.plugins</groupId>
+                  <artifactId>nexus-staging-maven-plugin</artifactId>
+                </plugin>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-install-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>default-install</id>
+                      <phase>install</phase>
+                    </execution>
+                  </executions>
+                  <inherited>false</inherited>
+                </plugin>
+              </plugins>
+          </build>
+      </profile>
+    </profiles>
+</project>
