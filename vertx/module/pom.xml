@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.jboss.narayana.vertx</groupId>
     <artifactId>narayana-vertx</artifactId>
-    <version>5.9.9.Final-SNAPSHOT</version>
+    <version>5.10.0.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
