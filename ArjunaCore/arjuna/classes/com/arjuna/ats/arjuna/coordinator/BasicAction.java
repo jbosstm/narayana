@@ -500,7 +500,7 @@ public class BasicAction extends StateManager
         }
         catch (ObjectStoreException e)
         {
-            tsLogger.logger.warn(e);
+            tsLogger.i18NLogger.warn_could_not_activate_type_at_object_store(type(), aaStore, e);
 
             return false;
         }

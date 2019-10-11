@@ -31,8 +31,11 @@ import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageLogger;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 
 /**
  * i18n log messages for the arjuna module.
@@ -1496,6 +1499,19 @@ public interface arjunaI18NLogger {
 	@Message(id = 12378, value = "OSB: Error constructing record header reader", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
 	public void info_osb_HeaderStateCtorFail(@Cause() Throwable arg0);
+
+    @Message(id = 12394, value = "Could not close transaction listener server socket ''{0}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_close_transaction_listener_socket(ServerSocket ss, @Cause Throwable exception);
+
+    @Message(id = 12395, value = "Could not close transaction listener socket connection ''{0}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_close_transaction_listener_connection(Socket ss, @Cause Throwable exception);
+
+    @Message(id = 12396, value = "Cannot activate type ''{0}'' at object store ''{1}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_activate_type_at_object_store(String type, ParticipantStore store, @Cause Throwable exception);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
