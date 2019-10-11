@@ -95,8 +95,9 @@ public class TransactionImporterImple implements TransactionImporter
 	public TransactionImportResult importRemoteTransaction(Xid xid, int timeout)
 			throws XAException
 	{
-		if (xid == null)
-			throw new IllegalArgumentException();
+		if (xid == null) {
+			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_imported_transaction_uid_is_null());
+		}
 
 		/*
 		 * the imported transaction map is keyed by xid and the xid used is the one created inside
@@ -118,13 +119,15 @@ public class TransactionImporterImple implements TransactionImporter
 	public TransactionImple recoverTransaction(Uid actId)
 			throws XAException
 	{
-		if (actId == null)
-			throw new IllegalArgumentException();
+		if (actId == null) {
+			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_imported_transaction_uid_is_null());
+		}
 
 		TransactionImple recovered = new TransactionImple(actId);
 
-		if (recovered.baseXid() == null)
-		    throw new IllegalArgumentException();
+		if (recovered.baseXid() == null) {
+		    throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_imported_transaction_base_id_is_null(actId, recovered));
+		}
 		
 		/*
 		 * Is the transaction already in the map? This may be the case because
@@ -156,8 +159,9 @@ public class TransactionImporterImple implements TransactionImporter
 	public SubordinateTransaction getImportedTransaction(Xid xid)
 			throws XAException
 	{
-		if (xid == null)
-			throw new IllegalArgumentException();
+		if (xid == null) {
+			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_xid_is_null());
+		}
 
 		AtomicReference<TransactionImple> holder = _transactions.get(new SubordinateXidImple(xid));
 		TransactionImple tx = holder == null ? null : holder.get();
@@ -204,8 +208,9 @@ public class TransactionImporterImple implements TransactionImporter
 
 	public void removeImportedTransaction(Xid xid) throws XAException
 	{
-		if (xid == null)
-			throw new IllegalArgumentException();
+		if (xid == null) {
+			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_xid_is_null());
+		}
 
         AtomicReference<TransactionImple> remove = _transactions.remove(new SubordinateXidImple(xid));
         if (remove != null) {

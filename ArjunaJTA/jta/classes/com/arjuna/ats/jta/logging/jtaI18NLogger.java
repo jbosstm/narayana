@@ -591,6 +591,15 @@ public interface jtaI18NLogger {
             + "Recovery is won''t able to decide about outcome. Transaction is marked as heuristic to be decided by administrator.", format = MESSAGE_FORMAT)
     String get_onephase_heuristic_commit_failure(StateManager action);
 
+    @Message(id = 16146, value = "Cannot work with the imported transaction as UID is null.", format = MESSAGE_FORMAT)
+    String get_error_imported_transaction_uid_is_null();
+
+    @Message(id = 16147, value = "Cannot recover imported transaction of UID ''{0}'' of transaction ''{1}'' as transaction base Xid is null.", format = MESSAGE_FORMAT)
+    String get_error_imported_transaction_base_id_is_null(Uid uid, javax.transaction.Transaction txn);
+
+    @Message(id = 16148, value = "Cannot work further as the argument Xid is null.", format = MESSAGE_FORMAT)
+    String get_error_xid_is_null();
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.
