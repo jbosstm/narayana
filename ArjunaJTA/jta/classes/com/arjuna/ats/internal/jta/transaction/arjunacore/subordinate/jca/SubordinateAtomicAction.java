@@ -41,6 +41,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.Header;
 import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
@@ -206,6 +207,9 @@ public class SubordinateAtomicAction extends
 		}
 		catch (IOException ex)
 		{
+		    if (jtaLogger.logger.isDebugEnabled()) {
+		        jtaLogger.logger.debugf(ex, "Cannot restrote state for type %s and action %s", getType(), this.toString());
+		    }
 			return false;
 		}
 		
