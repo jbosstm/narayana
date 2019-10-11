@@ -44,6 +44,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
         // adding Narayana LRA implementation under the Thorntail deployment
         archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
                 .addPackages(true, io.narayana.lra.Current.class.getPackage())
+                .addPackages(true, org.apache.http.HttpEntity.class.getPackage())
                 .addPackage(LRACDIExtension.class.getPackage())
                 .addAsResource("META-INF/services/javax.enterprise.inject.spi.Extension")
                 .addClass(org.jboss.weld.exceptions.DefinitionException.class)

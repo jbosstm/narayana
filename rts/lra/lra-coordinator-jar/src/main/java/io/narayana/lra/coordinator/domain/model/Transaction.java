@@ -30,6 +30,8 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import io.narayana.lra.RequestBuilder;
+import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -40,18 +42,14 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -60,17 +58,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static io.narayana.lra.coordinator.domain.model.LRARecord.PARTICIPANT_TIMEOUT;
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.LRAHttpClient.PARTICIPANT_TIMEOUT;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -540,7 +535,7 @@ public class Transaction extends AtomicAction {
         participant = enlistParticipant(coordinatorUrl, participantUrl, recoveryUrlBase, null,
                 timeLimit, compensatorData);
 
-        if (participant != null && findLRAParticipant(participantUrl, false) != null) {
+        if (participant != null) {
             // need to remember that there is a new participant
             deactivate(); // if it fails the superclass will have logged a warning
             savedIntentionList = true; // need this clean up if the LRA times out
@@ -549,12 +544,8 @@ public class Transaction extends AtomicAction {
         return participant;
     }
 
-    public LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
-                                       long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        if (findLRAParticipant(participantUrl, false) != null) {
-            return null;    // already enlisted
-        }
-
+    private LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
+                                        long timeLimit, String compensatorData) throws UnsupportedEncodingException {
         LRARecord p = new LRARecord(lraService, coordinatorUrl.toASCIIString(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
@@ -605,15 +596,20 @@ public class Transaction extends AtomicAction {
     }
 
     private LRARecord findLRAParticipant(String participantUrl, boolean remove) {
-        LRARecord rec = null;
+        LRARecord rec;
 
         try {
-            URI recoveryUrl = new URL(participantUrl).toURI();
+            URI recoveryUrl = new URI(LRARecord.cannonicalForm(participantUrl));
 
             rec = findLRAParticipantByRecoveryUrl(recoveryUrl, remove, pendingList, preparedList, heuristicList, failedList);
 
-        } catch (MalformedURLException | URISyntaxException ignore) {
-            String pUrl = LRARecord.extractCompensator(id, participantUrl);
+        } catch (URISyntaxException ignore) {
+            String pUrl;
+            try {
+                pUrl = LRARecord.extractCompensator(id, participantUrl);
+            } catch (URISyntaxException e) {
+                return null;
+            }
             rec = findLRAParticipant(pUrl, remove, pendingList, preparedList, heuristicList, failedList);
         }
 
@@ -627,14 +623,18 @@ public class Transaction extends AtomicAction {
                 AbstractRecord r;
 
                 if (participantUrl.indexOf(',') != -1) {
-                    participantUrl = LRARecord.extractCompensator(id, participantUrl);
+                    try {
+                        participantUrl = LRARecord.extractCompensator(id, participantUrl);
+                    } catch (URISyntaxException e) {
+                        continue;
+                    }
                 }
 
                 while ((r = i.iterate()) != null) {
                     if (r instanceof LRARecord) {
                         LRARecord rr = (LRARecord) r;
                         // can't use == because this may be a recovery scenario
-                        if (rr.getParticipantPath().equals(participantUrl) ||
+                        if (rr.getCompensator().equals(participantUrl) ||
                                 rr.getCompensator().equals(participantUrl)) {
                             if (remove) {
                                 list.remove(rr);
@@ -727,7 +727,6 @@ public class Transaction extends AtomicAction {
         return res;
     }
 
-    // TODO should this trickle down to compensators or do we need a separate API for that
     public int setTimeLimit(Long timeLimit) {
         return scheduleCancelation(this::abortLRA, timeLimit);
     }
@@ -773,11 +772,9 @@ public class Transaction extends AtomicAction {
                 LRALogger.logger.debugf("Transaction.abortLRA cancelling LRA %s", id);
             }
 
-            // just update the status for now and wait for the external LRA close and cancel from there instead
             status = LRAStatus.Cancelling;
 
-            // when JBTM-3189 is fixed uncomment the following async cancelLRA call
-            //CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
+            CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
         }
     }
 
@@ -848,46 +845,35 @@ public class Transaction extends AtomicAction {
         boolean notifiedAll = true;
 
         if (afterLRAListeners != null) {
-            Client client = ClientBuilder.newClient();
-
             try {
                 Iterator<AfterLRAListener> listeners = afterLRAListeners.iterator();
 
                 while (listeners.hasNext()) {
                     AfterLRAListener participant = listeners.next();
-                    Response response = null;
+                    ResponseHolder response = null;
 
                     try {
-                        Future<Response> asyncResponse = client.target(participant.notificationURI)
+                        response = new RequestBuilder(participant.notificationURI)
                                 .request()
                                 .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
-                                .header(LRA_HTTP_RECOVERY_HEADER, participant.recoveryId.toASCIIString())
-                                .async()
-                                .put(Entity.text(status.name()));
-
-                        response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+                                .header(LRA.LRA_HTTP_RECOVERY_HEADER, participant.recoveryId.toASCIIString())
+                                .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
+                                .put(status.name(), MediaType.TEXT_PLAIN);
 
                         if (response.getStatus() == 200) {
                             listeners.remove();
                         } else {
                             notifiedAll = false;
                         }
-
-                        response = null;
-                    } catch (WebApplicationException | InterruptedException | ExecutionException | TimeoutException e) {
+                    } catch (WebApplicationException e) {
                         notifiedAll = false;
 
                         if (LRALogger.logger.isInfoEnabled()) {
                             LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", participant.notificationURI, e.getMessage());
                         }
-                    } finally {
-                        if (response != null) {
-                            response.close();
-                        }
                     }
                 }
             } finally {
-                client.close();
             }
         }
 

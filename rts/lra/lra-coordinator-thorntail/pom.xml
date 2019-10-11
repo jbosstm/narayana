@@ -9,10 +9,44 @@
 
     <artifactId>lra-coordinator-thorntail</artifactId>
     <name>Thorntail LRA Coordinator</name>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
+
+    <properties>
+        <thorntail.http.port>8080</thorntail.http.port>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <build>
         <finalName>lra-coordinator</finalName>
+        <plugins>
+            <plugin>
+                <groupId>io.thorntail</groupId>
+                <artifactId>thorntail-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <environment>
+                        <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
+                    </environment>
+                    <properties>
+                        <lra.http.port>${thorntail.http.port}</lra.http.port>
+                    </properties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>

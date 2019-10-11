@@ -68,6 +68,7 @@ import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.Type.MANDATORY;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.Type.NESTED;
 
 @Provider
@@ -343,12 +344,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
 
                 headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString().replaceAll("^\"|\"$", ""));
-            } else if (requiresActiveLRA) {
-                // this is not a participant so we need to verify that the LRA is active manually
-                if (!lraClient.isEffectivelyActive(lraId)) {
-                    containerRequestContext.abortWith(
-                        Response.status(Response.Status.PRECONDITION_FAILED).build());
-                    return;
+            } else if (requiresActiveLRA && !lraClient.isActive(lraId)) {
+                Current.clearContext(headers);
+                Current.pop(lraId);
+                containerRequestContext.removeProperty(SUSPENDED_LRA_PROP);
+
+                if (type == MANDATORY) {
+                    containerRequestContext.abortWith(Response.status(Response.Status.PRECONDITION_FAILED).build());
                 }
             } else {
                 lraTrace(containerRequestContext, lraId,

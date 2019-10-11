@@ -59,11 +59,11 @@ public class NonRootLRAParticipantIT {
     public void testNonRootLRAParticipantEnlist() {
         Client client = ClientBuilder.newClient();
 
-        Response response = client.target(baseURL.toExternalForm() + "/root/participant/lra").request().get();
+        Response response = client.target(baseURL.toExternalForm() + "root/participant/lra").request().get();
 
         Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
 
-        response = client.target(baseURL.toExternalForm() + "/root/participant/counter").request().get();
+        response = client.target(baseURL.toExternalForm() + "root/participant/counter").request().get();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         int counterValue = response.readEntity(Integer.class);
         Assert.assertEquals("Non root JAX-RS participant should have been enlisted and invoked",
