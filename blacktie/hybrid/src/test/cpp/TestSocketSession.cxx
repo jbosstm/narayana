@@ -87,7 +87,8 @@ void TestSocketSession::test_queue() {
 		msg->rval = 0;
 		msg->rcode = 1;
                 msg->schedtime = -1;
-		msg->data = new char[8];
+		msg->data = new char[9];
+		memset(msg->data, '\0', 9);
 		memcpy(msg->data, (char*)"test1234", 8);;
 		msg->len = 8;
 		BT_ASSERT(svc_queue->send(msg->replyto, msg->rval,
@@ -113,7 +114,8 @@ void TestSocketSession::test_queue() {
 
 		msg->correlationId = 2;
 		msg->rcode = 2;
-		msg->data = new char[8];
+		msg->data = new char[9];
+		memset(msg->data, '\0', 9);
 		memcpy(msg->data, (char*)"test1235", 8);;
 		BT_ASSERT(client_queue->send(msg->replyto, msg->rval,
 						msg->rcode, msg->data, msg->len,
