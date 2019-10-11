@@ -96,7 +96,7 @@ public class TransactionImporterImple implements TransactionImporter
 			throws XAException
 	{
 		if (xid == null) {
-			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_imported_transaction_uid_is_null());
+			throw new IllegalArgumentException(jtaLogger.i18NLogger.get_error_xid_is_null());
 		}
 
 		/*
