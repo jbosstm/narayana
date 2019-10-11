@@ -27,12 +27,16 @@ import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.Logger.Level.TRACE;
 import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
 
 /**
  * i18n log messages for the arjuna module.
@@ -1576,6 +1580,17 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
     public void warn_not_asyncIO();
 
+    @Message(id = 12394, value = "Could not close transaction listener server socket ''{0}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_close_transaction_listener_socket(ServerSocket ss, @Cause Throwable exception);
+
+    @Message(id = 12395, value = "Could not close transaction listener socket connection ''{0}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_close_transaction_listener_connection(Socket ss, @Cause Throwable exception);
+
+    @Message(id = 12396, value = "Cannot activate type ''{0}'' at object store ''{1}''", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_could_not_activate_type_at_object_store(String type, ParticipantStore store, @Cause Throwable exception);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

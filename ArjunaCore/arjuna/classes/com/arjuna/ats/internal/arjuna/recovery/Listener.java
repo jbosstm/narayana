@@ -142,9 +142,11 @@ public class Listener extends Thread
             new_conn.start();
             }
          }
-         catch ( final InterruptedIOException ex )
+         catch ( final InterruptedIOException iioex )
          {
-            // timeout on the listener socket expired.
+             if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Timeout on the listener socket expired. Exception: " + iioex);
+             }
          }
          catch (final SocketException ex)
          {
@@ -154,13 +156,11 @@ public class Listener extends Thread
                          _listener_service.getClass().getName());
              }
          }
-         catch ( final IOException ex )
-         {
-	     if (tsLogger.logger.isDebugEnabled())
-		 tsLogger.logger.debug("Listener - IOException"+" "+ex);
-         }
          catch (final Exception ex)
          {
+             if (tsLogger.logger.isDebugEnabled()) {
+                 tsLogger.logger.debug("Listener - Exception: " + ex);
+             }
          }
       }
    }
@@ -175,10 +175,13 @@ public class Listener extends Thread
             // call to this method. it will have closed all the other connections
             // and will be waiting on this (listener) thread. so close this connection
             // before returning false
+            if (tsLogger.logger.isDebugEnabled()) {
+                tsLogger.logger.debug("Transaction listener is stopped. No new connection will be processed.");
+            }
             try {
                 conn.close();
             } catch (Exception e) {
-                // ignore
+                tsLogger.i18NLogger.warn_could_not_close_transaction_listener_connection(conn, e);
             }
             return false;
         }
@@ -187,7 +190,13 @@ public class Listener extends Thread
     public synchronized void removeConnection(Socket conn)
     {
         connections.remove(conn);
-        notifyAll();
+        try {
+            conn.close();
+        } catch (IOException ioe) {
+            tsLogger.i18NLogger.warn_could_not_close_transaction_listener_connection(conn, ioe);
+        } finally {
+            notifyAll();
+        }
     }
 
     /**
@@ -206,6 +215,7 @@ public class Listener extends Thread
         }
         catch (final Exception ex)
         {
+            tsLogger.i18NLogger.warn_could_not_close_transaction_listener_socket(_listener_socket, ex);
         }
     }
 
@@ -228,7 +238,7 @@ public class Listener extends Thread
            try {
                conn.close();
            } catch (Exception e) {
-               // ignore
+               tsLogger.i18NLogger.warn_could_not_close_transaction_listener_connection(conn, e);
            }
            try {
                wait();
