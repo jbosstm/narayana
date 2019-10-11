@@ -57,13 +57,6 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-        <!-- JAXRS 2 Client API -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.jaxrs.api}</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <profiles>

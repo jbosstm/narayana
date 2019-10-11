@@ -23,6 +23,8 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.RequestBuilder;
+import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.model.Transaction;
@@ -43,9 +45,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -56,10 +55,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -82,6 +83,7 @@ import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
+import static io.narayana.lra.LRAHttpClient.PARTICIPANT_TIMEOUT;
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
@@ -269,36 +271,31 @@ public class Coordinator {
         URI parentLRAUrl = null;
 
         if (parentLRA != null && !parentLRA.isEmpty()) {
-            parentLRAUrl = toURI(parentLRA, "Invalid parent LRA id");
+            parentLRAUrl = toDecodedURI(parentLRA);
         }
 
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
         URI lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
 
         if (parentLRAUrl != null) {
-            // register with the parentLRA as a participant
-            Client client = ClientBuilder.newClient();
-            String compensatorUrl = null;
-            URL url = null;
-
-            try {
-                url = lraId.toURL();
-                compensatorUrl = String.format("%s/%s", coordinatorUrl,
-                        URLEncoder.encode(url.toString(), "UTF-8"));
-            } catch (UnsupportedEncodingException | MalformedURLException e) {
-                LRALogger.i18NLogger.error_invalidFormatToEncodeUrl(url, e);
-                throw new WebApplicationException("Invalid parent LRA id", e, BAD_REQUEST);
-            }
-            Response response;
+            // register with the parentLRA as a participant (extract the LRAId)
+            String compensatorUrl = String.format("%s%s", coordinatorUrl,
+                        lraId.getPath().substring(lraId.getPath().lastIndexOf('/')));
 
             if (lraService.hasTransaction(parentLRAUrl)) {
-                response = joinLRAViaBody(parentLRAUrl.toASCIIString(), timelimit, null, compensatorUrl);
-            } else {
-                response = client.target(parentLRA).request().put(Entity.text(compensatorUrl));
-            }
+                Response response = joinLRAViaBody(parentLRAUrl.toASCIIString(), timelimit, null, compensatorUrl);
 
-            if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                return response;
+                if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                    return Response.status(response.getStatus()).build();
+                }
+            } else {
+                ResponseHolder resp = new RequestBuilder(parentLRAUrl)
+                        .request()
+                        .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
+                        .put(compensatorUrl, MediaType.TEXT_PLAIN);
+                if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
+                    return Response.status(resp.getStatus()).build(); // TODO include reason
+                }
             }
         }
 
@@ -585,6 +582,15 @@ public class Coordinator {
 
     private URI toURI(String lraId) {
         return toURI(lraId, "Invalid LRA id format");
+    }
+
+    private URI toDecodedURI(String lraId) {
+        try {
+            return toURI(URLDecoder.decode(lraId, StandardCharsets.UTF_8.toString()));
+        } catch (UnsupportedEncodingException e) {
+            LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
+            throw new WebApplicationException("Invalid LRA id format", e, BAD_REQUEST);
+        }
     }
 
     private URI toURI(String lraId, String message) {

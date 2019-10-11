@@ -32,7 +32,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.json.JsonObject;
-import javax.ws.rs.core.Response;
 
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
@@ -57,15 +56,15 @@ public interface lraI18NLogger {
 
     @LogMessage(level = ERROR)
     @Message(id = 25002, value = "LRA created with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraCreationUnexpectedStatus(int status, Response response);
+    void error_lraCreationUnexpectedStatus(int status, String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25003, value = "LRA is null on creation, coordinator response '%s'")
-    void error_nullLraOnCreation(Response response);
+    void error_nullLraOnCreation(String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25004, value = "Cannot create URL from coordinator response '%s'")
-    void error_cannotCreateUrlFromLCoordinatorResponse(Response response, @Cause Throwable t);
+    void error_cannotCreateUrlFromLCoordinatorResponse(String response, @Cause Throwable t);
 
     @LogMessage(level = ERROR)
     @Message(id = 25005, value = "Error on contacting the LRA coordinator '%s'")
@@ -73,11 +72,11 @@ public interface lraI18NLogger {
 
     @LogMessage(level = ERROR)
     @Message(id = 25006, value = "LRA renewal ends with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraRenewalUnexpectedStatus(int status, Response response);
+    void error_lraRenewalUnexpectedStatus(int status, String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25007, value = "Leaving LRA ends with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraLeaveUnexpectedStatus(int status, Response response);
+    void error_lraLeaveUnexpectedStatus(int status, String response);
 
     @LogMessage(level = WARN)
     @Message(id = 25008, value = "JAX-RS @Suspended annotation is untested")
@@ -89,7 +88,7 @@ public interface lraI18NLogger {
 
     @LogMessage(level = ERROR)
     @Message(id = 25010, value = "LRA finished with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraTerminationUnexpectedStatus(int status, Response response);
+    void error_lraTerminationUnexpectedStatus(int status, String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25011, value = "Cannot access coordinator '%s' when getting status for LRA '%s'")
@@ -109,7 +108,7 @@ public interface lraI18NLogger {
 
     @LogMessage(level = ERROR)
     @Message(id = 25015, value = "Too late to join with the LRA '%s', coordinator response: '%s'")
-    void error_tooLateToJoin(URL lra, Response response);
+    void error_tooLateToJoin(URL lra, String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25016, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%s'")
