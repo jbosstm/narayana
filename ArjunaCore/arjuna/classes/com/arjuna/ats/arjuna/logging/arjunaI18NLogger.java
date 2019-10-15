@@ -1591,6 +1591,10 @@ public interface arjunaI18NLogger {
     @Message(id = 12396, value = "Cannot activate type ''{0}'' at object store ''{1}''", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
     public void warn_could_not_activate_type_at_object_store(String type, ParticipantStore store, @Cause Throwable exception);
+
+	@Message(id = 12397, value = "Could not extract elements from the cache store list", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+    void warn_could_not_extract_array(@Cause Exception ex);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

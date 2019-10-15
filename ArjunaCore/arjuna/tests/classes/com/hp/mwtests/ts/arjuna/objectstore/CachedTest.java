@@ -71,11 +71,17 @@ class ThreadWriter extends Thread
                 Thread.yield();
                 
                 if (s != null) {
-                    if (participantStore.remove_committed(u, TYPE))
+                    if (participantStore.remove_committed(u, TYPE)) {
                         passed = true;
+                    } else {
+                        System.err.println("Could not remove "+u);
+
+                    }
                 }
                 else
                     System.err.println("No state found while trying to read "+u);
+            } else {
+                System.err.println("Could not write "+u);
             }
         }
         catch (Exception ex) {
@@ -97,7 +103,7 @@ public class CachedTest
     public void test() throws Exception
     {
         int cacheSize = 2048;
-        int threads = 100;
+        int threads = 1000;
         Thread[] t = new Thread[threads];
 
         ObjectStoreEnvironmentBean objectStoreEnvironmentBean = arjPropertyManager.getObjectStoreEnvironmentBean();
