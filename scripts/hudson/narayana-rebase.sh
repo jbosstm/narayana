@@ -56,6 +56,8 @@ function rebase_narayana {
   else
     export BRANCHPOINT=4.17
   fi
+  comment_on_pull "This pull is for 5.9"
+  export BRANCHPOINT=5.9
 
   # Update the pull to head  
   git pull --rebase --ff-only origin $BRANCHPOINT
