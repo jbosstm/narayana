@@ -738,11 +738,11 @@ class AsyncStore extends Thread // keep priority same as app. threads
                 }
                 catch (ObjectStoreException ex)
                 {
-                    ex.printStackTrace();
+                    tsLogger.i18NLogger.warn_could_not_handle_objectstore(ex);
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    tsLogger.i18NLogger.warn_could_not_handle_objectstore_generic(ex);
                 }
             }
         }
