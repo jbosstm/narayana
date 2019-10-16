@@ -30,6 +30,7 @@ import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
@@ -1595,6 +1596,14 @@ public interface arjunaI18NLogger {
 	@Message(id = 12397, value = "Could not extract elements from the cache store list", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
     void warn_could_not_extract_array(@Cause Exception ex);
+
+	@Message(id = 12398, value = "ObjectStoreException in doWork of CacheStore trying to perform state management", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_could_not_handle_objectstore(@Cause ObjectStoreException ex);
+
+	@Message(id = 12399, value = "Problem in doWork of CacheStore trying to perform state management", format = MESSAGE_FORMAT)
+	@LogMessage(level = WARN)
+	void warn_could_not_handle_objectstore_generic(@Cause Exception ex);
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
