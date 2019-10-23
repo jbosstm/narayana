@@ -1,4 +1,4 @@
-Narayana
+narayana
 ========
 
 Website: http://narayana.io
