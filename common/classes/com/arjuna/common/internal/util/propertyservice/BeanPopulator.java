@@ -174,6 +174,28 @@ public class BeanPopulator
         }
     }
 
+    /**
+     * Attempt to set a named bean instance.
+     *
+     * [Please note that this method is not guaranteed to exist longer term since it is provided in an internal API.
+     * In a later release a public API will be provided to support similar behaviour].
+     *
+     * If the name is not already associated with a bean instance (or is mapped to null) then the name will be associated
+     * with the supplied bean and the method will return null, else the method returns the current instance
+     * associated with the name.
+     *
+     * Once a bean is associated with a name any other configuration mechanism (such as XML property files and
+     * system properties) will be ignored. Therefore this method can be useful if the caller wishes to avoid the
+     * need to parse XML property files.
+     *
+     * @param name the name of the instance to set
+     * @param beanInstance the instance to be associated with the name
+     * @return the previous instance associated with the specified name, or null if there was no mapping for the name.
+     */
+    public static Object setBeanInstanceIfAbsent(String name, Object beanInstance) {
+        return beanInstances.putIfAbsent(name, beanInstance);
+    }
+
     public static String printBean(Object bean) {
         StringBuffer buffer = new StringBuffer();
         printBean(bean, buffer);
