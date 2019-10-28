@@ -33,7 +33,7 @@ public class LRAParticipantRegistry {
     private final Map<String, LRAParticipant> lraParticipants;
 
     // required for Weld to be able to create proxy
-    LRAParticipantRegistry() {
+    public LRAParticipantRegistry() {
         lraParticipants = new HashMap<>();
     }
 
