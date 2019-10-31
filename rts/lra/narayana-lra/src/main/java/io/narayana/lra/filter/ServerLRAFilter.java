@@ -48,6 +48,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -168,9 +169,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (method.isAnnotationPresent(Leave.class)) {
             // leave the LRA
-            String compensatorId = getCompensatorId(incommingLRA,
-                containerRequestContext.getUriInfo().getBaseUri(),
-                containerRequestContext.getUriInfo().getPath());
+            String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo());
 
             lraTrace(containerRequestContext, incommingLRA, "leaving LRA");
             lraClient.leaveLRA(incommingLRA, compensatorId);
@@ -307,9 +306,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // TODO make sure it is possible to do compensations inside a new LRA
         if (!endAnnotation) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
-            String path = containerRequestContext.getUriInfo().getPath();
 
-            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, path);
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), containerRequestContext.getUriInfo());
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
@@ -496,8 +494,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // nothing to do
     }
 
-    private String getCompensatorId(URI lraId, URI baseUri, String path) {
-        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, path);
+    private String getCompensatorId(URI lraId, UriInfo uriInfo) {
+        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), uriInfo);
 
         if (!terminateURIs.containsKey("Link")) {
             throwGenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
