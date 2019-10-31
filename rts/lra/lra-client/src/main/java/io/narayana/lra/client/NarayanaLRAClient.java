@@ -52,6 +52,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -67,6 +68,7 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import io.narayana.lra.Current;
 import io.narayana.lra.LRAConstants;
@@ -371,19 +373,22 @@ public class NarayanaLRAClient implements Closeable {
      * You get map of string and URI.
      *
      * @param compensatorClass  compensator class to examine
-     * @param baseUri  base URI used on creation of the termination map.
+     * @param uriInfo  the uri that triggered this join request.
      * @return map of URI
      */
-    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, String path) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, UriInfo uriInfo) {
         Map<String, String> paths = new HashMap<>();
         final boolean[] asyncTermination = {false};
-        String resourcePath = path == null
-                ? ""
-                : path.substring(0, path.lastIndexOf("/"));
+        URI baseUri = uriInfo.getBaseUri();
 
-        final String uriPrefix = String.format("%s:%s%s",
-                baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath)
-                .replaceAll("/$", "");
+        /*
+         * Calculate which path to prepend to the LRA participant methods. If there is more than one matching URI
+         * then the second matched URI comes from either the class level Path annotation or from a sub-resource locator.
+         * In both cases the second matched URI can be used as a prefix for the LRA participant URIs:
+         */
+        List<String> matchedURIs = uriInfo.getMatchedURIs();
+        int matchedURI = (matchedURIs.size() > 1 ? 1 : 0);
+        final String uriPrefix = baseUri + matchedURIs.get(matchedURI);
 
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
             Path pathAnnotation = method.getAnnotation(Path.class);
