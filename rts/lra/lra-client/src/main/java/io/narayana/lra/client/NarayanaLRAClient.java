@@ -391,7 +391,7 @@ public class NarayanaLRAClient implements Closeable {
      * @param baseUri  base URI used on creation of the termination map.
      * @return map of URI
      */
-    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, String path) {
+    public static Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, String path, Long timeout) {
         Map<String, String> paths = new HashMap<>();
         final boolean[] asyncTermination = {false};
         String resourcePath = path == null
@@ -402,6 +402,8 @@ public class NarayanaLRAClient implements Closeable {
                 baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath)
                 .replaceAll("/$", "");
 
+        String timeoutValue = timeout != null ? Long.toString(timeout) : "0";
+
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
             Path pathAnnotation = method.getAnnotation(Path.class);
 
@@ -409,10 +411,7 @@ public class NarayanaLRAClient implements Closeable {
 
                 if (checkMethod(paths, method, COMPENSATE, pathAnnotation,
                         method.getAnnotation(Compensate.class), uriPrefix) != 0) {
-                    long timeLimit = method.getAnnotation(Compensate.class).timeLimit();
-                    ChronoUnit timeUnit = method.getAnnotation(Compensate.class).timeUnit();
-
-                    paths.put(TIMELIMIT_PARAM_NAME, Long.toString(Duration.of(timeLimit, timeUnit).toMillis()));
+                    paths.put(TIMELIMIT_PARAM_NAME, timeoutValue);
 
                     if (isAsyncCompletion(method)) {
                         asyncTermination[0] = true;
@@ -421,6 +420,8 @@ public class NarayanaLRAClient implements Closeable {
 
                 if (checkMethod(paths, method, COMPLETE, pathAnnotation,
                         method.getAnnotation(Complete.class), uriPrefix) != 0) {
+                    paths.put(TIMELIMIT_PARAM_NAME, timeoutValue);
+
                     if (isAsyncCompletion(method)) {
                         asyncTermination[0] = true;
                     }
