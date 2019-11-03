@@ -120,6 +120,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         LRA transactional = method.getDeclaredAnnotation(LRA.class);
         URI lraId;
         URI newLRA = null;
+        Long timeout = null;
 
         URI suspendedLRA = null;
         URI incommingLRA = null;
@@ -144,6 +145,10 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             if (cancel0n.length != 0) {
                 containerRequestContext.setProperty(CANCEL_ON_PROP, cancel0n);
             }
+
+            if (transactional.timeLimit() != 0) {
+                timeout = Duration.of(transactional.timeLimit(), transactional.timeUnit()).toMillis();
+            }
         }
 
         boolean endAnnotation = method.isAnnotationPresent(Complete.class)
@@ -165,7 +170,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (method.isAnnotationPresent(Leave.class)) {
             // leave the LRA
-            String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo());
+            String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo(), timeout);
 
             lraTrace(containerRequestContext, incommingLRA, "leaving LRA");
             lraClient.leaveLRA(incommingLRA, compensatorId);
@@ -229,7 +234,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         // if there is an LRA present nest a new LRA under it
                         suspendedLRA = incommingLRA;
                         lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRED start new LRA");
-                        newLRA = lraId = startLRA(incommingLRA, method, getTimeOut(transactional));
+                        newLRA = lraId = startLRA(incommingLRA, method, timeout);
                     } else {
                         lraId = incommingLRA;
                         resumeTransaction(incommingLRA);
@@ -238,7 +243,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
                 } else {
                     lraTrace(containerRequestContext, null, "ServerLRAFilter before: REQUIRED start new LRA");
-                    newLRA = lraId = startLRA(null, method, getTimeOut(transactional));
+                    newLRA = lraId = startLRA(null, method, timeout);
                 }
 
                 break;
@@ -246,7 +251,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 //                    previous = AtomicAction.suspend();
                 suspendedLRA = incommingLRA;
                 lraTrace(containerRequestContext, suspendedLRA, "ServerLRAFilter before: REQUIRES_NEW start new LRA");
-                newLRA = lraId = startLRA(null, method, getTimeOut(transactional));
+                newLRA = lraId = startLRA(null, method, timeout);
 
                 break;
             case SUPPORTS:
@@ -303,7 +308,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), containerRequestContext.getUriInfo());
+            Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), containerRequestContext.getUriInfo(), timeout);
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? NarayanaLRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 
@@ -446,14 +451,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         return false;
     }
 
-    private long getTimeOut(LRA transactional) {
-        long timeLimit = transactional.timeLimit();
-        ChronoUnit timeUnit = transactional.timeUnit();
-
-        return Duration.of(timeLimit, timeUnit).toMillis();
-    }
-
-    private URI startLRA(URI parentLRA, Method method, long timeout) {
+    private URI startLRA(URI parentLRA, Method method, Long timeout) {
         // timeout should already have been converted to milliseconds
         String clientId = method.getDeclaringClass().getName() + "#" + method.getName();
 
@@ -464,8 +462,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         // nothing to do
     }
 
-    private String getCompensatorId(URI lraId, UriInfo uriInfo) {
-        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), uriInfo);
+    private String getCompensatorId(URI lraId, UriInfo uriInfo, Long timeout) {
+        Map<String, String> terminateURIs = NarayanaLRAClient.getTerminationUris(resourceInfo.getResourceClass(), uriInfo, timeout);
 
         if (!terminateURIs.containsKey("Link")) {
             throwGenericLRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(),
