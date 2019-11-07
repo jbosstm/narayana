@@ -24,6 +24,7 @@ package io.narayana.lra;
 public abstract class LRAConstants {
     public static final String COORDINATOR_PATH_NAME = "lra-coordinator";
     public static final String RECOVERY_COORDINATOR_PATH_NAME = "lra-recovery-coordinator";
+    public static final String RECOVERY_COORDINATOR_SUB_RESOURCE_NAME = "recovery";
 
     public static final String COMPLETE = "complete";
     public static final String COMPENSATE = "compensate";

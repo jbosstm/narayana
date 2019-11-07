@@ -33,7 +33,12 @@ public class RequestBuilder {
     private TimeUnit timeUnit;
 
     public RequestBuilder(URI baseURI) {
-        builder = new URIBuilder(baseURI);
+        try {
+            builder = new URIBuilder(String.format("%s://%s", baseURI.getScheme(), baseURI.getAuthority()));
+        } catch (URISyntaxException e) {
+            throw new WebApplicationException(e);
+        }
+
         paths = new ArrayList<>();
 
         Collections.addAll(paths, strip(baseURI.getPath()).split("/"));

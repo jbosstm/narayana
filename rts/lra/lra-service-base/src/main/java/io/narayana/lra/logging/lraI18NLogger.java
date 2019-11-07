@@ -206,6 +206,10 @@ public interface lraI18NLogger {
     @Message(id = 25040, value = "CDI cannot be detected, non JAX-RS LRA participants will not be processed")
     void warn_nonJaxRsParticipantsNotAllowed();
 
+    @LogMessage(level = ERROR)
+    @Message(id = 25041, value = "Invalid format of coordinator url, was '%s'")
+    void error_invalidCoordinatorId(String coordinatorUri, @Cause Throwable t);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

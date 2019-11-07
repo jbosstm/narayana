@@ -21,7 +21,8 @@
         <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
-        <lra.tck.consistency.shortDelay>0</lra.tck.consistency.shortDelay>
+        <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
+        <lra.tck.consistency.shortDelay>1000</lra.tck.consistency.shortDelay>
         <lra.tck.consistency.longDelay>20000</lra.tck.consistency.longDelay>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,23 +61,6 @@
             <artifactId>microprofile-lra-tck</artifactId>
             <version>${version.microprofile.lra.tck}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${version.org.jboss.resteasy}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-client</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>narayana-lra</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
@@ -126,6 +110,5 @@
                 <lra.tck.suite.thorntail.trace.params>-Dthorntail.logging=TRACE</lra.tck.suite.thorntail.trace.params>
             </properties>
         </profile>
-       
     </profiles>
 </project>
