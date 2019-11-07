@@ -77,6 +77,15 @@ public class LRAService {
         return lras.get(lraId);
     }
 
+    /*
+     * extract the Uid of the LRA from the LRA id
+     */
+    private String getUid(URI lraId) {
+        String path = lraId.getPath();
+
+        return path.substring(path.lastIndexOf('/') + 1);
+    }
+
     public LRAData getLRA(URI lraId) {
         Transaction lra = getTransaction(lraId);
         return lra.getLRAData();

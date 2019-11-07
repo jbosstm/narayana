@@ -117,6 +117,8 @@
                                         <argument>${lra.coordinator.trace.params}</argument>
                                         <argument>-DRecoveryEnvironmentBean.periodicRecoveryPeriod=10</argument>
                                         <argument>-DRecoveryEnvironmentBean.recoveryBackoffPeriod=5</argument>
+                                        <argument>-DObjectStoreEnvironmentBean.objectStoreDir=${project.build.directory}/lra_txn_logs</argument>
+                                        <argument>-DObjectStoreEnvironmentBean.communicationStore.objectStoreDir=${project.build.directory}/lra_txn_logs</argument>
                                         <argument>-jar</argument>
                                         <argument>${lra.coordinator.jar.path}</argument>
                                     </arguments>

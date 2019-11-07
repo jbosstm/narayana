@@ -1,0 +1,11 @@
+#######################################################################
+# This rule kills the JVM when an LRA method exits
+RULE Kill JVM after starting an LRA in LRAListener class
+CLASS io.narayana.lra.coordinator.LRAListener
+METHOD actionWithLRA
+AT EXIT
+BIND NOTHING
+IF TRUE
+        DO debug("LRAListener: XXXXXXXXXXXXXXXXXXXXXXXXXXXX: Killing JVM after actionWithLRA"),
+        killJVM()
+ENDRULE

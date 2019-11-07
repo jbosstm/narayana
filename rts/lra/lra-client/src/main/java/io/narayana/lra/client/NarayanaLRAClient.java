@@ -63,7 +63,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -122,8 +121,6 @@ public class NarayanaLRAClient implements Closeable {
     private static final String LINK_TEXT = "Link";
 
     private URI base;
-    private Client client;
-    private boolean connectionInUse;
 
     private static URI defaultCoordinatorURI;
 
@@ -141,11 +138,7 @@ public class NarayanaLRAClient implements Closeable {
      */
     public NarayanaLRAClient() throws URISyntaxException {
         if (defaultCoordinatorURI != null) {
-            try {
                 init(defaultCoordinatorURI);
-            } catch (MalformedURLException e) {
-                throw new URISyntaxException(defaultCoordinatorURI.toString(), e.getMessage());
-            }
         } else {
             init("http",
                     System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost"),
@@ -186,8 +179,8 @@ public class NarayanaLRAClient implements Closeable {
         init(coordinatorUri);
     }
 
-    private void init(URI coordinatorUri) throws URISyntaxException, MalformedURLException {
-        init(coordinatorUri.toURL().getProtocol(), coordinatorUri.getHost(), coordinatorUri.getPort());
+    private void init(URI coordinatorUri) {
+        setCoordinatorURI(coordinatorUri);
     }
 
     private void setCoordinatorURI(URI uri) {
@@ -208,18 +201,31 @@ public class NarayanaLRAClient implements Closeable {
         return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
     }
 
+    /*
+     * strip the uid of the LRA from the URI to obtain the coordinator endpoint
+     */
+    private static URI removeLRAId(URI lraId) throws URISyntaxException {
+        if (lraId == null) {
+            return null;
+        }
+
+        String ascii = lraId.toASCIIString();
+        String id = ascii.replaceFirst(".*/([^/?]+).*", "$1");
+
+        id = ascii.substring(0, ascii.length() - id.length());
+
+        return new URI(id);
+    }
+
     private RequestBuilder getTarget() {
         return new RequestBuilder(base);
     }
 
     public void setCurrentLRA(URI coordinatorUri) {
-        URL url = null;
-
         try {
-            url = coordinatorUri.toURL();
-            init(coordinatorUri);
-        } catch (URISyntaxException | MalformedURLException e) {
-            LRALogger.i18NLogger.error_invalidCoordinatorUrl(url, e);
+            init(removeLRAId(coordinatorUri));
+        } catch (URISyntaxException e) {
+            LRALogger.i18NLogger.error_invalidCoordinatorId(coordinatorUri.toASCIIString(), e);
             throwGenericLRAException(coordinatorUri, BAD_REQUEST.getStatusCode(), e.getMessage());
         }
     }
@@ -768,11 +774,7 @@ public class NarayanaLRAClient implements Closeable {
             URI nextLRA = Current.peek();
 
             if (nextLRA != null) {
-                try {
-                    init(nextLRA);
-                } catch (URISyntaxException | MalformedURLException ignore) {
-                    // the validity of the URI was checked when we added it to Current
-                }
+                init(nextLRA);
             }
         }
     }
@@ -835,7 +837,6 @@ public class NarayanaLRAClient implements Closeable {
     }
 
     public void close() {
-        client.close();
     }
 
     private void throwGenericLRAException(URI lraId, int statusCode, String message) throws WebApplicationException {
