@@ -200,12 +200,6 @@
     </dependency>
     <dependency>
         <groupId>org.jboss.resteasy</groupId>
-        <artifactId>async-http-servlet-3.0</artifactId>
-        <version>${version.org.jboss.resteasy}</version>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-undertow</artifactId>
         <version>${version.org.jboss.resteasy}</version>
         <scope>test</scope>

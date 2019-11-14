@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.jaxrs-api}</version>
+            <version>${version.javax.ws.rs-api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
