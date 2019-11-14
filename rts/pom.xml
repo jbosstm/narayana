@@ -33,15 +33,12 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <properties>
     <version.thorntail>2.4.0.Final</version.thorntail>
     <version.quarkus>0.22.0</version.quarkus>
-    <!-- Impportant: the resteasy client version must match the one used by wildfly.thorntail -->
-    <version.resteasy-client>3.6.2.Final</version.resteasy-client>
-    <version.resteasy>3.6.2.Final</version.resteasy>
+    <version.resteasy-client>${version.org.jboss.resteasy}</version.resteasy-client>
 
     <version.json.api>1.1</version.json.api>
     <version.jaxrs.api>1.0.0.Final</version.jaxrs.api>
 
     <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
-    <version.jaxrs-api>2.0</version.jaxrs-api>
     <version.cdi-api>1.0-SP1</version.cdi-api>
     <version.junit>4.12</version.junit>
 
