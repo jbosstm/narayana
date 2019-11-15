@@ -1494,7 +1494,7 @@ public class BasicAction extends StateManager
 
             if (doOnePhase())
             {
-                onePhaseCommit(reportHeuristics);
+                onePhaseCommit(reportHeuristics, true);
 
                 ActionManager.manager().remove(get_uid());
             }
@@ -2167,7 +2167,7 @@ public class BasicAction extends StateManager
 
         if ((p == TwoPhaseOutcome.PREPARE_READONLY) && (pendingList.size() == 1))
         {
-            onePhaseCommit(reportHeuristics);
+            onePhaseCommit(reportHeuristics, false);
 
             ActionManager.manager().remove(get_uid());
 
@@ -2343,8 +2343,17 @@ public class BasicAction extends StateManager
      * There is only one record on the intentions list. Only called from
      * synchronized methods. Don't bother about creating separate threads here!
      */
-
     protected void onePhaseCommit (boolean reportHeuristics)
+    {
+        onePhaseCommit(reportHeuristics, true);
+    }
+
+    /**
+     * See {@link #onePhaseCommit(boolean)}
+     *
+     * This method may be called during 2PC prepare when the first resource returns read-only.
+     */
+    protected void onePhaseCommit (boolean reportHeuristics, boolean permitReportStatistics)
     {
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("BasicAction::onePhaseCommit() for action-id "
@@ -2507,7 +2516,7 @@ public class BasicAction extends StateManager
 
         criticalEnd();
 
-        if (TxStats.enabled()) {
+        if (TxStats.enabled() && permitReportStatistics) {
             if (actionStatus == ActionStatus.ABORTED) {
                 TxStats.getInstance().incrementAbortedTransactions();
             } else {
