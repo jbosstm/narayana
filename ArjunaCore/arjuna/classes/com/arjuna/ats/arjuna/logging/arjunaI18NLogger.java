@@ -1568,7 +1568,7 @@ public interface arjunaI18NLogger {
     @LogMessage(level = WARN)
     public void warn_osb_MBeanCtorFail(@Cause() Throwable arg0);
 
-    @Message(id = 12391, value = "Could not initialize object store '{0}' of type '{1}'", format = MESSAGE_FORMAT)
+    @Message(id = 12391, value = "Could not initialize object store ''{0}'' of type ''{1}''", format = MESSAGE_FORMAT)
     public String init_StoreManager_instantiate_class_failure(String name, String type);
 
     @Message(id = 12392, value = "AbstractRecord.create {0} failed to create record class {1}.",
