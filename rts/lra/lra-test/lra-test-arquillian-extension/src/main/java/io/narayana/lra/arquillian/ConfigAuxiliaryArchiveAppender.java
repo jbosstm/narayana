@@ -22,6 +22,7 @@
 
 package io.narayana.lra.arquillian;
 
+import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRACDIExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
@@ -58,6 +59,11 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
                .addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
                .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
                     "META-INF/services/javax.ws.rs.client.ClientBuilder");
+
+        // adding TCK required SPI implementations
+        archive.addClass(NarayanaLRARecovery.class);
+        archive.addAsResource(new StringAsset("io.narayana.lra.arquillian.spi.NarayanaLRARecovery"),
+            "META-INF/services/org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService");
 
         return archive;
     }
