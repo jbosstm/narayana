@@ -67,7 +67,23 @@ public class LRAService {
 
     public Transaction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
+            String uid = getUid(lraId);
+
+            // try comparing on uid since differnt URIs can map to the same resource
+            // (eg localhost versus 127.0.0.1 versus :1 etc)
+            for (Transaction lra : lras.values()) {
+                if (uid.equals(lra.getUid())) {
+                    return lra;
+                }
+            }
+
             if (!recoveringLRAs.containsKey(lraId)) {
+                for (Transaction lra : recoveringLRAs.values()) {
+                    if (uid.equals(lra.getUid())) {
+                        return lra;
+                    }
+                }
+
                 throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
             }
 
