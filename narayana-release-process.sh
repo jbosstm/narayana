@@ -140,7 +140,7 @@ then
   git push --set-upstream jbosstm ${WFLYISSUE}
   git checkout 5_BRANCH
   git reset --hard jbosstm/5_BRANCH
-  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE %
+  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE &
 fi
 cd ..
 
