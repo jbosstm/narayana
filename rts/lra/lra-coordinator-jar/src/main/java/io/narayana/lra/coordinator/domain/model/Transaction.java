@@ -30,6 +30,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -420,28 +421,45 @@ public class Transaction extends AtomicAction {
         savePendingList();
 
         if ((res != ActionStatus.RUNNING) && (res != ActionStatus.ABORT_ONLY)) {
-            if (nested && cancel) {
-                /*
-                 * Note that we do not hook into ActionType.NESTED because that would mean that after a
-                 * nested txn is committed its participants are merged
-                 * with the parent and they can then only be aborted if the parent aborts whereas in
-                 * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
-                 */
+            if (nested) {
+                if (cancel) {
+                    /*
+                     * Note that we do not hook into ActionType.NESTED because that would mean that after a
+                     * nested txn is committed its participants are merged
+                     * with the parent and they can then only be aborted if the parent aborts whereas in
+                     * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
+                     */
 
-                // repopulate the pending list TODO it won't neccessarily be present during recovery
-                pendingList = new RecordList();
+                    // repopulate the pending list TODO it won't neccessarily be present during recovery
+                    pendingList = new RecordList();
 
-                pending.forEach(r -> pendingList.putRear(r));
+                    pending.forEach(r -> pendingList.putRear(r));
 
-                updateAfterLRAListeners(pendingList);
-                updateState(LRAStatus.Cancelling);
+                    updateAfterLRAListeners(pendingList);
+                    updateState(LRAStatus.Cancelling);
 
-                super.phase2Abort(true);
+                    super.phase2Abort(true);
 //                res = super.Abort();
 
-                res = status();
+                    res = status();
 
-                status = toLRAStatus(status());
+                    status = toLRAStatus(status());
+                } else {
+                    // parent LRA completed so we need to call Forget on nested LRA participants
+
+                    List<LRARecord> forgetParticipants = new ArrayList<>();
+                    pending.forEach(r -> {
+                        if (r.getForgetUri() != null) {
+                            forgetParticipants.add(r);
+                        }
+                    });
+
+                    do {
+                        if (LRALogger.logger.isDebugEnabled()) {
+                            LRALogger.logger.debug("Retrying Forget notification " + forgetParticipants);
+                        }
+                    } while (!forgetLRANotification(forgetParticipants));
+                }
             }
         } else {
             if (cancel || status() == ActionStatus.ABORT_ONLY) {
@@ -902,5 +920,22 @@ public class Transaction extends AtomicAction {
 
         final URI notificationURI;
         final URI recoveryId;
+    }
+
+    boolean forgetLRANotification(List<LRARecord> participants) {
+        boolean notifiedAll = true;
+
+        if (participants != null) {
+            Iterator<LRARecord> iterator = participants.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().invokeForgetMethod() == TwoPhaseOutcome.FINISH_OK) {
+                    iterator.remove();
+                } else {
+                    notifiedAll = false;
+                }
+            }
+        }
+
+        return notifiedAll;
     }
 }

@@ -138,7 +138,7 @@ class RecoveringLRA extends Transaction {
             if (r instanceof LRARecord) {
                 LRARecord rec = (LRARecord) r;
 
-                rec.setLraService(getLraService());
+                rec.setLRAService(getLraService());
             }
         }
     }

@@ -492,35 +492,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     compensate, target.getUri(), status);
 
                             if (forgetURI != null) {
-                                try {
-                                    // let the participant know he can clean up
-                                    WebTarget target2 = client.target(forgetURI);
-                                    AsyncInvoker asyncInvoker2 = target2.request()
-                                            .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
-                                            .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
-                                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                                            .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
-                                            .async();
-
-                                    Future<Response> asyncResponse2 = getAsyncResponse(
-                                            target2, DELETE.class.getName(), asyncInvoker2, compensatorData);
-
-                                    if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
-                                            Response.Status.OK.getStatusCode()) {
-                                        return TwoPhaseOutcome.FINISH_OK;
-                                    }
-                                } catch (Exception e) {
-                                    if (LRALogger.logger.isInfoEnabled()) {
-                                        LRALogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
-                                                forgetURI, e.getMessage());
-                                    }
-
-                                    // TODO write a test to ensure that recovery only retries the forget request
-                                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
-                                } finally {
-                                    Current.pop();
-                                }
-
+                                return invokeForgetMethod();
                             } else {
                                 LRALogger.logger.warnf(
                                         "LRARecord.doEnd(%b) LRA: %s: cannot forget %s: missing forget URI",
@@ -550,6 +522,48 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         return -1;
+    }
+
+    int invokeForgetMethod() {
+        Client client = ClientBuilder.newClient();
+        Response response = null;
+
+        try {
+            // let the participant know he can clean up
+            WebTarget target = client.target(forgetURI);
+            AsyncInvoker asyncInvoker2 = target.request()
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                    .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the parent context available to participants
+                    .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                    .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
+                    .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the parent context available to the jaxrs filters
+                    .async();
+
+            Future<Response> asyncResponse = getAsyncResponse(
+                    target, DELETE.class.getName(), asyncInvoker2, compensatorData);
+
+            response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                return TwoPhaseOutcome.FINISH_OK;
+            } else {
+                return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
+            }
+        } catch (Exception e) {
+            if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
+                        forgetURI, e.getMessage());
+            }
+
+            // TODO write a test to ensure that recovery only retries the forget request
+            return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
+        } finally {
+            Current.pop();
+
+            if (response != null) {
+                response.close();
+            }
+            client.close();
+        }
     }
 
     private Future<Response> getAsyncResponse(WebTarget target, String method, AsyncInvoker asyncInvoker, String compensatorData) {
@@ -835,14 +849,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     public String getCompensator() {
-        return compensateURI.toASCIIString();
+        return compensateURI != null ? compensateURI.toASCIIString() : null;
     }
 
-    void setLRAService(LRAService lraService) {
-        this.lraService = lraService;
+    public URI getForgetUri() {
+        return forgetURI;
     }
 
-    public void setLraService(LRAService lraService) {
+    public void setLRAService(LRAService lraService) {
         this.lraService = lraService;
     }
 
