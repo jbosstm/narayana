@@ -268,7 +268,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             if (isCompelete() || completeURI == null) {
                 status = ParticipantStatus.Completed;
 
-                return TwoPhaseOutcome.FINISH_OK; // the participant has already completed
+                return parentId != null ? forget(null) : TwoPhaseOutcome.FINISH_OK; // the participant has already completed
             }
 
             endPath = completeURI;  // we are going to ask the participant to complete
@@ -286,6 +286,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
 
             if (twoPhaseOutcome != -1) {
+                if (parentId != null && status == ParticipantStatus.Completed) {
+                    return forget(null);
+                }
+
                 return twoPhaseOutcome;
             }
         } else {
@@ -296,6 +300,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             // the local invocation was not made so fallback to using JAX-RS
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(URI.create(endPath.toASCIIString()));
+            LRALogger.logger.debugf("LRARecord.tryDoEnd calling PUT on %s with parent: %s",
+                endPath, parentId == null ? "null" : parentId);
 
             try {
                 // ask the participant to complete or compensate
@@ -303,8 +309,6 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                        .property(LRA_HTTP_CONTEXT_HEADER, lraId) // make the context available to the jaxrs filters
-                        .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to jaxrs filters
                         .async();
 
                 Future<Response> asyncResponse = getAsyncResponse(target, PUT.class.getName(), asyncInvoker, compensatorData);
@@ -313,6 +317,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 Response response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 httpStatus = response.getStatus();
+
+                LRALogger.logger.debugf("LRARecord.tryDoEnd called PUT on %s with parent: %s (http status %d)",
+                    endPath, parentId == null ? "null" : parentId, httpStatus);
 
                 accepted = httpStatus == Response.Status.ACCEPTED.getStatusCode();
 
@@ -386,6 +393,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
         updateStatus(compensate);
 
+        if (parentId != null && status == ParticipantStatus.Completed) {
+            return forget(null);
+        }
+
         // if the the request is still in progress (ie accepted is true) let recovery finish it
         return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
     }
@@ -454,9 +465,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 // since this method is called from the recovery thread do not block
                 AsyncInvoker asyncInvoker = target.request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                        .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
                         .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                        .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
                         .async();
 
                 Future<Response> asyncResponse = getAsyncResponse(target, GET.class.getName(), asyncInvoker, compensatorData);
@@ -492,35 +503,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     compensate, target.getUri(), status);
 
                             if (forgetURI != null) {
-                                try {
-                                    // let the participant know he can clean up
-                                    WebTarget target2 = client.target(forgetURI);
-                                    AsyncInvoker asyncInvoker2 = target2.request()
-                                            .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
-                                            .property(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
-                                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                                            .property(LRA_HTTP_CONTEXT_HEADER, lraId)  // make the context available to the jaxrs filters
-                                            .async();
-
-                                    Future<Response> asyncResponse2 = getAsyncResponse(
-                                            target2, DELETE.class.getName(), asyncInvoker2, compensatorData);
-
-                                    if (asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus() ==
-                                            Response.Status.OK.getStatusCode()) {
-                                        return TwoPhaseOutcome.FINISH_OK;
-                                    }
-                                } catch (Exception e) {
-                                    if (LRALogger.logger.isInfoEnabled()) {
-                                        LRALogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
-                                                forgetURI, e.getMessage());
-                                    }
-
-                                    // TODO write a test to ensure that recovery only retries the forget request
-                                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
-                                } finally {
-                                    Current.pop();
-                                }
-
+                                forget(client);
                             } else {
                                 LRALogger.logger.warnf(
                                         "LRARecord.doEnd(%b) LRA: %s: cannot forget %s: missing forget URI",
@@ -848,5 +831,56 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public URI getEndNotificationUri() {
         return afterURI;
+    }
+
+    private int forget(Client client) {
+        if (forgetURI == null) {
+            return TwoPhaseOutcome.FINISH_OK;
+        }
+
+        boolean close;
+
+        if (client != null) {
+            close = false;
+        } else {
+            close = true;
+            client = ClientBuilder.newClient();
+        }
+
+        LRALogger.logger.debugf("LRARecord.forget calling DELETE on %s with parent: %s",
+                    forgetURI, parentId == null ? "null" : parentId);
+
+        try {
+            // let the participant know he can clean up
+            WebTarget target2 = client.target(forgetURI);
+            AsyncInvoker asyncInvoker2 = target2.request()
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
+                    .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
+                    .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                    .async();
+
+            Future<Response> asyncResponse2 = getAsyncResponse(
+                    target2, DELETE.class.getName(), asyncInvoker2, compensatorData);
+            int status = asyncResponse2.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS).getStatus();
+
+            LRALogger.logger.debugf("LRARecord.forget called DELETE on %s with parent: %s (http status %d)",
+                    forgetURI, parentId == null ? "null" : parentId, status);
+
+            if (status == Response.Status.OK.getStatusCode() || status == Response.Status.GONE.getStatusCode()) {
+                return TwoPhaseOutcome.FINISH_OK;
+            }
+        } catch (Exception e) {
+            if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.infof("LRARecord.doEnd forget URI %s is invalid (%s)",
+                        forgetURI, e.getMessage());
+            }
+        } finally {
+            if (close) {
+                client.close();
+            }
+        }
+
+        // TODO write a test to ensure that recovery only retries the forget request
+        return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
     }
 }
