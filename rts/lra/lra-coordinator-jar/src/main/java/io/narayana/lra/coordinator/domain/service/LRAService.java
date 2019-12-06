@@ -320,7 +320,7 @@ public class LRAService {
 
         // the tx must be either Active (for participants with the @Compensate methods) or
         // Closing/Canceling (for the AfterLRA listeners)
-        if (!transaction.isActive()) {
+        if (!transaction.isActive() && !transaction.isRecovering()) {
             // validate that the party wanting to join with this LRA is a listener only:
             if (linkHeader != null) {
                 Pattern linkRelPattern = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
