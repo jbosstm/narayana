@@ -622,6 +622,12 @@ public class Transaction extends AtomicAction {
             setTimeLimit(timeLimit);
 
             return p;
+        } else if (isRecovering() && p.getCompensator() == null && p.getEndNotificationUri() != null) {
+            // the participant is an AfterLRA listener so manually add it to heuristic list
+            heuristicList.putRear(p);
+            updateState();
+
+            return p;
         }
 
         return null;
