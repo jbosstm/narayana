@@ -24,7 +24,8 @@ package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
-import org.eclipse.microprofile.lra.tck.service.spi.LraRecoveryService;
+import org.eclipse.microprofile.lra.tck.service.spi.LRACallbackException;
+import org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -54,7 +55,7 @@ public class FailingParticipantCallsIT {
     @Deployment
     public static WebArchive deploy() {
         return ShrinkWrap.create(WebArchive.class, FailingParticipantCallsIT.class.getSimpleName() + ".war")
-            .addClasses(LraRecoveryService.class);
+            .addClasses(LRARecoveryService.class, LRACallbackException.class);
     }
 
     @Before
@@ -70,7 +71,7 @@ public class FailingParticipantCallsIT {
     }
 
     @Test
-    public void testFailingAfterLRA() {
+    public void testFailingAfterLRA() throws LRACallbackException {
         Client client = ClientBuilder.newClient();
         Response response = null;
         URI lra = null;
@@ -92,7 +93,7 @@ public class FailingParticipantCallsIT {
             }
         }
 
-        new NarayanaLRARecovery().triggerRecovery(lra);
+        new NarayanaLRARecovery().waitForRecovery(lra);
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())

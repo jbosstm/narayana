@@ -896,7 +896,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     public String getCompensator() {
-        return compensateURI.toASCIIString();
+        return compensateURI != null ? compensateURI.toASCIIString() : null;
     }
 
     void setLRAService(LRAService lraService) {
