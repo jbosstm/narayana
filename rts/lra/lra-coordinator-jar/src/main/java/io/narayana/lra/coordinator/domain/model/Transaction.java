@@ -622,6 +622,12 @@ public class Transaction extends AtomicAction {
             setTimeLimit(timeLimit);
 
             return p;
+        } else if (isRecovering() && p.getCompensator() == null && p.getEndNotificationUri() != null) {
+            // the participant is an AfterLRA listener
+            afterLRAListeners.add(new AfterLRAListener(p.getEndNotificationUri(), p.getRecoveryCoordinatorURI()));
+            updateState();
+
+            return p;
         }
 
         return null;
