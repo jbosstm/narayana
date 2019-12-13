@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -345,7 +346,20 @@ public class Coordinator {
                             "getNestedLRAStatus", "The LRA is still  active")).build());
         }
 
-        return Response.ok(lra.getLRAStatus().name()).build();
+        return Response.ok(mapToParticipantStatus(lra.getLRAStatus()).name()).build();
+    }
+
+    private ParticipantStatus mapToParticipantStatus(LRAStatus lraStatus) {
+        switch (lraStatus) {
+            case Active: return ParticipantStatus.Active;
+            case Closed: return ParticipantStatus.Completed;
+            case Cancelled: return ParticipantStatus.Compensated;
+            case Closing: return ParticipantStatus.Completing;
+            case Cancelling: return ParticipantStatus.Compensating;
+            case FailedToClose: return ParticipantStatus.FailedToComplete;
+            case FailedToCancel: return ParticipantStatus.FailedToCompensate;
+            default: return null;
+        }
     }
 
     @PUT
