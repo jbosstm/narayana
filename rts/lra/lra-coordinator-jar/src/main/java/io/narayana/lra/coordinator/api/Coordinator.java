@@ -279,7 +279,7 @@ public class Coordinator {
 
         if (parentLRAUrl != null) {
             // register with the parentLRA as a participant (extract the LRAId)
-            String compensatorUrl = String.format("%s%s", coordinatorUrl,
+            String compensatorUrl = String.format("%s/nested/%s", coordinatorUrl,
                         lraId.getPath().substring(lraId.getPath().lastIndexOf('/')));
 
             if (lraService.hasTransaction(parentLRAUrl)) {
@@ -328,7 +328,7 @@ public class Coordinator {
     }
 
     @GET
-    @Path("{NestedLraId}/status")
+    @Path("nested/{NestedLraId}/status")
     public Response getNestedLRAStatus(@PathParam("NestedLraId")String nestedLraId) {
         if (!lraService.hasTransaction(nestedLraId)) {
             // it must have compensated TODO maybe it's better to keep nested LRAs in separate collection
@@ -349,19 +349,19 @@ public class Coordinator {
     }
 
     @PUT
-    @Path("{NestedLraId}/complete")
+    @Path("nested/{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURI(nestedLraId), false, true);
     }
 
     @PUT
-    @Path("{NestedLraId}/compensate")
+    @Path("nested/{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         return endLRA(toURI(nestedLraId), true, true);
     }
 
     @PUT
-    @Path("{NestedLraId}/forget")
+    @Path("nested/{NestedLraId}/forget")
     public Response forgetNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
         lraService.remove(null, toURI(nestedLraId));
 
