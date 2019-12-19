@@ -365,13 +365,13 @@ public class Coordinator {
     @PUT
     @Path("nested/{NestedLraId}/complete")
     public Response completeNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return endLRA(toURI(nestedLraId), false, true);
+        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), false, true)).name()).build();
     }
 
     @PUT
     @Path("nested/{NestedLraId}/compensate")
     public Response compensateNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        return endLRA(toURI(nestedLraId), true, true);
+        return Response.ok(mapToParticipantStatus(endLRA(toURI(nestedLraId), true, true)).name()).build();
     }
 
     @PUT
@@ -407,7 +407,7 @@ public class Coordinator {
     public Response closeLRA(
             @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String txId) throws NotFoundException {
-        return endLRA(toURI(txId), false, false);
+        return Response.ok(endLRA(toURI(txId), false, false).name()).build();
     }
 
     @PUT
@@ -427,14 +427,14 @@ public class Coordinator {
     public Response cancelLRA(
             @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {
-        return endLRA(toURI(lraId), true, false);
+        return Response.ok(endLRA(toURI(lraId), true, false).name()).build();
     }
 
 
-    private Response endLRA(URI lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
+    private LRAStatus endLRA(URI lraId, boolean compensate, boolean fromHierarchy) throws NotFoundException {
         LRAStatusHolder status = lraService.endLRA(lraId, compensate, fromHierarchy);
 
-        return Response.ok(status.getStatus().name()).build();
+        return status.getStatus();
 //        return compensatorData == null
 //                ? Response.ok().status(status.getHttpStatus()).build()
 //                : Response.ok(compensatorData).status(status.getHttpStatus()).build();
