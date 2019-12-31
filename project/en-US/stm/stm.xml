@@ -3,11 +3,77 @@
 <chapter>
     <title>STM</title>
     <para>In this chapter we shall look at the Software Transactional Memory (STM) implementation that ships as part of
-        Narayana. We won&apos;t go into the theoretical details behind STM as they would take up an entire book and
-        there are sufficint resources available for the interested reader to find out themselves. But suffice it to say
-        that STM offers an approach to developing transactional applications in a highly concurrent environment with
-        some of the same characteristics of ACID transactions. Typically though, the Durability property is relaxed
-        (removed) within STM implementations.</para>
+        Narayana. Software Transactional Memory (STM) has been around in research environments since the late 1990’s and has
+        relatively recently started to appear in products and various programming languages. We won’t go into all of
+        the details behind STM but the interested reader could look at this paper (https://groups.csail.mit.edu/tds/papers/Shavit/ShavitTouitou-podc95.pdf).
+        However, suffice it to say that STM
+        offers an approach to developing transactional applications in a highly concurrent environment with some of the
+        same characteristics of ACID transactions, which you’ve probably already used through JTA. Importantly though,
+        the Durability property is relaxed (removed) within STM implementations, or at least made optional. This is
+        not the situation with JTA, where state changes are made durable to a relational database which supports
+        the X/Open XA standard.
+    </para>
+    <para>
+        Now you may be asking yourself "Why STM instead of JTA?" or "What are the benefits to STM that I don’t get
+        from JTA?" We will try to answer those and similar questions:
+        <orderedlist>
+                <listitem>
+                    <para>
+                        The goal of STM is to simplify object reads and writes from multiple threads/protect state from
+                        concurrent updates. The Narayana STM implementation will safely manage any conflicts between these
+                        threads using whatever isolation model has been chosen to protect that specific state instance. In STM,
+                        there are two isolation implementations, pessimistic (the
+                        default), which would cause conflicting threads to be blocked until the original has completed its
+                        updates (committed or aborted the transaction); then there is the optimistic approach which allows
+                        all of the threads to proceed and checks for conflicts at commit time, where one or more of the threads
+                        may be forced to abort if there have been conflicting updates.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        STM objects have state but it does not need to be persistent (durable). In fact the default behaviour
+                        is for objects managed within transactional memory to be volatile, such that if the service or
+                        microservice within which they are being used crashes or is spawned elsewhere, e.g., by a scheduler,
+                        all state in memory is lost and the objects start from scratch. But surely you get this and more with
+                        JTA (and a suitable transactional datastore) and do not need to worry about restarting your application?
+                        Not quite. There is a trade-off here: we are doing away with persistent state and the overhead of reading
+                        from and then writing (and sync-ing) to the datastore during each transaction. This makes updates to
+                        (volatile) state very fast but you still get the benefits of atomic updates across multiple STM objects
+                        (e.g., objects your team wrote then calling objects you inherited from another team and requiring them
+                        to make all-or-nothing updates), as well as consistency and isolation in the presence of concurrent
+                        threads/users (common in distributed microservices architectures). Furthermore, not all stateful
+                        applications need to be durable - even when JTA transactions are used, they tend to be the exception
+                        and not the rule.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Another benefit of STM is composability and modularity. You can write concurrent Quarkus objects/services
+                        that can be easily composed with any other services built using STM, without exposing the details of how
+                        the objects/services are implemented. As we discussed earlier, this ability to compose objects you wrote
+                        with those other teams may have written weeks, months or years earlier, and have A, C and I properties
+                        can be hugely beneficial. Furthermore, some STM implementations, including the Narayana version, support
+                        nested transactions and these allow changes made within the context of a nested (sub) transaction to
+                        later be rolled back by the parent transaction.
+                    </para>
+               </listitem>
+                <listitem>
+                    <para>
+                        Although the default for STM object state is volatile, it is possible to configure the STM implementation
+                        such that an object’s state is durable. Although it’s possible to configure Narayana such that different
+                        backend datastores can be used, including relational databases, the default is the local operating system
+                        file system, which means you don’t need to configure anything else, such as a database.
+                    </para>
+            </listitem>
+            <listitem>
+                <para>
+                    Many STM implementations allow "plain old language objects" to be made STM-aware with little or no changes
+                    to the application code. You can build, test and deploy applications without wanting them to be STM-aware
+                    and then later add those capabilities if they become necessary and without much development overhead at all.
+                </para>
+            </listitem>  
+            </orderedlist>
+    </para>
     <para>The Narayana STM implementation builds on the Transactional Objects for Java (TXOJ) framework which has
         offered building blocks for the construction of transactional objects via inheritence. The interested reader
         should look at the text on TXOJ within the ArjunaCore documentation for more in depth details. However, within
@@ -111,7 +177,7 @@ public interface Atomic
                 if this change is eventually supported. https://issues.jboss.org/browse/JBTM-2172</para>
         </note>
         <para>Now we have a transactional class, by virtue of its dependency on the Atomic interface, how we we go about
-            creating instances of the corresponding transactional object and use it (them) within transactions?</para>
+            creating instances of the corresponding STM object and use it (them) within transactions?</para>
         <programlisting>Container&lt;Atomic&gt; theContainer = new Container&lt;Atomic&gt;();    ExampleInteger basic = new ExampleInteger();       
 Atomic obj = theContainer.create(basic);
 AtomicAction a = new AtomicAction();
@@ -144,8 +210,13 @@ else
             <para>Some of the discussions around AtomicAction etc. are deliberately brief here because you can find more
                 information in the relevant ArjunaCore documentation.</para>
         </note>
-        <para>First we need to create an STM Container: this is the entity which represents the transactional memory
-            within which each object will be maintained. We need to tell each Container about the type of objects for
+        <para>In order for the STM subsytem to have knowledge about which classes are to be managed within the context of
+            transactional memory it is necessary to provide a minimal level of instrumentation. This occurs by categorising
+            STM-aware and STM-unware classes through an interface bounday; specifically all STM-aware objects must be
+            instances of classes which inherit from interfaces that themselves have been annotated to identify them as
+            STM-aware. Any other objects (and their classes) which do not follow this rule will not be managed by the
+            STM subsystem and hence any of their state changes will not be rolled back, for example. Therefore, the first thing
+            we need to do is create an STM Container. We need to tell each Container about the type of objects for
             which it will be responsible. Then we create an instance of our ExampleInteger. However, we can&apos;t use
             it directly because at this stage its operations aren&apos;t being monitored by the Container. Therefore, we
             pass the instance to the Container and obtain a reference to an Atomic object through which we can operate
