@@ -72,7 +72,7 @@
                     and then later add those capabilities if they become necessary and without much development overhead at all.
                 </para>
             </listitem>  
-            </orderedlist>
+        </orderedlist>
     </para>
     <para>The Narayana STM implementation builds on the Transactional Objects for Java (TXOJ) framework which has
         offered building blocks for the construction of transactional objects via inheritence. The interested reader
