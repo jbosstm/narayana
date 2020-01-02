@@ -48,7 +48,7 @@
                 </listitem>
                 <listitem>
                     <para>
-                        Another benefit of STM is composability and modularity. You can write concurrent Quarkus objects/services
+                        Another benefit of STM is composability and modularity. You can write concurrent objects/services
                         that can be easily composed with any other services built using STM, without exposing the details of how
                         the objects/services are implemented. As we discussed earlier, this ability to compose objects you wrote
                         with those other teams may have written weeks, months or years earlier, and have A, C and I properties
