@@ -176,7 +176,7 @@ public interface Atomic
                 the implementation class. For now if you follow the above conventions you will continue to be compatible
                 if this change is eventually supported. https://issues.jboss.org/browse/JBTM-2172</para>
         </note>
-        <para>Now we have a transactional class, by virtue of its dependency on the Atomic interface, how we we go about
+        <para>Now we have a transactional class, by virtue of its dependency on the Atomic interface, how we go about
             creating instances of the corresponding STM object and use it (them) within transactions?</para>
         <programlisting>Container&lt;Atomic&gt; theContainer = new Container&lt;Atomic&gt;();    ExampleInteger basic = new ExampleInteger();       
 Atomic obj = theContainer.create(basic);
