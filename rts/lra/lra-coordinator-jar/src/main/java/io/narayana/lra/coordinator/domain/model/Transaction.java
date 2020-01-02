@@ -79,7 +79,7 @@ public class Transaction extends AtomicAction {
     private URI parentId;
     private String clientId;
     private List<LRARecord> pending;
-    private List<AfterLRAListener> afterLRAListeners;
+    private List<EndLRAListener> endLRAListeners;
     private LRAStatus status;
     private String responseData;
     private LocalDateTime startTime;
@@ -148,11 +148,12 @@ public class Transaction extends AtomicAction {
                 os.packString(status.name());
             }
 
-            if (afterLRAListeners == null) {
+            if (endLRAListeners == null) {
                 os.packInt(0);
             } else {
-                os.packInt(afterLRAListeners.size());
-                for (AfterLRAListener participant : afterLRAListeners) {
+                os.packInt(endLRAListeners.size());
+                for (EndLRAListener participant : endLRAListeners) {
+                    os.packString(participant.getClass().getName());
                     os.packString(participant.notificationURI.toASCIIString());
                     os.packString(participant.recoveryId.toASCIIString());
                 }
@@ -256,11 +257,16 @@ public class Transaction extends AtomicAction {
             int cnt = os.unpackInt();
 
             if (cnt == 0) {
-                afterLRAListeners = null;
+                endLRAListeners = null;
             } else {
-                afterLRAListeners = new ArrayList<>();
+                endLRAListeners = new ArrayList<>();
                 for (int i = 0; i < cnt; i++) {
-                    afterLRAListeners.add(new AfterLRAListener(new URI(os.unpackString()), new URI(os.unpackString())));
+                    String classname = os.unpackString();
+                    if (classname.equals(AfterLRAListener.class.getName())) {
+                        endLRAListeners.add(new AfterLRAListener(new URI(os.unpackString()), new URI(os.unpackString())));
+                    } else if (classname.equals(ForgetLRAListener.class.getName())) {
+                        endLRAListeners.add(new ForgetLRAListener(new URI(os.unpackString()), new URI(os.unpackString())));
+                    }
                 }
             }
 
@@ -382,10 +388,10 @@ public class Transaction extends AtomicAction {
             return;
         }
 
-        if (afterLRAListeners == null) {
-            afterLRAListeners = new ArrayList<>();
+        if (endLRAListeners == null) {
+            endLRAListeners = new ArrayList<>();
         } else {
-            afterLRAListeners.clear();
+            endLRAListeners.clear();
         }
 
         RecordListIterator i = new RecordListIterator(list);
@@ -394,10 +400,10 @@ public class Transaction extends AtomicAction {
         while ((r = i.iterate()) != null) {
             if (r instanceof LRARecord) {
                 URI endNotification = ((LRARecord) r).getEndNotificationUri();
-                URI recoveryCoordinatorURI = ((LRARecord) r).getRecoveryCoordinatorURI();
+                URI recoveryCoordinatorURI = ((LRARecord) r).getRecoveryURI();
 
                 if (endNotification != null && recoveryCoordinatorURI != null) {
-                    afterLRAListeners.add(new AfterLRAListener(endNotification, recoveryCoordinatorURI));
+                    endLRAListeners.add(new AfterLRAListener(endNotification, recoveryCoordinatorURI));
                 }
             }
         }
@@ -420,28 +426,39 @@ public class Transaction extends AtomicAction {
         savePendingList();
 
         if ((res != ActionStatus.RUNNING) && (res != ActionStatus.ABORT_ONLY)) {
-            if (nested && cancel) {
-                /*
-                 * Note that we do not hook into ActionType.NESTED because that would mean that after a
-                 * nested txn is committed its participants are merged
-                 * with the parent and they can then only be aborted if the parent aborts whereas in
-                 * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
-                 */
+            if (nested) {
+                if (cancel) {
+                    /*
+                     * Note that we do not hook into ActionType.NESTED because that would mean that after a
+                     * nested txn is committed its participants are merged
+                     * with the parent and they can then only be aborted if the parent aborts whereas in
+                     * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
+                     */
 
-                // repopulate the pending list TODO it won't neccessarily be present during recovery
-                pendingList = new RecordList();
+                    // repopulate the pending list TODO it won't neccessarily be present during recovery
+                    pendingList = new RecordList();
 
-                pending.forEach(r -> pendingList.putRear(r));
+                    pending.forEach(r -> pendingList.putRear(r));
 
-                updateAfterLRAListeners(pendingList);
-                updateState(LRAStatus.Cancelling);
+                    updateAfterLRAListeners(pendingList);
+                    updateState(LRAStatus.Cancelling);
 
-                super.phase2Abort(true);
+                    super.phase2Abort(true);
 //                res = super.Abort();
 
-                res = status();
+                    res = status();
 
-                status = toLRAStatus(status());
+                    status = toLRAStatus(status());
+                } else {
+                    // parent LRA is closed so we need to call Forget on the nested LRA participants
+                    pending.forEach(lraRecord -> {
+                        if (lraRecord.getForgetURI() != null) {
+                            endLRAListeners.add(new ForgetLRAListener(lraRecord.getForgetURI(), lraRecord.getRecoveryURI()));
+                        }
+                    });
+
+                    updateState();
+                }
             }
         } else {
             if (cancel || status() == ActionStatus.ABORT_ONLY) {
@@ -570,7 +587,7 @@ public class Transaction extends AtomicAction {
             return p;
         } else if (isRecovering() && p.getCompensator() == null && p.getEndNotificationUri() != null) {
             // the participant is an AfterLRA listener
-            afterLRAListeners.add(new AfterLRAListener(p.getEndNotificationUri(), p.getRecoveryCoordinatorURI()));
+            endLRAListeners.add(new AfterLRAListener(p.getEndNotificationUri(), p.getRecoveryURI()));
             updateState();
 
             return p;
@@ -666,7 +683,7 @@ public class Transaction extends AtomicAction {
                     if (r instanceof LRARecord) {
                         LRARecord rr = (LRARecord) r;
                         // can't use == because this may be a recovery scenario
-                        if (rr.getRecoveryCoordinatorURI().equals(recoveryUrl)) {
+                        if (rr.getRecoveryURI().equals(recoveryUrl)) {
                             if (remove) {
                                 list.remove(rr);
                             }
@@ -795,7 +812,7 @@ public class Transaction extends AtomicAction {
             if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
                 LRARecord lraRecord = (LRARecord) rec;
 
-                participants.put(lraRecord.getRecoveryCoordinatorURI().toASCIIString(), lraRecord.getParticipantPath());
+                participants.put(lraRecord.getRecoveryURI().toASCIIString(), lraRecord.getParticipantPath());
             }
         }
     }
@@ -850,46 +867,21 @@ public class Transaction extends AtomicAction {
         return parentId;
     }
 
-    public boolean afterLRANotification() {
+    public boolean endLRANotification() {
         boolean notifiedAll = true;
 
-        if (afterLRAListeners != null) {
+        if (endLRAListeners != null) {
             Client client = ClientBuilder.newClient();
 
             try {
-                Iterator<AfterLRAListener> listeners = afterLRAListeners.iterator();
+                Iterator<EndLRAListener> listeners = endLRAListeners.iterator();
 
                 while (listeners.hasNext()) {
-                    AfterLRAListener participant = listeners.next();
-                    Response response = null;
-
-                    try {
-                        Future<Response> asyncResponse = client.target(participant.notificationURI)
-                                .request()
-                                .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
-                                .header(LRA_HTTP_RECOVERY_HEADER, participant.recoveryId.toASCIIString())
-                                .async()
-                                .put(Entity.text(status.name()));
-
-                        response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
-
-                        if (response.getStatus() == 200) {
-                            listeners.remove();
-                        } else {
-                            notifiedAll = false;
-                        }
-
-                        response = null;
-                    } catch (WebApplicationException | InterruptedException | ExecutionException | TimeoutException e) {
+                    EndLRAListener participant = listeners.next();
+                    if (participant.call(client)) {
+                        listeners.remove();
+                    } else {
                         notifiedAll = false;
-
-                        if (LRALogger.logger.isInfoEnabled()) {
-                            LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", participant.notificationURI, e.getMessage());
-                        }
-                    } finally {
-                        if (response != null) {
-                            response.close();
-                        }
                     }
                 }
             } finally {
@@ -900,13 +892,63 @@ public class Transaction extends AtomicAction {
         return notifiedAll;
     }
 
-    static class AfterLRAListener {
-        public AfterLRAListener(URI notificationURI, URI recoveryId) {
+    private abstract static class EndLRAListener {
+        public EndLRAListener(URI notificationURI, URI recoveryId) {
             this.notificationURI = notificationURI;
             this.recoveryId = recoveryId;
         }
 
         final URI notificationURI;
         final URI recoveryId;
+
+        abstract boolean call(Client client);
     }
+
+    private class AfterLRAListener extends EndLRAListener {
+
+        public AfterLRAListener(URI notificationURI, URI recoveryId) {
+            super(notificationURI, recoveryId);
+        }
+
+        @Override
+        boolean call(Client client) {
+            Response response = null;
+
+            try {
+                Future<Response> asyncResponse = client.target(notificationURI)
+                    .request()
+                    .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
+                    .header(LRA_HTTP_RECOVERY_HEADER, recoveryId.toASCIIString())
+                    .async()
+                    .put(Entity.text(status.name()));
+
+                response = asyncResponse.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+
+                return response.getStatus() == 200;
+            } catch (WebApplicationException | InterruptedException | ExecutionException | TimeoutException e) {
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", notificationURI, e.getMessage());
+                }
+
+                return false;
+            } finally {
+                if (response != null) {
+                    response.close();
+                }
+            }
+        }
+    }
+
+    private class ForgetLRAListener extends EndLRAListener {
+
+        public ForgetLRAListener(URI notificationURI, URI recoveryId) {
+            super(notificationURI, recoveryId);
+        }
+
+        @Override
+        boolean call(Client client) {
+            return LRARecord.invokeForget(client, notificationURI, id, parentId, recoveryId);
+        }
+    }
+
 }
