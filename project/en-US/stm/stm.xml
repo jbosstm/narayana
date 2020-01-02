@@ -212,7 +212,7 @@ else
         </note>
         <para>In order for the STM subsystem to have knowledge about which classes are to be managed within the context of
             transactional memory it is necessary to provide a minimal level of instrumentation. This occurs by categorising
-            STM-aware and STM-unware classes through an interface bounday; specifically all STM-aware objects must be
+            STM-aware and STM-unware classes through an interface boundary; specifically all STM-aware objects must be
             instances of classes which inherit from interfaces that themselves have been annotated to identify them as
             STM-aware. Any other objects (and their classes) which do not follow this rule will not be managed by the
             STM subsystem and hence any of their state changes will not be rolled back, for example. Therefore, the first thing
