@@ -782,7 +782,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return 0;
     }
 
-    public URI getRecoveryCoordinatorURI() {
+    public URI getRecoveryURI() {
         return recoveryURI;
     }
 
