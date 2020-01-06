@@ -426,10 +426,10 @@ public class Transaction extends AtomicAction {
         while ((r = i.iterate()) != null) {
             if (r instanceof LRARecord) {
                 URI endNotification = ((LRARecord) r).getEndNotificationUri();
-                URI recoveryCoordinatorURI = ((LRARecord) r).getRecoveryCoordinatorURI();
+                URI recoveryURI = ((LRARecord) r).getRecoveryURI();
 
-                if (endNotification != null && recoveryCoordinatorURI != null) {
-                    afterLRAListeners.add(new AfterLRAListener(endNotification, recoveryCoordinatorURI));
+                if (endNotification != null && recoveryURI != null) {
+                    afterLRAListeners.add(new AfterLRAListener(endNotification, recoveryURI));
                 }
             }
         }
@@ -699,7 +699,7 @@ public class Transaction extends AtomicAction {
                     if (r instanceof LRARecord) {
                         LRARecord rr = (LRARecord) r;
                         // can't use == because this may be a recovery scenario
-                        if (rr.getRecoveryCoordinatorURI().equals(recoveryUrl)) {
+                        if (rr.getRecoveryURI().equals(recoveryUrl)) {
                             if (remove) {
                                 list.remove(rr);
                             }
@@ -849,7 +849,7 @@ public class Transaction extends AtomicAction {
             if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
                 LRARecord lraRecord = (LRARecord) rec;
 
-                participants.put(lraRecord.getRecoveryCoordinatorURI().toASCIIString(), lraRecord.getParticipantPath());
+                participants.put(lraRecord.getRecoveryURI().toASCIIString(), lraRecord.getParticipantPath());
             }
         }
     }

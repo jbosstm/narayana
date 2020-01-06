@@ -333,12 +333,12 @@ public class LRAService {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
-        if (participant == null || participant.getRecoveryCoordinatorURI() == null) {
+        if (participant == null || participant.getRecoveryURI() == null) {
             // probably already closing or cancelling
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
-        String recoveryURI = participant.getRecoveryCoordinatorURI().toASCIIString();
+        String recoveryURI = participant.getRecoveryURI().toASCIIString();
 
         updateRecoveryURI(lra, participant.getParticipantURI(), recoveryURI, false);
 
