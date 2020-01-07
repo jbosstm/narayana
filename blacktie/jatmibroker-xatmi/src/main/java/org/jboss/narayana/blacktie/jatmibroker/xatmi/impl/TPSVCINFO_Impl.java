@@ -2,8 +2,8 @@ package org.jboss.narayana.blacktie.jatmibroker.xatmi.impl;
 
 import java.io.Serializable;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jboss.narayana.blacktie.jatmibroker.xatmi.Buffer;
 import org.jboss.narayana.blacktie.jatmibroker.xatmi.Connection;
 import org.jboss.narayana.blacktie.jatmibroker.xatmi.ConnectionException;

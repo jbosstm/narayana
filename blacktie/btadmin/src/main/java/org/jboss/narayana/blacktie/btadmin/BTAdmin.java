@@ -24,9 +24,8 @@ import java.io.InputStreamReader;
 
 import javax.management.MalformedObjectNameException;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jboss.narayana.blacktie.jatmibroker.core.conf.ConfigurationException;
 
 /**
@@ -42,11 +41,6 @@ public class BTAdmin {
 
     public static void main(String[] args) throws IOException {
         int exitStatus = -1;
-        if (System.getProperty("log4j.configuration") == null && !new File("log4cxx.properties").exists()
-                && !new File("log4j.xml").exists()) {
-            BasicConfigurator.configure();
-            log.info("BasicConfigurator ran");
-        }
 
         boolean interactive = args.length == 0;
         boolean done = false;
