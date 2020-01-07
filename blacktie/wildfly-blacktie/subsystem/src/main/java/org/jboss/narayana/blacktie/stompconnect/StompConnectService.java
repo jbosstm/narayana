@@ -24,8 +24,8 @@ import java.net.URISyntaxException;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.stomp.jms.StompConnect;
 
 public class StompConnectService implements StompConnectServiceMBean {

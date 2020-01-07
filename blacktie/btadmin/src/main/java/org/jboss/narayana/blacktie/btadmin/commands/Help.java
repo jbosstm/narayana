@@ -29,8 +29,8 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jboss.narayana.blacktie.administration.BlacktieAdministration;
 import org.jboss.narayana.blacktie.btadmin.Command;
 import org.jboss.narayana.blacktie.btadmin.CommandFailedException;

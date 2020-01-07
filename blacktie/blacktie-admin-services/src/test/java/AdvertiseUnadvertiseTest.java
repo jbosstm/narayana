@@ -4,8 +4,8 @@ import static org.junit.Assert.fail;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.narayana.blacktie.administration.Authentication;
@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -47,6 +48,8 @@ public class AdvertiseUnadvertiseTest {
                         .addPackage(X_OCTET_Impl.class.getPackage())
                         .addAsResource("btconfig.xsd")
                 .addAsResource("btconfig.xml").setManifest(new StringAsset(ManifestMF))
+                .addAsLibraries(Maven.resolver().resolve("org.apache.logging.log4j:log4j-api:2.13.0").withTransitivity().asFile())
+                .addAsLibraries(Maven.resolver().resolve("org.apache.logging.log4j:log4j-core:2.13.0").withTransitivity().asFile())
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

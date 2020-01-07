@@ -16,8 +16,8 @@
  */
 package org.jboss.narayana.blacktie.jatmibroker.nbf;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.xs.ElementPSVI;
 import org.apache.xerces.xs.PSVIProvider;
 import org.apache.xerces.xs.XSTypeDefinition;

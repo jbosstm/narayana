@@ -21,8 +21,8 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class XMLParserTest extends TestCase {
     private static final Logger log = LogManager.getLogger(XMLParserTest.class);
