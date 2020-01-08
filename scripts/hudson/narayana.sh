@@ -461,6 +461,7 @@ function lra_tests {
   cd ./rts/lra/
 
   PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS "$@"
+
   [ $? = 0 ] || fatal "LRA Test failed"
   cd - # back to original directory
 }
