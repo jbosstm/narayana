@@ -457,7 +457,7 @@ function lra_tests {
   echo "#0. LRA Test"
   # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
-  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@"
+  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" -fae
   [ $? = 0 ] || fatal "LRA Test failed"
   cd - # back to original directory
 }
