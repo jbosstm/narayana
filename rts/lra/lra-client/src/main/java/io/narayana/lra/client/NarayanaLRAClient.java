@@ -286,7 +286,7 @@ public class NarayanaLRAClient implements Closeable {
                     .request()
                     .post();
 
-            // validate the HTTP status code says an LRAInfo resource was created
+            // validate the HTTP status code says an LRA resource was created
             if (isUnexpectedResponseStatus(response, Response.Status.CREATED)) {
                 LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), response.toString());
                 throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(),
@@ -294,16 +294,13 @@ public class NarayanaLRAClient implements Closeable {
                 return null;
             }
 
-            // validate that there is an LRAInfo response header holding the LRAInfo id
-            Object lraObject = response.getLastHeader(LRA_HTTP_CONTEXT_HEADER);
+            lra = response.getLocationHeaderAsURI();
 
-            if (lraObject == null) {
+            if (lra == null) {
                 LRALogger.i18NLogger.error_nullLraOnCreation(response.toString());
                 throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(), "LRA creation is null");
                 return null;
             }
-
-            lra = new URI(URLDecoder.decode(lraObject.toString(), "UTF-8"));
 
             lraTrace(lra, "startLRA returned");
 
