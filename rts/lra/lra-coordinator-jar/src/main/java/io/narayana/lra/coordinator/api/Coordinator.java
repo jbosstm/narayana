@@ -302,7 +302,7 @@ public class Coordinator {
 
         Current.push(lraId);
 
-        return Response.status(Response.Status.CREATED)
+        return Response.created(lraId)
                 .entity(lraId)
                 .header(LRA_HTTP_CONTEXT_HEADER, Current.getContexts())
                 .build();
