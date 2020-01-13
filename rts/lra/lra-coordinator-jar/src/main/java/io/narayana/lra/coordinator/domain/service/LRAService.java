@@ -61,7 +61,7 @@ public class LRAService {
     private Map<URI, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
     private Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
 
-    private static Map<String, String> participants = new ConcurrentHashMap<>();
+    private Map<String, String> participants = new ConcurrentHashMap<>();
     private LRARecoveryModule lraRecoveryModule;
 
     public Transaction getTransaction(URI lraId) throws NotFoundException {
@@ -188,13 +188,9 @@ public class LRAService {
             lras.remove(lraId);
         }
 
-        if (recoveringLRAs.containsKey(lraId)) {
-            recoveringLRAs.remove(lraId);
-        }
+        recoveringLRAs.remove(lraId);
 
-        if (locks.containsKey(lraId)) {
-            locks.remove(lraId);
-        }
+        locks.remove(lraId);
     }
 
     public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
@@ -392,7 +388,7 @@ public class LRAService {
         assert lraRecoveryModule == null;
 
         if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debugf("LRAServicve.enableRecovery%n");
+            LRALogger.logger.debugf("LRAServicve.enableRecovery");
         }
 
         lraRecoveryModule = new LRARecoveryModule(this);
@@ -411,13 +407,16 @@ public class LRAService {
      */
     @PreDestroy
     void disableRecovery() {
+        if (lraRecoveryModule != null) {
 
-        Implementations.uninstall();
-        RecoveryManager.manager().removeModule(lraRecoveryModule, false);
-        lraRecoveryModule = null;
+            RecoveryManager.manager().removeModule(lraRecoveryModule, false);
+            Implementations.uninstall();
 
-        if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debugf("LRAServicve.disableRecovery%n");
+            lraRecoveryModule = null;
+
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf("LRAServicve.disableRecovery");
+            }
         }
     }
 }

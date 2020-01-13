@@ -48,17 +48,20 @@ class LRACompensatorMap implements RecordTypeMap {
 
 public class Implementations {
 
-    private static boolean _added = false;
+    private static LRACompensatorMap typeMap;
 
     public static synchronized void install() {
-        if (!_added) {
-            RecordTypeManager.manager().add(new LRACompensatorMap());
-
-            _added = true;
+        if (typeMap == null) {
+            typeMap = new LRACompensatorMap();
+            RecordTypeManager.manager().add(typeMap);
         }
     }
 
     public static synchronized void uninstall() {
+        if (typeMap != null) {
+            RecordTypeManager.manager().remove(typeMap);
+            typeMap = null;
+        }
     }
 
     private Implementations() {
