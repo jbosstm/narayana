@@ -35,10 +35,9 @@ import io.narayana.lra.coordinator.domain.model.Transaction;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Destroyed;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -387,10 +386,9 @@ public class LRAService {
 
     /**
      * When the deployment is loaded register for recovery
-     *
-     * @param init a javax.servlet.ServletContext
      */
-    void enableRecovery(@Observes @Initialized(ApplicationScoped.class) Object init) {
+    @PostConstruct
+    void enableRecovery() {
         assert lraRecoveryModule == null;
 
         if (LRALogger.logger.isDebugEnabled()) {
@@ -410,11 +408,9 @@ public class LRAService {
 
     /**
      * When the deployment is unloaded unregister for recovery
-     *
-     * @param init a javax.servlet.ServletContext
      */
-    void disableRecovery(@Observes @Destroyed(ApplicationScoped.class) Object init) {
-        assert lraRecoveryModule != null;
+    @PreDestroy
+    void disableRecovery() {
 
         Implementations.uninstall();
         RecoveryManager.manager().removeModule(lraRecoveryModule, false);
