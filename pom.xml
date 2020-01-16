@@ -494,6 +494,7 @@
     <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
     <version.com.github.docker-java>3.0.14</version.com.github.docker-java>
     <version.org.eclipse.microprofile.openapi>1.1.2</version.org.eclipse.microprofile.openapi>
+    <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
 
     <!-- Maven plugin versions -->
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
