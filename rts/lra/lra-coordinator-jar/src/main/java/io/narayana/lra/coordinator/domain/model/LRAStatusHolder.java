@@ -38,6 +38,8 @@ public class LRAStatusHolder {
     private boolean isRecovering;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA has been asked to complete or compensate yet", required = false )
     private boolean isActive;
+    //    @ApiModelProperty( value = "Indicates whether or not this LRA is in the after LRA phase", required = false )
+    private boolean isAfterLRAPhase;
     //    @ApiModelProperty( value = "Indicates whether or not this LRA is top level", required = false )
     private boolean isTopLevel;
     private int httpStatus;
@@ -56,6 +58,7 @@ public class LRAStatusHolder {
         this.clientId = data.getClientId();
         this.isRecovering = data.isRecovering();
         this.isActive = data.isActive();
+        this.isAfterLRAPhase = data.isAfterLRAPhase();
         this.isTopLevel = data.isTopLevel();
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
@@ -108,6 +111,10 @@ public class LRAStatusHolder {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public boolean isAfterLRAPhase() {
+        return isAfterLRAPhase;
     }
 
     public boolean isTopLevel() {

@@ -36,6 +36,7 @@ import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.AsyncInvoker;
@@ -85,6 +86,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private LRAService lraService;
     private ParticipantStatus status;
     private boolean accepted;
+    private LRAStatus lraOutcome;
 
     public LRARecord() {
     }
@@ -252,6 +254,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private int tryDoEnd(boolean compensate) {
+        if (isFinished() && afterURI != null) {
+            // replay only the afterLRA call
+            return invokeAfterLRA(lraOutcome);
+        }
+
         URI endPath;
 
         if (ParticipantStatus.Compensating.equals(status)) {
@@ -259,6 +266,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         if (compensateURI == null) {
+            // this record is an LRA listener
+            status = ParticipantStatus.Completed;
             return TwoPhaseOutcome.FINISH_OK;
         }
 
@@ -445,6 +454,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 // 200 and 410 are the only valid response code for reporting the participant status
                 if (response.getStatus() == Response.Status.GONE.getStatusCode()) {
+                    // TODO shouldn't 410 be handled in a similar manner as 200 on retries?
+                    status = status.equals(ParticipantStatus.Compensating) ? ParticipantStatus.Compensated : ParticipantStatus.Completed;
                     return TwoPhaseOutcome.FINISH_OK;
                 } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -634,6 +645,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         return status != null && status == ParticipantStatus.Compensated;
     }
 
+    private boolean isFailed() {
+        return status != null &&
+        (status == ParticipantStatus.FailedToCompensate || status == ParticipantStatus.FailedToComplete);
+    }
+
+    private boolean isFinished() {
+        return isCompelete() || isCompensated() || isFailed();
+    }
+
     @Override
     public boolean save_state(OutputObjectState os, int t) {
         if (super.save_state(os, t)) {
@@ -648,6 +668,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 packStatus(os);
                 os.packString(participantPath);
                 os.packString(compensatorData);
+
+                if (lraOutcome == null) {
+                    os.packBoolean(false);
+                } else {
+                    os.packBoolean(true);
+                    os.packString(lraOutcome.name());
+                }
             } catch (IOException e) {
                 return false;
             }
@@ -671,6 +698,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 participantPath = os.unpackString();
                 compensatorData = os.unpackString();
                 accepted = status == ParticipantStatus.Completing || status == ParticipantStatus.Compensating;
+                lraOutcome = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
             } catch (IOException | URISyntaxException e) {
                 return false;
             }
@@ -711,6 +739,31 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public int typeIs() {
         return getTypeId();
+    }
+
+    public int invokeAfterLRA(LRAStatus lraOutcome) {
+        ResponseHolder response = null;
+
+        try {
+            response = new RequestBuilder(afterURI)
+                .request()
+                .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, lraId)
+                .header(LRA.LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
+                .put(lraOutcome.name(), MediaType.TEXT_PLAIN);
+
+            return response.getStatus() == 200 ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.HEURISTIC_HAZARD;
+        } catch (WebApplicationException e) {
+            if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", afterURI, e.getMessage());
+            }
+
+            return TwoPhaseOutcome.HEURISTIC_HAZARD;
+        }
+    }
+
+    public void setLRAOutcome(LRAStatus lraOutcome) {
+        this.lraOutcome = lraOutcome;
     }
 
     public int nestedAbort() {

@@ -120,10 +120,13 @@ public class LRARecoveryModule implements RecoveryModule {
                             " in flight is " + inFlight);
                 }
 
-                if (!inFlight && lra.isRecovering()) {
+                if (!inFlight && !lra.isFinished()) {
                     lra.replayPhase2();
 
-                    if (!lra.isRecovering() && lraService != null) {
+                    if (lra.isFinished() && lraService != null) {
+                        if (lra.isAfterLRAPhase()) {
+                            lra.setAfterLRAPhase(false);
+                        }
                         lraService.finished(lra, false);
                     }
                 }

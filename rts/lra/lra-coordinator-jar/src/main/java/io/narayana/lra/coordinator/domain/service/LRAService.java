@@ -168,13 +168,13 @@ public class LRAService {
     }
 
     public void finished(Transaction transaction, boolean fromHierarchy) {
-        if (transaction.isRecovering()) {
+        if (!transaction.isFinished()) {
             recoveringLRAs.put(transaction.getId(), transaction);
         } else if (fromHierarchy || transaction.isTopLevel()) {
             // the LRA is top level or it's a nested LRA that was closed by a
             // parent LRA (ie when fromHierarchy is true) then it's okay to forget about the LRA
 
-            if (transaction.afterLRANotification()) {
+            if (transaction.afterLRANotification(transaction.getLRAStatus()) && !transaction.isAfterLRAPhase()) {
                 remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
             }
         }

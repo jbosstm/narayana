@@ -162,7 +162,7 @@ public class LRACoordinatorTestCase extends TestBase {
         // check recovery
         LRAStatus status = getStatus(new URI(lraId));
 
-        LRALogger.logger.infof("%s: Status after restart is %s%n", status == null ? "GONE" : status.name());
+        LRALogger.logger.infof("Status after restart is %s%n", status == null ? "GONE" : status.name());
 
         if (status == null || status == LRAStatus.Cancelling) {
             int sc = recover();

@@ -11,13 +11,14 @@ public class LRAData {
     private boolean isCancelled;
     private boolean isRecovering;
     private boolean isActive;
+    private boolean isAfterLRAPhase;
     private boolean isTopLevel;
     private long startTime;
     private long finishTime;
 
     public LRAData(String lraId, String clientId, String status,
                            boolean isClosed, boolean isCancelled, boolean isRecovering,
-                           boolean isActive, boolean isTopLevel,
+                           boolean isActive, boolean isAfterLRAPhase, boolean isTopLevel,
                            long startTime, long finishTime) {
         this.lraId = lraId;
         this.clientId = clientId;
@@ -26,6 +27,7 @@ public class LRAData {
         this.isCancelled = isCancelled;
         this.isRecovering = isRecovering;
         this.isActive = isActive;
+        this.isAfterLRAPhase = isAfterLRAPhase;
         this.isTopLevel = isTopLevel;
         this.startTime = startTime;
         this.finishTime = finishTime;
@@ -57,6 +59,10 @@ public class LRAData {
 
     public boolean isActive() {
         return this.isActive;
+    }
+
+    public boolean isAfterLRAPhase() {
+        return this.isAfterLRAPhase;
     }
 
     public boolean isTopLevel() {
@@ -105,6 +111,7 @@ public class LRAData {
                 ", isCancelled=" + isCancelled +
                 ", isRecovering=" + isRecovering +
                 ", isActive=" + isActive +
+                ", isAfterLRAPhase=" + isAfterLRAPhase +
                 ", isTopLevel=" + isTopLevel +
                 ", startTime=" + startTime +
                 ", finishTime=" + finishTime +
