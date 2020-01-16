@@ -23,6 +23,7 @@ package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -51,6 +52,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -317,8 +320,28 @@ public class LRAService {
 
         // the tx must be either Active (for participants with the @Compensate methods) or
         // Closing/Canceling (for the AfterLRA listeners)
-        if (!transaction.isActive() && !transaction.isRecovering()) {
-            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        if (!transaction.isActive()) {
+            // validate that the party wanting to join with this LRA is a listener only:
+            if (linkHeader != null) {
+                Pattern linkRelPattern = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
+                Matcher relMatcher = linkRelPattern.matcher(linkHeader);
+
+                while (relMatcher.find()) {
+                    String key = relMatcher.group(1);
+
+                    if (key != null && key.equals("rel")) {
+                        String rel = relMatcher.group(2) == null ? relMatcher.group(3) : relMatcher.group(2);
+
+                        if (!LRAConstants.AFTER.equals(rel)) {
+                            // participants are not allowed to join inactive LRAs
+                            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+                        } else if (!transaction.isRecovering()) {
+                            // listeners cannot be notified if the LRA has already ended
+                            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+                        }
+                    }
+                }
+            }
         }
 
         LRARecord participant;
