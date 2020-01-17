@@ -31,7 +31,6 @@
 
         <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
         <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
-        <version.org.jboss.byteman.lra>4.0.9</version.org.jboss.byteman.lra>
       
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
