@@ -365,6 +365,12 @@
 				   <version>${version.org.jboss.arquillian.osgi.karaf}</version>
 				   <scope>test</scope>
 			   </dependency>
+			   <dependency>
+				   <groupId>org.jboss.arquillian.osgi</groupId>
+				   <artifactId>arquillian-osgi-bundle</artifactId>
+				   <version>${version.org.jboss.arquillian.osgi.karaf}</version>
+				   <scope>test</scope>
+			   </dependency>
 		   </dependencies>
 	   </profile>
    </profiles>
