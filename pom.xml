@@ -479,7 +479,7 @@
     <version.junit>4.11</version.junit>
     <version.org.jboss.byteman>4.0.4</version.org.jboss.byteman>
     <version.org.wildfly.arquillian>2.1.1.Final</version.org.wildfly.arquillian>
-    <version.org.jboss.arquillian.core>1.1.13.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.core>1.6.0.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.arquillian.container.weld>1.0.0.CR9</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.container.tomcat>1.0.1.Final</version.org.jboss.arquillian.container.tomcat>
     <version.org.apache.tomcat>9.0.7</version.org.apache.tomcat>
