@@ -53,14 +53,10 @@ import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.temporal.ChronoUnit;
 
 import static io.narayana.lra.coordinator.LRAListener.LRA_LISTENER_ACTION;
-import static io.narayana.lra.coordinator.LRAListener.LRA_LISTENER_KILL;
 import static io.narayana.lra.coordinator.LRAListener.LRA_LISTENER_STATUS;
-import static io.narayana.lra.coordinator.LRAListener.LRA_LISTENER_UNTIMED_ACTION;
 import static io.narayana.lra.coordinator.LRAListener.LRA_SHORT_TIMELIMIT;
-import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -69,10 +65,7 @@ import static org.junit.Assert.fail;
  * Test that check that LRA deadlines are respected during crash recovery
  */
 @RunWith(Arquillian.class)
-public class LRACoordinatorTestCase extends TestBase {
-    private static final Long LONG_TIMEOUT = 600000L; // 10 minutes
-    private static final Long SHORT_TIMEOUT = 10000L; // 10 seconds
-
+public class LRACoordinatorRecovery1TestCase extends TestBase {
     private static Package[] coordinatorPackages = {
             RecoveryModule.class.getPackage(),
             Coordinator.class.getPackage(),
@@ -131,7 +124,7 @@ public class LRACoordinatorTestCase extends TestBase {
      * @throws URISyntaxException if the LRA or recovery URIs are invalid (should never happen)
      */
     @Test
-    public void testRecovery1() throws URISyntaxException, InterruptedException {
+    public void testRecovery() throws URISyntaxException, InterruptedException {
         startContainer("participant-byteman-rules");
 
         String lraId;
@@ -183,68 +176,6 @@ public class LRACoordinatorTestCase extends TestBase {
 
         assertEquals("LRA listener should have been told that the final state of the LRA was cancelled",
                 LRAStatus.Cancelled.name(), listenerStatus);
-    }
-
-    /**
-     * Test that an LRA which times out while there is no running coordinator is cancelled
-     * when a coordinator is restarted.
-     *
-     * Test that an LRA which times out after a coordinator is restarted after a crash is still active
-     * @throws URISyntaxException if the LRA or recovery URIs are invalid (should never happen)
-     */
-    @Test
-    public void testRecovery2() throws URISyntaxException {
-        startContainer(null);
-
-        // start an LRA with a long timeout to validate that timed LRAs do not finish early during recovery
-        URI longLRA = lraClient.startLRA(null, "Long Timeout Recovery Test", LONG_TIMEOUT, ChronoUnit.MILLIS);
-        // start an LRA with a short timeout to validate that timed LRAs that time out when the coordinator is unavailable are cancelled
-        URI shortLRA = lraClient.startLRA(null, "Short Timeout Recovery Test", SHORT_TIMEOUT, ChronoUnit.MILLIS);
-
-        // invoke a method that will trigger a byteman rule to kill the JVM
-        try (Response ignore = client.target(lraListenerURL).path(LRA_LISTENER_KILL)
-                .request()
-                .get()) {
-
-            fail(testName + ": the container should have halted");
-        } catch (RuntimeException e) {
-            LRALogger.logger.infof("%s: the container halted", testName);
-        }
-
-        // restart the container
-        restartContainer();
-
-        // check that on restart an LRA whose deadline has expired are cancelled
-        int sc = recover();
-
-        if (sc != 0) {
-            recover();
-        }
-
-        LRAStatus longStatus = getStatus(longLRA);
-        LRAStatus shortStatus = getStatus(shortLRA);
-
-        Assert.assertEquals("LRA with long timeout should still be active",
-                LRAStatus.Active.name(), longStatus.name());
-        Assert.assertTrue("LRA with short timeout should not be active",
-                shortStatus == null || LRAStatus.Cancelled.equals(shortStatus));
-
-        // verify that it is still possible to join in with the LRA
-        try (Response response = client.target(lraListenerURL).path(LRA_LISTENER_UNTIMED_ACTION)
-                .request()
-                .header(LRA_HTTP_CONTEXT_HEADER, longLRA)
-                .put(null)) {
-
-            Assert.assertEquals("LRA participant action", 200, response.getStatus());
-        }
-
-        lraClient.closeLRA(longLRA);
-
-        // check that the participant was notified that the LRA has closed
-        String listenerStatus = getStatusFromListener();
-
-        assertEquals("LRA listener should have been told that the final state of the LRA was closed",
-                LRAStatus.Closed.name(), listenerStatus);
     }
 
     /**
