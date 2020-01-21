@@ -644,7 +644,10 @@ org.apache.tomcat.tomcat-dbcp.level = ALL
 com.arjuna.level = ALL
 EOT
     rm -rf narayana-tomcat
-    git clone https://github.com/jbosstm/narayana-tomcat.git
+    git clone https://github.com/mmusgrov/narayana-tomcat.git
+    cd narayana-tomcat
+    git checkout upgrade
+    cd ..
     echo "Executing Narayana Tomcat tests"
     ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
