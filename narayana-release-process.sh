@@ -12,7 +12,6 @@
 # 1 argument: same as 0 argument but taken in care WFLYISSUE thus script don't try to create new issue
 # 3 arguments: `./narayana-release-process.sh CURRENT NEXT WFLYISSUE`
 
-command -v mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting."; exit 1; }
 command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
 command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct (http://awestruct.org/getting_started) but it's not installed.  Aborting."; exit 1; }
 read -p "Have you created a WFLY issue at https://issues.jboss.org/secure/CreateIssue.jspa and have the number?" WISSUEOK
@@ -153,7 +152,7 @@ then
 fi
 
 rm -rf $PWD/localm2repo
-mvn clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
 rm -rf $PWD/localrepo
 cd -
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
@@ -173,25 +172,25 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-mvn clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not install narayana
   exit
 fi
-mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
-mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy blacktie cpp-plugin to nexus
   exit
 fi
-mvn clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy jatmibroker to nexus
