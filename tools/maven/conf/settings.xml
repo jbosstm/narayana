@@ -244,6 +244,18 @@ under the License.
       </properties>
     </profile>
     -->
+    <profile>
+      <id>httpscentral</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+        </repository>
+      </repositories>
+    </profile>
   </profiles>
 
   <!-- activeProfiles
