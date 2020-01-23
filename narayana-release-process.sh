@@ -172,25 +172,25 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not install narayana
   exit
 fi
-./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy narayana to nexus
   exit
 fi
-./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Prelease -f blacktie/utils/cpp-plugin/pom.xml
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy blacktie cpp-plugin to nexus
   exit
 fi
-./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs tools/maven/conf/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
+./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Prelease  -f blacktie/pom.xml -pl :blacktie-jatmibroker-nbf -am
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not deploy jatmibroker to nexus
