@@ -74,7 +74,7 @@ docker login docker.io
 
 git fetch upstream --tags
 set +e
-git tag | grep $CURRENT
+git tag | grep -x $CURRENT
 if [[ $? != 0 ]]
 then
   git status | grep "nothing to commit"
