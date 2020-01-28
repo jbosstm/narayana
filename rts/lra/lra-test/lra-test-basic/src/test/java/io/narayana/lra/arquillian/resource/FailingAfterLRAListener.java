@@ -52,7 +52,7 @@ public class FailingAfterLRAListener {
     @Path("after-lra")
     @AfterLRA
     public Response afterLRA(@HeaderParam(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER) URI endedLRAId) {
-        if (afterLRACounter.getAndIncrement() < 2) {
+        if (afterLRACounter.getAndIncrement() < 1) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 

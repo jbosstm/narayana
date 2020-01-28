@@ -97,7 +97,7 @@ public class FailingParticipantCallsIT {
                 .path(FailingAfterLRAListener.ROOT_PATH).path("counter").build())
                 .request().get();
 
-            Assert.assertEquals(3, Integer.parseInt(response.readEntity(String.class)));
+            Assert.assertEquals(2, Integer.parseInt(response.readEntity(String.class)));
         } finally {
             if (response != null) {
                 response.close();

@@ -23,11 +23,7 @@
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
-import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -102,6 +98,8 @@ class RecoveringLRA extends Transaction {
                 }
             }
 
+            runPostLRAActions();
+
             // if there are no more heuristics or failures then update the status of the LRA
             if (heuristicList.size() == 0 && failedList.size() == 0) {
                 setLRAStatus(_theStatus);
@@ -127,27 +125,6 @@ class RecoveringLRA extends Transaction {
             }
 
             // Failure to activate (NB other types such as AtomicActionExpiryScanner move the log)
-        }
-    }
-
-    private void checkParticipant(RecordList participants) {
-        RecordListIterator i = new RecordListIterator(participants);
-        AbstractRecord r;
-
-        while ((r = i.iterate()) != null) {
-            if (r instanceof LRARecord) {
-                LRARecord rec = (LRARecord) r;
-
-                rec.setLraService(getLraService());
-            }
-        }
-    }
-
-    private void moveTo(RecordList fromList, RecordList toList) {
-        AbstractRecord record;
-
-        while ((record = fromList.getFront()) != null) {
-            toList.putFront(record);
         }
     }
 

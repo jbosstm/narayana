@@ -101,17 +101,11 @@ public class LRARecoveryModule implements RecoveryModule {
             try {
                 RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus);
                 String Status = ActionStatus.stringForm(theStatus);
-                boolean inFlight = lraService.hasTransaction(lra.getId());
+                boolean inFlight = lra.isActive();
 
-                if (!inFlight && lra.getLRAStatus() == null) {
-                    // it must have crashed before the end phase so add it back into the active list
+                if (inFlight) {
+                    // make sure LRAService knows about it
                     lraService.addTransaction(lra);
-                    inFlight = true;
-                }
-
-                if (inFlight // might have been loaded on start up
-                        && !lraService.getTransaction(lra.getId()).isInFlight()) {
-                    inFlight = false; // lraService knows about it but was loaded at start up time
                 }
 
                 if (LRALogger.logger.isDebugEnabled()) {
@@ -120,7 +114,7 @@ public class LRARecoveryModule implements RecoveryModule {
                             " in flight is " + inFlight);
                 }
 
-                if (!inFlight && lra.isRecovering()) {
+                if (!inFlight && lra.hasPendingActions()) {
                     lra.replayPhase2();
 
                     if (!lra.isRecovering() && lraService != null) {

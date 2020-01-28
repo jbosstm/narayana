@@ -173,7 +173,8 @@ public class LRAService {
             // the LRA is top level or it's a nested LRA that was closed by a
             // parent LRA (ie when fromHierarchy is true) then it's okay to forget about the LRA
 
-            if (transaction.afterLRANotification()) {
+            if (!transaction.hasPendingActions()) {
+                // this call is only required to clean up cached LRAs (JBTM-3250 will remove this cache).
                 remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
             }
         }

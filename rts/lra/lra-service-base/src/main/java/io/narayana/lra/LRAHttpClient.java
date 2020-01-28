@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class LRAHttpClient {
-    public static final long PARTICIPANT_TIMEOUT = 1; // number of seconds to wait for requests
+    public static final long PARTICIPANT_TIMEOUT = 2; // number of seconds to wait for requests
 
     private static LRAHttpClient client = new LRAHttpClient();
 

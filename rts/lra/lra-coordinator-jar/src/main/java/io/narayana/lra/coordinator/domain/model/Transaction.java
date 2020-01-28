@@ -30,8 +30,6 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import io.narayana.lra.RequestBuilder;
-import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -39,10 +37,8 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -56,7 +52,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -66,7 +61,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static io.narayana.lra.LRAHttpClient.PARTICIPANT_TIMEOUT;
 
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
@@ -75,7 +69,6 @@ public class Transaction extends AtomicAction {
     private URI parentId;
     private String clientId;
     private List<LRARecord> pending;
-    private List<AfterLRAListener> afterLRAListeners;
     private LRAStatus status;
     private String responseData;
     private LocalDateTime startTime;
@@ -157,16 +150,6 @@ public class Transaction extends AtomicAction {
             } else {
                 os.packBoolean(true);
                 os.packString(status.name());
-            }
-
-            if (afterLRAListeners == null) {
-                os.packInt(0);
-            } else {
-                os.packInt(afterLRAListeners.size());
-                for (AfterLRAListener participant : afterLRAListeners) {
-                    os.packString(participant.notificationURI.toASCIIString());
-                    os.packString(participant.recoveryId.toASCIIString());
-                }
             }
         } catch (IOException e) {
             return false;
@@ -261,17 +244,6 @@ public class Transaction extends AtomicAction {
             startTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             finishTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             status = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
-
-            int cnt = os.unpackInt();
-
-            if (cnt == 0) {
-                afterLRAListeners = null;
-            } else {
-                afterLRAListeners = new ArrayList<>();
-                for (int i = 0; i < cnt; i++) {
-                    afterLRAListeners.add(new AfterLRAListener(new URI(os.unpackString()), new URI(os.unpackString())));
-                }
-            }
 
             /*
              * If the time limit has already been reached then the difference between now and the scheduled
@@ -374,6 +346,21 @@ public class Transaction extends AtomicAction {
                 (status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing));
     }
 
+    boolean isFinished() {
+        switch (status) {
+            case Closed:
+                /* FALLTHRU */
+            case Cancelled:
+                /* FALLTHRU */
+            case FailedToClose:
+                /* FALLTHRU */
+            case FailedToCancel:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private int cancelLRA() {
         return end(true);
     }
@@ -409,32 +396,6 @@ public class Transaction extends AtomicAction {
         }
     }
 
-    private void updateAfterLRAListeners(RecordList list) {
-        if (list == null || list.size() == 0) {
-            return;
-        }
-
-        if (afterLRAListeners == null) {
-            afterLRAListeners = new ArrayList<>();
-        } else {
-            afterLRAListeners.clear();
-        }
-
-        RecordListIterator i = new RecordListIterator(list);
-        AbstractRecord r;
-
-        while ((r = i.iterate()) != null) {
-            if (r instanceof LRARecord) {
-                URI endNotification = ((LRARecord) r).getEndNotificationUri();
-                URI recoveryURI = ((LRARecord) r).getRecoveryURI();
-
-                if (endNotification != null && recoveryURI != null) {
-                    afterLRAListeners.add(new AfterLRAListener(endNotification, recoveryURI));
-                }
-            }
-        }
-    }
-
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
     private int doEnd(boolean cancel) {
         inFlight = false;
@@ -465,7 +426,6 @@ public class Transaction extends AtomicAction {
 
                 pending.forEach(r -> pendingList.putRear(r));
 
-                updateAfterLRAListeners(pendingList);
                 updateState(LRAStatus.Cancelling);
 
                 super.phase2Abort(true);
@@ -484,7 +444,6 @@ public class Transaction extends AtomicAction {
                     pendingList.putRear(pendingList.getFront());
                 }
 
-                updateAfterLRAListeners(pendingList);
                 // tell each participant that the LRA canceled
                 updateState(LRAStatus.Cancelling);
 
@@ -496,7 +455,6 @@ public class Transaction extends AtomicAction {
                 super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
                 res = super.status();
             } else {
-                updateAfterLRAListeners(pendingList);
                 // tell each participant that the LRA closed ok
                 updateState(LRAStatus.Closing);
                 res = super.End(true);
@@ -519,6 +477,10 @@ public class Transaction extends AtomicAction {
             status = toLRAStatus(res);
         }
 
+        // note that we can either run the post actions now or wait for a recovery pass
+        // doing it here will provide more timely notifications
+        runPostLRAActions();
+
         if (!isRecovering()) {
             if (lraService != null) {
                 lraService.finished(this, false);
@@ -532,10 +494,77 @@ public class Transaction extends AtomicAction {
         return res;
     }
 
+    protected void runPostLRAActions() {
+        // if there are no more heuristics or failures then update the status of the LRA
+        if (isInEndState()) {
+            if (preparedList == null) {
+                preparedList = new RecordList();
+            }
+            moveTo(heuristicList, preparedList);
+            moveTo(failedList, preparedList);
+            checkParticipant(preparedList);
+            super.phase2Commit(true);
+        }
+    }
+
     private boolean updateState(LRAStatus nextState) {
         status = nextState;
 
         return (pendingList == null || pendingList.size() == 0) || deactivate();
+    }
+
+    protected void checkParticipant(RecordList participants) {
+        RecordListIterator i = new RecordListIterator(participants);
+        AbstractRecord r;
+
+        while ((r = i.iterate()) != null) {
+            if (r instanceof LRARecord) {
+                LRARecord rec = (LRARecord) r;
+
+                rec.setLraService(getLraService());
+                rec.setLRA(this);
+            }
+        }
+    }
+
+    protected void moveTo(RecordList fromList, RecordList toList) {
+        AbstractRecord record;
+
+        if (fromList != null) {
+            while ((record = fromList.getFront()) != null) {
+                toList.putFront(record);
+            }
+        }
+    }
+
+    private boolean allFinished(RecordList... lists) {
+        for (RecordList list : lists) {
+            if (list != null) {
+                RecordListIterator i = new RecordListIterator(list);
+                AbstractRecord r;
+
+                while ((r = i.iterate()) != null) {
+                    if (r instanceof LRARecord) {
+                        LRARecord rec = (LRARecord) r;
+                        if (!rec.isFinished()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isInEndState() {
+        if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
+            status = LRAStatus.Cancelled;
+        } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
+            status = LRAStatus.Closed;
+        }
+
+        return isFinished();
     }
 
     private int getSize(RecordList list) {
@@ -574,7 +603,6 @@ public class Transaction extends AtomicAction {
 
         if (participant != null) {
             // need to remember that there is a new participant
-            updateAfterLRAListeners(pendingList);
             deactivate(); // if it fails the superclass will have logged a warning
             savedIntentionList = true; // need this clean up if the LRA times out
         }
@@ -584,7 +612,7 @@ public class Transaction extends AtomicAction {
 
     private LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
                                         long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        LRARecord p = new LRARecord(lraService, coordinatorUrl.toASCIIString(), participantUrl, compensatorData);
+        LRARecord p = new LRARecord(this, lraService, coordinatorUrl.toASCIIString(), participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
         String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), "UTF-8");
@@ -904,56 +932,19 @@ public class Transaction extends AtomicAction {
         return parentId;
     }
 
-    public boolean afterLRANotification() {
-        boolean notifiedAll = true;
-
-        if (afterLRAListeners != null) {
-            try {
-                Iterator<AfterLRAListener> listeners = afterLRAListeners.iterator();
-
-                while (listeners.hasNext()) {
-                    AfterLRAListener participant = listeners.next();
-                    ResponseHolder response = null;
-
-                    try {
-                        response = new RequestBuilder(participant.notificationURI)
-                                .request()
-                                .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, id)
-                                .header(LRA.LRA_HTTP_RECOVERY_HEADER, participant.recoveryId.toASCIIString())
-                                .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                                .put(status.name(), MediaType.TEXT_PLAIN);
-
-                        if (response.getStatus() == 200) {
-                            listeners.remove();
-                        } else {
-                            notifiedAll = false;
-                        }
-                    } catch (WebApplicationException e) {
-                        notifiedAll = false;
-
-                        if (LRALogger.logger.isInfoEnabled()) {
-                            LRALogger.logger.infof("Could not notify AfterLRA listener at %s (%s)", participant.notificationURI, e.getMessage());
-                        }
-                    }
-                }
-            } finally {
-            }
-        }
-
-        return notifiedAll;
-    }
-
     public String getUid() {
         return uid;
     }
 
-    static class AfterLRAListener {
-        public AfterLRAListener(URI notificationURI, URI recoveryId) {
-            this.notificationURI = notificationURI;
-            this.recoveryId = recoveryId;
-        }
+    private boolean hasElements(RecordList list) {
+        return list != null && list.size() != 0;
+    }
 
-        final URI notificationURI;
-        final URI recoveryId;
+    /**
+     * Checks whether the LRA has finished and whether or not all of the post LRA actions are complete
+     * @return true if all post LRA actions are complete
+     */
+    public boolean hasPendingActions() {
+        return !isFinished() || hasElements(heuristicList) || hasElements(failedList);
     }
 }
