@@ -36,6 +36,7 @@ import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.AsyncInvoker;
@@ -259,12 +260,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
 
         if (compensateURI == null) {
-            return TwoPhaseOutcome.FINISH_OK;
+            return atEnd(TwoPhaseOutcome.FINISH_OK);
         }
 
         if (compensate) {
             if (isCompensated()) {
-                return TwoPhaseOutcome.FINISH_OK; // the participant has already compensated
+                return atEnd(TwoPhaseOutcome.FINISH_OK); // the participant has already compensated
             }
 
             endPath = compensateURI; // we are going to ask the participant to compensate
@@ -273,7 +274,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             if (isCompelete() || completeURI == null) {
                 status = ParticipantStatus.Completed;
 
-                return TwoPhaseOutcome.FINISH_OK; // the participant has already completed
+                return atEnd(TwoPhaseOutcome.FINISH_OK); // the participant has already completed
             }
 
             endPath = completeURI;  // we are going to ask the participant to complete
@@ -291,7 +292,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             int twoPhaseOutcome = retryGetEndStatus(endPath, compensate);
 
             if (twoPhaseOutcome != -1) {
-                return twoPhaseOutcome;
+                return atEnd(twoPhaseOutcome);
             }
         } else {
             httpStatus = tryLocalEndInvocation(endPath); // see if participant is in the same JVM
@@ -322,7 +323,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 if (httpStatus == Response.Status.GONE.getStatusCode()) {
                     updateStatus(compensate);
-                    return TwoPhaseOutcome.FINISH_OK; // the participant must have finished ok but we lost the response
+                    return atEnd(TwoPhaseOutcome.FINISH_OK); // the participant must have finished ok but we lost the response
                 }
 
                 if (response.hasEntity()) {
@@ -338,8 +339,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 httpStatus == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
             // the body should contain a valid ParticipantStatus
             try {
-                return reportFailure(compensate, endPath.toASCIIString(),
-                        ParticipantStatus.valueOf(responseData).name());
+                return atEnd(reportFailure(compensate, endPath.toASCIIString(),
+                        ParticipantStatus.valueOf(responseData).name()));
             } catch (IllegalArgumentException ignore) {
                 // ignore the body and let recovery discover the status of the participant
             }
@@ -361,18 +362,83 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                  * so if we were to return FINISH_ERROR recovery would not replay the log.
                  * To force the record to be eligible for recovery we return a heuristic hazard.
                  */
-                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                return atEnd(TwoPhaseOutcome.HEURISTIC_HAZARD);
             }
 
             status = ParticipantStatus.Completing; // recovery will figure out the status via the status url
 
-            return TwoPhaseOutcome.FINISH_ERROR;
+            return atEnd(TwoPhaseOutcome.FINISH_ERROR);
         }
 
         updateStatus(compensate);
 
         // if the the request is still in progress (ie accepted is true) let recovery finish it
-        return accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK;
+        return atEnd(accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK);
+    }
+
+    private boolean isFinished() {
+        if (status == null) {
+            return afterURI != null;
+        }
+
+        switch (status) {
+            case Completed:
+                /* FALLTHRU */
+            case FailedToComplete:
+                /* FALLTHRU */
+            case Compensated:
+                /* FALLTHRU */
+            case FailedToCompensate:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean request(URI target, Transaction lra, String payload) {
+        try {
+            RequestBuilder builder = new RequestBuilder(target)
+                    .request()
+                    .header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, lra.getId().toASCIIString())
+                    .header(LRA.LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
+                    .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+            ResponseHolder response = target.equals(forgetURI) ? builder.delete() : builder.put(payload, MediaType.TEXT_PLAIN);
+
+            if (response.getStatus() == 200) {
+                return true;
+            }
+        } catch (WebApplicationException e) {
+            if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.infof("Could not notify URI at %s (%s)", target, e.getMessage());
+            }
+        }
+
+        return false;
+    }
+
+    private int atEnd(int res) {
+        Transaction lra = lraService.getTransaction(lraId);
+
+        if (!lra.isFinished() && !isFinished()) {
+            // Only run the post LRA actions if both the LRA and participant are in an end state
+            return res;
+        }
+
+        // run post LRA actions
+        URI nested = compensateURI != null ? extractParentLRA(compensateURI) : null;
+        boolean r1 = request(afterURI, lra, lra.getLRAStatus().name());
+        boolean r2 = (nested == null || forgetURI == null) || request(forgetURI, lra, lra.getLRAStatus().name());
+
+        if (r1) {
+            afterURI = null; // the after LRA notification was received successfully
+        }
+
+        if (r2) {
+            forgetURI = null; // the forget notification was received successfully
+        }
+
+        // if the post LRA actions succeeded remove the participant from the intentions list otherwise retry
+        return r1 && r2 ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.HEURISTIC_HAZARD;
     }
 
     private void updateStatus(boolean compensate) {
