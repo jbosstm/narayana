@@ -121,10 +121,11 @@ def main():
     config = _get_configuration()
     confirm_message = 'Pre release {0} check failed. Do you want to continue? \n'
     error_message = 'Pre release {0} check failed.'
+    """,{'name': 'deprecation', 'function': check_deprecated_code, 'fail': config['fail_deprecation']}"""
     checks = [
         {'name': 'jenkins', 'function': check_jenkins, 'fail': config['fail_jenkins']},
-        {'name': 'blocker', 'function': check_jira_blockers, 'fail': config['fail_blocker']},
-        {'name': 'deprecation', 'function': check_deprecated_code, 'fail': config['fail_deprecation']}
+        {'name': 'blocker', 'function': check_jira_blockers, 'fail': config['fail_blocker']}
+        
     ]
     for check in checks:
         if not check['function'](config):
