@@ -15,4 +15,4 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-const char* version = "5.10.4.Final";
+const char* version = "5.10.5.Final-SNAPSHOT";
