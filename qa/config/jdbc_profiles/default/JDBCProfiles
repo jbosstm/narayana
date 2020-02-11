@@ -47,19 +47,22 @@
 # PostgreSQL JNDI Pair
 ######################################################################
 
-# docker run --name postgres-ci -e DB_USER="postgres" -e DB_PASSWORD="postgres" -d -p 5432:5432 dcerecedo/postgres-docker:postgresql-9.3
+# docker run --name postgres-ci -e DB_USER="postgres" -e DB_PASSWORD="postgres" -d -p 5432:5432 postgres:9.4
 # docker start postgres-ci
 # /var/lib/pgsql/data - conf files for tcp/ip and auth
+# docker exec -it postgres-ci bash
 # su - postgres
 # createdb jbossts
-# docker run --rm -ti dcerecedo/postgres-docker:postgresql-9.3 psql -h narayanaci1.eng.hst.ams2.redhat.com -p 5432 -U dtf11 jbossts
+# psql -h narayanaci1.eng.hst.ams2.redhat.com -p 5432 jbossts
 # CREATE USER dtf11 PASSWORD 'dtf11';
 # GRANT ALL ON DATABASE jbossts TO dtf11;
 # CREATE USER dtf12 PASSWORD 'dtf12';
 # GRANT ALL ON DATABASE jbossts TO dtf12;
 # ALTER DATABASE jbossts SET bytea_output TO 'escape';
 # \q
-# sed -i "s/#max_prepared_transactions = 0/max_prepared_transactions = 100/g" ./etc/postgresql/9.3/main/postgresql.conf
+# exit
+# sed -i "s/#max_prepared_transactions = 0/max_prepared_transactions = 100/g" ./var/lib/postgresql/data/postgresql.conf
+# exit
 #docker stop postgres-ci
 #docker start postgres-ci
 
