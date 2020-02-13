@@ -23,7 +23,12 @@
     <properties>
         <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase> <!-- not starting coordinator by default, need -Parq -->
         <lra.coordinator.port>8080</lra.coordinator.port>
-        <lra.coordinator.trace.params></lra.coordinator.trace.params>
+        <lra.coordinator.log.console.disable></lra.coordinator.log.console.disable>
+        <lra.coordinator.log.file.enable></lra.coordinator.log.file.enable>
+        <lra.coordinator.log.file.path></lra.coordinator.log.file.path>
+        <lra.coordinator.log.file.level></lra.coordinator.log.file.level>
+        <lra.coordinator.log.file.module.arjuna></lra.coordinator.log.file.module.arjuna>
+        <lra.coordinator.log.file.module.narayana></lra.coordinator.log.file.module.narayana>
         <lra.coordinator.debug.params></lra.coordinator.debug.params> <!-- has content when -Ddebug.coordinator is specified -->
         <lra.coordinator.debug.port>8787</lra.coordinator.debug.port>
         <lra.coordinator.jar.path>${project.basedir}/../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
@@ -75,7 +80,17 @@
                 </property>
             </activation>
             <properties>
-                <lra.coordinator.trace.params>-Dthorntail.logging=TRACE</lra.coordinator.trace.params>
+                <!-- # Disabling console trace level logging (By default logger level is INFO)-->
+                <lra.coordinator.log.console.disable>-Dquarkus.log.console.enable=false</lra.coordinator.log.console.disable>
+                <!--# Enabling file trace logging-->
+                <lra.coordinator.log.file.enable>-Dquarkus.log.file.enable=true</lra.coordinator.log.file.enable>
+                <lra.coordinator.log.file.level>-Dquarkus.log.file.level=TRACE</lra.coordinator.log.file.level>
+                <!--# Send output to a trace.log file under the target/failsafe-reports/ directory-->
+                <lra.coordinator.log.file.path>-Dquarkus.log.file.path=${project.build.directory}/failsafe-reports/lra-coordinator-trace.log</lra.coordinator.log.file.path>
+                <!--# Setting categories to TRACE level-->
+                <lra.coordinator.log.file.module.arjuna>-Dquarkus.log.category."com.arjuna".level=TRACE</lra.coordinator.log.file.module.arjuna>
+                <lra.coordinator.log.file.module.narayana>-Dquarkus.log.category."io.narayana.lra".level=TRACE</lra.coordinator.log.file.module.narayana>
+
             </properties>
         </profile>
 
@@ -114,7 +129,12 @@
                                         <argument>${java.home}/bin/java</argument>
                                         <argument>-Djava.net.preferIPv4Stack=true</argument>
                                         <argument>${lra.coordinator.debug.params}</argument>
-                                        <argument>${lra.coordinator.trace.params}</argument>
+                                        <argument>${lra.coordinator.log.console.disable}</argument>
+                                        <argument>${lra.coordinator.log.file.enable}</argument>
+                                        <argument>${lra.coordinator.log.file.level}</argument>
+                                        <argument>${lra.coordinator.log.file.path}</argument>
+                                        <argument>${lra.coordinator.log.file.module.arjuna}</argument>
+                                        <argument>${lra.coordinator.log.file.module.narayana}</argument>
                                         <argument>-DRecoveryEnvironmentBean.periodicRecoveryPeriod=10</argument>
                                         <argument>-DRecoveryEnvironmentBean.recoveryBackoffPeriod=5</argument>
                                         <argument>-DObjectStoreEnvironmentBean.objectStoreDir=${project.build.directory}/lra_txn_logs</argument>
