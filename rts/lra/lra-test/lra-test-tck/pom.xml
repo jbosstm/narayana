@@ -18,7 +18,6 @@
         
         <lra.tck.suite.host>localhost</lra.tck.suite.host>
         <lra.tck.suite.port>8180</lra.tck.suite.port>
-        <lra.tck.suite.thorntail.trace.params></lra.tck.suite.thorntail.trace.params>
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
         <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
@@ -44,7 +43,8 @@
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
                         <lra.tck.suite.host>${lra.tck.suite.host}</lra.tck.suite.host>
                         <lra.tck.suite.port>${lra.tck.suite.port}</lra.tck.suite.port>
-                        <lra.tck.suite.thorntail.trace.params>${lra.tck.suite.thorntail.trace.params}</lra.tck.suite.thorntail.trace.params>
+                        <thorntail.test.logging.category.arjuna>${thorntail.test.logging.category.arjuna}</thorntail.test.logging.category.arjuna>
+                        <thorntail.test.logging.category.narayana>${thorntail.test.logging.category.narayana}</thorntail.test.logging.category.narayana>
                         <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
                         <lra.tck.suite.debug.params>${lra.tck.suite.debug.params}</lra.tck.suite.debug.params>
                         <lra.tck.consistency.longDelay>${lra.tck.consistency.longDelay}</lra.tck.consistency.longDelay>
@@ -107,7 +107,8 @@
                 </property>
             </activation>
             <properties>
-                <lra.tck.suite.thorntail.trace.params>-Dthorntail.logging=TRACE</lra.tck.suite.thorntail.trace.params>
+                <thorntail.test.logging.category.arjuna>-Dthorntail.logging.com.arjuna=TRACE</thorntail.test.logging.category.arjuna>
+                <thorntail.test.logging.category.narayana>-Dthorntail.logging.io.narayana.lra=TRACE</thorntail.test.logging.category.narayana>
             </properties>
         </profile>
     </profiles>

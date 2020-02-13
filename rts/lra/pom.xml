@@ -36,6 +36,9 @@
 
         <test.logs.to.file>false</test.logs.to.file>
         <skipITs>true</skipITs> <!-- integration tests are disabled by default, use profile to run 'arq' -->
+
+        <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
+        <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
     </properties>
 
     <repositories>
@@ -101,6 +104,7 @@
               <groupId>org.sonatype.plugins</groupId>
               <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -111,6 +115,11 @@
                     <systemProperties>
                         <arquillian.xml>arquillian-thorntail.xml</arquillian.xml>
                     </systemProperties>
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
+                        <thorntail.test.logging.category.arjuna>${thorntail.test.logging.category.arjuna}</thorntail.test.logging.category.arjuna>
+                        <thorntail.test.logging.category.narayana>${thorntail.test.logging.category.narayana}</thorntail.test.logging.category.narayana>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
@@ -169,6 +178,19 @@
               <skipITs>false</skipITs>
           </properties>
       </profile>
+
+        <profile>
+            <id>trace.thorntail.test</id>
+            <activation>
+                <property>
+                    <name>trace.thorntail.test</name>
+                </property>
+            </activation>
+            <properties>
+                <thorntail.test.logging.category.arjuna>-Dthorntail.logging.com.arjuna=TRACE</thorntail.test.logging.category.arjuna>
+                <thorntail.test.logging.category.narayana>-Dthorntail.logging.io.narayana.lra=TRACE</thorntail.test.logging.category.narayana>
+            </properties>
+        </profile>
 
       <profile>
           <id>j9</id>

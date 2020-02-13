@@ -56,6 +56,7 @@ function init_test_options {
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
     [ $IBM_ORB ] || IBM_ORB=0
+    [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Ptrace.thorntail.test -Ptrace.lra.coordinator"
 
     AS_TESTS=0
 
@@ -455,9 +456,11 @@ function rts_tests {
 
 function lra_tests {
   echo "#0. LRA Test"
+
   # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
-  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@"
+
+  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS "$@"
   [ $? = 0 ] || fatal "LRA Test failed"
   cd - # back to original directory
 }
