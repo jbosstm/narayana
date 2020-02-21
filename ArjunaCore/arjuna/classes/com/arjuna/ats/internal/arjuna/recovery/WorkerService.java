@@ -63,7 +63,7 @@ public class WorkerService implements Service
 	{
 	    String request = in.readLine();
 
-        if (request.equals("PING"))
+        if ("PING".equals(request))
         {
             out.println("PONG");
         }
