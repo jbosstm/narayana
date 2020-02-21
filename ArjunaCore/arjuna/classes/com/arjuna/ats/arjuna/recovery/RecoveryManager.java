@@ -209,6 +209,7 @@ public class RecoveryManager
 
         _theImple.stop(async);
         _theImple = null;
+        _recoveryManager = null;
     }
 
     /**
