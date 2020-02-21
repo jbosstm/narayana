@@ -41,25 +41,25 @@ public class RecoveryDriverUnitTest
     @Test
     public void testInvalid () throws Exception
     {
-        RecoveryDriver rd = new RecoveryDriver(0, "foobar");
+        RecoveryDriver rd = new RecoveryDriver(0, "non-existent-hostname");
         
         try
         {
             rd.asynchronousScan();
-            
-            fail();
+
+            fail("Recovery driver asynchronously calls to a non-existent host:port at 'non-existent-hostname:0'. Failure is expected.");
         }
-        catch (final Exception ex)
+        catch (final Exception expected)
         {
         }
         
         try
         {
             rd.synchronousScan();
-            
-            fail();
+
+            fail("Recovery driver synchronously calls to a non-existent host:port at 'non-existent-hostname:0'. Failure is expected.");
         }
-        catch (final Exception ex)
+        catch (final Exception expected)
         {
         }
     }

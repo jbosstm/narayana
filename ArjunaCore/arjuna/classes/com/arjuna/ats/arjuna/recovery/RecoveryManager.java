@@ -133,7 +133,7 @@ public class RecoveryManager
 	else
 	{
 	    if (_recoveryManager.mode() != mode)
-		throw new IllegalArgumentException();
+		  throw new IllegalArgumentException(tsLogger.i18NLogger.get_recovery_manager_already_started_in_different_mode(_recoveryManager.mode(), mode));
 	}
 
 	return _recoveryManager;
@@ -442,7 +442,8 @@ public class RecoveryManager
                     }
                     catch(InterruptedException interruptedException)
                     {
-                        // do nothing
+                        System.err.println("The retry attempt was interrupted. Exiting...");
+                        throw new IllegalStateException(interruptedException);
                     }
                     manager = manager();
                 }
@@ -483,7 +484,7 @@ public class RecoveryManager
     private final void checkState ()
     {
         if (_theImple == null)
-            throw new IllegalStateException();
+            throw new IllegalStateException(tsLogger.i18NLogger.get_recovery_manager_implementation_is_not_set());
     }
 
     private RecoveryManagerImple _theImple = null;
