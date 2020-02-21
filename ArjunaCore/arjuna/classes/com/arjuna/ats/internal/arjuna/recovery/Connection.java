@@ -87,8 +87,8 @@ public class Connection extends Thread
 
          _service.doWork ( is, os );
       }
-      catch ( IOException ex ) {
-          tsLogger.i18NLogger.warn_recovery_Connection_1();
+      catch ( IOException ioe ) {
+          tsLogger.i18NLogger.warn_recovery_Connection_1(ioe);
       }
       finally
       {
@@ -102,12 +102,12 @@ public class Connection extends Thread
    }
 
    // What client (RecoveryManager) talks to.
-   private Socket  _server_socket;
+   private final Socket  _server_socket;
    
    // What Service is provided to the client(RecoveryManager).
-   private Service _service;
+   private final Service _service;
 
-   private Callback _callback;
+   private final Callback _callback;
 
     // abstract class instantiated by clients to allow notification that a connection has been closed
     
