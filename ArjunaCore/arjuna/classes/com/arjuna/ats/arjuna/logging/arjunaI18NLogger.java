@@ -1192,9 +1192,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_AtomicActionRecoveryModule_3(Uid arg0, @Cause() Throwable arg1);
 
-	@Message(id = 12292, value = "Connection - IOException", format = MESSAGE_FORMAT)
+	@Message(id = 12292, value = "Connection error on running a work on the socket. IOException: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_Connection_1();
+	public void warn_recovery_Connection_1(IOException cause);
 
 	@Message(id = 12293, value = "Setting timeout exception.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1605,6 +1605,14 @@ public interface arjunaI18NLogger {
 	@Message(id = 12399, value = "Problem in doWork of CacheStore trying to perform state management", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
 	void warn_could_not_handle_objectstore_generic(@Cause Exception ex);
+
+	@Message(id = 12400, value = "Cannot terminate the recovery manager as the implementation is not known. Could be the recovery manager was not started yet?", format = MESSAGE_FORMAT)
+	String get_recovery_manager_implementation_is_not_set();
+
+	@Message(id = 12401, value = "There is already started a recovery manager in mode ''{0}'' which is different from the requested mode ''{1}''." +
+			"If you consider starting in a different mode then first terminate the currently running recovery manager.", format = MESSAGE_FORMAT)
+	String get_recovery_manager_already_started_in_different_mode(int startedRecoveryManagerMode, int modeProvidedToMethodParameter);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
