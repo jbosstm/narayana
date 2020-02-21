@@ -59,19 +59,19 @@ public class WorkerService implements Service
 	{
 	    String request = in.readLine();
 
-        if (request.equals("PING"))
+        if ("PING".equals(request))
         {
             out.println("PONG");
         }
         else
-	    if (request.equals(RecoveryDriver.SCAN) || (request.equals(RecoveryDriver.ASYNC_SCAN)))
+	    if (RecoveryDriver.SCAN.equals(request) || RecoveryDriver.ASYNC_SCAN.equals(request))
 	    {
             // hmm, we need to synchronize on the periodic recovery object in order to wake it up via notify.
             // but the periodic recovery object has to synchronize on this object and then call notify
             // in order to tell it that the last requested scan has completed. i.e. we have a two way
             // wakeup here. so we have to be careful to avoid a deadlock.
 
-            if (request.equals(RecoveryDriver.SCAN)) {
+            if (RecoveryDriver.SCAN.equals(request)) {
                 // do this before kicking the periodic recovery thread
                 synchronized (this) {
                     doWait = true;
@@ -82,7 +82,7 @@ public class WorkerService implements Service
 
             tsLogger.i18NLogger.info_recovery_WorkerService_3();
 
-		if (request.equals(RecoveryDriver.SCAN))
+		if (RecoveryDriver.SCAN.equals(request))
 		{
             synchronized (this) {
                 if (doWait && _periodicRecovery.getMode() != PeriodicRecovery.Mode.TERMINATED) {
