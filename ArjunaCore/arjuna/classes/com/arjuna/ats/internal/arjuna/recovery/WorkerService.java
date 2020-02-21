@@ -85,7 +85,7 @@ public class WorkerService implements Service
 		if (request.equals(RecoveryDriver.SCAN))
 		{
             synchronized (this) {
-                if (doWait) {
+                if (doWait && _periodicRecovery.getMode() != PeriodicRecovery.Mode.TERMINATED) {
                     // ok, the periodic recovery thread cannot have finished responding to the last scan request
                     // so it is safe to wait. if we delivered the request while the last scan was still going
                     // then it will have been ignored but that is ok.
@@ -95,6 +95,9 @@ public class WorkerService implements Service
 		    }
 		    catch (Exception ex)
 		    {
+                if(tsLogger.logger.isTraceEnabled()) {
+                    tsLogger.logger.trace("Waiting for recovery scan to complete finished with an exception", ex);
+                }
                 tsLogger.i18NLogger.info_recovery_WorkerService_4();
 		    }
                 }
@@ -107,8 +110,8 @@ public class WorkerService implements Service
 
 	    out.flush();
 	}
-	catch (IOException ex) {
-        tsLogger.i18NLogger.warn_recovery_WorkerService_2();
+	catch (IOException ioe) {
+        tsLogger.i18NLogger.warn_recovery_WorkerService_2(ioe);
     }
 	catch ( Exception ex ) {
         tsLogger.i18NLogger.warn_recovery_WorkerService_1(ex);

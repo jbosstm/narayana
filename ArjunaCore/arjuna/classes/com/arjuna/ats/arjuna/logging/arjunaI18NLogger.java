@@ -31,6 +31,7 @@ import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageLogger;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -1356,9 +1357,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_recovery_WorkerService_1(@Cause() Throwable arg0);
 
-	@Message(id = 12339, value = "IOException", format = MESSAGE_FORMAT)
+	@Message(id = 12339, value = "Cannot read line from the socket. IOException: {0}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_recovery_WorkerService_2();
+	public void warn_recovery_WorkerService_2(IOException cause);
 
 	@Message(id = 12340, value = "RecoveryManager scan scheduled to begin.", format = MESSAGE_FORMAT)
 	@LogMessage(level = INFO)
