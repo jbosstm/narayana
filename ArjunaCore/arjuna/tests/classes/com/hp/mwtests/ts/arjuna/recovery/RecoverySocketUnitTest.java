@@ -107,6 +107,19 @@ public class RecoverySocketUnitTest {
         }
     }
 
+    @Test
+    public void socketScanTerminateAbruptly() throws Exception {
+        try (Socket connectorSocket = getSocket()) {
+            // stream to RecoveryManager listener
+            PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
+            toServer.println(RecoveryDriver.SCAN);
+            toServer.flush();
+            recoveryManager.terminate();
+        } catch (final SocketTimeoutException stex) {
+            failOnSocketTimeout(stex, RecoveryDriver.SCAN);
+        }
+    }
+
     private Socket getSocket() {
         try {
             recoveryManagerHost = RecoveryManager.getRecoveryManagerHost();
