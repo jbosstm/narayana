@@ -24,6 +24,7 @@ package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
+import org.eclipse.microprofile.lra.tck.service.spi.LRACallbackException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -68,7 +69,7 @@ public class FailingParticipantCallsIT {
     }
 
     @Test
-    public void testFailingAfterLRA() {
+    public void testFailingAfterLRA() throws LRACallbackException {
         Client client = ClientBuilder.newClient();
         Response response = null;
         URI lra = null;
