@@ -258,7 +258,9 @@ public class Transaction extends AtomicAction {
                         LRALogger.logger.debugf("Timer for LRA '%s' has expired since last reload", id);
                     }
 
-                    status = LRAStatus.Cancelling;
+                    if (isActive()) {
+                        status = LRAStatus.Cancelling; // transition from Active to Cancelling
+                    }
                 } else {
                     if (LRALogger.logger.isDebugEnabled()) {
                         LRALogger.logger.debugf("Restarting time for LRA '%s'", id);
@@ -624,8 +626,8 @@ public class Transaction extends AtomicAction {
 
             return p;
         } else if (isRecovering() && p.getCompensator() == null && p.getEndNotificationUri() != null) {
-            // the participant is an AfterLRA listener
-            afterLRAListeners.add(new AfterLRAListener(p.getEndNotificationUri(), p.getRecoveryCoordinatorURI()));
+            // the participant is an AfterLRA listener so manually add it to heuristic list
+            heuristicList.putRear(p);
             updateState();
 
             return p;
