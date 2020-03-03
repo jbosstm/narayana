@@ -312,7 +312,14 @@ public class LRAService {
             lraTrace(lra, "join LRA");
         }
 
-        Transaction transaction = getTransaction(lra);
+        Transaction transaction;
+
+        try {
+            transaction = getTransaction(lra);
+        } catch (NotFoundException e) {
+            // the spec requires that the LRA exist in order to join with it
+            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+        }
 
         if (timeLimit < 0) {
             timeLimit = 0;
