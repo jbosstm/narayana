@@ -120,6 +120,70 @@ public class RecoverySocketUnitTest {
         }
     }
 
+    @Test
+    public void socketPing() throws Exception {
+        try (Socket connectorSocket = getSocket()) {
+            // streams to and from the RecoveryManager listener
+            BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
+
+            toServer.println(RecoveryDriver.PING);
+            toServer.flush();
+            String stringResponse = fromServer.readLine();
+            assertEquals("Expecting the correct response string for command " + RecoveryDriver.PING, RecoveryDriver.PONG, stringResponse);
+        } catch (final SocketTimeoutException stex) {
+            failOnSocketTimeout(stex, RecoveryDriver.PING);
+        }
+    }
+
+    @Test
+    public void socketScan() throws Exception {
+        try (Socket connectorSocket = getSocket()) {
+            // streams to and from the RecoveryManager listener
+            BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
+
+            toServer.println(RecoveryDriver.SCAN);
+            toServer.flush();
+            String stringResponse = fromServer.readLine();
+            assertEquals("Expecting SCAN to be processed correctly", "DONE", stringResponse);
+        } catch (final SocketTimeoutException stex) {
+            failOnSocketTimeout(stex, RecoveryDriver.SCAN);
+        }
+    }
+
+    @Test
+    public void socketScanVerbose() throws Exception {
+        try (Socket connectorSocket = getSocket()) {
+            // streams to and from the RecoveryManager listener
+            BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
+
+            toServer.println(RecoveryDriver.VERBOSE_SCAN);
+            toServer.flush();
+            String stringResponse = fromServer.readLine();
+            assertEquals("Expecting VERBOSE SCAN to be processed correctly", "DONE", stringResponse);
+        } catch (final SocketTimeoutException stex) {
+            failOnSocketTimeout(stex, RecoveryDriver.VERBOSE_SCAN);
+        }
+    }
+
+    @Test
+    public void socketTimeout() throws Exception {
+        try (Socket connectorSocket = getSocket()) {
+            connectorSocket.setSoTimeout(500);
+            PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
+            BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8));
+            toServer.print(RecoveryDriver.PING);
+            String stringResponse = fromServer.readLine(); // waiting indefinitely as the socket call was not finished with EOL
+            fail("Expecting the socket times out as the PING call was not ended properly");
+        } catch (final SocketTimeoutException expected) {
+            log.debugf("The socket timed-out which is desired");
+        }
+        // when the socket timed-out the next call has to succeed, let's try to ping it
+        socketPing();
+    }
+
     private Socket getSocket() {
         try {
             recoveryManagerHost = RecoveryManager.getRecoveryManagerHost();
