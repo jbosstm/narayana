@@ -734,8 +734,11 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 		if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("xarecovery second pass of " + xares);
         }
-		
-		RecoveryXids xidsToRecover = _xidScans.get(xares);
+
+		RecoveryXids xidsToRecover = null;
+		if(_xidScans != null) {
+			xidsToRecover = _xidScans.get(xares);
+		}
 		if (xidsToRecover != null) {
 			try {
 				Xid[] xids = xidsToRecover.toRecover();
@@ -1048,7 +1051,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
     private boolean isHelperInUse(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
         XAResource[] xaResources = recoveryHelpersXAResource.get(xaResourceRecoveryHelper);
 
-        if (xaResources != null) {
+        if (xaResources != null && _xidScans != null) {
             for (int i = 0; i < xaResources.length; i++) {
                 RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
                 if (recoveryXids != null && recoveryXids.size() > 0) {
