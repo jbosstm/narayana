@@ -358,26 +358,26 @@ public class OutputBuffer
         if (!_valid)
             throw new IOException(tsLogger.i18NLogger.get_state_OutputBuffer_10());
 
-        int sz = 0;
-        String dummy = null;
+        if(s == null) {
+            packInt(0);
+        } else {
+            packStringBytes( s.getBytes(StandardCharsets.UTF_8) );
+        }
+    }
 
-        if (s != null)
-        {
-            sz = s.length() + 1;
-            dummy = s + '\0';
-
+    public final synchronized void packStringBytes(byte[] bytes) throws IOException
+    {
+        if (!_valid || bytes == null) {
+            throw new IOException(tsLogger.i18NLogger.get_state_OutputBuffer_10());
         }
 
-        packInt(sz);
+        packInt(bytes.length+1);
 
         _valid = false;
 
-        if (sz > 0)
-        {
-            byte[] bytes = dummy.getBytes(StandardCharsets.UTF_8);
-            _output.write(bytes, 0, bytes.length);
-            realign(bytes.length);
-        }
+        _output.write(bytes, 0, bytes.length);
+        _output.writeByte(0);
+        realign(bytes.length+1);
 
         _valid = true;
     }

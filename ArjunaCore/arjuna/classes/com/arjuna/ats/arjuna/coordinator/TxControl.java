@@ -165,16 +165,24 @@ public class TxControl
 		return xaNodeName;
 	}
 
+	public static final byte[] getXaNodeNameBytes() {
+		return xaNodeNameBytes;
+	}
+
 	public static void setXANodeName(String name)
 	{
-	    if (name.getBytes(StandardCharsets.UTF_8).length > NODE_NAME_SIZE) {
+		byte[] bytes = name.getBytes(StandardCharsets.UTF_8);
+	    if (bytes.length > NODE_NAME_SIZE) {
             tsLogger.i18NLogger.warn_coordinator_toolong(NODE_NAME_SIZE);
 
             throw new IllegalArgumentException();
         }
 	    
 		xaNodeName = name;
+		xaNodeNameBytes = bytes;
 	}
+
+
 
     public static boolean isBeforeCompletionWhenRollbackOnly()
     {
@@ -236,6 +244,7 @@ public class TxControl
 	private static TransactionStatusManager transactionStatusManager = null;
 
 	static String xaNodeName = arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier();
+	static byte[] xaNodeNameBytes = (xaNodeName == null ? null : xaNodeName.getBytes(StandardCharsets.UTF_8));
 
 	static int _defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
 
