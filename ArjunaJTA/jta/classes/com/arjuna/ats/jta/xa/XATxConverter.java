@@ -91,18 +91,18 @@ public class XATxConverter
             throw new IllegalStateException(); // Uid is too long!!!!
         }
 
-        String nodeName = TxControl.getXANodeName();
+        byte[] nodeNameBytes = TxControl.getXaNodeNameBytes();
 
-        if (nodeName == null) {
+        if (nodeNameBytes == null) {
             throw new IllegalStateException(jtaLogger.i18NLogger.get_nodename_null());
         }
 
-        int nodeNameLengthToUse = nodeName.getBytes(StandardCharsets.UTF_8).length;
+        int nodeNameLengthToUse = nodeNameBytes.length;
         xid.gtrid_length = gtridUid.length+nodeNameLengthToUse;
 
         // src, srcPos, dest, destPos, length
         System.arraycopy(gtridUid, 0, xid.data, 0, gtridUid.length);
-        System.arraycopy(nodeName.getBytes(StandardCharsets.UTF_8), 0, xid.data, gtridUid.length, nodeNameLengthToUse);
+        System.arraycopy(nodeNameBytes, 0, xid.data, gtridUid.length, nodeNameLengthToUse);
         
         
         if (branch.notEquals(Uid.nullUid()))

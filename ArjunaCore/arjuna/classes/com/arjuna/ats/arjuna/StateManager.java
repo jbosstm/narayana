@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.locks.ReentrantLock;
@@ -646,7 +647,7 @@ public class StateManager
         {
             // pack the marker first.
 
-            os.packString(StateManager.marker);
+            os.packStringBytes(StateManager.markerBytes);
 
             /*
              * Only pack something if there is a transaction. Otherwise the
@@ -1399,4 +1400,5 @@ public class StateManager
     private ReentrantLock mutex = new ReentrantLock();
 
     private static final String marker = "#ARJUNA#";
+    private static final byte[] markerBytes = marker.getBytes(StandardCharsets.UTF_8);
 }
