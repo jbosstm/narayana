@@ -90,7 +90,10 @@ public class FailingParticipantCallsIT {
             }
         }
 
-        new NarayanaLRARecovery().waitForRecovery(lra);
+        NarayanaLRARecovery recoveryHelper = new NarayanaLRARecovery();
+
+        recoveryHelper.waitForRecovery(lra);
+        recoveryHelper.waitForRecovery(lra);
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
