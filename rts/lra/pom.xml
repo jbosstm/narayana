@@ -197,6 +197,10 @@
           <activation>
              <jdk>[1.9,11)</jdk>
           </activation>
+          <properties>
+            <maven.compiler.source>1.9</maven.compiler.source>
+            <maven.compiler.target>1.9</maven.compiler.target>
+          </properties>
           <build>
             <plugins>
               <plugin>

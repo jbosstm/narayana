@@ -171,6 +171,8 @@
       <properties>
         <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
         <version.compiler.plugin>3.6.0</version.compiler.plugin>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
         <idlj.jdk9.args>
           --add-modules java.corba
           --upgrade-module-path ${project.build.directory}/upgrademodulepath

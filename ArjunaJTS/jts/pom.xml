@@ -279,6 +279,8 @@
         <jdk>[1.9, 11)</jdk>
       </activation>
       <properties>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
         <jacorb.jdk9.args>
           --add-modules java.corba
           --patch-module java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar
