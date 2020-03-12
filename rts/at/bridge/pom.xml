@@ -204,6 +204,8 @@
         <jdk>[1.9,11)</jdk>
       </activation>
       <properties>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
         <!-- a couple of the rest bridge tests a failing with
            java.lang.NoClassDefFoundError: javax/xml/bind/JAXBContext
         <modular.jdk.args>-add-modules=java.xml,java.xml.bind,java.xml.ws</modular.jdk.args>
