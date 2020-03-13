@@ -86,7 +86,7 @@ public class LRARecoveryModule implements RecoveryModule {
 
     public void periodicWorkSecondPass() {
         if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debug("AtomicActionRecoveryModule second pass");
+            LRALogger.logger.debug("LRARecoveryModule second pass");
         }
 
         processTransactionsStatus();

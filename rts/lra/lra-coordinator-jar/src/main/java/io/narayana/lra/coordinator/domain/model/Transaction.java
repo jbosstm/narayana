@@ -461,7 +461,9 @@ public class Transaction extends AtomicAction {
             }
         }
 
-        updateState();
+        // note that we can either run the post actions now or wait for a recovery pass
+        // doing it here will provide more timely notifications
+        runPostLRAActions();
 
         if (pending != null && pending.size() != 0) {
             if (!nested) {
@@ -477,9 +479,6 @@ public class Transaction extends AtomicAction {
             status = toLRAStatus(res);
         }
 
-        // note that we can either run the post actions now or wait for a recovery pass
-        // doing it here will provide more timely notifications
-        runPostLRAActions();
 
         if (!isRecovering()) {
             if (lraService != null) {
