@@ -44,14 +44,14 @@ public class NarayanaLRARecovery {
         do {
             LRALogger.logger.info("Recovery attempt #" + ++counter);
         } while (!waitForEndPhaseReplay(lraId));
-        LRALogger.logger.info("LRA " + lraId + "has finished the recovery " + counter);
+        LRALogger.logger.info("LRA " + lraId + " has finished the recovery " + counter);
     }
 
     public boolean waitForEndPhaseReplay(URI lraId) {
         String host = lraId.getHost();
         int port = lraId.getPort();
         if (!recoverLRAs(host, port, lraId)) {
-            // first recovery scan probably collided with periodic recovevery which started
+            // first recovery scan probably collided with periodic recovery which started
             // before the test execution so try once more
             return recoverLRAs(host, port, lraId);
         }
