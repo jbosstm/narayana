@@ -143,6 +143,33 @@ then
 fi
 cd ..
 
+# Raising PR for quarkus to upgrade Narayana to current version.
+QRKSISSUE = WFLYISSUE
+if [ ! -d "quarkus" ]
+then
+  (git clone git@github.com:jbosstm/quarkus.git -o jbosstm; cd quarkus; git remote add upstream git@github.com/quarkusio/quarkus.git)
+fi
+cd quarkus
+git fetch jbosstm
+git branch | grep $QRKSISSUE
+if [[ $? != 0 ]]
+then
+  git fetch upstream;
+  git checkout -b ${QRKSISSUE}
+  git reset --hard upstream/master
+  cd /bom/runtime/
+  CURRENT_VERSION_IN_QRKS=`grep 'narayana.version>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
+  sed -i "s/narayana.version>$CURRENT_VERSION_IN_QRKS/narayana.version>$CURRENT/g" pom.xml
+  cd ../../
+  git add /bom/runtime/pom.xml
+  git commit -m "${QRKSISSUE} Upgrade Narayana to $CURRENT"
+  git push --set-upstream jbosstm ${QRKSISSUE}
+  git checkout 5_BRANCH
+  git reset --hard jbosstm/5_BRANCH
+  xdg-open https://github.com/jbosstm/quarkus/pull/new/$QRKSISSUE &
+fi
+cd ..
+
 cd ~/tmp/narayana/$CURRENT/sources/documentation/
 git checkout $CURRENT
 if [[ $? != 0 ]]
