@@ -128,12 +128,7 @@ then
   git checkout -b ${WFLYISSUE}
   git reset --hard upstream/master
   CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  if [[ $(uname) == CYGWIN* ]]
-  then
-    sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
-  else
-    sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
-  fi
+  sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
   git add pom.xml
   git commit -m "${WFLYISSUE} Upgrade Narayana to $CURRENT"
   git push --set-upstream jbosstm ${WFLYISSUE}
