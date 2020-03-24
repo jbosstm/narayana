@@ -34,31 +34,8 @@ function rebase_narayana {
   rm -rf .git/rebase-apply
   git clean -f -d -x
   
-  # Work out the branch point
-  git branch -D 4.17
-  git branch 4.17 origin/4.17
-  git branch -D master
-  git branch master origin/master
-  myRev=`git rev-parse HEAD`
-  ancestor417=`git merge-base $myRev 4.17`
-  ancestorMaster=`git merge-base $myRev master`
-  if [ `uname` = "Darwin" ]
-  then
-  	cutLen=8
-  else
-  	cutLen=7
-  fi
-  distanceFromMaster=`git log $ancestorMaster..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
-  distanceFrom417=`git log $ancestor417..$myRev | grep commit | wc | cut -c 1-$cutLen | tr -d ' '`
-  if [ "$distanceFromMaster" -lt "$distanceFrom417" ]
-  then
-    export BRANCHPOINT=master
-  else
-    export BRANCHPOINT=4.17
-  fi
-
   # Update the pull to head  
-  git pull --rebase --ff-only origin $BRANCHPOINT
+  git pull --rebase --ff-only origin LRA
 
   if [ $? -ne 0 ]; then
     #comment_on_pull "Narayana rebase failed. Please rebase it manually."

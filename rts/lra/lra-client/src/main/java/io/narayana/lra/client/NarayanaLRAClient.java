@@ -395,6 +395,8 @@ public class NarayanaLRAClient implements Closeable {
 
         String timeoutValue = timeout != null ? Long.toString(timeout) : "0";
 
+        String timeoutValue = timeout != null ? Long.toString(timeout) : "0";
+
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
             Path pathAnnotation = method.getAnnotation(Path.class);
 
