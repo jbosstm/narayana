@@ -273,9 +273,6 @@
                                 <server.jvm.args>${server.jvm.args}</server.jvm.args>
                                 <node.address>127.0.0.1</node.address>
                             </systemPropertyVariables>
-                            <excludes>
-                              <exclude>AnnotationsTestCase.java</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
