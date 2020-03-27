@@ -44,6 +44,11 @@ public final class RecoveryManager {
 
     private final Map<String, ParticipantDeserializer> deserializers = new ConcurrentHashMap<String, ParticipantDeserializer>();
 
+    /**
+     * A map of participants persisted in the object store, it maps 'Participant Id' to 'Uid'
+     */
+    private final Map<String, Uid> persistedParticipants = new ConcurrentHashMap<>();
+
     private RecoveryManager() {
     }
 
@@ -82,6 +87,8 @@ public final class RecoveryManager {
             final Uid uid = new Uid(participantInformation.getId());
 
             recoveryStore.write_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE, state);
+            // to identify the uid from the participant persisted into the object store in order to delete it later
+            persistedParticipants.put(participantInformation.getId(), uid);
         } catch (Exception e) {
             LOG.warn("Failure while persisting participant information.", e);
         }
@@ -93,12 +100,15 @@ public final class RecoveryManager {
         }
 
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
-        final Uid uid = new Uid(participantInformation.getId());
+        String participantId = participantInformation.getId();
 
-        try {
-            recoveryStore.remove_committed(uid, PARTICIPANT_INFORMATION_RECORD_TYPE);
-        } catch (ObjectStoreException e) {
-            LOG.warn("Failure while removing participant information from the object store.", e);
+        if(persistedParticipants.get(participantId) != null) {
+            try {
+                recoveryStore.remove_committed(new Uid(participantId), PARTICIPANT_INFORMATION_RECORD_TYPE);
+                persistedParticipants.remove(participantId);
+            } catch (ObjectStoreException ose) {
+                LOG.warn("Failure while removing participant information from the object store.", ose);
+            }
         }
     }
 
@@ -156,6 +166,8 @@ public final class RecoveryManager {
                         if (participantInformation != null) {
                             ParticipantsContainer.getInstance().addParticipantInformation(
                                     participantInformation.getId(), participantInformation);
+                            // adding entry to map listing all persisted participants into the object store (to be removed later)
+                            persistedParticipants.put(participantInformation.getId(), uid);
                         }
                     }
                 }
@@ -198,6 +210,8 @@ public final class RecoveryManager {
 
         final ParticipantInformation participantInformation = new ParticipantInformation(id, applicationId, recoveryUrl,
                 participant, status);
+        // the participant was loaded from object store, make sure that the map consisting all the persisted ids knows about it
+        persistedParticipants.put(participantInformation.getApplicationId(), new Uid(participantInformation.getId()));
 
         if (!synchronizeParticipantUrlWithCoordinator(participantInformation)) {
             try {
