@@ -28,7 +28,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.TransactionAttribute;
+import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 import javax.transaction.Transactional;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -150,9 +151,10 @@ public final class InboundBridgeFilter implements ContainerRequestFilter, Contai
 
         Method method = methodInvoker.getMethod();
 
-        return method.isAnnotationPresent(Transactional.class) || method.isAnnotationPresent(TransactionAttribute.class)
-                || method.getDeclaringClass().isAnnotationPresent(Transactional.class)
-                || method.getDeclaringClass().isAnnotationPresent(TransactionAttribute.class);
+        // CDI transactional method is declared by annotation @Transactional, EJB class is transactional by default
+        return method.isAnnotationPresent(Transactional.class) || method.getDeclaringClass().isAnnotationPresent(Transactional.class)
+                || method.getDeclaringClass().isAnnotationPresent(Stateless.class)
+                || method.getDeclaringClass().isAnnotationPresent(Stateful.class);
     }
 
 }
