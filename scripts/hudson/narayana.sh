@@ -951,7 +951,7 @@ function perf_tests {
     fi
   fi
   
-  ./scripts/run_bm.sh
+  ./scripts/run_bm.sh "subset_perf_test"
   res=$?
   cd $WORKSPACE
 
