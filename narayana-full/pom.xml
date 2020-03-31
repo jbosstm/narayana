@@ -339,6 +339,7 @@
                   <goal>javadoc</goal>
                 </goals>
                 <configuration>
+                  <source>8</source>
                   <includeDependencySources>true</includeDependencySources>
                   <docfilessubdirs>true</docfilessubdirs>
                   <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11:org.jboss.stm</subpackages>
@@ -441,6 +442,8 @@
              <jdk>[9,)</jdk>
           </activation>
           <properties>
+             <!-- skip javadoc generation since it has already been ran by the release profile -->
+             <maven.javadoc.skip>true</maven.javadoc.skip>
              <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
 	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
 	     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
