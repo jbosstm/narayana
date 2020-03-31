@@ -339,6 +339,7 @@
                   <goal>javadoc</goal>
                 </goals>
                 <configuration>
+                  <detectJavaApiLink>false</detectJavaApiLink>
                   <includeDependencySources>true</includeDependencySources>
                   <docfilessubdirs>true</docfilessubdirs>
                   <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11:org.jboss.stm</subpackages>
