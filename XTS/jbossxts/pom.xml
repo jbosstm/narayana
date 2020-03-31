@@ -258,6 +258,7 @@
               </execution>
             </executions>
             <configuration>
+              <source>8</source>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>org.*:com.arjuna.services.*:com.arjuna.webservices*:com.arjuna.mwlabs.*:com.arjuna.webservices11*:com.arjuna.schemas:com.arjuna.mw.wstx</excludePackageNames>
             </configuration>
@@ -276,6 +277,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
+              <source>8</source>
               <additionalJOptions>
                 <additionalJOption>--add-modules</additionalJOption>
                 <additionalJOption>java.xml.bind</additionalJOption>

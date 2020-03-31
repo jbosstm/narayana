@@ -187,6 +187,7 @@
               </execution>
             </executions>
             <configuration>
+              <source>8</source>
               <detectOfflineLinks>false</detectOfflineLinks>
               <excludePackageNames>*.internal.*</excludePackageNames>
             </configuration>
