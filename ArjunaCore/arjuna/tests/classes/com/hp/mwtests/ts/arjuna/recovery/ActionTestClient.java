@@ -340,6 +340,7 @@ public class ActionTestClient
         }
         catch (Exception ex) {
             System.err.println("test_setup: Failed " + ex);
+            ex.printStackTrace();
         }
 
         return setupOk;
