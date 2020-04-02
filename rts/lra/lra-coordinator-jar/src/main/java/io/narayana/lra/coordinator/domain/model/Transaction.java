@@ -258,7 +258,9 @@ public class Transaction extends AtomicAction {
                         LRALogger.logger.debugf("Timer for LRA '%s' has expired since last reload", id);
                     }
 
-                    status = LRAStatus.Cancelling;
+                    if (isActive()) {
+                        status = LRAStatus.Cancelling; // transition from Active to Cancelling
+                    }
                 } else {
                     if (LRALogger.logger.isDebugEnabled()) {
                         LRALogger.logger.debugf("Restarting time for LRA '%s'", id);
@@ -706,8 +708,7 @@ public class Transaction extends AtomicAction {
                     if (r instanceof LRARecord) {
                         LRARecord rr = (LRARecord) r;
                         // can't use == because this may be a recovery scenario
-                        if (rr.getCompensator().equals(participantUrl) ||
-                                rr.getCompensator().equals(participantUrl)) {
+                        if (participantUrl.equals(rr.getCompensator())) {
                             if (remove) {
                                 list.remove(rr);
                             }
