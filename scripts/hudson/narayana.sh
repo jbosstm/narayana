@@ -186,6 +186,7 @@ function init_test_options {
           export COMMENT_ON_PULL=""
         fi
     else
+        export COMMENT_ON_PULL=""
         comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
     fi
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
