@@ -37,7 +37,7 @@ public class IsolatableServersClassLoaderTest {
     @Test
     public void multiThreadedTest() throws NoSuchMethodException, IOException, InterruptedException {
         for (int j = 0; j < 100; j++) {
-            IsolatableServersClassLoader loader = new IsolatableServersClassLoader(null, IsolatableServersClassLoaderTest.class.getName(), Thread.currentThread().getContextClassLoader());
+            final IsolatableServersClassLoader loader = new IsolatableServersClassLoader(null, IsolatableServersClassLoaderTest.class.getName(), Thread.currentThread().getContextClassLoader());
             List<Thread> threads = new ArrayList<Thread>();
             for (int i = 0; i < 2; i++) {
                 threads.add(new Thread() {
