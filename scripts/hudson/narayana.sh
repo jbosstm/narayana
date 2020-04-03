@@ -146,7 +146,7 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT $AS_XARGS
+  (cd .. && ./build.sh -f jboss-as/pom.xml clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
@@ -170,7 +170,7 @@ function xts_as_tests {
   init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test $AS_XARGS
+  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test $AS_XARGS)
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
