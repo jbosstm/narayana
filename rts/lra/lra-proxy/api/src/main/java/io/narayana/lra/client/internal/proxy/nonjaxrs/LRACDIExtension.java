@@ -22,6 +22,7 @@
 package io.narayana.lra.client.internal.proxy.nonjaxrs;
 
 import io.narayana.lra.client.internal.proxy.nonjaxrs.jandex.DotNames;
+import io.narayana.lra.client.internal.proxy.nonjaxrs.jandex.JandexAnnotationResolver;
 import io.narayana.lra.logging.LRALogger;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
@@ -51,10 +52,11 @@ import java.util.Set;
 public class LRACDIExtension implements Extension {
 
     private ClassPathIndexer classPathIndexer = new ClassPathIndexer();
+    private Index index;
     private final Map<String, LRAParticipant> participants = new HashMap<>();
 
     public void observe(@Observes AfterBeanDiscovery event, BeanManager beanManager) throws IOException, ClassNotFoundException {
-        Index index = classPathIndexer.createIndex();
+        index = classPathIndexer.createIndex();
 
         List<AnnotationInstance> annotations = index.getAnnotations(DotName.createSimple("javax.ws.rs.Path"));
 
@@ -99,7 +101,7 @@ public class LRACDIExtension implements Extension {
      * @return Collected methods wrapped in {@link LRAParticipant} class or null if no non-JAX-RS methods have been found
      */
     private LRAParticipant getAsParticipant(ClassInfo classInfo) throws ClassNotFoundException {
-        if (isNotLRAParticipant(classInfo)) {
+        if (!isLRAParticipant(classInfo)) {
             return null;
         }
 
@@ -109,10 +111,25 @@ public class LRACDIExtension implements Extension {
         return participant.hasNonJaxRsMethods() ? participant : null;
     }
 
-    private boolean isNotLRAParticipant(ClassInfo classInfo) {
-        Map<DotName, List<AnnotationInstance>> annotations = classInfo.annotations();
-        return !annotations.containsKey(DotNames.LRA) ||
-            (!annotations.containsKey(DotNames.COMPENSATE) &&
-                !annotations.containsKey(DotNames.AFTER_LRA));
+    /**
+     * Returns whether the classinfo represents an LRA participant --
+     * Class contains LRA method and either one or both of Compensate and/or AfterLRA methods.
+     *
+     * @param classInfo Jandex class object to scan for annotations
+     *
+     * @return true if the class is a valid LRA participant, false otherwise
+     * @throws IllegalStateException if there is LRA annotation but no Compensate or AfterLRA is found
+     */
+    private boolean isLRAParticipant(ClassInfo classInfo) {
+        Map<DotName, List<AnnotationInstance>> annotations = JandexAnnotationResolver.getAllAnnotationsFromClassInfoHierarchy(classInfo.name(), index);
+
+        if (!annotations.containsKey(DotNames.LRA)) {
+            return false;
+        } else if (!annotations.containsKey(DotNames.COMPENSATE) && !annotations.containsKey(DotNames.AFTER_LRA)) {
+            throw new IllegalStateException(String.format("%s: %s",
+                classInfo.simpleName(), "The class contains an LRA method and no Compensate or AfterLRA method was found."));
+        } else {
+            return true;
+        }
     }
 }

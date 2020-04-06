@@ -75,7 +75,7 @@ public class LRAParticipant {
     LRAParticipant(Class<?> javaClass) {
         this.javaClass = javaClass;
 
-        Arrays.stream(javaClass.getDeclaredMethods()).forEach(this::processParticipantMethod);
+        Arrays.stream(javaClass.getMethods()).forEach(this::processParticipantMethod);
     }
 
     Class<?> getJavaClass() {
@@ -154,7 +154,7 @@ public class LRAParticipant {
     }
 
     private boolean setAfterLRAAnnotation(Method method) {
-        if (!method.isAnnotationPresent(AfterLRA.class)) {
+        if (!AnnotationResolver.isAnnotationPresent(AfterLRA.class, method)) {
             return false;
         }
 
@@ -185,25 +185,25 @@ public class LRAParticipant {
     }
 
     private boolean isJaxRsMethod(Method method) {
-        return method.isAnnotationPresent(GET.class) ||
-            method.isAnnotationPresent(POST.class) ||
-            method.isAnnotationPresent(PUT.class) ||
-            method.isAnnotationPresent(DELETE.class) ||
-            method.isAnnotationPresent(HEAD.class) ||
-            method.isAnnotationPresent(OPTIONS.class);
+        return AnnotationResolver.isAnnotationPresent(GET.class, method) ||
+            AnnotationResolver.isAnnotationPresent(POST.class, method) ||
+            AnnotationResolver.isAnnotationPresent(PUT.class, method) ||
+            AnnotationResolver.isAnnotationPresent(DELETE.class, method) ||
+            AnnotationResolver.isAnnotationPresent(HEAD.class, method) ||
+            AnnotationResolver.isAnnotationPresent(OPTIONS.class, method);
     }
 
     private boolean setParticipantAnnotation(Method method) {
-        if (method.isAnnotationPresent(Compensate.class)) {
+        if (AnnotationResolver.isAnnotationPresent(Compensate.class, method)) {
             compensateMethod = method;
             return true;
-        } else if (method.isAnnotationPresent(Complete.class)) {
+        } else if (AnnotationResolver.isAnnotationPresent(Complete.class, method)) {
             completeMethod = method;
             return true;
-        } else if (method.isAnnotationPresent(Status.class)) {
+        } else if (AnnotationResolver.isAnnotationPresent(Status.class, method)) {
             statusMethod = method;
             return true;
-        } else if (method.isAnnotationPresent(Forget.class)) {
+        } else if (AnnotationResolver.isAnnotationPresent(Forget.class, method)) {
             forgetMethod = method;
             return true;
         }
