@@ -27,7 +27,7 @@ package com.arjuna.ats.internal.arjuna.objectstore.slot;
  */
 public class RAMSlots {
 
-    public final byte[][] slots;
+    private final byte[][] slots;
 
     public RAMSlots(SlotStoreEnvironmentBean config) {
         slots = new byte[config.getNumberOfSlots()][];

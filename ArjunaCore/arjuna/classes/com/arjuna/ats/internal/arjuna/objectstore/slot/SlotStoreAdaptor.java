@@ -78,12 +78,8 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
         OutputObjectState buffer = new OutputObjectState();
 
         try {
-            if (matchingKeys != null) {
-                for (SlotStoreKey matchingKey : matchingKeys) {
-                    if (matchingKey != null) {
-                        UidHelper.packInto(matchingKey.getUid(), buffer);
-                    }
-                }
+            for (SlotStoreKey matchingKey : matchingKeys) {
+                UidHelper.packInto(matchingKey.getUid(), buffer);
             }
             UidHelper.packInto(Uid.nullUid(), buffer);
         } catch (IOException e) {
@@ -117,7 +113,7 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
             tsLogger.logger.trace("SlotStore.allTypes()");
         }
 
-        String[] knownTypes = store.getKnownTypes(); // may contain trailing null elements
+        String[] knownTypes = store.getKnownTypes();
         Set<String> typeSet = new HashSet<>();
 
         if (knownTypes == null || knownTypes.length == 0) {
@@ -128,10 +124,6 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
 
         try {
             for (String typeName : knownTypes) {
-                if (typeName == null) {
-                    continue;
-                }
-
                 if (typeName.startsWith("/")) {
                     typeName = typeName.substring(1);
                 }

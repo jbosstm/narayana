@@ -203,20 +203,21 @@ public class SlotStore {
     /**
      * Return all keys in the store having the same typename and (matching or unknown) state as the provided key.
      *
-     * @param slotStoreKey a template key to match in the search. Uid part is ignored, typename and state are used in matching
+     * @param templateKey a template key to match in the search. Uid part is ignored, typename and state are used in matching
      * @return an array, possible empty but non-null, of matching keys.
      */
-    public SlotStoreKey[] getMatchingKeys(SlotStoreKey slotStoreKey) {
+    public SlotStoreKey[] getMatchingKeys(SlotStoreKey templateKey) {
 
-        List<SlotStoreKey> keys = new ArrayList<>();
+        List<SlotStoreKey> matchingKeys = new ArrayList<>();
 
-        for (SlotStoreKey key : slotIdIndex.keySet()) {
-            if (key.getTypeName().equalsIgnoreCase(slotStoreKey.getTypeName()) &&
-                    (key.getStateStatus() == StateStatus.OS_UNKNOWN || key.getStateStatus() == slotStoreKey.getStateStatus())) {
-                keys.add(key);
+        for (SlotStoreKey candidateKey : slotIdIndex.keySet()) {
+            if (candidateKey.getTypeName().equalsIgnoreCase(templateKey.getTypeName()) &&
+                    // OS_UNKNOWN in the template acts as a wildcard.
+                    (templateKey.getStateStatus() == StateStatus.OS_UNKNOWN || candidateKey.getStateStatus() == templateKey.getStateStatus())) {
+                matchingKeys.add(candidateKey);
             }
         }
 
-        return keys.toArray(new SlotStoreKey[0]);
+        return matchingKeys.toArray(new SlotStoreKey[0]);
     }
 }
