@@ -22,15 +22,10 @@ package com.arjuna.ats.internal.arjuna.objectstore.slot;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputBuffer;
-import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputBuffer;
-import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -56,7 +51,7 @@ public class SlotStoreKey {
         this.typeName = typeName;
         this.stateStatus = stateStatus;
 
-        this.hashcode = uid.hashCode();
+        this.hashcode = Objects.requireNonNull(uid).hashCode();
 
     }
 
