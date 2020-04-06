@@ -27,32 +27,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <it.test>
-            <!-- https://issues.redhat.com/browse/JBTM-3278 -->
-            !TckContextTests#testContextAfterRemoteCalls,
+            <!-- https://issues.redhat.com/browse/JBTM-3281 -->
             !TckContextTests#testForgetCalledForNestedParticipantsWhenParentIsClosed,
-            !TckInvalidSignaturesTests#invalidLRAResourceWithoutCompensateOrAfterLRATest,
-            !TckTests#acceptCancelTest,
-            !TckTests#acceptCloseTest,
-            !TckTests#compensateMultiLevelNestedActivity,
-            !TckTests#completeMultiLevelNestedActivity,
-            !TckTests#dependentLRA,
-            !TckTests#join,
-            !TckTests#joinLRAViaHeader,
-            !TckTests#joinWithOneResourceDifferentMethodTwiceWithCancel,
-            !TckTests#joinWithOneResourceDifferentMethodTwiceWithClose,
-            !TckTests#joinWithOneResourceSameMethodTwiceWithCancel,
-            !TckTests#joinWithOneResourceSameMethodTwiceWithClose,
-            !TckTests#joinWithTwoResourcesWithCancel,
-            !TckTests#joinWithTwoResourcesWithClose,
-            !TckTests#leaveLRA,
-            !TckTests#nestedActivity,
-            !TckTests#noLRATest,
-            !TckTests#testAfterLRAListener,
-            !TckTests#testAfterLRAParticipant,
             <!-- https://issues.redhat.com/browse/JBTM-3280 -->
-            !TckTests#timeLimit,
-            <!-- https://issues.redhat.com/browse/JBTM-3279 -->
-            !TckRecoveryTests
+            !TckTests#timeLimit
         </it.test>
     </properties>
 
