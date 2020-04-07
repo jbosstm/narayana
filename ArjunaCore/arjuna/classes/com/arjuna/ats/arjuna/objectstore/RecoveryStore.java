@@ -52,13 +52,23 @@ public interface RecoveryStore extends TxLog
      *
      * @param s The type to scan for.
      * @param buff The object state in which to store the Uids
-     * @param m The file type to look for (e.g., committed, shadowed). [StateStatus]
+     * @param m The file type to look for (e.g., committed, shadowed). [StateStatus] Note: m=OS_UNKNOWN matches any state.
      *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
 
     public boolean allObjUids (String s, InputObjectState buff, int m) throws ObjectStoreException;
+
+    /**
+     * Obtain all of the Uids for a specified type, regardless of their state.
+     *
+     * @param s The type to scan for.
+     * @param buff The object state in which to store the Uids
+     *
+     * @return <code>true</code> if no errors occurred, <code>false</code>
+     * otherwise.
+     */
 
     public boolean allObjUids (String s, InputObjectState buff) throws ObjectStoreException;
     

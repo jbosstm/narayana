@@ -61,7 +61,7 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
      *
      * @param typeName       The type to scan for.
      * @param foundInstances The object state in which to store the Uids
-     * @param matchState     The file type to look for (e.g., committed, shadowed). [StateStatus]
+     * @param matchState     The file type to look for (e.g., committed, shadowed). [StateStatus] Note: matchState=OS_UNKNOWN matches any state.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -91,6 +91,14 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
         return true;
     }
 
+    /**
+     * Obtain all of the Uids for a specified type, regardless of their state.
+     *
+     * @param typeName       The type to scan for.
+     * @param foundInstances The object state in which to store the Uids
+     * @return <code>true</code> if no errors occurred, <code>false</code>
+     * otherwise.
+     */
     @Override
     public boolean allObjUids(String typeName, InputObjectState foundInstances) throws ObjectStoreException {
         if (tsLogger.logger.isTraceEnabled()) {
