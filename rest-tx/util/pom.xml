@@ -154,6 +154,7 @@
           </execution>
         </executions>
         <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
           <detectOfflineLinks>false</detectOfflineLinks>
         </configuration>
       </plugin>
