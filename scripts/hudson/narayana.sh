@@ -146,7 +146,7 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT
+  ./build.sh clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT $AS_XARGS
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
@@ -170,7 +170,7 @@ function xts_as_tests {
   init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
+  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test $AS_XARGS
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -178,7 +178,7 @@ function xts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test
+  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test $AS_XARGS
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -315,6 +315,17 @@ function qa_tests {
 
   [ $ok1 = 0 -a $ok2 = 0 ] || fatal "some qa tests failed"
 }
+
+# when building on JDK 7 we get the error
+#   "Sonatype no longer supports TLSv1.1 and below (effective, June 18th, 2018).
+# There are two fixes: upgrade the JDK or use -Dhttps.protocols=TLSv1.2 when starting java
+JAVA_VER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/\1\2/p;')
+if [ "$JAVA_VER" -lt 18 ]; then
+  echo "JDK version < 18 - setting -Dhttps.protocols=TLSv1.2"
+  AS_XARGS="-Dhttps.protocols=TLSv1.2"
+else
+  AS_XARGS="-Dhttps.protocols=TLSv1.2"
+fi
 
 check_if_pull_closed
 
