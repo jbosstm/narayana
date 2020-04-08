@@ -59,6 +59,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.logging.RecoveryRequired;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
 import com.arjuna.ats.jta.recovery.XARecoveryResource;
@@ -91,7 +92,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 
     @Override
     public boolean isPeriodicWorkSuccessful() {
-        return !jtaLogger.isRecoveryProblems();
+        return !RecoveryRequired.isRecoveryProblems();
     }
 
     public void addXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
@@ -189,7 +190,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         }
 
         contactedJndiNames.clear();
-        jtaLogger.setRecoveryProblems(false);
+		RecoveryRequired.setRecoveryProblems(false);
 
 		_uids = new InputObjectState();
 
@@ -201,15 +202,18 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 		{
 			if (!_recoveryStore.allObjUids(_recoveryManagerClass.type(), _uids))
 			{
+				RecoveryRequired.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_alluids();
 			}
 		}
 		catch (ObjectStoreException e)
 		{
+			RecoveryRequired.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_objstoreerror(e);
 		}
 		catch (Exception e)
 		{
+			RecoveryRequired.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_periodicfirstpass(_logName+".periodicWorkFirstPass", e);
 		}
 		// JBTM-1354 JCA needs to be able to recover XAResources associated with a subordinate transaction so we have to do at least
@@ -225,6 +229,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			try {
 				xaRecoveryFirstPass(xaResource);
 			} catch (Exception ex) {
+				RecoveryRequired.setRecoveryProblems(true);
 				jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 			}
 		}
@@ -234,6 +239,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				try {
 					xaResource.recover(XAResource.TMENDRSCAN);
 				} catch (Exception ex) {
+					RecoveryRequired.setRecoveryProblems(true);
 					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 				}
 			}
@@ -276,6 +282,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 		}
 		catch (Exception e)
 		{
+			RecoveryRequired.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_periodicsecondpass(_logName+".periodicWorkSecondPass", e);
 		}
 
@@ -373,6 +380,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         _logName = logName;
         _recoveryManagerClass = recoveryClass;
         if(_recoveryManagerClass == null) {
+			RecoveryRequired.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_constfail();
         }
 
@@ -432,6 +440,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 									}
 									else
 									{
+										RecoveryRequired.setRecoveryProblems(true);
                                         jtaLogger.i18NLogger.warn_recovery_recoveryfailed(theUid, XARecoveryResourceHelper.stringForm(recoveryStatus));
 									}
 								}
@@ -469,6 +478,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 						{
 							problem = true;
 
+							RecoveryRequired.setRecoveryProblems(true);
                             jtaLogger.i18NLogger.warn_recovery_recoveryerror(e);
 						}
 
@@ -485,6 +495,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 
 							if (record.getXid() == null)
 							{
+								RecoveryRequired.setRecoveryProblems(true);
                                 jtaLogger.i18NLogger.warn_recovery_cannotadd();
 							}
 							else
@@ -501,6 +512,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			}
 			catch (Throwable e)
 			{
+				RecoveryRequired.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_unexpectedrecoveryerror(e);
 			}
 		}
@@ -518,6 +530,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				try {
 					xaRecoverySecondPass(xaResource);
 				} catch (Exception ex) {
+					RecoveryRequired.setRecoveryProblems(true);
 					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 				}
 			}
@@ -582,6 +595,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				}
 				catch (Exception ex)
 				{
+					RecoveryRequired.setRecoveryProblems(true);
                     jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
 				}
 			}
@@ -612,6 +626,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             }
             catch (Exception ex)
             {
+				RecoveryRequired.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
             }
         }
@@ -667,6 +682,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			}
 			catch (XAException e)
 			{
+				RecoveryRequired.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
 
 				try
@@ -801,6 +817,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 	
 								if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
 								{
+									RecoveryRequired.setRecoveryProblems(true);
 	                                jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName+".xaRecovery", XARecoveryResourceHelper.stringForm(recoveryStatus));
 								}
 	
@@ -815,6 +832,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 								}
 								catch (Exception e)
 								{
+									RecoveryRequired.setRecoveryProblems(true);
 	                                jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName+".xaRecovery", e);
 								}
 							}
@@ -825,6 +843,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			}
 			catch (Exception e)
 			{
+				RecoveryRequired.setRecoveryProblems(true);
 	            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
 			}
 	
@@ -835,6 +854,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			}
 			catch (XAException e)
 			{
+				RecoveryRequired.setRecoveryProblems(true);
 	            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
 			}
 		}
@@ -891,6 +911,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             }
             else
             {
+				RecoveryRequired.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
             }
 
@@ -912,6 +933,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         }
         catch (Exception e2)
         {
+			RecoveryRequired.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_xarecovery2(_logName+".xaRecovery", e2);
         }
         return false;
