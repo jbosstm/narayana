@@ -562,31 +562,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     compensate, endPath, status);
 
                             if (forgetURI != null) {
-                                try {
-                                    response = new RequestBuilder(forgetURI)//.path(getLRAId(lraId))
-                                            .request()
-                                            .header(LRA_HTTP_CONTEXT_HEADER, lraId)
-                                            .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI)
-                                            .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
-                                            .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                                            .delete();
-
-                                    if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                                        return TwoPhaseOutcome.FINISH_OK;
-                                    }
-                                } catch (WebApplicationException e) {
-                                    LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
-                                            endPath, e.getMessage());
-                                    // TODO write a test to ensure that recovery only retries the forget request
-                                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
-                                } finally {
-                                    Current.pop();
-                                }
-
-                            } else {
-                                LRALogger.logger.warnf(
-                                        "LRARecord.doEnd(%b) LRA: %s: cannot forget %s: missing forget URI",
-                                        compensate, lraId, statusURI, status);
+                                return forget() ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.HEURISTIC_HAZARD;
                             }
 
                             if (compensate) {
@@ -716,6 +692,34 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     boolean forget() {
+        if (forgetURI != null) {
+            try {
+                ResponseHolder response = new RequestBuilder(forgetURI)//.path(getLRAId(lraId))
+                    .request()
+                    .header(LRA_HTTP_CONTEXT_HEADER, lraId)
+                    .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI)
+                    .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
+                    .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
+                    .delete();
+
+                if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                    return true;
+                }
+            } catch (WebApplicationException e) {
+                LRALogger.logger.infof("LRARecord.forget delete %s failed: %s",
+                    forgetURI, e.getMessage());
+                // TODO write a test to ensure that recovery only retries the forget request
+                return false; // force recovery to keep retrying
+            } finally {
+                Current.pop();
+            }
+
+        } else {
+            LRALogger.logger.warnf(
+                "LRARecord.forget() LRA: %s: cannot forget %s: missing forget URI, status: %s",
+                lraId, recoveryURI, status);
+        }
+
         return true;
     }
 

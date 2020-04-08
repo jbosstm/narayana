@@ -27,10 +27,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <it.test>
-            <!-- https://issues.redhat.com/browse/JBTM-3281 -->
-            !TckContextTests#testForgetCalledForNestedParticipantsWhenParentIsClosed,
             <!-- https://issues.redhat.com/browse/JBTM-3280 -->
-            !TckTests#timeLimit
+            !TckTests#timeLimit,
+            !TckRecoveryTests#testCancelWhenParticipantIsRestarted
         </it.test>
     </properties>
 

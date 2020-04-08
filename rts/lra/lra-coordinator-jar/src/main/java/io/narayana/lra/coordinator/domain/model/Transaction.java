@@ -415,27 +415,32 @@ public class Transaction extends AtomicAction {
         savePendingList();
 
         if ((res != ActionStatus.RUNNING) && (res != ActionStatus.ABORT_ONLY)) {
-            if (nested && cancel) {
-                /*
-                 * Note that we do not hook into ActionType.NESTED because that would mean that after a
-                 * nested txn is committed its participants are merged
-                 * with the parent and they can then only be aborted if the parent aborts whereas in
-                 * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
-                 */
+            if (nested) {
+                if (cancel) {
+                    /*
+                     * Note that we do not hook into ActionType.NESTED because that would mean that after a
+                     * nested txn is committed its participants are merged
+                     * with the parent and they can then only be aborted if the parent aborts whereas in
+                     * the LRA model nested LRAs can be cancelled whilst the enclosing LRA is closed
+                     */
 
-                // repopulate the pending list TODO it won't neccessarily be present during recovery
-                pendingList = new RecordList();
+                    // repopulate the pending list TODO it won't neccessarily be present during recovery
+                    pendingList = new RecordList();
 
-                pending.forEach(r -> pendingList.putRear(r));
+                    pending.forEach(r -> pendingList.putRear(r));
 
-                updateState(LRAStatus.Cancelling);
+                    updateState(LRAStatus.Cancelling);
 
-                super.phase2Abort(true);
+                    super.phase2Abort(true);
 //                res = super.Abort();
 
-                res = status();
+                    res = status();
 
-                status = toLRAStatus(status());
+                    status = toLRAStatus(status());
+                } else {
+                    // forget calls for nested participants
+                    forgetAllParticipants();
+                }
             }
         } else {
             if (cancel || status() == ActionStatus.ABORT_ONLY) {
