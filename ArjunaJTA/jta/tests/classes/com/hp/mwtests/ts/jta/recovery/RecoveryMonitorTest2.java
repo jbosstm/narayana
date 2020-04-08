@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.jta.logging.RecoveryRequired;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import org.junit.Test;
 
@@ -122,7 +123,7 @@ public class RecoveryMonitorTest2 {
             // check the output of the scan
             assertEquals("DONE", RecoveryMonitor.getResponse());
             assertEquals("DONE", RecoveryMonitor.getSystemOutput());
-            assertFalse(jtaLogger.isRecoveryProblems());
+            assertFalse(RecoveryRequired.isRecoveryProblems());
         } finally {
             manager.terminate();
         }
