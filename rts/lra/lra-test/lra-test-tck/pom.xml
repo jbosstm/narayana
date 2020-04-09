@@ -28,7 +28,6 @@
 
         <it.test>
             <!-- https://issues.redhat.com/browse/JBTM-3280 -->
-            !TckTests#timeLimit,
             !TckRecoveryTests#testCancelWhenParticipantIsRestarted
         </it.test>
     </properties>
