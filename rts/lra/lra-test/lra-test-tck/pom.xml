@@ -25,7 +25,6 @@
         <lra.tck.consistency.longDelay>20000</lra.tck.consistency.longDelay>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     </properties>
 
     <build>

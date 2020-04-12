@@ -163,7 +163,8 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
         Assert.assertEquals("LRA with long timeout should still be active",
                 LRAStatus.Active.name(), longStatus.name());
         Assert.assertTrue("LRA with short timeout should not be active",
-                shortStatus == null || LRAStatus.Cancelled.equals(shortStatus));
+                shortStatus == null ||
+                        LRAStatus.Cancelled.equals(shortStatus) || LRAStatus.Cancelling.equals(shortStatus));
 
         // verify that it is still possible to join in with the LRA
         try (Response response = client.target(lraListenerURL).path(LRA_LISTENER_UNTIMED_ACTION)

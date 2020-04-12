@@ -76,46 +76,40 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.H_COMMIT) ||
                     (_theStatus == ActionStatus.H_MIXED) ||
                     (_theStatus == ActionStatus.H_HAZARD)) {
-                // move any heuristics back onto the prepared list for another attempt:
-                moveTo(heuristicList, preparedList);
-                moveTo(pendingList, preparedList);
-                checkParticipant(preparedList);
+                if (heuristicList.size() != 0 || pendingList.size() != 0 || isActive()) {
+                    // Note that we do not try to recover failed LRAs.
+                    // Move any heuristics back onto the prepared list for another attempt:
+                    moveTo(heuristicList, preparedList);
+                    moveTo(pendingList, preparedList);
 
-                super.phase2Commit(true);
-            } else if ((_theStatus == ActionStatus.ABORTED) ||
-                    (_theStatus == ActionStatus.H_ROLLBACK) ||
-                    (_theStatus == ActionStatus.ABORTING) ||
-                    (_theStatus == ActionStatus.ABORT_ONLY)) {
-                // move any heuristics back onto the pending list for another attempt:
-                moveTo(heuristicList, pendingList);
-                checkParticipant(pendingList);
+                    checkParticipant(preparedList);
 
-                super.phase2Abort(true);
-            } else {
-                if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
-                            + ActionStatus.stringForm(_theStatus));
-                }
-            }
+                    // NB we don't Abort a BasicAction since that can bypass creation of a log
+                    super.phase2Commit(true);
 
-            runPostLRAActions();
+                    runPostLRAActions();
 
-            // if there are no more heuristics or failures then update the status of the LRA
-            if (heuristicList.size() == 0 && failedList.size() == 0) {
-                setLRAStatus(_theStatus);
-            }
-
-            switch (getLRAStatus()) {
-                case Closed:
-                case Cancelled:
-                    getLraService().finished(this, false);
-                    break;
-                default:
-                    if (LRALogger.logger.isInfoEnabled()) {
-                        LRALogger.logger.infof("RecoveringLRA.replayPhase2 for %s ended with status: %s",
-                                getId().toASCIIString(), getLRAStatus());
+                    // if there are no more heuristics or failures then update the status of the LRA
+                    if (heuristicList.size() == 0 && failedList.size() == 0) {
+                        setLRAStatus(_theStatus);
                     }
-                    // FALLTHRU
+
+                    switch (getLRAStatus()) {
+                        case Closed:
+                        case Cancelled:
+                            getLraService().finished(this, false);
+                            break;
+                        default:
+                            if (LRALogger.logger.isInfoEnabled()) {
+                                LRALogger.logger.infof("RecoveringLRA.replayPhase2 for %s ended with status: %s",
+                                        getId().toASCIIString(), getLRAStatus());
+                            }
+                            break;
+                    }
+                }
+            } else if (LRALogger.logger.isInfoEnabled()) {
+                LRALogger.logger.info("RecoveringLRA.replayPhase2: Unexpected status: "
+                        + ActionStatus.stringForm(_theStatus));
             }
         } else {
             if (LRALogger.logger.isInfoEnabled()) {

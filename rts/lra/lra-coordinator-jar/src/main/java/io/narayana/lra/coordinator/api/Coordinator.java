@@ -377,7 +377,7 @@ public class Coordinator {
     @PUT
     @Path("nested/{NestedLraId}/forget")
     public Response forgetNestedLRA(@PathParam("NestedLraId") String nestedLraId) {
-        lraService.remove(null, toURI(nestedLraId));
+        lraService.remove(toURI(nestedLraId));
 
         return Response.ok().build();
     }

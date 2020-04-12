@@ -45,6 +45,7 @@ public class LRAStatusHolder {
     long startTime;
     long finishTime;
     long timeNow;
+    String[] failedParticipants;
 
     private LRAStatus lraStatus;
 
@@ -60,6 +61,7 @@ public class LRAStatusHolder {
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.lraStatus = lra.getLRAStatus();
+        this.failedParticipants = lra.getFailedParticipants().values().toArray(new String[0]);
     }
 
     public String getLraId() {
@@ -136,6 +138,10 @@ public class LRAStatusHolder {
 
     public long getTimeNow() {
         return timeNow;
+    }
+
+    public String[] getFailedParticipants() {
+        return failedParticipants;
     }
 
     @Override
