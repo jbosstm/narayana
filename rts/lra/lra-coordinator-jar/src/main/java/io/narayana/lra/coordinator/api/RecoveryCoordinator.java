@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
+import io.narayana.lra.coordinator.domain.model.LRAData;
 import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -36,6 +37,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PUT;
@@ -53,6 +55,7 @@ import java.util.List;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @ApplicationScoped
 @Path(RECOVERY_COORDINATOR_PATH_NAME)
@@ -151,5 +154,68 @@ public class RecoveryCoordinator {
         content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAStatusHolder.class)))
     public List<LRAStatusHolder> getRecoveringLRAs() {
         return lraService.getAllRecovering(true);
+    }
+
+    @GET
+    @Path("failed")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "List failed Long Running Actions",
+            description = "Returns LRAs that have failed. " +
+                    " Failure records are vital pieces of data needed to aid failure tracking and analysis " +
+                    " and are retained for inspection.")
+    @APIResponse(responseCode = "200",
+            content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAStatusHolder.class)))
+    public List<LRAStatusHolder> getFailedLRAs() {
+        return lraService.getFailedLRAs();
+    }
+
+    @DELETE
+    @Path("{LraId}")
+    @Operation(summary = "Remove the log for a failed LRA")
+    @APIResponses({
+            @APIResponse(responseCode = "204",
+                    description = "If the LRA log was successfully removed"),
+            @APIResponse(responseCode = "412",
+                    description = "If the LRA is not in an end state (in which case the response " +
+                            "entity will indicate the current state at the time of the request)"),
+            @APIResponse(responseCode = "412",
+                    description = "If the input LRA does not correspond to a valid URI (in which case the " +
+                            "response entity will contain the error message)"),
+            @APIResponse(responseCode = "500",
+                    description = "If the attempt to remove the LRA log failed. This return code does not " +
+                            "discriminate between a failure at the log storage level or if the log did not exist)")
+    })
+    public Response deleteFailedLRA(
+            @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
+            @PathParam("LraId")String lraId) throws NotFoundException {
+        URI lra;
+
+        try {
+            lra = new URI(lraId);
+
+            // verify that the LRA is not still being processed
+            // will throw NotFoundException if it's unknown or is failed (to be caught and processed in the catch block)
+            LRAData lraData = lraService.getLRA(lra);
+
+            // 412 the LRA is not in an end state (return 412 and the actual status of the LRA)
+            return Response.status(PRECONDITION_FAILED).entity(lraData.getStatus()).build();
+        } catch (NotFoundException e) {
+            // the LRA has finished and, if it corresponds to a failure record, it is safe to delete it
+            if (lraService.removeLog(lraId)) {
+                // 204 the log for the LRA was successfully removed
+                return Response.noContent().build(); // return 204
+            }
+
+            // 500 remove log failed (or it was not present)
+            return Response.status(INTERNAL_SERVER_ERROR).build();
+        } catch (URISyntaxException e) {
+            // 412 the user provided URI was invalid
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf("%s#deleteLRA: %s: %s",
+                        getClass().getCanonicalName(), lraId, e.getMessage());
+            }
+
+            return Response.status(PRECONDITION_FAILED).entity(String.format("%s: %s", lraId, e.getMessage())).build();
+        }
     }
 }

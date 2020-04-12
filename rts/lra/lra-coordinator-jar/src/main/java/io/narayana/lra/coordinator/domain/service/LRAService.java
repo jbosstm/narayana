@@ -22,6 +22,7 @@
 package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.coordinator.domain.model.LRAData;
@@ -178,12 +179,28 @@ public class LRAService {
 
             if (!transaction.hasPendingActions()) {
                 // this call is only required to clean up cached LRAs (JBTM-3250 will remove this cache).
-                remove(ActionStatus.stringForm(transaction.status()), transaction.getId());
+                remove(transaction.getId());
             }
         }
     }
 
-    public void remove(String state, URI lraId) {
+    /**
+     * Remove a log corresponding to an LRA record
+     * @param lraId the id of the LRA
+     * @return true if the record was either removed or was not present
+     */
+    public boolean removeLog(String lraId) {
+        // LRA ids are URIs with the arjuna uid forming the last segment
+        String uid = lraId.substring(lraId.lastIndexOf('/') + 1);
+
+        try {
+            return lraRecoveryModule.removeCommitted(new Uid(uid));
+        } catch (Exception e) {
+            return false; // the uid segment is invalid
+        }
+    }
+
+    public boolean remove(URI lraId) {
         lraTrace(lraId, "remove LRA");
 
         if (lras.containsKey(lraId)) {
@@ -195,6 +212,8 @@ public class LRAService {
         recoveringLRAs.remove(lraId);
 
         locks.remove(lraId);
+
+        return true;
     }
 
     public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
@@ -399,6 +418,14 @@ public class LRAService {
 
     public boolean isLocal(URI lraId) {
         return hasTransaction(lraId);
+    }
+
+    public List<LRAStatusHolder> getFailedLRAs() {
+        Map<URI, Transaction> failedLRAs = new ConcurrentHashMap<>();
+
+        lraRecoveryModule.getFailedLRAs(failedLRAs);
+
+        return failedLRAs.values().stream().map(LRAStatusHolder::new).collect(toList());
     }
 
     /**

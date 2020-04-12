@@ -235,7 +235,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     // - all compensators compensated ok
     // This participant can infer which possibility happened since it will have been told to complete or compensate
     public int topLevelAbort() {
-        return doEnd(true);
+        return doEnd(lra.isCancel());
     }
 
     @Override
@@ -245,7 +245,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     @Override
     public int topLevelCommit() {
-        return doEnd(false);
+        return doEnd(lra.isCancel());
     }
 
     private int doEnd(boolean compensate) {
@@ -352,7 +352,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 httpStatus == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) {
             // the body should contain a valid ParticipantStatus
             try {
-                return atEnd(reportFailure(compensate, endPath.toASCIIString(),
+                return atEnd(reportFailure(compensate, endPath,
                         ParticipantStatus.valueOf(responseData).name()));
             } catch (IllegalArgumentException ignore) {
                 // ignore the body and let recovery discover the status of the participant
@@ -367,20 +367,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         endPath, httpStatus);
             }
 
-            if (compensate) {
-                status = ParticipantStatus.Compensating; // recovery will figure out the status via the status url
-
-                /*
-                 * We are mapping compensate onto Abort. TwoPhaseCoordinator uses presumed abort
-                 * so if we were to return FINISH_ERROR recovery would not replay the log.
-                 * To force the record to be eligible for recovery we return a heuristic hazard.
-                 */
-                return atEnd(TwoPhaseOutcome.HEURISTIC_HAZARD);
-            }
-
-            status = ParticipantStatus.Completing; // recovery will figure out the status via the status url
-
-            return atEnd(TwoPhaseOutcome.FINISH_ERROR);
+            // recovery will figure out the status via the status url
+            status = compensate ? ParticipantStatus.Compensating : ParticipantStatus.Completing;
+            accepted = true;
         }
 
         updateStatus(compensate);
@@ -407,6 +396,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             default:
                 return false;
         }
+    }
+
+
+    boolean isFailed() {
+        return status == ParticipantStatus.FailedToCompensate || status == ParticipantStatus.FailedToComplete;
     }
 
     private boolean afterLRARequest(URI target, String payload) {
@@ -438,6 +432,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private int atEnd(int res) {
+        if (parentId != null
+                && (status == ParticipantStatus.Completed || status == ParticipantStatus.FailedToComplete)) {
+            // completed nested participants must remain compensatable
+            return TwoPhaseOutcome.HEURISTIC_HAZARD; // ask to be called again
+        }
+
         // Only run the post LRA actions if both the LRA and participant are in an end state
         // check the participant first since it will have been removed from one of the lists
         if (!isFinished() || !lra.isFinished()) {
@@ -467,15 +467,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
     }
 
-    private int reportFailure(boolean compensate, String endPath, String failureReason) {
+    private int reportFailure(boolean compensate, URI endPath, String failureReason) {
         status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
         LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s (cause %s)",
-                endPath, compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
+                endPath.toASCIIString(), compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
 
-        // permanently failed so tell recovery to ignore us in the future. TODO could move it to
-        // another list for reporting
-        return TwoPhaseOutcome.FINISH_OK;
+        // permanently failed so ask recovery to ignore us in the future.
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
     private int retryGetEndStatus(URI endPath, boolean compensate) {
@@ -508,7 +507,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         return TwoPhaseOutcome.HEURISTIC_HAZARD;
                     case FailedToClose:
                     case FailedToCancel:
-                        return TwoPhaseOutcome.FINISH_ERROR;
+                        return reportFailure(compensate, endPath, "unknown");
                     default:
                         return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 }
@@ -539,7 +538,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                      */
                     status = compensate ? ParticipantStatus.Compensated : ParticipantStatus.Completed;
                     return TwoPhaseOutcome.FINISH_OK;
-                } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+                } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode() ||
+                        Response.Status.Family.familyOf(response.getStatus()).equals(
+                            Response.Status.Family.SERVER_ERROR)) {
+                    // these response codes indicate that the implementation should retry later
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 } else if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.getResponseString() != null) {
@@ -562,14 +564,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                                     compensate, endPath, status);
 
                             if (forgetURI != null) {
-                                return forget() ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.HEURISTIC_HAZARD;
+                                if (!forget()) {
+                                    // we will retry the forget on the next recovery cycle
+                                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                                }
                             }
 
-                            if (compensate) {
-                                return TwoPhaseOutcome.FINISH_OK;
-                            }
-
-                            return TwoPhaseOutcome.FINISH_OK;
+                            return reportFailure(compensate, endPath, "Unknown");
                         default:
                             return TwoPhaseOutcome.HEURISTIC_HAZARD;
                     }

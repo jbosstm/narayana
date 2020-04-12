@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -121,8 +122,7 @@ public class Transaction extends AtomicAction {
 
     public boolean save_state(OutputObjectState os, int ot) {
         if (!super.save_state(os, ot)
-                || !save_list(os, ot, pendingList)
-                || !save_list(os, ot, preparedList)) {
+                || !save_list(os, ot, pendingList)) { // other lists are maintained in BasicAction
             return false;
         }
 
@@ -230,9 +230,33 @@ public class Transaction extends AtomicAction {
     public boolean restore_state(InputObjectState os, int ot) {
 
         if (!super.restore_state(os, ot)
-                || !restore_list(os, ot, pendingList)
-                || !restore_list(os, ot, preparedList)) {
+                || !restore_list(os, ot, pendingList)) { // other lists are maintained in BasicAction
             return false;
+        }
+
+        // restore_state may have put failed records onto the prepared list so move them back again:
+        for (AbstractRecord rec = preparedList.peekFront(); rec != null; rec = preparedList.peekNext(rec)) {
+            if (rec instanceof LRARecord) {
+                LRARecord p = (LRARecord) rec;
+
+                if (p.isFailed()) {
+                    boolean moveRec = true;
+                    AbstractRecord r;
+
+                    preparedList.remove(p);
+
+                    // put it back on the failedList if it isn't already on it
+                    for (r = failedList.peekFront(); r != null; r = failedList.peekNext(r)) {
+                        if (p.equals(r)) {
+                            break;
+                        }
+                    }
+
+                    if (r == null) {
+                        failedList.putFront(p);
+                    }
+                }
+            }
         }
 
         uid = get_uid().fileStringForm();
@@ -350,6 +374,18 @@ public class Transaction extends AtomicAction {
                 (status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing));
     }
 
+
+    public boolean isCancel() {
+        switch (status) {
+            case Cancelling: /* FALLTHRU */
+            case Cancelled: /* FALLTHRU */
+            case FailedToCancel:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     boolean isFinished() {
         switch (status) {
             case Closed:
@@ -428,13 +464,16 @@ public class Transaction extends AtomicAction {
 
                     // repopulate the pending list TODO it won't neccessarily be present during recovery
                     pendingList = new RecordList();
+                    preparedList = new RecordList();
+                    failedList = new RecordList();
 
-                    pending.forEach(r -> pendingList.putRear(r));
+                    moveTo(pendingList, preparedList);
+                    moveTo(heuristicList, preparedList);
 
                     updateState(LRAStatus.Cancelling);
 
-                    super.phase2Abort(true);
-//                res = super.Abort();
+                    // call commit since the abort route does not save the failed list
+                    super.phase2Commit(true);
 
                     res = status();
 
@@ -447,11 +486,10 @@ public class Transaction extends AtomicAction {
         } else {
             if (cancel || status() == ActionStatus.ABORT_ONLY) {
                 // compensators must be called in reverse order so reverse the pending list
-                int sz = pendingList == null ? 0 : pendingList.size();
-
-                for (int i = sz - 1; i > 0; i--) {
-                    pendingList.putRear(pendingList.getFront());
-                }
+                preparedList = new RecordList();
+                failedList = new RecordList();
+                moveTo(pendingList, preparedList);
+                moveTo(heuristicList, preparedList);
 
                 // tell each participant that the LRA canceled
                 updateState(LRAStatus.Cancelling);
@@ -461,7 +499,8 @@ public class Transaction extends AtomicAction {
                     heuristicList = new RecordList();
                 }
 
-                super.phase2Abort(true); // this route to abort forces a log write on failures and heuristics
+                // call commit since the abort route does not save the failed list
+                super.phase2Commit(true);
                 res = super.status();
             } else {
                 // tell each participant that the LRA closed ok
@@ -480,14 +519,15 @@ public class Transaction extends AtomicAction {
             }
         }
 
-        if (getSize(heuristicList) != 0 || getSize(failedList) != 0) {
+        if (getSize(heuristicList) != 0) {
             status = cancel ? LRAStatus.Cancelling : LRAStatus.Closing;
+        } else if (getSize(failedList) != 0) {
+            status = cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose;
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
             status = LRAStatus.Closing;
         } else {
             status = toLRAStatus(res);
         }
-
 
         if (!isRecovering()) {
             if (lraService != null) {
@@ -499,17 +539,18 @@ public class Transaction extends AtomicAction {
 
         finishTime = LocalDateTime.now(ZoneOffset.UTC);
 
+        deactivate(); // ensure that the new status is persisted
+
         return res;
     }
 
     protected void runPostLRAActions() {
-        // if there are no more heuristics or failures then update the status of the LRA
-        if (isInEndState()) {
+        // if there are no more heuristics then update the status of the LRA
+        if (isInEndState() && heuristicList != null && heuristicList.size() != 0) {
             if (preparedList == null) {
                 preparedList = new RecordList();
             }
             moveTo(heuristicList, preparedList);
-            moveTo(failedList, preparedList);
             checkParticipant(preparedList);
             super.phase2Commit(true);
         }
@@ -566,10 +607,11 @@ public class Transaction extends AtomicAction {
     }
 
     protected boolean isInEndState() {
+        // update the status first by checking for heuristics and failed participants
         if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
-            status = LRAStatus.Cancelled;
+            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
         } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
-            status = LRAStatus.Closed;
+            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Closed : LRAStatus.FailedToClose;
         }
 
         return isFinished();
@@ -883,14 +925,16 @@ public class Transaction extends AtomicAction {
     }
 
     private void getRecoveryCoordinatorUrls(Map<String, String> participants, RecordList list) {
-        RecordListIterator iter = new RecordListIterator(list);
-        AbstractRecord rec;
+        if (list != null) {
+            RecordListIterator iter = new RecordListIterator(list);
+            AbstractRecord rec;
 
-        while (((rec = iter.iterate()) != null)) {
-            if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
-                LRARecord lraRecord = (LRARecord) rec;
+            while (((rec = iter.iterate()) != null)) {
+                if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
+                    LRARecord lraRecord = (LRARecord) rec;
 
-                participants.put(lraRecord.getRecoveryURI().toASCIIString(), lraRecord.getParticipantPath());
+                    participants.put(lraRecord.getRecoveryURI().toASCIIString(), lraRecord.getParticipantPath());
+                }
             }
         }
     }
@@ -958,6 +1002,15 @@ public class Transaction extends AtomicAction {
      * @return true if all post LRA actions are complete
      */
     public boolean hasPendingActions() {
-        return !isFinished() || hasElements(heuristicList) || hasElements(failedList);
+        // if it is not in an end state or has a heuristic hazzard
+        return !isFinished() || hasElements(heuristicList);
+    }
+
+    Map<String, String> getFailedParticipants() {
+        Map<String, String> participants = new ConcurrentHashMap<>();
+
+        getRecoveryCoordinatorUrls(participants, failedList);
+
+        return participants;
     }
 }

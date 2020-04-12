@@ -45,6 +45,20 @@
       <artifactId>lra-test-arquillian-extension</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-coordinator-jar</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
+      <version>${version.org.codehaus.jettison}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   
   <build>
