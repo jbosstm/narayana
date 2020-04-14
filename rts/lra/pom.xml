@@ -26,8 +26,8 @@
         <version.junit>4.12</version.junit>
 
         <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->
-        <version.microprofile.lra.api>1.0-20200408.061430-745</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-20200408.061506-741</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0-20200414.093442-754</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-20200414.093502-750</version.microprofile.lra.tck>
 
         <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
         <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
