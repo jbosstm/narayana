@@ -323,8 +323,6 @@ JAVA_VER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/\1\2/
 if [ "$JAVA_VER" -lt 18 ]; then
   echo "JDK version < 18 - setting -Dhttps.protocols=TLSv1.2"
   AS_XARGS="-Dhttps.protocols=TLSv1.2"
-else
-  AS_XARGS="-Dhttps.protocols=TLSv1.2"
 fi
 
 check_if_pull_closed
