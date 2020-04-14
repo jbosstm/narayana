@@ -63,6 +63,11 @@
             <artifactId>lra-coordinator-jar</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+          <groupId>org.eclipse.microprofile.lra</groupId>
+          <artifactId>microprofile-lra-api</artifactId>
+          <version>${version.microprofile.lra.api}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
