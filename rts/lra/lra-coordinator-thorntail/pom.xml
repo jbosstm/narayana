@@ -59,6 +59,10 @@
             <artifactId>cdi</artifactId>
         </dependency>
         <dependency>
+          <groupId>io.thorntail</groupId>
+          <artifactId>microprofile-openapi</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-coordinator-jar</artifactId>
             <version>${project.version}</version>
