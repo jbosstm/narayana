@@ -311,11 +311,10 @@
 		<id>db2-jdbc-store</id>
 		<dependencies>
 			<dependency>
-				<groupId>com.ibm</groupId>
-				<artifactId>db2jcc</artifactId>
+				<groupId>com.ibm.db2</groupId>
+				<artifactId>jcc</artifactId>
 				<version>${version.com.ibm}</version>
-				<scope>system</scope>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/DB2_v9.7/db2jcc.jar</systemPath>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 		<build>
