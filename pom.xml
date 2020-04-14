@@ -466,7 +466,7 @@
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
     <version.com.oracle>10.2.0.4</version.com.oracle>
-    <version.com.ibm>9.7</version.com.ibm>
+    <version.com.ibm>11.5.0.0</version.com.ibm>
     <version.postgresql>9.0-801.jdbc4</version.postgresql>
     <version.mysql>5.1.28</version.mysql>
     <version.mariadb>1.2.2</version.mariadb>
