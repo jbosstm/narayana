@@ -19,8 +19,11 @@ ROOT="/"
 M2_HOME=""
 MAVEN_HOME=""
 
-MAVEN_OPTS="$MAVEN_OPTS -Xmx512M -XX:MaxPermSize=256m"
-export MAVEN_OPTS
+if [ -z $MAVEN_OPTS ]
+then
+    MAVEN_OPTS="$MAVEN_OPTS -Xmx512M -XX:MaxPermSize=256m"
+    export MAVEN_OPTS
+fi
 
 #  Default search path for maven.
 MAVEN_SEARCH_PATH="\
@@ -176,7 +179,7 @@ main() {
     #  Export some stuff for maven.
     export MVN MAVEN_HOME MVN_OPTS MVN_GOAL
 
-    echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
+    echo "$MAVEN_OPTS $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
     #  Execute in debug mode, or simply execute.
     if [ "x$MVN_DEBUG" != "x" ]; then

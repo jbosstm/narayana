@@ -144,7 +144,7 @@ function build_as {
 #  done
 #  [ $? = 0 ] || fatal "git rebase failed"
 
-  export MAVEN_OPTS="$MAVEN_OPTS -XX:MaxPermSize=512m"
+  export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
   (cd .. && ./build.sh -f jboss-as/pom.xml clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
