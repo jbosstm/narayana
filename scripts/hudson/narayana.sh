@@ -432,7 +432,7 @@ function osgi_tests {
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/xts/pom.xml -fae -B -Pxts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -440,7 +440,7 @@ function xts_as_tests {
 function rts_as_tests {
   echo "#-1. RTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  ./build.sh -f testsuite/integration/rts/pom.xml -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
+  ./build.sh -f testsuite/integration/rts/pom.xml -fae -B -Prts.integration.tests.profile -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" test
   [ $? = 0 ] || fatal "RTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -448,7 +448,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ArjunaJTA/jta/pom.xml -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -Parq $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -456,12 +456,12 @@ function jta_as_tests {
 
 function rts_tests {
   echo "#0. REST-AT Integration Test"
-  ./build.sh -f rts/at/integration/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f rts/at/integration/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "REST-AT Integration Test failed"
 
   echo "#0. REST-AT To JTA Bridge Test"
-    ./build.sh -f rts/at/bridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
-    [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
+  ./build.sh -f rts/at/bridge/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  [ $? = 0 ] || fatal "REST-AT To JTA Bridge Test failed"
 }
 
 function lra_tests {
@@ -470,7 +470,7 @@ function lra_tests {
   # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
 
-  PRESERVE_WORKING_DIR=true ../../build.sh -B -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS "$@"
+  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS "$@"
   [ $? = 0 ] || fatal "LRA Test failed"
   cd - # back to original directory
 }
@@ -557,20 +557,20 @@ function blacktie {
 
 function jta_cdi_tests {
   echo "#0. JTA CDI Tests"
-  ./build.sh -f ArjunaJTA/cdi/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/cdi/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "JTA CDI Test failed"
 }
 
 function compensations_tests {
   echo "#0. compensations Test"
   cp ./rts/at/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f txframework/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f txframework/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "txframework build failed"
-  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF-distributed $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
-  ./build.sh -f compensations/pom.xml -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f compensations/pom.xml -fae -B -P$ARQ_PROF-weld $CODE_COVERAGE_ARGS "$@" test
   [ $? = 0 ] || fatal "compensations build failed"
 }
 
@@ -593,17 +593,17 @@ function xts_tests {
     ./build.sh -f XTS/localjunit/pom.xml -B --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS/localjunit/pom.xml failed"
   else
-    ./build.sh -f XTS/localjunit/unit/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/unit/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit unit build failed"
-    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/disabled-context-propagation/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit disabled-context-propagation build failed"
-    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTX11-interop/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTX11 build failed"
-    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/WSTFSC07-interop/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit WSTFSC07 build failed"
-    ./build.sh -f XTS/localjunit/xtstest/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/xtstest/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit xtstest build failed (no test run)"
-    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
+    ./build.sh -f XTS/localjunit/crash-recovery-tests/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install "$@"
     [ $? = 0 ] || fatal "XTS localjunit crash-recovery-tests build failed"
   fi
 
@@ -626,12 +626,11 @@ function tx_bridge_tests {
   grep recovery-listener "$CONF"
   sed -e s/recovery-listener=\"true\"//g   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#"   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
-
-#  sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
+  # sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#" -i $CONF
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
+  ./build.sh -f txbridge/pom.xml -fae -B -P$ARQ_PROF $CODE_COVERAGE_ARGS "$@" $IPV6_OPTS install "$@"
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
@@ -659,10 +658,10 @@ EOT
     rm -rf narayana-tomcat
     git clone https://github.com/jbosstm/narayana-tomcat.git
     echo "Executing Narayana Tomcat tests"
-    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
-    ./build.sh -f narayana-tomcat/pom.xml -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
     rm -r ${CATALINA_HOME}
