@@ -28,7 +28,6 @@ import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.jta.logging.RecoveryRequired;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import org.junit.Test;
 
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Test the RecoveryMonitor is verbose mode
@@ -66,8 +66,8 @@ public class RecoveryMonitorTest {
         recoveryEnvironmentBean.setRecoveryListener(true); // configure the RecoveryMonitor
 
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-
-        manager.addModule(new XARecoveryModule()); // we only need to test the XARecoveryModule
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        manager.addModule(xaRecoveryModule); // we only need to test the XARecoveryModule
 
         try {
             manager.startRecoveryManagerThread(); // start periodic recovery
@@ -81,7 +81,7 @@ public class RecoveryMonitorTest {
             // check the output of the scan
             assertEquals("ERROR", RecoveryMonitor.getResponse());
             assertEquals("ERROR", RecoveryMonitor.getSystemOutput());
-            assertTrue(RecoveryRequired.isRecoveryProblems());
+            assertFalse(xaRecoveryModule.isPeriodicWorkSuccessful());
         } finally {
             manager.terminate();
         }

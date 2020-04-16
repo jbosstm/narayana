@@ -28,7 +28,6 @@ import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.logging.RecoveryRequired;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 public class RecoveryScanTest {
 
     private static RecoveryManager manager;
+    private static XARecoveryModule xaRecoveryModule;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -66,7 +66,8 @@ public class RecoveryScanTest {
 
         manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
 
-        manager.addModule(new XARecoveryModule()); // we only need to test the XARecoveryModule
+        xaRecoveryModule = new XARecoveryModule();
+        manager.addModule(xaRecoveryModule); // we only need to test the XARecoveryModule
         manager.startRecoveryManagerThread(); // start periodic recovery
     }
 
@@ -92,7 +93,7 @@ public class RecoveryScanTest {
 
         manager.scan();
 
-        assertTrue(RecoveryRequired.isRecoveryProblems());
+        assertFalse(xaRecoveryModule.isPeriodicWorkSuccessful());
     }
 
     @Test
@@ -157,7 +158,7 @@ public class RecoveryScanTest {
 
         manager.scan();
 
-        assertFalse(RecoveryRequired.isRecoveryProblems());
+        assertTrue(xaRecoveryModule.isPeriodicWorkSuccessful());
     }
 
     @Test
