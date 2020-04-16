@@ -394,6 +394,10 @@ function build_as {
     rm -rf .git
   fi
 
+  find testsuite/ -name '*.java' -print0 | xargs -0 -I file sed -i 's/initCLI();/initCLI(20 * 1000);/' file
+  find testsuite/ -name '*.java' -print0 | xargs -0 -I file sed -i 's/initCLI(true);/initCLI(20 * 1000);/' file
+  find testsuite/ -name '*.java' -print0 | xargs -0 -I file sed -i 's/AbstractCliTestBase.initCLI(DomainTestSupport.masterAddress)/AbstractCliTestBase.initCLI(DomainTestSupport.masterAddress, 20 * 1000)/' file
+
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
   if [ $AS_TESTS = 1 ]; then
     JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
