@@ -127,7 +127,7 @@ public class LRACDIExtension implements Extension {
             return false;
         } else if (!annotations.containsKey(DotNames.COMPENSATE) && !annotations.containsKey(DotNames.AFTER_LRA)) {
             throw new IllegalStateException(String.format("%s: %s",
-                classInfo.simpleName(), "The class contains an LRA method and no Compensate or AfterLRA method was found."));
+                classInfo.name(), "The class contains an LRA method and no Compensate or AfterLRA method was found."));
         } else {
             return true;
         }
