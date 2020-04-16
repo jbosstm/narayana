@@ -37,10 +37,6 @@ public class jtaLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.ats.jta");
 
-    /**
-     * For jtaI18NLogger, if any method, prefixed with <b>"warn_recovery"</b> is called then,
-     * <b>RecoverRequired</b> class variable i.e. "recoveryProblem" should be set as <b>true</b>.
-     * */
     public static final jtaI18NLogger i18NLogger = Logger.getMessageLogger(jtaI18NLogger.class, "com.arjuna.ats.jta");
 
     private jtaI18NLogger jtaI18NLoggerImpl;

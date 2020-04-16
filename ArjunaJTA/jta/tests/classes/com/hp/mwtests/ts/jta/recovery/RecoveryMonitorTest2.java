@@ -27,7 +27,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.tools.RecoveryMonitor;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.jta.logging.RecoveryRequired;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import org.junit.Test;
 
@@ -109,7 +108,8 @@ public class RecoveryMonitorTest2 {
 
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
 
-        manager.addModule(new XARecoveryModule()); // we only need to test the XARecoveryModule
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        manager.addModule(xaRecoveryModule); // we only need to test the XARecoveryModule
 
         try {
             manager.startRecoveryManagerThread(); // start periodic recovery
@@ -123,7 +123,7 @@ public class RecoveryMonitorTest2 {
             // check the output of the scan
             assertEquals("DONE", RecoveryMonitor.getResponse());
             assertEquals("DONE", RecoveryMonitor.getSystemOutput());
-            assertFalse(RecoveryRequired.isRecoveryProblems());
+            assertTrue(xaRecoveryModule.isPeriodicWorkSuccessful());
         } finally {
             manager.terminate();
         }
