@@ -26,10 +26,6 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <it.test>
-            <!-- https://issues.redhat.com/browse/JBTM-3280 -->
-            !TckRecoveryTests#testCancelWhenParticipantIsRestarted
-        </it.test>
     </properties>
 
     <build>
