@@ -212,7 +212,9 @@ public class Transaction extends AtomicAction {
                 }
 
                 if (record instanceof LRARecord) {
-                    ((LRARecord) record).setLRAService(lraService);
+                    LRARecord lraRecord = (LRARecord) record;
+                    lraRecord.setLRAService(lraService);
+                    lraRecord.setLRA(this);
                 }
 
             }
