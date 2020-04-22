@@ -420,6 +420,10 @@ function init_jboss_home {
   echo "JBOSS_HOME=$JBOSS_HOME"
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-xts.xml ${JBOSS_HOME}/standalone/configuration
   cp ${JBOSS_HOME}/docs/examples/configs/standalone-rts.xml ${JBOSS_HOME}/standalone/configuration
+  # configuring bigger connection timeout for jboss cli (WFLY-13385)
+  CONF="${JBOSS_HOME}/bin/jboss-cli.xml"
+  sed -e 's#^\(.*</jboss-cli>\)#<connection-timeout>30</connection-timeout>\n\1#' "$CONF" > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+  grep 'connection-timeout' "${CONF}"
 }
 
 function osgi_tests {
