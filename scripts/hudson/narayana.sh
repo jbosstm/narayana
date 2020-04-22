@@ -262,10 +262,13 @@ fi
   [ -z "$AS_BRANCH" ] || git checkout $AS_BRANCH
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
 
+  cd ../
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.2.25.Final-SNAPSHOT -Dversion.org.jboss.jboss-transaction-spi=7.3.0.SP1
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh -f jboss-as/pom.xml clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.2.25.Final-SNAPSHOT -Dversion.org.jboss.jboss-transaction-spi=7.3.0.SP1
   [ $? = 0 ] || fatal "AS build failed"
   
+  cd jboss-as
+
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/wildfly-*/bin/standalone.conf
 
