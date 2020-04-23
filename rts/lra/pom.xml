@@ -36,6 +36,7 @@
 
         <test.logs.to.file>false</test.logs.to.file>
         <skipITs>true</skipITs> <!-- integration tests are disabled by default, use profile to run 'arq' -->
+        <checkstyle.skip>false</checkstyle.skip>
 
         <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
         <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
@@ -145,13 +146,6 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-           </plugin>
         </plugins>
     </build>
 
