@@ -46,4 +46,12 @@ public interface SlotStoreEnvironmentBeanMBean {
     boolean isSyncDeletes();
 
     void setSyncDeletes(boolean syncDeletes);
+
+    String getBackingSlotsClassName();
+
+    void setBackingSlotsClassName(String backingSlotsClassName);
+
+    BackingSlots getBackingSlots();
+
+    void setBackingSlots(BackingSlots instance);
 }
