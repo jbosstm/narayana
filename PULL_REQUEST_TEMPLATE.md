@@ -6,4 +6,4 @@ Please make sure your PR meets the following requirements:
 
 The build axis can be controlled by prefixing a ! on the following as appropriate.
 
-MAIN TOMCAT AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_JACORB QA_JTS_JDKORB QA_JTS_OPENJDKORB BLACKTIE PERF LRA NO_WIN DB_TESTS mysql db2 postgres oracle
+MAIN TOMCAT AS_TESTS RTS JACOCO XTS QA_JTA QA_JTS_JACORB QA_JTS_JDKORB QA_JTS_OPENJDKORB BLACKTIE PERF LRA !NO_WIN DB_TESTS mysql db2 postgres oracle
