@@ -374,7 +374,7 @@
               <excludes>**/*$logger.java,**/*$bundle.java</excludes>
               <useFile/>
               <!-- checkstyle is set to be run on particular modules by disabling skip -->
-              <skip>true</skip>
+              <skip>${checkstyle.skip}</skip>
           </configuration>
           <dependencies>
               <dependency>
@@ -406,8 +406,11 @@
   </dependencies>
 
   <properties>
-    <!-- IP stack configs. -->
+    <!-- Checkstyle is disabled by default, but it could be enabled for default by a particular module -->
+    <checkstyle.skip>true</checkstyle.skip>
+    <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
+    <!-- IP stack configs. -->
     <jvm.args.ip>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false</jvm.args.ip>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
     <buildproperty.date>${maven.build.timestamp}</buildproperty.date>
