@@ -71,7 +71,7 @@ public class SlotStoreAdaptor implements ObjectStoreAPI {
             tsLogger.logger.trace("SlotStore.allObjUids(" + typeName + ", " + matchState + ")");
         }
 
-        SlotStoreKey key = new SlotStoreKey(null, typeName, matchState);
+        SlotStoreKey key = new SlotStoreKey(Uid.nullUid(), typeName, matchState);
 
         SlotStoreKey[] matchingKeys = store.getMatchingKeys(key);
 

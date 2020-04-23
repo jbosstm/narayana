@@ -25,22 +25,30 @@ package com.arjuna.ats.internal.arjuna.objectstore.slot;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2020-03
  */
-public class RAMSlots {
+public class VolatileSlots implements BackingSlots {
 
-    private final byte[][] slots;
+    private byte[][] slots = null;
 
-    public RAMSlots(SlotStoreEnvironmentBean config) {
-        slots = new byte[config.getNumberOfSlots()][];
+    @Override
+    public synchronized void init(SlotStoreEnvironmentBean config) {
+        if (slots == null) {
+            slots = new byte[config.getNumberOfSlots()][];
+        } else {
+            throw new IllegalStateException("already initialized");
+        }
     }
 
+    @Override
     public void write(int slot, byte[] data, boolean sync) {
         slots[slot] = data;
     }
 
+    @Override
     public byte[] read(int slot) {
         return slots[slot];
     }
 
+    @Override
     public void clear(int slot, boolean sync) {
         slots[slot] = null;
     }

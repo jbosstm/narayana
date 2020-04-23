@@ -20,15 +20,19 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot;
 
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputBuffer;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputBuffer;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -51,7 +55,7 @@ public class SlotStore {
     public final ConcurrentHashMap<SlotStoreKey, Integer> slotIdIndex = new ConcurrentHashMap<>();
     public final Deque<Integer> freeList = new ConcurrentLinkedDeque<>();
 
-    public final RAMSlots slots; // TODO add alternative implementations
+    public final BackingSlots slots;
 
     /**
      * Create a new instance with the given configuration.
@@ -65,15 +69,21 @@ public class SlotStore {
 
         // unused for now, but eventually we'll have a disk backend...
         File storeDir = new File(config.getStoreDir());
-        if (!storeDir.exists() && !storeDir.mkdirs()) {
-            throw new IOException(tsLogger.i18NLogger.get_dir_create_failed(storeDir.getCanonicalPath()));
-        }
         storeDirCanonicalPath = storeDir.getCanonicalPath();
 
-        slots = new RAMSlots(config);
+        slots = config.getBackingSlots();
+        slots.init(config);
 
+        // internal recovery to rebuild the slotIdIndex and freeList
         for (int i = 0; i < config.getNumberOfSlots(); i++) {
-            freeList.add(i); // TODO recovery, when the backend supports it.
+            byte[] data = slots.read(i);
+            if (data == null || data.length == 0) {
+                freeList.add(i); // slot does not contain a valid entry, is free for use
+            } else {
+                InputBuffer inputBuffer = new InputBuffer(data);
+                SlotStoreKey slotStoreKey = SlotStoreKey.unpackFrom(inputBuffer);
+                slotIdIndex.put(slotStoreKey, i);
+            }
         }
     }
 
@@ -143,10 +153,10 @@ public class SlotStore {
      */
     public boolean write(SlotStoreKey key, OutputObjectState outputObjectState) throws IOException {
 
-        OutputObjectState record = new OutputObjectState();
+        OutputBuffer record = new OutputBuffer();
         key.packInto(record);
         outputObjectState.packInto(record);
-        byte[] data = outputObjectState.buffer();
+        byte[] data = record.buffer();
 
         if (data.length > config.getBytesPerSlot()) {
             throw new IOException("data too big for slot");
@@ -161,13 +171,12 @@ public class SlotStore {
         }
 
         slots.write(slotId, data, config.isSyncWrites());
-        slotIdIndex.put(key, slotId);
 
         Integer previousSlot = slotIdIndex.put(key, slotId);
 
         // If it's a rewrite, we need to release the older version's slot
         if (previousSlot != null) {
-            slots.clear(previousSlot, config.isSyncDeletes() || config.isSyncWrites());
+            slots.clear(previousSlot, config.isSyncWrites());
             freeList.add(previousSlot);
         }
 

@@ -20,6 +20,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.slot;
 
+import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 import java.io.File;
@@ -42,6 +43,9 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
 
     private volatile boolean syncDeletes = true;
 
+    private volatile String backingSlotsClassName = "com.arjuna.ats.internal.arjuna.objectstore.slot.VolatileSlots";
+    private volatile BackingSlots backingSlots = null;
+
     /**
      * Returns the desired number of slots for the store.
      *
@@ -55,6 +59,8 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
      * Sets the desired number of slots for the store.
      * Should equal the maximum number of unresolved transactions expected at any given time,
      * including those in-flight and awaiting recovery.
+     * <p>
+     * Caution: reducing the number of slots in a non-empty store may result in data loss.
      * <p>
      * Default: 256
      *
@@ -76,6 +82,8 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
     /**
      * Sets the desired maximum size of entries in the store.
      * A typical tx record is under 1k. A 4k (disk block) size is probably reasonable.
+     * <p>
+     * Caution: modifying the size of slots in a non-empty store may result in data loss.
      * <p>
      * Default: 4k
      *
@@ -148,5 +156,65 @@ public class SlotStoreEnvironmentBean implements SlotStoreEnvironmentBeanMBean {
      */
     public void setSyncDeletes(boolean syncDeletes) {
         this.syncDeletes = syncDeletes;
+    }
+
+    /**
+     * Returns the class name of the com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots implementation
+     * <p>
+     * Default: "com.arjuna.ats.internal.arjuna.objectstore.slot.VolatileSlots"
+     *
+     * @return the name of the class implementing BackingSlots.
+     */
+    public String getBackingSlotsClassName() {
+        return backingSlotsClassName;
+    }
+
+    public void setBackingSlotsClassName(String backingSlotsClassName) {
+        synchronized (this) {
+            if (backingSlotsClassName == null) {
+                this.backingSlots = null;
+            } else if (!backingSlotsClassName.equals(this.backingSlotsClassName)) {
+                this.backingSlots = null;
+            }
+            this.backingSlotsClassName = backingSlotsClassName;
+        }
+    }
+
+    /**
+     * Returns an instance of a class implementing com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots
+     * <p>
+     * If there is no pre-instantiated instance set and classloading or instantiation fails,
+     * this method will log an appropriate warning and return null, not throw an exception.
+     *
+     * @return a BackingSlots implementation instance, or null.
+     */
+    public BackingSlots getBackingSlots() {
+        if (backingSlots == null && backingSlotsClassName != null) {
+            synchronized (this) {
+                if (backingSlots == null && backingSlotsClassName != null) {
+                    backingSlots = ClassloadingUtility.loadAndInstantiateClass(BackingSlots.class, backingSlotsClassName, null);
+                }
+            }
+        }
+        return backingSlots;
+    }
+
+    /**
+     * Sets the instance of BackingSlots
+     *
+     * @param instance an Object that implements com.arjuna.ats.internal.arjuna.objectstore.slot.BackingSlots
+     */
+    public void setBackingSlots(BackingSlots instance) {
+        synchronized (this) {
+            BackingSlots oldInstance = this.backingSlots;
+            backingSlots = instance;
+
+            if (instance == null) {
+                this.backingSlotsClassName = null;
+            } else if (instance != oldInstance) {
+                String name = ClassloadingUtility.getNameForClass(instance);
+                this.backingSlotsClassName = name;
+            }
+        }
     }
 }
