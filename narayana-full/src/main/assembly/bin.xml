@@ -213,6 +213,11 @@
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
 		<file>
+			<source>../rts/lra/lra-coordinator-war/target/lra-coordinator.war</source>
+			<fileMode>0644</fileMode>
+			<outputDirectory>rts/lra/</outputDirectory>
+		</file>
+		<file>
 			<source>../rts/lra/lra-coordinator-thorntail/target/lra-coordinator-thorntail.jar</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>

@@ -165,6 +165,7 @@
         <module>lra-annotation-checker</module>
         <module>lra-test</module>
         <module>narayana-lra</module>
+        <module>lra-coordinator-war</module>
     </modules>
 
     <profiles>
