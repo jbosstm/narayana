@@ -43,6 +43,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -129,6 +130,7 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
      * @throws URISyntaxException if the LRA or recovery URIs are invalid (should never happen)
      */
     @Test
+    @Ignore
     public void testRecovery2() throws URISyntaxException {
         startContainer(null);
 
