@@ -157,6 +157,11 @@ public class FailedLRAIT {
         URI lra = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
                 START_LRA_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
+        List<JSONObject> failedLRAs = getFailedRecords(lra);
+
+        // there should be no failed LRAs yet
+        assertEquals(0, failedLRAs.size());
+
         // the LRA should return 202 Accepted when asked to compensate
 
         // verify that deleting the LRA log fails

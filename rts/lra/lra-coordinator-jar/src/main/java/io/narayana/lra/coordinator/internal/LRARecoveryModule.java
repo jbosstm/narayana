@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
 import java.io.IOException;
 import java.net.URI;
@@ -214,9 +215,13 @@ public class LRARecoveryModule implements RecoveryModule {
         InputObjectState aa_uids = new InputObjectState();
         Consumer<Uid> failedLRACreator = uid -> {
             Transaction lra = new Transaction(lraService, new Uid(uid));
+            LRAStatus status = lra.getLRAStatus();
 
             lra.activate();
-            lras.put(lra.getId(), lra);
+
+            if (LRAStatus.FailedToCancel.equals(status) || LRAStatus.FailedToClose.equals(status)) {
+                lras.put(lra.getId(), lra);
+            }
         };
 
         if (getUids(aa_uids)) {
