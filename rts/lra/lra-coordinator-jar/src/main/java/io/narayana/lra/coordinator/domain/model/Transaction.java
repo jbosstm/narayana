@@ -525,8 +525,6 @@ public class Transaction extends AtomicAction {
             status = cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose;
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
             status = LRAStatus.Closing;
-        } else {
-            status = toLRAStatus(res);
         }
 
         if (!isRecovering()) {
