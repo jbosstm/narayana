@@ -97,6 +97,11 @@ public class LRARecoveryModule implements RecoveryModule {
             String Status = ActionStatus.stringForm(theStatus);
             boolean inFlight = lra.isActive();
 
+            LRAStatus lraStatus = lra.getLRAStatus();
+            if (LRAStatus.FailedToCancel.equals(lraStatus) || LRAStatus.FailedToClose.equals(lraStatus)) {
+                return;
+            }
+
             if (!lraService.hasTransaction(lra.getId())) {
                 // make sure LRAService knows about it
                 lraService.addTransaction(lra);
@@ -199,11 +204,11 @@ public class LRARecoveryModule implements RecoveryModule {
         } catch (ObjectStoreException e) {
             if (LRALogger.logger.isTraceEnabled()) {
                 LRALogger.logger.tracef(e,
-                        "LRARecoverModule: Object store exception '%s' while removing LRA record %s",
+                        "LRARecoveryModule: Object store exception '%s' while removing LRA record %s",
                         e.getMessage(), lraUid.fileStringForm());
             } else if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof(
-                        "LRARecoverModule: Object store exception '%s' while removing LRA record %s",
+                        "LRARecoveryModule: Object store exception '%s' while removing LRA record %s",
                         e.getMessage(), lraUid.fileStringForm());
             }
         }
@@ -215,10 +220,9 @@ public class LRARecoveryModule implements RecoveryModule {
         InputObjectState aa_uids = new InputObjectState();
         Consumer<Uid> failedLRACreator = uid -> {
             Transaction lra = new Transaction(lraService, new Uid(uid));
-            LRAStatus status = lra.getLRAStatus();
-
             lra.activate();
 
+            LRAStatus status = lra.getLRAStatus();
             if (LRAStatus.FailedToCancel.equals(status) || LRAStatus.FailedToClose.equals(status)) {
                 lras.put(lra.getId(), lra);
             }
