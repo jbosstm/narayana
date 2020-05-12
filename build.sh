@@ -204,7 +204,7 @@ main() {
     #  Export some stuff for maven.
     export MVN MAVEN_HOME MVN_OPTS MVN_GOAL
 
-    echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
+    echo "$MAVEN_OPTS $MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
     #  Execute in debug mode, or simply execute.
     if [ "x$MVN_DEBUG" != "x" ]; then
