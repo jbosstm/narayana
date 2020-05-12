@@ -263,7 +263,7 @@ fi
   [ $? = 0 ] || fatal "git fetch of pull branch failed"
 
   cd ../
-  export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
+  export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m -XX:+UseConcMarkSweepGC"
   JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh -f jboss-as/pom.xml clean install -DskipTests -Dts.smoke=false -Dlicense.skipDownloadLicenses=true $IPV6_OPTS -Drelease=true -Dversion.org.jboss.narayana=5.2.25.Final-SNAPSHOT -Dversion.org.jboss.jboss-transaction-spi=7.3.0.SP1
   [ $? = 0 ] || fatal "AS build failed"
   
@@ -296,8 +296,9 @@ function osgi_tests {
 
 function xts_as_tests {
   echo "#-1. XTS AS Integration Test"
-  cd ${WORKSPACE}/jboss-as
-  ./build.sh -f ./testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
+  cd ${WORKSPACE}
+  export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m -XX:+UseConcMarkSweepGC"
+  ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile "$@" test
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
