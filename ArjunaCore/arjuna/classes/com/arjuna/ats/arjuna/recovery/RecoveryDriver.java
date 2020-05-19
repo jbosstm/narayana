@@ -92,9 +92,19 @@ public class RecoveryDriver
 	return synchronousScan(DEFAULT_SYNC_TIMEOUT, DEFAULT_SYNC_RETRY);
     }
 
+    public final boolean synchronousVerboseScan () throws java.io.IOException
+    {
+        return synchronousVerboseScan(DEFAULT_SYNC_TIMEOUT, DEFAULT_SYNC_RETRY);
+    }
+
     public final boolean synchronousScan (int timeout, int retry) throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
     {
         return scan(SCAN, timeout, retry);
+    }
+
+    public final boolean synchronousVerboseScan (int timeout, int retry) throws java.io.IOException
+    {
+        return scan(VERBOSE_SCAN, timeout, retry);
     }
 
     public final boolean asynchronousScan () throws java.net.UnknownHostException, java.net.SocketException, java.io.IOException
@@ -104,6 +114,14 @@ public class RecoveryDriver
          */
 
 	return scan(ASYNC_SCAN, _timeout, 1);
+    }
+
+    public final boolean asynchronousVerboseScan () throws java.io.IOException
+    {
+        /*
+         * For async the timeout is the socket timeout and number of attempts on call is 1.
+         */
+        return scan(VERBOSE_ASYNC_SCAN, _timeout, 1);
     }
 
     /*
