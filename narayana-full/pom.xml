@@ -215,6 +215,12 @@
         <version>${version.org.jboss.resteasy}</version>
         <scope>provided</scope>
     </dependency>
+    <dependency>
+        <groupId>io.smallrye.reactive</groupId>
+        <artifactId>smallrye-reactive-converter-api</artifactId>
+        <version>${version.smallrye-converter-api}</version>
+        <scope>provided</scope>
+    </dependency>
     <!-- Ensure these are in the distribution -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
