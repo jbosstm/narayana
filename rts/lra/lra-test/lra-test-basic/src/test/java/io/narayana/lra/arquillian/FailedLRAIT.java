@@ -29,11 +29,9 @@ import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -76,10 +74,7 @@ public class FailedLRAIT {
 
     @Deployment
     public static WebArchive deploy() {
-        return ShrinkWrap.create(WebArchive.class, FailedLRAIT.class.getSimpleName() + ".war")
-                .addPackages(true,
-                        org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage(),
-                        LRARecoveryService.class.getPackage());
+        return Deployer.deploy(FailedLRAIT.class.getSimpleName());
     }
 
     @Before
