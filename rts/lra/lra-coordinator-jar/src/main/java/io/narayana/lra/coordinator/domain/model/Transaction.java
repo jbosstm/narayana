@@ -480,7 +480,12 @@ public class Transaction extends AtomicAction {
                     status = toLRAStatus(status());
                 } else {
                     // forget calls for nested participants
-                    forgetAllParticipants();
+                    if (forgetAllParticipants()) {
+                        updateState(LRAStatus.Closed);
+                    } else {
+                        // some forget calls have not been received, we need to repeat them at the next recovery pass
+                        return ActionStatus.H_HAZARD;
+                    }
                 }
             }
         } else {
@@ -690,10 +695,14 @@ public class Transaction extends AtomicAction {
         return findLRAParticipant(participantUrl, true) != null;
     }
 
-    public void forgetAllParticipants() {
-        if (pending != null) {
-            pending.forEach(LRARecord::forget);
+    public boolean forgetAllParticipants() {
+        if (pending == null) {
+            return true;
         }
+
+        pending.removeIf(LRARecord::forget);
+
+        return pending.isEmpty();
     }
 
     private void savePendingList() {

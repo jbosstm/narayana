@@ -22,9 +22,11 @@
 
 package io.narayana.lra.arquillian;
 
-import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
-import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
-import org.eclipse.microprofile.lra.tck.service.spi.LRACallbackException;
+import io.narayana.lra.arquillian.resource.NestedParticipant;
+import io.narayana.lra.client.NarayanaLRAClient;
+import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
+import org.eclipse.microprofile.lra.tck.service.LRAMetricService;
+import org.eclipse.microprofile.lra.tck.service.LRAMetricType;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -35,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -43,20 +46,27 @@ import java.net.URI;
 import java.net.URL;
 
 @RunWith(Arquillian.class)
-public class FailingParticipantCallsIT {
+public class NestedParticipantIT {
 
     @ArquillianResource
     private URL baseURL;
+
+    @Inject
+    private LRAMetricService lraMetricService;
+
+    @Inject
+    private NarayanaLRAClient narayanaLRAClient;
 
     private Client client;
 
     @Deployment
     public static WebArchive deploy() {
-        return Deployer.deploy(FailingParticipantCallsIT.class.getSimpleName());
+        return Deployer.deploy(NestedParticipantIT.class.getSimpleName());
     }
 
     @Before
     public void before() {
+        lraMetricService.clear();
         client = ClientBuilder.newClient();
     }
 
@@ -67,42 +77,39 @@ public class FailingParticipantCallsIT {
         }
     }
 
+    /**
+     * Verifies that the AfterLRA notification in nested participant is received correctly.
+     */
     @Test
-    public void testFailingAfterLRA() throws LRACallbackException {
-        Client client = ClientBuilder.newClient();
+    public void nestedParticipantAfterLRACalltest() {
         Response response = null;
-        URI lra = null;
+
+        URI parentLRA = narayanaLRAClient.startLRA(NestedParticipantIT.class.getName());
+
+        URI nestedLRA = null;
 
         try {
             response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
-                .path(FailingAfterLRAListener.ROOT_PATH)
-                .path(FailingAfterLRAListener.ACTION_PATH).build())
+                .path(NestedParticipant.ROOT_PATH)
+                .path(NestedParticipant.ENLIST_PATH))
                 .request()
+                .header(LRA.LRA_HTTP_CONTEXT_HEADER, parentLRA)
                 .get();
 
             Assert.assertEquals(200, response.getStatus());
             Assert.assertTrue(response.hasEntity());
 
-            lra = URI.create(response.readEntity(String.class));
+            nestedLRA = URI.create(response.readEntity(String.class));
+            Assert.assertNotEquals(parentLRA, nestedLRA);
         } finally {
             if (response != null) {
                 response.close();
             }
         }
 
-        new NarayanaLRARecovery().waitForRecovery(lra);
+        Assert.assertEquals("After LRA method for nested LRA enlist should have been called",
+            1, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA));
 
-        try {
-            response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
-                .path(FailingAfterLRAListener.ROOT_PATH).path("counter").build())
-                .request().get();
-
-            Assert.assertEquals(2, Integer.parseInt(response.readEntity(String.class)));
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-        }
-
+        narayanaLRAClient.closeLRA(parentLRA);
     }
 }

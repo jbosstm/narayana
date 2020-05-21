@@ -27,7 +27,6 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class NonRootLRAParticipantIT {
 
     @Deployment
     public static WebArchive deploy() {
-        return ShrinkWrap.create(WebArchive.class, NonRootLRAParticipantIT.class.getSimpleName() + ".war");
+        return Deployer.deploy(NonRootLRAParticipantIT.class.getSimpleName());
     }
 
     @Test
