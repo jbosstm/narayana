@@ -1,0 +1,13 @@
+{
+  "iss": "http://localhost:8080/auth/realms/narayana-lra-jwt",
+  "jti": "a-123",
+  "sub": "lra-using-jwt-rbac",
+  "upn": "lra@narayana.io",
+  "preferred_username": "lra",
+  "aud": "using-jwt-rbac",
+  "groups": [
+    "admin",
+    "client",
+    "participant"
+  ]
+}

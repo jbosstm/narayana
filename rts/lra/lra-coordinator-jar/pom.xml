@@ -31,9 +31,50 @@
         <server2.jvm.args>
             -Djboss.socket.binding.port-offset=${server.port.offset} ${jvm.args.other} ${jvm.args.memory} ${jvm.args.modular}
         </server2.jvm.args>
+        <version.quarkus>1.4.2.Final</version.quarkus>
+        <version.smallrye.jwt>2.1.1</version.smallrye.jwt>
+        <version.httpclient>4.5.12</version.httpclient>
+        <version.microprofile.jwt.auth.api>1.1.1</version.microprofile.jwt.auth.api>
+        <version.microprofile.config.api>1.4</version.microprofile.config.api>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-jwt</artifactId>
+            <version>${version.smallrye.jwt}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${version.httpclient}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.jwt</groupId>
+            <artifactId>microprofile-jwt-auth-api</artifactId>
+            <version>${version.microprofile.jwt.auth.api}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>${version.microprofile.config.api}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
+            <version>${version.org.eclipse.microprofile.openapi}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-api</artifactId>
@@ -63,12 +104,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <version>${version.org.jboss.resteasy}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
             <version>${version.org.jboss.resteasy}</version>
             <scope>provided</scope>
@@ -79,12 +114,6 @@
             <artifactId>lra-client</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.openapi</groupId>
-            <artifactId>microprofile-openapi-api</artifactId>
-            <version>${version.org.eclipse.microprofile.openapi}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>

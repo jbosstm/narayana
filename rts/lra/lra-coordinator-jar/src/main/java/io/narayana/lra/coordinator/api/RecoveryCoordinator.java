@@ -34,6 +34,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -80,6 +81,7 @@ public class RecoveryCoordinator {
         @APIResponse(responseCode = "200", description = "The participant associated with this recovery id is returned",
             content = @Content(schema = @Schema(title = "The original participant URI")))
     })
+    @RolesAllowed({"admin"})
     public String getCompensator(
             @Parameter(name = "LRAId", description = "Identifies the LRAId that the participant joined", required = true)
             @PathParam("LRAId") String lraId,
@@ -111,6 +113,7 @@ public class RecoveryCoordinator {
         @APIResponse(responseCode = "404", description = "The coordinator has no knowledge of this participant"),
         @APIResponse(responseCode = "200", description = "The coordinator has replaced the old participant with the new one")
     })
+    @RolesAllowed({"admin"})
     public String replaceCompensator(
             @Parameter(name = "LRAId",
                 description = "Identifies the LRAId that the participant joined",
@@ -151,6 +154,7 @@ public class RecoveryCoordinator {
         description = "Returns LRAs that are recovering (ie some compensators still need to be ran)")
     @APIResponse(responseCode = "200",
         content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAData.class)))
+    @RolesAllowed({"admin"})
     public List<LRAData> getRecoveringLRAs() {
         return lraService.getAllRecovering(true);
     }
@@ -164,6 +168,7 @@ public class RecoveryCoordinator {
                     " and are retained for inspection.")
     @APIResponse(responseCode = "200",
             content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAData.class)))
+    @RolesAllowed({"admin"})
     public List<LRAData> getFailedLRAs() {
         return lraService.getFailedLRAs();
     }
@@ -184,6 +189,7 @@ public class RecoveryCoordinator {
                     description = "If the attempt to remove the LRA log failed. This return code does not " +
                             "discriminate between a failure at the log storage level or if the log did not exist)")
     })
+    @RolesAllowed({"admin"})
     public Response deleteFailedLRA(
             @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
             @PathParam("LraId")String lraId) throws NotFoundException {

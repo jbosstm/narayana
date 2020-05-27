@@ -16,6 +16,7 @@
   <properties>
     <application.host>localhost</application.host>
     <application.port>8180</application.port>
+    <version.microprofile.config>2.7.0.Final</version.microprofile.config>
 
     <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
   </properties>
@@ -31,6 +32,12 @@
       <groupId>io.thorntail</groupId>
       <artifactId>cdi</artifactId>
       <version>${version.thorntail}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.thorntail</groupId>
+      <artifactId>microprofile-config</artifactId>
+      <version>${version.microprofile.config}</version>
       <scope>test</scope>
     </dependency>
  
