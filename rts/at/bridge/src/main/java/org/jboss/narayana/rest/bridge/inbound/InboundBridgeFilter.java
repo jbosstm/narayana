@@ -28,9 +28,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Priority;
 import javax.ejb.Stateless;
 import javax.ejb.Stateful;
 import javax.transaction.Transactional;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -49,6 +51,7 @@ import org.jboss.resteasy.core.ResourceMethodInvoker;
  *
  */
 @Provider
+@Priority(Priorities.USER - 100)
 public final class InboundBridgeFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     private static final Logger LOG = Logger.getLogger(InboundBridgeFilter.class);
