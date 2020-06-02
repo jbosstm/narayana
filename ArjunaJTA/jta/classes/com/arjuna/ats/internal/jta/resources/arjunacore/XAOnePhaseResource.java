@@ -97,7 +97,7 @@ public class XAOnePhaseResource implements OnePhaseResource, ExceptionDeferrer
     {
         this.xaResource = xaResource ;
         this.xid = xid ;
-        if ((params != null) && (params.length >= XAResourceRecord.XACONNECTION))
+        if ((params != null) && (params.length > XAResourceRecord.XACONNECTION))
         {
             final Object param = params[XAResourceRecord.XACONNECTION] ;
             if (param instanceof RecoverableXAConnection)
