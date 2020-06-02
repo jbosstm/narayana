@@ -31,31 +31,14 @@
 
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
+import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
@@ -69,32 +52,93 @@ import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.utils.XARecoveryResourceHelper;
-
 import org.jboss.tm.XAResourceWrapper;
+
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Designed to be able to recover any XAResource.
  */
 
-public class XARecoveryModule implements ExtendedRecoveryModule
-{
-	private AtomicBoolean recoveryProblems = new AtomicBoolean(false);
+public class XARecoveryModule implements ExtendedRecoveryModule {
+    private static XARecoveryModule registeredXARecoveryModule;
+    private final List<XAResourceRecovery> _xaRecoverers;
+    private final Set<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new CopyOnWriteArraySet<XAResourceRecoveryHelper>();
+    private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
+    private AtomicBoolean recoveryProblems = new AtomicBoolean(false);
+    private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
+    private InputObjectState _uids = new InputObjectState();
+    private List<XAResource> _resources;
+    private AtomicInteger scanState = new AtomicInteger(ScanStates.IDLE.ordinal());
+    private Hashtable _failures = null;
+    private Hashtable<XAResourceRecoveryHelper, XAResource[]> recoveryHelpersXAResource = new Hashtable<XAResourceRecoveryHelper, XAResource[]>();
+    private Hashtable<XAResource, RecoveryXids> _xidScans = null;
+    private XARecoveryResourceManager _recoveryManagerClass = null;
+    private String _logName = null;
+    private List<SerializableXAResourceDeserializer> _seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
+    private Set<String> contactedJndiNames = new HashSet<String>();
 
-	boolean isRecoveryProblems() {
-		return this.recoveryProblems.get();
-	}
-
-	void setRecoveryProblems(final boolean recoveryProblems) {
-		this.recoveryProblems.set(recoveryProblems);
-	}
-
-	public XARecoveryModule()
-	{
-		this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(),
+    public XARecoveryModule() {
+        this(new com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryResourceManagerImple(),
                 "Local XARecoveryModule");
 
-		com.arjuna.ats.internal.jta.Implementations.initialise();
-	}
+        com.arjuna.ats.internal.jta.Implementations.initialise();
+    }
+
+    protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName) {
+        _logName = logName;
+        _recoveryManagerClass = recoveryClass;
+        if (_recoveryManagerClass == null) {
+            this.setRecoveryProblems(true);
+            jtaLogger.i18NLogger.warn_recovery_constfail();
+        }
+
+        _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
+        _xaResourceOrphanFilters = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters();
+    }
+
+    public static XARecoveryModule getRegisteredXARecoveryModule() {
+        if (registeredXARecoveryModule == null) {
+            RecoveryManager recMan = RecoveryManager.manager();
+            Vector recoveryModules = recMan.getModules();
+
+            if (recoveryModules != null) {
+                Enumeration modules = recoveryModules.elements();
+
+                while (modules.hasMoreElements()) {
+                    RecoveryModule m = (RecoveryModule) modules.nextElement();
+
+                    if (m instanceof XARecoveryModule) {
+                        registeredXARecoveryModule = (XARecoveryModule) m;
+                        break;
+                    }
+                }
+            }
+        }
+        return registeredXARecoveryModule;
+    }
+
+    boolean isRecoveryProblems() {
+        return this.recoveryProblems.get();
+    }
+
+    void setRecoveryProblems(final boolean recoveryProblems) {
+        this.recoveryProblems.set(recoveryProblems);
+    }
 
     public Set<String> getContactedJndiNames() {
         return Collections.unmodifiableSet(contactedJndiNames);
@@ -158,7 +202,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 
     public void addXAResourceOrphanFilter(XAResourceOrphanFilter xaResourceOrphanFilter) {
         synchronized (_xaResourceOrphanFilters) {
-            if(!_xaResourceOrphanFilters.contains(xaResourceOrphanFilter)) {
+            if (!_xaResourceOrphanFilters.contains(xaResourceOrphanFilter)) {
                 _xaResourceOrphanFilters.add(xaResourceOrphanFilter);
             }
         }
@@ -169,118 +213,110 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             _xaResourceOrphanFilters.remove(xaResourceOrphanFilter);
         }
     }
-    
-	public void addSerializableXAResourceDeserializer(SerializableXAResourceDeserializer serializableXAResourceDeserializer) {
-		_seriablizableXAResourceDeserializers.add(serializableXAResourceDeserializer);		
-	}
-	
-	public List<SerializableXAResourceDeserializer> getSeriablizableXAResourceDeserializers() {
-		return _seriablizableXAResourceDeserializers;
-	}
 
-	public synchronized void periodicWorkFirstPass() {
-		periodicWorkFirstPass(ScanStates.BETWEEN_PASSES);
-	}
+    public void addSerializableXAResourceDeserializer(SerializableXAResourceDeserializer serializableXAResourceDeserializer) {
+        _seriablizableXAResourceDeserializers.add(serializableXAResourceDeserializer);
+    }
 
-	private synchronized void periodicWorkFirstPass(ScanStates endState)
-	{
-		// JBTM-1354 JCA needs to be able to recover XAResources associated with a subordinate transaction so we have to do at least
-		// the start scan to make sure that we have loaded all the XAResources we possibly can to assist subordinate transactions recovering
-		// the reason we can't do bottom up recovery is if this server has an XAResource which tries to recover a remote server (e.g. distributed JTA)
-		// then we get deadlock on the secondpass
-		if (getScanState() == ScanStates.BETWEEN_PASSES) {
-			periodicWorkSecondPass();
-			endState = ScanStates.BETWEEN_PASSES; // Ensure if originally we are between periodic recovery scans we continue in that state and leave XAResource in STARTRSCAN
-		}
+    public List<SerializableXAResourceDeserializer> getSeriablizableXAResourceDeserializers() {
+        return _seriablizableXAResourceDeserializers;
+    }
 
-		setScanState(ScanStates.FIRST_PASS);
+    public synchronized void periodicWorkFirstPass() {
+        periodicWorkFirstPass(ScanStates.BETWEEN_PASSES);
+    }
 
-        if(jtaLogger.logger.isDebugEnabled()) {
+    /* methods to manipulate the failure list */
+
+    private synchronized void periodicWorkFirstPass(ScanStates endState) {
+        // JBTM-1354 JCA needs to be able to recover XAResources associated with a subordinate transaction so we have to do at least
+        // the start scan to make sure that we have loaded all the XAResources we possibly can to assist subordinate transactions recovering
+        // the reason we can't do bottom up recovery is if this server has an XAResource which tries to recover a remote server (e.g. distributed JTA)
+        // then we get deadlock on the secondpass
+        if (getScanState() == ScanStates.BETWEEN_PASSES) {
+            periodicWorkSecondPass();
+            endState = ScanStates.BETWEEN_PASSES; // Ensure if originally we are between periodic recovery scans we continue in that state and leave XAResource in STARTRSCAN
+        }
+
+        setScanState(ScanStates.FIRST_PASS);
+
+        if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debugv("{0} - first pass", _logName);
         }
 
         contactedJndiNames.clear();
-		this.setRecoveryProblems(false);
+        this.setRecoveryProblems(false);
 
-		_uids = new InputObjectState();
+        _uids = new InputObjectState();
 
-		/*
-		 * Scan for resources in the object store.
-		 */
+        /*
+         * Scan for resources in the object store.
+         */
 
-		try
-		{
-			if (!_recoveryStore.allObjUids(_recoveryManagerClass.type(), _uids))
-			{
-				this.setRecoveryProblems(true);
+        try {
+            if (!_recoveryStore.allObjUids(_recoveryManagerClass.type(), _uids)) {
+                this.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_alluids();
-			}
-		}
-		catch (ObjectStoreException e)
-		{
-			this.setRecoveryProblems(true);
+            }
+        } catch (ObjectStoreException e) {
+            this.setRecoveryProblems(true);
             jtaLogger.i18NLogger.warn_recovery_objstoreerror(e);
-		}
-		catch (Exception e)
-		{
-			this.setRecoveryProblems(true);
-            jtaLogger.i18NLogger.warn_recovery_periodicfirstpass(_logName+".periodicWorkFirstPass", e);
-		}
-		// JBTM-1354 JCA needs to be able to recover XAResources associated with a subordinate transaction so we have to do at least
-		// the start scan to make sure that we have loaded all the XAResources we possibly can to assist subordinate transactions recovering
+        } catch (Exception e) {
+            this.setRecoveryProblems(true);
+            jtaLogger.i18NLogger.warn_recovery_periodicfirstpass(_logName + ".periodicWorkFirstPass", e);
+        }
+        // JBTM-1354 JCA needs to be able to recover XAResources associated with a subordinate transaction so we have to do at least
+        // the start scan to make sure that we have loaded all the XAResources we possibly can to assist subordinate transactions recovering
 
-		// scan using statically configured plugins;
-		_resources = resourceInitiatedRecovery();
-		// scan using dynamically configured plugins:
-		_resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
+        // scan using statically configured plugins;
+        _resources = resourceInitiatedRecovery();
+        // scan using dynamically configured plugins:
+        _resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
 
-		List<XAResource> resources = new ArrayList<XAResource>(_resources);
-		for (XAResource xaResource : resources) {
-			try {
-				xaRecoveryFirstPass(xaResource);
-			} catch (Exception ex) {
-				this.setRecoveryProblems(true);
-				jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-			}
-		}
-
-		if (endState != ScanStates.BETWEEN_PASSES) {
-			for (XAResource xaResource : resources) {
-				try {
-					xaResource.recover(XAResource.TMENDRSCAN);
-				} catch (Exception ex) {
-					this.setRecoveryProblems(true);
-					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-				} finally {
-					tryToClose(xaResource);
-				}
-			}
+        List<XAResource> resources = new ArrayList<XAResource>(_resources);
+        for (XAResource xaResource : resources) {
+            try {
+                xaRecoveryFirstPass(xaResource);
+            } catch (Exception ex) {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
+            }
         }
 
-		setScanState(endState);
-	}
+        if (endState != ScanStates.BETWEEN_PASSES) {
+            for (XAResource xaResource : resources) {
+                try {
+                    xaResource.recover(XAResource.TMENDRSCAN);
+                } catch (Exception ex) {
+                    this.setRecoveryProblems(true);
+                    jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
+                } finally {
+                    tryToClose(xaResource);
+                }
+            }
+        }
 
-	public synchronized void periodicWorkSecondPass()
-	{
-	    if (getScanState() == ScanStates.IDLE) {
-	        // a call to getNewXAResource must have already ran the second pass so it is safe to return
-			return;
-		}
+        setScanState(endState);
+    }
+
+    public synchronized void periodicWorkSecondPass() {
+        if (getScanState() == ScanStates.IDLE) {
+            // a call to getNewXAResource must have already ran the second pass so it is safe to return
+            return;
+        }
 
         setScanState(ScanStates.SECOND_PASS);
 
-		if (jtaLogger.logger.isDebugEnabled())
-		{
+        if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debugv("{0} - second pass", _logName);
-		}
+        }
 
-		try
-		{
-			// do the recovery on anything from the scan in first pass
+        try {
+            // do the recovery on anything from the scan in first pass
 
-			transactionInitiatedRecovery();
+            transactionInitiatedRecovery();
 
-			if (jtaLogger.logger.isDebugEnabled()) {
+            if (jtaLogger.logger.isDebugEnabled()) {
                 jtaLogger.logger.debug(_logName
                         + ".transactionInitiatedRecovery completed");
             }
@@ -291,354 +327,270 @@ public class XARecoveryModule implements ExtendedRecoveryModule
                 jtaLogger.logger.debug(_logName
                         + ".resourceInitiatedRecovery completed");
             }
-		}
-		catch (Exception e)
-		{
-			this.setRecoveryProblems(true);
-            jtaLogger.i18NLogger.warn_recovery_periodicsecondpass(_logName+".periodicWorkSecondPass", e);
-		}
+        } catch (Exception e) {
+            this.setRecoveryProblems(true);
+            jtaLogger.i18NLogger.warn_recovery_periodicsecondpass(_logName + ".periodicWorkSecondPass", e);
+        }
 
-		clearAllFailures();
+        clearAllFailures();
 
         setScanState(ScanStates.IDLE);
- 	}
+    }
 
- 	public static XARecoveryModule getRegisteredXARecoveryModule () {
- 		if (registeredXARecoveryModule == null) {
-			RecoveryManager recMan = RecoveryManager.manager();
-			Vector recoveryModules = recMan.getModules();
+    public String id() {
+        return "XARecoveryModule:" + _recoveryManagerClass;
+    }
 
-			if (recoveryModules != null) {
-				Enumeration modules = recoveryModules.elements();
+    /**
+     * @param xid The transaction to commit/rollback.
+     * @return the XAResource than can be used to commit/rollback the specified
+     * transaction.
+     */
+    private XAResource getNewXAResource(Xid xid) {
+        XAResource toReturn = getTheKey(xid);
 
-				while (modules.hasMoreElements()) {
-					RecoveryModule m = (RecoveryModule) modules.nextElement();
+        if (toReturn == null) {
+            synchronized (this) {
+                /*
+                 * run an xid scan with the lock held to avoid _xidScans being changed
+                 * after the call to periodicWorkFirstPass but before the call to getTheKey
+                 */
+                periodicWorkFirstPass(ScanStates.IDLE);
+                toReturn = getTheKey(xid);
+            }
+        }
 
-					if (m instanceof XARecoveryModule) {
-						registeredXARecoveryModule = (XARecoveryModule) m;
-						break;
-					}
-				}
-			}
-		}
-		return registeredXARecoveryModule;
-	}
-
-	public String id()
-	{
-		return "XARecoveryModule:" + _recoveryManagerClass;
-	}
-
-	/**
-	 * @param xid The transaction to commit/rollback.
-	 *
-	 * @return the XAResource than can be used to commit/rollback the specified
-	 *         transaction.
-	 */
-	private XAResource getNewXAResource(Xid xid)
-	{
-		XAResource toReturn = getTheKey(xid);
-
-		if (toReturn == null) {
-			synchronized (this) {
-				/*
-				 * run an xid scan with the lock held to avoid _xidScans being changed
-				 * after the call to periodicWorkFirstPass but before the call to getTheKey
-				 */
-				periodicWorkFirstPass(ScanStates.IDLE);
-				toReturn = getTheKey(xid);
-			}
-		}
-
-		return toReturn;
+        return toReturn;
     }
 
     private XAResource getTheKey(Xid xid) {
-		if (_xidScans != null)
-		{
-			Enumeration<XAResource> keys = _xidScans.keys();
+        if (_xidScans != null) {
+            Enumeration<XAResource> keys = _xidScans.keys();
 
-			while (keys.hasMoreElements())
-			{
-				XAResource theKey = keys.nextElement();
-				RecoveryXids xids = _xidScans.get(theKey);
+            while (keys.hasMoreElements()) {
+                XAResource theKey = keys.nextElement();
+                RecoveryXids xids = _xidScans.get(theKey);
 
-				// JBTM-1255 moved stale check back to bottomUpRecovery
-				if (xids.contains(xid)) {
-					// This Xid is going to be recovered by the AtomicAction
-					// it is possible that the Xid is recovered by both txbridge and XATerminator - the second
-					// would get noxaresource error message
-					xids.remove(xid);
-					return theKey;
-				}
-			}
-		}
-		return null;
-	}
+                // JBTM-1255 moved stale check back to bottomUpRecovery
+                if (xids.contains(xid)) {
+                    // This Xid is going to be recovered by the AtomicAction
+                    // it is possible that the Xid is recovered by both txbridge and XATerminator - the second
+                    // would get noxaresource error message
+                    xids.remove(xid);
+                    return theKey;
+                }
+            }
+        }
+        return null;
+    }
 
-       /**
-        * @param xaResourceRecord The record to reassociate.
-        *
-        * @return the XAResource than can be used to commit/rollback the specified
-        *         record.
-        */
-    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord)
-    {
+    /**
+     * @param xaResourceRecord The record to reassociate.
+     * @return the XAResource than can be used to commit/rollback the specified
+     * record.
+     */
+    public XAResource getNewXAResource(XAResourceRecord xaResourceRecord) {
         return getNewXAResource(xaResourceRecord.getXid());
     }
 
-	protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName)
-    {
-        _logName = logName;
-        _recoveryManagerClass = recoveryClass;
-        if(_recoveryManagerClass == null) {
-			this.setRecoveryProblems(true);
-            jtaLogger.i18NLogger.warn_recovery_constfail();
+    private final boolean transactionInitiatedRecovery() {
+        Uid theUid = null;
+
+        while (Uid.nullUid().notEquals(theUid)) {
+            try {
+                theUid = UidHelper.unpackFrom(_uids);
+
+                if (theUid.notEquals(Uid.nullUid())) {
+                    /*
+                     * Ignore it if it isn't in the store any more. Transaction
+                     * probably recovered it.
+                     */
+
+                    if (_recoveryStore.currentState(theUid, _recoveryManagerClass
+                            .type()) != StateStatus.OS_UNKNOWN) {
+                        boolean problem = false;
+                        XARecoveryResource record = null;
+
+                        try {
+                            record = _recoveryManagerClass.getResource(theUid);
+
+                            problem = true;
+
+                            switch (record.recoverable()) {
+                                case XARecoveryResource.RECOVERY_REQUIRED: {
+                                    if (jtaLogger.logger.isDebugEnabled()) {
+                                        jtaLogger.logger.debug("XARecovery attempting recovery of "
+                                                + theUid);
+                                    }
+
+                                    int recoveryStatus = record.recover();
+
+                                    if (recoveryStatus != XARecoveryResource.RECOVERED_OK) {
+                                        if (recoveryStatus == XARecoveryResource.WAITING_FOR_RECOVERY) {
+                                            // resource initiated recovery not possible (no distribution).
+
+                                            problem = false;
+
+                                            jtaLogger.i18NLogger.info_recovery_recoverydelayed(theUid, XARecoveryResourceHelper.stringForm(recoveryStatus));
+                                        } else {
+                                            this.setRecoveryProblems(true);
+                                            jtaLogger.i18NLogger.warn_recovery_recoveryfailed(theUid, XARecoveryResourceHelper.stringForm(recoveryStatus));
+                                        }
+                                    } else
+                                        problem = false;
+                                }
+                                break;
+                                case XARecoveryResource.INFLIGHT_TRANSACTION: {
+                                    /*
+                                     * Transaction was inflight and between us
+                                     * noticing it and trying to access the state,
+                                     * it finished and removed the state.
+                                     */
+
+                                    problem = false;
+                                }
+                                break;
+                                case XARecoveryResource.INCOMPLETE_STATE:
+                                default: {
+                                    if (jtaLogger.logger.isDebugEnabled()) {
+                                        jtaLogger.logger.debug("XARecovery " + theUid
+                                                + " is non-recoverable");
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (NullPointerException ex) {
+                            problem = true;
+                        } catch (Throwable e) {
+                            problem = true;
+
+                            this.setRecoveryProblems(true);
+                            jtaLogger.i18NLogger.warn_recovery_recoveryerror(e);
+                        }
+
+                        if (problem && (record != null)) {
+                            /*
+                             * Some error occurred which prevented the state of
+                             * the resource from being read from the log. Hence
+                             * we don't have a valid key to use to insert it
+                             * into the list of records to be recovered. Print a
+                             * warning and move on. Force recovery via the
+                             * administration tool. Should be a rare occurrence.
+                             */
+
+                            if (record.getXid() == null) {
+                                this.setRecoveryProblems(true);
+                                jtaLogger.i18NLogger.warn_recovery_cannotadd();
+                            } else {
+                                addFailure(record.getXid(), record.get_uid());
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                theUid = Uid.nullUid();
+            } catch (Throwable e) {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_unexpectedrecoveryerror(e);
+            }
         }
 
-        _xaRecoverers = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveries();
-        _xaResourceOrphanFilters = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceOrphanFilters();
+        return true;
     }
 
-	private final boolean transactionInitiatedRecovery()
-	{
-		Uid theUid = null;
-
-		while (Uid.nullUid().notEquals(theUid))
-		{
-			try
-			{
-				theUid = UidHelper.unpackFrom(_uids);
-
-				if (theUid.notEquals(Uid.nullUid()))
-				{
-					/*
-					 * Ignore it if it isn't in the store any more. Transaction
-					 * probably recovered it.
-					 */
-
-					if (_recoveryStore.currentState(theUid, _recoveryManagerClass
-							.type()) != StateStatus.OS_UNKNOWN)
-					{
-						boolean problem = false;
-						XARecoveryResource record = null;
-
-						try
-						{
-							record = _recoveryManagerClass.getResource(theUid);
-
-							problem = true;
-
-							switch (record.recoverable())
-							{
-							case XARecoveryResource.RECOVERY_REQUIRED:
-							{
-								if (jtaLogger.logger.isDebugEnabled()) {
-                                    jtaLogger.logger.debug("XARecovery attempting recovery of "
-                                            + theUid);
-                                }
-
-								int recoveryStatus = record.recover();
-
-								if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
-								{
-									if (recoveryStatus == XARecoveryResource.WAITING_FOR_RECOVERY)
-									{
-									    // resource initiated recovery not possible (no distribution).
-
-										problem = false;
-
-                                        jtaLogger.i18NLogger.info_recovery_recoverydelayed(theUid, XARecoveryResourceHelper.stringForm(recoveryStatus));
-									}
-									else
-									{
-										this.setRecoveryProblems(true);
-                                        jtaLogger.i18NLogger.warn_recovery_recoveryfailed(theUid, XARecoveryResourceHelper.stringForm(recoveryStatus));
-									}
-								}
-								else
-									problem = false;
-							}
-								break;
-							case XARecoveryResource.INFLIGHT_TRANSACTION:
-							{
-								/*
-								 * Transaction was inflight and between us
-								 * noticing it and trying to access the state,
-								 * it finished and removed the state.
-								 */
-
-								problem = false;
-							}
-								break;
-							case XARecoveryResource.INCOMPLETE_STATE:
-							default:
-							{
-								if (jtaLogger.logger.isDebugEnabled()) {
-                                    jtaLogger.logger.debug("XARecovery " + theUid
-                                            + " is non-recoverable");
-                                }
-							}
-								break;
-							}
-						}
-						catch (NullPointerException ex)
-						{
-							problem = true;
-						}
-						catch (Throwable e)
-						{
-							problem = true;
-
-							this.setRecoveryProblems(true);
-                            jtaLogger.i18NLogger.warn_recovery_recoveryerror(e);
-						}
-
-						if (problem && (record != null))
-						{
-							/*
-							 * Some error occurred which prevented the state of
-							 * the resource from being read from the log. Hence
-							 * we don't have a valid key to use to insert it
-							 * into the list of records to be recovered. Print a
-							 * warning and move on. Force recovery via the
-							 * administration tool. Should be a rare occurrence.
-							 */
-
-							if (record.getXid() == null)
-							{
-								this.setRecoveryProblems(true);
-                                jtaLogger.i18NLogger.warn_recovery_cannotadd();
-							}
-							else
-							{
-								addFailure(record.getXid(), record.get_uid());
-							}
-						}
-					}
-				}
-			}
-			catch (IOException e)
-			{
-				theUid = Uid.nullUid();
-			}
-			catch (Throwable e)
-			{
-				this.setRecoveryProblems(true);
-                jtaLogger.i18NLogger.warn_recovery_unexpectedrecoveryerror(e);
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * 
-	 * JBTM-895 garbage collection is now done when we return XAResources @see XARecoveryModule#getNewXAResource(XAResourceRecord)
-	 * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
-	 */
+    /**
+     * JBTM-895 garbage collection is now done when we return XAResources @see XARecoveryModule#getNewXAResource(XAResourceRecord)
+     *
+     * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
+     */
     private void bottomUpRecovery() {
-			for (XAResource xaResource : _resources) {
-				try {
-					xaRecoverySecondPass(xaResource);
-				} catch (Exception ex) {
-					this.setRecoveryProblems(true);
-					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-				}
-			}
+        for (XAResource xaResource : _resources) {
+            try {
+                xaRecoverySecondPass(xaResource);
+            } catch (Exception ex) {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
+            }
+        }
 
 
         // JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
         // JBTM-924 requires this here garbage collection, see JBTM-1155:
         if (_xidScans != null) {
             Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
-            for(XAResource theKey : keys) {
+            for (XAResource theKey : keys) {
                 RecoveryXids recoveryXids = _xidScans.get(theKey);
-                if(recoveryXids.isStale()) {
+                if (recoveryXids.isStale()) {
                     _xidScans.remove(theKey);
                 }
             }
         }
     }
 
-	/**
-	 * Now check for any outstanding transactions. If we didn't fail to recover
-	 * them, then roll them back - if they'd got through prepare we would have
-	 * an entry within the object store.
-	 *
-	 * Rely upon _xaRecoverers being set up properly (via properties).
-	 *
-	 * We cannot just remember the XAResourceRecords we used (if any) to cache
-	 * the JDBC connection information and use that since we may never have had
-	 * any such records!
-	 *
-	 * IMPORTANT: resourceInitiatedRecovery may rollback transactions which are
-	 * inflight: just because we have no entry for a transaction in the object
-	 * store does not mean it does not exist - it may be *about* to write its
-	 * intentions list. To try to reduce this probability we remember potential
-	 * rollback-ees at this scan, and wait for the next scan before actually
-	 * rolling them back.
-	 *
-	 * Note we cannot use the method that works with Transactions and
-	 * TransactionalObjects, of checking with original process that created the
-	 * transaction, because we don't know which process it was.
-	 */
+    /**
+     * Now check for any outstanding transactions. If we didn't fail to recover
+     * them, then roll them back - if they'd got through prepare we would have
+     * an entry within the object store.
+     * <p>
+     * Rely upon _xaRecoverers being set up properly (via properties).
+     * <p>
+     * We cannot just remember the XAResourceRecords we used (if any) to cache
+     * the JDBC connection information and use that since we may never have had
+     * any such records!
+     * <p>
+     * IMPORTANT: resourceInitiatedRecovery may rollback transactions which are
+     * inflight: just because we have no entry for a transaction in the object
+     * store does not mean it does not exist - it may be *about* to write its
+     * intentions list. To try to reduce this probability we remember potential
+     * rollback-ees at this scan, and wait for the next scan before actually
+     * rolling them back.
+     * <p>
+     * Note we cannot use the method that works with Transactions and
+     * TransactionalObjects, of checking with original process that created the
+     * transaction, because we don't know which process it was.
+     */
 
-	private final List<XAResource> resourceInitiatedRecovery()
-	{
-		/*
-		 * Now any additional connections we may need to create. Relies upon
-		 * information provided by the application.
-		 */
+    private final List<XAResource> resourceInitiatedRecovery() {
+        /*
+         * Now any additional connections we may need to create. Relies upon
+         * information provided by the application.
+         */
 
-		List<XAResource> xaresources = new ArrayList<XAResource>();
-		if (_xaRecoverers.size() > 0)
-		{
-			for (int i = 0; i < _xaRecoverers.size(); i++)
-			{
-				try
-				{
-					XAResourceRecovery ri = (XAResourceRecovery) _xaRecoverers.get(i);
+        List<XAResource> xaresources = new ArrayList<XAResource>();
+        if (_xaRecoverers.size() > 0) {
+            for (int i = 0; i < _xaRecoverers.size(); i++) {
+                try {
+                    XAResourceRecovery ri = (XAResourceRecovery) _xaRecoverers.get(i);
 
-					while (ri.hasMoreResources())
-					{
-						xaresources.add(ri.getXAResource());
-					}
-				}
-				catch (Exception ex)
-				{
-					this.setRecoveryProblems(true);
+                    while (ri.hasMoreResources()) {
+                        xaresources.add(ri.getXAResource());
+                    }
+                } catch (Exception ex) {
+                    this.setRecoveryProblems(true);
                     jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
-				}
-			}
-		}
+                }
+            }
+        }
 
-		return xaresources;
-	}
+        return xaresources;
+    }
 
-    private List<XAResource> resourceInitiatedRecoveryForRecoveryHelpers()
-    {
-		List<XAResource> xaresources = new ArrayList<XAResource>();
+    private List<XAResource> resourceInitiatedRecoveryForRecoveryHelpers() {
+        List<XAResource> xaresources = new ArrayList<XAResource>();
 
         recoveryHelpersXAResource.clear();
 
-        for (XAResourceRecoveryHelper xaResourceRecoveryHelper : _xaResourceRecoveryHelpers)
-        {
-            try
-            {
+        for (XAResourceRecoveryHelper xaResourceRecoveryHelper : _xaResourceRecoveryHelpers) {
+            try {
                 XAResource[] xaResources = xaResourceRecoveryHelper.getXAResources();
-                if (xaResources != null)
-                {
-                    for (XAResource xaResource : xaResources)
-                    {
+                if (xaResources != null) {
+                    for (XAResource xaResource : xaResources) {
                         xaresources.add(xaResource);
                     }
                     recoveryHelpersXAResource.put(xaResourceRecoveryHelper, xaResources);
                 }
-            }
-            catch (Exception ex)
-            {
-				this.setRecoveryProblems(true);
+            } catch (Exception ex) {
+                this.setRecoveryProblems(true);
                 jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
             }
         }
@@ -646,239 +598,205 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         return xaresources;
     }
 
-
-	private final void xaRecoveryFirstPass(XAResource xares)
-	{
-		if (jtaLogger.logger.isDebugEnabled()) {
+    private final void xaRecoveryFirstPass(XAResource xares) {
+        if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("xarecovery of " + xares);
         }
 
-		
-			Xid[] trans = null;
 
-			try
-			{
-				trans = xares.recover(XAResource.TMSTARTRSCAN);
+        Xid[] trans = null;
 
-				if (jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug("Found "
-                            + ((trans != null) ? trans.length : 0)
-                            + " xids in doubt");
+        try {
+            trans = xares.recover(XAResource.TMSTARTRSCAN);
+
+            if (jtaLogger.logger.isDebugEnabled()) {
+                jtaLogger.logger.debug("Found "
+                        + ((trans != null) ? trans.length : 0)
+                        + " xids in doubt");
+            }
+            if (jtaLogger.logger.isTraceEnabled()) {
+                for (Xid xid : trans) {
+                    byte[] globalTransactionId = xid.getGlobalTransactionId();
+                    byte[] branchQualifier = xid.getBranchQualifier();
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("< ");
+                    stringBuilder.append(xid.getFormatId());
+                    stringBuilder.append(", ");
+                    stringBuilder.append(globalTransactionId.length);
+                    stringBuilder.append(", ");
+                    stringBuilder.append(branchQualifier.length);
+                    stringBuilder.append(", ");
+                    for (int i = 0; i < globalTransactionId.length; i++) {
+                        stringBuilder.append(globalTransactionId[i]);
+                    }
+                    stringBuilder.append(", ");
+                    for (int i = 0; i < branchQualifier.length; i++) {
+                        stringBuilder.append(branchQualifier[i]);
+                    }
+                    stringBuilder.append(" >");
+
+                    jtaLogger.logger.debug("Recovered: "
+                            + stringBuilder.toString());
                 }
-				if (jtaLogger.logger.isTraceEnabled()) {
-					for (Xid xid : trans) {
-						byte[] globalTransactionId = xid.getGlobalTransactionId();
-						byte[] branchQualifier = xid.getBranchQualifier();
-	
-						StringBuilder stringBuilder = new StringBuilder();
-						stringBuilder.append("< ");
-						stringBuilder.append(xid.getFormatId());
-						stringBuilder.append(", ");
-						stringBuilder.append(globalTransactionId.length);
-						stringBuilder.append(", ");
-						stringBuilder.append(branchQualifier.length);
-						stringBuilder.append(", ");
-						for (int i = 0; i < globalTransactionId.length; i++) {
-							stringBuilder.append(globalTransactionId[i]);
-						}
-						stringBuilder.append(", ");
-						for (int i = 0; i < branchQualifier.length; i++) {
-							stringBuilder.append(branchQualifier[i]);
-						}
-						stringBuilder.append(" >");
-	
-						jtaLogger.logger.debug("Recovered: "
-								+ stringBuilder.toString());
-					}
-				}
-			}
-			catch (XAException e)
-			{
-				this.setRecoveryProblems(true);
-                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
+            }
+        } catch (XAException e) {
+            this.setRecoveryProblems(true);
+            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName + ".xaRecovery", XAHelper.printXAErrorCode(e), e);
 
-				try
-				{
-					xares.recover(XAResource.TMENDRSCAN);
-				}
-				catch (Exception e1)
-				{
-					jtaLogger.logger.tracef(e1,
-						"Error when calling xares.recover(XAResource.TMENDRSCAN) for XAResource %s", xares);
-				} finally {
-					tryToClose(xares);
-				}
+            try {
+                xares.recover(XAResource.TMENDRSCAN);
+            } catch (Exception e1) {
+                jtaLogger.logger.tracef(e1,
+                    "Error when calling xares.recover(XAResource.TMENDRSCAN) for XAResource %s", xares);
+            } finally {
+                tryToClose(xares);
+            }
 
-				if (_xidScans != null)
-					_xidScans.remove(xares);
+            if (_xidScans != null)
+                _xidScans.remove(xares);
 
-				return;
-			}
+            return;
+        }
 
-			RecoveryXids xidsToRecover = null;
+        RecoveryXids xidsToRecover = null;
 
-			if (_xidScans == null)
-				_xidScans = new Hashtable<XAResource,RecoveryXids>();
-			else
-			{
-                refreshXidScansForEquivalentXAResourceImpl(xares, trans);
+        if (_xidScans == null)
+            _xidScans = new Hashtable<XAResource, RecoveryXids>();
+        else {
+            refreshXidScansForEquivalentXAResourceImpl(xares, trans);
 
-				xidsToRecover = _xidScans.get(xares);
+            xidsToRecover = _xidScans.get(xares);
 
-				if (xidsToRecover == null)
-				{
-                    // this is probably redundant now due to updateIfEquivalentRM,
-                    // but in some implementations hashcode/equals does not behave itself.
+            if (xidsToRecover == null) {
+                // this is probably redundant now due to updateIfEquivalentRM,
+                // but in some implementations hashcode/equals does not behave itself.
 
-					java.util.Enumeration<RecoveryXids> elements = _xidScans.elements();
-					boolean found = false;
+                java.util.Enumeration<RecoveryXids> elements = _xidScans.elements();
+                boolean found = false;
 
-					while (elements.hasMoreElements())
-					{
-						xidsToRecover = elements.nextElement();
+                while (elements.hasMoreElements()) {
+                    xidsToRecover = elements.nextElement();
 
-						if (xidsToRecover.isSameRM(xares))
-						{
-							found = true;
+                    if (xidsToRecover.isSameRM(xares)) {
+                        found = true;
 
-							break;
-						}
-					}
+                        break;
+                    }
+                }
 
-					if (!found)
-						xidsToRecover = null;
-				}
-			}
+                if (!found)
+                    xidsToRecover = null;
+            }
+        }
 
-			if (xidsToRecover == null)
-			{
-				xidsToRecover = new RecoveryXids(xares);
+        if (xidsToRecover == null) {
+            xidsToRecover = new RecoveryXids(xares);
 
-				_xidScans.put(xares, xidsToRecover);
-			}
+            _xidScans.put(xares, xidsToRecover);
+        }
 
-			xidsToRecover.nextScan(trans);
-            saveContactedJndiName(xares);
-	}
-	
-	private void xaRecoverySecondPass(XAResource xares) { 
+        xidsToRecover.nextScan(trans);
+        saveContactedJndiName(xares);
+    }
 
-		if (jtaLogger.logger.isDebugEnabled()) {
+    private void xaRecoverySecondPass(XAResource xares) {
+
+        if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("xarecovery second pass of " + xares);
         }
 
-		RecoveryXids xidsToRecover = null;
-		if(_xidScans != null) {
-			xidsToRecover = _xidScans.get(xares);
-		}
-		if (xidsToRecover != null) {
-			try {
-				Xid[] xids = xidsToRecover.toRecover();
-	
-				if (xids != null)
-				{
-					if (jtaLogger.logger.isDebugEnabled()) {
-	                    jtaLogger.logger.debug("Have "
-	                            + xids.length
-	                            + " Xids to recover on this pass.");
-	                }
-	
-					for (int j = 0; j < xids.length; j++)
-					{
-						boolean doForget = false;
-	
-						/*
-						 * Check if in failure list.
-						 */
-	
-						Uid recordUid = null;
-						boolean foundTransaction = false;
-	
-						do
-						{
-							// is the xid known to be one that couldn't be recovered
-	
-							recordUid = previousFailure(xids[j]);
-	
-							if ((recordUid == null) && (foundTransaction))
-								break; // end
-							// of
-							// recovery
-							// for
-							// this
-							// transaction
-	
-							if (recordUid == null)
-	                        {
-	                            /*
-	                            * It wasn't an xid that we couldn't recover, so the
-	                            * RM knows about it, but we don't. Therefore it may
-	                            * have to be rolled back.
-	                            */
-	                            doForget = handleOrphan(xares, xids[j]);
-	                        }
-	                        else
-							{
-								foundTransaction = true;
-	
-								/*
-								 * In the failures list so it may be that we just
-								 * need another XAResource to be able to recover
-								 * this.
-								 */
-	
-								XARecoveryResource record = _recoveryManagerClass
-										.getResource(recordUid, xares);
-								int recoveryStatus = record.recover();
-	
-								if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
-								{
-									this.setRecoveryProblems(true);
-	                                jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName+".xaRecovery", XARecoveryResourceHelper.stringForm(recoveryStatus));
-								}
-	
-								removeFailure(record.getXid(), record.get_uid());
-							}
-	
-							if (doForget)
-							{
-								try
-								{
-									xares.forget(xids[j]);
-								}
-								catch (Exception e)
-								{
-									this.setRecoveryProblems(true);
-	                                jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName+".xaRecovery", e);
-								}
-							}
-	
-						} while (recordUid != null);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				this.setRecoveryProblems(true);
-	            jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
-			}
-	
-			try
-			{
-				if (xares != null)
-					xares.recover(XAResource.TMENDRSCAN);
-			}
-			catch (XAException e)
-			{
-				this.setRecoveryProblems(true);
-	            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
-			} finally {
-				tryToClose(xares);
-			}
-		}
+        RecoveryXids xidsToRecover = null;
+        if (_xidScans != null) {
+            xidsToRecover = _xidScans.get(xares);
+        }
+        if (xidsToRecover != null) {
+            try {
+                Xid[] xids = xidsToRecover.toRecover();
 
-		return;
-	}
+                if (xids != null) {
+                    if (jtaLogger.logger.isDebugEnabled()) {
+                        jtaLogger.logger.debug("Have "
+                                + xids.length
+                                + " Xids to recover on this pass.");
+                    }
+
+                    for (int j = 0; j < xids.length; j++) {
+                        boolean doForget = false;
+
+                        /*
+                         * Check if in failure list.
+                         */
+
+                        Uid recordUid = null;
+                        boolean foundTransaction = false;
+
+                        do {
+                            // is the xid known to be one that couldn't be recovered
+
+                            recordUid = previousFailure(xids[j]);
+
+                            if ((recordUid == null) && (foundTransaction))
+                                break; // end of recovery for this transaction
+
+                            if (recordUid == null) {
+                                /*
+                                 * It wasn't an xid that we couldn't recover, so the
+                                 * RM knows about it, but we don't. Therefore it may
+                                 * have to be rolled back.
+                                 */
+                                doForget = handleOrphan(xares, xids[j]);
+                            } else {
+                                foundTransaction = true;
+
+                                /*
+                                 * In the failures list so it may be that we just
+                                 * need another XAResource to be able to recover
+                                 * this.
+                                 */
+
+                                XARecoveryResource record = _recoveryManagerClass
+                                        .getResource(recordUid, xares);
+                                int recoveryStatus = record.recover();
+
+                                if (recoveryStatus != XARecoveryResource.RECOVERED_OK) {
+                                    this.setRecoveryProblems(true);
+                                    jtaLogger.i18NLogger.warn_recovery_failedtorecover(_logName + ".xaRecovery", XARecoveryResourceHelper.stringForm(recoveryStatus));
+                                }
+
+                                removeFailure(record.getXid(), record.get_uid());
+                            }
+
+                            if (doForget) {
+                                try {
+                                    xares.forget(xids[j]);
+                                } catch (Exception e) {
+                                    this.setRecoveryProblems(true);
+                                    jtaLogger.i18NLogger.warn_recovery_forgetfailed(_logName + ".xaRecovery", e);
+                                }
+                            }
+
+                        } while (recordUid != null);
+                    }
+                }
+            } catch (Exception e) {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_generalrecoveryerror(_logName + ".xaRecovery", e);
+            }
+
+            try {
+                if (xares != null)
+                    xares.recover(XAResource.TMENDRSCAN);
+            } catch (XAException e) {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName + ".xaRecovery", XAHelper.printXAErrorCode(e), e);
+            } finally {
+                tryToClose(xares);
+            }
+        }
+
+        return;
+    }
 
     /**
      * Apply use configurable filtering to determine how to handle the in-doubt resource.
@@ -887,72 +805,57 @@ public class XARecoveryModule implements ExtendedRecoveryModule
      * @param xid
      * @return true if forget should be called, false otherwise.
      */
-    private boolean handleOrphan(XAResource xares, Xid xid)
-    {
+    private boolean handleOrphan(XAResource xares, Xid xid) {
         // be default we play it safe and leave resources alone unless a filter explicitly recognizes them.
         // getting presumed abort behaviour therefore requires appropriate filters to be registered.
         XAResourceOrphanFilter.Vote votingOutcome = XAResourceOrphanFilter.Vote.LEAVE_ALONE;
 
-        for(XAResourceOrphanFilter filter : _xaResourceOrphanFilters) {
+        for (XAResourceOrphanFilter filter : _xaResourceOrphanFilters) {
             XAResourceOrphanFilter.Vote vote = filter.checkXid(xid);
 
-            if(jtaLogger.logger.isDebugEnabled()) {
+            if (jtaLogger.logger.isDebugEnabled()) {
                 jtaLogger.logger.debug("XAResourceOrphanFilter " + filter.getClass().getName() + " voted " + vote);
             }
 
-            if(vote == XAResourceOrphanFilter.Vote.LEAVE_ALONE)
-            {
+            if (vote == XAResourceOrphanFilter.Vote.LEAVE_ALONE) {
                 return false;
-            }
-            else if(vote == XAResourceOrphanFilter.Vote.ROLLBACK)
-            {
+            } else if (vote == XAResourceOrphanFilter.Vote.ROLLBACK) {
                 votingOutcome = vote;
             }
         }
 
-        try
-        {
-            if(votingOutcome == XAResourceOrphanFilter.Vote.ROLLBACK)
-            {
+        try {
+            if (votingOutcome == XAResourceOrphanFilter.Vote.ROLLBACK) {
                 jtaLogger.i18NLogger.info_recovery_rollingback(XAHelper.xidToString(xid));
 
                 xares.rollback(xid);
             }
-        }
-        catch (XAException e1)
-        {
-            if(e1.errorCode == XAException.XAER_NOTA)
-            {
-                if(jtaLogger.logger.isDebugEnabled()) {
-                    jtaLogger.logger.debug(_logName+".xaRecovery: XAER_NOTA received while rolling back " + XAHelper.xidToString(xid));
+        } catch (XAException e1) {
+            if (e1.errorCode == XAException.XAER_NOTA) {
+                if (jtaLogger.logger.isDebugEnabled()) {
+                    jtaLogger.logger.debug(_logName + ".xaRecovery: XAER_NOTA received while rolling back " + XAHelper.xidToString(xid));
                 }
-            }
-            else
-            {
-				this.setRecoveryProblems(true);
-                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
+            } else {
+                this.setRecoveryProblems(true);
+                jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName + ".xaRecovery", XAHelper.printXAErrorCode(e1), e1);
             }
 
-            switch (e1.errorCode)
-            {
+            switch (e1.errorCode) {
                 case XAException.XAER_RMERR:
                     break;
                 case XAException.XA_HEURHAZ:
                 case XAException.XA_HEURCOM:
                 case XAException.XA_HEURMIX:
                 case XAException.XA_HEURRB:
-                case XAException.XA_RBROLLBACK:
-                {
+                case XAException.XA_RBROLLBACK: {
                     return true;
                 }
                 default:
                     break;
             }
-        }
-        catch (Exception e2)
-        {
-			this.setRecoveryProblems(true);
-            jtaLogger.i18NLogger.warn_recovery_xarecovery2(_logName+".xaRecovery", e2);
+        } catch (Exception e2) {
+            this.setRecoveryProblems(true);
+            jtaLogger.i18NLogger.warn_recovery_xarecovery2(_logName + ".xaRecovery", e2);
         }
         return false;
     }
@@ -966,14 +869,13 @@ public class XARecoveryModule implements ExtendedRecoveryModule
      * @param xares
      * @param xids
      */
-    private void refreshXidScansForEquivalentXAResourceImpl(XAResource xares, Xid[] xids)
-    {
+    private void refreshXidScansForEquivalentXAResourceImpl(XAResource xares, Xid[] xids) {
         Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
 
-        for(XAResource theKey : keys) {
+        for (XAResource theKey : keys) {
             RecoveryXids recoveryXids = _xidScans.get(theKey);
 
-            if(recoveryXids.updateIfEquivalentRM(xares, xids)) {
+            if (recoveryXids.updateIfEquivalentRM(xares, xids)) {
                 // recoveryXids is for this xares, but was originally obtained using
                 // a different XAResource. rekey the hashtable to use the new one.
                 _xidScans.remove(theKey);
@@ -981,110 +883,98 @@ public class XARecoveryModule implements ExtendedRecoveryModule
                 _resources.remove(theKey);
                 // There could be two datasources pointed at the same resource manager
                 if (!_resources.contains(xares)) {
-                	_resources.add(xares);
+                    _resources.add(xares);
                 }
             }
         }
     }
 
-	/**
-	 * Is the Xid is in the failure list, i.e., the list of those transactions
-	 * we couldn't recover, possibly because of transient failures. If so,
-	 * return the uid of (one of) the records and remove it from the list.
-	 */
+    /**
+     * Is the Xid is in the failure list, i.e., the list of those transactions
+     * we couldn't recover, possibly because of transient failures. If so,
+     * return the uid of (one of) the records and remove it from the list.
+     */
 
-	private final Uid previousFailure(Xid xid)
-	{
-		if (_failures == null)
-		{
-			return null;
-		}
+    private final Uid previousFailure(Xid xid) {
+        if (_failures == null) {
+            return null;
+        }
 
-		Enumeration e = _failures.keys();
+        Enumeration e = _failures.keys();
 
-		while (e.hasMoreElements())
-		{
-			Xid theXid = (Xid) e.nextElement();
+        while (e.hasMoreElements()) {
+            Xid theXid = (Xid) e.nextElement();
 
-			if (XAHelper.sameXID(xid, theXid))
-			{
-				// remove uid from failure list
-				Vector failureItem = (Vector) _failures.get(theXid);
-				Uid u = (Uid) failureItem.remove(0);
+            if (XAHelper.sameXID(xid, theXid)) {
+                // remove uid from failure list
+                Vector failureItem = (Vector) _failures.get(theXid);
+                Uid u = (Uid) failureItem.remove(0);
 
-				if (failureItem.size() == 0)
-					_failures.remove(theXid);
+                if (failureItem.size() == 0)
+                    _failures.remove(theXid);
 
-				return u;
-			}
-		}
+                return u;
+            }
+        }
 
-		// not present in the failures list.
+        // not present in the failures list.
 
-		return null;
-	}
+        return null;
+    }
 
-	/* methods to manipulate the failure list */
+    /**
+     * Add record to failure list
+     */
 
-	/**
-	 * Add record to failure list
-	 */
+    private void addFailure(Xid xid, Uid uid) {
+        if (_failures == null)
+            _failures = new Hashtable();
 
-	private void addFailure(Xid xid, Uid uid)
-	{
-		if (_failures == null)
-			_failures = new Hashtable();
+        Vector failureItem = (Vector) _failures.get(xid);
 
-		Vector failureItem = (Vector) _failures.get(xid);
+        if (failureItem == null) {
+            failureItem = new Vector();
 
-		if (failureItem == null)
-		{
-			failureItem = new Vector();
+            _failures.put(xid, failureItem);
+        }
 
-			_failures.put(xid, failureItem);
-		}
+        failureItem.addElement(uid);
+    }
 
-		failureItem.addElement(uid);
-	}
+    /* remove record uid from failure list */
+    private void removeFailure(Xid xid, Uid uid) {
+        // find the failure item for this xid
+        Vector failureItem = (Vector) _failures.get(xid);
 
-	/* remove record uid from failure list */
-	private void removeFailure(Xid xid, Uid uid)
-	{
-		// find the failure item for this xid
-		Vector failureItem = (Vector) _failures.get(xid);
+        if (failureItem == null) {
+            /*
+             * if (jtaLogger.loggerI18N.isWarnEnabled()) {
+             * jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.recovery.removefailed",
+             * new Object[] { _logName, xid}); }
+             */
 
-		if (failureItem == null)
-		{
-			/*
-			 * if (jtaLogger.loggerI18N.isWarnEnabled()) {
-			 * jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.recovery.removefailed",
-			 * new Object[] { _logName, xid}); }
-			 */
+            /*
+             * Already removed via previousFailure.
+             */
+        } else {
+            // remove this record from the item
+            failureItem.remove(uid);
 
-			/*
-			 * Already removed via previousFailure.
-			 */
-		}
-		else
-		{
-			// remove this record from the item
-			failureItem.remove(uid);
+            // if that was the last one, remove the item altogether
+            if (failureItem.size() == 0)
+                _failures.remove(xid);
+        }
+    }
 
-			// if that was the last one, remove the item altogether
-			if (failureItem.size() == 0)
-				_failures.remove(xid);
-		}
-	}
-
-	private void clearAllFailures()
-	{
-		if (_failures != null)
-			_failures.clear();
-	}
+    private void clearAllFailures() {
+        if (_failures != null)
+            _failures.clear();
+    }
 
     /**
      * Check whether an XAResourceRecoveryHelper is currently being used by the scanner.
      * Must be called holding a lock on scanState
+     *
      * @param xaResourceRecoveryHelper the helper
      * @return true if the helper is in use
      */
@@ -1106,6 +996,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
     /**
      * Wait until scanner reaches a specific target state.
      * Must be called holding a lock on scanState.
+     *
      * @param state the target scan state to wait for
      * @return false if the thread was interrupted
      */
@@ -1121,11 +1012,12 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             return false;
         }
     }
+
     private boolean waitForNotScanState(ScanStates state) {
         try {
-			while (getScanState().equals(state)) {
-				this.wait();
-			} 
+            while (getScanState().equals(state)) {
+                this.wait();
+            }
 
             return true;
         } catch (InterruptedException e) {
@@ -1134,18 +1026,19 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         }
     }
 
+    private ScanStates getScanState() {
+        return ScanStates.values()[scanState.get()];
+    }
+
     /**
      * Update the status of the scanner
+     *
      * @param state the new state
      */
     private synchronized void setScanState(ScanStates state) {
         jtaLogger.logger.debugf("XARecoveryModule state change %s->%s%n", getScanState(), state);
         scanState.set(state.ordinal());
         this.notifyAll();
-    }
-
-    private ScanStates getScanState() {
-        return ScanStates.values()[scanState.get()];
     }
 
     private void saveContactedJndiName(final XAResource xaResource) {
@@ -1160,30 +1053,25 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         }
     }
 
-	/**
-	 * The method verifies if the {@link XAResource} is an instance of {@link AutoCloseable} and then it tries
-	 * to close it.
-	 * It's expected this method is used only after the recover scan finished for the resource by call
-	 * the {@link XAResource#recover(int)} with flag {@link XAResource#TMENDRSCAN}.
-	 */
-	private void tryToClose(final XAResource xaResource) {
-		if(xaResource == null || !jtaPropertyManager.getJTAEnvironmentBean().isAutoCloseXAResourcesAfterRecovery()) return;
-		if (xaResource instanceof AutoCloseable) {
-			try {
-				((AutoCloseable) xaResource).close();
-			} catch (Exception e) {
-				jtaLogger.logger.debugf("Exception on closing %s instance of xaResource %s " +
-								"after the recovery scan finished with call XAResource.recover(XAResource.TMENDRSCAN)",
-						AutoCloseable.class.getName(), xaResource);
-			}
-		}
-	}
-
-    private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
-
-	private InputObjectState _uids = new InputObjectState();
-
-	private List<XAResource> _resources;
+    /**
+     * The method verifies if the {@link XAResource} is an instance of {@link AutoCloseable} and then it tries
+     * to close it.
+     * It's expected this method is used only after the recover scan finished for the resource by call
+     * the {@link XAResource#recover(int)} with flag {@link XAResource#TMENDRSCAN}.
+     */
+    private void tryToClose(final XAResource xaResource) {
+        if (xaResource == null || !jtaPropertyManager.getJTAEnvironmentBean().isAutoCloseXAResourcesAfterRecovery())
+            return;
+        if (xaResource instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) xaResource).close();
+            } catch (Exception e) {
+                jtaLogger.logger.debugf("Exception on closing %s instance of xaResource %s " +
+                    "after the recovery scan finished with call XAResource.recover(XAResource.TMENDRSCAN)",
+                        AutoCloseable.class.getName(), xaResource);
+            }
+        }
+    }
 
     // WARNING com.hp.mwtests.ts.jta.recovery.XARecoveryModuleUnitTest uses reflection to peek at the scan state of this recovery module
     private enum ScanStates {
@@ -1192,28 +1080,4 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         BETWEEN_PASSES,
         SECOND_PASS
     }
-
-    private AtomicInteger scanState = new AtomicInteger(ScanStates.IDLE.ordinal());
-
-	private final List<XAResourceRecovery> _xaRecoverers;
-
-    private final Set<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new CopyOnWriteArraySet<XAResourceRecoveryHelper>();
-
-    private final List<XAResourceOrphanFilter> _xaResourceOrphanFilters;
-
-    private Hashtable _failures = null;
-
-    private Hashtable<XAResourceRecoveryHelper,XAResource[]> recoveryHelpersXAResource = new Hashtable<XAResourceRecoveryHelper,XAResource[]>();
-
-	private Hashtable<XAResource,RecoveryXids> _xidScans = null;
-
-	private XARecoveryResourceManager _recoveryManagerClass = null;
-
-	private String _logName = null;
-
-	private List<SerializableXAResourceDeserializer> _seriablizableXAResourceDeserializers = new ArrayList<SerializableXAResourceDeserializer>();
-
-    private Set<String> contactedJndiNames = new HashSet<String>();
-
-	private static XARecoveryModule registeredXARecoveryModule;
 }
