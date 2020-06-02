@@ -251,6 +251,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				} catch (Exception ex) {
 					this.setRecoveryProblems(true);
 					jtaLogger.i18NLogger.warn_recovery_getxaresource(ex);
+				} finally {
+					tryToClose(xaResource);
 				}
 			}
         }
@@ -701,6 +703,10 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				}
 				catch (Exception e1)
 				{
+					jtaLogger.logger.tracef(e1,
+						"Error when calling xares.recover(XAResource.TMENDRSCAN) for XAResource %s", xares);
+				} finally {
+					tryToClose(xares);
 				}
 
 				if (_xidScans != null)
@@ -866,6 +872,8 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			{
 				this.setRecoveryProblems(true);
 	            jtaLogger.i18NLogger.warn_recovery_xarecovery1(_logName+".xaRecovery", XAHelper.printXAErrorCode(e), e);
+			} finally {
+				tryToClose(xares);
 			}
 		}
 
@@ -1151,6 +1159,25 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             contactedJndiNames.add(jndiName);
         }
     }
+
+	/**
+	 * The method verifies if the {@link XAResource} is an instance of {@link AutoCloseable} and then it tries
+	 * to close it.
+	 * It's expected this method is used only after the recover scan finished for the resource by call
+	 * the {@link XAResource#recover(int)} with flag {@link XAResource#TMENDRSCAN}.
+	 */
+	private void tryToClose(final XAResource xaResource) {
+		if(xaResource == null || !jtaPropertyManager.getJTAEnvironmentBean().isAutoCloseXAResourcesAfterRecovery()) return;
+		if (xaResource instanceof AutoCloseable) {
+			try {
+				((AutoCloseable) xaResource).close();
+			} catch (Exception e) {
+				jtaLogger.logger.debugf("Exception on closing %s instance of xaResource %s " +
+								"after the recovery scan finished with call XAResource.recover(XAResource.TMENDRSCAN)",
+						AutoCloseable.class.getName(), xaResource);
+			}
+		}
+	}
 
     private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
 

@@ -251,12 +251,33 @@ public class XARecoveryModuleUnitTest
         assertEquals("XAResource.recover() has to be called once for each pass, "
                 + "the resource was provided by xa resource recovery helper",
                 2, testXAResource.recoveryCount());
+        assertEquals("XAResource can't be closed automatically even it implements the AutoCloseable interface," +
+                        "JTAEnvironmentBean#autoCloseXAResourcesAfterRecovery has to be set up first",
+                0, testXAResource.closeCount());
 
         xaRecoveryModule.removeXAResourceRecoveryHelper(xaResourceRecoveryHelper);
         xaRecoveryModule.periodicWorkFirstPass();
         xaRecoveryModule.periodicWorkSecondPass();
         assertEquals("Recovery helper should be removed and the test xa resource should not be provided",
                 2, testXAResource.recoveryCount());
+    }
+
+    @Test
+    public void testXAResourceRecoveryHelperRegistrationPermitAutoCloseable() {
+        TestXAResource testXAResource = new TestXAResource(new XidImple());
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        XAResourceRecoveryHelper xaResourceRecoveryHelper
+                = new RegistrationTestXAResourceRecoveryHelper().set(testXAResource);
+        try {
+            jtaPropertyManager.getJTAEnvironmentBean().setAutoCloseXAResourcesAfterRecovery(true);
+            xaRecoveryModule.addXAResourceRecoveryHelper(xaResourceRecoveryHelper);
+            xaRecoveryModule.periodicWorkFirstPass();
+            xaRecoveryModule.periodicWorkSecondPass();
+            assertEquals("XAResource has to be closed automatically as it implements the AutoCloseable interface",
+                    1, testXAResource.closeCount());
+        } finally {
+            jtaPropertyManager.getJTAEnvironmentBean().setAutoCloseXAResourcesAfterRecovery(false);
+        }
     }
     
     @Test

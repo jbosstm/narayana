@@ -24,11 +24,12 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-public class TestXAResource implements XAResource {
+public class TestXAResource implements XAResource, AutoCloseable {
 	private Xid xid;
 	private int commitCount;
 	private int rollbackCount;
 	private int recoveryCount;
+	private int closeCount;
 
 	public TestXAResource(Xid xid) {
 		this.xid = xid;
@@ -80,6 +81,10 @@ public class TestXAResource implements XAResource {
 	public void end(Xid xid, int flags) throws XAException {
 	}
 
+	public void close() throws Exception {
+		closeCount++;
+	}
+
 	public Xid getXid() {
 		return xid;
 	}
@@ -96,4 +101,7 @@ public class TestXAResource implements XAResource {
 		return recoveryCount;
 	}
 
+	public int closeCount() {
+		return closeCount;
+	}
 }
