@@ -55,8 +55,6 @@ public class JTATest
         XAResource theResource = creator.create(connectionString, true);
         XAResource theResource2 = creator.create(connectionString, true);
 
-        assertNotNull(xaResource);
-
         javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
         tm.begin();

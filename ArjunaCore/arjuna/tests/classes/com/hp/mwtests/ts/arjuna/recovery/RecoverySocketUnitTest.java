@@ -175,7 +175,7 @@ public class RecoverySocketUnitTest {
             PrintWriter toServer = new PrintWriter(new OutputStreamWriter(connectorSocket.getOutputStream(), StandardCharsets.UTF_8));
             BufferedReader fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream(), StandardCharsets.UTF_8));
             toServer.print(RecoveryDriver.PING);
-            String stringResponse = fromServer.readLine(); // waiting indefinitely as the socket call was not finished with EOL
+            fromServer.readLine(); // waiting indefinitely as the socket call was not finished with EOL
             fail("Expecting the socket times out as the PING call was not ended properly");
         } catch (final SocketTimeoutException expected) {
             log.debugf("The socket timed-out which is desired");

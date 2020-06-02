@@ -207,9 +207,11 @@ public class RecoveryManager
     {
         checkState();
 
+        synchronized (RecoveryManager.class) {
+            _recoveryManager = null;
+        }
         _theImple.stop(async);
         _theImple = null;
-        _recoveryManager = null;
     }
 
     /**

@@ -123,7 +123,7 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 
 		if (params != null)
 		{
-			if (params.length >= XACONNECTION)
+			if (params.length > XACONNECTION)
 			{
 				if (params[XACONNECTION] instanceof RecoverableXAConnection)
 					_recoveryObject = (RecoverableXAConnection) params[XACONNECTION];

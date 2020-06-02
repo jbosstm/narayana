@@ -116,13 +116,14 @@ public class TestBackwardsCompatibilityForSha0b511d470f7a {
         // the full file system path to the log record
         Path logContainer = Paths.get(os.storeDir(), os.storeRoot(), RECORD_TYPE); // valid on linux and windows
         // read a resource representing a log from the classpath
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(logName);
+        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(logName)) {
 
-        assertNotNull(inputStream);
+            assertNotNull(inputStream);
 
-        // and then copy inputStream to the log store located at logContainer
-        Path logPath = Paths.get(logContainer.toString(), logName);
-        Files.createDirectories(logPath.getParent());
-        Files.copy(inputStream, logPath, StandardCopyOption.REPLACE_EXISTING);
+            // and then copy inputStream to the log store located at logContainer
+            Path logPath = Paths.get(logContainer.toString(), logName);
+            Files.createDirectories(logPath.getParent());
+            Files.copy(inputStream, logPath, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 }
