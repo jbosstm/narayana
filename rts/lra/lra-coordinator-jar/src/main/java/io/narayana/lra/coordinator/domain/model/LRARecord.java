@@ -138,6 +138,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     public void setLRA(Transaction lra) {
         this.lra = lra;
+        this.parentId = lra.getParentId();
     }
 
     String getParticipantPath() {
@@ -411,6 +412,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             if (target.equals(afterURI)) {
                 builder.header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, lra.getId().toASCIIString());
+                if (lra.getParentId() != null) {
+                    builder.header(LRA_HTTP_PARENT_CONTEXT_HEADER, lra.getParentId().toASCIIString());
+                }
             } else {
                 builder.header(LRA.LRA_HTTP_CONTEXT_HEADER, lra.getId().toASCIIString());
             }
@@ -434,8 +438,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private int atEnd(int res) {
         if (parentId != null
                 && (status == ParticipantStatus.Completed || status == ParticipantStatus.FailedToComplete)) {
-            // completed nested participants must remain compensatable
-            return TwoPhaseOutcome.HEURISTIC_HAZARD; // ask to be called again
+            if (lraService.getLRA(parentId).isActive()) {
+                // completed nested participants must remain compensatable
+                return TwoPhaseOutcome.HEURISTIC_HAZARD; // ask to be called again
+            } else {
+                // the parent is finishing so this is the post LRA invocation
+                return runPostLRAActions();
+            }
         }
 
         // Only run the post LRA actions if both the LRA and participant are in an end state
@@ -448,7 +457,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             return res;
         }
 
-        // run post LRA actions
+        return runPostLRAActions();
+    }
+
+    private int runPostLRAActions() {
         if (afterURI == null || afterLRARequest(afterURI, lra.getLRAStatus().name())) {
             afterURI = null;
 

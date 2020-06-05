@@ -333,7 +333,7 @@ public class Coordinator {
     public Response getNestedLRAStatus(@PathParam("NestedLraId")String nestedLraId) {
         if (!lraService.hasTransaction(nestedLraId)) {
             // it must have compensated TODO maybe it's better to keep nested LRAs in separate collection
-            return Response.ok(LRAStatus.Cancelled.name()).build();
+            return Response.ok(ParticipantStatus.Compensated.name()).build();
         }
 
         Transaction lra = lraService.getTransaction(toURI(nestedLraId));
