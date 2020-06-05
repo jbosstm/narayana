@@ -441,6 +441,7 @@ public class Transaction extends AtomicAction {
         inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();
+        updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
 
         if (scheduledAbort != null) {
             scheduledAbort.cancel(false);

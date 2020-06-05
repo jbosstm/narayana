@@ -24,6 +24,9 @@
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
+import org.eclipse.microprofile.lra.annotation.Compensate;
+import org.eclipse.microprofile.lra.annotation.Complete;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricService;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricType;
@@ -49,19 +52,43 @@ public class NestedParticipant {
     @Inject
     LRAMetricService lraMetricService;
 
-    @LRA(LRA.Type.NESTED)
+    @LRA(value = LRA.Type.NESTED, end = false)
     @GET
     @Path(NestedParticipant.ENLIST_PATH)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response enlist(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+    public Response enlist(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
+                           @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
         return Response.ok(lraId).build();
+    }
+
+    @Complete
+    @PUT
+    @Path("/complete")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response complete(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
+                             @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
+        lraMetricService.incrementMetric(LRAMetricType.Completed, lraId);
+        return Response.ok(ParticipantStatus.Completed).build();
+    }
+
+    @Compensate
+    @PUT
+    @Path("/compensate")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response compensate() {
+        // required for the enlistment
+        return Response.ok(ParticipantStatus.Compensated).build();
     }
 
     @AfterLRA
     @PUT
     @Path("/after")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response afterLRA(@HeaderParam(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER) URI endedLraId) {
+    public Response afterLRA(@HeaderParam(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER) URI endedLraId,
+                             @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
         lraMetricService.incrementMetric(LRAMetricType.AfterLRA, endedLraId);
         return Response.ok(endedLraId).build();
     }
