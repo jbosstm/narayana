@@ -24,11 +24,6 @@
         <lra.tck.timeout.factor>1.0</lra.tck.timeout.factor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <it.test>
-          <!-- https://issues.redhat.com/browse/JBTM-3318 -->
-          !TckRecoveryTests#testCancelWhenParticipantIsUnavailable
-        </it.test>
     </properties>
 
     <build>
