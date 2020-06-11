@@ -783,6 +783,15 @@ public class XAResourceRecord extends AbstractRecord implements ExceptionDeferre
 	        return TwoPhaseOutcome.FINISH_ERROR;
 	}
 
+	@Override
+	public void clearHeuristicDecision() {
+		if (jtaLogger.logger.isTraceEnabled()) {
+			jtaLogger.logger.tracef("XAResourceRecord.clearHeuristicDecisition for %s changing from %d to %d",
+					this, _heuristic, TwoPhaseOutcome.FINISH_OK);
+		}
+		_heuristic = TwoPhaseOutcome.FINISH_OK;
+	}
+
 	public boolean forgetHeuristic()
 	{
 		if (jtaLogger.logger.isTraceEnabled()) {

@@ -293,7 +293,7 @@ public class ActionBean extends OSEntryBean implements ActionBeanMBean {
                             break;
                         case PREPARED:
                             ra.clearHeuristicDecision(TwoPhaseOutcome.PREPARE_OK);
-                            targRecord.forgetHeuristic();
+                            targRecord.clearHeuristicDecision();
                             break;
                         case READONLY:
                             ra.clearHeuristicDecision(TwoPhaseOutcome.PREPARE_READONLY);
