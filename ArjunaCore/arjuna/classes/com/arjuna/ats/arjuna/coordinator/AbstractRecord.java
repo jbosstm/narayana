@@ -395,6 +395,16 @@ public abstract class AbstractRecord extends StateManager
 	}
 
 	/**
+	 * Clearing the heuristic state on the resource.
+	 * If the resource maintains a state of the prior heuristic outcome then it should use this method
+	 * to clear the state and forget the heuristic.
+	 */
+	public void clearHeuristicDecision()
+	{
+		return;
+	}
+
+	/**
 	 * Perform a nested one phase commit.
 	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
