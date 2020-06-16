@@ -61,7 +61,7 @@ public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender 
                     "META-INF/services/javax.ws.rs.client.ClientBuilder");
 
         // adding TCK required SPI implementations
-        archive.addClass(NarayanaLRARecovery.class);
+        archive.addPackage(NarayanaLRARecovery.class.getPackage());
         archive.addAsResource(new StringAsset("io.narayana.lra.arquillian.spi.NarayanaLRARecovery"),
             "META-INF/services/org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService");
 

@@ -24,6 +24,7 @@ package io.narayana.lra.arquillian.spi;
 
 import io.narayana.lra.LRAConstants;
 import org.eclipse.microprofile.lra.tck.service.spi.LRARecoveryService;
+import org.jboss.logging.Logger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -32,6 +33,25 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 
 public class NarayanaLRARecovery implements LRARecoveryService {
+    private static final Logger log = Logger.getLogger(NarayanaLRARecovery.class);
+
+    /**
+     * A bit of hacking to change the internals of annotations defined in LRA TCK.
+     * There is need to adjust timeout defined on the annotation definition.
+     */
+    static {
+        String[] resourceClassNames = new String[]{
+                "org.eclipse.microprofile.lra.tck.participant.api.LraResource",
+                "org.eclipse.microprofile.lra.tck.participant.api.RecoveryResource"};
+        for(String resourceClassName: resourceClassNames) {
+            try {
+                Class<?> clazz = Class.forName(resourceClassName);
+                LRAAnnotationAdjuster.processWithClass(clazz);
+            } catch (ClassNotFoundException e) {
+                log.debugf("Cannot load class %s to adjust LRA annotation on the class", resourceClassName);
+            }
+        }
+    }
 
     @Override
     public void waitForCallbacks(URI lraId) {
