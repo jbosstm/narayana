@@ -78,6 +78,12 @@ public class HornetqObjectStoreAdaptor implements ObjectStoreAPI
         this.store = new HornetqJournalStore(envBean);
     }
 
+    // allows us to work with named beans
+    public HornetqObjectStoreAdaptor(HornetqJournalEnvironmentBean envBean) throws IOException {
+
+        this.store = new HornetqJournalStore(envBean);
+    }
+
     // used for beans wiring type bootstrap when running embedded.
     public HornetqObjectStoreAdaptor(HornetqJournalStore store) {
         this.store = store;
