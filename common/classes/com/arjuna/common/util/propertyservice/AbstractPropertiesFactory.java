@@ -121,6 +121,7 @@ public abstract class AbstractPropertiesFactory {
         Enumeration enumeration = System.getProperties().propertyNames();
         while(enumeration.hasMoreElements()) {
             String key = (String)enumeration.nextElement();
+            if (key == null || key.isEmpty()) continue;
             outputProperties.setProperty(key, System.getProperty(key));
         }
         return outputProperties;
