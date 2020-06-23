@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2014, Red Hat, Inc., and individual contributors
+ * Copyright 2020, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,38 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package com.arjuna.common.tests.propertyservice;
 
-import java.util.Properties;
-
-import org.junit.Before;
-import org.junit.Test;
-
+import com.arjuna.common.tests.propertyservice.PropertiesFactoryUtil;
 import com.arjuna.common.util.propertyservice.AbstractPropertiesFactory;
 import com.arjuna.common.util.propertyservice.PropertiesFactorySax;
 import com.arjuna.common.util.propertyservice.PropertiesFactoryStax;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Properties;
 
 import static com.arjuna.common.tests.propertyservice.PropertiesFactoryUtil.assertProperties;
 
 /**
- *
- * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
- *
+ * Verification of the property processing when the system property contains an empty property.
  */
-public final class PropertiesFactoryTest {
+public class EmptyPropertiesFactoryTest {
     private Properties expectedProperties;
 
     @Before
     public void setUp() {
-        expectedProperties = PropertiesFactoryUtil.getExpectedProperties();
+        Properties props = new Properties();
+        // setup the empty system property
+        props.setProperty("", "");
+        props.putAll(System.getProperties()); // preserve all JDK properties
+        System.setProperties(props);
 
-        // property not defined in XML file but defined as system property should be found as well
-        System.setProperty("CoordinatorEnvironmentBean.dynamic1PC", "false");
-        expectedProperties.put("CoordinatorEnvironmentBean.dynamic1PC", "false");
+        expectedProperties = PropertiesFactoryUtil.getExpectedProperties();
     }
 
     @Test
-    public void testGetDefaultPropertiesWithStax() {
+    public void testGetWithEmptyPropertyWithStax() {
         final AbstractPropertiesFactory propertiesFactory = new PropertiesFactoryStax();
         final Properties properties = propertiesFactory.getDefaultProperties();
 
@@ -58,11 +59,10 @@ public final class PropertiesFactoryTest {
     }
 
     @Test
-    public void testGetDefaultPropertiesWithSax() {
+    public void testGetWithEmptyPropertyWithSax() {
         final AbstractPropertiesFactory propertiesFactory = new PropertiesFactorySax();
         final Properties properties = propertiesFactory.getDefaultProperties();
 
         assertProperties(expectedProperties, properties);
     }
-
 }
