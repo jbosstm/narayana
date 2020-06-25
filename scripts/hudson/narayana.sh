@@ -249,7 +249,7 @@ function comment_on_pull
     if [ "$PULL_NUMBER" != "" ]
     then
         JSON="{ \"body\": \"$1\" }"
-        curl -d "$JSON" -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
+        curl -d "$JSON" -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
     else
         echo "Not a pull request, so not commenting"
     fi
