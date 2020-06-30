@@ -44,8 +44,7 @@ public class EmptyPropertiesFactoryTest {
         Properties props = new Properties();
         // setup the empty system property
         props.setProperty("", "");
-        // preserve JDK defined property used on loading XML property file
-        props.setProperty("user.dir", System.getProperty("user.dir"));
+        props.putAll(System.getProperties()); // preserve all JDK properties
         System.setProperties(props);
 
         expectedProperties = PropertiesFactoryUtil.getExpectedProperties();
@@ -54,6 +53,14 @@ public class EmptyPropertiesFactoryTest {
     @Test
     public void testGetWithEmptyPropertyWithStax() {
         final AbstractPropertiesFactory propertiesFactory = new PropertiesFactoryStax();
+        final Properties properties = propertiesFactory.getDefaultProperties();
+
+        assertProperties(expectedProperties, properties);
+    }
+
+    @Test
+    public void testGetWithEmptyPropertyWithSax() {
+        final AbstractPropertiesFactory propertiesFactory = new PropertiesFactorySax();
         final Properties properties = propertiesFactory.getDefaultProperties();
 
         assertProperties(expectedProperties, properties);
