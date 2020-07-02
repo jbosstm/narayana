@@ -793,7 +793,7 @@ public class TransactionImple implements javax.transaction.Transaction,
         {
             if (xaRes instanceof ConnectableResource) {
             	String jndiName = ((XAResourceWrapper)xaRes).getJndiName();
-            	if (commitMarkableResourceJNDINames.contains(jndiName)) {
+            	if (jtaEnvBean.getCommitMarkableResourceJNDINames().contains(jndiName)) {
             		try {
 						return new CommitMarkableResourceRecord(this, ((ConnectableResource)xaRes), xid, _theTransaction);
 					} catch (IllegalStateException | RollbackException
@@ -1067,7 +1067,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					doEnd(_tranID, dupXar, xaState, txInfoState, false);
 				} catch (XAException e) {
 					// Some resource managers (e.g. Artemis) will not allow xa_end on duplicate xa resources as per JTA 1.2
-					if (e.errorCode != XAException.XAER_PROTO || STRICTJTA12DUPLICATEXAENDPROTOERR) {
+					if (e.errorCode != XAException.XAER_PROTO || jtaEnvBean.isStrictJTA12DuplicateXAENDPROTOErr()) {
 						if (toThrow == null) {
 							toThrow = e;
 						} else {
@@ -1740,10 +1740,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
-	
-	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class)
-			.getCommitMarkableResourceJNDINames();
 
-	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
+	private static final JTAEnvironmentBean jtaEnvBean = BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
 }

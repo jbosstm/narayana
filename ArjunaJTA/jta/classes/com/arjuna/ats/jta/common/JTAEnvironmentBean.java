@@ -21,6 +21,7 @@
 package com.arjuna.ats.jta.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,33 +95,37 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private volatile String xaResourceRecordWrappingPluginClassName;
     private volatile XAResourceRecordWrappingPlugin xaResourceRecordWrappingPlugin;
 
-	private int asyncCommitPoolSize = 10;
+	private volatile int asyncCommitPoolSize = 10;
 
-    private int orphanSafetyInterval = 20000;
+    private volatile int orphanSafetyInterval = 20000;
     
-    private String commitMarkableResourceTableName = "xids";
+    private volatile String commitMarkableResourceTableName = "xids";
 
-	private Map<String, String> commitMarkableResourceTableNameMap = new HashMap<String, String>();
+	private volatile Map<String, String> commitMarkableResourceTableNameMap
+            = Collections.unmodifiableMap(new HashMap<>());
 
-	private List<String> commitMarkableResourceJNDINames = new ArrayList<String>();
+	private volatile List<String> commitMarkableResourceJNDINames
+            = Collections.unmodifiableList(new ArrayList<>());
 	
-	private boolean performImmediateCleanupOfCommitMarkableResourceBranches = false;
+	private volatile boolean performImmediateCleanupOfCommitMarkableResourceBranches = false;
 	
-	private boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = true;
+	private volatile boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = true;
 
-	private int commitMarkableResourceRecordDeleteBatchSize = 30000;
+	private volatile int commitMarkableResourceRecordDeleteBatchSize = 30000;
 
-	private Map<String, Boolean> performImmediateCleanupOfCommitMarkableResourceBranchesMap = new HashMap<String, Boolean>();
+	private volatile Map<String, Boolean> performImmediateCleanupOfCommitMarkableResourceBranchesMap
+            = Collections.unmodifiableMap(new HashMap<>());
 
-	private Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>();
+	private volatile Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap
+            = Collections.unmodifiableMap(new HashMap<>());
 
 	private static final String defaultTransactionOperationsProviderClassName = ServerVMClientUserTransactionOperationsProvider.class.getName(); 
 	private volatile String userTransactionOperationsProviderClassName = defaultTransactionOperationsProviderClassName;
 	private volatile UserTransactionOperationsProvider userTransactionOperationsProvider = null;
 
-	private boolean strictJTA12DuplicateXAENDPROTOErr = false;
+	private volatile boolean strictJTA12DuplicateXAENDPROTOErr = false;
 
-	private boolean transactionToThreadListenersEnabled = false;
+	private volatile boolean transactionToThreadListenersEnabled = false;
 
 	/**
      * Returns true if subtransactions are allowed.
@@ -1052,9 +1057,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * @return the table name map
 	 */
 	public Map<String, String> getCommitMarkableResourceTableNameMap() {
-		synchronized (this) {
 			return commitMarkableResourceTableNameMap;
-		}
 	}
 
 	/**
@@ -1063,19 +1066,16 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * 
 	 * @param commitMarkableResourceTableNameMap
 	 *            The name of the table.
-	 * 
 	 */
 	public void setCommitMarkableResourceTableNameMap(
 			Map<String, String> commitMarkableResourceTableNameMap) {
-		synchronized (this) {
-			if (commitMarkableResourceTableNameMap == null) {
-				this.commitMarkableResourceTableNameMap = new HashMap<String, String>();
-			} else if (!commitMarkableResourceTableNameMap
-					.equals(this.commitMarkableResourceTableNameMap)) {
-				this.commitMarkableResourceTableNameMap = new HashMap<String, String>(
-						commitMarkableResourceTableNameMap);
-			}
-		}
+	    if (commitMarkableResourceTableNameMap == null) {
+            this.commitMarkableResourceTableNameMap =
+                    Collections.unmodifiableMap(new HashMap<>());
+        } else {
+            this.commitMarkableResourceTableNameMap =
+                    Collections.unmodifiableMap(new HashMap<>(commitMarkableResourceTableNameMap));
+        }
 	}
 
 	/**
@@ -1085,9 +1085,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * @return The list of JNDI names
 	 */
 	public List<String> getCommitMarkableResourceJNDINames() {
-		synchronized (this) {
-			return new ArrayList<String>(commitMarkableResourceJNDINames);
-		}
+        return commitMarkableResourceJNDINames;
 	}
 
 	/**
@@ -1103,15 +1101,13 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 */
 	public void setCommitMarkableResourceJNDINames(
 			List<String> commitMarkableResourceJNDINames) {
-		synchronized (this) {
-			if (commitMarkableResourceJNDINames == null) {
-				this.commitMarkableResourceJNDINames = new ArrayList<String>();
-			} else if (!commitMarkableResourceJNDINames
-					.equals(this.commitMarkableResourceJNDINames)) {
-				this.commitMarkableResourceJNDINames = new ArrayList<String>(
-						commitMarkableResourceJNDINames);
-			}
-		}
+	    if (commitMarkableResourceJNDINames == null) {
+            this.commitMarkableResourceJNDINames
+                    = Collections.unmodifiableList(new ArrayList<>());
+        } else {
+            this.commitMarkableResourceJNDINames
+                    = Collections.unmodifiableList(new ArrayList<>(commitMarkableResourceJNDINames));
+        }
 	}
 
 	/**
@@ -1143,9 +1139,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * @return whether to perform immediate cleanup of branches or batch them
 	 */
 	public Map<String, Boolean> getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap() {
-		synchronized (this) {
-			return performImmediateCleanupOfCommitMarkableResourceBranchesMap;
-		}
+	    return performImmediateCleanupOfCommitMarkableResourceBranchesMap;
 	}
 
 	/**
@@ -1158,15 +1152,13 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 */
 	public void setPerformImmediateCleanupOfCommitMarkableResourceBranchesMap(
 			Map<String, Boolean> performImmediateCleanupOfCommitMarkableResourceBranchesMap) {
-		synchronized (this) {
-			if (performImmediateCleanupOfCommitMarkableResourceBranchesMap == null) {
-				this.performImmediateCleanupOfCommitMarkableResourceBranchesMap = new HashMap<String, Boolean>();
-			} else if (!performImmediateCleanupOfCommitMarkableResourceBranchesMap
-					.equals(this.performImmediateCleanupOfCommitMarkableResourceBranchesMap)) {
-				this.performImmediateCleanupOfCommitMarkableResourceBranchesMap = new HashMap<String, Boolean>(
-						performImmediateCleanupOfCommitMarkableResourceBranchesMap);
-			}
-		}
+	    if(performImmediateCleanupOfCommitMarkableResourceBranchesMap == null) {
+            this.performImmediateCleanupOfCommitMarkableResourceBranchesMap =
+                    Collections.unmodifiableMap(new HashMap<String, Boolean>());
+        } else {
+            this.performImmediateCleanupOfCommitMarkableResourceBranchesMap =
+                    Collections.unmodifiableMap(new HashMap<String, Boolean>(performImmediateCleanupOfCommitMarkableResourceBranchesMap));
+        }
 	}
 
 	/**
@@ -1197,9 +1189,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 * @return the maximum batch size to clean up
 	 */
 	public Map<String, Integer> getCommitMarkableResourceRecordDeleteBatchSizeMap() {
-		synchronized (this) {
-			return commitMarkableResourceRecordDeleteBatchSizeMap;
-		}
+		return commitMarkableResourceRecordDeleteBatchSizeMap;
 	}
 
 	/**
@@ -1212,16 +1202,13 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	 */
 	public void setCommitMarkableResourceRecordDeleteBatchSizeMap(
 			Map<String, Integer> commitMarkableResourceRecordDeleteBatchSizeMap) {
-		synchronized (this) {
-			if (commitMarkableResourceRecordDeleteBatchSizeMap == null) {
-				this.commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>();
-			} else if (!commitMarkableResourceRecordDeleteBatchSizeMap
-					.equals(this.commitMarkableResourceRecordDeleteBatchSizeMap)) {
-				this.commitMarkableResourceRecordDeleteBatchSizeMap = new HashMap<String, Integer>(
-						commitMarkableResourceRecordDeleteBatchSizeMap);
-			}
-		}
-	}
+	    if(commitMarkableResourceRecordDeleteBatchSizeMap == null) {
+            this.commitMarkableResourceRecordDeleteBatchSizeMap = Collections.unmodifiableMap(new HashMap<String, Integer>());
+        } else {
+            this.commitMarkableResourceRecordDeleteBatchSizeMap =
+                    Collections.unmodifiableMap(new HashMap<String, Integer>(commitMarkableResourceRecordDeleteBatchSizeMap));
+        }
+    }
 
 	/**
 	 * If this is enabled we will tell the recovery module when we complete

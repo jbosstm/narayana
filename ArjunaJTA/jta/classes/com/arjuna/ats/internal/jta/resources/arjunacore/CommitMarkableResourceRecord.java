@@ -98,6 +98,11 @@ import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
  */
 public class CommitMarkableResourceRecord extends AbstractRecord {
 
+	private static CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule;
+	private static final JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
+			.getDefaultInstance(JTAEnvironmentBean.class);
+
+	private final boolean isPerformImmediateCleanupOfBranches;
 	private final String tableName;
 	private Xid xid;
 	private ConnectableResource connectableResource;
@@ -109,20 +114,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	private String productName;
 	private String productVersion;
 	private boolean hasCompleted;
-	private static CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule;
-	private static final JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class);
-	private static final Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
-	private static final String defaultTableName = jtaEnvironmentBean
-			.getDefaultCommitMarkableTableName();
-	private boolean isPerformImmediateCleanupOfBranches = jtaEnvironmentBean
-			.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
 	private Connection preparedConnection;
-	private static final boolean isNotifyRecoveryModuleOfCompletedBranches = jtaEnvironmentBean
-			.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches();
-	private static final Map<String, Boolean> isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap = jtaEnvironmentBean
-			.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap();
 
 	static {
 		commitMarkableResourceRecoveryModule = null;
@@ -152,6 +144,8 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 
 		heuristic = TwoPhaseOutcome.FINISH_OK;
 		tableName = null;
+		isPerformImmediateCleanupOfBranches
+				= jtaEnvironmentBean.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
 	}
 
 	public CommitMarkableResourceRecord(TransactionImple tx,
@@ -174,18 +168,19 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 		this.basicAction = basicAction;
 		heuristic = TwoPhaseOutcome.FINISH_OK;
 
-		String tableName = commitMarkableResourceTableNameMap
-				.get(commitMarkableJndiName);
+		String tableName = jtaEnvironmentBean.getCommitMarkableResourceTableNameMap().get(commitMarkableJndiName);
 		if (tableName != null) {
 			this.tableName = tableName;
 		} else {
-			this.tableName = defaultTableName;
+			this.tableName = jtaEnvironmentBean.getDefaultCommitMarkableTableName();
 		}
 
-		Boolean boolean1 = isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap
+		Boolean boolean1 = jtaEnvironmentBean.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap()
 				.get(commitMarkableJndiName);
 		if (boolean1 != null) {
 			isPerformImmediateCleanupOfBranches = boolean1;
+		} else {
+			isPerformImmediateCleanupOfBranches = jtaEnvironmentBean.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
 		}
 
 		if (isPerformImmediateCleanupOfBranches) {
@@ -265,7 +260,7 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 					}
 				}
 			});
-		} else if (isNotifyRecoveryModuleOfCompletedBranches) {
+		} else if (jtaEnvironmentBean.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches()) {
 			// a session synch may enlist a CMR in a transaction so this sycnh must be correctly ordered 
 			new TransactionSynchronizationRegistryImple()
 					.registerInterposedSynchronization(new Synchronization() {

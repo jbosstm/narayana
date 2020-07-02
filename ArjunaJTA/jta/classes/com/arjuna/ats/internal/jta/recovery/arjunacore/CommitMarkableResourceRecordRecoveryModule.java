@@ -42,12 +42,10 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -106,23 +104,16 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	private TransactionStatusConnectionManager transactionStatusConnectionMgr;
 
-	private static JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class);
-	private Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
+	private static JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
 	private Map<String, List<Xid>> completedBranches = new HashMap<String, List<Xid>>();
     private boolean inFirstPass;
-	private static String defaultTableName = jtaEnvironmentBean
-			.getDefaultCommitMarkableTableName();
 
-	public CommitMarkableResourceRecordRecoveryModule() throws NamingException,
-			ObjectStoreException {
+	public CommitMarkableResourceRecordRecoveryModule() throws NamingException, ObjectStoreException {
 		context = new InitialContext();
-		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-				.getDefaultInstance(JTAEnvironmentBean.class);
-		jndiNamesToContact.addAll(jtaEnvironmentBean
-				.getCommitMarkableResourceJNDINames());
-		
+
+		jtaEnvironmentBean = BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
+		jndiNamesToContact.addAll(jtaEnvironmentBean.getCommitMarkableResourceJNDINames());
+
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger
 					.trace("CommitMarkableResourceRecordRecoveryModule::list to contact");
@@ -228,10 +219,10 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 						Statement createStatement = connection
 								.createStatement();
 						try {
-							String tableName = commitMarkableResourceTableNameMap
+							String tableName = jtaEnvironmentBean.getCommitMarkableResourceTableNameMap()
 									.get(jndiName);
 							if (tableName == null) {
-								tableName = defaultTableName;
+								tableName = jtaEnvironmentBean.getDefaultCommitMarkableTableName();
 							}
 							ResultSet rs = createStatement
 									.executeQuery("SELECT xid,actionuid from "
@@ -612,8 +603,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 		int batchSize = jtaEnvironmentBean
 				.getCommitMarkableResourceRecordDeleteBatchSize();
 		Integer integer = jtaEnvironmentBean
-				.getCommitMarkableResourceRecordDeleteBatchSizeMap().get(
-						jndiName);
+				.getCommitMarkableResourceRecordDeleteBatchSizeMap().get(jndiName);
 		if (integer != null) {
 			batchSize = integer;
 		}
@@ -636,10 +626,10 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 						connection = dataSource.getConnection();
 						connection.setAutoCommit(false);
 
-						String tableName = commitMarkableResourceTableNameMap
+						String tableName = jtaEnvironmentBean.getCommitMarkableResourceTableNameMap()
 								.get(jndiName);
 						if (tableName == null) {
-							tableName = defaultTableName;
+							tableName = jtaEnvironmentBean.getDefaultCommitMarkableTableName();
 						}
 						String sql = "DELETE from " + tableName
 								+ " where xid in ("
