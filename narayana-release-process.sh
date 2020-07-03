@@ -19,28 +19,14 @@ if [[ $WISSUEOK == n* ]]
 then
   exit
 fi
-if [ $# -ne 3 ]; then
-  echo 1>&2 "$0: usage: CURRENT NEXT WFLYISSUE"
+if [ $# -ne 2 ]; then
+  echo 1>&2 "$0: usage: CURRENT NEXT"
   exit 2
 else
   CURRENT=$1
   NEXT=$2
-  WFLYISSUE=$3
 fi
 
-if [[ $(uname) == CYGWIN* ]]
-then
-  docker-machine env --shell bash
-  if [[ $? != 0 ]]; then
-    exit
-  fi
-  eval "$(docker-machine env --shell bash)"
-  read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT docker needs this" ELEV
-  if [[ $ELEV == n* ]]
-  then
-    exit
-  fi
-fi
 read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
@@ -48,11 +34,6 @@ then
 fi
 read -p "Have you configured ~/.m2/settings.xml with repository 'jboss-releases-repository' and correct username/password?" M2OK
 if [[ $M2OK == n* ]]
-then
-  exit
-fi
-read -p "You will need: docker.io account with permission to push under https://hub.docker.com/u/jbosstm/. Do you have these? y/n: " ENVOK
-if [[ $ENVOK == n* ]]
 then
   exit
 fi
@@ -65,12 +46,6 @@ fi
 # Do this early to prevent later interactive need
 docker login docker.io
 [ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
-
-#if [ -z "$WFLYISSUE" ]
-#then
-  #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
-#  exit
-#fi
 
 git fetch upstream --tags
 set +e
@@ -116,42 +91,6 @@ then
 else
   echo "This script is only interactive at the very end now, press enter to continue"
   read
-fi
-
-if [ ! -d "jboss-as" ]
-then
-  (git clone git@github.com:jbosstm/jboss-as.git -o jbosstm; cd jboss-as; git remote add upstream git@github.com:wildfly/wildfly.git)
-fi
-cd jboss-as
-git fetch jbosstm
-git branch | grep $WFLYISSUE
-if [[ $? != 0 ]]
-then
-  git fetch upstream; 
-  git checkout -b ${WFLYISSUE}
-  git reset --hard upstream/master
-  CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
-  if [[ $(uname) == CYGWIN* ]]
-  then
-    sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
-  else
-    sed -i "s/narayana>$CURRENT_VERSION_IN_WFLY/narayana>$CURRENT/g" pom.xml
-  fi
-  git add pom.xml
-  git commit -m "${WFLYISSUE} Upgrade Narayana to $CURRENT"
-  git push --set-upstream jbosstm ${WFLYISSUE}
-  git checkout 5_BRANCH
-  git reset --hard jbosstm/5_BRANCH
-  xdg-open https://github.com/jbosstm/jboss-as/pull/new/$WFLYISSUE %
-fi
-cd ..
-
-cd ~/tmp/narayana/$CURRENT/sources/documentation/
-git checkout $CURRENT
-if [[ $? != 0 ]]
-then
-  echo 1>&2 documentation: Tag '$CURRENT' did not exist
-  exit
 fi
 
 rm -rf $PWD/localm2repo
@@ -207,20 +146,6 @@ then
   exit
 fi
 cd -
-
-# Building and pushing the lra coordinator docker image
-cd ~/tmp/narayana/$CURRENT/sources/jboss-dockerfiles/lra/lra-coordinator
-git checkout $CURRENT
-if [[ $? != 0 ]]
-then
-  echo 1>&2 jboss-dockerfiles: Tag $CURRENT did not exist
-  exit
-fi
-docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
-docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
-docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
-docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
-docker push  docker.io/jbosstm/lra-coordinator:latest
 
 xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ &
 echo "Press enter when the centos54x64 and vc9x32 artifacts are available from http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ are available"
