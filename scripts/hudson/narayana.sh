@@ -336,19 +336,19 @@ function build_as {
     fi
     #Abort any partially complete rebase
     git rebase --abort
-    git checkout 5_BRANCH
-    [ $? = 0 ] || fatal "git checkout 5_BRANCH failed"
+    git checkout 5_9_BRANCH
+    [ $? = 0 ] || fatal "git checkout 5_9_BRANCH failed"
     git fetch
     [ $? = 0 ] || fatal "git fetch git://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? = 0 ] || fatal "git reset 5_BRANCH failed"
+    git reset --hard jbosstm/5_9_BRANCH
+    [ $? = 0 ] || fatal "git reset 5_9_BRANCH failed"
     git clean -f -d -x
     [ $? > 1 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of AS7"
-    git clone git://github.com/jbosstm/jboss-as.git -o jbosstm
+    git clone git://github.com/jbosstm/jboss-as.git -b 5_9_BRANCH -o jbosstm
     [ $? = 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
@@ -364,9 +364,9 @@ function build_as {
 
   git fetch upstream
   echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/master)
+  echo $(git rev-parse upstream/18.0.x)
 
-  git pull --rebase --ff-only upstream master
+  git pull --rebase --ff-only upstream 18.0.x
   [ $? = 0 ] || fatal "git rebase failed"
   
   if [ $REDUCE_SPACE = 1 ]; then
