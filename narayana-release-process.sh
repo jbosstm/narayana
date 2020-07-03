@@ -97,16 +97,19 @@ then
   fi
   set -e
   echo "Checking if there were any failed jobs, this may be interactive so please stand by"
-  JENKINS_JOBS=narayana,narayana-catelyn,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn ./scripts/release/pre_release.py
+  JIRA_HOST=issues.redhat.com JENKINS_JOBS=narayana,narayana-catelyn,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn\
+      ./scripts/release/pre_release.py
   echo "Executing pre-release script, this may be interactive so please stand by"
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
   echo "This script is only interactive at the very end now, press enter to continue"
   read
   # Start the blacktie builds now
-  wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/build?delay=0sec
-  rm build?delay=0sec
-  wget --post-data='json={"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}' http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/build?delay=0sec
-  rm build?delay=0sec
+  json='{"parameter": {"name": "TAG_NAME", "value": "'${CURRENT}'"}, "parameter": {"name": "WFLY_PR_BRANCH", "value": "'master'"}}'
+  # jenkins XSS needs a token
+  COOKIE_PATH=/tmp/cookie_jenkins_crumb.txt
+  crumb=$(curl -s -c "$COOKIE_PATH" 'http://narayanaci1.eng.hst.ams2.redhat.com/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)')
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/build?delay=0sec --data-urlencode json="$json"
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/build?delay=0sec --data-urlencode json="$json"
   set +e
   git fetch upstream --tags
   #./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
