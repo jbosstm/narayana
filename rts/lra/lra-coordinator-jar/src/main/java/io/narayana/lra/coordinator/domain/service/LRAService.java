@@ -179,7 +179,7 @@ public class LRAService {
 
             if (!transaction.hasPendingActions()) {
                 // this call is only required to clean up cached LRAs (JBTM-3250 will remove this cache).
-                remove(transaction.getId());
+                remove(transaction);
             }
         }
     }
@@ -198,6 +198,13 @@ public class LRAService {
         } catch (Exception e) {
             return false; // the uid segment is invalid
         }
+    }
+
+    public boolean remove(Transaction lra) {
+        if (lra.isFailed()) { // persist failed LRA state
+            lra.deactivate();
+        }
+        return remove(lra.getId());
     }
 
     public boolean remove(URI lraId) {

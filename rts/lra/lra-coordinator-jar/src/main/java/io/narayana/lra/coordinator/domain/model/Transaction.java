@@ -374,6 +374,10 @@ public class Transaction extends AtomicAction {
                 (status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing));
     }
 
+    public boolean isFailed() {
+        return status != null &&
+            (status.equals(LRAStatus.FailedToCancel) || status.equals(LRAStatus.FailedToClose));
+    }
 
     public boolean isCancel() {
         switch (status) {
