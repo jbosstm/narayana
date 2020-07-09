@@ -97,6 +97,8 @@ class RecoveringLRA extends Transaction {
                     switch (getLRAStatus()) {
                         case Closed:
                         case Cancelled:
+                        case FailedToClose:
+                        case FailedToCancel:
                             getLraService().finished(this, false);
                             break;
                         default:
