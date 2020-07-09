@@ -1,24 +1,16 @@
 #!/bin/bash
 
 # You can run this script with 0, 1 or 3 arguments.
-# Arguments are then tranformed to env varibales CURRENT, NEXT and WFLYISSUE
+# Arguments are then tranformed to env varibales CURRENT, NEXT
 # Release process releases version ${CURRENT} and prepares github with commits to ${NEXT}-SNAPSHOT
-# If WFLYISSUE is not defined then script tries to create new jira with upgrade component.
 #
-# 0 argument: information about CURRENT, NEXT is taken from pom.xml, WFLYISSUE is ignored
+# 0 argument: information about CURRENT, NEXT is taken from pom.xml
 #             CURRENT is taken as what is version from pom.xml without '-SNAPSHOT' suffix,
 #             NEXT is CURRENT with increased micro version
 #             e.g. pom.xml talks about version 5.7.3.Final-SNAPSHOT, CURRENT is 5.7.3.Final and NEXT is 5.7.4.Final
-# 1 argument: same as 0 argument but taken in care WFLYISSUE thus script don't try to create new issue
-# 3 arguments: `./narayana-release-process.sh CURRENT NEXT WFLYISSUE`
+# 2 arguments: `./narayana-release-process.sh CURRENT NEXT`
 
 command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
-command -v awestruct >/dev/null 2>&1 || { echo >&2 "I require awestruct (http://awestruct.org/getting_started) but it's not installed.  Aborting."; exit 1; }
-read -p "Have you created a WFLY issue at https://issues.jboss.org/secure/CreateIssue.jspa and have the number?" WISSUEOK
-if [[ $WISSUEOK == n* ]]
-then
-  exit
-fi
 if [ $# -ne 2 ]; then
   echo 1>&2 "$0: usage: CURRENT NEXT"
   exit 2
@@ -42,10 +34,6 @@ if [[ $JIRAOK == n* ]]
 then
   exit
 fi
-
-# Do this early to prevent later interactive need
-docker login docker.io
-[ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
 
 git fetch upstream --tags
 set +e
