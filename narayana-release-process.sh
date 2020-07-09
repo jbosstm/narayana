@@ -72,8 +72,7 @@ then
   fi
   set -e
   echo "Checking if there were any failed jobs, this may be interactive so please stand by"
-  JIRA_HOST=issues.redhat.com JENKINS_JOBS=narayana,narayana-catelyn,narayana-documentation,narayana-hqstore,narayana-jdbcobjectstore,narayana-quickstarts,narayana-quickstarts-catelyn\
-      ./scripts/release/pre_release.py
+  JIRA_HOST=issues.redhat.com JENKINS_JOBS=narayana59 ./scripts/release/pre_release.py
   echo "Executing pre-release script, this may be interactive so please stand by"
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
   echo "This script is only interactive at the very end now, press enter to continue"
@@ -139,12 +138,6 @@ then
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
-if [[ $? != 0 ]]
-then
-  echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
-  exit
-fi
 cd -
 
 xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ &
