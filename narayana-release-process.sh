@@ -126,6 +126,12 @@ then
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
+ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" init downloads
+if [[ $? != 0 ]]
+then
+  echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
+  exit
+fi
 cd -
 
 xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ &
