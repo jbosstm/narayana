@@ -1055,7 +1055,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		XAException toThrow = null;
 		if ((txInfo != TxInfo.NOT_ASSOCIATED) && (txInfo != TxInfo.FAILED)) {
 			try {
-				doEnd(_tranID, _theXAResource, xaState, txInfoState, true);
+				doEnd(_tranID, _theXAResource, xaState, txInfoState);
 			} catch (XAException e) {
 				toThrow = e;
 			}
@@ -1064,7 +1064,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			XAResource dupXar = (XAResource) resource;
 			if (_theXAResource.isSameRM(dupXar)) {
 				try {
-					doEnd(_tranID, dupXar, xaState, txInfoState, false);
+					doEnd(_tranID, dupXar, xaState, txInfoState);
 				} catch (XAException e) {
 					// Some resource managers (e.g. Artemis) will not allow xa_end on duplicate xa resources as per JTA 1.2
 					if (e.errorCode != XAException.XAER_PROTO || STRICTJTA12DUPLICATEXAENDPROTOERR) {
@@ -1082,7 +1082,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 	}
 
-	private void doEnd(Xid _tranID, XAResource xar, int xaState, int txInfoState, boolean initialResource) throws XAException {
+	private void doEnd(Xid _tranID, XAResource xar, int xaState, int txInfoState) throws XAException {
 		try {
 			xar.end(_tranID, xaState);
 			setXAResourceState(xar, txInfoState);
@@ -1098,11 +1098,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				case XAException.XA_RBTRANSIENT:
 					setXAResourceState(xar, txInfoState);
 			}
-			if (initialResource) {
-				jtaLogger.logger.trace("Could not end XA resource {0}", xar, e1);
-			} else {
-				jtaLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
-			}
+			jtaLogger.i18NLogger.warn_could_not_end_xar(xar, e1);
 			throw e1;
 		}
 	}
