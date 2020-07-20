@@ -40,7 +40,7 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     private volatile int minFiles = 4;
 
-    private volatile int poolSize = -1;
+    private volatile int poolSize = 20;
 
     private volatile int compactMinFiles = 10;
 
