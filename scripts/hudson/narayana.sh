@@ -407,8 +407,7 @@ function build_as {
 
   # running WildFly testsuite if configured to be run by axis AS_TESTS
   if [ $AS_TESTS = 1 ]; then
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" 
-    JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m" ./integration-tests.sh verify -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -DallTests=true -fae
+    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./integration-tests.sh clean verify -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae
     [ $? = 0 ] || fatal "AS tests failed"
   fi
 
