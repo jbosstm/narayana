@@ -39,12 +39,6 @@ public class jtaLogger
 
     public static final jtaI18NLogger i18NLogger = Logger.getMessageLogger(jtaI18NLogger.class, "com.arjuna.ats.jta");
 
-    private jtaI18NLogger jtaI18NLoggerImpl;
-
     private jtaLogger() {
-    }
-
-    private jtaLogger(jtaI18NLogger logger) {
-        jtaI18NLoggerImpl = logger;
     }
 }
