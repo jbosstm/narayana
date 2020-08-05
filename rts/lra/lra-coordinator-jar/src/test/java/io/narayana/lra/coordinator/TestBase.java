@@ -197,7 +197,7 @@ public abstract class TestBase {
 
     LRAStatus getStatus(URI lra) {
         try {
-            return lraClient.getStatus(lra, true);
+            return lraClient.getStatus(lra);
         } catch (NotFoundException ignore) {
             return null;
         }

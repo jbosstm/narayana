@@ -87,7 +87,7 @@ public class NonRootLRAParticipantIT {
         client.closeLRA(lraId);
 
         try {
-            LRAStatus status = client.getStatus(lraId, false);
+            LRAStatus status = client.getStatus(lraId);
 
             Assert.assertEquals("wrong state", Closing, status);
         } catch (WebApplicationException e) {
