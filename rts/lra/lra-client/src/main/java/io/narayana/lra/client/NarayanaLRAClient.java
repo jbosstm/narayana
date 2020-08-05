@@ -469,20 +469,6 @@ public class NarayanaLRAClient implements Closeable {
         return false;
     }
 
-    /** Returns true if this LRA is either in Active state or
-     * it is a nested LRA that is in one of the final states (Cancelled/Closed)
-     *
-     * @param lraId the LRA queried for the status
-     * @return true if LRA is Active or nested with status Cancelled or Closed
-     */
-    public boolean isEffectivelyActive(URI lraId) {
-        try {
-            return getStatus(lraId, true) == LRAStatus.Active;
-        } catch (NotFoundException e) {
-            return false;
-        }
-    }
-
     private static int checkMethod(Map<String, String> paths,
                                    Method method, String rel,
                                    Path pathAnnotation,
@@ -569,7 +555,7 @@ public class NarayanaLRAClient implements Closeable {
         }
     }
 
-    public LRAStatus getStatus(URI uri, boolean effectivelyActive) throws WebApplicationException {
+    public LRAStatus getStatus(URI uri) throws WebApplicationException {
         ResponseHolder response;
         URL lraId;
 
@@ -585,7 +571,6 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             response = getTarget().path(getLRAId(lraId.toString())).path("status")
-                    .queryParam("effectivelyActive", effectivelyActive)
                     .request()
                     .get();
         } catch (Exception e) {

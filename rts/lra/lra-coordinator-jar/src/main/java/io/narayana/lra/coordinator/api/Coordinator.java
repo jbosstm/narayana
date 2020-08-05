@@ -149,24 +149,12 @@ public class Coordinator {
     public Response getLRAStatus(
         @Parameter(name = "LraId",
             description = "The unique identifier of the LRA", required = true)
-        @PathParam("LraId")String lraId,
-        @Parameter(name = "effectivelyActive",
-            description = "LRA is in LRAStatus.Active or it is a nested LRA in one of the final states")
-        @QueryParam("effectivelyActive") @DefaultValue("false") boolean isEffectivelyActive) throws NotFoundException {
+        @PathParam("LraId")String lraId) throws NotFoundException {
         Transaction transaction = lraService.getTransaction(toURI(lraId));
         LRAStatus status = transaction.getLRAStatus();
 
         if (status == null) {
-            return Response.noContent().build(); // 204 means the LRA is still active
-        }
-
-        if (isEffectivelyActive) {
-            // effectively active means that LRA is either in LRAStatus.Active status or it's a nested LRA in one
-            // of the final states (LRAStatus.Cancelled or LRAStatus.Closed)
-
-            if (!transaction.isTopLevel() && (status == LRAStatus.Cancelled || status == LRAStatus.Closed)) {
-                return Response.noContent().build();
-            }
+            status = LRAStatus.Active;
         }
 
         return Response.ok(status.name()).build();
@@ -192,42 +180,6 @@ public class Coordinator {
             @PathParam("LraId") String lraId) throws NotFoundException {
 
         return lraService.getLRA(toURI(lraId));
-    }
-
-/*    @GET
-    @Path("{LraId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Obtain the status of an LRA as a string",
-            response = String.class)
-    @ApiResponses({
-            @ApiResponse(code = 404, message =
-                    "The coordinator has no knowledge of this LRA"),
-            @ApiResponse(code = 200, message =
-                    "The LRA exists. A JSON representation of the state is reported in the content body.")
-    })
-    public LRAStatus getDetailedLRAStatus(
-            @ApiParam(value = "The unique identifier of the LRA", required = true)
-            @PathParam("LraId")String lraId) throws NotFoundException {
-        return new LRAStatus(lraService.getTransaction(toURI(lraId)));
-    }*/
-
-    // Performing a GET on /lra-io.narayana.lra.coordinator/<LraId> returns 200 if the lra is still active.
-    @GET
-    @Path("/status/{LraId}")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Operation(summary = "Indicates whether an LRA is active")
-    @APIResponses({
-        @APIResponse(responseCode = "404",
-            description = "The coordinator has no knowledge of this LRA",
-            content = @Content(schema = @Schema(implementation = Boolean.class))),
-        @APIResponse(responseCode = "200",
-            description = "If the LRA exists",
-            content = @Content(schema = @Schema(implementation = Boolean.class)))
-    })
-    public Boolean isActiveLRA(
-            @Parameter(name = "LraId", description = "The unique identifier of the LRA", required = true)
-            @PathParam("LraId")String lraId) throws NotFoundException {
-        return lraService.getTransaction(toURI(lraId)).isActive();
     }
 
     // Performing a POST on /lra-io.narayana.lra.coordinator/start?ClientID=<ClientID> will start a new lra with a default timeout and
