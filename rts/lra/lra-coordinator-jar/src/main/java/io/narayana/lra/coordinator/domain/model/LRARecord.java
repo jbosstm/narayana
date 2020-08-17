@@ -376,6 +376,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         updateStatus(compensate);
 
         // if the the request is still in progress (ie accepted is true) let recovery finish it
+        lra.setLRAStatusReason(LRAStatusReason.ParticipantResponse);
+        lra.getReportedParticipants().addParticipant(recoveryURI, LRAStatusReason.ParticipantResponse);
         return atEnd(accepted ? TwoPhaseOutcome.HEURISTIC_HAZARD : TwoPhaseOutcome.FINISH_OK);
     }
 
@@ -440,6 +442,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 && (status == ParticipantStatus.Completed || status == ParticipantStatus.FailedToComplete)) {
             if (lraService.getLRA(parentId).isActive()) {
                 // completed nested participants must remain compensatable
+                lra.setLRAStatusReason(LRAStatusReason.NestedClose);
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // ask to be called again
             } else {
                 // the parent is finishing so this is the post LRA invocation
@@ -451,6 +454,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         // check the participant first since it will have been removed from one of the lists
         if (!isFinished() || !lra.isFinished()) {
             if (afterURI != null) {
+                lra.setLRAStatusReason(LRAStatusReason.AfterLRARequestPhase);
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             }
 
@@ -468,6 +472,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             return TwoPhaseOutcome.FINISH_OK;
         }
 
+        lra.setLRAStatusReason(LRAStatusReason.AfterLRAFailed);
+        lra.getReportedParticipants().addParticipant(recoveryURI, LRAStatusReason.AfterLRAFailed);
         return TwoPhaseOutcome.HEURISTIC_HAZARD;
     }
 
@@ -550,10 +556,16 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                      */
                     status = compensate ? ParticipantStatus.Compensated : ParticipantStatus.Completed;
                     return TwoPhaseOutcome.FINISH_OK;
-                } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode() ||
-                        Response.Status.Family.familyOf(response.getStatus()).equals(
-                            Response.Status.Family.SERVER_ERROR)) {
-                    // these response codes indicate that the implementation should retry later
+                } else if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+                    // this response code indicate that the implementation should retry later
+                    lra.setLRAStatusReason(LRAStatusReason.ParticipantResponse);
+                    lra.getReportedParticipants().addParticipant(recoveryURI, LRAStatusReason.ParticipantResponse);
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                } else if (Response.Status.Family.familyOf(response.getStatus())
+                    .equals(Response.Status.Family.SERVER_ERROR)) {
+                    // participant processing failed, retry later
+                    lra.setLRAStatusReason(LRAStatusReason.ParticipantFailedStatusCall);
+                    lra.getReportedParticipants().addParticipant(recoveryURI, LRAStatusReason.ParticipantFailedStatusCall);
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 } else if (response.getStatus() == Response.Status.OK.getStatusCode() &&
                         response.getResponseString() != null) {
@@ -567,6 +579,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         case Completing:
                         case Compensating:
                             // still in progress - make sure recovery keeps retrying it
+                            lra.setLRAStatusReason(LRAStatusReason.ParticipantResponse);
+                            lra.getReportedParticipants().addParticipant(recoveryURI, LRAStatusReason.ParticipantResponse);
                             return TwoPhaseOutcome.HEURISTIC_HAZARD;
                         case FailedToCompensate:
                         case FailedToComplete:
@@ -578,6 +592,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                             if (forgetURI != null) {
                                 if (!forget()) {
                                     // we will retry the forget on the next recovery cycle
+                                    lra.setLRAStatusReason(LRAStatusReason.ForgetLRARequestPhase);
                                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                                 }
                             }

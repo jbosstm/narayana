@@ -7,6 +7,8 @@ public class LRAData {
     private String lraId;
     private String clientId;
     private String status;
+    private String statusReason;
+    private String reportedParticipants;
     private boolean isClosed;
     private boolean isCancelled;
     private boolean isRecovering;
@@ -15,13 +17,15 @@ public class LRAData {
     private long startTime;
     private long finishTime;
 
-    public LRAData(String lraId, String clientId, String status,
+    public LRAData(String lraId, String clientId, String status, String statusReason, String reportedParticipants,
                            boolean isClosed, boolean isCancelled, boolean isRecovering,
                            boolean isActive, boolean isTopLevel,
                            long startTime, long finishTime) {
         this.lraId = lraId;
         this.clientId = clientId;
         this.status = status;
+        this.statusReason = statusReason;
+        this.reportedParticipants = reportedParticipants;
         this.isClosed = isClosed;
         this.isCancelled = isCancelled;
         this.isRecovering = isRecovering;
@@ -41,6 +45,14 @@ public class LRAData {
 
     public String getStatus() {
         return this.status;
+    }
+
+    public String getStatusReason() {
+        return statusReason;
+    }
+
+    public String getReportedParticipants() {
+        return reportedParticipants;
     }
 
     public boolean isClosed() {
@@ -101,6 +113,7 @@ public class LRAData {
                 "lraId='" + lraId + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", status='" + status + '\'' +
+                ", statusReason='" + statusReason + '\'' +
                 ", isClosed=" + isClosed +
                 ", isCancelled=" + isCancelled +
                 ", isRecovering=" + isRecovering +

@@ -71,6 +71,8 @@ public class Transaction extends AtomicAction {
     private String clientId;
     private List<LRARecord> pending;
     private LRAStatus status;
+    private LRAStatusReason statusReason;
+    private ReportedParticipants reportedParticipants;
     private String responseData;
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
@@ -90,7 +92,8 @@ public class Transaction extends AtomicAction {
         this.clientId = clientId;
         this.finishTime = null;
         this.status = LRAStatus.Active;
-
+        this.statusReason = LRAStatusReason.Unknown;
+        this.reportedParticipants = new ReportedParticipants();
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
@@ -105,11 +108,14 @@ public class Transaction extends AtomicAction {
         this.clientId = null;
         this.finishTime = null;
         this.status = LRAStatus.Active;
+        this.statusReason = LRAStatusReason.Unknown;
+        this.reportedParticipants = new ReportedParticipants();
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public LRAData getLRAData() {
         return new LRAData(id.toASCIIString(), clientId, status == null ? "" : status.name(),
+                statusReason.toString(), reportedParticipants.report(),
                 isClosed(), isCancelled(), isRecovering(),
                 isActive(), isTopLevel(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
@@ -151,6 +157,10 @@ public class Transaction extends AtomicAction {
                 os.packBoolean(true);
                 os.packString(status.name());
             }
+
+            os.packString(statusReason.name());
+            reportedParticipants.save(os);
+
         } catch (IOException e) {
             return false;
         }
@@ -270,6 +280,8 @@ public class Transaction extends AtomicAction {
             startTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             finishTime = os.unpackBoolean() ? LocalDateTime.ofInstant(Instant.ofEpochMilli(os.unpackLong()), ZoneOffset.UTC) : null;
             status = os.unpackBoolean() ? LRAStatus.valueOf(os.unpackString()) : null;
+            statusReason = LRAStatusReason.valueOf(os.unpackString());
+            reportedParticipants = new ReportedParticipants().restore(os);
 
             /*
              * If the time limit has already been reached then the difference between now and the scheduled
@@ -286,6 +298,7 @@ public class Transaction extends AtomicAction {
 
                     if (isActive()) {
                         status = LRAStatus.Cancelling; // transition from Active to Cancelling
+                        statusReason = LRAStatusReason.Timeout;
                     }
                 } else {
                     if (LRALogger.logger.isDebugEnabled()) {
@@ -359,6 +372,18 @@ public class Transaction extends AtomicAction {
 
     protected void setLRAStatus(int actionStatus) {
         status = toLRAStatus(actionStatus);
+    }
+
+    public LRAStatusReason getStatusReason() {
+        return statusReason;
+    }
+
+    protected void setLRAStatusReason(LRAStatusReason statusReason) {
+        this.statusReason = statusReason;
+    }
+
+    public ReportedParticipants getReportedParticipants() {
+        return reportedParticipants;
     }
 
     boolean isClosed() {

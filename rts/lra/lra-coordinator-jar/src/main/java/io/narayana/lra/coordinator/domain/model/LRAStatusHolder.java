@@ -48,6 +48,8 @@ public class LRAStatusHolder {
     String[] failedParticipants;
 
     private LRAStatus lraStatus;
+    private LRAStatusReason statusReason;
+    private ReportedParticipants reportedParticipants;
 
     public LRAStatusHolder(Transaction lra) {
 
@@ -61,6 +63,8 @@ public class LRAStatusHolder {
         this.httpStatus = lra.getHttpStatus();
         this.responseData = lra.getResponseData();
         this.lraStatus = lra.getLRAStatus();
+        this.statusReason =  lra.getStatusReason();
+        this.reportedParticipants = lra.getReportedParticipants();
         this.failedParticipants = lra.getFailedParticipants().values().toArray(new String[0]);
     }
 
@@ -74,6 +78,14 @@ public class LRAStatusHolder {
 
     public LRAStatus getStatus() {
         return lraStatus;
+    }
+
+    public LRAStatusReason getStatusReason() {
+        return isRecovering() ? statusReason : LRAStatusReason.Unknown;
+    }
+
+    public ReportedParticipants getReportedParticipants() {
+        return isRecovering() ? reportedParticipants : ReportedParticipants.EMPTY;
     }
 
     private boolean isInState(LRAStatus state) {
