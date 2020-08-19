@@ -540,15 +540,14 @@ public class NarayanaLRAClient implements Closeable {
                 nvps.put(nvp[0], nvp[1]);
             }
 
-
             boolean topLevel = Boolean.valueOf(nvps.get("topLevel"));
             String lraStatus = nvps.get("status");
 
-            if (lraStatus.equals(LRAStatus.Active.name())) {
+            if (LRAStatus.Active.name().equals(lraStatus)) {
                 return true;
             }
 
-            // a nested LRA can still be cancelled/closed even if it ahs closed/cancelled
+            // a nested LRA can still be cancelled/closed even if it has closed/cancelled
             // BTW there is no test that uses it so it is dead code
             // still "effecively" active
             return !topLevel && (lraStatus.equals(LRAStatus.Cancelled.name()) || lraStatus.equals(LRAStatus.Closed.name()));

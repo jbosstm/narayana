@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import io.narayana.lra.logging.LRALogger;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -76,7 +77,7 @@ class RecoveringLRA extends Transaction {
                     (_theStatus == ActionStatus.H_COMMIT) ||
                     (_theStatus == ActionStatus.H_MIXED) ||
                     (_theStatus == ActionStatus.H_HAZARD)) {
-                if (heuristicList.size() != 0 || pendingList.size() != 0 || isActive()) {
+                if (heuristicList.size() != 0 || pendingList.size() != 0 || getLRAStatus() == LRAStatus.Active) {
                     // Note that we do not try to recover failed LRAs.
                     // Move any heuristics back onto the prepared list for another attempt:
                     moveTo(heuristicList, preparedList);
