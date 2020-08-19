@@ -22,7 +22,6 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.coordinator.domain.model.LRAData;
-import io.narayana.lra.coordinator.domain.model.LRAStatusHolder;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -151,8 +150,8 @@ public class RecoveryCoordinator {
     @Operation(summary = "List recovering Long Running Actions",
         description = "Returns LRAs that are recovering (ie some compensators still need to be ran)")
     @APIResponse(responseCode = "200",
-        content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAStatusHolder.class)))
-    public List<LRAStatusHolder> getRecoveringLRAs() {
+        content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAData.class)))
+    public List<LRAData> getRecoveringLRAs() {
         return lraService.getAllRecovering(true);
     }
 
@@ -164,8 +163,8 @@ public class RecoveryCoordinator {
                     " Failure records are vital pieces of data needed to aid failure tracking and analysis " +
                     " and are retained for inspection.")
     @APIResponse(responseCode = "200",
-            content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAStatusHolder.class)))
-    public List<LRAStatusHolder> getFailedLRAs() {
+            content = @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = LRAData.class)))
+    public List<LRAData> getFailedLRAs() {
         return lraService.getFailedLRAs();
     }
 
@@ -198,7 +197,7 @@ public class RecoveryCoordinator {
             LRAData lraData = lraService.getLRA(lra);
 
             // 412 the LRA is not in an end state (return 412 and the actual status of the LRA)
-            return Response.status(PRECONDITION_FAILED).entity(lraData.getStatus()).build();
+            return Response.status(PRECONDITION_FAILED).entity(lraData.getStatus().name()).build();
         } catch (NotFoundException e) {
             // the LRA has finished and, if it corresponds to a failure record, it is safe to delete it
             if (lraService.removeLog(lraId)) {

@@ -1,34 +1,32 @@
 package io.narayana.lra.coordinator.domain.model;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
+/**
+ * DTO object which serves to transfer data of particular LRA instance.
+ * It's used by {@link io.narayana.lra.coordinator.api.Coordinator}
+ * for JSON response creation when LRA info is asked for.
+ */
 public class LRAData {
-    private String lraId;
-    private String clientId;
-    private String status;
-    private boolean isClosed;
-    private boolean isCancelled;
-    private boolean isRecovering;
-    private boolean isActive;
-    private boolean isTopLevel;
-    private long startTime;
-    private long finishTime;
+    private final String lraId;
+    private final String clientId;
+    private final LRAStatus status;
+    private final boolean isTopLevel;
+    private final boolean isRecovering;
+    private final long startTime;
+    private final long finishTime;
+    private final int httpStatus;
 
-    public LRAData(String lraId, String clientId, String status,
-                           boolean isClosed, boolean isCancelled, boolean isRecovering,
-                           boolean isActive, boolean isTopLevel,
-                           long startTime, long finishTime) {
+    public LRAData(String lraId, String clientId, LRAStatus status, boolean isTopLevel, boolean isRecovering,
+                    long startTime, long finishTime, int httpStatus) {
         this.lraId = lraId;
         this.clientId = clientId;
         this.status = status;
-        this.isClosed = isClosed;
-        this.isCancelled = isCancelled;
-        this.isRecovering = isRecovering;
-        this.isActive = isActive;
         this.isTopLevel = isTopLevel;
+        this.isRecovering = isRecovering;
         this.startTime = startTime;
         this.finishTime = finishTime;
+        this.httpStatus = httpStatus;
     }
 
     public String getLraId() {
@@ -39,30 +37,17 @@ public class LRAData {
         return this.clientId;
     }
 
-    public String getStatus() {
+    public LRAStatus getStatus() {
         return this.status;
-    }
-
-    public boolean isClosed() {
-        return this.isClosed;
-    }
-
-    public boolean isCancelled() {
-        return this.isCancelled;
-    }
-
-    public boolean isRecovering() {
-        return this.isRecovering;
-    }
-
-    public boolean isActive() {
-        return this.isActive;
     }
 
     public boolean isTopLevel() {
         return this.isTopLevel;
     }
 
+    public boolean isRecovering() {
+        return this.isRecovering;
+    }
 
     public long getStartTime() {
         return startTime;
@@ -72,12 +57,8 @@ public class LRAData {
         return finishTime;
     }
 
-    public long getTimeNow() {
-        return LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
-    }
-
-    public ZoneOffset getZoneOffset() {
-        return ZoneOffset.UTC;
+    public int getHttpStatus() {
+        return this.httpStatus;
     }
 
     public boolean equals(Object o) {
@@ -97,18 +78,9 @@ public class LRAData {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" +
-                "lraId='" + lraId + '\'' +
-                ", clientId='" + clientId + '\'' +
-                ", status='" + status + '\'' +
-                ", isClosed=" + isClosed +
-                ", isCancelled=" + isCancelled +
-                ", isRecovering=" + isRecovering +
-                ", isActive=" + isActive +
-                ", isTopLevel=" + isTopLevel +
-                ", startTime=" + startTime +
-                ", finishTime=" + finishTime +
-                '}';
+        return String.format(
+            "%s {lraId='%s', clientId='%s', status='%s', isTopLevel=%b, isRecovering=%b, startTime=%d, finishTime=%d, httpStatus=%d}",
+                this.getClass().getSimpleName(), lraId, clientId, status,
+                isTopLevel, isRecovering, startTime, finishTime, httpStatus);
     }
-
 }

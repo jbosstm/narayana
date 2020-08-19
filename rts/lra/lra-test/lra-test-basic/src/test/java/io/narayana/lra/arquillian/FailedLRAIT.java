@@ -157,15 +157,14 @@ public class FailedLRAIT {
         // there should be no failed LRAs yet
         assertEquals(0, failedLRAs.size());
 
-        // the LRA should return 202 Accepted when asked to compensate
+        // verify that deleting the LRA log fails as it's with "Cancelling" status
+        int status1 = removeFailedLRA(lra);
+        assertEquals("deleting a cancelling LRA should fail with error code 412", 412, status1);
 
-        // verify that deleting the LRA log fails
-        int status1 = removeFailedLRA(lra); // lra is compensating so should fail
         int status2 = removeFailedLRA(lra.getHost(), lra.getPort(), "Invalid URI Syntax");
-        int status3 = removeFailedLRA(lra.getHost(), lra.getPort(), "http://example.com");
-
-        assertEquals("deleting a compensating LRA", 412, status1);
         assertEquals("deleting an invalid (wrong URI syntax) LRA", 412, status2);
+
+        int status3 = removeFailedLRA(lra.getHost(), lra.getPort(), "http://example.com");
         assertEquals("deleting a non existent LRA", 404, status3);
 
         // tell the participant compensate method to return an end state on the next compensate request

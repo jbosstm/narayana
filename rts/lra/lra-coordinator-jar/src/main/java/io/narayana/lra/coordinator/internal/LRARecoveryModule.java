@@ -95,7 +95,7 @@ public class LRARecoveryModule implements RecoveryModule {
         try {
             RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus);
             String Status = ActionStatus.stringForm(theStatus);
-            boolean inFlight = lra.isActive();
+            boolean inFlight = (lra.getLRAStatus() == LRAStatus.Active);
 
             LRAStatus lraStatus = lra.getLRAStatus();
             if (LRAStatus.FailedToCancel.equals(lraStatus) || LRAStatus.FailedToClose.equals(lraStatus)) {
@@ -116,7 +116,7 @@ public class LRARecoveryModule implements RecoveryModule {
             if (!inFlight && lra.hasPendingActions()) {
                 lra.replayPhase2();
 
-                if (!lra.isRecovering() && lraService != null) {
+                if (!lra.isRecovering()) {
                     lraService.finished(lra, false);
                 }
             }
@@ -147,10 +147,10 @@ public class LRARecoveryModule implements RecoveryModule {
     private void processTransactionsStatus() {
         if (_transactionUidVector != null) {
             // Process the Vector of transaction Uids
-            Enumeration<?> transactionUidEnum = _transactionUidVector.elements();
+            Enumeration<Uid> transactionUidEnum = _transactionUidVector.elements();
 
             while (transactionUidEnum.hasMoreElements()) {
-                Uid currentUid = (Uid) transactionUidEnum.nextElement();
+                Uid currentUid = transactionUidEnum.nextElement();
 
                 try {
                     if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN) {
@@ -176,10 +176,10 @@ public class LRARecoveryModule implements RecoveryModule {
         periodicWorkFirstPass();
 
         if (_transactionUidVector != null) {
-            Enumeration transactionUidEnum = _transactionUidVector.elements();
+            Enumeration<Uid> transactionUidEnum = _transactionUidVector.elements();
 
             while (transactionUidEnum.hasMoreElements()) {
-                Uid currentUid = (Uid) transactionUidEnum.nextElement();
+                Uid currentUid = transactionUidEnum.nextElement();
                 int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, currentUid);
                 RecoveringLRA lra = new RecoveringLRA(lraService, currentUid, status);
 
@@ -195,7 +195,8 @@ public class LRARecoveryModule implements RecoveryModule {
 
     /**
      * remove an LRA log record
-     * @param lraUid
+     *
+     * @param lraUid LRA id that will be removed from the log record
      * @return false if record isn't in the store or there was an error removing it
      */
     public boolean removeCommitted(Uid lraUid) {
@@ -290,18 +291,18 @@ public class LRARecoveryModule implements RecoveryModule {
         } while (true);
     }
 
-    private LRAService lraService;
+    private final LRAService lraService;
 
     // 'type' within the Object Store for LRAs.
-    private String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType();
+    private final String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType();
 
     // Array of transactions found in the object store of the type LRA
-    private Vector _transactionUidVector = null;
+    private Vector<Uid> _transactionUidVector = null;
 
     // Reference to the Object Store.
     private static RecoveryStore _recoveryStore = null;
 
     // This object manages the interface to all TransactionStatusManager
     // processes(JVMs) on this system/node.
-    private TransactionStatusConnectionManager _transactionStatusConnectionMgr;
+    private final TransactionStatusConnectionManager _transactionStatusConnectionMgr;
 }
