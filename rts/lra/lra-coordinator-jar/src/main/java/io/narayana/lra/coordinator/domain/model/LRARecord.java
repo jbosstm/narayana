@@ -438,7 +438,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private int atEnd(int res) {
         if (parentId != null
                 && (status == ParticipantStatus.Completed || status == ParticipantStatus.FailedToComplete)) {
-            if (lraService.getLRA(parentId).isActive()) {
+            if (lraService.getLRA(parentId).getStatus() == LRAStatus.Active) {
                 // completed nested participants must remain compensatable
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // ask to be called again
             } else {
@@ -686,14 +686,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 httpStatus = BAD_REQUEST.getStatusCode();
             } else {
-                LRAStatusHolder inVMStatus = lraService.endLRA(cId, isCompensate, true);
+                LRAData inVMStatus = lraService.endLRA(cId, isCompensate, true);
 
                 httpStatus = inVMStatus.getHttpStatus();
-
-                try {
-                    responseData = inVMStatus.getEncodedResponseData();
-                } catch (IOException ignore) {
-                }
             }
 
             return httpStatus;
