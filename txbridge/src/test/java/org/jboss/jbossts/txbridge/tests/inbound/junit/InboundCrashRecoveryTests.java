@@ -216,9 +216,29 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("commit");
     }
 
+    /**
+     * <p>
+     * The test checks that the xts inbound bridge does not rollback a resource of an in-flight transaction.
+     * </p>
+     * <p>
+     * The test is meant to run as
+     * <ul>
+     *  <li>the test calls the WS call, the call goes with the transaction context and the inbound bridge is involved</li>
+     *  <li>the call then commits a transaction where participates the TestXAResource</li>
+     *  <li>the TestXAResource is prepared and then the test makes the Durable Bridge participant waiting with help of Byteman</li>
+     *  <li>the recovery is triggered and as there is in-flight transaction the inbound txbridge recovery manager must not abort it</li>
+     *  <li>in the meantime there is running a participant completion task (com.arjuna.webservices11.wsat.sei.CoordinatorPortTypeImpl),
+     *     This is run by TaskManager periodically and trying to finish the XTS participants.
+     *     The first time the recovery let the task went through prepare phase and on the second time (when the recovery is run for the second time)
+     *     the task makes the participant to be committed.
+     *  </li>
+     *  <li>the recovery itself does not commit but it preserve the participant not to be rolled-back</li>
+     * </ul>
+     * </p>
+     */
     @Test
     @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
-    public void testRecoveryLivingTransactions(@ArquillianResource URL baseURL) throws Exception {
+    public void testRecoveryLivingTransactions(@ArquillianResource final URL baseURL) throws Exception {
 
         InstrumentedClass durableParticipant = instrumentor.instrumentClass(BridgeDurableParticipant.class);
         InstrumentedClass instrumentedTestXAResourceRecovered = instrumentor.instrumentClass(TestXAResourceRecovered.class);
@@ -226,8 +246,13 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
         instrumentor.injectOnExit(BridgeDurableParticipant.class, "prepare", "waitFor(\"recoveryProcessed\")");
 
-        Executors.newSingleThreadExecutor().submit(() ->
-            executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false));
+        Executors.newSingleThreadExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false);
+            }
+        });
+
 
         instrumentor.injectOnExit(PeriodicRecovery.class, "doWorkInternal", "signalWake(\"recoveryProcessed\", flag(\"alreadyProcessed\"))");
 
