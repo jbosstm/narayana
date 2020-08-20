@@ -21,6 +21,7 @@
 package com.arjuna.mw.wstx.logging;
 
 
+import com.arjuna.wst.Durable2PCParticipant;
 import org.jboss.logging.*;
 import static org.jboss.logging.Logger.Level.*;
 import static org.jboss.logging.Message.Format.*;
@@ -161,13 +162,13 @@ public interface wstxI18NLogger {
 	@LogMessage(level = ERROR)
 	public void error_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_cancel_1(String arg0);
 
-	@Message(id = 45034, value = "comms timeout attempting to commit WS-AT participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 45034, value = "comms timeout attempting to commit WS-AT participant {0} : {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(String arg0);
+	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_confirm_1(String arg0, Durable2PCParticipant participant);
 
-	@Message(id = 45035, value = "comms timeout attempting to prepare WS-AT participant {0}", format = MESSAGE_FORMAT)
+	@Message(id = 45035, value = "comms timeout attempting to prepare WS-AT participant {0} : {1}", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
-	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(String arg0);
+	public void warn_mwlabs_wst_at_participants_DurableTwoPhaseCommitParticipant_prepare_1(String arg0, Durable2PCParticipant participant);
 
 	@Message(id = 45036, value = "Not implemented!", format = MESSAGE_FORMAT)
 	public String get_mwlabs_wst_at_remote_Transaction11ManagerImple_1();
@@ -264,6 +265,17 @@ public interface wstxI18NLogger {
     @Message(id = 45062, value = "Coordinator cancelled the activity", format = MESSAGE_FORMAT)
     @LogMessage(level = WARN)
    	public void warn_mwlabs_wst11_ba_coordinator_cancelled_activity();
+
+	@Message(id = 45068, value = "can't commit durable participant {0} : {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_wst_at_participants_Durable2PC_confirm (
+			String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
+	@Message(id = 45070, value = "can't prepare durable participant {0} : {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = ERROR)
+	public void error_wst_at_participants_Durable2PC_prepare (
+			String id, Durable2PCParticipant participant, @Cause() Throwable t);
+
 
     /*
         Allocate new messages directly above this notice.
