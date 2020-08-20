@@ -175,16 +175,11 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
         instrumentor.injectOnCall(TestServiceImpl.class, "doNothing", "$0.enlistXAResource(2)");
         instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
-        instrumentor.installRule(RuleConstructor.createRule("crashOnSecondTestResource")
-            .onClass(TestXAResource.class)
-            .inMethod("commit")
-            .atEntry()
-            .ifCondition("NOT flag(\"testxaresourcecrash\")")
-            .doAction("debug(\"killing TestXAResource\"); killJVM()"));
+        instrumentor.injectOnMethod(TestXAResource.class, "commit", "NOT flag(\"testxaresourcecrash\")", "debug(\"killing TestXAResource\"); killJVM()", "ENTRY");
 
         execute(baseURL + TestClient.URL_PATTERN, false);
 
-        instrumentedTestXAResource.assertSumMethodCallCount("prepare", 2);
+        instrumentedTestXAResource.assertMethodCalled("prepare");
         instrumentedTestXAResource.assertMethodNotCalled("rollback");
         // commit called twice, first TestXAResource commits,
         // the second enters the commit and immediately kills JVM
@@ -198,7 +193,7 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("prepare");
         instrumentedTestXAResource.assertMethodCalled("recover");
         instrumentedTestXAResource.assertMethodNotCalled("rollback");
-        instrumentedTestXAResource.assertSumMethodCallCount("commit", 2);
+        instrumentedTestXAResource.assertMethodCalled("commit");
     }
 
     @Test
