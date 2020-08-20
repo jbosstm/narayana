@@ -218,7 +218,7 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
     @Test
     @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
-    public void testRecoveryLivingTransactions(@ArquillianResource URL baseURL) throws Exception {
+    public void testRecoveryLivingTransactions(final @ArquillianResource URL baseURL) throws Exception {
 
         InstrumentedClass durableParticipant = instrumentor.instrumentClass(BridgeDurableParticipant.class);
         InstrumentedClass instrumentedTestXAResourceRecovered = instrumentor.instrumentClass(TestXAResourceRecovered.class);
@@ -226,8 +226,12 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
         instrumentor.injectOnExit(BridgeDurableParticipant.class, "prepare", "waitFor(\"recoveryProcessed\")");
 
-        Executors.newSingleThreadExecutor().submit(() ->
-            executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false));
+	Thread t = new Thread(new Runnable() {
+            public void run() {
+            executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false);
+            }
+        });
+        t.start();
 
         instrumentor.injectOnExit(PeriodicRecovery.class, "doWorkInternal", "signalWake(\"recoveryProcessed\", flag(\"alreadyProcessed\"))");
 
@@ -243,6 +247,7 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("rollback");
         instrumentedTestXAResourceRecovered.assertMethodCalled("commit");
         instrumentedTestXAResourceRecovered.assertMethodNotCalled("rollback");
+        t.join();
     }
 
     // TODO: add test for 4log case i.e. commit
