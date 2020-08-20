@@ -26,6 +26,9 @@ import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.Message.Format.MESSAGE_FORMAT;
 
+import javax.transaction.Transaction;
+import javax.transaction.xa.Xid;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.LogMessage;
 import org.jboss.logging.Message;
