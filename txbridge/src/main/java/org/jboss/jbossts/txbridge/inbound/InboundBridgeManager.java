@@ -57,7 +57,7 @@ public class InboundBridgeManager
     // maps WS-AT Tx Id to InboundBridge instance.
     private static final ConcurrentMap<String, InboundBridge> inboundBridgeMappings = new ConcurrentHashMap<String, org.jboss.jbossts.txbridge.inbound.InboundBridge>();
 
-    private static final Set<Xid> liveXids = new HashSet<>();
+    private static final Set<Xid> liveXids = new HashSet<Xid>();
 
     /**
      * Return an InboundBridge instance that maps the current Thread's WS transaction context
