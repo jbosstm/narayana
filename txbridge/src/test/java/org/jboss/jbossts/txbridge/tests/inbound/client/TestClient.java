@@ -88,6 +88,8 @@ public class TestClient extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.info("TestClient::doGet called");
+
         try {
             UserTransaction ut = UserTransactionFactory.userTransaction();
 
