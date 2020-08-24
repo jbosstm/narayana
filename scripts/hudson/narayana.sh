@@ -123,13 +123,24 @@ function build_as {
   GIT_URL="https://github.com/jbosstm/jboss-as.git"
 
   cd ${WORKSPACE}
-  rm -rf jboss-as
-  git clone $GIT_URL
-  [ $? = 0 ] || fatal "git clone $GIT_URL failed"
+  #rm -rf jboss-as
+  if [ ! -d jboss-as ];
+  then
+    git clone $GIT_URL -o upstream
+    [ $? = 0 ] || fatal "git clone $GIT_URL failed"
+  fi
 
   cd jboss-as
-  git checkout -t origin/4_BRANCH
-  [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
+  git fetch --all
+  git branch | grep 4_BRANCH | grep \*
+  if [ $? != 0 ];
+  then
+    git checkout -t upstream/4_BRANCH
+    [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
+  fi
+  git clean -fdx
+  git reset --hard upstream/4_BRANCH
+  [ $? = 0 ] || fatal "git reset 4_BRANCH failed"
 
 #  UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
 #  git remote add upstream $UPSTREAM_GIT_URL
