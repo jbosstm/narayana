@@ -73,6 +73,7 @@ function init_test_options {
         export AS_BUILD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export QA_TESTS=0 SUN_ORB=0 JAC_ORB=0
     fi
+    [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
 }
 
 function comment_on_pull
