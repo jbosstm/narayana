@@ -245,8 +245,9 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertKnownInstances(1);
         instrumentedTestXAResource.assertMethodCalled("prepare");
         instrumentedTestXAResource.assertMethodNotCalled("rollback");
-        instrumentedTestXAResourceRecovered.assertMethodCalled("commit");
+        instrumentedTestXAResource.assertMethodCalled("commit");
         instrumentedTestXAResourceRecovered.assertMethodNotCalled("rollback");
+        instrumentedTestXAResourceRecovered.assertMethodNotCalled("commit");
         t.join();
     }
 
