@@ -31,6 +31,7 @@ import org.jboss.jbossts.txbridge.tests.inbound.utility.TestSynchronization;
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResource;
 
 import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResourceRecovered;
+import org.jboss.jbossts.txbridge.tests.inbound.utility.TestXAResourceRecoveryHelper;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.*;
@@ -268,6 +269,26 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("commit");
     }
 
+    /**
+     * <p>
+     * The test checks that the xts inbound bridge does not rollback a resource of an in-flight transaction.
+     * </p>
+     * <p>
+     * The test is meant to run as
+     * <ul>
+     *  <li>the test calls the WS call, the call goes with the transaction context and the inbound bridge is involved</li>
+     *  <li>the call then commits a transaction where participates the TestXAResource</li>
+     *  <li>the TestXAResource is prepared and then the test makes the Durable Bridge participant waiting with help of Byteman</li>
+     *  <li>the recovery is triggered and as there is in-flight transaction the inbound txbridge recovery manager must not abort it</li>
+     *  <li>in the meantime there is running a participant completion task (com.arjuna.webservices11.wsat.sei.CoordinatorPortTypeImpl),
+     *     This is run by TaskManager periodically and trying to finish the XTS participants.
+     *     The first time the recovery let the task went through prepare phase and on the second time (when the recovery is run for the second time)
+     *     the task makes the participant to be committed.
+     *  </li>
+     *  <li>the recovery itself does not commit but it preserve the participant not to be rolled-back</li>
+     * </ul>
+     * </p>
+     */
     @Test
     @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
     public void testRecoveryLivingTransactions(@ArquillianResource URL baseURL) throws Exception {
@@ -295,6 +316,47 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertMethodNotCalled("rollback");
         instrumentedTestXAResourceRecovered.assertMethodCalled("commit");
         instrumentedTestXAResourceRecovered.assertMethodNotCalled("rollback");
+    }
+
+    /**
+     * This is an alternative test to {@link #testRecoveryOfLiveTransaction(URL)}
+     * which expect the recover does not roll-back but signal byteman waiting
+     * at different location.
+     */
+    @Test
+    @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
+    public void testRecoveryOfLiveTransaction(final @ArquillianResource URL baseURL) throws Exception {
+        InstrumentedClass durableParticipant = instrumentor.instrumentClass(BridgeDurableParticipant.class);
+        InstrumentedClass instrumentedTestXAResourceRecovered = instrumentor.instrumentClass(TestXAResourceRecovered.class);
+
+        instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
+        instrumentor.injectOnCall(TestXAResource.class, "commit", "waitFor(\"recoveryProcessed\")");
+        instrumentor.injectOnCall(TestXAResourceRecoveryHelper.class, "recover", "waitFor(\"preparedXid\")");
+
+        instrumentor.injectOnExit(TestXAResource.class, "prepare", "signalWake(\"preparedXid\"), true");
+        // This should create a transaction that has a SystemException in CompletionStub:74
+        executeWithRuntimeException(baseURL + TestClient.URL_PATTERN, false);
+
+        // Prevent recovery needing to see another prepare call
+        instrumentor.injectOnCall(TestXAResourceRecoveryHelper.class, "recover", "signalWake(\"preparedXid\")");
+        // Recovery should be leaving this alone as it is live
+        log.info("requesting recovery for a live transaction");
+        doRecovery();
+
+        durableParticipant.assertMethodCalled("prepare");
+        durableParticipant.assertMethodNotCalled("rollback");
+        durableParticipant.assertMethodCalled("commit");
+
+        instrumentedTestXAResource.assertKnownInstances(1);
+        instrumentedTestXAResource.assertMethodCalled("prepare");
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
+        instrumentedTestXAResource.assertMethodCalled("commit"); // The transaction should still be waiting for recoveryProcessed
+        instrumentedTestXAResourceRecovered.assertMethodNotCalled("commit"); // We don't want recovery to have committed this Xid as it was live
+        instrumentedTestXAResourceRecovered.assertMethodNotCalled("rollback");
+
+        // Allow the original transaction to release for cleanup including removal of islive
+        instrumentor.injectOnExit(PeriodicRecovery.class, "doWorkInternal", "signalWake(\"recoveryProcessed\", true)");
+        doRecovery();
     }
 
     // TODO: add test for 4log case i.e. commit
