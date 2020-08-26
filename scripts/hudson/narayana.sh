@@ -1,3 +1,5 @@
+set -x
+
 function fatal {
   if [[ -z $PROFILE ]]; then
       comment_on_pull "Tests failed ($BUILD_URL): $1"
@@ -113,7 +115,7 @@ function build_narayana {
   cd $WORKSPACE
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS clean install
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS -B clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   return 0
@@ -121,47 +123,53 @@ function build_narayana {
 
 function build_as {
   echo "Building AS"
-  GIT_URL="https://github.com/jbosstm/jboss-as.git"
+  AS_GIT_URL=${AS_GIT_URL:-"https://github.com/jbosstm/jboss-as.git"}
+  AS_GIT_REF=${AS_GIT_REF:-"4_BRANCH"}
 
   cd ${WORKSPACE}
   #rm -rf jboss-as
   if [ ! -d jboss-as ];
   then
-    git clone $GIT_URL -o upstream
-    [ $? = 0 ] || fatal "git clone $GIT_URL failed"
+    git clone $AS_GIT_URL -o upstream jboss-as
+    [ $? = 0 ] || fatal "git clone $AS_GIT_URL failed"
   fi
 
   cd jboss-as
+
   git fetch --all
-  git branch | grep 4_BRANCH | grep \*
+  git branch | grep ${AS_GIT_REF} | grep \*
   if [ $? != 0 ];
   then
-    git checkout -t upstream/4_BRANCH
+    git checkout -t upstream/${AS_GIT_REF}
     [ $? = 0 ] || fatal "git checkout 4_BRANCH failed"
   fi
   git clean -fdx
-  git reset --hard upstream/4_BRANCH
-  [ $? = 0 ] || fatal "git reset 4_BRANCH failed"
+  git reset --hard upstream/${AS_GIT_REF}
+  [ $? = 0 ] || fatal "git reset ${AS_GIT_REF} failed"
 
-#  UPSTREAM_GIT_URL="https://github.com/jbossas/jboss-as.git"
-#  git remote add upstream $UPSTREAM_GIT_URL
-#  git pull --rebase --ff-only upstream master
-#  while [ $? != 0 ]
-#  do
-#     for i in `git status -s | sed "s/UU \(.*\)/\1/g"`
-#     do 
-#        awk '/^<+ HEAD$/,/^=+$/{next} /^>+ /{next} 1' $i > $i.bak; mv $i.bak $i; git add $i
-#     done
-#     git rebase --continue
-#  done
-#  [ $? = 0 ] || fatal "git rebase failed"
+  # TODO: find out how to rebase jbosstm/jboss-as on top of the jbossas/jboss-as
+  # UPSTREAM_AS_GIT_URL=${UPSTREAM_AS_GIT_URL:-"https://github.com/jbossas/jboss-as.git"}
+  # git remote add upstream $UPSTREAM_AS_GIT_URL
+  # git pull --rebase --ff-only upstream master
+  # while [ $? != 0 ]
+  # do
+  #    for i in `git status -s | sed "s/UU \(.*\)/\1/g"`
+  #    do
+  #       awk '/^<+ HEAD$/,/^=+$/{next} /^>+ /{next} 1' $i > $i.bak; mv $i.bak $i; git add $i
+  #    done
+  #    git rebase --continue
+  # done
+  # [ $? = 0 ] || fatal "git rebase failed"
+
+  echo "Last 5 commits of the JBoss AS directory"
+  git log -n 5 --oneline
 
   sed -i "s/2.1.1/2.2/g" testsuite/pom.xml
   sed -i "s/2.1.1/2.2/g" testsuite/integration/pom.xml
 
   export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  (cd .. && ./build.sh -f jboss-as/pom.xml clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT $AS_XARGS)
+  (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
   
   #Enable remote debugger
@@ -185,7 +193,7 @@ function xts_as_tests {
   init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT "$@" test $AS_XARGS)
+  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT "$@" test $AS_XARGS)
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -242,7 +250,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS clean install
+  ./build.sh -f txbridge/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
