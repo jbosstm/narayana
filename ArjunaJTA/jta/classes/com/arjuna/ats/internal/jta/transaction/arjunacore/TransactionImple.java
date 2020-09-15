@@ -98,6 +98,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public TransactionImple(int timeout)
 	{
+		this.commitMarkableResourceJNDINames = BeanPopulator
+				.getDefaultInstance(JTAEnvironmentBean.class)
+				.getCommitMarkableResourceJNDINames();
 		_theTransaction = new AtomicAction();
 
 		_theTransaction.begin(timeout);
@@ -1222,6 +1225,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	protected TransactionImple(BasicAction curr)
 	{
+		this.commitMarkableResourceJNDINames = BeanPopulator
+				.getDefaultInstance(JTAEnvironmentBean.class)
+				.getCommitMarkableResourceJNDINames();
+
 		try
 		{
 			if (curr == null)
@@ -1744,10 +1751,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
-	
-	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class)
-			.getCommitMarkableResourceJNDINames();
+
+	private final List<String> commitMarkableResourceJNDINames;
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
 }

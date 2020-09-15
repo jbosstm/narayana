@@ -885,7 +885,7 @@ public class PeriodicRecovery extends Thread
      */
     private void loadModules ()
     {
-        _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules());
+        _recoveryModules.addAll(recoveryPropertyManager.getRecoveryEnvironmentBean().reloadRecoveryModules());
     }
 
     /**

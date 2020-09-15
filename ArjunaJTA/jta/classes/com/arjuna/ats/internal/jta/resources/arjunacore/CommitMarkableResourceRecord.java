@@ -38,7 +38,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import org.jboss.tm.ConnectableResource;
@@ -109,23 +108,25 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	private String productName;
 	private String productVersion;
 	private boolean hasCompleted;
-	private static CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule;
-	private static final JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class);
-	private static final Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
-	private static final String defaultTableName = jtaEnvironmentBean
-			.getDefaultCommitMarkableTableName();
-	private boolean isPerformImmediateCleanupOfBranches = jtaEnvironmentBean
-			.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
+	private CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule;
+	private final Map<String, String> commitMarkableResourceTableNameMap;
+	private final String defaultTableName;
+	private boolean isPerformImmediateCleanupOfBranches;
 	private Connection preparedConnection;
-	private static final boolean isNotifyRecoveryModuleOfCompletedBranches = jtaEnvironmentBean
-			.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches();
-	private static final Map<String, Boolean> isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap = jtaEnvironmentBean
-			.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap();
+	private final boolean isNotifyRecoveryModuleOfCompletedBranches;
+	private final Map<String, Boolean> isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap;
 
-	static {
-		commitMarkableResourceRecoveryModule = null;
+	/**
+	 * For recovery
+	 */
+	public CommitMarkableResourceRecord() {
+		if (tsLogger.logger.isTraceEnabled()) {
+			tsLogger.logger.trace("CommitMarkableResourceRecord.CommitMarkableResourceRecord (), record id=" + order());
+		}
+
+		heuristic = TwoPhaseOutcome.FINISH_OK;
+		tableName = null;
+
 		RecoveryManager recMan = RecoveryManager.manager();
 		Vector recoveryModules = recMan.getModules();
 		if (recoveryModules != null) {
@@ -140,18 +141,17 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 				}
 			}
 		}
-	}
-
-	/**
-	 * For recovery
-	 */
-	public CommitMarkableResourceRecord() {
-		if (tsLogger.logger.isTraceEnabled()) {
-			tsLogger.logger.trace("CommitMarkableResourceRecord.CommitMarkableResourceRecord (), record id=" + order());
-		}
-
-		heuristic = TwoPhaseOutcome.FINISH_OK;
-		tableName = null;
+		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
+		this.commitMarkableResourceTableNameMap = jtaEnvironmentBean
+				.getCommitMarkableResourceTableNameMap();
+		this.defaultTableName = jtaEnvironmentBean
+				.getDefaultCommitMarkableTableName();
+		this.isPerformImmediateCleanupOfBranches = jtaEnvironmentBean
+				.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
+		this.isNotifyRecoveryModuleOfCompletedBranches = jtaEnvironmentBean
+				.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches();
+		this.isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap = jtaEnvironmentBean
+				.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap();
 	}
 
 	public CommitMarkableResourceRecord(TransactionImple tx,
@@ -159,6 +159,31 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			BasicAction basicAction) throws IllegalStateException,
 			RollbackException, SystemException {
 		super(new Uid(), null, ObjectType.ANDPERSISTENT);
+		RecoveryManager recMan = RecoveryManager.manager();
+		Vector recoveryModules = recMan.getModules();
+		if (recoveryModules != null) {
+			Enumeration modules = recoveryModules.elements();
+
+			while (modules.hasMoreElements()) {
+				RecoveryModule m = (RecoveryModule) modules.nextElement();
+
+				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
+					commitMarkableResourceRecoveryModule = (CommitMarkableResourceRecordRecoveryModule) m;
+					break;
+				}
+			}
+		}
+		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator.getDefaultInstance(JTAEnvironmentBean.class);
+		this.commitMarkableResourceTableNameMap = jtaEnvironmentBean
+				.getCommitMarkableResourceTableNameMap();
+		this.defaultTableName = jtaEnvironmentBean
+				.getDefaultCommitMarkableTableName();
+		this.isPerformImmediateCleanupOfBranches = jtaEnvironmentBean
+				.isPerformImmediateCleanupOfCommitMarkableResourceBranches();
+		this.isNotifyRecoveryModuleOfCompletedBranches = jtaEnvironmentBean
+				.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches();
+		this.isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap = jtaEnvironmentBean
+				.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap();
 
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger.trace("CommitMarkableResourceRecord.CommitMarkableResourceRecord ( " + tx + ", " + xaResource + ", " 

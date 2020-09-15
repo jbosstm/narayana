@@ -470,6 +470,19 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     }
 
     /**
+     * Reloads the RecoveryModule.
+     *
+     * This method will reload the RecoveryModules forcibly.
+     *
+     * @return the copy of list of RecoveryModule instances
+     */
+    public List<RecoveryModule> reloadRecoveryModules() {
+        List<RecoveryModule> instances = ClassloadingUtility.loadAndInstantiateClassesWithInit(RecoveryModule.class, recoveryModuleClassNames);
+        setRecoveryModules(instances);
+        return new ArrayList<>(instances);
+    }
+
+    /**
      * Sets the instances of RecoveryModule.
      * The provided list will be copied, not retained.
      *

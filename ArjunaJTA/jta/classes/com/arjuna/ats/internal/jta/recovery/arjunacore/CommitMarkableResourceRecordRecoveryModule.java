@@ -42,12 +42,10 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -106,23 +104,24 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	private TransactionStatusConnectionManager transactionStatusConnectionMgr;
 
-	private static JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class);
-	private Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
+	private final JTAEnvironmentBean jtaEnvironmentBean;
+	private final Map<String, String> commitMarkableResourceTableNameMap;
 	private Map<String, List<Xid>> completedBranches = new HashMap<String, List<Xid>>();
     private boolean inFirstPass;
-	private static String defaultTableName = jtaEnvironmentBean
-			.getDefaultCommitMarkableTableName();
+	private final String defaultTableName;
 
 	public CommitMarkableResourceRecordRecoveryModule() throws NamingException,
 			ObjectStoreException {
 		context = new InitialContext();
-		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
+		this.jtaEnvironmentBean = BeanPopulator
 				.getDefaultInstance(JTAEnvironmentBean.class);
 		jndiNamesToContact.addAll(jtaEnvironmentBean
 				.getCommitMarkableResourceJNDINames());
-		
+		this.commitMarkableResourceTableNameMap = jtaEnvironmentBean
+				.getCommitMarkableResourceTableNameMap();
+		this.defaultTableName = jtaEnvironmentBean
+				.getDefaultCommitMarkableTableName();
+
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger
 					.trace("CommitMarkableResourceRecordRecoveryModule::list to contact");
