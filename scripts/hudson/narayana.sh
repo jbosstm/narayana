@@ -233,7 +233,7 @@ function initGithubVariables
      if [ "$PULL_NUMBER" != "" ]
      then
          [ "x${PULL_DESCRIPTION}" = "x" ] &&\
-             PULL_DESCRIPTION=$(curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER)
+             PULL_DESCRIPTION=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER)
          [ "x${PULL_DESCRIPTION_BODY}" = "x" ] &&\
              PULL_DESCRIPTION_BODY=$(printf '%s' "$PULL_DESCRIPTION" | grep \"body\":)
      else
