@@ -39,6 +39,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.util.AnnotationLiteral;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,11 +102,11 @@ public class LRACDIExtension implements Extension {
      * @return Collected methods wrapped in {@link LRAParticipant} class or null if no non-JAX-RS methods have been found
      */
     private LRAParticipant getAsParticipant(ClassInfo classInfo) throws ClassNotFoundException {
-        if (!isLRAParticipant(classInfo)) {
+        Class<?> javaClass = getClass().getClassLoader().loadClass(classInfo.name().toString());
+
+        if (javaClass.isInterface() || Modifier.isAbstract(javaClass.getModifiers()) || !isLRAParticipant(classInfo)) {
             return null;
         }
-
-        Class<?> javaClass = getClass().getClassLoader().loadClass(classInfo.name().toString());
 
         LRAParticipant participant = new LRAParticipant(javaClass);
         return participant.hasNonJaxRsMethods() ? participant : null;
