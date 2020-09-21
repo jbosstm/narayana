@@ -22,6 +22,8 @@
 
 package io.narayana.lra.arquillian;
 
+import org.eclipse.microprofile.lra.tck.LRAClientOps;
+import org.eclipse.microprofile.lra.tck.participant.api.WrongHeaderException;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricService;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -32,6 +34,7 @@ public class Deployer {
         return ShrinkWrap.create(WebArchive.class, appName + ".war")
                 .addPackages(true,
                     LRAMetricService.class.getPackage(),
-                    org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage());
+                    org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage())
+                .addClasses(LRAClientOps.class, WrongHeaderException.class);
     }
 }
