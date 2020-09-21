@@ -104,7 +104,7 @@ public class NestedParticipantIT {
 
             nestedLRA = URI.create(response.readEntity(String.class));
             Assert.assertNotEquals(parentLRA, nestedLRA);
-            Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA));
+            Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
         } finally {
             if (response != null) {
                 response.close();
@@ -118,15 +118,15 @@ public class NestedParticipantIT {
         // https://issues.redhat.com/browse/JBTM-3330
         narayanaLRARecovery.waitForEndPhaseReplay(nestedLRA);
 
-        Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Completed, nestedLRA));
-        Assert.assertEquals(2, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA));
-        Assert.assertEquals(0, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA));
+        Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Completed, nestedLRA, NestedParticipant.class));
+        Assert.assertEquals(2, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
+        Assert.assertEquals(0, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA, NestedParticipant.class));
 
         narayanaLRAClient.closeLRA(parentLRA);
         narayanaLRARecovery.waitForEndPhaseReplay(nestedLRA);
 
         Assert.assertEquals("After LRA method for nested LRA enlist should have been called",
-            1, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA));
+            1, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA, NestedParticipant.class));
 
     }
 }

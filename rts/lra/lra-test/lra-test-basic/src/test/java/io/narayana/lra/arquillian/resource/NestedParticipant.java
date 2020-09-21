@@ -58,7 +58,7 @@ public class NestedParticipant {
     @Produces(MediaType.TEXT_PLAIN)
     public Response enlist(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
                            @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
-        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId, NestedParticipant.class);
         return Response.ok(lraId).build();
     }
 
@@ -68,8 +68,8 @@ public class NestedParticipant {
     @Produces(MediaType.TEXT_PLAIN)
     public Response complete(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
                              @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
-        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
-        lraMetricService.incrementMetric(LRAMetricType.Completed, lraId);
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId, NestedParticipant.class);
+        lraMetricService.incrementMetric(LRAMetricType.Completed, lraId, NestedParticipant.class);
         return Response.ok(ParticipantStatus.Completed).build();
     }
 
@@ -88,8 +88,8 @@ public class NestedParticipant {
     @Produces(MediaType.TEXT_PLAIN)
     public Response afterLRA(@HeaderParam(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER) URI endedLraId,
                              @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
-        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId);
-        lraMetricService.incrementMetric(LRAMetricType.AfterLRA, endedLraId);
+        lraMetricService.incrementMetric(LRAMetricType.Nested, parentId, NestedParticipant.class);
+        lraMetricService.incrementMetric(LRAMetricType.AfterLRA, endedLraId, NestedParticipant.class);
         return Response.ok(endedLraId).build();
     }
 }
