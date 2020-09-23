@@ -140,8 +140,16 @@
         <subsystem xmlns="urn:jboss:domain:bean-validation:1.0"/>
         <subsystem xmlns="urn:jboss:domain:datasources:4.0">
             <datasources>
-                <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true">
+                <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true" connectable="true">
                     <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+                    <driver>h2</driver>
+                    <security>
+                        <user-name>sa</user-name>
+                        <password>sa</password>
+                    </security>
+                </datasource>
+                <datasource jndi-name="java:jboss/datasources/ExampleDS2" pool-name="ExampleDS2" enabled="true" use-java-context="true" connectable="true">
+                    <connection-url>jdbc:h2:./cmr;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
                     <driver>h2</driver>
                     <security>
                         <user-name>sa</user-name>
@@ -382,6 +390,9 @@
             <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
             <commit-markable-resources>
                 <commit-markable-resource jndi-name="java:jboss/datasources/ExampleDS">
+                    <xid-location name="xids" batch-size="1" immediate-cleanup="false"/>
+                </commit-markable-resource>
+                <commit-markable-resource jndi-name="java:jboss/datasources/ExampleDS2">
                     <xid-location name="xids" batch-size="1" immediate-cleanup="false"/>
                 </commit-markable-resource>
             </commit-markable-resources>

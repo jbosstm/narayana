@@ -1182,7 +1182,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	/**
 	 * Alter the default batch size or set to -1 to disable batch deletion of
 	 * CommitMarkableResourceRecord from the database.
-	 * 
+	 *
 	 * @param batchSize
 	 *            -1 to prevent batching.
 	 */
@@ -1242,6 +1242,42 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 			boolean notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches) {
 		this.notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches = notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches;
 	}
+
+    /**
+     * Remove a resource from the list of Markable Resources
+     */
+    public void removeCommitMarkableResource(String jndiName) {
+        synchronized (this) {
+            commitMarkableResourceJNDINames.remove(jndiName);
+            commitMarkableResourceTableNameMap.remove(jndiName);
+            performImmediateCleanupOfCommitMarkableResourceBranchesMap.remove(jndiName);
+            commitMarkableResourceRecordDeleteBatchSizeMap.remove(jndiName);
+        }
+    }
+
+    /**
+     * Add a resource to the list of Markable Resources
+     */
+    public void addCommitMarkableResource(String jndiName, String tableName, boolean immediateCleanup, int batchSize) {
+        synchronized (this) {
+            commitMarkableResourceJNDINames.add(jndiName);
+            commitMarkableResourceTableNameMap.put(jndiName, tableName);
+            performImmediateCleanupOfCommitMarkableResourceBranchesMap.put(jndiName, immediateCleanup);
+            commitMarkableResourceRecordDeleteBatchSizeMap.put(jndiName, batchSize);
+
+            // use the standard setter for notifyCommitMarkableResourceRecoveryModuleOfCompleteBranches,
+            // commitMarkableResourceRecordDeleteBatchSize and commitMarkableResourceTableName
+        }
+    }
+
+    public CmrJndiConfig getCmrJndiConfig() {
+        synchronized (this) {
+            return new CmrJndiConfig(commitMarkableResourceJNDINames,
+                    commitMarkableResourceTableNameMap,
+                    performImmediateCleanupOfCommitMarkableResourceBranchesMap,
+                    commitMarkableResourceRecordDeleteBatchSizeMap);
+        }
+    }
 
     /**
      * <p>

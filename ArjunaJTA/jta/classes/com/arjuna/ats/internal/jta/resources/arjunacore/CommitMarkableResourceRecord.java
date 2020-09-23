@@ -41,6 +41,7 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
+import com.arjuna.ats.jta.common.CmrJndiConfig;
 import org.jboss.tm.ConnectableResource;
 import org.jboss.tm.XAResourceWrapper;
 
@@ -112,8 +113,6 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	private static CommitMarkableResourceRecordRecoveryModule commitMarkableResourceRecoveryModule;
 	private static final JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
 			.getDefaultInstance(JTAEnvironmentBean.class);
-	private static final Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
 	private static final String defaultTableName = jtaEnvironmentBean
 			.getDefaultCommitMarkableTableName();
 	private boolean isPerformImmediateCleanupOfBranches = jtaEnvironmentBean
@@ -121,8 +120,6 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 	private Connection preparedConnection;
 	private static final boolean isNotifyRecoveryModuleOfCompletedBranches = jtaEnvironmentBean
 			.isNotifyCommitMarkableResourceRecoveryModuleOfCompleteBranches();
-	private static final Map<String, Boolean> isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap = jtaEnvironmentBean
-			.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap();
 
 	static {
 		commitMarkableResourceRecoveryModule = null;
@@ -174,7 +171,9 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 		this.basicAction = basicAction;
 		heuristic = TwoPhaseOutcome.FINISH_OK;
 
-		String tableName = commitMarkableResourceTableNameMap
+		CmrJndiConfig cmrConfig = jtaEnvironmentBean.getCmrJndiConfig();
+		String tableName = cmrConfig
+				.getCommitMarkableResourceTableNameMap()
 				.get(commitMarkableJndiName);
 		if (tableName != null) {
 			this.tableName = tableName;
@@ -182,7 +181,8 @@ public class CommitMarkableResourceRecord extends AbstractRecord {
 			this.tableName = defaultTableName;
 		}
 
-		Boolean boolean1 = isPerformImmediateCleanupOfCommitMarkableResourceBranchesMap
+		Boolean boolean1 = cmrConfig
+				.getPerformImmediateCleanupOfCommitMarkableResourceBranchesMap()
 				.get(commitMarkableJndiName);
 		if (boolean1 != null) {
 			isPerformImmediateCleanupOfBranches = boolean1;

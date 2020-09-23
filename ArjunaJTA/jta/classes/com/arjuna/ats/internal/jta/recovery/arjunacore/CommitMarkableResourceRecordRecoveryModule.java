@@ -42,12 +42,10 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreIterator;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -56,6 +54,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.common.CmrJndiConfig;
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -82,8 +81,6 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	private InitialContext context;
 
-	private List<String> jndiNamesToContact = new ArrayList<String>();
-
 	private Map<Xid, String> committedXidsToJndiNames = new HashMap<Xid, String>();
 
 	private List<String> queriedResourceManagers = new ArrayList<String>();
@@ -108,8 +105,6 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 
 	private static JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
 			.getDefaultInstance(JTAEnvironmentBean.class);
-	private Map<String, String> commitMarkableResourceTableNameMap = jtaEnvironmentBean
-			.getCommitMarkableResourceTableNameMap();
 	private Map<String, List<Xid>> completedBranches = new HashMap<String, List<Xid>>();
     private boolean inFirstPass;
 	private static String defaultTableName = jtaEnvironmentBean
@@ -118,15 +113,11 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	public CommitMarkableResourceRecordRecoveryModule() throws NamingException,
 			ObjectStoreException {
 		context = new InitialContext();
-		JTAEnvironmentBean jtaEnvironmentBean = BeanPopulator
-				.getDefaultInstance(JTAEnvironmentBean.class);
-		jndiNamesToContact.addAll(jtaEnvironmentBean
-				.getCommitMarkableResourceJNDINames());
 		
 		if (tsLogger.logger.isTraceEnabled()) {
 			tsLogger.logger
 					.trace("CommitMarkableResourceRecordRecoveryModule::list to contact");
-			for (String jndiName : jndiNamesToContact) {
+			for (String jndiName : jtaEnvironmentBean.getCommitMarkableResourceJNDINames()) {
 				tsLogger.logger
 						.trace("CommitMarkableResourceRecordRecoveryModule::in list: "
 								+ jndiName);
@@ -213,7 +204,8 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 		// CommitMarkableResourceRecord to find out what transactions have
 		// committed
 		try {
-			Iterator<String> iterator = jndiNamesToContact.iterator();
+			CmrJndiConfig cmrJndiConfig = jtaEnvironmentBean.getCmrJndiConfig();
+			Iterator<String> iterator = cmrJndiConfig.getCommitMarkableResourceJNDINames().iterator();
 			while (iterator.hasNext()) {
 				String jndiName = iterator.next();
 				try {
@@ -228,7 +220,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 						Statement createStatement = connection
 								.createStatement();
 						try {
-							String tableName = commitMarkableResourceTableNameMap
+							String tableName = cmrJndiConfig.getCommitMarkableResourceTableNameMap()
 									.get(jndiName);
 							if (tableName == null) {
 								tableName = defaultTableName;
@@ -609,11 +601,11 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 	}
 
 	private void delete(String jndiName, List<Xid> completedXids) {
+		CmrJndiConfig cmrJndiConfig = jtaEnvironmentBean.getCmrJndiConfig();
 		int batchSize = jtaEnvironmentBean
 				.getCommitMarkableResourceRecordDeleteBatchSize();
-		Integer integer = jtaEnvironmentBean
-				.getCommitMarkableResourceRecordDeleteBatchSizeMap().get(
-						jndiName);
+		Integer integer = cmrJndiConfig.getCommitMarkableResourceRecordDeleteBatchSizeMap().get(jndiName);
+
 		if (integer != null) {
 			batchSize = integer;
 		}
@@ -636,7 +628,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 						connection = dataSource.getConnection();
 						connection.setAutoCommit(false);
 
-						String tableName = commitMarkableResourceTableNameMap
+						String tableName = cmrJndiConfig.getCommitMarkableResourceTableNameMap()
 								.get(jndiName);
 						if (tableName == null) {
 							tableName = defaultTableName;

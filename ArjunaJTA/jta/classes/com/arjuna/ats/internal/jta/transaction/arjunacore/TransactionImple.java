@@ -793,7 +793,11 @@ public class TransactionImple implements javax.transaction.Transaction,
         {
             if (xaRes instanceof ConnectableResource) {
             	String jndiName = ((XAResourceWrapper)xaRes).getJndiName();
-            	if (commitMarkableResourceJNDINames.contains(jndiName)) {
+
+            	// NB the CMR JNDI names can change so re-read them from the config
+            	if (BeanPopulator
+						.getDefaultInstance(JTAEnvironmentBean.class)
+						.getCommitMarkableResourceJNDINames().contains(jndiName)) {
             		try {
 						return new CommitMarkableResourceRecord(this, ((ConnectableResource)xaRes), xid, _theTransaction);
 					} catch (IllegalStateException | RollbackException
@@ -1744,10 +1748,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	private static final ConcurrentHashMap _transactions = new ConcurrentHashMap();
-	
-	private static final List<String> commitMarkableResourceJNDINames = BeanPopulator
-			.getDefaultInstance(JTAEnvironmentBean.class)
-			.getCommitMarkableResourceJNDINames();
 
 	private static final boolean STRICTJTA12DUPLICATEXAENDPROTOERR = jtaPropertyManager.getJTAEnvironmentBean().isStrictJTA12DuplicateXAENDPROTOErr();
 }

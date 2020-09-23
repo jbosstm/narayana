@@ -17,6 +17,7 @@
 package com.hp.mwtests.ts.jta.commitmarkable.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
@@ -40,14 +41,14 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,10 +66,22 @@ public class CMRIntegrationTest {
 
 	private static final String DEPENDENCIES = "Dependencies: com.h2database.h2, org.jboss.jts, org.jboss.jboss-transaction-spi\n";
 
-	@Deployment
-	public static JavaArchive createTestArchive() {
+	@Deployment(name = "archive1", order = 1)
+	public static WebArchive createTestArchive1() {
 		return ShrinkWrap
-				.create(JavaArchive.class, "test.jar")
+				.create(WebArchive.class, "testArchive1.war")
+				.addClasses(DummyXAResource.class, Utils.class)
+				.addPackage("io.narayana.connectableresource")
+				.addAsManifestResource(new StringAsset(DEPENDENCIES),
+						"MANIFEST.MF")
+				.addAsManifestResource(EmptyAsset.INSTANCE,
+						ArchivePaths.create("beans.xml"));
+	}
+
+	@Deployment(name = "archive2", order = 2)
+	public static WebArchive createTestArchive2() {
+		return ShrinkWrap
+				.create(WebArchive.class, "testArchive2.war")
 				.addClasses(DummyXAResource.class, Utils.class)
 				.addPackage("io.narayana.connectableresource")
 				.addAsManifestResource(new StringAsset(DEPENDENCIES),
@@ -80,17 +93,27 @@ public class CMRIntegrationTest {
 	@Resource(mappedName = "java:jboss/datasources/ExampleDS")
 	private javax.sql.DataSource ds;
 
+	@Resource(mappedName = "java:jboss/datasources/ExampleDS2")
+	private javax.sql.DataSource ds2;
+
 	@Inject
 	private UserTransaction userTransaction;
 
 	@Resource(mappedName = "java:jboss/TransactionManager")
 	private TransactionManager tm;
 
-	@Test
-	public void testCMR() throws Exception {
+	@Test @OperateOnDeployment("archive1")
+	public void testCMRDeployment1() throws Exception {
 		Utils.createTables(ds.getConnection());
 
 		doTest(ds);
+	}
+
+	@Test @OperateOnDeployment("archive2")
+	public void testCMRDeploment2() throws Exception {
+		Utils.createTables(ds2.getConnection());
+
+		doTest(ds2);
 	}
 
 	// @Test
@@ -159,7 +182,7 @@ public class CMRIntegrationTest {
 
 					for (int i = 0; i < iterationCount; i++) {
 						try {
-							userTransaction.begin();
+							tm.begin();
 							tm.getTransaction().enlistResource(
 									new DummyXAResource());
 
@@ -174,7 +197,7 @@ public class CMRIntegrationTest {
 							if (faultType == 1)
 								Runtime.getRuntime().halt(0);
 
-                            userTransaction.commit();
+                            tm.commit();
 							connection.close(); // This wouldn't work for a
 												// none-JCA code as commit has
 												// closed the connection - it
@@ -201,7 +224,7 @@ public class CMRIntegrationTest {
 								suppressed[j].printStackTrace();
 							}
 							try {
-								userTransaction.rollback();
+								tm.rollback();
 							} catch (IllegalStateException | SecurityException
 									| SystemException e1) {
 								e1.printStackTrace();
@@ -259,6 +282,7 @@ public class CMRIntegrationTest {
 
 		long timeInMillis = (endTime - startTime) + additionalCleanuptime;
 		System.out.printf("  Total time millis: %d%n", timeInMillis);
+		assertNotEquals(totalExecuted.intValue(), 0);
 		System.out.printf("  Average transaction time: %d%n", timeInMillis
 				/ totalExecuted.intValue());
 		System.out
@@ -281,13 +305,13 @@ public class CMRIntegrationTest {
 	public void checkFooSize(DataSource dataSource) throws SQLException,
 			HeuristicRollbackException, RollbackException,
 			HeuristicMixedException, SystemException, NotSupportedException {
-		userTransaction.begin();
+		tm.begin();
 		Connection connection = dataSource.getConnection();
 		String tableToCheck = "foo";
 		Statement statement = connection.createStatement();
 		checkSize(tableToCheck, statement, threadCount * iterationCount);
 		statement.close();
-		userTransaction.commit();
+		tm.commit();
 		connection.close();
 	}
 
