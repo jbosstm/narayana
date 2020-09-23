@@ -48,7 +48,7 @@ import com.arjuna.ats.jta.xa.XidImple;
 public class RecoveryXids
 {
 
-    public RecoveryXids (XAResource xares)
+    public RecoveryXids (NameScopedXAResource xares)
     {
     	_xares = xares;
         _lastValidated = System.currentTimeMillis();
@@ -62,7 +62,7 @@ public class RecoveryXids
 	{
 	    try
 	    {
-		return ((RecoveryXids) obj)._xares.isSameRM(_xares);
+		return ((RecoveryXids) obj).isSameRM(_xares);
 	    }
 	    catch (Exception ex)
 	    {
@@ -133,14 +133,14 @@ public class RecoveryXids
         return oldEnoughXids.toArray(new Xid[oldEnoughXids.size()]);
     }
 
-    public final boolean isSameRM (XAResource xares)
+    public final boolean isSameRM (NameScopedXAResource xares)
     {
 	try
 	{
 	    if (xares == null)
 		return false;
 	    else
-		return xares.isSameRM(_xares);
+		return xares.getXaResource().isSameRM(_xares.getXaResource());
 	}
 	catch (Exception ex)
 	{
@@ -189,35 +189,47 @@ public class RecoveryXids
 	}
 
     /**
-     * If supplied xids contains any values seen on prev scans, replace the existing
-     * XAResource with the supplied one and return true. Otherwise, return false.
+     * Heuristically determine is the supplied xaResource is from the same origin as ours and if so,
+     * replace the existing resource with the supplied one. This deals with cases where a recovery
+     * plugin supplies a new resource on each call.
      *
-     * @param xaResource
-     * @param xids
-     * @return true if equivalent
+     * @param xaResource an xaResource which may or may not be from the same orgin as ours.
+     * @param xids The list of xids returned by a recovery scan of the supplied resource.
+     * @return true if the supplied xaResource is from the same origin as the one we previously held.
      */
-    public boolean updateIfEquivalentRM(XAResource xaResource, Xid[] xids)
+    public boolean updateIfEquivalentRM(NameScopedXAResource xaResource, Xid[] xids)
     {
-        if(xids != null && xids.length > 0) {
-            for(int i = 0; i < xids.length; i++) {
-                if(contains(xids[i])) {
-                    _xares = xaResource;
-                    _lastValidated = System.currentTimeMillis();
-                    if (tsLogger.logger.isTraceEnabled())
-                        tsLogger.logger.trace("RecoveryXids updateIfEquivalentRM1 " + _xares + " " + _lastValidated);
-                    return true;
-                }
-            }
-        }
+        // Equivalence is hard! get it wrong and XARecoveryModule._xidScans can leak memory...
 
-        // either (or both) passes have an empty Xid set,
-        // so fallback to isSameRM as we can't use Xid matching
-        if(isSameRM(xaResource)) {
+        // If the resources have the same (non-null) jndiName, then they are equivalent
+        //   (unless someone messed up and renamed a datasource between recovery passes...)
+        // If the resource's own implementation (i.e. vendor driver) says they are equivalent, then they are
+        //  (if the vendor got it right, which is not as likely as you'd hope).
+        if(xaResource.isSameName(_xares) || isSameRM(xaResource)) {
+            if (tsLogger.logger.isTraceEnabled()) {
+                tsLogger.logger.trace("RecoveryXids updateIfEquivalent updated with strong match. prev="+_xares+", replacement="+xaResource+", _lastValidated="+_lastValidated);
+            }
             _xares = xaResource;
             _lastValidated = System.currentTimeMillis();
-            if (tsLogger.logger.isTraceEnabled())
-                tsLogger.logger.trace("RecoveryXids updateIfEquivalentRM2 " + _xares + " " + _lastValidated);
             return true;
+        }
+
+        // For cases where we have nothing else to rely on, we fall back to determining equivalence based
+        // on if the resources know about the same xids.
+        // Which is fine until non-uniq xids values from inflowed transactions appear in more than one RM...
+        if(_xares.isAnonymous() && xaResource.isAnonymous()) {
+            if(xids != null && xids.length > 0) {
+                for(int i = 0; i < xids.length; i++) {
+                    if(contains(xids[i])) {
+                        if (tsLogger.logger.isTraceEnabled()) {
+                            tsLogger.logger.trace("RecoveryXids updateIfEquivalent updated with weak match. prev="+_xares+", replacement="+xaResource+", _lastValidated="+_lastValidated);
+                        }
+                        _xares = xaResource;
+                        _lastValidated = System.currentTimeMillis();
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
@@ -232,7 +244,7 @@ public class RecoveryXids
     private final Map<XidImple,Long> _whenFirstSeen = new HashMap<XidImple, Long>();
     private final Map<XidImple,Long> _whenLastSeen = new HashMap<XidImple, Long>();
 
-    private XAResource _xares;
+    private NameScopedXAResource _xares;
     private long _lastValidated;
 
     /**

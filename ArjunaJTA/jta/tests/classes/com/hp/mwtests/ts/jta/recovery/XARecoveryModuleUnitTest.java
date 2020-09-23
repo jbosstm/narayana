@@ -55,7 +55,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.internal.jta.recovery.arjunacore.JTANodeNameXAResourceOrphanFilter;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.*;
 import org.jboss.tm.XAResourceWrapper;
 import org.junit.Test;
 
@@ -69,9 +69,6 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
@@ -342,14 +339,14 @@ public class XARecoveryModuleUnitTest
         
         Class<?>[] parameterTypes = new Class[2];
         
-        parameterTypes[0] = XAResource.class;
+        parameterTypes[0] = NameScopedXAResource.class;
         parameterTypes[1] = Xid.class;
         
         Method m = xarm.getClass().getDeclaredMethod("handleOrphan", parameterTypes);
         m.setAccessible(true);
         
         Object[] parameters = new Object[2];
-        parameters[0] = new RecoveryXAResource();
+        parameters[0] = new NameScopedXAResource(new RecoveryXAResource(), null);
         parameters[1] = new XidImple();
         
         m.invoke(xarm, parameters);
