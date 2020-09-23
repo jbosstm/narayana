@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package io.narayana.lra.client.internal.proxy.nonjaxrs;
+package io.narayana.lra;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
