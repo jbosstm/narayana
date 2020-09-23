@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.recovery.arjunacore.NameScopedXAResource;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -51,23 +52,23 @@ public class RecoveryXidsUnitTest
     public void test()
     {
         TestResource tr = new TestResource();
-        RecoveryXids rxids = new RecoveryXids(tr);
+        RecoveryXids rxids = new RecoveryXids(new NameScopedXAResource(tr, null));
         Xid[] xids = new XidImple[2];
-        
+
         xids[0] = new XidImple(new Uid());
         xids[1] = new XidImple(new Uid());
-        
-        RecoveryXids dup1 = new RecoveryXids(new DummyXA(false));
-        RecoveryXids dup2 = new RecoveryXids(tr);
-        
+
+        RecoveryXids dup1 = new RecoveryXids(new NameScopedXAResource(new DummyXA(false), null));
+        RecoveryXids dup2 = new RecoveryXids(new NameScopedXAResource(tr, null));
+
         assertFalse(rxids.equals(dup1));
         assertTrue(rxids.equals(dup2));
-        
+
         rxids.nextScan(xids);
         rxids.nextScan(xids);
-        
+
         xids[1] = new XidImple(new Uid());
-        
+
         rxids.nextScan(xids);
 
         Object[] trans = rxids.toRecover();
@@ -80,17 +81,17 @@ public class RecoveryXidsUnitTest
 
         rxids.nextScan(xids); // force cleanup.
         trans = rxids.toRecover();
-        
+
         assertEquals(2, trans.length);
 
         assertTrue( trans[0].equals(xids[0]) || trans[1].equals(xids[0]));
         assertTrue( trans[0].equals(xids[1]) || trans[1].equals(xids[1]));
 
         assertTrue(rxids.contains(xids[0]));
-        
-        assertFalse(rxids.updateIfEquivalentRM(new TestResource(), null));
-        assertTrue(rxids.updateIfEquivalentRM(new TestResource(), xids));
-        
-        assertFalse(rxids.isSameRM(new TestResource()));
+
+        assertFalse(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), null));
+        assertTrue(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), xids));
+
+        assertFalse(rxids.isSameRM(new NameScopedXAResource(new TestResource(), null)));
     }
 }
