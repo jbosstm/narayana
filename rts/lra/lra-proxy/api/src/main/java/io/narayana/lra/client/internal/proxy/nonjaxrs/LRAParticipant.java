@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.client.internal.proxy.nonjaxrs;
 
+import io.narayana.lra.AnnotationResolver;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
