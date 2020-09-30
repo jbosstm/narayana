@@ -57,6 +57,8 @@ import static java.util.stream.Collectors.toList;
 
 @ApplicationScoped
 public class LRAService {
+    private static final Pattern LINK_REL_PATTERN = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
+
     private Map<URI, Transaction> lras = new ConcurrentHashMap<>();
     private Map<URI, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
     private Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
@@ -330,8 +332,7 @@ public class LRAService {
         if (transaction.getLRAStatus() != LRAStatus.Active && !transaction.isRecovering()) {
             // validate that the party wanting to join with this LRA is a listener only:
             if (linkHeader != null) {
-                Pattern linkRelPattern = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
-                Matcher relMatcher = linkRelPattern.matcher(linkHeader);
+                Matcher relMatcher = LINK_REL_PATTERN.matcher(linkHeader);
 
                 while (relMatcher.find()) {
                     String key = relMatcher.group(1);
