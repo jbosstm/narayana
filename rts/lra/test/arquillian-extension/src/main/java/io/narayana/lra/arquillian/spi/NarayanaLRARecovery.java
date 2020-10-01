@@ -81,7 +81,7 @@ public class NarayanaLRARecovery implements LRARecoveryService {
         Client recoveryCoordinatorClient = ClientBuilder.newClient();
 
         try {
-            URI lraCoordinatorUri = LRAConstants.getLRACoordinatorUri(lraId);
+            URI lraCoordinatorUri = LRAConstants.getLRACoordinatorUrl(lraId);
             URI recoveryCoordinatorUri = UriBuilder.fromUri(lraCoordinatorUri)
                     .path(RECOVERY_COORDINATOR_PATH_NAME).build();
             WebTarget recoveryTarget = recoveryCoordinatorClient.target(recoveryCoordinatorUri);

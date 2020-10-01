@@ -17,8 +17,6 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URL;
 
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY;
-import static io.narayana.lra.client.NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.GET_ACTIVITY_PATH;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_PATH;
 import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_WORK;
@@ -26,9 +24,8 @@ import static io.narayana.lra.proxy.test.api.LRAMgmtEgController.LRAM_WORK;
 import static org.junit.Assert.assertTrue;
 
 public class SpecTest {
-    private static URL MICRSERVICE_BASE_URL;
+    private static URL MICROSERVICE_BASE_URL;
 
-    private static final int COORDINATOR_THORNTAIL_PORT = 8080;
     private static final int TEST_THORNTAIL_PORT = 8081;
 
     private static NarayanaLRAClient lraClient;
@@ -40,20 +37,18 @@ public class SpecTest {
     public static void setupClass() throws Exception {
         System.out.println("Getting ready to connect - waiting for coordinator to startup...");
         int servicePort = Integer.getInteger("service.http.port", TEST_THORNTAIL_PORT);
-        int rcPort = Integer.getInteger(LRA_COORDINATOR_PORT_KEY, COORDINATOR_THORNTAIL_PORT);
-        String rcHost = System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost");
 
-        MICRSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
+        MICROSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 
         // setting up the client
-        lraClient = new NarayanaLRAClient(rcHost, rcPort);
+        lraClient = new NarayanaLRAClient();
         msClient = ClientBuilder.newClient();
     }
 
     @Before
     public void setupTest() throws Exception {
         setupClass();
-        msTarget = msClient.target(URI.create(new URL(MICRSERVICE_BASE_URL, "/").toExternalForm()));
+        msTarget = msClient.target(URI.create(new URL(MICROSERVICE_BASE_URL, "/").toExternalForm()));
     }
 
     @After

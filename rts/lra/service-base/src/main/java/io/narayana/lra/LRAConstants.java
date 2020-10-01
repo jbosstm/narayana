@@ -81,17 +81,17 @@ public final class LRAConstants {
     }
 
     /*
-     * Extract the coordinator URI from the provided LRA id.
+     * Extract the coordinator URL from the provided LRA id.
      *
      * @implNote Narayana LRA id is defined as an URL, e.g. {@code http://localhost:8080/deployment/lra-coordinator/0_ffff0a28054b_9133_5f855916_a7}.
      *           The LRA coordinator is available at {@code http://localhost:8080/deployment/lra-coordinator}
      *           and the {@code 0_ffff0a28054b_9133_5f855916_a7} is the LRA uid.
      *
      * @param lraId  LRA id to extract the LRA coordinator URI from
-     * @return LRA Coordinator URI
+     * @return LRA Coordinator URL
      * @throws IllegalStateException if the LRA coordinator URL, extracted from the LRA id, is not assignable to URI
      */
-    public static URI getLRACoordinatorUri(URI lraId) {
+    public static URI getLRACoordinatorUrl(URI lraId) {
         if (lraId == null) return null;
         String lraIdPath = lraId.getPath();
         String lraCoordinatorPath = lraIdPath.substring(0, lraIdPath.lastIndexOf(COORDINATOR_PATH_NAME)) + COORDINATOR_PATH_NAME;

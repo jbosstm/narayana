@@ -341,7 +341,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
                 accepted = httpStatus == Response.Status.ACCEPTED.getStatusCode();
 
-                if (accepted && statusURI == null) {
+                if (accepted && statusURI == null && response.getHeaderString(HttpHeaders.LOCATION) != null) {
                     // the participant could not finish immediately and we have no status URI so one should be
                     // present in the Location header
                     statusURI = URI.create(response.getHeaderString(HttpHeaders.LOCATION));
@@ -356,8 +356,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     responseData = response.readEntity(String.class);
                 }
             } catch (Exception e) {
-                 LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
-                            endPath, e.getMessage());
+                 LRALogger.logger.warnf(e, "LRARecord.doEnd put %s failed", endPath);
             } finally {
                 if (client != null) {
                     client.close();

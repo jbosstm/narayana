@@ -32,7 +32,7 @@ public class LRAConstantsTest {
     @Test
     public void getCoordinatorFromUsualLRAId() {
         URI lraId = URI.create("http://localhost:8080/lra-coordinator/0_ffff0a28054b_9133_5f855916_a7?query=1#fragment");
-        URI coordinatorUri = LRAConstants.getLRACoordinatorUri(lraId);
+        URI coordinatorUri = LRAConstants.getLRACoordinatorUrl(lraId);
         System.out.println(">>>> " + coordinatorUri);
         Assert.assertEquals("http", coordinatorUri.getScheme());
         Assert.assertEquals("localhost", coordinatorUri.getHost());
@@ -46,7 +46,7 @@ public class LRAConstantsTest {
     @Test
     public void getCoordinatorWithMultipleCoordinatorPaths() {
         URI lraId = URI.create("http://198.10.0.10:8999/lra-coordinator/lra-coordinator");
-        URI coordinatorUri = LRAConstants.getLRACoordinatorUri(lraId);
+        URI coordinatorUri = LRAConstants.getLRACoordinatorUrl(lraId);
         Assert.assertEquals("http://198.10.0.10:8999/lra-coordinator/lra-coordinator", coordinatorUri.toASCIIString());
     }
 }
