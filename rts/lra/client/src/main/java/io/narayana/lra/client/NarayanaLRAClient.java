@@ -51,6 +51,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.UriBuilder;
 import java.io.Closeable;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -62,6 +63,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -73,7 +75,6 @@ import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.CLIENT_ID_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
 import static io.narayana.lra.LRAConstants.COMPLETE;
-import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.FORGET;
 import static io.narayana.lra.LRAConstants.LEAVE;
 import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
@@ -89,32 +90,20 @@ import static javax.ws.rs.core.Response.Status.GONE;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 
 /**
- * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the prefered mechanism is to use
+ * A utility class for controlling the lifecycle of Long Running Actions (LRAs) but the preferred mechanism is to use
  * the annotation in the {@link org.eclipse.microprofile.lra.annotation} package
  */
 @RequestScoped
 public class NarayanaLRAClient implements Closeable {
     /**
-     * Key for looking up the config property that specifies which host a
-     * coordinator is running on
+     * Key for looking up the config property that specifies which is the URL
+     * to connect to the Narayana LRA coordinator
      */
-    public static final String LRA_COORDINATOR_HOST_KEY = "lra.http.host";
-
-    /**
-     * Key for looking up the config property that specifies which port a
-     * coordinator is running on
-     */
-    public static final String LRA_COORDINATOR_PORT_KEY = "lra.http.port";
-
-    /**
-     * Key for looking up the config property that specifies which JAX-RS path a
-     * coordinator is running on
-     */
-    public static final String LRA_COORDINATOR_PATH_KEY = "lra.coordinator.path";
-
-    public static final long DEFAULT_TIMEOUT_MILLIS = 0L;
+    public static final String LRA_COORDINATOR_URL_KEY = "lra.coordinator.url";
 
     // LRA Coordinator API
     private static final String START_PATH = "/start";
@@ -125,82 +114,75 @@ public class NarayanaLRAClient implements Closeable {
 
     private static final String LINK_TEXT = "Link";
 
-    private static URI defaultCoordinatorURI;
-    private URI base;
-
-    public static void setDefaultCoordinatorEndpoint(URI lraCoordinatorEndpoint) {
-        defaultCoordinatorURI = lraCoordinatorEndpoint;
-    }
-
-    public static boolean isInitialised() {
-        return defaultCoordinatorURI != null;
-    }
+    private URI coordinatorUrl;
 
     /**
-     * Creating LRA client where expecting LRA coordinator being at
-     * <code>http://localhost:8080</code>
-     */
-    public NarayanaLRAClient() throws URISyntaxException {
-        if (defaultCoordinatorURI != null) {
-                init(defaultCoordinatorURI);
-        } else {
-            init("http",
-                    System.getProperty(LRA_COORDINATOR_HOST_KEY, "localhost"),
-                    Integer.getInteger(LRA_COORDINATOR_PORT_KEY, 8080));
-        }
-    }
-
-    /**
-     * Creating LRA client where expecting LRA coordinator being available through <code>http</code>
-     * protocol at <i>host</i>:<i>port</i>.
+     * Creating LRA client. The URL of the LRA coordinator will be taken
+     * from system property {@link NarayanaLRAClient#LRA_COORDINATOR_URL_KEY}.
+     * If not defined as default value is taken {@code http://localhost:8080/lra-coordinator}.
+     * The LRA recovery coordinator will be searched at the sub-path {@value LRAConstants#RECOVERY_COORDINATOR_PATH_NAME}.
      *
-     * @param host  hostname where the LRA coordinator will be contacted
-     * @param port  port where the LRA coordinator will be contacted
+     * @throws IllegalStateException  thrown when the URL taken from the system property value is not an URI format
      */
-    public NarayanaLRAClient(String host, int port) throws URISyntaxException {
-        this("http", host, port);
+    public NarayanaLRAClient() {
+        this(System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_URL_KEY,
+                "http://localhost:8080/" + COORDINATOR_PATH_NAME));
     }
 
     /**
      * Creating LRA client where expecting LRA coordinator being available through
-     * protocol <i>scheme</i> at <i>host</i>:<i>port</i>.
+     * protocol <i>protocol</i> at <i>host</i>:<i>port</i>/<i>coordinatorPath</i>.
      *
-     * @param scheme  protocol used to contact the LRA coordinator
+     * @param protocol  protocol used to contact the LRA coordinator
      * @param host  hostname where the LRA coordinator will be contacted
      * @param port  port where the LRA coordinator will be contacted
+     * @param coordinatorPath path where the LRA coordinator will be contacted
      */
-    public NarayanaLRAClient(String scheme, String host, int port) throws URISyntaxException {
-        init(scheme, host, port);
+    public NarayanaLRAClient(String protocol, String host, int port, String coordinatorPath) {
+        coordinatorUrl = UriBuilder.fromPath(coordinatorPath).scheme(protocol).host(host).port(port).build();
     }
 
     /**
      * Creating LRA client where expecting LRA coordinator being available
      * at the provided uri.
+     * The LRA recovery coordinator will be searched at the sub-path {@value LRAConstants#RECOVERY_COORDINATOR_PATH_NAME}.
      *
-     * @param coordinatorUri  uri of the lra coordinator
+     * @param coordinatorUrl  uri of the LRA coordinator
      */
-    public NarayanaLRAClient(URI coordinatorUri) {
-        init(coordinatorUri);
+    public NarayanaLRAClient(URI coordinatorUrl) {
+        this.coordinatorUrl = coordinatorUrl;
     }
 
-    private void init(URI coordinatorUri) {
-        setCoordinatorURI(coordinatorUri);
-    }
-
-    private void setCoordinatorURI(URI uri) {
-        base = uri;
-    }
-
-    private void init(String scheme, String host, int port) throws URISyntaxException {
-        setCoordinatorURI(new URI(scheme, null, host, port, "/" + COORDINATOR_PATH_NAME, null, null));
-    }
-
-    public void setCurrentLRA(URI coordinatorUri) {
+    /**
+     * Creating LRA client where expecting LRA coordinator being available
+     * at the provided URL defined by String.
+     * The LRA recovery coordinator will be searched at the sub-path {@value LRAConstants#RECOVERY_COORDINATOR_PATH_NAME}.
+     *
+     * @param coordinatorUrl  url of the LRA coordinator
+     * @throws IllegalStateException  thrown when the provided URL String is not an URI format
+     */
+    public NarayanaLRAClient(String coordinatorUrl) {
         try {
-            init(LRAConstants.getLRACoordinatorUri(coordinatorUri));
+            this.coordinatorUrl = new URI(coordinatorUrl);
+        } catch (URISyntaxException use) {
+            throw new IllegalStateException("Cannot convert the provided coordinator url String "
+                    + coordinatorUrl + " to URI format", use);
+        }
+    }
+
+    /**
+     * Method changes the client's notion about the place where the LRA coordinator can be contacted.
+     * It takes the provided URI and tries to derive the URL path of the coordinator responsible
+     * for the LRA id. The URL is then used as endpoint for later use of this LRA Narayana client instance.
+     *
+     * @param lraId  LRA id consisting of the coordinator URL and the LRA uid
+     */
+    public void setCurrentLRA(URI lraId) {
+        try {
+            this.coordinatorUrl = LRAConstants.getLRACoordinatorUrl(lraId);
         } catch (IllegalStateException e) {
-            LRALogger.i18NLogger.error_invalidCoordinatorId(coordinatorUri.toASCIIString(), e);
-            throwGenericLRAException(coordinatorUri, BAD_REQUEST.getStatusCode(), e.getMessage());
+            LRALogger.i18NLogger.error_invalidLraIdFormatToConvertToCoordinatorUrl(lraId.toASCIIString(), e);
+            throwGenericLRAException(lraId, BAD_REQUEST.getStatusCode(), e.getMessage());
         }
     }
 
@@ -208,7 +190,7 @@ public class NarayanaLRAClient implements Closeable {
         Client client = null;
         try {
             client = getClient();
-            Response response = client.target(base)
+            Response response = client.target(coordinatorUrl)
                 .request()
                 .get();
 
@@ -241,7 +223,7 @@ public class NarayanaLRAClient implements Closeable {
      * and is passed when working with the LRA.
      *
      * @param clientID  client id determining the LRA
-     * @param timeout  timeout value in seconds, when timeouted the LRA will be compensated
+     * @param timeout  timeout value in seconds, when timeout-ed the LRA will be compensated
      * @return  LRA id as URL
      * @throws WebApplicationException  thrown when start of the LRA failed
      */
@@ -273,11 +255,11 @@ public class NarayanaLRAClient implements Closeable {
         lraTracef("startLRA for client %s with parent %s", clientID, parentLRA);
 
         try {
-            String encodedParentLRA = parentLRA == null ? "" : URLEncoder.encode(parentLRA.toString(), "UTF-8");
+            String encodedParentLRA = parentLRA == null ? "" : URLEncoder.encode(parentLRA.toString(), StandardCharsets.UTF_8.name());
 
             client = getClient();
 
-            response = client.target(base)
+            response = client.target(coordinatorUrl)
                 .path(START_PATH)
                 .queryParam(CLIENT_ID_PARAM_NAME, clientID)
                 .queryParam(TIMELIMIT_PARAM_NAME, Duration.of(timeout, unit).toMillis())
@@ -287,9 +269,10 @@ public class NarayanaLRAClient implements Closeable {
 
             // validate the HTTP status code says an LRA resource was created
             if (isUnexpectedResponseStatus(response, Response.Status.CREATED)) {
-                LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), response.toString());
+                String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
+                LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), responseEntity);
                 throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(),
-                        "LRA start returned an unexpected status code: " + response.getStatus());
+                        "LRA start returned an unexpected status code: " + response.getStatus() + ", response '" + responseEntity + "'");
                 return null;
             }
 
@@ -299,15 +282,17 @@ public class NarayanaLRAClient implements Closeable {
             Current.push(lra);
 
         } catch (UnsupportedEncodingException e) {
-            LRALogger.i18NLogger.error_cannotCreateUrlFromLCoordinatorResponse(response.toString(), e);
-            throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage());
+            LRALogger.i18NLogger.error_invalidFormatToEncodeParentUri(parentLRA, e);
+            throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(),
+                    "Cannot connect to the LRA coordinator: " + coordinatorUrl + " as provided parent LRA URL '" + parentLRA +
+                            "' is not in URI format (" + e.getCause().getMessage() + ")");
             return null;
         } catch (Exception e) {
-            LRALogger.i18NLogger.error_cannotContactLRACoordinator(base, e);
+            LRALogger.i18NLogger.error_cannotContactLRACoordinator(coordinatorUrl, e);
 
             if (e.getCause() != null && ConnectException.class.equals(e.getCause().getClass())) {
                 throwGenericLRAException(null, SERVICE_UNAVAILABLE.getStatusCode(),
-                        "Cannot connect to the LRA coordinator: " + base + " (" + e.getCause().getMessage() + ")");
+                        "Cannot connect to the LRA coordinator: " + coordinatorUrl + " (" + e.getCause().getMessage() + ")");
             } else {
                 throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage());
             }
@@ -333,6 +318,9 @@ public class NarayanaLRAClient implements Closeable {
     }
 
     /**
+     * Joining the LRA with identity of `lraId` as participant defined by URIs for complete, compensate, forget, leave,
+     * after and status.
+     *
      * @param lraId the URI of the LRA to join
      * @param timeLimit how long the participant is prepared to wait for LRA completion
      * @param compensateUri URI for compensation notifications
@@ -353,6 +341,25 @@ public class NarayanaLRAClient implements Closeable {
                 compensatorData);
     }
 
+    /**
+     * Joining the LRA with identity of `lraId` as participant defined by a participant URI.
+     *
+     * @param lraId the URI of the LRA to join
+     * @param timeLimit how long the participant is prepared to wait for LRA completion
+     * @param participantUri URI of participant for enlistment
+     * @param compensatorData data provided during compensation
+     * @return a recovery URL for this enlistment
+     * @throws WebApplicationException if the LRA coordinator failed to enlist the participant
+     */
+    public URI joinLRA(URI lraId, Long timeLimit,
+                       URI participantUri, String compensatorData) throws WebApplicationException {
+        validateURI(participantUri, false, "Invalid participant URL: %s");
+        StringBuilder linkHeaderValue
+                = makeLink(new StringBuilder(), null, "participant", participantUri.toASCIIString());
+
+        return enlistCompensator(lraId, timeLimit, linkHeaderValue.toString(), compensatorData);
+    }
+
     public void leaveLRA(URI lraId, String body) throws WebApplicationException {
         Client client = null;
         Response response;
@@ -360,14 +367,16 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
 
-            response = client.target(base)
+            response = client.target(coordinatorUrl)
                 .path(String.format(LEAVE_PATH, LRAConstants.getLRAUid(lraId)))
                 .request()
                 .put(Entity.text(body));
 
             if (OK.getStatusCode() != response.getStatus()) {
-                LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(), response.toString());
-                throwGenericLRAException(null, response.getStatus(), "");
+                LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(),
+                        response.hasEntity() ? response.readEntity(String.class) : "");
+                throwGenericLRAException(null, response.getStatus(), "Leaving LRA " + lraId + " from coordinator " + coordinatorUrl
+                    + " finished with unexpected response code: " + response.getStatusInfo());
             }
         } finally {
             if (client != null) {
@@ -437,7 +446,7 @@ public class NarayanaLRAClient implements Closeable {
 
             throw new WebApplicationException(
                     Response.status(BAD_REQUEST)
-                            .entity("LRA participant class with asynchronous temination but no @Status or @Forget annotations")
+                            .entity("LRA participant class with asynchronous termination but no @Status or @Forget annotations")
                             .build());
         }
 
@@ -530,15 +539,15 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             client = getClient();
-            response = client.target(base)
+            response = client.target(coordinatorUrl)
                 .path(String.format(STATUS_PATH, LRAConstants.getLRAUid(uri)))
                 .request()
                 .get();
 
             if (response.getStatus() == NOT_FOUND.getStatusCode()) {
-                String responseContent = response.readEntity(String.class);
-                String errorMsg = "The requested LRA it '" + lraId + "' was not found and the status can't be obtained"
-                    + (responseContent != null ? ": " + responseContent : "");
+                String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
+                String errorMsg = "The requested LRA it '" + lraId + "' was not found and the status can't be obtained, "
+                        + "response content: " + responseEntity;
                 throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(errorMsg).build());
             }
 
@@ -547,7 +556,7 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (response.getStatus() != OK.getStatusCode()) {
-                LRALogger.i18NLogger.error_invalidStatusCode(base, response.getStatus(), lraId);
+                LRALogger.i18NLogger.error_invalidStatusCode(coordinatorUrl, response.getStatus(), lraId);
                 throwGenericLRAException(uri,
                     response.getStatus(),
                     "LRA coordinator returned an invalid status code"
@@ -555,7 +564,7 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (!response.hasEntity()) {
-                LRALogger.i18NLogger.error_noContentOnGetStatus(base, lraId);
+                LRALogger.i18NLogger.error_noContentOnGetStatus(coordinatorUrl, lraId);
                 throwGenericLRAException(uri,
                     Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "LRA coordinator#getStatus returned 200 OK but no content: lra: " + lraId);
@@ -565,7 +574,7 @@ public class NarayanaLRAClient implements Closeable {
             try {
                 return fromString(response.readEntity(String.class));
             } catch (IllegalArgumentException e) {
-                LRALogger.i18NLogger.error_invalidArgumentOnStatusFromCoordinator(base, lraId, e);
+                LRALogger.i18NLogger.error_invalidArgumentOnStatusFromCoordinator(coordinatorUrl, lraId, e);
                 throwGenericLRAException(uri,
                     Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "LRA coordinator returned an invalid status"
@@ -642,8 +651,7 @@ public class NarayanaLRAClient implements Closeable {
         // put the lra id in an http header
         Client client = null;
         Response response = null;
-        String responseEntity = null;
-        URL lraId;
+        URL lraId = null;
 
         try {
             lraId = uri.toURL();
@@ -652,7 +660,6 @@ public class NarayanaLRAClient implements Closeable {
                     Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "Could not convert LRA to a URL: " + e.getMessage()
             );
-            return null;
         }
         if (timelimit == null || timelimit < 0) {
             timelimit = 0L;
@@ -661,7 +668,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             try {
-                response = client.target(base)
+                response = client.target(coordinatorUrl)
                     .path(LRAConstants.getLRAUid(uri))
                     .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                     .request()
@@ -671,31 +678,32 @@ public class NarayanaLRAClient implements Closeable {
                 throw new WebApplicationException(uri.toASCIIString(), GONE);
             }
 
+            String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                LRALogger.i18NLogger.error_tooLateToJoin(lraId, response.toString());
+                LRALogger.i18NLogger.error_tooLateToJoin(lraId, responseEntity);
                 String errorMsg = lraId + ": Too late to join with this LRA";
                 throw new WebApplicationException(errorMsg,
                         Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
             } else if (response.getStatus() == NOT_FOUND.getStatusCode()) {
                 LRALogger.i18NLogger.info_failedToEnlistingLRANotFound(
-                        lraId, base, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
+                        lraId, coordinatorUrl, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
                 throw new WebApplicationException(uri.toASCIIString(),
                         Response.status(GONE).entity(uri.toASCIIString()).build());
             } else if (response.getStatus() != OK.getStatusCode()) {
-                LRALogger.i18NLogger.error_failedToEnlist(lraId, base, response.getStatus());
-
+                LRALogger.i18NLogger.error_failedToEnlist(lraId, coordinatorUrl, response.getStatus());
                 throwGenericLRAException(uri, response.getStatus(),
                         "unable to register participant");
             }
 
+            String recoveryUrl = null;
             try {
-                String recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
-                String url = URLDecoder.decode(recoveryUrl, "UTF-8");
+                recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
+                String url = URLDecoder.decode(recoveryUrl, StandardCharsets.UTF_8.name());
                 return new URI(url);
             } catch (URISyntaxException | UnsupportedEncodingException e) {
-                LRALogger.logger.infof("join %s returned an invalid recovery URI: %s", lraId, responseEntity);
+                LRALogger.logger.infof(e,"join %s returned an invalid recovery URI '%s': %s", lraId, recoveryUrl, responseEntity);
                 throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                        "join " + lraId + " returned an invalid recovery URI: " + responseEntity);
+                        "join " + lraId + " returned an invalid recovery URI '" + recoveryUrl + "' : " + responseEntity);
                 return null;
             }
         } finally {
@@ -714,20 +722,21 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             String lraUid = LRAConstants.getLRAUid(lra);
-            response = client.target(base)
+            response = client.target(coordinatorUrl)
                 .path(confirm ? String.format(CLOSE_PATH, lraUid) : String.format(CANCEL_PATH, lraUid))
                 .request()
                 .put(null);
 
             if (isUnexpectedResponseStatus(response, OK, Response.Status.ACCEPTED, NOT_FOUND)) {
-                LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(), response.toString());
+                LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(),
+                        response.hasEntity() ? response.readEntity(String.class) : "");
                 throwGenericLRAException(lra, INTERNAL_SERVER_ERROR.getStatusCode(),
                         "LRA finished with an unexpected status code: " + response.getStatus());
             }
 
             if (response.getStatus() == NOT_FOUND.getStatusCode()) {
                 String errorMsg = LRALogger.i18NLogger.get_couldNotCompleteCompensateOnReturnedStatus(
-                        confirm ? "close" : "compensate", lra, base, NOT_FOUND.getReasonPhrase());
+                        confirm ? "close" : "compensate", lra, coordinatorUrl, NOT_FOUND.getReasonPhrase());
                 LRALogger.logger.info(errorMsg);
                 throw new NotFoundException(errorMsg,
                         Response.status(NOT_FOUND).entity(lra.toASCIIString()).build());
@@ -768,8 +777,12 @@ public class NarayanaLRAClient implements Closeable {
         return true;
     }
 
-    public String getUrl() {
-        return base.toString();
+    public String getCoordinatorUrl() {
+        return coordinatorUrl.toString();
+    }
+
+    public String getRecoveryUrl() {
+        return getCoordinatorUrl() + "/" + RECOVERY_COORDINATOR_PATH_NAME;
     }
 
     public URI getCurrent() {
@@ -777,26 +790,21 @@ public class NarayanaLRAClient implements Closeable {
     }
 
     private void lraTracef(String reasonFormat, Object... parameters) {
-        if (!LRALogger.logger.isTraceEnabled()) {
-            return;
+        if (LRALogger.logger.isTraceEnabled()) {
+            LRALogger.logger.tracef(reasonFormat, parameters);
         }
-
-        LRALogger.logger.tracef(reasonFormat, parameters);
     }
 
     private void lraTrace(URI lra, String reason) {
-        lraTracef(lra, reason, (Object[]) null);
+        if (LRALogger.logger.isTraceEnabled()) {
+            lraTracef(lra, reason, (Object[]) null);
+        }
     }
 
     private void lraTracef(URI lra, String reasonFormat, Object... parameters) {
-        Object[] newParams;
-        if (parameters != null) {
-            newParams = Arrays.copyOf(parameters, parameters.length + 1);
-        } else {
-            newParams = new Object[1];
+        if (LRALogger.logger.isTraceEnabled()) {
+            lraTracef(reasonFormat + ", lra id: %s", parameters, lra);
         }
-        newParams[newParams.length - 1] = lra;
-        lraTracef(reasonFormat + ", lra id: %s", newParams);
     }
 
     public void close() {

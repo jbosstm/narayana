@@ -26,17 +26,11 @@ import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.ByteArrayOutputStream;
@@ -45,6 +39,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -58,12 +54,10 @@ import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA
 
 @ApplicationScoped
 public class ProxyService {
-    private static final String TIMELIMIT_PARAM_NAME = "TimeLimit";
-
     private static List<ParticipantProxy> participants; // TODO figure out why ProxyService is constructed twice
 
-    private Client lcClient;
-    private WebTarget lcTarget;
+    @Inject
+    private NarayanaLRAClient narayanaLRAClient;
 
     private UriBuilder uriBuilder;
 
@@ -82,24 +76,6 @@ public class ProxyService {
         uriBuilder.scheme("http")
                 .host(httpHost)
                 .port(httpPort);
-
-        String lcHost = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost");
-        int lcPort = Integer.getInteger(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, 8080);
-        String lcPath = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PATH_KEY, "lra-coordinator");
-
-
-        UriBuilder urib = UriBuilder.fromPath(lcPath).scheme("http").host(lcHost).port(lcPort);
-
-        lcClient = ClientBuilder.newClient();
-        lcTarget = lcClient.target(urib.build());
-    }
-
-    @PreDestroy
-    void fini() {
-        if (lcClient != null) {
-            lcClient.close();
-            lcClient = null;
-        }
     }
 
     private ParticipantProxy getProxy(URI lraId, String participantId) {
@@ -190,39 +166,23 @@ public class ProxyService {
         return joinLRA(participant, lraId, 0L, ChronoUnit.SECONDS);
     }
 
-    public URI joinLRA(LRAProxyParticipant participant, URI lraId, Long timelimit, ChronoUnit unit) {
+    public URI joinLRA(LRAProxyParticipant participant, URI lraId, Long timeLimit, ChronoUnit unit) {
         // TODO if lraId == null then register a join all new LRAs
         ParticipantProxy proxy = new ParticipantProxy(lraId, UUID.randomUUID().toString(), participant);
 
         try {
             String pId = proxy.getParticipantId();
-            String lra = URLEncoder.encode(lraId.toASCIIString(), "UTF-8");
-            UriBuilder clone = uriBuilder.clone();
-
-            URI participantUri = clone.build(lra, pId);
-            Link link = Link.fromUri(participantUri)
-                    .rel("participant").type("text/plain")
-                    .build();
-
-            Optional<String> participantData = serializeParticipant(participant);
+            String lra = URLEncoder.encode(lraId.toASCIIString(), StandardCharsets.UTF_8.name());
 
             participants.add(proxy);
 
-            Response response = lcTarget.path(lra)
-                    .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
-                    .request()
-                    .header("Link", link.toString())
-                    .put(Entity.entity(participantData.orElse(""), MediaType.TEXT_PLAIN));
+            Optional<String> compensatorData = serializeParticipant(participant);
+            URI participantUri = uriBuilder.build(lra, pId);
+            long timeLimitInSeconds = Duration.of(timeLimit, unit).getSeconds();
 
-            if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                throw new WebApplicationException(Response.status(response.getStatus())
-                    .entity(lraId + ": Too late to join with this LRA").build());
-            } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                throw new WebApplicationException(Response.status(response.getStatus())
-                    .entity(lraId + ": Unable to join with this LRA ").build());
-            }
-
-            return new URI(response.readEntity(String.class));
+            URI participantRecoveryUrl
+                    = narayanaLRAClient.joinLRA(lraId, timeLimitInSeconds, participantUri, compensatorData.orElse(null));
+            return participantRecoveryUrl;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.status(0)
                 .entity(lraId + ": Exception whilst joining with this LRA").build());

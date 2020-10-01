@@ -203,8 +203,8 @@ public interface lraI18NLogger {
     void warn_nonJaxRsParticipantsNotAllowed();
 
     @LogMessage(level = ERROR)
-    @Message(id = 25041, value = "Invalid format of coordinator url, was '%s'")
-    void error_invalidCoordinatorId(String coordinatorUri, @Cause Throwable t);
+    @Message(id = 25041, value = "Invalid format of LRA id to be converted to LRA coordinator url, was '%s'")
+    void error_invalidLraIdFormatToConvertToCoordinatorUrl(String lraId, @Cause Throwable t);
 
     @LogMessage(level = INFO)
     @Message(id = 25042, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%d (%s)'. Returning '%d (%s)'.")
@@ -213,6 +213,10 @@ public interface lraI18NLogger {
 
     @Message(id = 25043, value = "Could not %s LRA '%s': coordinator '%s' responded with status '%s'")
     String get_couldNotCompleteCompensateOnReturnedStatus(String actionName, URI lraId, URI coordinatorUri, String status);
+
+    @LogMessage(level = ERROR)
+    @Message(id = 25044, value = "Error when encoding parent LRA id URL '%s' to String")
+    void error_invalidFormatToEncodeParentUri(URI parentUri, @Cause Throwable t);
 
     /*
         Allocate new messages directly above this notice.
