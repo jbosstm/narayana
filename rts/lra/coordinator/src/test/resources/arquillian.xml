@@ -26,7 +26,7 @@
 
     <container qualifier="lra-coordinator" default="true" mode="manual">
         <configuration>
-            <property name="managementAddress">${lra.http.host}</property>
+            <property name="managementAddress">${lra.coordinator.host}</property>
             <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
         </configuration>
     </container>

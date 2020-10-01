@@ -50,9 +50,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Optional;
-
-import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
-import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import java.util.stream.Stream;
 
 public abstract class TestBase {
     @Rule
@@ -62,13 +60,9 @@ public abstract class TestBase {
 
     static final String COORDINATOR_DEPLOYMENT = COORDINATOR_CONTAINER;
 
-    private static String coordinatorUrl;
-    private static String recoveryUrl;
-    private static String jvmArgs;
     private static Path storeDir;
-    private static String deploymentURL;
 
-    NarayanaLRAClient lraClient;
+    protected NarayanaLRAClient lraClient;
 
     @ArquillianResource
     private ContainerController containerController;
@@ -78,24 +72,13 @@ public abstract class TestBase {
 
     @BeforeClass
     public static void beforeClass() {
-        String host = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_HOST_KEY, "localhost");
-        String port = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PORT_KEY, "8080");
-        String path = System.getProperty(NarayanaLRAClient.LRA_COORDINATOR_PATH_KEY, COORDINATOR_PATH_NAME);
-
-        coordinatorUrl = String.format("http://%s:%s/%s", host, port, path);
-        recoveryUrl = String.format("%s/%s/",
-                coordinatorUrl, RECOVERY_COORDINATOR_PATH_NAME);
         storeDir = Paths.get(String.format("%s/standalone/data/tx-object-store", System.getProperty("env.JBOSS_HOME", "null")));
-        jvmArgs = System.getProperty("server.jvm.args");
-
-        deploymentURL = String.format("http://%s:%s/%s", host, port, COORDINATOR_DEPLOYMENT);
     }
 
     @Before
     public void before() throws URISyntaxException, MalformedURLException {
         LRALogger.logger.debugf("Starting test %s", testName);
-
-        lraClient = new NarayanaLRAClient(new URI(coordinatorUrl));
+        lraClient = new NarayanaLRAClient();
     }
 
     @After
@@ -148,14 +131,14 @@ public abstract class TestBase {
         }
     }
 
-    int recover() throws URISyntaxException {
+    int recover() {
         Client client = ClientBuilder.newClient();
 
-        try (Response response = client.target(new URI(recoveryUrl))
+        try (Response response = client.target(lraClient.getRecoveryUrl())
                 .request()
                 .get()) {
 
-            Assert.assertEquals("Unexpected status from recovery call to " + recoveryUrl, 200, response.getStatus());
+            Assert.assertEquals("Unexpected status from recovery call to " + lraClient.getRecoveryUrl(), 200, response.getStatus());
 
             // the result will be a List<LRAStatusHolder> of recovering LRAs but we just need the count
             String recoveringLRAs = response.readEntity(String.class);
@@ -173,13 +156,14 @@ public abstract class TestBase {
     }
 
     private void clearRecoveryLog() {
-        try {
-            Files.walk(storeDir)
+        try (Stream<Path> recoveryLogFiles = Files.walk(storeDir)) {
+            recoveryLogFiles
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(File::delete);
-        } catch (IOException ignore) {
+        } catch (IOException ioe) {
             // transaction logs will only exists after there has been a previous run
+            LRALogger.logger.debugf(ioe,"Cannot finish delete operation on recovery log dir '%s'", storeDir);
         }
     }
 
@@ -201,13 +185,5 @@ public abstract class TestBase {
         } catch (NotFoundException ignore) {
             return null;
         }
-    }
-
-    String getCoordinatorUrl() {
-        return coordinatorUrl;
-    }
-
-    String getDeploymentUrl() {
-        return deploymentURL;
     }
 }

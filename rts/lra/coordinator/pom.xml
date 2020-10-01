@@ -18,13 +18,7 @@
             -Djboss.bind.address=[::1] -Djboss.bind.address.management=[::1] -Djboss.bind.address.unsecure=[::1]
             -Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true
         </ipv6.server.jvm.args>
-        <modular.jdk.args/>
-        <modular.jdk.props/>
-        <!-- the resource path of the coordinator - must match the deployment URL (see arquillian.xml) -->
         <lra.coordinator.path>lra-coordinator/lra-coordinator</lra.coordinator.path>
-        <jvm.args.other>
-            -Dlra.coordinator.path=${lra.coordinator.path}
-        </jvm.args.other>
         <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
     </properties>
 
@@ -142,6 +136,10 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <lra.coordinator.host>localhost</lra.coordinator.host>
+                <lra.coordinator.url>http://localhost:8080/${lra.coordinator.path}</lra.coordinator.url>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -162,10 +160,9 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables combine.children="append">
-                                <lra.http.host>127.0.0.1</lra.http.host>
-                                <lra.http.port>8080</lra.http.port>
-                                <lra.coordinator.path>${lra.coordinator.path}</lra.coordinator.path>
-                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
+                                <lra.coordinator.host>${lra.coordinator.host}</lra.coordinator.host>
+                                <lra.coordinator.url>${lra.coordinator.url}</lra.coordinator.url>
+                                <server.jvm.args>${server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url}</server.jvm.args>
                             </systemPropertyVariables>
                             <systemProperties>
                                 <arquillian.xml>arquillian.xml</arquillian.xml>
@@ -180,6 +177,10 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <lra.coordinator.host>[::1]</lra.coordinator.host>
+                <lra.coordinator.url>http://[::1]:8080/${lra.coordinator.path}</lra.coordinator.url>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -201,10 +202,9 @@
                         <configuration>
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
-                                <lra.http.host>[::1]</lra.http.host>
-                                <lra.http.port>8080</lra.http.port>
-                                <lra.coordinator.path>${lra.coordinator.path}</lra.coordinator.path>
-                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
+                                <lra.coordinator.host>${lra.coordinator.host}</lra.coordinator.host>
+                                <lra.coordinator.url>${lra.coordinator.url}</lra.coordinator.url>
+                                <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url}</server.jvm.args>
                             </systemPropertyVariables>
                             <systemProperties>
                                 <arquillian.xml>arquillian.xml</arquillian.xml>
