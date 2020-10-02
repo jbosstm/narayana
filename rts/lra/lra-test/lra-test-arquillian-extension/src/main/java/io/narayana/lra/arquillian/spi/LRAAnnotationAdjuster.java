@@ -40,6 +40,8 @@ public class LRAAnnotationAdjuster {
     private static final Logger log = Logger.getLogger(LRAAnnotationAdjuster.class);
     private static final String ANNOTATIONS_FIELD_NAME = "annotations";
     private static final String ANNOTATION_DATA_METHOD_NAME = "annotationData";
+    private static final String ANNOTATION_CACHE_FIELD_NAME = "annotationCache";
+    private static final String ANNOTATION_MAP_FIELD_NAME = "annotationMap";
 
     /**
      * Take the clazz, check if contains the {@link LRA} annotation.
@@ -62,8 +64,8 @@ public class LRAAnnotationAdjuster {
      * Changing the LRA annotation declared on class by wrapping it with {@link LRAWrapped}.
      */
     static void adjustLRAAnnotation(Class<?> clazzToLookFor, LRA originalLRAAnnotation) {
-        if (doesJDKDefineAnnotationsField()) {
-            // JDK7 has "annotations" field
+        if (doesJDKDefineFieldName(ANNOTATIONS_FIELD_NAME)) {
+            // Open JDK7 has "annotations" field
             try {
                 Field annotations = Class.class.getDeclaredField(ANNOTATIONS_FIELD_NAME);
                 annotations.setAccessible(true);
@@ -75,9 +77,9 @@ public class LRAAnnotationAdjuster {
                 throw new IllegalStateException("Cannot change annotation " + originalLRAAnnotation
                         + " of class " + clazzToLookFor + " in JDK7 way", e);
             }
-        } else {
+        } else if (doesJDKDefineMethodName(ANNOTATION_DATA_METHOD_NAME)) {
             try {
-                // JDK8+ has "annotationData" private method
+                // Open JDK8+ has "annotationData" private method
                 // obtaining reference to private class AnnotationData
                 Method method = Class.class.getDeclaredMethod(ANNOTATION_DATA_METHOD_NAME);
                 method.setAccessible(true);
@@ -95,6 +97,25 @@ public class LRAAnnotationAdjuster {
                 throw new IllegalStateException("Cannot change annotation " + originalLRAAnnotation
                         + " of class " + clazzToLookFor + " in JDK8 way", e);
             }
+        } else if (doesJDKDefineFieldName(ANNOTATION_CACHE_FIELD_NAME)) {
+            // OpenJ9
+            try {
+                Field cacheField = Class.class.getDeclaredField(ANNOTATION_CACHE_FIELD_NAME);
+                cacheField.setAccessible(true);
+                Object cache = cacheField.get(clazzToLookFor);
+
+                Class<? extends Object> cacheClass = cache.getClass();
+                Field mapField = cacheClass.getDeclaredField(ANNOTATION_MAP_FIELD_NAME);
+                mapField.setAccessible(true);
+                Map<Class<? extends Annotation>, Annotation> annotationMap = (Map<Class<? extends Annotation>, Annotation>) mapField.get(cache);
+                annotationMap.put(LRA.class, new LRAWrapped(originalLRAAnnotation));
+            } catch (Exception e) {
+                throw new IllegalStateException("Cannot change annotation " + originalLRAAnnotation
+                        + " of class " + clazzToLookFor + " in JDK OpenJ9 way", e);
+            }
+        } else {
+            log.warnf("Cannot adjust the timeout value of the %s annotation of class %s. The processing of %s is skipped.",
+                    originalLRAAnnotation, clazzToLookFor, LRAAnnotationAdjuster.class.getName());
         }
     }
 
@@ -123,17 +144,22 @@ public class LRAAnnotationAdjuster {
         annotations.put(LRA.class, new LRAWrapped(originalLRAAnnotation));
     }
 
-    /**
-     * Expected for JDK lower to 7
-     */
-    private static boolean doesJDKDefineAnnotationsField() {
-        boolean jdkLower = true;
+    private static boolean doesJDKDefineFieldName(String fieldName) {
         try {
-            Class.class.getDeclaredField(ANNOTATIONS_FIELD_NAME);
+            Class.class.getDeclaredField(fieldName);
         } catch (NoSuchFieldException ignore) {
-            jdkLower = false;
+            return false;
         }
-        return jdkLower;
+        return true;
+    }
+
+    private static boolean doesJDKDefineMethodName(String methodName) {
+        try {
+            Class.class.getDeclaredMethod(methodName);
+        } catch (NoSuchMethodException ignore) {
+            return false;
+        }
+        return true;
     }
 
     private static class LRAWrapped implements LRA {
