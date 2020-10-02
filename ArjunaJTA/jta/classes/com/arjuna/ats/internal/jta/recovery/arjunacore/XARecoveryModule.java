@@ -70,6 +70,7 @@ import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.utils.XARecoveryResourceHelper;
 
+import com.arjuna.ats.jta.xa.XATxConverter;
 import org.jboss.tm.XAResourceWrapper;
 
 /**
@@ -372,9 +373,10 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				// This deals with inflow cases where the xid by itself is non-unique,
 				// but the <xid,jndiName> tuple is unique.
 				// BUT...
-				// This breaks legacy cross-origin recovery configurations, where N datasources point to the same RM
-				// and one could be used to recover on behalf of the others.
-				if(!scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
+				// It also breaks legacy cross-origin recovery configurations, where N datasources point to the same RM
+				// and one could be used to recover on behalf of the others. So, where it's a JTA tx we know will
+				// have uniq branches (see TransactionImple::createXid) we ignore the names to preserve compatibility.
+				if(scopedXid.getXid().getFormatId() != XATxConverter.FORMAT_ID && !scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
 					continue;
 				}
 
