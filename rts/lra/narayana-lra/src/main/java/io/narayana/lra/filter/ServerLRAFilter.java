@@ -21,6 +21,7 @@
  */
 package io.narayana.lra.filter;
 
+import io.narayana.lra.AnnotationResolver;
 import io.narayana.lra.Current;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
@@ -117,7 +118,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Method method = resourceInfo.getResourceMethod();
         MultivaluedMap<String, String> headers = containerRequestContext.getHeaders();
         LRA.Type type = null;
-        LRA transactional = method.getDeclaredAnnotation(LRA.class);
+        LRA transactional = AnnotationResolver.resolveAnnotation(LRA.class, method);
         URI lraId;
         URI newLRA = null;
         Long timeout = null;
@@ -151,11 +152,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
         }
 
-        boolean endAnnotation = method.isAnnotationPresent(Complete.class)
-                || method.isAnnotationPresent(Compensate.class)
-                || method.isAnnotationPresent(Leave.class)
-                || method.isAnnotationPresent(Status.class)
-                || method.isAnnotationPresent(Forget.class);
+        boolean endAnnotation = AnnotationResolver.isAnnotationPresent(Complete.class, method)
+                || AnnotationResolver.isAnnotationPresent(Compensate.class, method)
+                || AnnotationResolver.isAnnotationPresent(Leave.class, method)
+                || AnnotationResolver.isAnnotationPresent(Status.class, method)
+                || AnnotationResolver.isAnnotationPresent(Forget.class, method);
 
         if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
@@ -168,7 +169,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             }
         }
 
-        if (method.isAnnotationPresent(Leave.class)) {
+        if (AnnotationResolver.isAnnotationPresent(Leave.class, method)) {
             // leave the LRA
             String compensatorId = getCompensatorId(incommingLRA, containerRequestContext.getUriInfo(), timeout);
 
