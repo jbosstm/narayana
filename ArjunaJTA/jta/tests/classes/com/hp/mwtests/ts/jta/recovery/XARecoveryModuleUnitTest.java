@@ -31,11 +31,7 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -47,6 +43,8 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.internal.jta.recovery.arjunacore.*;
+import org.jboss.tm.XAResourceWrapper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -59,9 +57,6 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.RecoveryXids;
-import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
@@ -81,29 +76,29 @@ public class XARecoveryModuleUnitTest
         xarm.periodicWorkFirstPass();
         xarm.periodicWorkSecondPass();
         
-        assertNotNull(xarm.id());
+        Assert.assertNotNull(xarm.id());
     }
 
     
     @Test
     public void testRecoverFromMultipleXAResourceRecovery() throws Exception {
         // Make sure the file doesn't exist
-        assertFalse(new File("XARR.txt").exists());
+        Assert.assertFalse(new File("XARR.txt").exists());
 
         ArrayList<String> r = new ArrayList<String>();
 
         AtomicAction aa = new AtomicAction();
         aa.begin();
-        assertEquals(AddOutcome.AR_ADDED, aa.add(new XAResourceRecord(null, new XARRTestResource(), new XidImple(aa), null)));
+        Assert.assertEquals(AddOutcome.AR_ADDED, aa.add(new XAResourceRecord(null, new XARRTestResource(), new XidImple(aa), null)));
 
         Class c = BasicAction.class;
         Method method = c.getDeclaredMethod("prepare", boolean.class);
         method.setAccessible(true);
         int result = (Integer) method.invoke(aa, new Object[] { true });
-        assertEquals(result, TwoPhaseOutcome.PREPARE_OK);
+        Assert.assertEquals(result, TwoPhaseOutcome.PREPARE_OK);
 
         // Make sure the file exists
-        assertTrue(new File("XARR.txt").exists());
+        Assert.assertTrue(new File("XARR.txt").exists());
 
 //        AtomicActionRecoveryModule aaRecoveryModule = new AtomicActionRecoveryModule();
 //        aaRecoveryModule.periodicWorkFirstPass();
@@ -146,7 +141,7 @@ public class XARecoveryModuleUnitTest
         xaRecoveryModule.periodicWorkSecondPass();
 
         // Make sure the file doesn't exist
-        assertFalse(new File("XARR.txt").exists());
+        Assert.assertFalse(new File("XARR.txt").exists());
         
         aa.abort();
     }
@@ -157,9 +152,9 @@ public class XARecoveryModuleUnitTest
         ArrayList<String> r = new ArrayList<String>();
         TransactionImple tx = new TransactionImple(0);
         
-        assertTrue(tx.enlistResource(new RecoveryXAResource()));
+        Assert.assertTrue(tx.enlistResource(new RecoveryXAResource()));
         
-        assertEquals(tx.doPrepare(), TwoPhaseOutcome.PREPARE_OK);
+        Assert.assertEquals(tx.doPrepare(), TwoPhaseOutcome.PREPARE_OK);
         
         r.add("com.hp.mwtests.ts.jta.recovery.DummyXARecoveryResource");
 
@@ -167,7 +162,7 @@ public class XARecoveryModuleUnitTest
         
         XARecoveryModule xarm = new XARecoveryModule();
 
-        assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
+        Assert.assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
         
         for (int i = 0; i < 11; i++)
         {
@@ -175,9 +170,9 @@ public class XARecoveryModuleUnitTest
             xarm.periodicWorkSecondPass();
         }
         
-        assertTrue(xarm.getNewXAResource(  new XAResourceRecord(null, null, new XidImple(new Uid()), null) ) == null);
+        Assert.assertTrue(xarm.getNewXAResource(  new XAResourceRecord(null, null, new XidImple(new Uid()), null) ) == null);
         
-        assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
+        Assert.assertNull(xarm.getNewXAResource( new XAResourceRecord(null, null, new XidImple(), null) ));
     }
     
     @Test
@@ -211,7 +206,7 @@ public class XARecoveryModuleUnitTest
         
         Uid ret = (Uid) m.invoke(xarm, parameters);
         
-        assertEquals(ret, u);
+        Assert.assertEquals(ret, u);
         
         parameterTypes = new Class[2];
         parameterTypes[0] = Xid.class;
@@ -277,14 +272,14 @@ public class XARecoveryModuleUnitTest
         
         Class[] parameterTypes = new Class[2];
         
-        parameterTypes[0] = XAResource.class;
+        parameterTypes[0] = NameScopedXAResource.class;
         parameterTypes[1] = Xid.class;
         
         Method m = xarm.getClass().getDeclaredMethod("handleOrphan", parameterTypes);
         m.setAccessible(true);
         
         Object[] parameters = new Object[2];
-        parameters[0] = new RecoveryXAResource();
+        parameters[0] = new NameScopedXAResource(new RecoveryXAResource(), null);
         parameters[1] = new XidImple();
         
         m.invoke(xarm, parameters);
@@ -363,15 +358,15 @@ public class XARecoveryModuleUnitTest
         });
 
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 1);
+        Assert.assertEquals(recoverCalled, 1);
         xarm.periodicWorkSecondPass();
-        assertEquals(recoverCalled, 2);
+        Assert.assertEquals(recoverCalled, 2);
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 3);
+        Assert.assertEquals(recoverCalled, 3);
         xarm.periodicWorkFirstPass();
-        assertEquals(recoverCalled, 5);
+        Assert.assertEquals(recoverCalled, 5);
         xarm.periodicWorkSecondPass();
-        assertEquals(recoverCalled, 6);
+        Assert.assertEquals(recoverCalled, 6);
     }
 
     class DummyXAResourceOrphanFilter implements XAResourceOrphanFilter
