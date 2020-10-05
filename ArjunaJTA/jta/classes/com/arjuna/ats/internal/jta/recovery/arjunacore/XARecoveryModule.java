@@ -67,6 +67,9 @@ import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import com.arjuna.ats.jta.utils.XAHelper;
 
+import com.arjuna.ats.jta.xa.XATxConverter;
+import org.jboss.tm.XAResourceWrapper;
+
 /**
  * Designed to be able to recover any XAResource.
  */
@@ -178,8 +181,8 @@ public class XARecoveryModule implements RecoveryModule
 		// scan using dynamically configured plugins:
 		_resources.addAll(resourceInitiatedRecoveryForRecoveryHelpers());
 
-		List<XAResource> resources = new ArrayList<XAResource>(_resources);
-		for (XAResource xaResource : resources) {
+		List<NameScopedXAResource> resources = new ArrayList<NameScopedXAResource>(_resources);
+		for (NameScopedXAResource xaResource : resources) {
 			try {
 				xaRecoveryFirstPass(xaResource);
 			} catch (Exception ex) {
@@ -230,13 +233,13 @@ public class XARecoveryModule implements RecoveryModule
  	public static XARecoveryModule getRegisteredXARecoveryModule () {
  		if (registeredXARecoveryModule == null) {
 			RecoveryManager recMan = RecoveryManager.manager();
-			Vector recoveryModules = recMan.getModules();
+			Vector<RecoveryModule> recoveryModules = recMan.getModules();
 
 			if (recoveryModules != null) {
-				Enumeration modules = recoveryModules.elements();
+				Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
 				while (modules.hasMoreElements()) {
-					RecoveryModule m = (RecoveryModule) modules.nextElement();
+					RecoveryModule m = modules.nextElement();
 
 					if (m instanceof XARecoveryModule) {
 						registeredXARecoveryModule = (XARecoveryModule) m;
@@ -259,35 +262,50 @@ public class XARecoveryModule implements RecoveryModule
 	 * @return the XAResource than can be used to commit/rollback the specified
 	 *         transaction.
 	 */
-	private XAResource getNewXAResource(Xid xid)
+	private XAResource getNewXAResource(Xid xid, String jndiName)
 	{
-		XAResource toReturn = getTheKey(xid);
+		NameScopedXid key = new NameScopedXid(xid, jndiName);
+
+		XAResource toReturn = getTheKey(key);
 
 		if (toReturn == null) {
 			periodicWorkFirstPass();
-			toReturn = getTheKey(xid);
+			toReturn = getTheKey(key);
 		}
 
 		return toReturn;
     }
 
-    private XAResource getTheKey(Xid xid) {
+    private XAResource getTheKey(NameScopedXid scopedXid) {
 		if (_xidScans != null)
 		{
-			Enumeration<XAResource> keys = _xidScans.keys();
+			Enumeration<NameScopedXAResource> keys = _xidScans.keys();
 
 			while (keys.hasMoreElements())
 			{
-				XAResource theKey = keys.nextElement();
+				NameScopedXAResource theKey = keys.nextElement();
+
+				// In cases where the xid originally came from named source,
+				// only  a replacement from the same source is allowed.
+				// This deals with inflow cases where the xid by itself is non-unique,
+				// but the <xid,jndiName> tuple is unique.
+				// BUT...
+				// It also breaks legacy cross-origin recovery configurations, where N datasources point to the same RM
+				// and one could be used to recover on behalf of the others. So, where it's a JTA tx we know will
+				// have uniq branches (see TransactionImple::createXid) we ignore the names to preserve compatibility.
+				if(scopedXid.getXid().getFormatId() != XATxConverter.FORMAT_ID && !scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
+					continue;
+				}
+
 				RecoveryXids xids = _xidScans.get(theKey);
 
 				// JBTM-1255 moved stale check back to bottomUpRecovery
-				if (xids.contains(xid)) {
+				if (xids.contains(scopedXid.getXid())) {
 					// This Xid is going to be recovered by the AtomicAction
 					// it is possible that the Xid is recovered by both txbridge and XATerminator - the second
 					// would get noxaresource error message
-					xids.remove(xid);
-					return theKey;
+					xids.remove(scopedXid.getXid());
+					return theKey.getXaResource();
 				}
 			}
 		}
@@ -302,7 +320,10 @@ public class XARecoveryModule implements RecoveryModule
         */
     public XAResource getNewXAResource(XAResourceRecord xaResourceRecord)
     {
-        return getNewXAResource(xaResourceRecord.getXid());
+		if (jtaLogger.logger.isTraceEnabled()) {
+			jtaLogger.logger.trace("trying getNewXAResource for "+xaResourceRecord);
+		}
+        return getNewXAResource(xaResourceRecord.getXid(), xaResourceRecord.getJndiName());
     }
 
 	protected XARecoveryModule(XARecoveryResourceManager recoveryClass, String logName)
@@ -451,7 +472,7 @@ public class XARecoveryModule implements RecoveryModule
 	 * @see XARecoveryModule#getNewXAResource(XAResourceRecord)
 	 */
     private void bottomUpRecovery() {
-			for (XAResource xaResource : _resources) {
+			for (NameScopedXAResource xaResource : _resources) {
 				try {
 					xaRecoverySecondPass(xaResource);
 				} catch (Exception ex) {
@@ -463,8 +484,8 @@ public class XARecoveryModule implements RecoveryModule
         // JBTM-895 garbage collection is now done when we return XAResources {@see XARecoveryModule#getNewXAResource(XAResourceRecord)}
         // JBTM-924 requires this here garbage collection, see JBTM-1155:
         if (_xidScans != null) {
-            Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
-            for(XAResource theKey : keys) {
+            Set<NameScopedXAResource> keys = new HashSet<NameScopedXAResource>(_xidScans.keySet());
+            for(NameScopedXAResource theKey : keys) {
                 RecoveryXids recoveryXids = _xidScans.get(theKey);
                 if(recoveryXids.isStale()) {
                     _xidScans.remove(theKey);
@@ -496,25 +517,32 @@ public class XARecoveryModule implements RecoveryModule
 	 * transaction, because we don't know which process it was.
 	 */
 
-	private final List<XAResource> resourceInitiatedRecovery()
+	private final List<NameScopedXAResource> resourceInitiatedRecovery()
 	{
 		/*
 		 * Now any additional connections we may need to create. Relies upon
 		 * information provided by the application.
 		 */
 
-		List<XAResource> xaresources = new ArrayList<XAResource>();
+		List<NameScopedXAResource> xaresources = new ArrayList<NameScopedXAResource>();
 		if (_xaRecoverers.size() > 0)
 		{
 			for (int i = 0; i < _xaRecoverers.size(); i++)
 			{
 				try
 				{
-					XAResourceRecovery ri = (XAResourceRecovery) _xaRecoverers.get(i);
+					XAResourceRecovery ri = _xaRecoverers.get(i);
 
 					while (ri.hasMoreResources())
 					{
-						xaresources.add(ri.getXAResource());
+						XAResource xaResource = ri.getXAResource();
+
+						String jndiName = null;
+						if(xaResource instanceof XAResourceWrapper) {
+							jndiName = ((XAResourceWrapper)xaResource).getJndiName();
+						}
+
+						xaresources.add(new NameScopedXAResource(xaResource, jndiName));
 					}
 				}
 				catch (Exception ex)
@@ -527,9 +555,9 @@ public class XARecoveryModule implements RecoveryModule
 		return xaresources;
 	}
 
-    private List<XAResource> resourceInitiatedRecoveryForRecoveryHelpers()
+    private List<NameScopedXAResource> resourceInitiatedRecoveryForRecoveryHelpers()
     {
-		List<XAResource> xaresources = new ArrayList<XAResource>();
+		List<NameScopedXAResource> xaresources = new ArrayList<NameScopedXAResource>();
 
         recoveryHelpersXAResource.clear();
 
@@ -542,7 +570,12 @@ public class XARecoveryModule implements RecoveryModule
                 {
                     for (XAResource xaResource : xaResources)
                     {
-                        xaresources.add(xaResource);
+						String jndiName = null;
+						if(xaResource instanceof XAResourceWrapper) {
+							jndiName = ((XAResourceWrapper)xaResource).getJndiName();
+						}
+
+                        xaresources.add(new NameScopedXAResource(xaResource, jndiName));
                     }
                     recoveryHelpersXAResource.put(xaResourceRecoveryHelper, xaResources);
                 }
@@ -557,7 +590,7 @@ public class XARecoveryModule implements RecoveryModule
     }
 
 
-	private final void xaRecoveryFirstPass(XAResource xares)
+	private final void xaRecoveryFirstPass(NameScopedXAResource xares)
 	{
 		if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("xarecovery of " + xares);
@@ -568,7 +601,7 @@ public class XARecoveryModule implements RecoveryModule
 
 			try
 			{
-				trans = xares.recover(XAResource.TMSTARTRSCAN);
+				trans = xares.getXaResource().recover(XAResource.TMSTARTRSCAN);
 
 				if (jtaLogger.logger.isDebugEnabled()) {
                     jtaLogger.logger.debug("Found "
@@ -582,7 +615,7 @@ public class XARecoveryModule implements RecoveryModule
 
 				try
 				{
-					xares.recover(XAResource.TMENDRSCAN);
+					xares.getXaResource().recover(XAResource.TMENDRSCAN);
 				}
 				catch (Exception e1)
 				{
@@ -594,7 +627,7 @@ public class XARecoveryModule implements RecoveryModule
 			RecoveryXids xidsToRecover = null;
 
 			if (_xidScans == null)
-				_xidScans = new Hashtable<XAResource,RecoveryXids>();
+				_xidScans = new Hashtable<NameScopedXAResource,RecoveryXids>();
 			else
 			{
                 refreshXidScansForEquivalentXAResourceImpl(xares, trans);
@@ -636,8 +669,17 @@ public class XARecoveryModule implements RecoveryModule
 			xidsToRecover.nextScan(trans);
 	}
 	
-	private void xaRecoverySecondPass(XAResource xares) { 		
-		RecoveryXids xidsToRecover = _xidScans.get(xares);
+	private void xaRecoverySecondPass(NameScopedXAResource xares) {
+
+		if (jtaLogger.logger.isDebugEnabled()) {
+            jtaLogger.logger.debug("xarecovery second pass of " + xares);
+        }
+
+		RecoveryXids xidsToRecover = null;
+		if(_xidScans != null) {
+			xidsToRecover = _xidScans.get(xares);
+		}
+
 		if (xidsToRecover != null) {
 			try {
 				Xid[] xids = xidsToRecover.toRecover();
@@ -695,7 +737,7 @@ public class XARecoveryModule implements RecoveryModule
 								 */
 	
 								XARecoveryResource record = _recoveryManagerClass
-										.getResource(recordUid, xares);
+										.getResource(recordUid, xares.getXaResource());
 								int recoveryStatus = record.recover();
 	
 								if (recoveryStatus != XARecoveryResource.RECOVERED_OK)
@@ -710,7 +752,7 @@ public class XARecoveryModule implements RecoveryModule
 							{
 								try
 								{
-									xares.forget(xids[j]);
+									xares.getXaResource().forget(xids[j]);
 								}
 								catch (Exception e)
 								{
@@ -730,7 +772,7 @@ public class XARecoveryModule implements RecoveryModule
 			try
 			{
 				if (xares != null)
-					xares.recover(XAResource.TMENDRSCAN);
+					xares.getXaResource().recover(XAResource.TMENDRSCAN);
 			}
 			catch (XAException e)
 			{
@@ -748,7 +790,7 @@ public class XARecoveryModule implements RecoveryModule
      * @param xid
      * @return true if forget should be called, false otherwise.
      */
-    private boolean handleOrphan(XAResource xares, Xid xid)
+    private boolean handleOrphan(NameScopedXAResource xares, Xid xid)
     {
         // be default we play it safe and leave resources alone unless a filter explicitly recognizes them.
         // getting presumed abort behaviour therefore requires appropriate filters to be registered.
@@ -777,7 +819,7 @@ public class XARecoveryModule implements RecoveryModule
             {
                 jtaLogger.i18NLogger.info_recovery_rollingback(XAHelper.xidToString(xid));
 
-                xares.rollback(xid);
+                xares.getXaResource().rollback(xid);
             }
         }
         catch (XAException e1)
@@ -816,11 +858,11 @@ public class XARecoveryModule implements RecoveryModule
      * @param xares
      * @param xids
      */
-    private void refreshXidScansForEquivalentXAResourceImpl(XAResource xares, Xid[] xids)
+    private void refreshXidScansForEquivalentXAResourceImpl(NameScopedXAResource xares, Xid[] xids)
     {
-        Set<XAResource> keys = new HashSet<XAResource>(_xidScans.keySet());
+        Set<NameScopedXAResource> keys = new HashSet<NameScopedXAResource>(_xidScans.keySet());
 
-        for(XAResource theKey : keys) {
+        for(NameScopedXAResource theKey : keys) {
             RecoveryXids recoveryXids = _xidScans.get(theKey);
 
             if(recoveryXids.updateIfEquivalentRM(xares, xids)) {
@@ -943,7 +985,12 @@ public class XARecoveryModule implements RecoveryModule
 
         if (xaResources != null) {
             for (int i = 0; i < xaResources.length; i++) {
-                RecoveryXids recoveryXids = _xidScans.get(xaResources[i]);
+            	XAResource xaResource = xaResources[i];
+				String jndiName = null;
+				if(xaResource instanceof XAResourceWrapper) {
+					jndiName = ((XAResourceWrapper)xaResource).getJndiName();
+				}
+                RecoveryXids recoveryXids = _xidScans.get(new NameScopedXAResource(xaResource, jndiName));
                 if (recoveryXids != null && recoveryXids.size() > 0) {
                     return true;
                 }
@@ -992,7 +1039,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	private InputObjectState _uids = new InputObjectState();
 
-	private List<XAResource> _resources;
+	private List<NameScopedXAResource> _resources;
 
     // WARNING com.hp.mwtests.ts.jta.recovery.XARecoveryModuleUnitTest uses reflection to peek at the scan state of this recovery module
     private enum ScanStates {
@@ -1013,7 +1060,7 @@ public class XARecoveryModule implements RecoveryModule
 
     private Hashtable<XAResourceRecoveryHelper,XAResource[]> recoveryHelpersXAResource = new Hashtable<XAResourceRecoveryHelper,XAResource[]>();
 
-	private Hashtable<XAResource,RecoveryXids> _xidScans = null;
+	private Hashtable<NameScopedXAResource,RecoveryXids> _xidScans = null;
 
 	private XARecoveryResourceManager _recoveryManagerClass = null;
 
