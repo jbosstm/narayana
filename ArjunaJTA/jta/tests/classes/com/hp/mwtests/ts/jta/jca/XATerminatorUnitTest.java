@@ -43,8 +43,11 @@ import javax.transaction.xa.Xid;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
+import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -459,6 +462,7 @@ public class XATerminatorUnitTest
         });
     }
 
+
     @Test
     public void testCommitMid () throws Exception
     {
@@ -480,12 +484,12 @@ public class XATerminatorUnitTest
 
         XATerminatorImple xaTerminator = new XATerminatorImple();
         XidImple xid = new XidImple(new Uid());
-        XAResourceImple toCommit = new XAResourceImple(XAResource.XA_OK);
+        final XAResourceImple toCommit = new XAResourceImple(XAResource.XA_OK, XAResource.XA_OK);
 
         {
             SubordinateTransaction subordinateTransaction = SubordinationManager.getTransactionImporter().importTransaction(xid);
             tm.resume(subordinateTransaction);
-            subordinateTransaction.enlistResource(new XAResourceImple(XAResource.XA_RDONLY));
+            subordinateTransaction.enlistResource(new XAResourceImple(XAResource.XA_RDONLY, XAResource.XA_OK));
             subordinateTransaction.enlistResource(toCommit);
             Transaction suspend = tm.suspend();
         }
@@ -497,6 +501,19 @@ public class XATerminatorUnitTest
             Transaction suspend = tm.suspend();
         }
 
+        XARecoveryModule xaRecoveryModule = new XARecoveryModule();
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelper() {
+            @Override
+            public boolean initialise(String p) throws Exception {
+                return false;
+            }
+
+            @Override
+            public XAResource[] getXAResources() throws Exception {
+                return new XAResource[] {toCommit};
+            }
+        });
+        RecoveryManager.manager().addModule(xaRecoveryModule);
         xaTerminator.doRecover(null, null);
 
         {
@@ -505,6 +522,7 @@ public class XATerminatorUnitTest
             subordinateTransaction.doCommit();
             tm.suspend();
         }
+        RecoveryManager.manager().removeModule(xaRecoveryModule, false);
 
         assertTrue(toCommit.wasCommitted());
 
@@ -517,14 +535,23 @@ public class XATerminatorUnitTest
 
         private final int prepareFlag;
         private boolean committed;
+        private final int commitException;
+        private boolean rollbackCalled;
+        private Xid xid;
 
-        public XAResourceImple(int prepareFlag) {
+        public XAResourceImple(int prepareFlag, int commitException) {
             this.prepareFlag = prepareFlag;
+            this.commitException = commitException;
         }
 
         @Override
         public void commit(Xid xid, boolean b) throws XAException {
             committed = true;
+            if (commitException < 0) {
+                throw new XAException(commitException);
+            } else {
+                this.xid = null;
+            }
         }
 
         boolean wasCommitted() {
@@ -553,17 +580,26 @@ public class XATerminatorUnitTest
 
         @Override
         public int prepare(Xid xid) throws XAException {
+            this.xid = xid;
             return prepareFlag;
         }
 
         @Override
         public Xid[] recover(int i) throws XAException {
+            if (xid != null) {
+                return new Xid[]{xid};
+            }
             return new Xid[0];
+        }
+
+        public boolean rollbackCalled()  {
+            return rollbackCalled;
         }
 
         @Override
         public void rollback(Xid xid) throws XAException {
-
+            this.xid = null;
+            rollbackCalled = true;
         }
 
         @Override
