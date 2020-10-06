@@ -53,6 +53,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
 
 @ApplicationScoped
@@ -158,7 +159,7 @@ public class ProxyService {
             LRAProxyLogger.logger.errorf("TODO recovery: null participant for callback %s", lraId.toASCIIString());
         }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(NOT_FOUND).build();
     }
 
     void notifyForget(URI lraId, String participantId) {
@@ -173,7 +174,10 @@ public class ProxyService {
         ParticipantProxy proxy = getProxy(lraId, participantId);
 
         if (proxy == null) {
-            throw new NotFoundException();
+            String errorMsg = String.format("Cannot find participant proxy for LRA id %s, participant id %%s",
+                    lraId, participantId);
+            throw new NotFoundException(errorMsg,
+                    Response.status(NOT_FOUND).entity(errorMsg).build());
         }
 
         Optional<ParticipantStatus> status = proxy.getStatus();
@@ -212,16 +216,16 @@ public class ProxyService {
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
                 throw new WebApplicationException(Response.status(response.getStatus())
-                    .entity(lraId + ": " + "Too late to join with this LRA").build());
+                    .entity(lraId + ": Too late to join with this LRA").build());
             } else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                 throw new WebApplicationException(Response.status(response.getStatus())
-                    .entity(lraId + ": " + "Unable to join with this LRA").build());
+                    .entity(lraId + ": Unable to join with this LRA ").build());
             }
 
             return new URI(response.readEntity(String.class));
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.status(0)
-                .entity(lraId + ": " + "Exception whilst joining with this LRA").build());
+                .entity(lraId + ": Exception whilst joining with this LRA").build());
         }
     }
 

@@ -332,6 +332,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             toURI(terminateURIs.get(STATUS)),
                             null);
                 } catch (NotFoundException e) {
+                    lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: not found exception with " + e.getMessage());
                     throw e;
                 } catch (WebApplicationException e) {
                     lraTrace(containerRequestContext, lraId, "ServerLRAFilter before: aborting with " + e.getMessage());
@@ -491,7 +492,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     }
 
     private void throwGenericLRAException(URI lraId, int statusCode, String message) throws WebApplicationException {
-        throw new WebApplicationException(Response.status(statusCode)
-                .entity(String.format("%s: %s", lraId, message)).build());
+        String errorMsg = String.format("%s: %s", lraId, message);
+        throw new WebApplicationException(errorMsg,
+                Response.status(statusCode).entity(errorMsg).build());
     }
 }

@@ -53,6 +53,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static java.util.stream.Collectors.toList;
 
 @ApplicationScoped
@@ -85,7 +87,9 @@ public class LRAService {
                     }
                 }
 
-                throw new NotFoundException(Response.status(404).entity("Invalid transaction id: " + lraId).build());
+                String errorMsg = "Invalid transaction id: " + lraId;
+                throw new NotFoundException(errorMsg, // 404
+                        Response.status(NOT_FOUND).entity(errorMsg).build());
             }
 
             return recoveringLRAs.get(lraId);
@@ -252,7 +256,9 @@ public class LRAService {
 
             lra.abort();
 
-            throw new InternalServerErrorException("Could not start LRA: " + ActionStatus.stringForm(status));
+            String errorMsg = "Could not start LRA: " + ActionStatus.stringForm(status);
+            throw new InternalServerErrorException(errorMsg,
+                    Response.status(INTERNAL_SERVER_ERROR).entity(errorMsg).build());
         } else {
             try {
                 addTransaction(lra);
