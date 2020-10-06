@@ -49,11 +49,10 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
             try {
                 lraId = new URI(Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
             } catch (URISyntaxException e) {
-                String msg = String.format("header %s contains an invalid URL %s",
-                        LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)));
-
-                throw new WebApplicationException(Response.status(PRECONDITION_FAILED.getStatusCode())
-                        .entity(String.format("%s: %s", msg, e.getMessage())).build());
+                String errMsg = String.format("header %s contains an invalid URL %s: %s",
+                        LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)), e.getMessage());
+                throw new WebApplicationException(errMsg, e,
+                        Response.status(PRECONDITION_FAILED.getStatusCode()).entity(errMsg).build());
             }
         }
 

@@ -210,6 +210,14 @@ public interface lraI18NLogger {
     @Message(id = 25041, value = "Invalid format of coordinator url, was '%s'")
     void error_invalidCoordinatorId(String coordinatorUri, @Cause Throwable t);
 
+    @LogMessage(level = INFO)
+    @Message(id = 25042, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%d (%s)'. Returning '%d (%s)'.")
+    void info_failedToEnlistingLRANotFound(URL lraId, URI coordinatorUri, int coordinatorStatusCode,
+            String coordinatorStatusMsg, int returnStatusCode, String returnStatusMsg);
+
+    @Message(id = 25043, value = "Could not %s LRA '%s': coordinator '%s' responded with status '%s'")
+    String get_couldNotCompleteCompensateOnReturnedStatus(String actionName, URI lraId, URI coordinatorUri, String status);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
