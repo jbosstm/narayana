@@ -123,8 +123,9 @@ public class Coordinator {
 
         if (lras == null) {
             LRALogger.i18NLogger.error_invalidQueryForGettingLraStatuses(state);
-            throw new WebApplicationException(Response.status(BAD_REQUEST)
-                    .entity(String.format("Invalid query '%s' to get LRAs", state)).build());
+            String errMsg = String.format("Invalid query '%s' to get LRAs", state);
+            throw new WebApplicationException(errMsg,
+                    Response.status(BAD_REQUEST).entity(errMsg).build());
         }
 
         return lras;
@@ -309,9 +310,10 @@ public class Coordinator {
 
         if (status == null || lra.getLRAStatus() == null) {
             LRALogger.i18NLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
-            throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED)
-                    .entity(String.format("LRA is in the wrong state for operation '%s': %s",
-                            "getNestedLRAStatus", "The LRA is still  active")).build());
+            String errMsg = String.format("LRA (parent: %s, nested: %s) is in the wrong state for operation " +
+                    "'getNestedLRAStatus': The LRA is still active.", nestedLraId, lra.getId());
+            throw new WebApplicationException(errMsg,
+                    Response.status(Response.Status.PRECONDITION_FAILED).entity(errMsg).build());
         }
 
         return Response.ok(mapToParticipantStatus(lra.getLRAStatus()).name()).build();
@@ -528,7 +530,9 @@ public class Coordinator {
                     .build();
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
-            throw new WebApplicationException("Invalid recovery URL", e, INTERNAL_SERVER_ERROR);
+            String errorMsg = lraId + ": Invalid recovery URL " + recoveryUrl.toString();
+            throw new WebApplicationException(errorMsg, e ,
+                    Response.status(INTERNAL_SERVER_ERROR).entity(errorMsg).build());
         }
     }
 
@@ -559,20 +563,18 @@ public class Coordinator {
         return Response.status(status).build();
     }
 
-    private URI toURI(String lraId) {
-        return toURI(lraId, "Invalid LRA id format");
-    }
-
     private URI toDecodedURI(String lraId) {
         try {
             return toURI(URLDecoder.decode(lraId, StandardCharsets.UTF_8.toString()));
         } catch (UnsupportedEncodingException e) {
             LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
-            throw new WebApplicationException("Invalid LRA id format", e, BAD_REQUEST);
+            String erroMsg = lraId + ": Invalid LRA id format " + e.getMessage();
+            throw new WebApplicationException(erroMsg, e,
+                    Response.status(BAD_REQUEST).entity(erroMsg).build());
         }
     }
 
-    private URI toURI(String lraId, String message) {
+    private URI toURI(String lraId) {
         URL url;
 
         try {
@@ -584,7 +586,9 @@ public class Coordinator {
                 url = new URL(String.format("%s%s/%s", context.getBaseUri(), COORDINATOR_PATH_NAME, lraId));
             } catch (MalformedURLException e1) {
                 LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e1);
-                throw new WebApplicationException(message, e1, BAD_REQUEST);
+                String errorMsg = lraId + ": Illegal LRA id format " + e1.getMessage();
+                throw new WebApplicationException(errorMsg, e1,
+                        Response.status(BAD_REQUEST).entity(errorMsg).build());
             }
         }
 
@@ -592,7 +596,9 @@ public class Coordinator {
             return url.toURI();
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
-            throw new WebApplicationException(message, e, BAD_REQUEST);
+            String errorMsg = lraId + ": Invalid format of LRA id URL format to convert to URI " + e.getMessage();
+            throw new WebApplicationException(errorMsg, e,
+                    Response.status(BAD_REQUEST).entity(errorMsg).build());
         }
     }
 }

@@ -31,13 +31,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 @ApplicationScoped
 public class ActivityService {
     private Map<String, Activity> activities = new HashMap<>();
 
     public Activity getActivity(String txId) throws NotFoundException {
         if (!activities.containsKey(txId)) {
-            throw new NotFoundException(Response.status(404).entity("Invalid activity id: " + txId).build());
+            String errorMsg = "Invalid activity id: " + txId;
+            throw new NotFoundException(errorMsg, // 404
+                    Response.status(NOT_FOUND).entity(errorMsg).build());
         }
 
         return activities.get(txId);
@@ -61,7 +65,9 @@ public class ActivityService {
         }
 
         if (failIfNotFound) {
-            throw new NotFoundException(Response.status(404).entity("Invalid activity id: " + txId).build());
+            String errorMsg = "Invalid activity id: " + txId;
+            throw new NotFoundException(errorMsg, // 404
+                    Response.status(NOT_FOUND).entity(errorMsg).build());
         }
 
         return new Activity(txId);

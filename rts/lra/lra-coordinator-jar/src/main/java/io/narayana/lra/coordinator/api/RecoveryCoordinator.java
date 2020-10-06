@@ -54,6 +54,7 @@ import java.util.List;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @ApplicationScoped
@@ -130,9 +131,9 @@ public class RecoveryCoordinator {
                 lra = new URI(lraId);
             } catch (URISyntaxException e) {
                 LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensatorURI(lraId, compensatorUrl, e);
-
-                throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR.getStatusCode())
-                            .entity(String.format("%s: %s", lraId, e.getMessage())).build());
+                String errMsg = String.format("%s: %s", lraId, e.getMessage());
+                throw new WebApplicationException(errMsg, e,
+                        Response.status(INTERNAL_SERVER_ERROR.getStatusCode()).entity(errMsg).build());
             }
 
             lraService.updateRecoveryURI(lra, newCompensatorUrl, rcvCoordId, true);
@@ -141,7 +142,8 @@ public class RecoveryCoordinator {
         }
 
         LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
-        throw new NotFoundException(rcvCoordId);
+        String errorMsg = lraId + ": Cannot find compensator URL " + compensatorUrl;
+        throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(rcvCoordId).build());
     }
 
     @GET

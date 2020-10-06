@@ -112,9 +112,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 });
 
                 if (parseException[0] != null) {
-                    throw new WebApplicationException(lraId + ": Invalid link URI: " + parseException[0], BAD_REQUEST);
+                    String errorMsg = lraId + ": Invalid link URI: " + parseException[0];
+                    throw new WebApplicationException(errorMsg, parseException[0],
+                            Response.status(BAD_REQUEST).entity(errorMsg).build());
                 } else if (compensateURI == null && afterURI == null) {
-                    throw new WebApplicationException(lraId + ": Invalid link URI: missing compensator", BAD_REQUEST);
+                    String errorMsg = lraId + ": Invalid link URI: missing compensator";
+                    throw new WebApplicationException(errorMsg, Response.status(BAD_REQUEST).entity(errorMsg).build());
                 }
             } else {
                 this.compensateURI = new URI(String.format("%s/compensate", linkURI));
@@ -135,7 +138,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             this.compensatorData = compensatorData;
         } catch (URISyntaxException e) {
             LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId, linkURI);
-            throw new WebApplicationException(lraId + ": Invalid LRA id: " + e.getMessage(), BAD_REQUEST);
+            String errorMsg = lraId + ": Invalid LRA id: " + e.getMessage();
+            throw new WebApplicationException(errorMsg, e,
+                    Response.status(BAD_REQUEST).entity(errorMsg).build());
         }
     }
 
@@ -177,8 +182,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             try {
                 link = Link.valueOf(lnk);
             } catch (Exception e) {
-                throw new WebApplicationException(Response.status(PRECONDITION_FAILED.getStatusCode())
-                        .entity(String.format("Invalid compensator join request: cannot parse link '%s'", linkStr)).build());
+                String errorMsg = "Invalid compensator join request: cannot parse link '" + linkStr + "'";
+                throw new WebApplicationException(errorMsg, e,
+                        Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
             }
 
             if (COMPENSATE_REL.equals(link.getRel())) {
@@ -937,7 +943,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         try {
             this.recoveryURI = new URI(recoveryURI);
         } catch (URISyntaxException e) {
-            throw new WebApplicationException(recoveryURI + ": Invalid recovery id: " + e.getMessage(), BAD_REQUEST);
+            String errorMsg = recoveryURI + ": Invalid recovery id: " + e.getMessage();
+            throw new WebApplicationException(errorMsg, e,
+                    Response.status(BAD_REQUEST).entity(errorMsg).build());
         }
     }
 
