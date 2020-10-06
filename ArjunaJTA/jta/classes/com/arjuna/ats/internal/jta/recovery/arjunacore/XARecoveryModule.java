@@ -293,7 +293,7 @@ public class XARecoveryModule implements RecoveryModule
 				// It also breaks legacy cross-origin recovery configurations, where N datasources point to the same RM
 				// and one could be used to recover on behalf of the others. So, where it's a JTA tx we know will
 				// have uniq branches (see TransactionImple::createXid) we ignore the names to preserve compatibility.
-				if(scopedXid.getXid().getFormatId() != XATxConverter.FORMAT_ID && !scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
+				if(USE_JNDI_NAME && scopedXid.getXid().getFormatId() != XATxConverter.FORMAT_ID && !scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
 					continue;
 				}
 
@@ -1071,4 +1071,6 @@ public class XARecoveryModule implements RecoveryModule
     private Set<String> contactedJndiNames = new HashSet<String>();
 
     private static XARecoveryModule registeredXARecoveryModule;
+
+    public static final boolean USE_JNDI_NAME = Boolean.getBoolean("tx-recover-non-unique-xids");
 }
