@@ -91,14 +91,18 @@ public class ImportNonUniqueBranchTest {
 
     @Test
     public void testWrapped() throws Exception {
-        test(true);
-        Assert.assertEquals("resource commit error", 0, XAResourceImpl.getErrorCount());
+        if (XARecoveryModule.USE_JNDI_NAME) {
+            test(true);
+            Assert.assertEquals("resource commit error", 0, XAResourceImpl.getErrorCount());
+        }
     }
 
     @Test
     public void testNotWrapped() throws Exception {
-        test(false);
-        Assert.assertNotEquals("resource commit should have failed", 0, XAResourceImpl.getErrorCount());
+        if (XARecoveryModule.USE_JNDI_NAME) {
+            test(false);
+            Assert.assertNotEquals("resource commit should have failed", 0, XAResourceImpl.getErrorCount());
+        }
     }
 
     public void test(boolean wrap) throws Exception {
