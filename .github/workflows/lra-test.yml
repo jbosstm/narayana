@@ -1,0 +1,46 @@
+name: LRA
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - "rts/lra/**"
+  pull_request:
+    branches: [ master ]
+    paths:
+      - "rts/lra/**"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  lra-test:
+    name: LRA test with JDK ${{ matrix.java-version }}
+    timeout-minutes: 120
+    strategy:
+      matrix:
+        java-version: [ 8, 11 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        name: Set up JDK ${{ matrix.java-version }}
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - uses: actions/cache@v2
+        name: Cache local Maven repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: LRA test
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          WORKSPACE=$PWD PROFILE=LRA ./scripts/hudson/narayana.sh
+        env:
+          LRA_TCK_TIMEOUT_FACTOR: 1
+
