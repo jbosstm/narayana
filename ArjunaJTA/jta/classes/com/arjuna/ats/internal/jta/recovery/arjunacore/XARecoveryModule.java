@@ -356,6 +356,10 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 	private boolean isReasonableMatch(NameScopedXid scopedXid, NameScopedXAResource theKey, boolean relaxedMatch) {
 		jtaLogger.logger.trace("isReasonableMatch "+scopedXid+" "+theKey+" "+relaxedMatch);
 
+		if (!USE_JNDI_NAME) {
+			return true; // legacy behaviour
+		}
+
 		// JTA Xids are always unique (see TransactionImple::createXid)
 		// so can appear in only one place. Just ignore any metadata.
 		if(scopedXid.getXid().getFormatId() == XATxConverter.FORMAT_ID) {
