@@ -43,6 +43,7 @@ import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 
 public class RecoveryXids
@@ -220,7 +221,7 @@ public class RecoveryXids
         if(_xares.isAnonymous() && xaResource.isAnonymous()) {
             if(xids != null && xids.length > 0) {
                 for(int i = 0; i < xids.length; i++) {
-                    if(contains(xids[i])) {
+                    if(contains(xids[i]) && xids[i].getFormatId() == XATxConverter.FORMAT_ID) {
                         if (tsLogger.logger.isTraceEnabled()) {
                             tsLogger.logger.trace("RecoveryXids updateIfEquivalent updated with weak match. prev="+_xares+", replacement="+xaResource+", _lastValidated="+_lastValidated);
                         }
