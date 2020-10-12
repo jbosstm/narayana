@@ -266,17 +266,72 @@ public class XARecoveryModule implements RecoveryModule
 	{
 		NameScopedXid key = new NameScopedXid(xid, jndiName);
 
-		XAResource toReturn = getTheKey(key);
+		XAResource toReturn = getTheKey(key, false);
 
 		if (toReturn == null) {
-			periodicWorkFirstPass();
-			toReturn = getTheKey(key);
+			synchronized (this) {
+				/*
+				 * run an xid scan with the lock held to avoid _xidScans being changed
+				 * after the call to periodicWorkFirstPass but before the call to getTheKey
+				 */
+				periodicWorkFirstPass();
+				toReturn = getTheKey(key, false);
+				if(toReturn == null) {
+					// last resort, accept a weaker match if there is one
+					toReturn = getTheKey(key, true);
+				}
+			}
 		}
 
 		return toReturn;
     }
 
-    private XAResource getTheKey(NameScopedXid scopedXid) {
+	/*
+	 An Xid value we're looking for, described from the objectstore log record by scopedXid,
+	   also appears in the recovery xa scan of theKey.
+	 However, that does not necessarily mean that theKey's XAResource can be used for recovering it
+	   as non-unique (inflowed) xids may appear under multiple, potentially non-interchangeable, keys.
+	 */
+	private boolean isReasonableMatch(NameScopedXid scopedXid, NameScopedXAResource theKey, boolean relaxedMatch) {
+		jtaLogger.logger.trace("isReasonableMatch "+scopedXid+" "+theKey+" "+relaxedMatch);
+
+		// JTA Xids are always unique (see TransactionImple::createXid)
+		// so can appear in only one place. Just ignore any metadata.
+		if(scopedXid.getXid().getFormatId() == XATxConverter.FORMAT_ID) {
+			jtaLogger.logger.trace("isReasonableMatch true by FORMAT_ID");
+			return true;
+		}
+
+		// all other xids may be non-uniq branches and appear under more than one theKey
+		// so we need some additional rules to try and get the right one...
+
+		// where the jndi name in the log matches the resources name, it's a good bet.
+		// this covers the ironjacamar integration case for databases in wildfly/EAP
+		if(!scopedXid.isAnonymous() && scopedXid.isSameName(theKey)) {
+			jtaLogger.logger.trace("isReasonableMatch true by exact name");
+			return true;
+		}
+
+		// some integrations, notable HornetQ, provide name metadata in the enlistment side
+		// (so it winds up in the logs and hence in scopedXid)
+		// but not on the recovery side (so theKey is unnamed).
+		// If we've failed to make a stronger match, then that will have to do,
+		// even though it's potentially wrong.
+		if(relaxedMatch && !(!scopedXid.isAnonymous() && !theKey.isAnonymous())) {
+			jtaLogger.logger.trace("isReasonableMatch true by relaxed name");
+			return true;
+		}
+
+		// at this point there is one remaining valid case... the names on both side are set and don't match
+		// BUT it's still valid to recover the xid from theKey. That's the case only with legacy configurations
+		// where N datasources point to the same RM and one could be used to recover on behalf of the others.
+		// we no longer support that, since it's impossible to distinguish from matches that are simply incorrect.
+
+		jtaLogger.logger.trace("isReasonableMatch false");
+		return false;
+	}
+
+    private XAResource getTheKey(NameScopedXid scopedXid, boolean relaxedMatch) {
 		if (_xidScans != null)
 		{
 			Enumeration<NameScopedXAResource> keys = _xidScans.keys();
@@ -285,22 +340,10 @@ public class XARecoveryModule implements RecoveryModule
 			{
 				NameScopedXAResource theKey = keys.nextElement();
 
-				// In cases where the xid originally came from named source,
-				// only  a replacement from the same source is allowed.
-				// This deals with inflow cases where the xid by itself is non-unique,
-				// but the <xid,jndiName> tuple is unique.
-				// BUT...
-				// It also breaks legacy cross-origin recovery configurations, where N datasources point to the same RM
-				// and one could be used to recover on behalf of the others. So, where it's a JTA tx we know will
-				// have uniq branches (see TransactionImple::createXid) we ignore the names to preserve compatibility.
-				if(USE_JNDI_NAME && scopedXid.getXid().getFormatId() != XATxConverter.FORMAT_ID && !scopedXid.isAnonymous() && !scopedXid.isSameName(theKey)) {
-					continue;
-				}
-
 				RecoveryXids xids = _xidScans.get(theKey);
 
 				// JBTM-1255 moved stale check back to bottomUpRecovery
-				if (xids.contains(scopedXid.getXid())) {
+				if (xids.contains(scopedXid.getXid()) && isReasonableMatch(scopedXid, theKey, relaxedMatch)) {
 					// This Xid is going to be recovered by the AtomicAction
 					// it is possible that the Xid is recovered by both txbridge and XATerminator - the second
 					// would get noxaresource error message
