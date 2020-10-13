@@ -173,7 +173,7 @@ public class LRACoordinatorRecovery1TestCase extends TestBase {
         // the LRA with the short timeout should have timed out and cancelled
         status = getStatus(new URI(lraId));
 
-        Assert.assertTrue("LRA with short timeout should have cancelled",
+        Assert.assertTrue("LRA with short timeout should have cancelled dsfgasdfasdf",
                 status == null || status == LRAStatus.Cancelled);
 
         // verify that the resource was notified that the LRA finished
