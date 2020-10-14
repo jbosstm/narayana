@@ -95,14 +95,6 @@ public class ImportNonUniqueBranchTest {
         }
     }
 
-    @Test
-    public void testNotWrapped() throws Exception {
-        if (XARecoveryModule.USE_JNDI_NAME) {
-            test(false);
-            Assert.assertFalse("resource commit should have failed", 0 == XAResourceImpl.getErrorCount());
-        }
-    }
-
     static final int XARESOURCE_FORMAT_ID = 131080; // see BridgeDurableParticipant.XARESOURCE_FORMAT_ID = 131080;
 
     public void test(boolean wrap) throws Exception {
