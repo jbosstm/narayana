@@ -479,7 +479,7 @@
     <version.com.sun.jersey>1.9.1</version.com.sun.jersey>
     <version.com.sun.grizzly>1.9.59</version.com.sun.grizzly>
     <version.org.codehaus.jettison>1.4.0</version.org.codehaus.jettison>
-    <version.junit>4.11</version.junit>
+    <version.junit>4.13.1</version.junit>
     <version.org.jboss.byteman>4.0.10</version.org.jboss.byteman>
     <version.org.wildfly.arquillian>2.1.1.Final</version.org.wildfly.arquillian>
     <version.org.jboss.arquillian.core>1.1.13.Final</version.org.jboss.arquillian.core>
