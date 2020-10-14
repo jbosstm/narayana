@@ -97,14 +97,6 @@ public class ImportNonUniqueBranchTest {
         }
     }
 
-    @Test
-    public void testNotWrapped() throws Exception {
-        if (XARecoveryModule.USE_JNDI_NAME) {
-            test(false);
-            Assert.assertNotEquals("resource commit should have failed", 0, XAResourceImpl.getErrorCount());
-        }
-    }
-
     public void test(boolean wrap) throws Exception {
         XAResourceImpl.clearErrorCount();
         ResourceManager resourceManagerA = new ResourceManager("jndi:/A", wrap);
