@@ -30,17 +30,20 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 
 import io.narayana.lra.Current;
 import io.narayana.lra.LRAConstants;
-import io.narayana.lra.RequestBuilder;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
-import io.narayana.lra.ResponseHolder;
 import io.narayana.lra.logging.LRALogger;
+import org.apache.http.HttpHeaders;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.AsyncInvoker;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -58,7 +61,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static io.narayana.lra.LRAConstants.AFTER;
-import static io.narayana.lra.LRAHttpClient.PARTICIPANT_TIMEOUT;
+import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
@@ -263,6 +266,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     private int tryDoEnd(boolean compensate) {
         URI endPath;
+        Client client = null;
 
         if (isFinished()) {
             return atEnd(status == ParticipantStatus.FailedToComplete || status == ParticipantStatus.FailedToCompensate
@@ -317,13 +321,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             try {
                 // ask the participant to complete or compensate
-                ResponseHolder response = new RequestBuilder(endPath)
+                client = ClientBuilder.newClient();
+                Response response = client.target(endPath)
                         .request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
-                        .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                        .put();
+                        .async()
+                        .put(null)
+                        .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 httpStatus = response.getStatus();
 
@@ -332,7 +338,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 if (accepted && statusURI == null) {
                     // the participant could not finish immediately and we have no status URI so one should be
                     // present in the Location header
-                    statusURI = response.getLocationHeaderAsURI();
+                    statusURI = URI.create(response.getHeaderString(HttpHeaders.LOCATION));
                 }
 
                 if (httpStatus == Response.Status.GONE.getStatusCode()) {
@@ -341,11 +347,15 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 }
 
                 if (response.hasEntity()) {
-                    responseData = response.readEntity();
+                    responseData = response.readEntity(String.class);
                 }
             } catch (Exception e) {
                  LRALogger.logger.infof("LRARecord.doEnd put %s failed: %s",
                             endPath, e.getMessage());
+            } finally {
+                if (client != null) {
+                    client.close();
+                }
             }
         }
 
@@ -405,10 +415,13 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private boolean afterLRARequest(URI target, String payload) {
+        Client client = null;
+
         try {
-            RequestBuilder builder = new RequestBuilder(target)
-                    .request()
-                    .header(LRA.LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString());
+            client = ClientBuilder.newClient();
+            Invocation.Builder builder = client.target(target)
+                .request()
+                .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString());
 
             if (target.equals(afterURI)) {
                 builder.header(LRA.LRA_HTTP_ENDED_CONTEXT_HEADER, lra.getId().toASCIIString());
@@ -419,16 +432,24 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 builder.header(LRA.LRA_HTTP_CONTEXT_HEADER, lra.getId().toASCIIString());
             }
 
-            builder.async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
-
-            ResponseHolder response = target.equals(forgetURI) ? builder.delete() : builder.put(payload, MediaType.TEXT_PLAIN);
+            Future<Response> responseFuture =  target.equals(forgetURI) ? builder.async().delete()
+                : builder.async().put(Entity.text(payload));
+            Response response = responseFuture.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
             if (response.getStatus() == 200) {
                 return true;
             }
-        } catch (WebApplicationException e) {
-            if (LRALogger.logger.isInfoEnabled()) {
-                LRALogger.logger.infof("Could not notify URI at %s (%s)", target, e.getMessage());
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (!(e instanceof WebApplicationException) && cause instanceof WebApplicationException) {
+                e = (WebApplicationException) cause;
+            }
+            if (LRALogger.logger.isDebugEnabled()) {
+                LRALogger.logger.debugf("Could not notify URI at %s (%s)", target, e.getMessage());
+            }
+        } finally {
+            if (client != null) {
+                client.close();
             }
         }
 
@@ -526,17 +547,20 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             }
         } else if (statusURI != null) {
             // it is a standard participant - check the status URI
-            ResponseHolder response;
+            Response response;
+            Client client = null;
 
             try {
                 // since this method is called from the recovery thread do not block
-                response = new RequestBuilder(statusURI)//.path(getLRAId(lraId))
+                client = ClientBuilder.newClient();
+                response = client.target(statusURI)//.path(getLRAId(lraId))
                         .request()
                         .header(LRA_HTTP_CONTEXT_HEADER, lraId.toASCIIString())
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
-                        .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                        .get(); // if the attempt times out the catch block below will return a heuristic
+                        .async()
+                        .get()
+                        .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS); // if the attempt times out the catch block below will return a heuristic
 
                 // 200 and 410 are the only valid response code for reporting the participant status
                 if (response.getStatus() == Response.Status.GONE.getStatusCode()) {
@@ -556,9 +580,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     // these response codes indicate that the implementation should retry later
                     return TwoPhaseOutcome.HEURISTIC_HAZARD;
                 } else if (response.getStatus() == Response.Status.OK.getStatusCode() &&
-                        response.getResponseString() != null) {
+                        response.hasEntity()) {
                     // the participant is available again and has reported its status
-                    status = ParticipantStatus.valueOf(response.getResponseString());
+                    status = ParticipantStatus.valueOf(response.readEntity(String.class));
 
                     switch (status) {
                         case Completed:
@@ -596,6 +620,9 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
             } finally {
                 Current.pop();
+                if (client != null) {
+                    client.close();
+                }
             }
         }
 
@@ -700,26 +727,37 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     boolean forget() {
+        Client client = null;
+
         if (forgetURI != null) {
             try {
-                ResponseHolder response = new RequestBuilder(forgetURI)//.path(getLRAId(lraId))
+                client = ClientBuilder.newClient();
+                Response response = client.target(forgetURI)//.path(getLRAId(lraId))
                     .request()
                     .header(LRA_HTTP_CONTEXT_HEADER, lraId)
                     .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI)
                     .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId)
-                    .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                    .delete();
+                    .async()
+                    .delete()
+                    .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                     return true;
                 }
-            } catch (WebApplicationException e) {
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+                if (!(e instanceof WebApplicationException) && cause instanceof WebApplicationException) {
+                    e = (WebApplicationException) cause;
+                }
                 LRALogger.logger.infof("LRARecord.forget delete %s failed: %s",
                     forgetURI, e.getMessage());
                 // TODO write a test to ensure that recovery only retries the forget request
                 return false; // force recovery to keep retrying
             } finally {
                 Current.pop();
+                if (client != null) {
+                    client.close();
+                }
             }
 
         } else {
