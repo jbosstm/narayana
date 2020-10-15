@@ -12,7 +12,7 @@
   <artifactId>lra-test-arquillian-extension</artifactId>
   <name>LRA tests: Arquillian extension</name>
   <description>Arquillian extensions needed for LRA tests to work</description>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.microprofile.lra</groupId>
@@ -52,6 +52,6 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
-  
+
 
 </project>

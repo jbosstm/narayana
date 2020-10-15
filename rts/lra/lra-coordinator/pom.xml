@@ -31,7 +31,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <finalName>lra-coordinator</finalName>
         <plugins>
@@ -61,6 +61,10 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-jsonb</artifactId>

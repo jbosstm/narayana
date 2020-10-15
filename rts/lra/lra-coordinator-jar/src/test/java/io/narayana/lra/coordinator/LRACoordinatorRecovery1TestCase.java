@@ -26,7 +26,8 @@ import io.narayana.lra.Current;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.coordinator.api.Coordinator;
-import io.narayana.lra.coordinator.domain.model.LRAData;
+import io.narayana.lra.LRAData;
+import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.filter.ServerLRAFilter;
@@ -75,7 +76,8 @@ public class LRACoordinatorRecovery1TestCase extends TestBase {
             NarayanaLRAClient.class.getPackage(),
             Current.class.getPackage(),
             LRAService.class.getPackage(),
-            LRARecoveryModule.class.getPackage()
+            LRARecoveryModule.class.getPackage(),
+            Transaction.class.getPackage()
     };
 
     private static Package[] participantPackages = {
