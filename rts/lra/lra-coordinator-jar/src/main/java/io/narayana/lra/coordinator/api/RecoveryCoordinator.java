@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.coordinator.api;
 
-import io.narayana.lra.coordinator.domain.model.LRAData;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.openapi.annotations.Operation;

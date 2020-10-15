@@ -1,4 +1,4 @@
-package io.narayana.lra.coordinator.domain.model;
+package io.narayana.lra;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
@@ -8,14 +8,16 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
  * for JSON response creation when LRA info is asked for.
  */
 public class LRAData {
-    private final String lraId;
-    private final String clientId;
-    private final LRAStatus status;
-    private final boolean isTopLevel;
-    private final boolean isRecovering;
-    private final long startTime;
-    private final long finishTime;
-    private final int httpStatus;
+    private String lraId;
+    private String clientId;
+    private LRAStatus status;
+    private boolean isTopLevel;
+    private boolean isRecovering;
+    private long startTime;
+    private long finishTime;
+    private int httpStatus;
+
+    public LRAData() {}
 
     public LRAData(String lraId, String clientId, LRAStatus status, boolean isTopLevel, boolean isRecovering,
                     long startTime, long finishTime, int httpStatus) {
@@ -33,32 +35,64 @@ public class LRAData {
         return this.lraId;
     }
 
+    public void setLraId(String lraId) {
+        this.lraId = lraId;
+    }
+
     public String getClientId() {
         return this.clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public LRAStatus getStatus() {
         return this.status;
     }
 
+    public void setStatus(LRAStatus status) {
+        this.status = status;
+    }
+
     public boolean isTopLevel() {
         return this.isTopLevel;
+    }
+
+    public void setTopLevel(boolean topLevel) {
+        isTopLevel = topLevel;
     }
 
     public boolean isRecovering() {
         return this.isRecovering;
     }
 
+    public void setRecovering(boolean recovering) {
+        isRecovering = recovering;
+    }
+
     public long getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
     public long getFinishTime() {
         return finishTime;
     }
 
+    public void setFinishTime(long finishTime) {
+        this.finishTime = finishTime;
+    }
+
     public int getHttpStatus() {
         return this.httpStatus;
+    }
+
+    public void setHttpStatus(int httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
     public boolean equals(Object o) {

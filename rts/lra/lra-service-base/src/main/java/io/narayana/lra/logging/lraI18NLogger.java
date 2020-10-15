@@ -92,7 +92,7 @@ public interface lraI18NLogger {
 
     @LogMessage(level = ERROR)
     @Message(id = 25011, value = "Cannot access coordinator '%s' when getting status for LRA '%s'")
-    void error_cannotAccesCorrdinatorWhenGettingStatus(URI coordinator, URL lra, @Cause Throwable t);
+    void error_cannotAccessCoordinatorWhenGettingStatus(URI coordinator, URL lra, @Cause Throwable t);
 
     @LogMessage(level = ERROR)
     @Message(id = 25012, value = "LRA coordinator '%s' returned an invalid status code '%s' for LRA '%s'")

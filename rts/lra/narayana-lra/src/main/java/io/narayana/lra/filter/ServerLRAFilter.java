@@ -30,6 +30,7 @@ import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
@@ -344,7 +345,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
 
                 headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString().replaceAll("^\"|\"$", ""));
-            } else if (requiresActiveLRA && !lraClient.isActive(lraId)) {
+            } else if (requiresActiveLRA && lraClient.getStatus(lraId) != LRAStatus.Active) {
                 Current.clearContext(headers);
                 Current.pop(lraId);
                 containerRequestContext.removeProperty(SUSPENDED_LRA_PROP);

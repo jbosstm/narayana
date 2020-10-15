@@ -23,9 +23,7 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
-import io.narayana.lra.RequestBuilder;
-import io.narayana.lra.ResponseHolder;
-import io.narayana.lra.coordinator.domain.model.LRAData;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.model.Transaction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
@@ -44,6 +42,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -79,11 +80,11 @@ import static io.narayana.lra.LRAConstants.COMPENSATE;
 import static io.narayana.lra.LRAConstants.COMPLETE;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.STATUS;
 import static io.narayana.lra.LRAConstants.STATUS_PARAM_NAME;
 import static io.narayana.lra.LRAConstants.TIMELIMIT_PARAM_NAME;
-import static io.narayana.lra.LRAHttpClient.PARTICIPANT_TIMEOUT;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
@@ -238,13 +239,32 @@ public class Coordinator {
                     return Response.status(response.getStatus()).build();
                 }
             } else {
-                ResponseHolder resp = new RequestBuilder(parentLRAUrl)
+                Client client = null;
+                Response response = null;
+
+                try {
+                    client = ClientBuilder.newClient();
+                    response = client.target(parentLRAUrl)
                         .request()
-                        .async(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS)
-                        .put(compensatorUrl, MediaType.TEXT_PLAIN);
-                if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
-                    return Response.status(resp.getStatus()).build(); // TODO include reason
+                        .async()
+                        .put(Entity.text(compensatorUrl))
+                        .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
+
+                    if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+                        String errMessage = String.format("The coordinator at %s returned an unexpected response: %d",
+                            parentLRAUrl, response.getStatus());
+                        return Response.status(response.getStatus()).entity(errMessage).build();
+                    }
+                } catch (Exception e) {
+                    LRALogger.logger.debugf("Cannot contact the LRA Coordinator at %s", parentLRA);
+                    throw new WebApplicationException(e);
+                } finally {
+                    if (client != null) {
+                        client.close();
+                    }
                 }
+
+                return Response.status(PRECONDITION_FAILED).build();
             }
         }
 
