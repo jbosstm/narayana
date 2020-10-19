@@ -95,12 +95,6 @@ public class ImportNonUniqueBranchTest {
         Assert.assertEquals("resource commit error", 0, XAResourceImpl.getErrorCount());
     }
 
-    @Test
-    public void testNotWrapped() throws Exception {
-        test(false);
-        Assert.assertNotEquals("resource commit should have failed", 0, XAResourceImpl.getErrorCount());
-    }
-
     public void test(boolean wrap) throws Exception {
         XAResourceImpl.clearErrorCount();
         ResourceManager resourceManagerA = new ResourceManager("jndi:/A", wrap);
