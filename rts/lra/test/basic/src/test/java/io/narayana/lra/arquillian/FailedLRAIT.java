@@ -22,7 +22,6 @@
 
 package io.narayana.lra.arquillian;
 
-import io.narayana.lra.LRAConstants;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithStatusURI;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
@@ -54,6 +53,8 @@ import java.util.List;
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.RESET_ACCEPTED_PATH;
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.START_LRA_PATH;
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.SIMPLE_PARTICIPANT_RESOURCE_PATH;
+import static  io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
+import static  io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -231,8 +232,8 @@ public class FailedLRAIT {
     // look up LRAs that are in a failed state (ie FailedToCancel or FailedToClose)
     private List<JSONObject> getFailedRecords(URI lra) throws Exception {
         Response response = null;
-        String recoveryUrl = String.format("http://%s:%d/%s",
-                lra.getHost(), lra.getPort(), LRAConstants.RECOVERY_COORDINATOR_PATH_NAME);
+        String recoveryUrl = String.format("http://%s:%d/%s/%s",
+                lra.getHost(), lra.getPort(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
 
         try {
             response = client.target(new URI(recoveryUrl)).path("failed").request().get();
@@ -257,8 +258,8 @@ public class FailedLRAIT {
 
     // ask the recovery coordinator to delete its log for an LRA
     private int removeFailedLRA(URI lra) throws URISyntaxException, UnsupportedEncodingException {
-        String recoveryUrl = String.format("http://%s:%d/%s",
-                lra.getHost(), lra.getPort(), LRAConstants.RECOVERY_COORDINATOR_PATH_NAME);
+        String recoveryUrl = String.format("http://%s:%d/%s/%s",
+                lra.getHost(), lra.getPort(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
         String txId = URLEncoder.encode(lra.toASCIIString(), "UTF-8");
 
         return removeFailedLRA(recoveryUrl, txId);
@@ -266,8 +267,8 @@ public class FailedLRAIT {
 
     // ask the recovery coordinator to delete its log for an LRA
     private int removeFailedLRA(String host, int port, String lra) throws URISyntaxException, UnsupportedEncodingException {
-        String recoveryUrl = String.format("http://%s:%d/%s",
-                host, port, LRAConstants.RECOVERY_COORDINATOR_PATH_NAME);
+        String recoveryUrl = String.format("http://%s:%d/%s/%s",
+                host, port, COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
 
         return removeFailedLRA(recoveryUrl, lra);
     }
