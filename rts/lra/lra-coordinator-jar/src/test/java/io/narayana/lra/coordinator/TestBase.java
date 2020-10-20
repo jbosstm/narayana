@@ -112,7 +112,8 @@ public abstract class TestBase {
         clearRecoveryLog();
 
         if (bytemanScript != null) {
-            javaVmArguments = javaVmArguments.replaceAll("=listen", "=script:scripts/@BMScript@.btm,listen");
+            String testClassesDir = System.getProperty("maven.test.classes.dir");
+            javaVmArguments = javaVmArguments.replaceAll("=listen", "=script:" + testClassesDir + "/scripts/@BMScript@.btm,listen");
             javaVmArguments = javaVmArguments.replace("@BMScript@", bytemanScript);
         }
 
