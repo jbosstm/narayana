@@ -70,7 +70,7 @@ public class LRAService {
 
     public Transaction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
-            String uid = getUid(lraId);
+            String uid = LRAConstants.getLRAId(lraId);
 
             // try comparing on uid since different URIs can map to the same resource
             // (eg localhost versus 127.0.0.1 versus :1 etc)
@@ -96,15 +96,6 @@ public class LRAService {
         }
 
         return lras.get(lraId);
-    }
-
-    /*
-     * extract the Uid of the LRA from the LRA id
-     */
-    private String getUid(URI lraId) {
-        String path = lraId.getPath();
-
-        return path.substring(path.lastIndexOf('/') + 1);
     }
 
     public LRAData getLRA(URI lraId) {
@@ -189,7 +180,7 @@ public class LRAService {
      */
     public boolean removeLog(String lraId) {
         // LRA ids are URIs with the arjuna uid forming the last segment
-        String uid = lraId.substring(lraId.lastIndexOf('/') + 1);
+        String uid = LRAConstants.getLRAId(lraId);
 
         try {
             return lraRecoveryModule.removeCommitted(new Uid(uid));

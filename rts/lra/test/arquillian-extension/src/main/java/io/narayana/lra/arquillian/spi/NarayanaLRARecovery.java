@@ -30,12 +30,14 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 
 public class NarayanaLRARecovery implements LRARecoveryService {
     private static final Logger log = Logger.getLogger(NarayanaLRARecovery.class);
 
-    /**
+    /*
      * A bit of hacking to change the internals of annotations defined in LRA TCK.
      * There is need to adjust timeout defined on the annotation definition.
      */
@@ -60,33 +62,29 @@ public class NarayanaLRARecovery implements LRARecoveryService {
 
     @Override
     public boolean waitForEndPhaseReplay(URI lraId) {
-        String host = lraId.getHost();
-        int port = lraId.getPort();
-        if (!recoverLRAs(host, port, lraId)) {
+        if (!recoverLRAs(lraId)) {
             // first recovery scan probably collided with periodic recovery which started
             // before the test execution so try once more
-            return recoverLRAs(host, port, lraId);
+            return recoverLRAs(lraId);
         }
-
         return true;
     }
 
     /**
-     * Invokes LRA coordinator recovery REST endpoint and returns whether the recovery of intended LRAs happended
+     * Invokes LRA coordinator recovery REST endpoint and returns whether the recovery of intended LRAs happened
      *
-     * @param host  the LRA coordinator host address
-     * @param port  the LRA coordinator port
      * @param lraId the LRA id of the LRA that is intended to be recovered
      * @return true the intended LRA recovered, false otherwise
      */
-    private boolean recoverLRAs(String host, int port, URI lraId) {
+    private boolean recoverLRAs(URI lraId) {
         // trigger a recovery scan
         Client recoveryCoordinatorClient = ClientBuilder.newClient();
 
         try {
-            String recoveryCoordinatorUrl = String.format("http://%s:%d/%s/recovery",
-                host, port, LRAConstants.RECOVERY_COORDINATOR_PATH_NAME);
-            WebTarget recoveryTarget = recoveryCoordinatorClient.target(URI.create(recoveryCoordinatorUrl));
+            URI lraCoordinatorUri = LRAConstants.getLRACoordinatorUri(lraId);
+            URI recoveryCoordinatorUri = UriBuilder.fromUri(lraCoordinatorUri)
+                    .path(RECOVERY_COORDINATOR_PATH_NAME).build();
+            WebTarget recoveryTarget = recoveryCoordinatorClient.target(recoveryCoordinatorUri);
 
             // send the request to the recovery coordinator
             Response response = recoveryTarget.request().get();
@@ -102,6 +100,5 @@ public class NarayanaLRARecovery implements LRARecoveryService {
         } finally {
             recoveryCoordinatorClient.close();
         }
-
     }
 }

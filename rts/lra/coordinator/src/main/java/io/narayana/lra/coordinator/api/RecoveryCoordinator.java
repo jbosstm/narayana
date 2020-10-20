@@ -53,12 +53,13 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 
 @ApplicationScoped
-@Path(RECOVERY_COORDINATOR_PATH_NAME)
+@Path(COORDINATOR_PATH_NAME + "/" + RECOVERY_COORDINATOR_PATH_NAME)
 @Tag(name = "LRA Recovery")
 public class RecoveryCoordinator {
 
@@ -147,7 +148,6 @@ public class RecoveryCoordinator {
     }
 
     @GET
-    @Path("recovery")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "List recovering Long Running Actions",
         description = "Returns LRAs that are recovering (ie some compensators still need to be ran)")
