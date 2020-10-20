@@ -36,6 +36,7 @@ import org.apache.http.HttpConnection;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -66,6 +67,7 @@ import static org.junit.Assert.fail;
  * Test that check that LRA deadlines are respected during crash recovery
  */
 @RunWith(Arquillian.class)
+@RunAsClient
 public class LRACoordinatorRecovery1TestCase extends TestBase {
     private static Package[] coordinatorPackages = {
             RecoveryModule.class.getPackage(),

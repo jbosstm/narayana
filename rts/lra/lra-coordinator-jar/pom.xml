@@ -26,11 +26,6 @@
             -Dlra.coordinator.path=${lra.coordinator.path}
         </jvm.args.other>
         <server.jvm.args>${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
-
-        <server.port.offset>100</server.port.offset>
-        <server2.jvm.args>
-            -Djboss.socket.binding.port-offset=${server.port.offset} ${jvm.args.other} ${jvm.args.memory} ${jvm.args.modular}
-        </server2.jvm.args>
     </properties>
 
     <dependencies>
@@ -117,17 +112,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                    <includes>
-                        <include>**/*TestCase.java</include>
-                    </includes>
-                    <!-- workaround to force tests that use byteman to run first -->
-                    <runOrder>alphabetical</runOrder>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -175,21 +159,17 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
                                 <lra.http.host>127.0.0.1</lra.http.host>
                                 <lra.http.port>8080</lra.http.port>
-
                                 <lra.coordinator.path>${lra.coordinator.path}</lra.coordinator.path>
-                                <lra-participant.address>127.0.0.1</lra-participant.address>
-                                <lra-participant.port>9080</lra-participant.port>
                                 <server.jvm.args>${server.jvm.args}</server.jvm.args>
                             </systemPropertyVariables>
-                            <excludes>
-                              <exclude>AnnotationsTestCase.java</exclude>
-                            </excludes>
+                            <systemProperties>
+                                <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -217,14 +197,18 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <skip>false</skip>
                             <argLine>${ipv6.server.jvm.args}</argLine>
                             <systemPropertyVariables combine.children="append">
+                                <lra.http.host>[::1]</lra.http.host>
+                                <lra.http.port>8080</lra.http.port>
+                                <lra.coordinator.path>${lra.coordinator.path}</lra.coordinator.path>
                                 <server.jvm.args>${server.jvm.args} ${ipv6.server.jvm.args}</server.jvm.args>
-                                <node.address>[::1]</node.address>
                             </systemPropertyVariables>
+                            <systemProperties>
+                                <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>

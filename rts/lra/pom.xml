@@ -108,7 +108,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-		<version>${version.maven-failsafe-plugin}</version>
+		        <version>${version.maven-failsafe-plugin}</version>
                 <configuration>
                     <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
                     <skipITs>${skipITs}</skipITs>
@@ -117,9 +117,16 @@
                     </systemProperties>
                     <systemPropertyVariables>
                         <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
+                        <maven.test.classes.dir>${project.build.testOutputDirectory}</maven.test.classes.dir>
                         <thorntail.test.logging.category.arjuna>${thorntail.test.logging.category.arjuna}</thorntail.test.logging.category.arjuna>
                         <thorntail.test.logging.category.narayana>${thorntail.test.logging.category.narayana}</thorntail.test.logging.category.narayana>
                     </systemPropertyVariables>
+                    <includes>
+                        <!-- Integration tests running at the container -->
+                        <include>*IT.java</include>
+                        <include>*Tests.java</include> <!-- LRA TCK tests are named with 'Tests.java' -->
+                        <include>*TestCase.java</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>
@@ -135,7 +142,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <includes>
+                        <!-- Unit tests running with no container involved -->
+                        <include>*Test.java</include>
+                    </includes>
                 </configuration>
             </plugin>
             <plugin>
