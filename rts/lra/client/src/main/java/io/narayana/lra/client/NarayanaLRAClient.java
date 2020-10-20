@@ -195,36 +195,10 @@ public class NarayanaLRAClient implements Closeable {
         setCoordinatorURI(new URI(scheme, null, host, port, "/" + COORDINATOR_PATH_NAME, null, null));
     }
 
-    /**
-     * Extract the uid part from an LRA URL.
-     *
-     * @param lraId  LRA id to extract from
-     * @return  uid of lra extracted from LRA id URL
-     */
-    private static String getLRAId(String lraId) {
-        return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
-    }
-
-    /*
-     * strip the uid of the LRA from the URI to obtain the coordinator endpoint
-     */
-    private static URI removeLRAId(URI lraId) throws URISyntaxException {
-        if (lraId == null) {
-            return null;
-        }
-
-        String ascii = lraId.toASCIIString();
-        String id = ascii.replaceFirst(".*/([^/?]+).*", "$1");
-
-        id = ascii.substring(0, ascii.length() - id.length());
-
-        return new URI(id);
-    }
-
     public void setCurrentLRA(URI coordinatorUri) {
         try {
-            init(removeLRAId(coordinatorUri));
-        } catch (URISyntaxException e) {
+            init(LRAConstants.getLRACoordinatorUri(coordinatorUri));
+        } catch (IllegalStateException e) {
             LRALogger.i18NLogger.error_invalidCoordinatorId(coordinatorUri.toASCIIString(), e);
             throwGenericLRAException(coordinatorUri, BAD_REQUEST.getStatusCode(), e.getMessage());
         }
@@ -394,7 +368,7 @@ public class NarayanaLRAClient implements Closeable {
             client = getClient();
 
             response = client.target(base)
-                .path(String.format(LEAVE_PATH, getLRAId(lraId.toString())))
+                .path(String.format(LEAVE_PATH, LRAConstants.getLRAId(lraId)))
                 .request()
                 .put(Entity.text(body));
 
@@ -564,7 +538,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             response = client.target(base)
-                .path(String.format(STATUS_PATH, getLRAId(lraId.toString())))
+                .path(String.format(STATUS_PATH, LRAConstants.getLRAId(uri)))
                 .request()
                 .get();
 
@@ -694,7 +668,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             response = client.target(base)
-                .path(getLRAId(uri.toASCIIString()))
+                .path(LRAConstants.getLRAId(uri))
                 .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                 .request()
                 .header("Link", linkHeader)
@@ -744,7 +718,7 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             client = getClient();
-            String lraId = getLRAId(lra.toString());
+            String lraId = LRAConstants.getLRAId(lra);
             response = client.target(base)
                 .path(confirm ? String.format(CLOSE_PATH, lraId) : String.format(CANCEL_PATH, lraId))
                 .request()
