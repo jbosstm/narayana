@@ -32,7 +32,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  
   <properties>
     <version.thorntail>2.6.0.Final</version.thorntail>
-    <version.quarkus>1.5.0.Final</version.quarkus>
+    <version.quarkus>1.8.3.Final</version.quarkus>
     <version.resteasy-client>${version.org.jboss.resteasy}</version.resteasy-client>
 
     <version.json.api>1.1</version.json.api>
