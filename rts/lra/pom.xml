@@ -159,16 +159,16 @@
     </build>
 
     <modules>
-        <module>lra-service-base</module>
-        <module>lra-client</module>
-        <module>lra-coordinator-jar</module>
-        <module>lra-coordinator-thorntail</module>
-        <module>lra-coordinator</module>
-        <module>lra-proxy</module>
-        <module>lra-annotation-checker</module>
-        <module>lra-test</module>
-        <module>narayana-lra</module>
-        <module>lra-coordinator-war</module>
+        <module>service-base</module>
+        <module>client</module>
+        <module>coordinator</module>
+        <module>coordinator-thorntail</module>
+        <module>coordinator-quarkus</module>
+        <module>coordinator-war</module>
+        <module>proxy</module>
+        <module>annotation-checker</module>
+        <module>test</module>
+        <module>jaxrs</module>
     </modules>
 
     <profiles>

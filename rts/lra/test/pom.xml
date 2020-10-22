@@ -31,7 +31,7 @@
         <lra.coordinator.log.file.module.narayana></lra.coordinator.log.file.module.narayana>
         <lra.coordinator.debug.params></lra.coordinator.debug.params> <!-- has content when -Ddebug.coordinator is specified -->
         <lra.coordinator.debug.port>8787</lra.coordinator.debug.port>
-        <lra.coordinator.jar.path>${project.basedir}/../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
+        <lra.coordinator.jar.path>${project.basedir}/../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
     </properties>
     
     <dependencies>
@@ -159,8 +159,8 @@
     </profiles>
 
     <modules>
-        <module>lra-test-tck</module>
-        <module>lra-test-basic</module>
-        <module>lra-test-arquillian-extension</module>
+        <module>tck</module>
+        <module>basic</module>
+        <module>arquillian-extension</module>
     </modules>
 </project>

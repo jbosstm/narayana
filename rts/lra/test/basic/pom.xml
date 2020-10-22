@@ -17,7 +17,7 @@
     <application.host>localhost</application.host>
     <application.port>8180</application.port>
 
-    <lra.coordinator.jar.path>${project.basedir}/../../lra-coordinator/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
+    <lra.coordinator.jar.path>${project.basedir}/../../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
   </properties>
 
   <dependencies>
