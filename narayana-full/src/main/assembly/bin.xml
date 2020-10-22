@@ -203,22 +203,22 @@
 			<destName>xts_third_party_licenses.txt</destName>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator/target/lra-coordinator-runner.jar</source>
+			<source>../rts/lra/coordinator-quarkus/target/lra-coordinator-runner.jar</source>
 			<fileMode>0755</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator-jar/target/lra-coordinator.jar</source>
+			<source>../rts/lra/coordinator/target/lra-coordinator.jar</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator-war/target/lra-coordinator.war</source>
+			<source>../rts/lra/coordinator-war/target/lra-coordinator.war</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
 		<file>
-			<source>../rts/lra/lra-coordinator-thorntail/target/lra-coordinator-thorntail.jar</source>
+			<source>../rts/lra/coordinator-thorntail/target/lra-coordinator-thorntail.jar</source>
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
