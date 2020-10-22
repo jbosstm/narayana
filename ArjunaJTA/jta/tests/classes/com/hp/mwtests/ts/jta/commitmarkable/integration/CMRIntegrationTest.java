@@ -16,7 +16,7 @@
  */
 package com.hp.mwtests.ts.jta.commitmarkable.integration;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
@@ -43,6 +43,7 @@ import javax.transaction.UserTransaction;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -51,7 +52,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.CommitMarkableResourceRecordRecoveryModule;
@@ -62,6 +62,7 @@ import com.hp.mwtests.ts.jta.commitmarkable.Utils;
 
 @RunWith(Arquillian.class)
 public class CMRIntegrationTest {
+	private static final Logger log = Logger.getLogger(CMRIntegrationTest.class);
 
 	private static final String DEPENDENCIES = "Dependencies: com.h2database.h2, org.jboss.jts, org.jboss.jboss-transaction-spi\n";
 
@@ -111,24 +112,24 @@ public class CMRIntegrationTest {
 
 			userTransaction.commit();
 		} catch (Exception e) {
-			System.out.printf("XXX txn excp: %s%n", e.getCause());
+			log.infof(e, "XXX txn exception cause: %s", e.getCause());
 		} finally {
 			try {
 				if (userTransaction.getStatus() == Status.STATUS_ACTIVE
 						|| userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK)
 					userTransaction.rollback();
 			} catch (Throwable e) {
-				System.out.printf("XXX txn did not finish: %s%n", e.getCause());
+				log.infof(e, "XXX txn did not finish, exception cause: %s", e.getCause());
 			}
 		}
 	}
 
-	private int threadCount = 100;
-	private int iterationCount = 2000;
+	private final int threadCount = 5;
+	private final int iterationCount = 20;
 	private int waiting;
 	private boolean go;
 	private final Object waitLock = new Object();
-	private AtomicInteger totalExecuted = new AtomicInteger();
+	private final AtomicInteger totalExecuted = new AtomicInteger();
 
 	public void doTest(final DataSource dataSource) throws Exception {
 
@@ -146,8 +147,8 @@ public class CMRIntegrationTest {
 						while (!go) {
 							try {
 								CMRIntegrationTest.this.wait();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+							} catch (InterruptedException ie) {
+								log.error("Interrupted exception on waiting for a notification at CMRIntegrationTest", ie);
 								return;
 							}
 						}
@@ -155,8 +156,6 @@ public class CMRIntegrationTest {
 
 					int success = 0;
 					Connection connection = null;
-					int faultType = Integer.getInteger(
-					    "com.hp.mwtests.ts.jta.commitmarkable.integration.CMRIntegrationTest", 0);
 
 					for (int i = 0; i < iterationCount; i++) {
 						try {
@@ -170,10 +169,6 @@ public class CMRIntegrationTest {
 									.createStatement();
 							createStatement
 									.execute("INSERT INTO foo (bar) VALUES (1)");
-							// System.out.printf("XXX txn close%n");
-
-							if (faultType == 1)
-								Runtime.getRuntime().halt(0);
 
                             userTransaction.commit();
 							connection.close(); // This wouldn't work for a
@@ -181,51 +176,35 @@ public class CMRIntegrationTest {
 												// closed the connection - it
 												// helps us though as JCA seems
 												// to rely on finalize
-
-							// System.out
-							// .printf("committed txn iteration %d%n", i);
 							success++;
 						} catch (SQLException e) {
-							System.err.println("boom");
-							e.printStackTrace();
-							if (e.getCause() != null) {
-								e.getCause().printStackTrace();
-							}
+							log.errorf(e, "Error while invoking insertion to a database table with CMR resource");
 							SQLException nextException = e.getNextException();
 							while (nextException != null) {
-								nextException.printStackTrace();
-								nextException = nextException
-										.getNextException();
-							}
-							Throwable[] suppressed = e.getSuppressed();
-							for (int j = 0; j < suppressed.length; j++) {
-								suppressed[j].printStackTrace();
+								log.errorf("Next SQLException chained", nextException);
+								nextException = nextException.getNextException();
 							}
 							try {
 								userTransaction.rollback();
 							} catch (IllegalStateException e1) {
-								e1.printStackTrace();
+								log.error("Problem with transaction", e1);
 								fail("Problem with transaction");
 							} catch (SecurityException  e1) {
-								e1.printStackTrace();
+								log.error("Problem with transaction", e1);
 								fail("Problem with transaction");
 							} catch (SystemException e1) {
-								e1.printStackTrace();
+								log.error("Problem with transaction", e1);
 								fail("Problem with transaction");
 							}
 						} catch (Exception e) {
-							e.printStackTrace();
+							log.error("Problem with UserTransaction", e);
 							fail("Problem with transaction");
 						} finally {
 							if (connection != null)
 								try {
 									connection.close();
-								} catch (SQLException e) {
-									e.printStackTrace(); // To change body of
-															// catch statement
-															// use File |
-															// Settings | File
-															// Templates.
+								} catch (SQLException sqle) {
+									log.error("Error on closing failed CMR resource connection", sqle);
 								}
 						}
 
@@ -242,31 +221,27 @@ public class CMRIntegrationTest {
 				waitLock.wait();
 			}
 		}
-		long startTime = -1;
+		long startTime;
 		synchronized (CMRIntegrationTest.this) {
 			go = true;
 			CMRIntegrationTest.this.notifyAll();
 			startTime = System.currentTimeMillis();
 		}
 
-		for (int i = 0; i < threads.length; i++) {
-			threads[i].join();
+		for (Thread thread : threads) {
+			thread.join();
 		}
 
 		long endTime = System.currentTimeMillis();
 
-		System.out.println(new Date() + "  Number of transactions: "
-				+ totalExecuted.intValue());
+		log.infof("%T Number of transactions: %d", new Date(), totalExecuted.intValue());
 
 		long additionalCleanuptime = 0L; // postRunCleanup(dataSource);
 
 		long timeInMillis = (endTime - startTime) + additionalCleanuptime;
-		System.out.printf("  Total time millis: %d%n", timeInMillis);
-		System.out.printf("  Average transaction time: %d%n", timeInMillis
-				/ totalExecuted.intValue());
-		System.out
-				.printf("  Transactions per second: %d%n",
-						Math.round((totalExecuted.intValue() / (timeInMillis / 1000d))));
+		log.infof("  Total time millis: %d%n", timeInMillis);
+		log.infof("  Average transaction time: %d%n", timeInMillis / totalExecuted.intValue());
+		log.infof("  Transactions per second: %d%n", Math.round((totalExecuted.intValue() / (timeInMillis / 1000d))));
 
 		checkFooSize(dataSource);
 	}
@@ -295,15 +270,14 @@ public class CMRIntegrationTest {
 	}
 
 	private CommitMarkableResourceRecordRecoveryModule getCRRRM() {
-		CommitMarkableResourceRecordRecoveryModule crrrm = null;
 		RecoveryManager recMan = RecoveryManager.manager();
-		Vector recoveryModules = recMan.getModules();
+		Vector<RecoveryModule> recoveryModules = recMan.getModules();
 
 		if (recoveryModules != null) {
-			Enumeration modules = recoveryModules.elements();
+			Enumeration<RecoveryModule> modules = recoveryModules.elements();
 
 			while (modules.hasMoreElements()) {
-				RecoveryModule m = (RecoveryModule) modules.nextElement();
+				RecoveryModule m = modules.nextElement();
 
 				if (m instanceof CommitMarkableResourceRecordRecoveryModule) {
 					return (CommitMarkableResourceRecordRecoveryModule) m;
@@ -314,9 +288,7 @@ public class CMRIntegrationTest {
 		return null;
 	}
 
-	public long postRunCleanup(DataSource dataSource) throws SQLException,
-			ObjectStoreException {
-
+	public long postRunCleanup(DataSource dataSource) throws SQLException {
 		Connection connection = dataSource.getConnection();
 		CommitMarkableResourceRecordRecoveryModule crrrm = getCRRRM();
 
@@ -333,8 +305,6 @@ public class CMRIntegrationTest {
 
 			if (expectedReapableConnectableResourceRecords > 0) {
 				// The recovery module has to perform lookups
-				// new InitialContext().rebind("connectableresource",
-				// recoveryDataSource);
 				long startTime = System.currentTimeMillis();
 				crrrm.periodicWorkFirstPass();
 				crrrm.periodicWorkSecondPass();
@@ -343,10 +313,8 @@ public class CMRIntegrationTest {
 				checkSize("xids", statement, 0);
 				statement.close();
 
-				System.out.println("  Total cleanup time: "
-						+ (endTime - startTime) + " Average cleanup time: "
-						+ (endTime - startTime)
-						/ expectedReapableConnectableResourceRecords);
+				log.infof("  Total cleanup time: %d  Average cleanup time: %s",
+						(endTime - startTime),(endTime - startTime) / expectedReapableConnectableResourceRecords);
 
 				return endTime - startTime;
 			} else {
