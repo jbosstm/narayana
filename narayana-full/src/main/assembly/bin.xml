@@ -327,7 +327,7 @@
 			<outputDirectory>quickstarts/rest-tx</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>../rts/lra/lra-coordinator/target/lib</directory>
+			<directory>../rts/lra/coordinator-quarkus/target/lib</directory>
 			<outputDirectory>rts/lra/lib</outputDirectory>
 		</fileSet>
 	</fileSets>
