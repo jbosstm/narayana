@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.internal.jta.recovery.jts;
 
+import com.arjuna.ats.internal.arjuna.FormatConstants;
+
 /**
  * Designed to be able to recover any XAResource.
  */
@@ -47,4 +49,7 @@ public class XARecoveryModule extends
 		com.arjuna.ats.internal.jta.Implementationsx.initialise();
 	}
 
+	protected int getFormatId() {
+		return FormatConstants.JTS_FORMAT_ID;
+	}
 }

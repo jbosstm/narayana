@@ -37,6 +37,7 @@ import static org.junit.Assert.assertTrue;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.internal.jta.recovery.arjunacore.NameScopedXAResource;
+import com.arjuna.ats.jta.xa.XATxConverter;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -89,8 +90,8 @@ public class RecoveryXidsUnitTest
 
         assertTrue(rxids.contains(xids[0]));
 
-        assertFalse(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), null));
-        assertTrue(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), xids));
+        assertFalse(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), null, XATxConverter.FORMAT_ID));
+        assertTrue(rxids.updateIfEquivalentRM(new NameScopedXAResource(new TestResource(), null), xids, XATxConverter.FORMAT_ID));
 
         assertFalse(rxids.isSameRM(new NameScopedXAResource(new TestResource(), null)));
     }

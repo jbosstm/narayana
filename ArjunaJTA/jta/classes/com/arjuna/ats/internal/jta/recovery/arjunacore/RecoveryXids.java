@@ -42,6 +42,7 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.FormatConstants;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -196,9 +197,10 @@ public class RecoveryXids
      *
      * @param xaResource an xaResource which may or may not be from the same orgin as ours.
      * @param xids The list of xids returned by a recovery scan of the supplied resource.
+     * @param formatId
      * @return true if the supplied xaResource is from the same origin as the one we previously held.
      */
-    public boolean updateIfEquivalentRM(NameScopedXAResource xaResource, Xid[] xids)
+    public boolean updateIfEquivalentRM(NameScopedXAResource xaResource, Xid[] xids, int formatId)
     {
         // Equivalence is hard! get it wrong and XARecoveryModule._xidScans can leak memory...
 
@@ -221,7 +223,7 @@ public class RecoveryXids
         if(_xares.isAnonymous() && xaResource.isAnonymous()) {
             if(xids != null && xids.length > 0) {
                 for(int i = 0; i < xids.length; i++) {
-                    if(contains(xids[i]) && xids[i].getFormatId() == XATxConverter.FORMAT_ID) {
+                    if(contains(xids[i]) && xids[i].getFormatId() == formatId) {
                         if (tsLogger.logger.isTraceEnabled()) {
                             tsLogger.logger.trace("RecoveryXids updateIfEquivalent updated with weak match. prev="+_xares+", replacement="+xaResource+", _lastValidated="+_lastValidated);
                         }

@@ -1038,7 +1038,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         for(NameScopedXAResource theKey : keys) {
             RecoveryXids recoveryXids = _xidScans.get(theKey);
 
-            if(recoveryXids.updateIfEquivalentRM(xares, xids)) {
+            if(recoveryXids.updateIfEquivalentRM(xares, xids, getFormatId())) {
                 // recoveryXids is for this xares, but was originally obtained using
                 // a different XAResource. rekey the hashtable to use the new one.
                 _xidScans.remove(theKey);
@@ -1051,6 +1051,10 @@ public class XARecoveryModule implements ExtendedRecoveryModule
             }
         }
     }
+
+    protected int getFormatId() {
+		return XATxConverter.FORMAT_ID;
+	}
 
 	/**
 	 * Is the Xid is in the failure list, i.e., the list of those transactions
