@@ -699,7 +699,7 @@ public class NarayanaLRAClient implements Closeable {
         }
 
         try {
-            String recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER); //readEntity(String.class).replaceAll("^\"|\"$", "");
+            String recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
             String url = URLDecoder.decode(recoveryUrl, "UTF-8");
             return new URI(url);
         } catch (URISyntaxException | UnsupportedEncodingException e) {
