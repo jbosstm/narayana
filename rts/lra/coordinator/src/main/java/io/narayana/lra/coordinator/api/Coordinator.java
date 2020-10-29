@@ -264,8 +264,6 @@ public class Coordinator {
                         client.close();
                     }
                 }
-
-                return Response.status(PRECONDITION_FAILED).build();
             }
         }
 
