@@ -55,6 +55,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.COMPENSATE;
@@ -77,6 +78,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
     private static final String SUSPENDED_LRA_PROP = "suspendLRA";
     private static final String NEW_LRA_PROP = "newLRA";
+
+    private static final Pattern START_END_QUOTES_PATTERN = Pattern.compile("^\"|\"$");
 
     @Context
     protected ResourceInfo resourceInfo;
@@ -345,7 +348,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             .entity(String.format("%s: %s", lraId, e.getMessage())).build());
                 }
 
-                headers.putSingle(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString().replaceAll("^\"|\"$", ""));
+                headers.putSingle(LRA_HTTP_RECOVERY_HEADER,
+                        START_END_QUOTES_PATTERN.matcher(recoveryUrl.toASCIIString()).replaceAll(""));
             } else if (requiresActiveLRA && lraClient.getStatus(lraId) != LRAStatus.Active) {
                 Current.clearContext(headers);
                 Current.pop(lraId);
