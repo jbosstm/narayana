@@ -23,6 +23,7 @@ package io.narayana.lra;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 public final class LRAConstants {
     public static final String COORDINATOR_PATH_NAME = "lra-coordinator";
@@ -44,6 +45,8 @@ public final class LRAConstants {
 
     public static final long PARTICIPANT_TIMEOUT = 2; // number of seconds to wait for requests
 
+    private static final Pattern UID_REGEXP_EXTRACT_MATCHER = Pattern.compile(".*/([^/?]+).*");
+
     private LRAConstants() {
         // utility class
     }
@@ -55,7 +58,7 @@ public final class LRAConstants {
      * @return  uid of LRA
      */
     public static String getLRAId(String lraId) {
-        return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
+        return lraId == null ? null : UID_REGEXP_EXTRACT_MATCHER.matcher(lraId).replaceFirst("$1");
     }
 
     /**
