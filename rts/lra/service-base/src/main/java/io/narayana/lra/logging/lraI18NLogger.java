@@ -59,10 +59,6 @@ public interface lraI18NLogger {
     void error_lraCreationUnexpectedStatus(int status, String response);
 
     @LogMessage(level = ERROR)
-    @Message(id = 25003, value = "LRA is null on creation, coordinator response '%s'")
-    void error_nullLraOnCreation(String response);
-
-    @LogMessage(level = ERROR)
     @Message(id = 25004, value = "Cannot create URL from coordinator response '%s'")
     void error_cannotCreateUrlFromLCoordinatorResponse(String response, @Cause Throwable t);
 
