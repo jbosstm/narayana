@@ -21,7 +21,6 @@
 package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import javax.transaction.xa.Xid;
-import java.util.Objects;
 
 class NameScopedXid implements NameScopedElement {
 
@@ -63,7 +62,7 @@ class NameScopedXid implements NameScopedElement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(xid, jndiName);
+        return Objects.hash(new Object[] { xid, jndiName });
     }
 
     @Override
