@@ -200,7 +200,7 @@ function init_test_options {
     fi
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
-    [ $AS_BUILD ] || AS_BUILD=0 # git clone and build a fresh copy of the AS
+    [ $AS_BUILD ] && [ -z "$JBOSS_HOME" ]  || AS_BUILD=0 # git clone and build a fresh copy of the AS when JBOSS_HOME is not provided
     [ $BLACKTIE ] || BLACKTIE=0 # Build BlackTie
     [ $OSGI_TESTS ] || OSGI_TESTS=0 # OSGI tests
     [ $TXF_TESTS ] || TXF_TESTS=0 # compensations tests
