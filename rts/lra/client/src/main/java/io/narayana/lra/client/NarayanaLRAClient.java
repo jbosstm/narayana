@@ -106,13 +106,13 @@ public class NarayanaLRAClient implements Closeable {
      * Key for looking up the config property that specifies which port a
      * coordinator is running on
      */
-    public static String LRA_COORDINATOR_PORT_KEY = "lra.http.port";
+    public static final String LRA_COORDINATOR_PORT_KEY = "lra.http.port";
 
     /**
      * Key for looking up the config property that specifies which JAX-RS path a
      * coordinator is running on
      */
-    public static String LRA_COORDINATOR_PATH_KEY = "lra.coordinator.path";
+    public static final String LRA_COORDINATOR_PATH_KEY = "lra.coordinator.path";
 
     public static final long DEFAULT_TIMEOUT_MILLIS = 0L;
 
@@ -179,7 +179,7 @@ public class NarayanaLRAClient implements Closeable {
      *
      * @param coordinatorUri  uri of the lra coordinator
      */
-    public NarayanaLRAClient(URI coordinatorUri) throws MalformedURLException, URISyntaxException {
+    public NarayanaLRAClient(URI coordinatorUri) {
         init(coordinatorUri);
     }
 
@@ -279,7 +279,7 @@ public class NarayanaLRAClient implements Closeable {
 
             response = client.target(base)
                 .path(START_PATH)
-                .queryParam(CLIENT_ID_PARAM_NAME, client)
+                .queryParam(CLIENT_ID_PARAM_NAME, clientID)
                 .queryParam(TIMELIMIT_PARAM_NAME, Duration.of(timeout, unit).toMillis())
                 .queryParam(PARENT_LRA_PARAM_NAME, encodedParentLRA)
                 .request()
@@ -294,13 +294,6 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             lra = URI.create(response.getHeaderString(HttpHeaders.LOCATION));
-
-            if (lra == null) {
-                LRALogger.i18NLogger.error_nullLraOnCreation(response.toString());
-                throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(), "LRA creation is null");
-                return null;
-            }
-
             lraTrace(lra, "startLRA returned");
 
             Current.push(lra);
@@ -341,7 +334,7 @@ public class NarayanaLRAClient implements Closeable {
 
     /**
      * @param lraId the URI of the LRA to join
-     * @param timelimit how long the participant is prepared to wait for LRA completion
+     * @param timeLimit how long the participant is prepared to wait for LRA completion
      * @param compensateUri URI for compensation notifications
      * @param completeUri URI for completion notifications
      * @param forgetUri URI for forget callback
@@ -351,10 +344,10 @@ public class NarayanaLRAClient implements Closeable {
      * @return a recovery URL for this enlistment
      * @throws WebApplicationException if the LRA coordinator failed to enlist the participant
      */
-    public URI joinLRA(URI lraId, Long timelimit,
+    public URI joinLRA(URI lraId, Long timeLimit,
                        URI compensateUri, URI completeUri, URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
                        String compensatorData) throws WebApplicationException {
-        return enlistCompensator(lraId, timelimit, "",
+        return enlistCompensator(lraId, timeLimit, "",
                 compensateUri, completeUri,
                 forgetUri, leaveUri, afterUri, statusUri,
                 compensatorData);
@@ -362,7 +355,7 @@ public class NarayanaLRAClient implements Closeable {
 
     public void leaveLRA(URI lraId, String body) throws WebApplicationException {
         Client client = null;
-        Response response = null;
+        Response response;
 
         try {
             client = getClient();
@@ -470,7 +463,7 @@ public class NarayanaLRAClient implements Closeable {
         if (method.isAnnotationPresent(Complete.class) || method.isAnnotationPresent(Compensate.class)) {
             for (Annotation[] ann : method.getParameterAnnotations()) {
                 for (Annotation an : ann) {
-                    if (Suspended.class.getName().equals(an.annotationType().getName())) {
+                    if (Suspended.class.isAssignableFrom(an.annotationType())) {
                         LRALogger.logger.warn("JAX-RS @Suspended annotation is untested");
                         return true;
                     }
@@ -522,7 +515,7 @@ public class NarayanaLRAClient implements Closeable {
 
     public LRAStatus getStatus(URI uri) throws WebApplicationException {
         Client client = null;
-        Response response = null;
+        Response response;
         URL lraId;
 
         try {
@@ -615,7 +608,7 @@ public class NarayanaLRAClient implements Closeable {
         return b.append(link);
     }
 
-    private URI enlistCompensator(URI lraUri, long timelimit, String uriPrefix,
+    private URI enlistCompensator(URI lraUri, Long timelimit, String uriPrefix,
                                   URI compensateUri, URI completeUri,
                                   URI forgetUri, URI leaveUri, URI afterUri, URI statusUri,
                                   String compensatorData) {
@@ -644,7 +637,7 @@ public class NarayanaLRAClient implements Closeable {
         return enlistCompensator(lraUri, timelimit, linkHeaderValue.toString(), compensatorData);
     }
 
-    private URI enlistCompensator(URI uri, long timelimit, String linkHeader, String compensatorData) {
+    private URI enlistCompensator(URI uri, Long timelimit, String linkHeader, String compensatorData) {
         // register with the coordinator
         // put the lra id in an http header
         Client client = null;
@@ -661,7 +654,7 @@ public class NarayanaLRAClient implements Closeable {
             );
             return null;
         }
-        if (timelimit < 0) {
+        if (timelimit == null || timelimit < 0) {
             timelimit = 0L;
         }
 
