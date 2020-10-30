@@ -19,12 +19,6 @@
       <version>${version.microprofile.lra.api}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${version.apache.httpclient}</version>
-    </dependency>
-
     <!-- jboss logging -->
     <dependency>
       <groupId>org.jboss.logging</groupId>
