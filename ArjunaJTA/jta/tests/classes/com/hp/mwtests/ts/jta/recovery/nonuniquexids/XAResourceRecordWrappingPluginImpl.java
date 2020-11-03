@@ -49,7 +49,7 @@ public class XAResourceRecordWrappingPluginImpl implements XAResourceRecordWrapp
 	private ConcurrentMap<String, Integer> nameToKey = new ConcurrentHashMap<String, Integer>();
 	private AtomicInteger nextKey = new AtomicInteger(1);
 	private ObjectStoreAPI eisNameStore;
-	private String nodeIdentifier;
+	private volatile String nodeIdentifier;
 
 	public void transcribeWrapperData(XAResourceRecord record) {
 
