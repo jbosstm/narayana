@@ -11,18 +11,18 @@
   Documentation
   -------------
 
-  The most up-to-date documentation can be found at https://maven.apache.org/.
+  The most up-to-date documentation can be found at http://maven.apache.org/.
 
   Release Notes
   -------------
 
-  The full list of changes can be found at https://maven.apache.org/docs/history.html.
+  The full list of changes can be found at http://maven.apache.org/release-notes.html.
 
   System Requirements
   -------------------
 
   JDK:
-    1.7 or above (this is to execute Maven - it still allows you to build against 1.3
+    1.6 or above (this is to execute Maven - it still allows you to build against 1.3
     and prior JDK's).
   Memory:
     No minimum requirement.
@@ -31,15 +31,13 @@
     that, additional disk space will be used for your local Maven repository. The size
     of your local repository will vary depending on usage but expect at least 500MB.
   Operating System:
-    Windows:
-      Windows 2000 or above.
-    Unix based systems (Linux, Solaris and Mac OS X) and others:
-      No minimum requirement.
+    No minimum requirement. Start up scripts are included as shell scripts and Windows
+    batch files.
 
   Installing Maven
   ----------------
 
-  1) Unpack the archive where you would like to store the binaries, e.g.:
+  1) Unpack the archive where you would like to store the binaries, eg:
 
     Unix-based operating systems (Linux, Solaris and Mac OS X)
       tar zxvf apache-maven-3.x.y.tar.gz
@@ -48,7 +46,7 @@
 
   2) A directory called "apache-maven-3.x.y" will be created.
 
-  3) Add the bin directory to your PATH, e.g.:
+  3) Add the bin directory to your PATH, eg:
 
     Unix-based operating systems (Linux, Solaris and Mac OS X)
       export PATH=/usr/local/apache-maven-3.x.y/bin:$PATH
@@ -59,7 +57,7 @@
 
   5) Run "mvn --version" to verify that it is correctly installed.
 
-  For complete documentation, see https://maven.apache.org/download.html#Installation
+  For complete documentation, see http://maven.apache.org/download.html#Installation
 
   Licensing
   ---------
@@ -69,11 +67,11 @@
   Maven URLS
   ----------
 
-  Home Page:          https://maven.apache.org/
-  Downloads:          https://maven.apache.org/download.html
-  Release Notes:      https://maven.apache.org/docs/history.html
-  Mailing Lists:      https://maven.apache.org/mailing-lists.html
-  Source Code:        https://gitbox.apache.org/repos/asf/maven.git
-  Issue Tracking:     https://issues.apache.org/jira/browse/MNG
+  Home Page:          http://maven.apache.org/
+  Downloads:          http://maven.apache.org/download.html
+  Release Notes:      http://maven.apache.org/release-notes.html
+  Mailing Lists:      http://maven.apache.org/mail-lists.html
+  Source Code:        https://git-wip-us.apache.org/repos/asf/maven.git/apache-maven
+  Issue Tracking:     http://jira.codehaus.org/browse/MNG
   Wiki:               https://cwiki.apache.org/confluence/display/MAVEN/
-  Available Plugins:  https://maven.apache.org/plugins/
+  Available Plugins:  http://maven.apache.org/plugins/index.html
