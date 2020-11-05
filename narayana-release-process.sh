@@ -52,7 +52,7 @@ then
   git clean -f -d
   # Add -x (this will delete all files (e.g. IDE, new features) not under source control)
   rm -rf $PWD/localm2repo
-  ./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -Prelease,all -Dmaven.javadoc.skip=true -DskipTests -pl :jbossjts-jacorb,:jbossxts,:jbossjts-integration,:byteman_support,:jbosstxbridge -am
+  ./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease,all -Dmaven.javadoc.skip=true -DskipTests -pl :jbossjts-jacorb,:jbossxts,:jbossjts-integration,:byteman_support,:jbosstxbridge -am
   rm -rf $PWD/localrepo
 
   echo "Go to https://repository.jboss.org/nexus/index.html#welcome
