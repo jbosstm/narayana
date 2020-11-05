@@ -123,10 +123,37 @@ function check_if_pull_closed
 function build_narayana {
   echo "Building Narayana"
   cd $WORKSPACE
-  [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
-  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $IPV6_OPTS -B clean install
+  if [ -n "$JAVA_HOME_FOR_BUILD" ]; then
+    local pathOriginal="$PATH"
+    local javaHomeOriginal="$JAVA_HOME"
+    export JAVA_HOME="$JAVA_HOME_FOR_BUILD"
+    export PATH="$JAVA_HOME/bin:$PATH"
+  fi
+
+  echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
+  ./build.sh -version
+
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false $IPV6_OPTS -B clean install
   [ $? = 0 ] || fatal "narayana build failed"
+
+  if [ -n "$pathOriginal" ]; then
+     export PATH="$pathOriginal"
+     export JAVA_HOME="$javaHomeOriginal"
+  fi
+
+  return 0
+}
+
+function test_narayana {
+  echo "Testing Narayana"
+  cd $WORKSPACE
+
+  echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
+  ./build.sh -version
+
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $AS_XARGS $IPV6_OPTS -B verify
+  [ $? = 0 ] || fatal "narayana test failed"
 
   return 0
 }
@@ -385,6 +412,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
 # run the job
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
+[ $NARAYANA_TESTS = 1 ] && test_narayana "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $XTS_AS_TESTS = 1 ] && xts_as_tests
 [ $JTA_AS_TESTS = 1 ] && jta_as_tests
