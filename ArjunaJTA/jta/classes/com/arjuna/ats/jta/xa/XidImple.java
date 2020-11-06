@@ -115,8 +115,9 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 		if (getFormatId() == xid.getFormatId()) {
 			byte[] gtx = xid.getGlobalTransactionId();
+			final int gtxlength = (gtx == null ? 0 : gtx.length);
 
-			if (_theXid.gtrid_length == gtx.length) {
+			if (_theXid.gtrid_length == gtxlength) {
 				if (equals(xid))
 					return true;
 				else {
@@ -186,15 +187,17 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 
 				byte[] gtx = xid.getGlobalTransactionId();
 				byte[] bql = xid.getBranchQualifier();
+				final int gtxlength = (gtx == null ? 0 : gtx.length);
 				final int bqlength = (bql == null ? 0 : bql.length);
 
-				_theXid.gtrid_length = gtx.length;
+				_theXid.gtrid_length = gtxlength;
 				_theXid.bqual_length = bqlength;
 
-				System.arraycopy(gtx, 0, _theXid.data, 0, gtx.length);
+				if (gtxlength > 0) {
+					System.arraycopy(gtx, 0, _theXid.data, 0, gtxlength);  
+				}
 				if (bqlength > 0) {
-					System.arraycopy(bql, 0, _theXid.data, gtx.length,
-							bql.length);
+					System.arraycopy(bql, 0, _theXid.data, gtxlength, bqlength);
 				}
 			}
 		}
@@ -213,9 +216,10 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable {
 				if (xid.getFormatId() == _theXid.formatID) {
 					byte[] gtx = xid.getGlobalTransactionId();
 					byte[] bql = xid.getBranchQualifier();
+					final int gtxlength = (gtx == null ? 0 : gtx.length);
 					final int bqlength = (bql == null ? 0 : bql.length);
 
-					if ((_theXid.gtrid_length == gtx.length)
+					if ((_theXid.gtrid_length == gtxlength)
 							&& (_theXid.bqual_length == bqlength)) {
 						int i;
 
