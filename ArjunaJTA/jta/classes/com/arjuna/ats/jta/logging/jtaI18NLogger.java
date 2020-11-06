@@ -600,6 +600,14 @@ public interface jtaI18NLogger {
     @Message(id = 16148, value = "Cannot work further as the argument Xid is null.", format = MESSAGE_FORMAT)
     String get_error_xid_is_null();
 
+    @Message(id = 16149, value = "Returned global transaction identifier and branch qualifier are null but format id is not -1. {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = WARN)
+    public void warn_recovery_transaction_id_and_branch_qualifier_are_null_wrong_format_id(String xaResourceAsString);
+
+    @Message(id = 16150, value = "Returned global transaction identifier or branch qualifier is null. {0}", format = MESSAGE_FORMAT)
+    @LogMessage(level = INFO)
+    public void info_recovery_transaction_id_or_branch_qualifier_is_null(String xaResourceAsString);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

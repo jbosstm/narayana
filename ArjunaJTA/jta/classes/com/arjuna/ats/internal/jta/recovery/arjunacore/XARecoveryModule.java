@@ -33,10 +33,12 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -736,33 +738,27 @@ public class XARecoveryModule implements ExtendedRecoveryModule
                             + ((trans != null) ? trans.length : 0)
                             + " xids in doubt");
                 }
-				if (jtaLogger.logger.isTraceEnabled() && trans != null) {
-					for (Xid xid : trans) {
-						byte[] globalTransactionId = xid.getGlobalTransactionId();
-						byte[] branchQualifier = xid.getBranchQualifier();
-	
-						StringBuilder stringBuilder = new StringBuilder();
-						stringBuilder.append("< ");
-						stringBuilder.append(xid.getFormatId());
-						stringBuilder.append(", ");
-						stringBuilder.append(globalTransactionId.length);
-						stringBuilder.append(", ");
-						stringBuilder.append(branchQualifier.length);
-						stringBuilder.append(", ");
-						for (int i = 0; i < globalTransactionId.length; i++) {
-							stringBuilder.append(globalTransactionId[i]);
-						}
-						stringBuilder.append(", ");
-						for (int i = 0; i < branchQualifier.length; i++) {
-							stringBuilder.append(branchQualifier[i]);
-						}
-						stringBuilder.append(" >");
-	
-						jtaLogger.logger.debug("Recovered: "
-								+ stringBuilder.toString());
-					}
-				}
-			}
+
+                if (trans != null) {
+                    for (Xid xid : trans) {
+                        if (xid != null) {
+                            byte[] globalTransactionId = xid.getGlobalTransactionId();
+                            byte[] branchQualifier = xid.getBranchQualifier();
+                            int formatId = xid.getFormatId();
+                            if (globalTransactionId == null || branchQualifier == null) {
+                                if (formatId != -1 && globalTransactionId == null && branchQualifier == null) {
+                                    jtaLogger.i18NLogger.warn_recovery_transaction_id_and_branch_qualifier_are_null_wrong_format_id(xares.toString() + getXidLogInfo(xid));
+                                } else {
+                                    jtaLogger.i18NLogger.info_recovery_transaction_id_or_branch_qualifier_is_null(xares.toString() + getXidLogInfo(xid));
+                                }
+                            }
+                            if (jtaLogger.logger.isDebugEnabled()) {
+                                jtaLogger.logger.debug("Recovered: " + getXidLogInfo(xid));
+                            }
+                        }
+                    }
+                }
+            }
 			catch (XAException e)
 			{
 				this.setRecoveryProblems(true);
@@ -1222,6 +1218,40 @@ public class XARecoveryModule implements ExtendedRecoveryModule
         if (jndiName != null && jndiName.length() > 0) {
             contactedJndiNames.add(jndiName);
         }
+    }
+    
+    private String getXidLogInfo (Xid xid) {
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        if (xid != null) {
+            byte[] globalTransactionId = xid.getGlobalTransactionId();
+            byte[] branchQualifier = xid.getBranchQualifier();
+            stringBuilder.append("< ");
+            stringBuilder.append(xid.getFormatId());
+            stringBuilder.append(", ");
+            stringBuilder.append(globalTransactionId != null ? globalTransactionId.length : "0");
+            stringBuilder.append(", ");
+            stringBuilder.append(branchQualifier != null ? branchQualifier.length : "0");
+            stringBuilder.append(", ");
+            if (globalTransactionId != null) {
+                for (int i = 0; i < globalTransactionId.length; i++) {
+                    stringBuilder.append(globalTransactionId[i]);
+                }
+            } else {
+                stringBuilder.append("null");
+            }
+            stringBuilder.append(", ");
+            if (branchQualifier != null) {
+                for (int i = 0; i < branchQualifier.length; i++) {
+                    stringBuilder.append(branchQualifier[i]);
+                }
+            } else {
+                stringBuilder.append("null");
+            }            
+            stringBuilder.append(" >");
+        }        
+        
+        return stringBuilder.toString();        
     }
 
     private RecoveryStore _recoveryStore = StoreManager.getRecoveryStore();
