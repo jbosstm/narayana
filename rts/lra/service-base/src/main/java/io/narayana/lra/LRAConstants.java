@@ -43,7 +43,13 @@ public final class LRAConstants {
     public static final String RECOVERY_PARAM = "recoveryCount";
     public static final String HTTP_METHOD_NAME = "method"; // the name of the HTTP method used to invoke participants
 
-    public static final long PARTICIPANT_TIMEOUT = 2; // number of seconds to wait for requests
+    /**
+     * System property name which defines the connection read timeout which is used
+     * by LRA Coordinator and its friends when connecting remote participants and other coordinators.
+     * The value is in seconds. The default value is {@code 2}.
+     */
+    public static final String PARTICIPANT_TIMEOUT_PARAM = "narayana.lra.participant.timeout";
+    public static final long PARTICIPANT_TIMEOUT = Long.getLong(PARTICIPANT_TIMEOUT_PARAM, 2);
 
     private static final Pattern UID_REGEXP_EXTRACT_MATCHER = Pattern.compile(".*/([^/?]+).*");
 
