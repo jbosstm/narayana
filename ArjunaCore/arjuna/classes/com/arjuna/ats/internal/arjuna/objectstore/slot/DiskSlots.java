@@ -62,10 +62,15 @@ public class DiskSlots implements BackingSlots {
         RandomAccessFile randomAccessFile = slots[slot];
         synchronized (randomAccessFile) {
 
+            // randomAccessFile.writeInt() is slower than the memory copy for our smallish records.
+            byte[] record = new byte[data.length+8];
+            java.nio.ByteBuffer byteBuffer = java.nio.ByteBuffer.wrap(record);
+            byteBuffer.putInt(data.length);
+            byteBuffer.put(data);
+            byteBuffer.putInt(checksum(data));
+
             randomAccessFile.seek(0);
-            randomAccessFile.writeInt(data.length);
-            randomAccessFile.write(data);
-            randomAccessFile.writeInt(checksum(data));
+            randomAccessFile.write(record);
 
             if (sync) {
                 randomAccessFile.getFD().sync();
@@ -102,10 +107,7 @@ public class DiskSlots implements BackingSlots {
 
     @Override
     public void clear(int slot, boolean sync) throws IOException {
-        RandomAccessFile randomAccessFile = slots[slot];
-        synchronized (randomAccessFile) {
-            write(slot, new byte[0], sync);
-        }
+        write(slot, new byte[0], sync);
     }
 
     private int checksum(byte[] data) {
