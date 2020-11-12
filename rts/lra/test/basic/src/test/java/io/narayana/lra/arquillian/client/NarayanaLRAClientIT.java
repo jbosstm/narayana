@@ -52,8 +52,12 @@ public class NarayanaLRAClientIT {
         URI lra = lraClient.startLRA("test-lra");
 
         List<LRAData> allLRAs = lraClient.getAllLRAs();
-
         Assert.assertTrue(allLRAs.stream().anyMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
+
+        lraClient.closeLRA(lra);
+
+        allLRAs = lraClient.getAllLRAs();
+        Assert.assertTrue(allLRAs.isEmpty());
     }
 
 }
