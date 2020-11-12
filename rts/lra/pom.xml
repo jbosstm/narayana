@@ -21,7 +21,6 @@
         <version.jackson>2.9.10.1</version.jackson>
 
         <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
-        <version.apache.httpclient>4.5.10</version.apache.httpclient>
         <version.cdi-api>2.0</version.cdi-api>
 
         <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->

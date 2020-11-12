@@ -35,12 +35,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${version.apache.httpclient}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-test-arquillian-extension</artifactId>
       <version>${project.version}</version>

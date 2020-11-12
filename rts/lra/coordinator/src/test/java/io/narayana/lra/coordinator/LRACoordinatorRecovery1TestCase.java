@@ -32,7 +32,6 @@ import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.filter.ServerLRAFilter;
 import io.narayana.lra.logging.LRALogger;
-import org.apache.http.HttpConnection;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -102,7 +101,6 @@ public class LRACoordinatorRecovery1TestCase extends TestBase {
         return ShrinkWrap.create(WebArchive.class, COORDINATOR_DEPLOYMENT + ".war")
                 .addPackages(false, coordinatorPackages)
                 .addPackages(false, participantPackages)
-                .addPackages(true, HttpConnection.class.getPackage())
                 .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
