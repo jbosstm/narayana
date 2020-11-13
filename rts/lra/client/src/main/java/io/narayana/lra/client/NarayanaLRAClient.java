@@ -361,7 +361,7 @@ public class NarayanaLRAClient implements Closeable {
             client = getClient();
 
             response = client.target(base)
-                .path(String.format(LEAVE_PATH, LRAConstants.getLRAId(lraId)))
+                .path(String.format(LEAVE_PATH, LRAConstants.getLRAUid(lraId)))
                 .request()
                 .put(Entity.text(body));
 
@@ -531,7 +531,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             response = client.target(base)
-                .path(String.format(STATUS_PATH, LRAConstants.getLRAId(uri)))
+                .path(String.format(STATUS_PATH, LRAConstants.getLRAUid(uri)))
                 .request()
                 .get();
 
@@ -661,7 +661,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             client = getClient();
             response = client.target(base)
-                .path(LRAConstants.getLRAId(uri))
+                .path(LRAConstants.getLRAUid(uri))
                 .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                 .request()
                 .header("Link", linkHeader)
@@ -711,9 +711,9 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             client = getClient();
-            String lraId = LRAConstants.getLRAId(lra);
+            String lraUid = LRAConstants.getLRAUid(lra);
             response = client.target(base)
-                .path(confirm ? String.format(CLOSE_PATH, lraId) : String.format(CANCEL_PATH, lraId))
+                .path(confirm ? String.format(CLOSE_PATH, lraUid) : String.format(CANCEL_PATH, lraUid))
                 .request()
                 .put(null);
 

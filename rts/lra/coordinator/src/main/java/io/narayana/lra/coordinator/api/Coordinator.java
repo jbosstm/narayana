@@ -231,7 +231,7 @@ public class Coordinator {
 
         if (parentLRAUrl != null) {
             // register with the parentLRA as a participant (extract the LRAId)
-            String compensatorUrl = String.format("%s/nested/%s", coordinatorUrl, LRAConstants.getLRAId(lraId));
+            String compensatorUrl = String.format("%s/nested/%s", coordinatorUrl, LRAConstants.getLRAUid(lraId));
 
             if (lraService.hasTransaction(parentLRAUrl)) {
                 Response response = joinLRAViaBody(parentLRAUrl.toASCIIString(), timelimit, null, compensatorUrl);
