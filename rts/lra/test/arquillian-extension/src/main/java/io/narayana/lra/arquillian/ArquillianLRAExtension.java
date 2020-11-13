@@ -24,7 +24,6 @@ package io.narayana.lra.arquillian;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 
 /**
  * Extension defined under <code>resources/META-INF/org.jboss.arquillian.core.spi.LoadableExtension</code>
@@ -33,10 +32,12 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
  */
 public class ArquillianLRAExtension implements LoadableExtension {
 
-   @Override
-   public void register(ExtensionBuilder builder) {
-       builder.service(AuxiliaryArchiveAppender.class, ConfigAuxiliaryArchiveAppender.class);
-       builder.service(ResourceProvider.class, NarayanaLRABaseUrlProvider.class);
-   }
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder
+            .service(AuxiliaryArchiveAppender.class, ConfigAuxiliaryArchiveAppender.class);
 
+        builder
+            .observer(AppServerCoordinatorDeploymentObserver.class);
+    }
 }

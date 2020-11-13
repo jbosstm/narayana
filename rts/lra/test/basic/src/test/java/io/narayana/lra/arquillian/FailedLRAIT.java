@@ -22,6 +22,7 @@
 
 package io.narayana.lra.arquillian;
 
+import io.narayana.lra.LRAConstants;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithStatusURI;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
@@ -31,6 +32,7 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
@@ -44,7 +46,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,10 +56,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.RESET_ACCEPTED_PATH;
-import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.START_LRA_PATH;
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.SIMPLE_PARTICIPANT_RESOURCE_PATH;
-import static  io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 import static  io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
+import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.START_LRA_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -71,6 +71,7 @@ import static org.junit.Assert.fail;
  */
 @RunWith(Arquillian.class)
 public class FailedLRAIT {
+    private static final Logger log = Logger.getLogger(FailedLRAIT.class);
 
     @ArquillianResource
     private URL baseURL;
@@ -94,15 +95,19 @@ public class FailedLRAIT {
         }
     }
 
+    static String getRecoveryUrl(URI lraId) {
+        return LRAConstants.getLRACoordinatorUrl(lraId) + "/" + RECOVERY_COORDINATOR_PATH_NAME;
+    }
+
     /**
      * test that a failure record is created when a participant (with status reporting) fails to compensate
      */
     @Test
     public void testWithStatusCompensateFailed() throws Exception {
-        URI lra = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
+        URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
 
-        if (!validateStateAndRemove(lra, LRAStatus.FailedToCancel)) {
+        if (!validateStateAndRemove(lraId, LRAStatus.FailedToCancel)) {
             fail("lra not in failed list");
         }
     }
@@ -113,11 +118,11 @@ public class FailedLRAIT {
     @Test
     public void testWithStatusCompleteFailed() throws Exception {
         // invoke a method that should run with an LRA
-        URI lra = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
+        URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
 
         // when the invoked method returns validate that the narayana implementation created a failure record
-        if (!validateStateAndRemove(lra, LRAStatus.FailedToClose)) {
+        if (!validateStateAndRemove(lraId, LRAStatus.FailedToClose)) {
             fail("lra not in failed list");
         }
     }
@@ -127,10 +132,10 @@ public class FailedLRAIT {
      */
     @Test
     public void testCompensateFailed() throws Exception {
-        URI lra = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
+        URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
 
-        if (!validateStateAndRemove(lra, LRAStatus.FailedToCancel)) {
+        if (!validateStateAndRemove(lraId, LRAStatus.FailedToCancel)) {
             fail("lra not in failed list");
         }
     }
@@ -140,10 +145,10 @@ public class FailedLRAIT {
      */
     @Test
     public void testCompleteFailed() throws Exception {
-        URI lra = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
+        URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
 
-        if (!validateStateAndRemove(lra, LRAStatus.FailedToClose)) {
+        if (!validateStateAndRemove(lraId, LRAStatus.FailedToClose)) {
             fail("lra not in failed list");
         }
     }
@@ -154,31 +159,31 @@ public class FailedLRAIT {
     @Test
     public void testCannotDeleteNonFailedLRAs() throws Exception {
         // start an LRA which will return 202 when asked to compensate
-        URI lra = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
+        URI lraId = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
                 START_LRA_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
-        List<JSONObject> failedLRAs = getFailedRecords(lra);
+        List<JSONObject> failedLRAs = getFailedRecords(lraId);
 
         // there should be no failed LRAs yet
         assertEquals(0, failedLRAs.size());
 
         // verify that deleting the LRA log fails as it's with "Cancelling" status
-        int status1 = removeFailedLRA(lra);
+        int status1 = removeFailedLRA(lraId);
         assertEquals("deleting a cancelling LRA should fail with error code 412", 412, status1);
 
-        int status2 = removeFailedLRA(lra.getHost(), lra.getPort(), "Invalid URI Syntax");
+        int status2 = removeFailedLRA(getRecoveryUrl(lraId), "Invalid URI Syntax");
         assertEquals("used an invalid (wrong URI syntax) LRA id and precondition failed is expected", 412, status2);
 
-        int status3 = removeFailedLRA(lra.getHost(), lra.getPort(), "http://example.com");
+        int status3 = removeFailedLRA(getRecoveryUrl(lraId), "http://example.com");
         // there is a difference on handling this url format in different REST Easy versions (ie. Thorntail returns 404, WFLY 21 returns 405)
         assertThat("deleting an LRA in wrong format that JAX-RS understands as non-existent URL binding or as method not-allowed",
                 status3, anyOf(equalTo(404), equalTo(405)));
 
-        int status4 = removeFailedLRA(lra.getHost(), lra.getPort(), URLEncoder.encode("http://example.com", StandardCharsets.UTF_8.name()));
+        int status4 = removeFailedLRA(getRecoveryUrl(lraId), URLEncoder.encode("http://example.com", StandardCharsets.UTF_8.name()));
         assertEquals("using correct URI format but such that has empty path component and thus non-existent, " +
                 "expecting internal server error", 500, status4);
 
-        int status5 = removeFailedLRA(lra.getHost(), lra.getPort(), "a:b.c");
+        int status5 = removeFailedLRA(getRecoveryUrl(lraId), "a:b.c");
         assertEquals("using correct URI format but such that has no path component and thus non-existent, " +
                 "expecting internal server error", 500, status5);
 
@@ -186,10 +191,10 @@ public class FailedLRAIT {
         invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH, RESET_ACCEPTED_PATH, 200);
 
         // wait for recovery to replay the compensation
-        new NarayanaLRARecovery().waitForRecovery(lra);
+        new NarayanaLRARecovery().waitForRecovery(lraId);
 
         // the participant should now be in a failed state so the record can be deleted
-        int statusDeleted = removeFailedLRA(lra);
+        int statusDeleted = removeFailedLRA(lraId);
         assertEquals("deleting a failed LRA", 204, statusDeleted);
     }
 
@@ -197,16 +202,18 @@ public class FailedLRAIT {
         Response response = null;
 
         try {
-            response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
+            response = client.target(baseURL.toURI())
                     .path(resourcePrefix)
-                    .path(resourcePath).build())
+                    .path(resourcePath)
                     .request()
                     .get();
 
-            assertEquals(expectedStatus, response.getStatus());
-            Assert.assertTrue(response.hasEntity());
+            Assert.assertTrue("Expecting a non empty body in response from " + resourcePrefix + "/" + resourcePath,
+                    response.hasEntity());
 
-            return URI.create(response.readEntity(String.class));
+            return new URI(response.readEntity(String.class));
+        } catch (URISyntaxException use) {
+            throw new IllegalStateException("baseUrl '" + baseURL + "' cannot be converted to URI");
         } finally {
             if (response != null) {
                 response.close();
@@ -246,11 +253,10 @@ public class FailedLRAIT {
     // look up LRAs that are in a failed state (ie FailedToCancel or FailedToClose)
     private List<JSONObject> getFailedRecords(URI lra) throws Exception {
         Response response = null;
-        String recoveryUrl = String.format("http://%s:%d/%s/%s",
-                lra.getHost(), lra.getPort(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
+        String recoveryUrl = getRecoveryUrl(lra);
 
         try {
-            response = client.target(new URI(recoveryUrl)).path("failed").request().get();
+            response = client.target(recoveryUrl).path("failed").request().get();
 
             Assert.assertTrue("Missing response body when querying for failed LRAs", response.hasEntity());
             String failedLRAs = response.readEntity(String.class);
@@ -272,27 +278,18 @@ public class FailedLRAIT {
 
     // ask the recovery coordinator to delete its log for an LRA
     private int removeFailedLRA(URI lra) throws URISyntaxException, UnsupportedEncodingException {
-        String recoveryUrl = String.format("http://%s:%d/%s/%s",
-                lra.getHost(), lra.getPort(), COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
+        String recoveryUrl = getRecoveryUrl(lra);
         String txId = URLEncoder.encode(lra.toASCIIString(), "UTF-8");
 
         return removeFailedLRA(recoveryUrl, txId);
     }
 
     // ask the recovery coordinator to delete its log for an LRA
-    private int removeFailedLRA(String host, int port, String lra) throws URISyntaxException {
-        String recoveryUrl = String.format("http://%s:%d/%s/%s",
-                host, port, COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
-
-        return removeFailedLRA(recoveryUrl, lra);
-    }
-
-    // ask the recovery coordinator to delete its log for an LRA
-    private int removeFailedLRA(String recoveryUrl, String lra) throws URISyntaxException {
+    private int removeFailedLRA(String recoveryUrl, String lra) {
         Response response = null;
 
         try {
-            response = client.target(new URI(recoveryUrl)).path(lra).request().delete();
+            response = client.target(recoveryUrl).path(lra).request().delete();
 
             return response.getStatus();
         } finally {

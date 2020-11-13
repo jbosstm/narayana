@@ -1,0 +1,102 @@
+= `lra/test` module - integration tests
+
+The `lra/test` module contains the following submodules
+
+* link:./arquillian-extension/[`arquillian-extension`] contains set of
+  Arquillian extension classes which makes possible to execute the test modules
+  on supported runtimes
+* link:./basic[`basic`] contains integration tests which are written for testing
+  the Narayana features of the
+  https://github.com/eclipse/microprofile-lra[LRA specification]
+* link:./tck[`tck`] is a module which is responsible for execution of
+  https://github.com/eclipse/microprofile-lra/tree/master/tck[LRA TCK tests]
+  with Narayana supported runtimes
+
+All tests are executed with help of https://arquillian.org[Arquillian] platform.
+Arquillian is responsible to launch the runtime and makes possible to execute
+the tests.
+
+== How to run integration tests
+
+The itegration tests which should be run on the application runtime
+are configured to be started with https://maven.apache.org/surefire/maven-failsafe-plugin/[Maven Failsafe Plugin].
+
+To run the tests the target `verify` has to be used.
+Single test with `-Dit.test=...`.
+Debug the Maven test execution with `-Dmaven.failsafe.debug`.
+
+The Failsafe Plugin link:../pom.xml#114[is configured] to run tests with names
+`*IT.java`, `*Tests.java` and `*TestCase.java`.
+
+=== Application runtimes
+
+The module is configured to run two runtimes - https://www.wildfly.org[WildFly]
+and link:https://quarkus.io[Quarkus]/link:https://thorntail.io[Thorntail].
+
+The **WildFly** runtime deploys the coordinator and the application with the client
+library at the same application server. The coordinator is deployed as
+a separated `war` archive, and the same the applications which packs together
+the LRA client library.
+
+**Quarkus/Thorntail** splits the deployments to two separate JVMs.
+The Quarkus is started as Narayana LRA coordinator and
+Thorntail packs the client application with the LRA client library.
+
+=== Running tests with Quarkus/Thorntail
+
+To start integration tests:
+
+[source,sh]
+----
+mvn clean verify -Parq
+
+# single test in one module
+mvn clean verify -Parq -pl basic -Dit.test=FailedLRAIT
+----
+
+.Configuration options of Quarkus/Thorntail
+|===
+| Option | Description
+
+| `-Dno.lra.coordinator`
+| The Quarkus coordinator is automatically started before the Arquillian executes the test (profile `start.lra.coodinator.before.it.tests`).
+This makes the coordinator not to be started.
+
+| `-Dtrace.thorntail.test`
+| Thorntail client application starts to use `TRACE` level
+for Narayana log messages.
+
+| `-Dtrace.lra.coordinator`
+| Quarkus LRA coordinator starts to use `TRACE` level for Narayana log messages.
+
+| `-Ddebug`
+| The Thorntail client application will be waiting at port `8787`
+for debugger to connect.
+
+| `-Ddebug.coordinator`
+| Quarkus LRA coordinator will be waiting at port `lra.coordinator.debug.port`
+(by default `8788`) for debugger to connect.
+
+|===
+
+=== Running tests with WildFly
+
+To start all integration tests:
+
+[source,sh]
+----
+export JBOSS_HOME=<path-to-wildfly-distribution-directory>
+mvn clean verify -Parq.wildfly
+
+# single test in one module
+mvn clean verify -Parq.wildfly -pl basic -Dit.test=FailedLRAIT
+----
+
+.Configuration options of WildFly
+|===
+| Option | Description
+
+| `-Ddebug`
+| The WildFly waits at port `8787` for debugger to connect.
+
+|===
