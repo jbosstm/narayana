@@ -37,6 +37,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -47,6 +50,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,10 +167,20 @@ public class FailedLRAIT {
         assertEquals("deleting a cancelling LRA should fail with error code 412", 412, status1);
 
         int status2 = removeFailedLRA(lra.getHost(), lra.getPort(), "Invalid URI Syntax");
-        assertEquals("deleting an invalid (wrong URI syntax) LRA", 412, status2);
+        assertEquals("used an invalid (wrong URI syntax) LRA id and precondition failed is expected", 412, status2);
 
         int status3 = removeFailedLRA(lra.getHost(), lra.getPort(), "http://example.com");
-        assertEquals("deleting a non existent LRA", 404, status3);
+        // there is a difference on handling this url format in different REST Easy versions (ie. Thorntail returns 404, WFLY 21 returns 405)
+        assertThat("deleting an LRA in wrong format that JAX-RS understands as non-existent URL binding or as method not-allowed",
+                status3, anyOf(equalTo(404), equalTo(405)));
+
+        int status4 = removeFailedLRA(lra.getHost(), lra.getPort(), URLEncoder.encode("http://example.com", StandardCharsets.UTF_8.name()));
+        assertEquals("using correct URI format but such that has empty path component and thus non-existent, " +
+                "expecting internal server error", 500, status4);
+
+        int status5 = removeFailedLRA(lra.getHost(), lra.getPort(), "a:b.c");
+        assertEquals("using correct URI format but such that has no path component and thus non-existent, " +
+                "expecting internal server error", 500, status5);
 
         // tell the participant compensate method to return an end state on the next compensate request
         invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH, RESET_ACCEPTED_PATH, 200);
@@ -175,8 +189,8 @@ public class FailedLRAIT {
         new NarayanaLRARecovery().waitForRecovery(lra);
 
         // the participant should now be in a failed state so the record can be deleted
-        int status4 = removeFailedLRA(lra);
-        assertEquals("deleting a failed LRA", 204, status4);
+        int statusDeleted = removeFailedLRA(lra);
+        assertEquals("deleting a failed LRA", 204, statusDeleted);
     }
 
     private URI invokeInTransaction(String resourcePrefix, String resourcePath, int expectedStatus) {
@@ -266,7 +280,7 @@ public class FailedLRAIT {
     }
 
     // ask the recovery coordinator to delete its log for an LRA
-    private int removeFailedLRA(String host, int port, String lra) throws URISyntaxException, UnsupportedEncodingException {
+    private int removeFailedLRA(String host, int port, String lra) throws URISyntaxException {
         String recoveryUrl = String.format("http://%s:%d/%s/%s",
                 host, port, COORDINATOR_PATH_NAME, RECOVERY_COORDINATOR_PATH_NAME);
 
