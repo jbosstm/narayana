@@ -23,7 +23,6 @@
 package io.narayana.lra.arquillian;
 
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
-import io.narayana.lra.client.internal.proxy.nonjaxrs.LRACDIExtension;
 import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,34 +30,41 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
- * The appender provides way to bundle LRA interfaces implementation classes to the deployment
- * as the Thorntail container does not bundle the LRA classes to the fat jar until
- * there is no fraction for it.
+ * The appender provides way to bundle LRA interfaces implementation classes to the deployment.
+ * <ul>
+ *     <li>The Thorntail container does not bundle the LRA classes to the fat jar until there is no fraction for it.</li>
+ *     <li>The WildFly container bundles nothing which is not explicitly part of the war file (until WFLY extension is created)</li>
+ * </ul>
  */
 public class ConfigAuxiliaryArchiveAppender implements AuxiliaryArchiveAppender {
+
+    // manifest for WildFly deployment, it requires access to some other WildFly internal modules
+    final String ManifestMF = "Manifest-Version: 1.0\n"
+            + "Dependencies: org.jboss.jandex, org.jboss.logging, org.jboss.modules\n";
 
     @Override
     public Archive<?> createAuxiliaryArchive() {
         JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-        // adding LRA spec interfaces under the Thorntail deployment
-                .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage());
-        // adding Narayana LRA implementation under the Thorntail deployment
-        archive.addPackages(true, io.narayana.lra.client.NarayanaLRAClient.class.getPackage())
-                .addPackages(true, io.narayana.lra.Current.class.getPackage())
-                .addPackages(true, org.apache.http.HttpEntity.class.getPackage())
-                .addPackage(LRACDIExtension.class.getPackage())
-                .addAsResource("META-INF/services/javax.enterprise.inject.spi.Extension")
-                .addClass(org.jboss.weld.exceptions.DefinitionException.class)
-                .addAsManifestResource(new StringAsset("<beans version=\"1.1\" bean-discovery-mode=\"annotated\"></beans>"), "beans.xml");
+            // adding LRA spec interfaces under the client test deployment
+            .addPackages(true, org.eclipse.microprofile.lra.annotation.Compensate.class.getPackage())
+            // adding whole Narayana LRA implementation under the client test deployment
+            .addPackages(true, io.narayana.lra.LRAConstants.class.getPackage())
+             // registration of LRACDIExtension as Weld extension to be booted-up
+            .addAsResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+            .addClass(org.jboss.weld.exceptions.DefinitionException.class)
+             // explicitly define to work with annotated beans
+            .addAsManifestResource(new StringAsset("<beans version=\"1.1\" bean-discovery-mode=\"annotated\"></beans>"), "beans.xml")
+             // for WildFly we need dependencies to be part of the deployment's class path
+            .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF");
 
-        // adding Narayana LRA filters under the Thorntail deployment
+        // adding Narayana LRA filters under the client test deployment
         String filtersAsset = String.format("%s%n%s",
-                io.narayana.lra.filter.ClientLRAResponseFilter.class.getName(),
-                io.narayana.lra.filter.ClientLRARequestFilter.class.getName());
+            io.narayana.lra.filter.ClientLRAResponseFilter.class.getName(),
+            io.narayana.lra.filter.ClientLRARequestFilter.class.getName());
         archive.addPackages(true, io.narayana.lra.filter.ClientLRARequestFilter.class.getPackage())
-               .addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
-               .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
-                    "META-INF/services/javax.ws.rs.client.ClientBuilder");
+            .addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
+            .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
+                "META-INF/services/javax.ws.rs.client.ClientBuilder");
 
         // adding TCK required SPI implementations
         archive.addPackage(NarayanaLRARecovery.class.getPackage());

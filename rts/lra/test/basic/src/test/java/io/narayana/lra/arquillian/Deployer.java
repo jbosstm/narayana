@@ -26,15 +26,21 @@ import org.eclipse.microprofile.lra.tck.LRAClientOps;
 import org.eclipse.microprofile.lra.tck.participant.api.WrongHeaderException;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricService;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 public class Deployer {
 
     public static WebArchive deploy(String appName) {
+        // manifest for WildFly deployment which requires access to transaction jboss module
+        final String ManifestMF = "Manifest-Version: 1.0\n"
+            + "Dependencies: org.jboss.jts, org.jboss.logging\n";
+
         return ShrinkWrap.create(WebArchive.class, appName + ".war")
                 .addPackages(true,
                     LRAMetricService.class.getPackage(),
                     org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage())
-                .addClasses(LRAClientOps.class, WrongHeaderException.class);
+                .addClasses(LRAClientOps.class, WrongHeaderException.class)
+                .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF");
     }
 }

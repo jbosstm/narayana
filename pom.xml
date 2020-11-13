@@ -768,6 +768,11 @@
     </profile>
     <profile>
       <id>debug</id>
+      <activation>
+          <property>
+              <name>debug</name>
+          </property>
+      </activation>
       <properties>
         <jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</jvm.args.debug>
       </properties>

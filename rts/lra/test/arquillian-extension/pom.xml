@@ -39,7 +39,22 @@
       <groupId>org.jboss.shrinkwrap</groupId>
       <artifactId>shrinkwrap-api</artifactId>
       <version>${version.org.jboss.shrinkwrap}</version>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
@@ -53,5 +68,17 @@
     </dependency>
   </dependencies>
 
-
+  <profiles>
+    <profile>
+      <id>do-not-start-lra-coordinator</id>
+      <activation>
+        <property>
+          <name>!lra.coordinator</name>
+        </property>
+      </activation>
+      <properties>
+        <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
+      </properties>
+    </profile>
+  </profiles>
 </project>
