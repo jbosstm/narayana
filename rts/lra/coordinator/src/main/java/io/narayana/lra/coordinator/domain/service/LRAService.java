@@ -70,7 +70,13 @@ public class LRAService {
 
     public Transaction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
-            String uid = LRAConstants.getLRAId(lraId);
+            String uid = LRAConstants.getLRAUid(lraId);
+
+            if (uid == null || uid.isEmpty()) {
+                String errorMsg = "Invalid transaction format of LRA id: " + lraId;
+                throw new NotFoundException(errorMsg, // 404
+                        Response.status(NOT_FOUND).entity(errorMsg).build());
+            }
 
             // try comparing on uid since different URIs can map to the same resource
             // (eg localhost versus 127.0.0.1 versus :1 etc)
@@ -180,7 +186,7 @@ public class LRAService {
      */
     public boolean removeLog(String lraId) {
         // LRA ids are URIs with the arjuna uid forming the last segment
-        String uid = LRAConstants.getLRAId(lraId);
+        String uid = LRAConstants.getLRAUid(lraId);
 
         try {
             return lraRecoveryModule.removeCommitted(new Uid(uid));

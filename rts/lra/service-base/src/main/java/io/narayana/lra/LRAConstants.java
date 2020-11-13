@@ -63,7 +63,7 @@ public final class LRAConstants {
      * @param lraId  LRA id to extract the uid from
      * @return  uid of LRA
      */
-    public static String getLRAId(String lraId) {
+    public static String getLRAUid(String lraId) {
         return lraId == null ? null : UID_REGEXP_EXTRACT_MATCHER.matcher(lraId).replaceFirst("$1");
     }
 
@@ -73,9 +73,10 @@ public final class LRAConstants {
      * @param lraId  LRA id to extract the uid from
      * @return  uid of LRA
      */
-    public static String getLRAId(URI lraId) {
+    public static String getLRAUid(URI lraId) {
         if (lraId == null) return null;
         String path = lraId.getPath();
+        if (path == null) return null;
         return path.substring(path.lastIndexOf('/') + 1);
     }
 
