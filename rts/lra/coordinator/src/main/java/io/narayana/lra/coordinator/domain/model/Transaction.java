@@ -605,9 +605,9 @@ public class Transaction extends AtomicAction {
     protected boolean isInEndState() {
         // update the status first by checking for heuristics and failed participants
         if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
-            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
+            status = ((failedList == null) || (failedList.size() == 0)) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
         } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
-            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Closed : LRAStatus.FailedToClose;
+            status = ((failedList == null) || (failedList.size() == 0)) ? LRAStatus.Closed : LRAStatus.FailedToClose;
         }
 
         return isFinished();
