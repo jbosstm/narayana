@@ -27,6 +27,7 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -45,6 +47,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class NonRootLRAParticipantIT {
+    private static final Logger log = Logger.getLogger(NonRootLRAParticipantIT.class);
 
     @ArquillianResource
     private URL baseURL;
@@ -76,8 +79,9 @@ public class NonRootLRAParticipantIT {
      * @throws URISyntaxException if arquillian URL is invalid
      */
     @Test
-    public void testFinishLRA() throws URISyntaxException {
-        NarayanaLRAClient client = new NarayanaLRAClient(); // the narayana client API for using LRAs
+    public void testFinishLRA() throws URISyntaxException, MalformedURLException {
+
+        NarayanaLRAClient client = new NarayanaLRAClient();
         URI lraId = client.startLRA("testFinishLRA");
         URI compensateURI = new URI(baseURL.toExternalForm() + "/participant/compensate");
         URI completeURI = new URI(baseURL.toExternalForm() + "/participant/complete");

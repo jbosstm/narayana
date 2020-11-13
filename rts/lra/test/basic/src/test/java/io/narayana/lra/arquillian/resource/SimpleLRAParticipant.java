@@ -36,6 +36,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
+import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @ApplicationScoped
 @Path(SimpleLRAParticipant.SIMPLE_PARTICIPANT_RESOURCE_PATH)
@@ -49,10 +50,13 @@ public class SimpleLRAParticipant {
     @GET
     @Path(START_LRA_PATH)
     @LRA(value = LRA.Type.REQUIRED)
-    public Response doInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+    public Response doInLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId, @HeaderParam(LRA_HTTP_RECOVERY_HEADER) URI recoveryUrl) {
         accepted.set(true);
 
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(lraId.toASCIIString()).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .header(LRA_HTTP_RECOVERY_HEADER, recoveryUrl.toASCIIString())
+                .entity(lraId.toASCIIString())
+                .build();
     }
 
     @GET
