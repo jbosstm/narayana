@@ -48,6 +48,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -207,6 +208,17 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
         if (endAnnotation && incommingLRA == null) {
             return;
+        }
+
+        if (incommingLRA != null) {
+            // set the parent context header
+            try {
+                headers.putSingle(LRA_HTTP_PARENT_CONTEXT_HEADER, Current.getFirstParent(incommingLRA));
+            } catch (UnsupportedEncodingException e) {
+                String msg = String.format("incoming LRA %s contains an invalid parent", incommingLRA);
+
+                throwGenericLRAException(incommingLRA, Response.Status.PRECONDITION_FAILED.getStatusCode(), msg);
+            }
         }
 
         switch (type) {

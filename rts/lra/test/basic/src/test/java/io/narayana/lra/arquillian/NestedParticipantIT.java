@@ -25,6 +25,7 @@ package io.narayana.lra.arquillian;
 import io.narayana.lra.arquillian.resource.NestedParticipant;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import io.narayana.lra.client.NarayanaLRAClient;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricService;
 import org.eclipse.microprofile.lra.tck.service.LRAMetricType;
@@ -39,12 +40,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URL;
+
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(Arquillian.class)
 public class NestedParticipantIT {
@@ -87,7 +95,7 @@ public class NestedParticipantIT {
     public void nestedParticipantAfterLRACallTest() {
         Response response = null;
 
-        URI parentLRA = narayanaLRAClient.startLRA(NestedParticipantIT.class.getName());
+        URI parentLRA = narayanaLRAClient.startLRA(NestedParticipantIT.class.getName() + "#nestedParticipantAfterLRACallTest");
 
         URI nestedLRA = null;
 
@@ -99,12 +107,12 @@ public class NestedParticipantIT {
                 .header(LRA.LRA_HTTP_CONTEXT_HEADER, parentLRA)
                 .get();
 
-            Assert.assertEquals(200, response.getStatus());
+            assertEquals(200, response.getStatus());
             Assert.assertTrue(response.hasEntity());
 
             nestedLRA = URI.create(response.readEntity(String.class));
-            Assert.assertNotEquals(parentLRA, nestedLRA);
-            Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
+            assertNotEquals(parentLRA, nestedLRA);
+            assertEquals(1, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
         } finally {
             if (response != null) {
                 response.close();
@@ -118,15 +126,92 @@ public class NestedParticipantIT {
         // https://issues.redhat.com/browse/JBTM-3330
         narayanaLRARecovery.waitForEndPhaseReplay(nestedLRA);
 
-        Assert.assertEquals(1, lraMetricService.getMetric(LRAMetricType.Completed, nestedLRA, NestedParticipant.class));
-        Assert.assertEquals(2, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
-        Assert.assertEquals(0, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA, NestedParticipant.class));
+        assertEquals(1, lraMetricService.getMetric(LRAMetricType.Completed, nestedLRA, NestedParticipant.class));
+        assertEquals(2, lraMetricService.getMetric(LRAMetricType.Nested, parentLRA, NestedParticipant.class));
+        assertEquals(0, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA, NestedParticipant.class));
 
         narayanaLRAClient.closeLRA(parentLRA);
         narayanaLRARecovery.waitForEndPhaseReplay(nestedLRA);
 
-        Assert.assertEquals("After LRA method for nested LRA enlist should have been called",
+        assertEquals("After LRA method for nested LRA enlist should have been called",
             1, lraMetricService.getMetric(LRAMetricType.AfterLRA, nestedLRA, NestedParticipant.class));
 
+    }
+
+    // verify that starting and closing an LRA with no participants works
+    @Test
+    public void isSane() {
+        URI lra = narayanaLRAClient.startLRA("NestedParticipantIT#isSane");
+        narayanaLRAClient.closeLRA(lra);
+
+        assertClosed("LRA should be closed", lra);
+    }
+
+    // test that closing the top level of a transaction hierarchy leaves no LRAs associated with the calling thread
+    @Test
+    public void testGrandparentContext() {
+        assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
+                narayanaLRAClient.getCurrent());
+
+        // start a hierarchy of three LRAs
+        URI grandParent = narayanaLRAClient.startLRA("NestedParticipantIT#testGrandparentContext grandparent");
+        URI parent = narayanaLRAClient.startLRA("NestedParticipantIT#testGrandparentContext parent"); // child of grandParent
+        URI child = narayanaLRAClient.startLRA("NestedParticipantIT#testGrandparentContext child"); // child of parent
+
+        narayanaLRAClient.closeLRA(grandParent); // should close everything in the hierarchy
+
+        // nothing should be associated with the calling thread
+        assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
+                narayanaLRAClient.getCurrent());
+
+        // and verify they are all closed
+        assertClosed("grandparent", grandParent);
+        assertClosed("parent", parent);
+        assertClosed("child", child);
+    }
+
+    // test that the parent context header is propagated on JAX-RS invocations
+    @Test
+    public void testParentContext() {
+        // start a top level LRA
+        URI parent = narayanaLRAClient.startLRA(NestedParticipantIT.class.getName() + "#testParentContext parent");
+        // and nest another one under it
+        URI child = narayanaLRAClient.startLRA(NestedParticipantIT.class.getName() + "#testParentContext child");
+
+        Response response = null;
+
+        try {
+            response = client.target(UriBuilder.fromUri(baseURL.toExternalForm())
+                    .path(NestedParticipant.ROOT_PATH)
+                    .path(NestedParticipant.PATH))
+                    .request()
+                    .get();
+
+            assertEquals("parent context was not propagated correctly: " + response.readEntity(String.class),
+                    200, response.getStatus());
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+
+            narayanaLRAClient.closeLRA(parent);
+            assertNull("testParentContext: close LRA is still on the current thread", narayanaLRAClient.getCurrent());
+        }
+
+        // verify that the child is closed:
+        try {
+            // the status of child should be NOT_FOUND or finishing
+            assertNotEquals("child should no longer be active", LRAStatus.Active, narayanaLRAClient.getStatus(child));
+        } catch (WebApplicationException e) {
+            assertEquals("child should be finished", NOT_FOUND.getStatusCode(), e.getResponse().getStatus());
+        }
+    }
+
+    // verify that an LRA is closed
+    private void assertClosed(String msg, URI lra) {
+        try {
+            assertEquals(msg, LRAStatus.Closed, narayanaLRAClient.getStatus(lra));
+        } catch (NotFoundException ignore) {
+        }
     }
 }

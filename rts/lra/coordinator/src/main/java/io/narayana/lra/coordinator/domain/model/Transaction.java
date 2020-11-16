@@ -30,6 +30,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.RecordListIterator;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import io.narayana.lra.Current;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -63,7 +64,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class Transaction extends AtomicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
     private final ScheduledExecutorService scheduler;
@@ -84,7 +84,12 @@ public class Transaction extends AtomicAction {
 
         this.uid = get_uid().fileStringForm();
         this.lraService = lraService;
-        this.id = new URI(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
+
+        if (parentId != null) {
+            this.id = Current.buildFullLRAUrl(String.format("%s/%s", baseUrl, get_uid().fileStringForm()), parentId);
+        } else {
+            this.id = new URI(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
+        }
         this.inFlight = true;
         this.parentId = parentId;
         this.clientId = clientId;
@@ -535,7 +540,7 @@ public class Transaction extends AtomicAction {
 
         finishTime = LocalDateTime.now(ZoneOffset.UTC);
 
-        deactivate(); // ensure that the new status is persisted
+        updateState(); // ensure the record is removed if it finished otherwise persisted the state
 
         return res;
     }
@@ -605,9 +610,9 @@ public class Transaction extends AtomicAction {
     protected boolean isInEndState() {
         // update the status first by checking for heuristics and failed participants
         if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
-            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
+            status = (failedList == null || failedList.size() == 0) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
         } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
-            status = ((failedList != null) && (failedList.size() == 0)) ? LRAStatus.Closed : LRAStatus.FailedToClose;
+            status = (failedList == null || failedList.size() == 0) ? LRAStatus.Closed : LRAStatus.FailedToClose;
         }
 
         return isFinished();
@@ -658,7 +663,7 @@ public class Transaction extends AtomicAction {
 
     private LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
                                         long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        LRARecord p = new LRARecord(this, lraService, coordinatorUrl.toASCIIString(), participantUrl, compensatorData);
+        LRARecord p = new LRARecord(this, lraService, participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
         String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), "UTF-8");
