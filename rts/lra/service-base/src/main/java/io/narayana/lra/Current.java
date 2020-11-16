@@ -24,13 +24,21 @@ package io.narayana.lra;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import static io.narayana.lra.LRAConstants.PARENT_LRA_PARAM_NAME;
+import static io.narayana.lra.LRAConstants.QUERY_FIELD_SEPARATOR;
+import static io.narayana.lra.LRAConstants.QUERY_PAIR_SEPARATOR;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 public class Current {
@@ -59,6 +67,65 @@ public class Current {
 
         if (current != null && current.state != null) {
             return current.state.get(key);
+        }
+
+        return null;
+    }
+
+    private static String getParents(URI uri) {
+        String query = uri.getQuery();
+
+        if (query != null) {
+            for (String nvpair : query.split(QUERY_PAIR_SEPARATOR)) {
+                if (nvpair.startsWith(PARENT_LRA_PARAM_NAME + QUERY_FIELD_SEPARATOR)) {
+                    return nvpair.split(QUERY_FIELD_SEPARATOR)[1];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // construct the LRA URI including the parent hierarchy as a query parameter
+    public static URI buildFullLRAUrl(String baseURI, URI parentId) throws URISyntaxException {
+        // is the parent part of a hierarchy
+        String parents = Current.getParents(parentId); // gets the hierarchy form the query param
+        // we have the hierarchy so remove the query parameter
+        String gParent = new URI(parentId.getScheme(),
+                parentId.getAuthority(),
+                parentId.getPath(),
+                null, // skip the query string
+                parentId.getFragment())
+                .toASCIIString();
+
+        if (parents != null) {
+            gParent += parents + ","; // , separated list of the hierarchy
+        }
+
+        return UriBuilder.fromUri(baseURI).queryParam(PARENT_LRA_PARAM_NAME, gParent).build();
+    }
+
+    // given a URL extract the immediate parent of
+    public static String getFirstParent(URI parent) throws UnsupportedEncodingException {
+        String query = parent == null ? null : parent.getQuery();
+
+        if (query != null) {
+            for (String param : query.split(QUERY_PAIR_SEPARATOR)) {
+                if (param.startsWith(PARENT_LRA_PARAM_NAME + QUERY_FIELD_SEPARATOR)) {
+                    String parents = param.split(QUERY_FIELD_SEPARATOR, 2)[1];
+
+                    // parents is a comma separated list of parents (the first one is the direct parent)
+                    if (parents != null) {
+                        String[] pa = parents.split(",");
+
+                        if (pa.length > 0) {
+                            return URLDecoder.decode(pa[0], "UTF-8");
+                        }
+                    }
+
+                    break;
+                }
+            }
         }
 
         return null;
@@ -101,22 +168,62 @@ public class Current {
         return lraId;
     }
 
-
+    // dissassociate an LRA from the callers thread (including any child LRAs)
     public static boolean pop(URI lra) {
         Current current = lraContexts.get();
 
-        // NB URIs would have been preferable to URLs for testing equality
         if (current == null || !current.stack.contains(lra)) {
             return false;
         }
 
         current.stack.remove(lra);
 
+        // pop children
+        // since child LRAs are contingent upon the parent, popping a parent should also pop the children
+
+        // check every LRA associated with the calling thread and if it is a child of lra then pop it
+        // the lra that is being popped is a parent of nextLRA:
+        current.stack.removeIf(nextLRA -> isParentOf(lra, nextLRA));
+
         if (current.stack.empty()) {
             clearContext(current);
         }
 
         return true;
+    }
+
+    /*
+     * return true if child is nested under parent
+     * ie if child contains a query param matching child
+     */
+    private static boolean isParentOf(URI parent, URI child) {
+        String qs = child.getQuery();
+
+        if (qs == null) {
+            return false; // child is top level
+        }
+
+        String theParent = parent.toASCIIString();
+        String[] params = qs.split(QUERY_PAIR_SEPARATOR);
+
+        for (String param : params) {
+            String[] nvp = param.split(QUERY_FIELD_SEPARATOR);
+
+            if (nvp.length == 2 && nvp[0].contains(PARENT_LRA_PARAM_NAME)) { // ignore null parameter values
+                // Child has a parent. See if its parent matches theParent:
+                try {
+                    String parentCandidate = URLDecoder.decode(nvp[1], StandardCharsets.UTF_8.name());
+
+                    if (parentCandidate.contains(theParent) || theParent.contains(parentCandidate)) {
+                        return true;
+                    }
+                } catch (UnsupportedEncodingException ignore) {
+                    // not a candidate
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

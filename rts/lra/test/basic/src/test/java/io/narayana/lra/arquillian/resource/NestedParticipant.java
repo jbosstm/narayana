@@ -20,7 +20,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-
 package io.narayana.lra.arquillian.resource;
 
 import org.eclipse.microprofile.lra.annotation.AfterLRA;
@@ -38,6 +37,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -48,9 +48,25 @@ public class NestedParticipant {
 
     public static final String ROOT_PATH = "/nested";
     public static final String ENLIST_PATH = "/enlist";
+    public static final String PATH = "path";
 
     @Inject
     LRAMetricService lraMetricService;
+
+    @LRA(end = false)
+    @GET
+    @Path(PATH)
+    @Produces({MediaType.TEXT_PLAIN})
+    public Response runWithNestedContext(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
+                           @HeaderParam(LRA.LRA_HTTP_PARENT_CONTEXT_HEADER) URI parentId) {
+        if (parentId == null || lraId == null) {
+            throw new WebApplicationException(
+                    Response.status(Response.Status.PRECONDITION_FAILED)
+                            .entity(parentId + " or " + lraId + " cannot be null").build());
+        }
+
+        return Response.ok(lraId).build();
+    }
 
     @LRA(value = LRA.Type.NESTED, end = false)
     @GET
