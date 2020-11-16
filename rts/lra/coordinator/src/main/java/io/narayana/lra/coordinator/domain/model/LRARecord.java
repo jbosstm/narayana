@@ -94,7 +94,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     public LRARecord() {
     }
 
-    LRARecord(Transaction lra, LRAService lraService, String lraId, String linkURI, String compensatorData) {
+    LRARecord(Transaction lra, LRAService lraService, String linkURI, String compensatorData) {
         super(new Uid());
 
         this.lra = lra;
@@ -127,7 +127,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
             }
 
-            this.lraId = new URI(lraId);
+            this.lraId = lra.getId();
             this.parentId = lraService.getTransaction(this.lraId).getParentId();
             this.status = ParticipantStatus.Active;
 
@@ -137,7 +137,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             this.recoveryURI = null;
             this.compensatorData = compensatorData;
         } catch (URISyntaxException e) {
-            LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId, linkURI);
+            LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI);
             String errorMsg = lraId + ": Invalid LRA id: " + e.getMessage();
             throw new WebApplicationException(errorMsg, e,
                     Response.status(BAD_REQUEST).entity(errorMsg).build());
