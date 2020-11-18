@@ -660,46 +660,48 @@ public class NarayanaLRAClient implements Closeable {
 
         try {
             client = getClient();
-            response = client.target(base)
-                .path(LRAConstants.getLRAUid(uri))
-                .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
-                .request()
-                .header("Link", linkHeader)
-                .put(Entity.text(compensatorData == null ? linkHeader : compensatorData));
-        } catch (WebApplicationException webApplicationException) {
-            throw new WebApplicationException(uri.toASCIIString(), GONE);
+            try {
+                response = client.target(base)
+                    .path(LRAConstants.getLRAUid(uri))
+                    .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
+                    .request()
+                    .header("Link", linkHeader)
+                    .put(Entity.text(compensatorData == null ? linkHeader : compensatorData));
+            } catch (WebApplicationException webApplicationException) {
+                throw new WebApplicationException(uri.toASCIIString(), GONE);
+            }
+
+            if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
+                LRALogger.i18NLogger.error_tooLateToJoin(lraId, response.toString());
+                String errorMsg = lraId + ": Too late to join with this LRA";
+                throw new WebApplicationException(errorMsg,
+                        Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
+            } else if (response.getStatus() == NOT_FOUND.getStatusCode()) {
+                LRALogger.i18NLogger.info_failedToEnlistingLRANotFound(
+                        lraId, base, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
+                throw new WebApplicationException(uri.toASCIIString(),
+                        Response.status(GONE).entity(uri.toASCIIString()).build());
+            } else if (response.getStatus() != OK.getStatusCode()) {
+                LRALogger.i18NLogger.error_failedToEnlist(lraId, base, response.getStatus());
+
+                throwGenericLRAException(uri, response.getStatus(),
+                        "unable to register participant");
+            }
+
+            try {
+                String recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
+                String url = URLDecoder.decode(recoveryUrl, "UTF-8");
+                return new URI(url);
+            } catch (URISyntaxException | UnsupportedEncodingException e) {
+                LRALogger.logger.infof("join %s returned an invalid recovery URI: %s", lraId, responseEntity);
+                throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                        "join " + lraId + " returned an invalid recovery URI: " + responseEntity);
+                return null;
+            }
         } finally {
             if (client != null) {
                 client.close();
             }
-        }
-
-        if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-            LRALogger.i18NLogger.error_tooLateToJoin(lraId, response.toString());
-            String errorMsg = lraId + ": Too late to join with this LRA";
-            throw new WebApplicationException(errorMsg,
-                    Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
-        } else if (response.getStatus() == NOT_FOUND.getStatusCode()) {
-            LRALogger.i18NLogger.info_failedToEnlistingLRANotFound(
-                    lraId, base, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
-            throw new WebApplicationException(uri.toASCIIString(),
-                    Response.status(GONE).entity(uri.toASCIIString()).build());
-        } else if (response.getStatus() != OK.getStatusCode()) {
-            LRALogger.i18NLogger.error_failedToEnlist(lraId, base, response.getStatus());
-
-            throwGenericLRAException(uri, response.getStatus(),
-                    "unable to register participant");
-        }
-
-        try {
-            String recoveryUrl = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
-            String url = URLDecoder.decode(recoveryUrl, "UTF-8");
-            return new URI(url);
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
-            LRALogger.logger.infof("join %s returned an invalid recovery URI: %s", lraId, responseEntity);
-            throwGenericLRAException(null, Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                    "join " + lraId + " returned an invalid recovery URI: " + responseEntity);
-            return null;
         }
     }
 
