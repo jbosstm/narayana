@@ -41,14 +41,11 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class LRAIT {
@@ -87,9 +84,7 @@ public class LRAIT {
      */
     @Test
     public void testChainOfInvocations() {
-        NarayanaLRAClient lraClient = getLRAClient();
-
-        assertNotNull(lraClient);
+        NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
         // Invoke a method which starts a transaction
         // (note that the method LRAParticipant.CREATE_OR_CONTINUE_LRA also invokes other resource methods)
@@ -108,9 +103,7 @@ public class LRAIT {
      */
     @Test
     public void testNoCurrent() {
-        NarayanaLRAClient lraClient = getLRAClient();
-
-        assertNotNull(lraClient);
+        NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
         URI lra1 = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
         assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
@@ -128,9 +121,8 @@ public class LRAIT {
      */
     @Test
     public void testRemoteCurrent() {
-        NarayanaLRAClient lraClient = getLRAClient();
+        NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
-        assertNotNull(lraClient);
         URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA2);
         invokeInTransaction(lra1, LRAParticipant.END_EXISTING_LRA);
         assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
@@ -144,7 +136,7 @@ public class LRAIT {
      * b) creating another one still works fine
      */
     @Test
-    public void testCurrent() throws URISyntaxException {
+    public void testCurrent() {
         NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
         // start two LRAs on the current thread
@@ -205,15 +197,6 @@ public class LRAIT {
             if (response != null) {
                 response.close();
             }
-        }
-    }
-
-    private NarayanaLRAClient getLRAClient() {
-        try {
-            return new NarayanaLRAClient();
-        } catch (URISyntaxException e) {
-            fail("testChainOfInvocations: unable to create an instance of NarayanaLRAClient: " + e.getMessage());
-            return null; // NOT_REACHED
         }
     }
 }
