@@ -356,7 +356,8 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     responseData = response.readEntity(String.class);
                 }
             } catch (Exception e) {
-                 LRALogger.logger.warnf(e, "LRARecord.doEnd put %s failed", endPath);
+                // log an informational message (failure to contact participants is unexceptional so don't dump the stack)
+                LRALogger.logger.infof("LRARecord.doEnd put %s failed", endPath);
             } finally {
                 if (client != null) {
                     client.close();
