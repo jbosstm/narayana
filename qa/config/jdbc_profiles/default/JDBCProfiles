@@ -29,8 +29,8 @@
 
 #DB2
 #https://hub.docker.com/r/ibmcom/db2express-c/
-#docker run -it -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept ibmcom/db2express-c:latest bash
-#docker run -d -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept  ibmcom/db2express-c:latest db2start
+#docker run -it -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept ibmcom/db2:latest bash
+#docker run -d -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept  ibmcom/db2:latest db2start
 #docker run --name db2-ci -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept -d -p 50000:50000 ibmcom/db2express-c:latest db2start
 #docker rename <container> db2
 # docker start db2-ci
