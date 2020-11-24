@@ -28,17 +28,12 @@
 #########
 
 #DB2
-#https://hub.docker.com/r/ibmcom/db2express-c/
-#docker run -it -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept ibmcom/db2:latest bash
-#docker run -d -p 50000:50000 -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept  ibmcom/db2:latest db2start
-#docker run --name db2-ci -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept -d -p 50000:50000 ibmcom/db2express-c:latest db2start
-#docker rename <container> db2
-# docker start db2-ci
-#useradd -g db2iadm1 db2
-#echo "db2:db2" | chpasswd
+#https://hub.docker.com/r/ibmcom/db2/
+# docker run -itd --name db2-ci --privileged=true -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept -e DBNAME=BTDB1 -p 50000:50000 ibmcom/db2:latest db2start
+# docker exec -it db2-ci bash
+#useradd db2
+#passwd db2
 #su - db2inst1
-#db2start
-#db2 create db BTDB1
 #db2
 #CONNECT TO BTDB1
 #GRANT CONNECT ON DATABASE TO USER db2
