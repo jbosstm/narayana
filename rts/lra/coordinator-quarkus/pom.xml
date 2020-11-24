@@ -18,6 +18,8 @@
         <narayana.nodename.property>CoreEnvironmentBean.nodeIdentifier</narayana.nodename.property>
         <quarkus.http.port>8080</quarkus.http.port>
         <surefire-plugin.version>2.22.0</surefire-plugin.version>
+
+        <coordinator.native.container-runtime>docker</coordinator.native.container-runtime>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +120,34 @@
                                     <systemProperties>
                                         <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                                     </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>native-docker</id>
+            <activation>
+                <property>
+                    <name>native-docker</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.quarkus</groupId>
+                        <artifactId>quarkus-maven-plugin</artifactId>
+                        <version>${version.quarkus}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>native-image</goal>
+                                </goals>
+                                <configuration>
+                                    <enableHttpUrlHandler>true</enableHttpUrlHandler>
+                                    <containerRuntime>${coordinator.native.container-runtime}</containerRuntime>
                                 </configuration>
                             </execution>
                         </executions>

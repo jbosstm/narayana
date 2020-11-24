@@ -87,6 +87,11 @@ STM: `./build.[sh|bat] -am -pl :stm`
 
 LRA: `./build.[sh|bat] -am -f rts/lra`
 
+LRA binary: `./build.[sh|bat] -Pnative-docker -am -f rts/lra`
+If podman is installed on the system then this native-docker maven profile will produce a native executable for a coordinator which you can then start using the command:
+
+    ./rts/lra/coordinator-quarkus/target/lra-coordinator-runner
+
 Testing Narayana
 ---------------
 

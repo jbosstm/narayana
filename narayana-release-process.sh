@@ -62,6 +62,11 @@ then
   exit
 fi
 
+# check if docker is actually podman
+if [[ -z $LRA_CONTAINER_BUILD_RUNTIME ]]; then
+  command -v podman >/dev/null 2>&1 && LRA_CONTAINER_BUILD_RUNTIME=-Dcoordinator.native.container-runtime=podman
+fi
+
 # Do this early to prevent later interactive need
 docker login docker.io
 [ $? -ne 0 ] && echo "Login to docker.io was not succesful" && exit
@@ -175,7 +180,7 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
+./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity -Pnative-docker $LRA_CONTAINER_BUILD_RUNTIME
 if [[ $? != 0 ]]
 then
   echo 1>&2 Could not install narayana
