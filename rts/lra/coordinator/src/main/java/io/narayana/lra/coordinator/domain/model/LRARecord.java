@@ -89,12 +89,12 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private LRAService lraService;
     private ParticipantStatus status;
     private boolean accepted;
-    private Transaction lra;
+    private LongRunningAction lra;
 
     public LRARecord() {
     }
 
-    LRARecord(Transaction lra, LRAService lraService, String linkURI, String compensatorData) {
+    LRARecord(LongRunningAction lra, LRAService lraService, String linkURI, String compensatorData) {
         super(new Uid());
 
         this.lra = lra;
@@ -144,7 +144,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
     }
 
-    public void setLRA(Transaction lra) {
+    public void setLRA(LongRunningAction lra) {
         this.lra = lra;
         this.parentId = lra.getParentId();
     }
@@ -525,7 +525,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         URI nestedLraId = extractParentLRA(endPath);
 
         if (nestedLraId != null && lraService != null) {
-            Transaction transaction = lraService.getTransaction(nestedLraId);
+            LongRunningAction transaction = lraService.getTransaction(nestedLraId);
 
             if (transaction != null) {
                 LRAStatus cStatus = transaction.getLRAStatus();
