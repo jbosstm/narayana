@@ -52,12 +52,14 @@ public class NarayanaLRAClientIT {
         URI lra = lraClient.startLRA("test-lra");
 
         List<LRAData> allLRAs = lraClient.getAllLRAs();
-        Assert.assertTrue(allLRAs.stream().anyMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
+        Assert.assertTrue("Expected to find the LRA " + lra + " amongst all active ones: " + allLRAs,
+                allLRAs.stream().anyMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
 
         lraClient.closeLRA(lra);
 
         allLRAs = lraClient.getAllLRAs();
-        Assert.assertTrue(allLRAs.isEmpty());
+        Assert.assertTrue("LRA " + lra + " was closed but is still referred as active one at: " + allLRAs,
+                allLRAs.stream().noneMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
     }
 
 }
