@@ -251,7 +251,7 @@ public class LRAService {
         if (status != ActionStatus.RUNNING) {
             lraTrace(lra.getId(), "failed to start LRA");
 
-            lra.cancelLRA();
+            lra.finishLRA(true);
 
             String errorMsg = "Could not start LRA: " + ActionStatus.stringForm(status);
             throw new InternalServerErrorException(errorMsg,
@@ -279,7 +279,7 @@ public class LRAService {
                     .entity(String.format("%s: LRA is closing or closed: endLRA", lraId)).build());
         }
 
-        transaction.end(compensate);
+        transaction.finishLRA(compensate);
 
         if (transaction.currentLRA() != null) {
             if (LRALogger.logger.isInfoEnabled()) {
