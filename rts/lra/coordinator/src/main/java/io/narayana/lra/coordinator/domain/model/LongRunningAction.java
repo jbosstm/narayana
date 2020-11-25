@@ -34,7 +34,6 @@ import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
@@ -799,10 +798,6 @@ public class LongRunningAction extends BasicAction {
 
     public boolean isTopLevel() {
         return parentId == null;
-    }
-
-    public BasicAction currentLRA() {
-        return ThreadActionData.currentAction();
     }
 
     public int getHttpStatus() {
