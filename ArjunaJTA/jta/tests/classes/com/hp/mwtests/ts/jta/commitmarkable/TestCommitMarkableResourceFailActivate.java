@@ -32,10 +32,13 @@ import javax.sql.DataSource;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.byteman.contrib.bmunit.BMScript;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.jboss.byteman.rule.exception.ExecuteException;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,6 +55,13 @@ public class TestCommitMarkableResourceFailActivate extends
 	boolean failed = false;
 
 	protected SimpleXAResource xaResource;
+
+	@Before
+	public void setUp() {
+		// tests runs with JDK API 7+ where suppressed exceptions are available
+		// otherwise the test is skipped as it would fail
+		Assume.assumeTrue(SuppressedExceptionsHelper.canSuppress());
+	}
 
 	@Test
 	@BMScript("commitMarkableResourceFailAfterCommit")

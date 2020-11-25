@@ -28,6 +28,7 @@
 			<!-- Enforce minimum Java 1.5 -->
 			<plugin>
 				<artifactId>maven-enforcer-plugin</artifactId>
+                                <version>1.4.1</version>
 				<executions>
 					<execution>
 						<id>enforce-jdk5</id>

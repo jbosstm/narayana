@@ -32,18 +32,28 @@ import javax.sql.DataSource;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.jboss.byteman.rule.exception.ExecuteException;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.CommitMarkableResourceRecordRecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
+import org.junit.Assume;
+import org.junit.Before;
 
 public class FailAfterCommitBase extends TestCommitMarkableResourceBase {
 
 	private JDBCConnectableResource nonXAResource;
 	private boolean failed = false;
 	private SimpleXAResource xaResource;
+
+	@Before
+	public void setUp() {
+		// tests runs with JDK API 7+ where suppressed exceptions are available
+		// otherwise the test is skipped as it would fail
+		Assume.assumeTrue(SuppressedExceptionsHelper.canSuppress());
+	}
 
 	protected void doTest(final DataSource dataSource) throws Exception {
 		// Test code

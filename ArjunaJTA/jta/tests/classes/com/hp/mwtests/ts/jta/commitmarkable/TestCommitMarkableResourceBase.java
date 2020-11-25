@@ -21,6 +21,7 @@ package com.hp.mwtests.ts.jta.commitmarkable;
 
 import java.io.File;
 
+import org.h2.store.fs.FileUtils;
 import org.jnp.server.NamingBeanImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class TestCommitMarkableResourceBase {
 
 		File file = new File(System.getProperty("user.dir") + "/ObjectStore");
 		if (file.exists()) {
-			Utils.removeRecursive(file.toPath());
+			FileUtils.deleteRecursive(file.getAbsolutePath(), false);
 		}
 
 		System.setProperty("java.naming.factory.initial",

@@ -46,6 +46,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -419,9 +420,11 @@ public class PerformanceTestCommitMarkableResource extends
 								nextException = nextException
 										.getNextException();
 							}
-							Throwable[] suppressed = e.getSuppressed();
-							for (int j = 0; j < suppressed.length; j++) {
-								suppressed[j].printStackTrace();
+							if (SuppressedExceptionsHelper.canSuppress()) {
+								Throwable[] suppressed = e.getSuppressed();
+								for (int j = 0; j < suppressed.length; j++) {
+									suppressed[j].printStackTrace();
+								}
 							}
 							try {
 								tm.rollback();

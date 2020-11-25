@@ -6,6 +6,7 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
 import javax.transaction.xa.XAException;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.junit.Test;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -50,7 +51,9 @@ public class ExceptionDeferrerTest {
         }
         catch (final RollbackException ex)
         {
-            assertEquals(XAException.XAER_INVAL, ((XAException) ex.getSuppressed()[0]).errorCode);
+            if(SuppressedExceptionsHelper.canSuppress()) {
+                assertEquals(XAException.XAER_INVAL, ((XAException) ex.getSuppressed()[0]).errorCode);
+            }
         }
     }
 
@@ -78,7 +81,9 @@ public class ExceptionDeferrerTest {
        }
        catch (final RollbackException ex)
        {
-          assertEquals(XAException.XA_HEURRB, ((XAException) ex.getSuppressed()[0]).errorCode);
+           if(SuppressedExceptionsHelper.canSuppress()) {
+               assertEquals(XAException.XA_HEURRB, ((XAException) ex.getSuppressed()[0]).errorCode);
+           }
        }
    }
    
@@ -107,7 +112,9 @@ public class ExceptionDeferrerTest {
        }
        catch (final HeuristicMixedException ex)
        {
-          assertEquals(XAException.XA_HEURMIX, ((XAException) ex.getSuppressed()[0]).errorCode);
+           if(SuppressedExceptionsHelper.canSuppress()) {
+               assertEquals(XAException.XA_HEURMIX, ((XAException) ex.getSuppressed()[0]).errorCode);
+           }
        }
    }
    
@@ -136,7 +143,9 @@ public class ExceptionDeferrerTest {
        }
        catch (final HeuristicMixedException ex)
        {
-          assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+           if(SuppressedExceptionsHelper.canSuppress()) {
+               assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+           }
        }
    }
    
@@ -165,7 +174,9 @@ public class ExceptionDeferrerTest {
        }
        catch (final HeuristicMixedException ex)
        {
-          assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+           if(SuppressedExceptionsHelper.canSuppress()) {
+               assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+           }
        }
    }
    
@@ -195,7 +206,9 @@ public class ExceptionDeferrerTest {
       }
       catch (final HeuristicMixedException ex)
       {
-         assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+          if(SuppressedExceptionsHelper.canSuppress()) {
+              assertEquals(XAException.XAER_NOTA, ((XAException) ex.getSuppressed()[0]).errorCode);
+          }
       }
    }
 
