@@ -980,10 +980,6 @@ public class LongRunningAction extends BasicAction {
         return parentId;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
     private boolean hasElements(RecordList list) {
         return list != null && list.size() != 0;
     }
