@@ -24,6 +24,7 @@ package io.narayana.lra.coordinator.domain.service;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
@@ -239,10 +240,10 @@ public class LRAService {
                     .entity(String.format("Invalid base URI: '%s'", baseUri)).build());
         }
 
-        if (lra.currentLRA() != null) {
+        if (BasicAction.Current() != null) {
             if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof("LRAServicve.startLRA LRA %s is already associated%n",
-                        lra.currentLRA().get_uid().fileStringForm());
+                        BasicAction.Current().get_uid().fileStringForm());
             }
         }
 
@@ -281,10 +282,10 @@ public class LRAService {
 
         transaction.finishLRA(compensate);
 
-        if (transaction.currentLRA() != null) {
+        if (BasicAction.Current() != null) {
             if (LRALogger.logger.isInfoEnabled()) {
                 LRALogger.logger.infof("LRAServicve.endLRA LRA %s ended but is still associated with %s%n",
-                        lraId, transaction.currentLRA().get_uid().fileStringForm());
+                        lraId, BasicAction.Current().get_uid().fileStringForm());
             }
         }
 
