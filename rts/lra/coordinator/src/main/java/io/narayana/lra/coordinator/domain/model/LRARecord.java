@@ -909,7 +909,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
 
     @Override
     public Object value() {
-        return null; // LRA does not support heuristics
+        return null;
     }
 
     @Override
