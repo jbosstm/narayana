@@ -124,13 +124,17 @@ function build_narayana {
   echo "Building Narayana"
   cd $WORKSPACE
 
+  # JAVA_HOME_FOR_BUILD can be used in environment if JDK for building Narayana needs to be different from one which runs e.g. tests.
+  # This env property is used e.g. to build Narayana with JDK 1.7 but run the tests with JDK 1.6.
+  # Narayana targets 1.6 byte code. And the java source is limited to 1.6 language features only.
+  # We must build on 1.7 because we are using a JDK API that only exists in JDK 1.7.
   if [ -n "$JAVA_HOME_FOR_BUILD" ]; then
     local pathOriginal="$PATH"
     local javaHomeOriginal="$JAVA_HOME"
     export JAVA_HOME="$JAVA_HOME_FOR_BUILD"
     export PATH="$JAVA_HOME/bin:$PATH"
   fi
-
+FailAfterPrepareBase.java
   echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
   ./build.sh -version
 
@@ -152,7 +156,7 @@ function test_narayana {
   echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
   ./build.sh -version
 
-  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $AS_XARGS $IPV6_OPTS -B verify
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS $AS_XARGS $IPV6_OPTS -B -pl '!narayana-full' verify
   [ $? = 0 ] || fatal "narayana test failed"
 
   return 0

@@ -27,8 +27,11 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.jta.recovery.XAResourceRecoveryHelper;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jboss.byteman.rule.exception.ExecuteException;
+import org.junit.Assume;
+import org.junit.Before;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -49,6 +52,13 @@ public class FailAfterPrepareBase extends TestCommitMarkableResourceBase {
     private boolean failed = false;
     private SimpleXAResource xaResource;
     private CommitMarkableResourceRecordRecoveryModule recoveryModule;
+
+    @Before
+    public void setUp() {
+        // tests runs with JDK API 7+ where suppressed exceptions are available
+        // otherwise the test is skipped as it would fail
+        Assume.assumeTrue(SuppressedExceptionsHelper.canSuppress());
+    }
 
     protected Uid generateCMRRecord(final DataSource dataSource) throws Exception {
 

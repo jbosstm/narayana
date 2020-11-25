@@ -43,6 +43,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import com.hp.mwtests.ts.jta.SuppressedExceptionsHelper;
 import org.junit.Test;
 
 public class JTATest {
@@ -205,8 +206,10 @@ public class JTATest {
             tm.commit();
             fail();
         } catch (RollbackException e) {
-            e.printStackTrace();
-            assertTrue(e.getSuppressed()[0] == exception);
+            if(SuppressedExceptionsHelper.canSuppress()) {
+                e.printStackTrace();
+                assertTrue(e.getSuppressed()[0] == exception);
+            }
         }
 	    
 	}
