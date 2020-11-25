@@ -82,14 +82,14 @@ public class LRAService {
             // try comparing on uid since different URIs can map to the same resource
             // (eg localhost versus 127.0.0.1 versus :1 etc)
             for (LongRunningAction lra : lras.values()) {
-                if (uid.equals(lra.getUid())) {
+                if (uid.equals(lra.get_uid().fileStringForm())) {
                     return lra;
                 }
             }
 
             if (!recoveringLRAs.containsKey(lraId)) {
                 for (LongRunningAction lra : recoveringLRAs.values()) {
-                    if (uid.equals(lra.getUid())) {
+                    if (uid.equals(lra.get_uid().fileStringForm())) {
                         return lra;
                     }
                 }
