@@ -87,8 +87,9 @@ DB2_PGSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 ######################################################################
 
 #docker run --name mariadb-ci -e MYSQL_ROOT_PASSWORD="admin1234" -d -p 3306:3306 mariadb:latest
-#docker start mariadb-ci
-# docker run --rm -ti mariadb:latest mysql -p
+## doesn't seem to work due - docker run --rm -ti mariadb:latest mysql -p
+# docker exec -it mariadb-ci bash
+# mysql
 # create database jbossts;
 # CREATE USER dtf11 IDENTIFIED BY 'dtf11';
 # grant all on jbossts.* to 'dtf11'@'%' identified by 'dtf11';
