@@ -399,15 +399,15 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    public int cancelLRA() {
-        return end(true);
+    private int cancelLRA() {
+        return finishLRA(true);
     }
 
     protected ReentrantLock tryLockTransaction() {
         return lraService.tryLockTransaction(getId());
     }
 
-    public int end(boolean cancel) {
+    public int finishLRA(boolean cancel) {
         ReentrantLock lock = null;
 
         try {
