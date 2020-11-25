@@ -25,7 +25,7 @@ package io.narayana.lra.coordinator.api;
 import io.narayana.lra.Current;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
-import io.narayana.lra.coordinator.domain.model.Transaction;
+import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 
@@ -149,7 +149,7 @@ public class Coordinator {
         @Parameter(name = "LraId",
             description = "The unique identifier of the LRA", required = true)
         @PathParam("LraId")String lraId) throws NotFoundException {
-        Transaction transaction = lraService.getTransaction(toURI(lraId));
+        LongRunningAction transaction = lraService.getTransaction(toURI(lraId));
         LRAStatus status = transaction.getLRAStatus();
 
         if (status == null) {
@@ -303,7 +303,7 @@ public class Coordinator {
             return Response.ok(ParticipantStatus.Compensated.name()).build();
         }
 
-        Transaction lra = lraService.getTransaction(toURI(nestedLraId));
+        LongRunningAction lra = lraService.getTransaction(toURI(nestedLraId));
         LRAStatus status = lra.getLRAStatus();
 
         if (status == null || lra.getLRAStatus() == null) {
