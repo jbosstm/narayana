@@ -22,6 +22,7 @@
 package io.narayana.lra.coordinator;
 
 import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Config;
@@ -168,7 +169,7 @@ public abstract class TestBase {
     }
 
     String getFirstLRA() {
-        Path lraDir = Paths.get(storeDir.toString(), "ShadowNoFileLockStore", "defaultStore", "StateManager", "BasicAction", "TwoPhaseCoordinator", "LRA");
+        Path lraDir = Paths.get(storeDir.toString(), "ShadowNoFileLockStore", "defaultStore", LongRunningAction.getType());
 
         try {
             Optional<Path> lra = Files.list(new File(lraDir.toString()).toPath()).findFirst();

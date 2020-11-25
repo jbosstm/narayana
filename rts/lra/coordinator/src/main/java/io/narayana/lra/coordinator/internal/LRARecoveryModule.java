@@ -34,7 +34,7 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import io.narayana.lra.coordinator.domain.model.Transaction;
+import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
@@ -171,7 +171,7 @@ public class LRARecoveryModule implements RecoveryModule {
         }
     }
 
-    public void getRecoveringLRAs(Map<URI, Transaction> lras) {
+    public void getRecoveringLRAs(Map<URI, LongRunningAction> lras) {
 
         periodicWorkFirstPass();
 
@@ -217,10 +217,10 @@ public class LRARecoveryModule implements RecoveryModule {
         return false;
     }
 
-    public void getFailedLRAs(Map<URI, Transaction> lras) {
+    public void getFailedLRAs(Map<URI, LongRunningAction> lras) {
         InputObjectState aa_uids = new InputObjectState();
         Consumer<Uid> failedLRACreator = uid -> {
-            Transaction lra = new Transaction(lraService, new Uid(uid));
+            LongRunningAction lra = new LongRunningAction(lraService, new Uid(uid));
             lra.activate();
 
             LRAStatus status = lra.getLRAStatus();
@@ -294,7 +294,7 @@ public class LRARecoveryModule implements RecoveryModule {
     private final LRAService lraService;
 
     // 'type' within the Object Store for LRAs.
-    private final String _transactionType = io.narayana.lra.coordinator.domain.model.Transaction.getType();
+    private final String _transactionType = LongRunningAction.getType();
 
     // Array of transactions found in the object store of the type LRA
     private Vector<Uid> _transactionUidVector = null;

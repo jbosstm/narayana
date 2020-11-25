@@ -32,7 +32,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.coordinator.domain.model.LRARecord;
 import io.narayana.lra.coordinator.internal.Implementations;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
-import io.narayana.lra.coordinator.domain.model.Transaction;
+import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
@@ -61,14 +61,14 @@ import static java.util.stream.Collectors.toList;
 public class LRAService {
     private static final Pattern LINK_REL_PATTERN = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
 
-    private Map<URI, Transaction> lras = new ConcurrentHashMap<>();
-    private Map<URI, Transaction> recoveringLRAs = new ConcurrentHashMap<>();
+    private Map<URI, LongRunningAction> lras = new ConcurrentHashMap<>();
+    private Map<URI, LongRunningAction> recoveringLRAs = new ConcurrentHashMap<>();
     private Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     private Map<String, String> participants = new ConcurrentHashMap<>();
     private LRARecoveryModule lraRecoveryModule;
 
-    public Transaction getTransaction(URI lraId) throws NotFoundException {
+    public LongRunningAction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
             String uid = LRAConstants.getLRAUid(lraId);
 
@@ -80,14 +80,14 @@ public class LRAService {
 
             // try comparing on uid since different URIs can map to the same resource
             // (eg localhost versus 127.0.0.1 versus :1 etc)
-            for (Transaction lra : lras.values()) {
+            for (LongRunningAction lra : lras.values()) {
                 if (uid.equals(lra.getUid())) {
                     return lra;
                 }
             }
 
             if (!recoveringLRAs.containsKey(lraId)) {
-                for (Transaction lra : recoveringLRAs.values()) {
+                for (LongRunningAction lra : recoveringLRAs.values()) {
                     if (uid.equals(lra.getUid())) {
                         return lra;
                     }
@@ -105,7 +105,7 @@ public class LRAService {
     }
 
     public LRAData getLRA(URI lraId) {
-        Transaction lra = getTransaction(lraId);
+        LongRunningAction lra = getTransaction(lraId);
         return lra.getLRAData();
     }
 
@@ -161,11 +161,11 @@ public class LRAService {
         return getAllRecovering(false);
     }
 
-    public void addTransaction(Transaction lra) {
+    public void addTransaction(LongRunningAction lra) {
         lras.put(lra.getId(), lra);
     }
 
-    public void finished(Transaction transaction, boolean fromHierarchy) {
+    public void finished(LongRunningAction transaction, boolean fromHierarchy) {
         if (transaction.isRecovering()) {
             recoveringLRAs.put(transaction.getId(), transaction);
         } else if (fromHierarchy || transaction.isTopLevel()) {
@@ -195,7 +195,7 @@ public class LRAService {
         }
     }
 
-    public void remove(Transaction lra) {
+    public void remove(LongRunningAction lra) {
         if (lra.isFailed()) { // persist failed LRA state
             lra.deactivate();
         }
@@ -219,7 +219,7 @@ public class LRAService {
         participants.put(recoveryURI, compensatorUrl);
 
         if (persist && lraId != null) {
-            Transaction transaction = getTransaction(lraId);
+            LongRunningAction transaction = getTransaction(lraId);
 
             transaction.updateRecoveryURI(compensatorUrl, recoveryURI);
         }
@@ -230,10 +230,10 @@ public class LRAService {
     }
 
     public synchronized URI startLRA(String baseUri, URI parentLRA, String clientId, Long timelimit) {
-        Transaction lra;
+        LongRunningAction lra;
 
         try {
-            lra = new Transaction(this, baseUri, parentLRA, clientId);
+            lra = new LongRunningAction(this, baseUri, parentLRA, clientId);
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.PRECONDITION_FAILED)
                     .entity(String.format("Invalid base URI: '%s'", baseUri)).build());
@@ -251,7 +251,7 @@ public class LRAService {
         if (status != ActionStatus.RUNNING) {
             lraTrace(lra.getId(), "failed to start LRA");
 
-            lra.abort();
+            lra.cancelLRA();
 
             String errorMsg = "Could not start LRA: " + ActionStatus.stringForm(status);
             throw new InternalServerErrorException(errorMsg,
@@ -272,7 +272,7 @@ public class LRAService {
     public LRAData endLRA(URI lraId, boolean compensate, boolean fromHierarchy) {
         lraTrace(lraId, "end LRA");
 
-        Transaction transaction = getTransaction(lraId);
+        LongRunningAction transaction = getTransaction(lraId);
 
         if (transaction.getLRAStatus() != LRAStatus.Active && !transaction.isRecovering() && transaction.isTopLevel()) {
             throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED)
@@ -296,7 +296,7 @@ public class LRAService {
     public int leave(URI lraId, String compensatorUrl) {
         lraTrace(lraId, "leave LRA");
 
-        Transaction transaction = getTransaction(lraId);
+        LongRunningAction transaction = getTransaction(lraId);
 
         if (transaction.getLRAStatus() != LRAStatus.Active) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
@@ -324,7 +324,7 @@ public class LRAService {
             lraTrace(lra, "join LRA");
         }
 
-        Transaction transaction = getTransaction(lra);
+        LongRunningAction transaction = getTransaction(lra);
 
         if (timeLimit < 0) {
             timeLimit = 0;
@@ -394,7 +394,7 @@ public class LRAService {
     private void lraTrace(URI lraId, String reason) {
         if (LRALogger.logger.isTraceEnabled()) {
             if (lraId != null && lras.containsKey(lraId)) {
-                Transaction lra = lras.get(lraId);
+                LongRunningAction lra = lras.get(lraId);
                 LRALogger.logger.tracef("LRAService: '%s' (%s) in state %s: %s%n",
                         reason, lra.getClientId(), ActionStatus.stringForm(lra.status()), lra.getId());
             } else {
@@ -404,7 +404,7 @@ public class LRAService {
     }
 
     public int renewTimeLimit(URI lraId, Long timelimit) {
-        Transaction lra = lras.get(lraId);
+        LongRunningAction lra = lras.get(lraId);
 
         if (lra == null) {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
@@ -418,7 +418,7 @@ public class LRAService {
     }
 
     public List<LRAData> getFailedLRAs() {
-        Map<URI, Transaction> failedLRAs = new ConcurrentHashMap<>();
+        Map<URI, LongRunningAction> failedLRAs = new ConcurrentHashMap<>();
 
         lraRecoveryModule.getFailedLRAs(failedLRAs);
 
@@ -442,7 +442,7 @@ public class LRAService {
 
         lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
 
-        for (Transaction transaction : recoveringLRAs.values()) {
+        for (LongRunningAction transaction : recoveringLRAs.values()) {
             transaction.getRecoveryCoordinatorUrls(participants);
         }
     }
@@ -465,7 +465,7 @@ public class LRAService {
         }
     }
 
-    private List<LRAData> getDataByStatus(Map<URI, Transaction> lrasToFilter, LRAStatus status) {
+    private List<LRAData> getDataByStatus(Map<URI, LongRunningAction> lrasToFilter, LRAStatus status) {
         return lrasToFilter.values().stream().filter(t -> t.getLRAStatus() == status)
                 .map(t -> t.getLRAData()).collect(toList());
     }

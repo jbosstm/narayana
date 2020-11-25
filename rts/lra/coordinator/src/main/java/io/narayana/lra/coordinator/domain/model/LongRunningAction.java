@@ -21,7 +21,6 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -64,8 +63,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Transaction extends AtomicAction {
-    private static final String LRA_TYPE = "/StateManager/BasicAction/TwoPhaseCoordinator/LRA";
+public class LongRunningAction extends BasicAction {
+    private static final String LRA_TYPE = "/StateManager/BasicAction/LongRunningAction";
     private final ScheduledExecutorService scheduler;
     private URI id;
     private URI parentId;
@@ -79,7 +78,7 @@ public class Transaction extends AtomicAction {
     private LRAService lraService;
     private String uid;
 
-    public Transaction(LRAService lraService, String baseUrl, URI parentId, String clientId) throws URISyntaxException {
+    public LongRunningAction(LRAService lraService, String baseUrl, URI parentId, String clientId) throws URISyntaxException {
         super(new Uid());
 
         this.uid = get_uid().fileStringForm();
@@ -99,7 +98,7 @@ public class Transaction extends AtomicAction {
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
-    public Transaction(LRAService lraService, Uid rcvUid) {
+    public LongRunningAction(LRAService lraService, Uid rcvUid) {
         super(rcvUid);
 
         this.uid = rcvUid.fileStringForm();
@@ -114,7 +113,7 @@ public class Transaction extends AtomicAction {
     }
 
     /**
-     * Creating {@link LRAData} from the current {@link Transaction} state.
+     * Creating {@link LRAData} from the current {@link LongRunningAction} state.
      * The data are immutable and represents the current state of the LRA transaction.
      *
      * @return  immutable {@link LRAData} representing the current state of the LRA transaction
@@ -124,10 +123,6 @@ public class Transaction extends AtomicAction {
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 getHttpStatus());
-    }
-
-    public static String getType() {
-        return LRA_TYPE;
     }
 
     public boolean save_state(OutputObjectState os, int ot) {
@@ -317,7 +312,7 @@ public class Transaction extends AtomicAction {
             return true;
         }
 
-        if (!(o instanceof Transaction)) {
+        if (!(o instanceof LongRunningAction)) {
             return false;
         }
 
@@ -325,7 +320,7 @@ public class Transaction extends AtomicAction {
             return false;
         }
 
-        Transaction that = (Transaction) o;
+        LongRunningAction that = (LongRunningAction) o;
 
         return getId().equals(that.getId());
     }
@@ -337,8 +332,12 @@ public class Transaction extends AtomicAction {
         return result;
     }
 
-    public String type() {
+    public static String getType() {
         return LRA_TYPE;
+    }
+
+    public String type() {
+        return getType();
     }
 
     public URI getId() {
@@ -400,7 +399,7 @@ public class Transaction extends AtomicAction {
         }
     }
 
-    private int cancelLRA() {
+    public int cancelLRA() {
         return end(true);
     }
 
@@ -837,7 +836,7 @@ public class Transaction extends AtomicAction {
     }
 
     public int begin(Long timeLimit) {
-        int res = super.begin(); // no timeout because the default timeunit (SECONDS) is too course
+        int res = super.Begin(null);
 
         startTime = LocalDateTime.now(ZoneOffset.UTC);
 
