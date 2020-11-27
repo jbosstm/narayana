@@ -67,7 +67,7 @@ function init_test_options {
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
         export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
           export AS_BUILD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=1
