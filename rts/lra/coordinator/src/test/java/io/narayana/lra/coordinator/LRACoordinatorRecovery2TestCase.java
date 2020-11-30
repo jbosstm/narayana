@@ -27,6 +27,7 @@ import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.LRAData;
+import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.filter.ServerLRAFilter;
@@ -45,7 +46,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -72,7 +72,7 @@ import static org.junit.Assert.fail;
 @RunWith(Arquillian.class)
 @RunAsClient
 public class LRACoordinatorRecovery2TestCase extends TestBase {
-    private static final Long LONG_TIMEOUT = 600000L; // 10 minutes
+    private static final Long LONG_TIMEOUT = TimeoutValueAdjuster.adjustTimeout(600000L); // 10 minutes
     private static final Long SHORT_TIMEOUT = 10000L; // 10 seconds
 
     private static final Package[] coordinatorPackages = {
@@ -84,7 +84,8 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
             NarayanaLRAClient.class.getPackage(),
             Current.class.getPackage(),
             LRAService.class.getPackage(),
-            LRARecoveryModule.class.getPackage()
+            LRARecoveryModule.class.getPackage(),
+            LongRunningAction.class.getPackage()
     };
 
     private static final Package[] participantPackages = {
@@ -131,8 +132,7 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
      * Test that an LRA which times out after a coordinator is restarted after a crash is still active
      */
     @Test
-    @Ignore
-    public void testRecovery2(@ArquillianResource @OperateOnDeployment(COORDINATOR_DEPLOYMENT) URL deploymentUrl) throws URISyntaxException {
+    public void testRecovery2(@ArquillianResource @OperateOnDeployment(COORDINATOR_DEPLOYMENT) URL deploymentUrl) throws URISyntaxException, InterruptedException {
         URI lraListenerURI = UriBuilder.fromUri(deploymentUrl.toURI()).path(LRAListener.LRA_LISTENER_PATH).build();
 
         // start an LRA with a long timeout to validate that timed LRAs do not finish early during recovery
@@ -149,6 +149,9 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
         } catch (RuntimeException e) {
             LRALogger.logger.infof("%s: the container halted", testName);
         }
+
+        // waiting for the short LRA timeout really expires
+        Thread.sleep(TimeoutValueAdjuster.adjustTimeout(SHORT_TIMEOUT));
 
         // restart the container
         restartContainer();
@@ -178,7 +181,9 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
             Assert.assertEquals("LRA participant action", 200, response.getStatus());
         }
 
+        // closing the LRA and clearing the active thread of the launched LRAs
         lraClient.closeLRA(longLRA);
+        lraClient.closeLRA(shortLRA);
 
         // check that the participant was notified that the LRA has closed
         String listenerStatus = getStatusFromListener(lraListenerURI);
