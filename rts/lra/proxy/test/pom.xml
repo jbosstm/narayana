@@ -74,7 +74,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <version>${version.servlet-api}</version>
             <scope>provided</scope>
         </dependency>
         <!-- JAXRS 2 Client API -->
