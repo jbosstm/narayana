@@ -21,7 +21,6 @@
         <lra.tck.suite.debug.params></lra.tck.suite.debug.params> <!-- has content when -Ddebug.tck is specified -->
         <lra.tck.suite.debug.port>8788</lra.tck.suite.debug.port>
         <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
-        <lra.tck.timeout.factor>1.0</lra.tck.timeout.factor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -46,7 +45,7 @@
                         <thorntail.test.logging.category.narayana>${thorntail.test.logging.category.narayana}</thorntail.test.logging.category.narayana>
                         <lra.coordinator.port>${lra.coordinator.port}</lra.coordinator.port>
                         <lra.tck.suite.debug.params>${lra.tck.suite.debug.params}</lra.tck.suite.debug.params>
-                        <lra.tck.timeout.factor>${lra.tck.timeout.factor}</lra.tck.timeout.factor>
+                        <lra.tck.timeout.factor>${lra.test.timeout.factor}</lra.tck.timeout.factor>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
