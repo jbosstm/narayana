@@ -163,6 +163,7 @@
                                 <lra.coordinator.host>${lra.coordinator.host}</lra.coordinator.host>
                                 <lra.coordinator.url>${lra.coordinator.url}</lra.coordinator.url>
                                 <server.jvm.args>${server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url}</server.jvm.args>
+                                <lra.test.timeout.factor>${lra.test.timeout.factor}</lra.test.timeout.factor>
                             </systemPropertyVariables>
                             <systemProperties>
                                 <arquillian.xml>arquillian.xml</arquillian.xml>

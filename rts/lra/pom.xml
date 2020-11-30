@@ -38,6 +38,8 @@
 
         <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
         <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
+
+        <lra.test.timeout.factor>1.0</lra.test.timeout.factor>
     </properties>
 
     <repositories>
