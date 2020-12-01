@@ -43,7 +43,7 @@ rem REPLACE THE OPENJDK-ORB WITH THE 8.0.8.Final
 wget --no-check-certificate https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/openjdk-orb/openjdk-orb/8.0.8.Final/openjdk-orb-8.0.8.Final.jar -O %JBOSS_HOME%\modules\system\layers\base\javax\orb\api\main\openjdk-orb-8.0.8.Final.jar
 set OPENJDK_ORB_MODULE_XML=%JBOSS_HOME%\modules\system\layers\base\javax\orb\api\main\module.xml
 powershell -Command "((Get-Content ($env:OPENJDK_ORB_MODULE_XML)).replace('8.0.6.Final', '8.0.8.Final') | Set-Content ($env:OPENJDK_ORB_MODULE_XML))"
-unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.9.10.Final-SNAPSHOT-bin.zip -d %JBOSS_HOME%
+unzip wildfly-blacktie\build\target\wildfly-blacktie-build-5.9.10.Final-bin.zip -d %JBOSS_HOME%
 cd ..\
 
 rem INITIALIZE JBOSS
