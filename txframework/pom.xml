@@ -148,6 +148,20 @@
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
             <version>${version.org.apache.cxf}</version>
         </dependency>
+        <!-- maven dependency download issue, need to explicitly specify the version even
+            it should be taken transitively from 'cxf-rt-frontend-javaws' -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.1.13</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>2.1.13</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-spi</artifactId>
