@@ -138,6 +138,7 @@ function build_narayana {
   echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
   ./build.sh -version
 
+  # building with -Dtest + -DfailIfNoTests to get downloaded test dependencies to local maven repo on the build time
   ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false -P${ARQ_PROF} $IPV6_OPTS -B clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
@@ -219,6 +220,7 @@ function build_as {
 
   export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
+  # building with -Dtest + -DfailIfNoTests to get downloaded test dependencies to local maven repo on the build time
   (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -Dtest=NonExistentTest -DfailIfNoTests=false -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
 
