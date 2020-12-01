@@ -134,7 +134,7 @@ function build_narayana {
     export JAVA_HOME="$JAVA_HOME_FOR_BUILD"
     export PATH="$JAVA_HOME/bin:$PATH"
   fi
-FailAfterPrepareBase.java
+
   echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
   ./build.sh -version
 
