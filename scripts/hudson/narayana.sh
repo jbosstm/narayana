@@ -138,7 +138,7 @@ function build_narayana {
   echo "Using Java version, Maven version with JAVA_HOME='$JAVA_HOME'"
   ./build.sh -version
 
-  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false $IPV6_OPTS -B clean install
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false -P${ARQ_PROF} $IPV6_OPTS -B clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   if [ -n "$pathOriginal" ]; then
@@ -208,11 +208,25 @@ function build_as {
   sed -i "s/2.1.1/2.2/g" testsuite/pom.xml
   sed -i "s/2.1.1/2.2/g" testsuite/integration/pom.xml
 
+  # JAVA_HOME_FOR_BUILD can be used in environment if JDK needs to be different from one which runs e.g. tests.
+  # This env property is used to build with JDK 1.7 as we need JDK 1.6 has issues to download from SSL
+  if [ -n "$JAVA_HOME_FOR_BUILD" ]; then
+    local pathOriginal="$PATH"
+    local javaHomeOriginal="$JAVA_HOME"
+    export JAVA_HOME="$JAVA_HOME_FOR_BUILD"
+    export PATH="$JAVA_HOME/bin:$PATH"
+  fi
+
   export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
-  (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -DskipTests -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT $AS_XARGS)
+  (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -Dtest=NonExistentTest -DfailIfNoTests=false -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
-  
+
+  if [ -n "$pathOriginal" ]; then
+     export PATH="$pathOriginal"
+     export JAVA_HOME="$javaHomeOriginal"
+  fi
+
   #Enable remote debugger
   echo JAVA_OPTS='"$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"' >> ./build/target/jboss-as-*/bin/standalone.conf
 
