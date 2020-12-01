@@ -10,7 +10,7 @@
 #             e.g. pom.xml talks about version 5.7.3.Final-SNAPSHOT, CURRENT is 5.7.3.Final and NEXT is 5.7.4.Final
 # 2 arguments: `./narayana-release-process.sh CURRENT NEXT`
 
-command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
+#command -v ant >/dev/null 2>&1 || { echo >&2 "I require ant but it's not installed.  Aborting."; exit 1; }
 if [ $# -ne 2 ]; then
   echo 1>&2 "$0: usage: CURRENT NEXT"
   exit 2
@@ -19,7 +19,7 @@ else
   NEXT=$2
 fi
 
-read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
+read -p "You will need: VPN, credentials for jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
   exit
@@ -59,10 +59,12 @@ then
     exit
   fi
   set -e
-  echo "Checking if there were any failed jobs, this may be interactive so please stand by"
-  JIRA_HOST=issues.redhat.com JENKINS_JOBS=narayana59 ./scripts/release/pre_release.py
+#  echo "Checking if there were any failed jobs, this may be interactive so please stand by"
+#  JIRA_HOST=issues.redhat.com JENKINS_JOBS=narayana59 ./scripts/release/pre_release.py
   echo "Executing pre-release script, this may be interactive so please stand by"
   (cd ./scripts/ ; ./pre-release.sh $CURRENT $NEXT)
+  echo "REMARK our release process for maintenance branches now only includes tagging - exiting script early"
+  exit 0
   echo "This script is only interactive at the very end now, press enter to continue"
   read
   # Start the blacktie builds now
