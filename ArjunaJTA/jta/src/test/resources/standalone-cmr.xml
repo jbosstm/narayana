@@ -135,7 +135,7 @@
         <subsystem xmlns="urn:jboss:domain:datasources:1.2">
             <datasources>
                 <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true" connectable="true">
-                    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000</connection-url>
+                    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000</connection-url>
                     <driver>h2</driver>
                     <security>
                         <user-name>sa</user-name>
