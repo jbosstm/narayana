@@ -139,7 +139,7 @@ function build_narayana {
   ./build.sh -version
 
   # building with -Dtest + -DfailIfNoTests to get downloaded test dependencies to local maven repo on the build time
-  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false -P${ARQ_PROF} $IPV6_OPTS -B clean install
+  ./build.sh -Prelease,community,all$OBJECT_STORE_PROFILE -Didlj-enabled=true "$@" $NARAYANA_ARGS -Dtest=NonExistentTest -DfailIfNoTests=false -P${ARQ_PROF} ${IPV6_OPTS} ${AS_XARGS} -B clean install
   [ $? = 0 ] || fatal "narayana build failed"
 
   if [ -n "$pathOriginal" ]; then
@@ -250,7 +250,7 @@ function xts_as_tests {
   init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT "$@" test $AS_XARGS)
+  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.44.Final-SNAPSHOT "$@" $IPV6_OPTS test $AS_XARGS)
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -258,7 +258,7 @@ function xts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test $AS_XARGS
+  ./build.sh -f ./ArjunaJTA/jta/pom.xml -Parq "$@" test $AS_XARGS $IPV6_OPTS
   [ $? = 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
@@ -267,7 +267,7 @@ function txframework_tests {
   init_jboss_home
   echo "#0. TXFramework Test"
   cp ./rest-tx/webservice/target/restat-web-*.war $JBOSS_HOME/standalone/deployments
-  ./build.sh -f ./txframework/pom.xml -P$ARQ_PROF "$@" test
+  ./build.sh -f ./txframework/pom.xml $AS_XARGS $IPV6_OPTS -P$ARQ_PROF "$@" test
   [ $? = 0 ] || fatal "TxFramework build failed"
 }
 
@@ -281,9 +281,9 @@ function xts_tests {
   if [ $WSTX_MODULES ]; then
     [[ $WSTX_MODULES = *crash-recovery-tests* ]] || ran_crt=0
     echo "BUILDING SPECIFIC WSTX11 modules"
-    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
+    ./build.sh -f XTS/localjunit/pom.xml --projects "$WSTX_MODULES" -P$ARQ_PROF "$@" $AS_XARGS $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
   else
-    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
+    ./build.sh -f XTS/localjunit/pom.xml -P$ARQ_PROF "$@" $AS_XARGS $IPV6_OPTS -Dorg.jboss.remoting-jmx.timeout=300 clean install
   fi
 
   [ $? = 0 ] || fatal "XTS: SOME TESTS failed"
@@ -307,7 +307,7 @@ function tx_bridge_tests {
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS: sed failed"
 
   echo "XTS: TXBRIDGE TESTS"
-  ./build.sh -f txbridge/pom.xml -B -P$ARQ_PROF "$@" $IPV6_OPTS clean install
+  ./build.sh -f txbridge/pom.xml -B -P$ARQ_PROF "$@" $AS_XARGS $IPV6_OPTS clean install
   [ $? = 0 ] || fatal "#3.TXBRIDGE TESTS failed"
 }
 
@@ -402,8 +402,10 @@ function qa_tests {
 JAVA_VER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/\1\2/p;')
 if [ "$JAVA_VER" -lt 18 ]; then
   echo "JDK version < 18 - setting -Dhttps.protocols=TLSv1.2"
-  AS_XARGS="-Dhttps.protocols=TLSv1.2"
+  AS_XARGS="${AS_XARGS} -Dhttps.protocols=TLSv1.2"
 fi
+# when IPv6 is not set then set up the IPv4
+[ -z ${IPV6_OPTS} ] && AS_XARGS="${AS_XARGS} -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses"
 
 check_if_pull_closed
 
