@@ -35,8 +35,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.NotSupportedException;
@@ -308,6 +310,21 @@ public class BaseTransaction
 
 	private static final int _asyncCommitPoolSize = jtaPropertyManager.getJTAEnvironmentBean().getAsyncCommitPoolSize();
 
-	private static final ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, _asyncCommitPoolSize, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3));
+	static class NamedThreadFactory implements ThreadFactory {
+		private final String name;
+		private final AtomicInteger counter = new AtomicInteger();
+
+		NamedThreadFactory(String name) {
+			this.name = name;
+		}
+
+		public Thread newThread(Runnable r) {
+			return new Thread(r, name + "-Thread_" + counter.incrementAndGet());
+		}
+	}
+
+	private static final ThreadFactory transactionThreadFactory = new NamedThreadFactory("Narayana-Transaction");
+
+	private static final ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, _asyncCommitPoolSize, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3), transactionThreadFactory);
 
 }
