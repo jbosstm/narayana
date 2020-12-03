@@ -22,7 +22,7 @@ function get_pull_description {
 }
 
 function init_test_options {
-    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.44.Final"
+    [ $NARAYANA_VERSION ] || NARAYANA_VERSION="4.17.45.Final-SNAPSHOT"
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
 
     PULL_DESCRIPTION=$(get_pull_description)
@@ -221,7 +221,7 @@ function build_as {
   export MAVEN_OPTS="$MAVEN_OPTS -Xms2048m -Xmx2048m -XX:MaxPermSize=1024m"
   export JAVA_OPTS="$JAVA_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
   # building with -Dtest + -DfailIfNoTests to get downloaded test dependencies to local maven repo on the build time
-  (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -Dtest=NonExistentTest -DfailIfNoTests=false -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final -Dversion.org.jboss.jbossts=4.17.44.Final $AS_XARGS)
+  (cd .. && ./build.sh -f jboss-as/pom.xml -B clean install -Dtest=NonExistentTest -DfailIfNoTests=false -Dts.smoke=false $IPV6_OPTS -Drelease=true -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.45.Final-SNAPSHOT $AS_XARGS)
   [ $? = 0 ] || fatal "AS build failed"
 
   if [ -n "$pathOriginal" ]; then
@@ -250,7 +250,7 @@ function xts_as_tests {
   init_jboss_home
   echo "#-1. XTS AS Integration Test"
   cd ${WORKSPACE}/jboss-as
-  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.44.Final -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.44.Final -Dversion.org.jboss.jbossts.jbossxts=4.17.44.Final -Dversion.org.jboss.jbossts=4.17.44.Final "$@" $IPV6_OPTS test $AS_XARGS)
+  (cd ../ && ./build.sh -f ./jboss-as/testsuite/integration/xts/pom.xml -B -Pxts.integration.tests.profile -Dversion.org.jboss.jboss-transaction-spi=7.1.0.SP2 -Dversion.org.jboss.jbossts.jbossjts=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossjts-integration=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts.jbossxts=4.17.45.Final-SNAPSHOT -Dversion.org.jboss.jbossts=4.17.45.Final-SNAPSHOT "$@" $IPV6_OPTS test $AS_XARGS)
   [ $? = 0 ] || fatal "XTS AS Integration Test failed"
   cd ${WORKSPACE}
 }
