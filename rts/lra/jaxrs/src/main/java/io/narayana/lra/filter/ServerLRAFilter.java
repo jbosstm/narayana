@@ -540,7 +540,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 String failureMessage =  processLRAOperationFailures(progress);
 
                 if (failureMessage != null) {
-                    LRALogger.logger.warn(LRALogger.i18NLogger.warn_LRAStatusInDoubt(failureMessage));
+                    LRALogger.logger.warn(failureMessage);
 
                     // the actual failure(s) will also have been added to the i18NLogger logs at the time they occured
                     responseContext.setEntity(failureMessage, null, MediaType.TEXT_PLAIN_TYPE);

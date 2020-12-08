@@ -23,7 +23,6 @@
 package io.narayana.lra.proxy.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
-import static org.jboss.logging.Logger.Level.WARN;
 
 import java.util.concurrent.ExecutionException;
 
@@ -48,17 +47,14 @@ public interface lraI18NLogger {
     @LogMessage(level = ERROR)
     void error_cannotSerializeParticipant(String participantToString, @Cause Throwable e);
 
-    @Message(id = 25003, value = "Participant '%s' exception during completion")
+    @Message(id = 25002, value = "Participant '%s' exception during completion")
     @LogMessage(level = ERROR)
     void error_participantExceptionOnCompletion(String name, @Cause ExecutionException e);
 
-    @Message(id = 25004, value = "Cannot get status of participant '%s' of lra id '%s'")
+    @Message(id = 25003, value = "Cannot get status of participant '%s' of lra id '%s'")
     @LogMessage(level = ERROR)
     void error_gettingParticipantStatus(String participant, String lraId, @Cause Throwable e);
 
-    @Message(id = 25005, value = "Participant deserialization failed for LRA '%s' using deserializer class %s: '%s'")
-    @LogMessage(level = WARN)
-    void warn_cannotDeserializeParticipant(String lraId, String deserializer, String message);
 
     /*
         Allocate new messages directly above this notice.

@@ -45,6 +45,25 @@ public final class LRAConstants {
     public static final String RECOVERY_PARAM = "recoveryCount";
     public static final String HTTP_METHOD_NAME = "method"; // the name of the HTTP method used to invoke participants
 
+    /*
+     * Supported Narayana LRA API versions.
+     * Any version not mentioned in the list of the supported versions is unsupported
+     * and will fail on incoming HTTP call.
+     * The valid version format is specified in API.adoc document.
+     * When a new version with a new features is added consider adding API tests under 'test/basic'.
+     */
+    public static final String[] NARAYANA_LRA_API_SUPPORTED_VERSIONS = new String[] {
+            "1.0"
+    };
+
+    /**
+     * The Narayana API version for LRA coordinator supported for the release.
+     * Any higher version is considered as unimplemented and unknown.
+     */
+    public static final String CURRENT_API_VERSION_STRING = "1.0";
+
+    public static final String NARAYANA_LRA_API_VERSION_HEADER_NAME = "Narayana-LRA-API-version";
+
     /**
      * Number of seconds to wait for requests to participant.
      * The timeout is hardcoded as the protocol expects retry in case of failure and timeout.

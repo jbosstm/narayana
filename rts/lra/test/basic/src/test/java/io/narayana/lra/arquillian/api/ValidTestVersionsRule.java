@@ -1,0 +1,85 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2021, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package io.narayana.lra.arquillian.api;
+
+import org.junit.AssumptionViolatedException;
+import org.junit.rules.MethodRule;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
+/**
+ * This rule works with annotation {@link ValidTestVersions}.
+ * It verifies that the test contains a field named 'version'
+ * and verifies if the list of the valid test versions contains the found field value.
+ * If the version field and annotation values match then the test is executed,
+ * otherwise the test execution is skipped.
+ */
+public class ValidTestVersionsRule implements MethodRule {
+    private static final String VERSION_FIELD_NAME = "version";
+
+    private String methodName;
+
+    @Override
+    public Statement apply(Statement base, FrameworkMethod method, Object target) {
+        // storing name of the currently running method
+        methodName = method.getName();
+
+        ValidTestVersions validTestVersions = method.getAnnotation(ValidTestVersions.class);
+        String foundVersionValue = findVersionField(target);
+        if (validTestVersions != null && foundVersionValue != null) {
+            if (Arrays.stream(validTestVersions.value()).noneMatch(val -> val.equals(foundVersionValue))) {
+                // ignoring to run the test when annotation does specify the version
+                return new Statement() {
+                    @Override
+                    public void evaluate() throws Throwable {
+                        throw new AssumptionViolatedException("Test " + method.getName() + " annotated with annotation " +
+                                ValidTestVersions.class.getSimpleName() + " and the current '" + VERSION_FIELD_NAME + "' field is not in set " +
+                                "of the versions to run with");
+                    }
+                };
+            }
+        }
+        return base;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    private String findVersionField(Object objectToSearch) {
+        for(Field field: objectToSearch.getClass().getDeclaredFields()) {
+            if (field.getName().equals(VERSION_FIELD_NAME) && field.getType().isAssignableFrom(String.class)) {
+                try {
+                    field.setAccessible(true);
+                    return (String) field.get(objectToSearch);
+                } catch (IllegalAccessException iae) {
+                    new IllegalStateException("Cannot get value of '" + VERSION_FIELD_NAME + "' field with reflection", iae);
+                }
+            }
+        }
+        return null;
+    }
+}
