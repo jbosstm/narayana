@@ -43,6 +43,9 @@ public class AppServerCoordinatorDeploymentObserver {
     /**
      * When the container name {@link Container#getName()} contains this string
      * then this observer prepares the 'war' deployment of the LRA Coordinator and serve it to the container.
+     * This string needs to be part of the container {@code qualifier} as defined
+     * in {@code arquillian.xml}.<br/>
+     * For example: {@code <container qualifier="wildfly-managed-run-as-coordinator">}.
      */
     private static final String CONTAINER_NAME_RECOGNITION = "as-coordinator";
     private static final String LRA_COORDINATOR_DEPLOYMENT_NAME = "lra-coordinator";
@@ -53,7 +56,7 @@ public class AppServerCoordinatorDeploymentObserver {
      * which is deployed when the app server starts.
      */
     public void handleAfterStartup(@Observes AfterStart event, Container container) throws Exception {
-        if(!container.getName().contains(CONTAINER_NAME_RECOGNITION)) {
+        if (!container.getName().contains(CONTAINER_NAME_RECOGNITION)) {
             log.debugf("Handling before after start-up event for container '%s'. The container name does not contain substring '%s' " +
                             "thus skipping execution.", container.getName(), CONTAINER_NAME_RECOGNITION);
             return;
@@ -61,7 +64,7 @@ public class AppServerCoordinatorDeploymentObserver {
 
         log.debugf("handleAfterStartup for container %s", container.getName());
         Archive<?> deployment = createLRACoordinatorDeployment();
-        if(deployments.put(deployment.getName(), deployment) == null) {
+        if (deployments.put(deployment.getName(), deployment) == null) {
             log.infof("Deploying LRA Coordinator war deployment: %s", deployment.getName());
             container.getDeployableContainer()
                     .deploy(deployment);
@@ -73,14 +76,14 @@ public class AppServerCoordinatorDeploymentObserver {
      * {@link #handleAfterStartup(AfterStart, Container)}.
      */
     public void handleBeforeStop(@Observes BeforeStop event, Container container) throws Exception {
-        if(!container.getName().contains(CONTAINER_NAME_RECOGNITION)) {
+        if (!container.getName().contains(CONTAINER_NAME_RECOGNITION)) { // container name taken from 'qualifier' string of arquillian.xml
             log.debugf("Handling before stop event for container '%s'. The container name does not contain substring '%s' " +
                     "thus skipping execution.", container.getName(), CONTAINER_NAME_RECOGNITION);
             return;
         }
 
         log.debugf("handleBeforeStop for container %s", container.getName());
-        for(Archive<?> deployment: deployments.values()) {
+        for (Archive<?> deployment: deployments.values()) {
             log.infof("Undeploying LRA Coordinator war deployment: %s", deployment.getName());
             container.getDeployableContainer().undeploy(deployment);
         }
@@ -98,12 +101,12 @@ public class AppServerCoordinatorDeploymentObserver {
                 .withTransitivity().asFile();
 
         ZipImporter zip = ShrinkWrap.create(ZipImporter.class, LRA_COORDINATOR_DEPLOYMENT_NAME + ".war");
-        for(File file: files) {
+        for (File file: files) {
             zip.importFrom(file);
         }
         WebArchive war = zip.as(WebArchive.class);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debugf("Content of the LRA Coordinator deployment is:%n%s%n", war.toString(true));
         }
         return war;

@@ -272,8 +272,9 @@ public class LRAService {
         LongRunningAction transaction = getTransaction(lraId);
 
         if (transaction.getLRAStatus() != LRAStatus.Active && !transaction.isRecovering() && transaction.isTopLevel()) {
-            throw new WebApplicationException(Response.status(Response.Status.PRECONDITION_FAILED)
-                    .entity(String.format("%s: LRA is closing or closed: endLRA", lraId)).build());
+            String errorMsg = String.format("%s: LRA is closing or closed: endLRA", lraId);
+            throw new WebApplicationException(errorMsg, Response.status(Response.Status.PRECONDITION_FAILED)
+                    .entity(errorMsg).build());
         }
 
         transaction.finishLRA(compensate);
@@ -299,16 +300,21 @@ public class LRAService {
             return Response.Status.PRECONDITION_FAILED.getStatusCode();
         }
 
+        boolean wasForgotten;
         try {
-            if (!transaction.forgetParticipant(compensatorUrl)) {
-                if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.infof("LRAServicve.forget %s failed%n", lraId);
-                }
-            }
-
-            return Response.Status.OK.getStatusCode();
+            wasForgotten = transaction.forgetParticipant(compensatorUrl);
         } catch (Exception e) {
-            return Response.Status.BAD_REQUEST.getStatusCode();
+            String errorMsg = String.format("LRAService.forget %s failed on finding participant '%s'", lraId, compensatorUrl);
+            throw new WebApplicationException(errorMsg, e, Response.status(Response.Status.BAD_REQUEST)
+                    .entity(errorMsg).build());
+        }
+        if (wasForgotten) {
+            return Response.Status.OK.getStatusCode();
+        } else {
+            String errorMsg = String.format("LRAService.forget %s failed as the participant was not found, compensator url '%s'",
+                    lraId, compensatorUrl);
+            throw new WebApplicationException(errorMsg, Response.status(Response.Status.BAD_REQUEST)
+                    .entity(errorMsg).build());
         }
     }
 
@@ -404,7 +410,7 @@ public class LRAService {
         LongRunningAction lra = lras.get(lraId);
 
         if (lra == null) {
-            return Response.Status.PRECONDITION_FAILED.getStatusCode();
+            return NOT_FOUND.getStatusCode();
         }
 
         return lra.setTimeLimit(timelimit);

@@ -1,0 +1,68 @@
+= Versioning of Narayna LRA REST API
+
+The goal of this document is summarize the approach to REST API versioning
+in Narayana LRA coordinator service.
+This document is written for developer of Narayana LRA services.
+
+The version format is `major.minor` and both components are required.
+
+Client may demand behaviour based on particular API version
+by providing HTTP header link:./service-base/src/main/java/io/narayana/lra/LRAConstants.java[`Narayana-LRA-API-version`] on the call.
+
+If the caller is able to accept more than one version then the caller should include the header for each one.
+
+== Listing of API versions
+
+.Support status of Narayana LRA API versions
+[options="header"]
+|===
+
+| Version | Support status
+
+| `1.0`   | Supported
+
+|===
+
+== API definition as Open API document
+
+The Narayana LRA API is documented with Open API annotations at the java
+classes. The Open API definition needs to be published at the http://narayana.io
+page.
+
+== Changes in LRA REST API
+
+The Narayana LRA REST API is expected to support for at least two previous
+`major` versions (ie. support is expected in parallel at least
+of versions 1.x, 2.x and 3.x until the 4.0 is released).
+Still versions other than the last three may be supported.
+
+Changes which do not make a trouble for backward compatibility
+from client perspective (i.e., addition of features or enhancing the API
+with return types or similar) are considered to bump a `minor` version.
+Incompatible changes needs to bump the `major` version.
+
+== Unsupported version errors
+
+When client demands unsupported version from the REST API endpoint
+the code returns HTTP status
+link:http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.18[`417` EXPECTATION_FAILED`].
+
+On returning the `417` error the API is expected to return the header
+`Narayana-LRA-API-version` with the highest supported
+API version.
+
+For an unsupported version is considered any request to the REST API endpoint
+which demands (via HTTP header `Narayana-LRA-API-version`) version
+higher than the current API version (i.e., the highest version that the API
+is created for).
+
+Multiple versions of the API may be supported in parallel.
+The current version can be discovered by:
+
+* Either looking at <<_listing_of_api_versions, the listing above>>.
+* And/or by sending a request without the version header.
+  The response will include the version header containing
+  the latest supported version
+
+Typically the last 3 versions are supported
+but older version may also be maintained
