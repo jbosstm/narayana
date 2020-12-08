@@ -22,6 +22,8 @@
 package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.Current;
+import io.narayana.lra.LRAConstants;
+import io.narayana.lra.logging.LRALogger;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -31,19 +33,32 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME;
+import static io.narayana.lra.LRAConstants.CURRENT_API_VERSION_STRING;
+import static io.narayana.lra.LRAConstants.NARAYANA_LRA_API_SUPPORTED_VERSIONS;
+import static javax.ws.rs.core.Response.Status.EXPECTATION_FAILED;
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
 @Provider
 public class CoordinatorContainerFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
         URI lraId = null;
+
+        verifyHighestSupportedVersion(requestContext);
 
         if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
@@ -71,6 +86,46 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        if(!responseContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)) {
+            // when app code did not provide version to header to be returned back
+            // then using the api version which came within request; when provided neither then the current version of the api
+            String responseVersion = requestContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) ?
+                    requestContext.getHeaderString(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) : CURRENT_API_VERSION_STRING;
+            responseContext.getHeaders().putSingle(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME, responseVersion);
+        }
+
         Current.updateLRAContext(responseContext);
+    }
+
+    /**
+     * Verification if the version in the header is the supported version.
+     * Format and the string has to match of the list of the supported versions.
+     */
+    private void verifyHighestSupportedVersion(ContainerRequestContext requestContext) {
+        if (!requestContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)) {
+            // no header specified, going with 'null' further into processing
+            return;
+        }
+
+        String apiVersionString = requestContext.getHeaderString(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME);
+
+        if (requestContext.getHeaders().get(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME).size() > 1 && LRALogger.logger.isDebugEnabled()) {
+            LRALogger.logger.debugf("Multiple version headers for the request '%s', using version '%s'.",
+                            dumpInputStreamToString(requestContext.getEntityStream()), apiVersionString);
+        }
+
+        if (!Arrays.stream(NARAYANA_LRA_API_SUPPORTED_VERSIONS).anyMatch(v -> v.equals(apiVersionString))) {
+            String errorMsg = LRALogger.i18NLogger.get_wrongAPIVersionDemanded(
+                    apiVersionString, NARAYANA_LRA_API_SUPPORTED_VERSIONS.toString());
+            throw new WebApplicationException(errorMsg,
+                    Response.status(EXPECTATION_FAILED).entity(errorMsg)
+                            .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, CURRENT_API_VERSION_STRING).build());
+        }
+    }
+
+    private String dumpInputStreamToString(InputStream is) {
+        try (Stream<String> lines = new BufferedReader(new InputStreamReader(is)).lines()) {
+            return lines.collect(Collectors.joining(System.lineSeparator()));
+        }
     }
 }

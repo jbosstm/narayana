@@ -28,6 +28,7 @@
         <configuration>
             <property name="managementAddress">${lra.coordinator.host}</property>
             <property name="startupTimeoutInSeconds">${server.startup.timeout:120}</property>
+            <property name="allowConnectingToRunningServer">true</property>
         </configuration>
     </container>
 </arquillian>

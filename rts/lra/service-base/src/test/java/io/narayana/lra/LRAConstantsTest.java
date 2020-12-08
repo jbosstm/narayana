@@ -33,7 +33,6 @@ public class LRAConstantsTest {
     public void getCoordinatorFromUsualLRAId() {
         URI lraId = URI.create("http://localhost:8080/lra-coordinator/0_ffff0a28054b_9133_5f855916_a7?query=1#fragment");
         URI coordinatorUri = LRAConstants.getLRACoordinatorUrl(lraId);
-        System.out.println(">>>> " + coordinatorUri);
         Assert.assertEquals("http", coordinatorUri.getScheme());
         Assert.assertEquals("localhost", coordinatorUri.getHost());
         Assert.assertEquals(8080, coordinatorUri.getPort());
