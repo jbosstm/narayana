@@ -118,7 +118,7 @@ public class LongRunningAction extends BasicAction {
      * @return  immutable {@link LRAData} representing the current state of the LRA transaction
      */
     public LRAData getLRAData() {
-        return new LRAData(id.toASCIIString(), clientId, status, isTopLevel(), isRecovering(),
+        return new LRAData(id, clientId, status, isTopLevel(), isRecovering(),
                 startTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 finishTime == null ? 0L : finishTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 getHttpStatus());

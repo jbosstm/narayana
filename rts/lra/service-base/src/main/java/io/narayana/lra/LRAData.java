@@ -1,14 +1,39 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2020, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package io.narayana.lra;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
+import java.beans.Transient;
+import java.net.URI;
+
 /**
  * DTO object which serves to transfer data of particular LRA instance.
- * It's used by {@link io.narayana.lra.coordinator.api.Coordinator}
+ * It's used by {@code io.narayana.lra.coordinator.api.Coordinator}
  * for JSON response creation when LRA info is asked for.
  */
 public class LRAData {
-    private String lraId;
+    private URI lraId;
     private String clientId;
     private LRAStatus status;
     private boolean isTopLevel;
@@ -19,7 +44,7 @@ public class LRAData {
 
     public LRAData() {}
 
-    public LRAData(String lraId, String clientId, LRAStatus status, boolean isTopLevel, boolean isRecovering,
+    public LRAData(URI lraId, String clientId, LRAStatus status, boolean isTopLevel, boolean isRecovering,
                     long startTime, long finishTime, int httpStatus) {
         this.lraId = lraId;
         this.clientId = clientId;
@@ -31,12 +56,17 @@ public class LRAData {
         this.httpStatus = httpStatus;
     }
 
-    public String getLraId() {
+    public URI getLraId() {
         return this.lraId;
     }
 
-    public void setLraId(String lraId) {
+    public void setLraId(URI lraId) {
         this.lraId = lraId;
+    }
+
+    @Transient
+    public String getLraIdAsString() {
+        return this.lraId.toASCIIString();
     }
 
     public String getClientId() {
