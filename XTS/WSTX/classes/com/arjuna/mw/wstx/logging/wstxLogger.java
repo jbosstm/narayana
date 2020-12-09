@@ -33,9 +33,41 @@ package com.arjuna.mw.wstx.logging;
 
 import org.jboss.logging.Logger;
 
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 
 public class wstxLogger
 {
     public static final Logger logger = Logger.getLogger("com.arjuna.mw.wstx");
     public static final wstxI18NLogger i18NLogger = Logger.getMessageLogger(wstxI18NLogger.class, "com.arjuna.mw.wstx");
+
+    /**
+     * Print the content of the SOAP message.
+     *
+     * @param soapMessageContext  SOAP message context to extract and log the message content from
+     */
+    public static final void traceMessage(SOAPMessageContext soapMessageContext) {
+        SOAPMessage soapMessage = ((SOAPMessageContext) soapMessageContext).getMessage();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try {
+            soapMessage.writeTo(baos);
+            logger.trace(baos);
+        } catch (IOException e) {
+            logger.trace("Failure on logging content of the SOAP message " + soapMessage, e);
+        } catch (SOAPException e) {
+            logger.trace("Failure on logging content of the SOAP message " + soapMessage, e);
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                logger.trace("unable to close ByteArrayOutputStream during trace logging", e);
+            }
+        }
+    }
 }
