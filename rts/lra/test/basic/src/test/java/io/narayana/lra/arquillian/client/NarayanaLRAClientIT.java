@@ -53,13 +53,13 @@ public class NarayanaLRAClientIT {
 
         List<LRAData> allLRAs = lraClient.getAllLRAs();
         Assert.assertTrue("Expected to find the LRA " + lra + " amongst all active ones: " + allLRAs,
-                allLRAs.stream().anyMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
+                allLRAs.stream().anyMatch(lraData -> lraData.getLraId().equals(lra)));
 
         lraClient.closeLRA(lra);
 
         allLRAs = lraClient.getAllLRAs();
         Assert.assertTrue("LRA " + lra + " was closed but is still referred as active one at: " + allLRAs,
-                allLRAs.stream().noneMatch(lraData -> lraData.getLraId().equals(lra.toASCIIString())));
+                allLRAs.stream().noneMatch(lraData -> lraData.getLraId().equals(lra)));
     }
 
 }
