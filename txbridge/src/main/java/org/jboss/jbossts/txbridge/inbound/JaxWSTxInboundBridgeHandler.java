@@ -53,9 +53,11 @@ public class JaxWSTxInboundBridgeHandler implements Handler
      */
     public boolean handleMessage(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleMessage()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleMessage()");
+        }
 
-        Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        Boolean outbound = (Boolean) msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outbound == null)
             throw new IllegalStateException("Cannot obtain required property: " + MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
@@ -70,14 +72,18 @@ public class JaxWSTxInboundBridgeHandler implements Handler
      */
     public boolean handleFault(MessageContext messageContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleFault()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleFault()");
+        }
 
         return suspendTransaction();
     }
 
     public void close(MessageContext messageContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.close()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.close()");
+        }
     }
 
     /**
@@ -89,7 +95,9 @@ public class JaxWSTxInboundBridgeHandler implements Handler
      */
     protected boolean handleInbound(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleInbound()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleInbound()");
+        }
 
         try
         {
@@ -113,7 +121,9 @@ public class JaxWSTxInboundBridgeHandler implements Handler
      */
     protected boolean handleOutbound(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleOutbound()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxInboundBridgeHandler.handleOutbound()");
+        }
 
         return suspendTransaction();
     }
