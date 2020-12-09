@@ -29,6 +29,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 
 /**
@@ -72,6 +73,11 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      */
     public boolean handleFault(SOAPMessageContext messageContext)
     {
+        if (wstxLogger.logger.isTraceEnabled()) {
+            wstxLogger.logger.trace("client/JaxWSHeaderContextProcessor.handleFault()");
+            wstxLogger.traceMessage(messageContext);
+        }
+
         final SOAPMessageContext soapMessageContext = (SOAPMessageContext)messageContext ;
         final SOAPMessage soapMessage = soapMessageContext.getMessage() ;
 
@@ -110,6 +116,11 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      */
     protected boolean handleInbound(SOAPMessageContext messageContext)
     {
+        if (wstxLogger.logger.isTraceEnabled()) {
+            wstxLogger.logger.trace("client/JaxWSHeaderContextProcessor.handleInbound()");
+            wstxLogger.traceMessage(messageContext);
+        }
+
         final SOAPMessage soapMessage = messageContext.getMessage() ;
 
         resumeTransaction(soapMessage);
@@ -125,6 +136,11 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      */
     protected boolean handleOutbound(SOAPMessageContext messageContext, boolean mustUnderstand)
     {
+        if (wstxLogger.logger.isTraceEnabled()) {
+            wstxLogger.logger.trace("client/JaxWSHeaderContextProcessor.handleOutbound()");
+            wstxLogger.traceMessage(messageContext);
+        }
+
         final SOAPMessage soapMessage = messageContext.getMessage() ;
 
         return handleOutboundMessage(soapMessage, mustUnderstand);
