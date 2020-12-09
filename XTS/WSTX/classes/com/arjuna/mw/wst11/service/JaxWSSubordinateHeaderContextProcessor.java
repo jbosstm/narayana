@@ -1,5 +1,7 @@
 package com.arjuna.mw.wst11.service;
 
+import com.arjuna.mw.wstx.logging.wstxLogger;
+
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPMessage;
 
@@ -17,6 +19,11 @@ public class JaxWSSubordinateHeaderContextProcessor extends JaxWSHeaderContextPr
      */
     protected boolean handleInbound(SOAPMessageContext msgContext)
     {
+        if (wstxLogger.logger.isTraceEnabled()) {
+            wstxLogger.logger.trace("service/JaxWSSubordinateHeaderContextProcessor.handleInbound()");
+            wstxLogger.traceMessage(msgContext);
+        }
+
         final SOAPMessageContext soapMessageContext = (SOAPMessageContext)msgContext ;
         final SOAPMessage soapMessage = soapMessageContext.getMessage() ;
 
