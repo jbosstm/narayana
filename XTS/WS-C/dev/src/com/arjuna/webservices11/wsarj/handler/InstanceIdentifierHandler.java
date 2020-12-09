@@ -20,6 +20,7 @@
  */
 package com.arjuna.webservices11.wsarj.handler;
 
+import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices.wsarj.ArjunaConstants;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -107,6 +108,11 @@ public class InstanceIdentifierHandler implements SOAPHandler<SOAPMessageContext
             throw new ProtocolException(se);
         }
 
+        if (WSCLogger.logger.isTraceEnabled()) {
+            WSCLogger.logger.trace("InstanceIdentifierHandler.handleMessageOutbound()");
+            WSCLogger.traceMessage(context);
+        }
+
         return true;
     }
 
@@ -139,6 +145,11 @@ public class InstanceIdentifierHandler implements SOAPHandler<SOAPMessageContext
             }
         } catch (Exception se) {
             throw new ProtocolException(se);
+        }
+
+        if (WSCLogger.logger.isTraceEnabled()) {
+            WSCLogger.logger.trace("InstanceIdentifierHandler.handlemessageInbound()");
+            WSCLogger.traceMessage(context);
         }
 
         return true;

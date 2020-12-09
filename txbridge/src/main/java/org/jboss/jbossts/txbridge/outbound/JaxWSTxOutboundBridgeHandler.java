@@ -50,7 +50,9 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     public boolean handleMessage(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleMessage()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleMessage()");
+        }
 
         Boolean outbound = (Boolean)msgContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (outbound == null)
@@ -67,14 +69,18 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     public boolean handleFault(MessageContext messageContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleFault()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleFault()");
+        }
 
         return suspendTransaction();
     }
 
     public void close(MessageContext messageContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.close()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.close()");
+        }
     }
 
     /**
@@ -85,7 +91,9 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     protected boolean handleInbound(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleInbound()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleInbound()");
+        }
 
         return suspendTransaction();
     }
@@ -99,7 +107,9 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     protected boolean handleOutbound(MessageContext msgContext)
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleOutbound()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.handleOutbound()");
+        }
 
         try
         {
@@ -122,7 +132,9 @@ public class JaxWSTxOutboundBridgeHandler implements Handler
      */
     private boolean suspendTransaction()
     {
-        txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.suspendTransaction()");
+        if (txbridgeLogger.logger.isTraceEnabled()) {
+            txbridgeLogger.logger.trace("JaxWSTxOutboundBridgeHandler.suspendTransaction()");
+        }
 
         try
         {
