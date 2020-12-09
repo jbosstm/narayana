@@ -1,5 +1,7 @@
 package com.arjuna.webservices11.wsarj.handler;
 
+import com.arjuna.webservices.logging.WSCLogger;
+
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.ProtocolException;
 
@@ -20,6 +22,11 @@ public class InstanceIdentifierInHandler extends InstanceIdentifierHandler {
      * @throws javax.xml.ws.ProtocolException
      */
     protected boolean handleMessageOutbound(SOAPMessageContext context) throws ProtocolException {
+        if (WSCLogger.logger.isTraceEnabled()) {
+            WSCLogger.logger.trace("InstanceIdentifierInHandler.handleMessageOutbound()");
+            WSCLogger.traceMessage(context);
+        }
+
         return true;
     }
 }
