@@ -1,5 +1,6 @@
 package com.arjuna.webservices11.wsat.sei;
 
+import com.arjuna.webservices.logging.WSTLogger;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.jboss.ws.api.addressing.MAP;
 
@@ -56,6 +57,10 @@ public class ParticipantPortTypeImpl // implements ParticipantPortType
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.traceOperation("CoordinatorPortTypeImpl.prepareOperation", prepare, inboundMap, arjunaContext);
+        }
+
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
                 ParticipantProcessor.getProcessor().prepare(prepare, inboundMap, arjunaContext) ;
@@ -78,6 +83,10 @@ public class ParticipantPortTypeImpl // implements ParticipantPortType
         final Notification commit = parameters;
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
+
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.traceOperation("CoordinatorPortTypeImpl.commitOperation", commit, inboundMap, arjunaContext);
+        }
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
@@ -102,6 +111,10 @@ public class ParticipantPortTypeImpl // implements ParticipantPortType
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.traceOperation("CoordinatorPortTypeImpl.rollbackOperation", rollback, inboundMap, arjunaContext);
+        }
+
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
                 ParticipantProcessor.getProcessor().rollback(rollback, inboundMap, arjunaContext) ;
@@ -120,6 +133,10 @@ public class ParticipantPortTypeImpl // implements ParticipantPortType
         final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
+
+        if (WSTLogger.logger.isTraceEnabled()) {
+            WSTLogger.traceFault("CoordinatorPortTypeImpl.soapFault", soapFault, inboundMap, arjunaContext);
+        }
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
