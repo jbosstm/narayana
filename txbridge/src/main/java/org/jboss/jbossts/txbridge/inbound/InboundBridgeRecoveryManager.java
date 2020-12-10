@@ -25,6 +25,7 @@ package org.jboss.jbossts.txbridge.inbound;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.internal.jta.recovery.arjunacore.NodeNameXAResourceOrphanFilter;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
@@ -56,6 +57,8 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
     private final List<BridgeDurableParticipant> participantsAwaitingRecovery =
             Collections.synchronizedList(new LinkedList<BridgeDurableParticipant>());
     private volatile boolean orphanedXAResourcesAreIdentifiable = false;
+
+    private final XAResourceOrphanFilter nodeNameFilter = new NodeNameXAResourceOrphanFilter();
 
     /**
      * MC lifecycle callback, used to register components with the recovery manager.
@@ -277,8 +280,16 @@ public class InboundBridgeRecoveryManager implements XTSATRecoveryModule, Recove
         txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+")");
 
         if(xid.getFormatId() != BridgeDurableParticipant.XARESOURCE_FORMAT_ID) {
-            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - not ours. Abstaining.");
+            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - not our type. Abstaining.");
             return Vote.ABSTAIN; // it's not one of ours, ignore it.
+        }
+
+        // it's the right format for us, but if it came from a db that is shared with other nodes
+        // then it may not belong to us...
+        Vote nameFilterVote = nodeNameFilter.checkXid(xid);
+        if(nameFilterVote != Vote.ROLLBACK) {
+            txbridgeLogger.logger.trace("InboundBridgeRecoveryManager.checkXid("+xid+") - not our nodename. Abstaining.");
+            return Vote.ABSTAIN;
         }
 
         if(!orphanedXAResourcesAreIdentifiable) {
