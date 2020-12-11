@@ -40,9 +40,12 @@ public class JandexAnnotationResolver {
         }
 
         ClassInfo classInfo = index.getClassByName(name);
-        annotations.putAll(classInfo.annotations());
-        annotations.putAll(getInterfaceAnnotations(classInfo.interfaceNames(), index));
-        annotations.putAll(getAllAnnotationsFromClassInfoHierarchy(classInfo.superName(), index));
+
+        if (classInfo != null) {
+            annotations.putAll(classInfo.annotations());
+            annotations.putAll(getInterfaceAnnotations(classInfo.interfaceNames(), index));
+            annotations.putAll(getAllAnnotationsFromClassInfoHierarchy(classInfo.superName(), index));
+        }
 
         return annotations;
     }

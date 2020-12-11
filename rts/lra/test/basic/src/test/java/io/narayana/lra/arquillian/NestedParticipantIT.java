@@ -164,7 +164,7 @@ public class NestedParticipantIT {
         assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
                 narayanaLRAClient.getCurrent());
 
-        // and verify they are all closed
+        // and verify they are all closed - narayanaLRAClient.getStatus(grandParent)
         assertClosed("grandparent", grandParent);
         assertClosed("parent", parent);
         assertClosed("child", child);

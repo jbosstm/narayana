@@ -322,11 +322,13 @@ public class NarayanaLRAClient implements Closeable {
             // validate the HTTP status code says an LRA resource was created
             if (isUnexpectedResponseStatus(response, Response.Status.CREATED)) {
                 String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
+
                 if (verbose) {
                     LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), responseEntity);
                 }
-                throwGenericLRAException(null, response.getStatus(),
+                throwGenericLRAException(null, response.getStatus(), // TODO the catch (Exception) block already catches this one
                         "LRA start returned an unexpected status code: " + response.getStatus() + ", response '" + responseEntity + "'", null);
+
                 return null;
             }
 
@@ -787,10 +789,11 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (isUnexpectedResponseStatus(response, OK, Response.Status.ACCEPTED, NOT_FOUND)) {
-                LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(),
+                String warnMsg = LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(),
                         response.hasEntity() ? response.readEntity(String.class) : "");
-                throwGenericLRAException(lra, INTERNAL_SERVER_ERROR.getStatusCode(),
-                        "LRA finished with an unexpected status code: " + response.getStatus(), null);
+
+                LRALogger.logger.warn(warnMsg);
+                throwGenericLRAException(lra, INTERNAL_SERVER_ERROR.getStatusCode(), warnMsg, null);
             }
 
             if (response.getStatus() == NOT_FOUND.getStatusCode()) {

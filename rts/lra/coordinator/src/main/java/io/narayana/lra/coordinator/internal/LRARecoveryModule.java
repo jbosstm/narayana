@@ -22,11 +22,9 @@
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
-import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -40,52 +38,76 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.function.Consumer;
 
 public class LRARecoveryModule implements RecoveryModule {
-    public LRARecoveryModule(LRAService lraService) {
-        this.lraService = lraService;
+    public LRARecoveryModule() {
+        service = new LRAService();
 
         if (_recoveryStore == null) {
             _recoveryStore = StoreManager.getRecoveryStore();
         }
 
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
+        Implementations.install();
+    }
 
-        RecordTypeManager.manager().add(new RecordTypeMap() {
-            @Override
-            public Class<? extends AbstractRecord> getRecordClass() {
-                return null;
+    public static LRAService getService() {
+        if (service == null) {
+            // service is a cached static value and is only set once (to the instance variable
+            // held by the LRARecoveryModule singleton).
+            // This means that if two threads try to set it they will set it to the same value.
+            // Also, the code called by this routine which (indirectly) creates the recovery module
+            // is also reentrant. Therefore this routine is reentrant and there is no necessity for
+            // synchronisation
+            RecoveryManager.manager();
+
+            List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
+
+            for (RecoveryModule rm : modules) {
+                if (rm instanceof LRARecoveryModule) {
+                    return service;
+                }
             }
 
-            @Override
-            public int getType() {
-                return 0;
-            }
-        });
+            String errorMsg = LRALogger.i18NLogger.error_recovery_missing_module();
+
+            LRALogger.logger.error(errorMsg);
+
+            throw new RuntimeException(errorMsg); // misconfiguration
+        }
+
+        return service;
     }
 
     /**
      * This is called periodically by the RecoveryManager
      */
     public void periodicWorkFirstPass() {
-        // uids per transaction type
-        InputObjectState aa_uids = new InputObjectState();
-
-        if (getUids(aa_uids)) {
-            _transactionUidVector = processTransactions(aa_uids);
+        if (LRALogger.logger.isTraceEnabled()) {
+            LRALogger.logger.trace("LRARecoveryModule: first pass");
         }
     }
 
     public void periodicWorkSecondPass() {
-        if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debug("LRARecoveryModule: second pass");
+        if (LRALogger.logger.isTraceEnabled()) {
+            LRALogger.logger.trace("LRARecoveryModule: second pass");
         }
 
-        processTransactionsStatus();
+        recoverTransactions();
+    }
+
+    private synchronized void recoverTransactions() {
+         // uids per transaction type
+        InputObjectState aa_uids = new InputObjectState();
+
+        if (getUids(aa_uids)) {
+            processTransactionsStatus(processTransactions(aa_uids));
+        }
     }
 
     private void doRecoverTransaction(Uid recoverUid) {
@@ -93,8 +115,7 @@ public class LRARecoveryModule implements RecoveryModule {
         int theStatus = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, recoverUid);
 
         try {
-            RecoveringLRA lra = new RecoveringLRA(lraService, recoverUid, theStatus);
-            String Status = ActionStatus.stringForm(theStatus);
+            RecoveringLRA lra = new RecoveringLRA(service, recoverUid, theStatus);
             boolean inFlight = (lra.getLRAStatus() == LRAStatus.Active);
 
             LRAStatus lraStatus = lra.getLRAStatus();
@@ -102,14 +123,14 @@ public class LRARecoveryModule implements RecoveryModule {
                 return;
             }
 
-            if (!lraService.hasTransaction(lra.getId())) {
+            if (!service.hasTransaction(lra.getId())) {
                 // make sure LRAService knows about it
-                lraService.addTransaction(lra);
+                service.addTransaction(lra);
             }
 
             if (LRALogger.logger.isDebugEnabled()) {
                 LRALogger.logger.debug("LRARecoverModule: transaction type is " + _transactionType + " uid is " +
-                        recoverUid.toString() + "\n ActionStatus is " + Status +
+                        recoverUid.toString() + "\n Status is " + lraStatus +
                         " in flight is " + inFlight);
             }
 
@@ -117,7 +138,7 @@ public class LRARecoveryModule implements RecoveryModule {
                 lra.replayPhase2();
 
                 if (!lra.isRecovering()) {
-                    lraService.finished(lra, false);
+                    service.finished(lra, false);
                 }
             }
 
@@ -130,66 +151,59 @@ public class LRARecoveryModule implements RecoveryModule {
         }
     }
 
-    private Vector<Uid> processTransactions(InputObjectState uids) {
-        Vector<Uid> uidVector = new Vector<>();
+    private Collection<Uid> processTransactions(InputObjectState uids) {
+        Collection<Uid> uidCollection = new ArrayList<>();
 
         if (LRALogger.logger.isDebugEnabled()) {
             LRALogger.logger.debugf("LRARecoverModule: processing transaction type %s", _transactionType);
         }
 
-        Consumer<Uid> uidUnpacker = uidVector::addElement;
+        Consumer<Uid> uidUnpacker = uidCollection::add;
 
         forEach(uids, uidUnpacker);
 
-        return uidVector;
+        return uidCollection;
     }
 
-    private void processTransactionsStatus() {
-        if (_transactionUidVector != null) {
-            // Process the Vector of transaction Uids
-            Enumeration<Uid> transactionUidEnum = _transactionUidVector.elements();
-
-            while (transactionUidEnum.hasMoreElements()) {
-                Uid currentUid = transactionUidEnum.nextElement();
-
-                try {
-                    if (_recoveryStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN) {
-                        doRecoverTransaction(currentUid);
-                    }
-                } catch (ObjectStoreException e) {
-                    if (LRALogger.logger.isTraceEnabled()) {
-                        LRALogger.logger.tracef(e,
-                     "LRARecoverModule: Object store exception '%s' while reading the current state of LRA record %s:",
-                                e.getMessage(), currentUid.fileStringForm());
-                    } else if (LRALogger.logger.isInfoEnabled()) {
-                        LRALogger.logger.infof(
-                    "LRARecoverModule: Object store exception '%s' while reading the current state of LRA record %s",
-                                e.getMessage(), currentUid.fileStringForm());
-                    }
+    private void processTransactionsStatus(Collection<Uid> uids) {
+        // Process the collection of transaction Uids
+        uids.forEach(uid -> {
+            try {
+                if (_recoveryStore.currentState(uid, _transactionType) != StateStatus.OS_UNKNOWN) {
+                    doRecoverTransaction(uid);
+                }
+            } catch (ObjectStoreException e) {
+                if (LRALogger.logger.isTraceEnabled()) {
+                    LRALogger.logger.tracef(e,
+                            "LRARecoverModule: Object store exception '%s' while reading the current state of LRA record %s:",
+                            e.getMessage(), uid.fileStringForm());
+                } else if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof(
+                            "LRARecoverModule: Object store exception '%s' while reading the current state of LRA record %s",
+                            e.getMessage(), uid.fileStringForm());
                 }
             }
-        }
+        });
+
     }
 
     public void getRecoveringLRAs(Map<URI, LongRunningAction> lras) {
+        InputObjectState aa_uids = new InputObjectState();
 
-        periodicWorkFirstPass();
-
-        if (_transactionUidVector != null) {
-            Enumeration<Uid> transactionUidEnum = _transactionUidVector.elements();
-
-            while (transactionUidEnum.hasMoreElements()) {
-                Uid currentUid = transactionUidEnum.nextElement();
-                int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, currentUid);
-                RecoveringLRA lra = new RecoveringLRA(lraService, currentUid, status);
+        // for LRA call reactivate and add it to the input list
+        if (getUids(aa_uids)) {
+            Collection<Uid> uids = processTransactions(aa_uids);
+            uids.forEach(uid -> {
+                int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, uid);
+                RecoveringLRA lra = new RecoveringLRA(service, uid, status);
 
                 if (lra.isActivated()) {
                     lras.put(lra.getId(), lra);
                 } else {
                     LRALogger.logger.infof("LRARecoverModule: failed to activate LRA record %s",
-                            currentUid.fileStringForm());
+                            uid.fileStringForm());
                 }
-            }
+            });
         }
     }
 
@@ -217,10 +231,14 @@ public class LRARecoveryModule implements RecoveryModule {
         return false;
     }
 
+    public void recover() {
+        recoverTransactions();
+    }
+
     public void getFailedLRAs(Map<URI, LongRunningAction> lras) {
         InputObjectState aa_uids = new InputObjectState();
         Consumer<Uid> failedLRACreator = uid -> {
-            LongRunningAction lra = new LongRunningAction(lraService, new Uid(uid));
+            LongRunningAction lra = new LongRunningAction(service, new Uid(uid));
             lra.activate();
 
             LRAStatus status = lra.getLRAStatus();
@@ -291,13 +309,10 @@ public class LRARecoveryModule implements RecoveryModule {
         } while (true);
     }
 
-    private final LRAService lraService;
+    private static LRAService service;
 
     // 'type' within the Object Store for LRAs.
     private final String _transactionType = LongRunningAction.getType();
-
-    // Array of transactions found in the object store of the type LRA
-    private Vector<Uid> _transactionUidVector = null;
 
     // Reference to the Object Store.
     private static RecoveryStore _recoveryStore = null;

@@ -46,6 +46,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -128,6 +129,7 @@ public class LRACoordinatorRecovery1TestCase extends TestBase {
      * @throws URISyntaxException if the LRA or recovery URIs are invalid (should never happen)
      */
     @Test
+    @Ignore
     public void testRecovery(@ArquillianResource @OperateOnDeployment(COORDINATOR_DEPLOYMENT) URL deploymentUrl) throws URISyntaxException, InterruptedException {
         String lraId;
         URI lraListenerURI = UriBuilder.fromUri(deploymentUrl.toURI()).path(LRAListener.LRA_LISTENER_PATH).build();

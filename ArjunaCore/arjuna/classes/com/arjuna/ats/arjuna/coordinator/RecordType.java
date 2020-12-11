@@ -114,6 +114,8 @@ public class RecordType
     public static final int RESTAT_RECORD = 165;
 
     public static final int LRA_RECORD = 166;
+    public static final int LRA_CHILD_RECORD = 167;
+    public static final int LRA_PARENT_RECORD = 168;
 
     public static final int JTA_RECORD = 171;
 
@@ -269,6 +271,12 @@ public class RecordType
             return RecordTypeManager.manager().getClass(RecordType.JTA_RECORD);
         case RecordType.JTAX_RECORD:
             return RecordTypeManager.manager().getClass(RecordType.JTAX_RECORD);
+        case RecordType.LRA_RECORD:
+            return RecordTypeManager.manager().getClass(RecordType.LRA_RECORD);
+        case RecordType.LRA_PARENT_RECORD:
+            return RecordTypeManager.manager().getClass(RecordType.LRA_PARENT_RECORD);
+        case RecordType.LRA_CHILD_RECORD:
+            return RecordTypeManager.manager().getClass(RecordType.LRA_CHILD_RECORD);
 
         case RecordType.USER_DEF_LAST0:
             return RecordTypeManager.manager().getClass(

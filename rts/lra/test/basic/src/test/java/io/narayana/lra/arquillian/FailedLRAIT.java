@@ -37,7 +37,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -77,6 +79,9 @@ public class FailedLRAIT {
     private URL baseURL;
 
     private Client client;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Deployment
     public static WebArchive deploy() {
@@ -161,11 +166,6 @@ public class FailedLRAIT {
         // start an LRA which will return 202 when asked to compensate
         URI lraId = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
                 START_LRA_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-
-        List<JSONObject> failedLRAs = getFailedRecords(lraId);
-
-        // there should be no failed LRAs yet
-        assertEquals(0, failedLRAs.size());
 
         // verify that deleting the LRA log fails as it's with "Cancelling" status
         int status1 = removeFailedLRA(lraId);
