@@ -23,7 +23,9 @@ package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
+import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -35,7 +37,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -44,13 +45,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
@@ -61,15 +65,25 @@ import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME + "/" + RECOVERY_COORDINATOR_PATH_NAME)
 @Tag(name = "LRA Recovery")
-public class RecoveryCoordinator {
+public class RecoveryCoordinator extends Application {
 
     private final Logger logger = Logger.getLogger(RecoveryCoordinator.class.getName());
 
     @Context
     private UriInfo context;
 
-    @Inject
-    LRAService lraService;
+    private final LRAService lraService;
+
+    public RecoveryCoordinator() {
+        lraService = LRARecoveryModule.getService();
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        HashSet<Class<?>> classes = new HashSet<>();
+        classes.add(RecoveryCoordinator.class);
+        return classes;
+    }
 
     // Performing a GET on the recovery URL (return from a join request) will return the original <participant URL>
     @GET
@@ -195,20 +209,19 @@ public class RecoveryCoordinator {
             lra = new URI(lraId);
 
             // verify that the LRA is not still being processed
-            // will throw NotFoundException if it's unknown or is failed (to be caught and processed in the catch block)
+            // will throw NotFoundException if it's unknown (to be caught and processed in the catch block)
             LRAData lraData = lraService.getLRA(lra);
+            LRAStatus status = lraData.getStatus();
 
             // 412 the LRA is not in an end state (return 412 and the actual status of the LRA)
+            if (status == LRAStatus.FailedToCancel || status == LRAStatus.FailedToClose) {
+                return removeLog(lraId);
+            }
+
             return Response.status(PRECONDITION_FAILED).entity(lraData.getStatus().name()).build();
         } catch (NotFoundException e) {
             // the LRA has finished and, if it corresponds to a failure record, it is safe to delete it
-            if (lraService.removeLog(lraId)) {
-                // 204 the log for the LRA was successfully removed
-                return Response.noContent().build(); // return 204
-            }
-
-            // 500 remove log failed (or it was not present)
-            return Response.status(INTERNAL_SERVER_ERROR).build();
+            return removeLog(lraId);
         } catch (URISyntaxException e) {
             // 412 the user provided URI was invalid
             if (LRALogger.logger.isDebugEnabled()) {
@@ -218,5 +231,15 @@ public class RecoveryCoordinator {
 
             return Response.status(PRECONDITION_FAILED).entity(String.format("%s: %s", lraId, e.getMessage())).build();
         }
+    }
+
+    private Response removeLog(String lra) {
+        if (lraService.removeLog(lra)) {
+            // 204 the log for the LRA was successfully removed
+            return Response.noContent().build(); // return 204
+        }
+
+        // 500 remove log failed (or it was not present)
+        return Response.status(INTERNAL_SERVER_ERROR).build();
     }
 }
