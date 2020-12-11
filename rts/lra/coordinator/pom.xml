@@ -68,7 +68,6 @@
             <version>${version.org.jboss.resteasy}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-client</artifactId>
@@ -97,6 +96,12 @@
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>narayana-lra</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-undertow</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

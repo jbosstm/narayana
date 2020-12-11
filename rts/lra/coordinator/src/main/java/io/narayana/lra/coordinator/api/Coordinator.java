@@ -27,6 +27,7 @@ import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -34,7 +35,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -46,21 +46,21 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
@@ -96,13 +96,22 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
 @Tag(name = "LRA Coordinator")
-public class Coordinator {
-
+public class Coordinator extends Application {
     @Context
     private UriInfo context;
 
-    @Inject // Will not work in an async scenario: CDI-452
-    LRAService lraService;
+    private final LRAService lraService;
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        HashSet<Class<?>> classes = new HashSet<>();
+        classes.add(Coordinator.class);
+        return classes;
+    }
+
+    public Coordinator() {
+        lraService = LRARecoveryModule.getService();
+    }
 
     // Performing a GET on /lra-io.narayana.lra.coordinator returns a list of all LRAs.
     @GET
@@ -219,35 +228,24 @@ public class Coordinator {
             @QueryParam(TIMELIMIT_PARAM_NAME) @DefaultValue("0") Long timelimit,
             @Parameter(name = PARENT_LRA_PARAM_NAME,
                 description = "The enclosing LRA if this new LRA is nested")
-            @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA,
-            @HeaderParam(LRA_HTTP_CONTEXT_HEADER) String parentId) throws WebApplicationException {
+            @QueryParam(PARENT_LRA_PARAM_NAME) @DefaultValue("") String parentLRA) throws WebApplicationException {
 
-        URI parentLRAUrl = null;
-
-        if (parentLRA != null && !parentLRA.isEmpty()) {
-            parentLRAUrl = toDecodedURI(parentLRA);
-        }
-
+        URI parentId = (parentLRA == null || parentLRA.trim().isEmpty()) ? null : toURI(parentLRA);
         String coordinatorUrl = String.format("%s%s", context.getBaseUri(), COORDINATOR_PATH_NAME);
-        URI lraId = lraService.startLRA(coordinatorUrl, parentLRAUrl, clientId, timelimit);
+        LongRunningAction lra = lraService.startLRA(coordinatorUrl, parentId, clientId, timelimit);
+        URI lraId = lra.getId();
 
-        if (parentLRAUrl != null) {
-            // register with the parentLRA as a participant (extract the LRAId)
+        if (parentId != null) {
+            // the startLRA call will have imported the parent LRA
             String compensatorUrl = String.format("%s/nested/%s", coordinatorUrl, LRAConstants.getLRAUid(lraId));
 
-            if (lraService.hasTransaction(parentLRAUrl)) {
-                Response response = joinLRAViaBody(parentLRAUrl.toASCIIString(), timelimit, null, compensatorUrl);
-
-                if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-                    return Response.status(response.getStatus()).build();
-                }
-            } else {
+            if (!lraService.hasTransaction(parentId)) {
                 Client client = null;
                 Response response = null;
 
                 try {
                     client = ClientBuilder.newClient();
-                    response = client.target(parentLRAUrl)
+                    response = client.target(parentId)
                         .request()
                         .async()
                         .put(Entity.text(compensatorUrl))
@@ -255,7 +253,7 @@ public class Coordinator {
 
                     if (response.getStatus() != Response.Status.OK.getStatusCode()) {
                         String errMessage = String.format("The coordinator at %s returned an unexpected response: %d",
-                            parentLRAUrl, response.getStatus());
+                                parentId, response.getStatus());
                         return Response.status(response.getStatus()).entity(errMessage).build();
                     }
                 } catch (Exception e) {
@@ -301,7 +299,7 @@ public class Coordinator {
     @Path("nested/{NestedLraId}/status")
     public Response getNestedLRAStatus(@PathParam("NestedLraId")String nestedLraId) {
         if (!lraService.hasTransaction(nestedLraId)) {
-            // it must have compensated TODO maybe it's better to keep nested LRAs in separate collection
+            // it must have compensated
             return Response.ok(ParticipantStatus.Compensated.name()).build();
         }
 
@@ -414,7 +412,7 @@ public class Coordinator {
     @APIResponses({
         @APIResponse(responseCode = "404", description = "The coordinator has no knowledge of this LRA"),
         @APIResponse(responseCode = "412",
-            description = "The LRA is not longer active (ie in the complete or compensate messages have been sent"),
+            description = "The LRA is no longer active (ie the complete or compensate message has been sent"),
         @APIResponse(responseCode = "200",
             description = "The participant was successfully registered with the LRA and"
                 + " the response body contains a unique resource reference for that participant:\n"
@@ -561,17 +559,6 @@ public class Coordinator {
         status = lraService.leave(new URI(reqUri), compensatorUrl);
 
         return Response.status(status).build();
-    }
-
-    private URI toDecodedURI(String lraId) {
-        try {
-            return toURI(URLDecoder.decode(lraId, StandardCharsets.UTF_8.toString()));
-        } catch (UnsupportedEncodingException e) {
-            LRALogger.i18NLogger.error_invalidStringFormatOfUrl(lraId, e);
-            String erroMsg = lraId + ": Invalid LRA id format " + e.getMessage();
-            throw new WebApplicationException(erroMsg, e,
-                    Response.status(BAD_REQUEST).entity(erroMsg).build());
-        }
     }
 
     private URI toURI(String lraId) {

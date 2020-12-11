@@ -54,6 +54,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
@@ -68,7 +69,7 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
-public class LRARecord extends AbstractRecord implements Comparable<AbstractRecord> {
+public class LRAParticipantRecord extends AbstractRecord implements Comparable<AbstractRecord> {
     private static final String TYPE_NAME = "/StateManager/AbstractRecord/LRARecord";
     private static final String COMPENSATE_REL = "compensate";
     private static final String COMPLETE_REL = "complete";
@@ -91,10 +92,10 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     private boolean accepted;
     private LongRunningAction lra;
 
-    public LRARecord() {
+    public LRAParticipantRecord() {
     }
 
-    LRARecord(LongRunningAction lra, LRAService lraService, String linkURI, String compensatorData) {
+    LRAParticipantRecord(LongRunningAction lra, LRAService lraService, String linkURI, String compensatorData) {
         super(new Uid());
 
         this.lra = lra;
@@ -144,7 +145,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
         }
     }
 
-    public void setLRA(LongRunningAction lra) {
+    void setLRA(LongRunningAction lra) {
         this.lra = lra;
         this.parentId = lra.getParentId();
     }
@@ -488,14 +489,26 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private int runPostLRAActions() {
-        if (afterURI == null || afterLRARequest(afterURI, lra.getLRAStatus().name())) {
+        // TODO investigate whether we can use a sync which works in recovery scenarios
+        LRAStatus lraStatus = lra.getLRAStatus();
+        boolean report = false;
+
+        if (lraStatus == LRAStatus.Cancelling) {
+            report = isFailed();
+            lraStatus = report ? LRAStatus.FailedToCancel : LRAStatus.Cancelled;
+        } else if (lraStatus == LRAStatus.Closing) {
+            report = isFailed();
+            lraStatus = report ? LRAStatus.FailedToClose : LRAStatus.Closed;
+        }
+
+        if (afterURI == null || afterLRARequest(afterURI, lraStatus.name())) {
             afterURI = null;
 
             // the post LRA actions succeeded so remove the participant from the intentions list otherwise retry
-            return TwoPhaseOutcome.FINISH_OK;
+            return report ? reportFailure(lraStatus.name()) : TwoPhaseOutcome.FINISH_OK;
         }
 
-        return TwoPhaseOutcome.HEURISTIC_HAZARD;
+        return report ? reportFailure(lraStatus.name()) : TwoPhaseOutcome.HEURISTIC_HAZARD;
     }
 
     private void updateStatus(boolean compensate) {
@@ -503,6 +516,14 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
             status = accepted ? ParticipantStatus.Compensating : ParticipantStatus.Compensated;
         } else {
             status = accepted ? ParticipantStatus.Completing : ParticipantStatus.Completed;
+        }
+    }
+
+    private int reportFailure(String failureReason) {
+        if (status == ParticipantStatus.FailedToCompensate) {
+            return reportFailure(true, compensateURI, failureReason);
+        } else { // must be ParticipantStatus.FailedToComplete
+            return reportFailure(false, completeURI, failureReason);
         }
     }
 
@@ -748,6 +769,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                     .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                    forgetURI = null; // succeeded so dispose of the endpoint
                     return true;
                 }
             } catch (Exception e) {
@@ -851,11 +873,11 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
     }
 
     private URI unpackURI(InputObjectState os) throws IOException, URISyntaxException {
-        return os.unpackBoolean() ? new URI(os.unpackString()) : null;
+        return os.unpackBoolean() ? new URI(Objects.requireNonNull(os.unpackString())) : null;
     }
 
     private static int getTypeId() {
-        return RecordType.USER_DEF_FIRST0; // RecordType.LRA_RECORD; TODO we depend on thorntail for narayana which is using an earlier version
+        return RecordType.LRA_RECORD;
     }
 
     public int typeIs() {

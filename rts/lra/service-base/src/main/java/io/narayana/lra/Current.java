@@ -41,10 +41,12 @@ import static io.narayana.lra.LRAConstants.QUERY_FIELD_SEPARATOR;
 import static io.narayana.lra.LRAConstants.QUERY_PAIR_SEPARATOR;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 
+// similar to ThreadActionData except it need to be available on the client side
+// for use by NarayanaLRAClient and ServerLRAFilter
 public class Current {
     private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();
 
-    private Stack<URI> stack;
+    private final Stack<URI> stack;
     private Map<String, Object> state;
 
     private Current(URI url) {

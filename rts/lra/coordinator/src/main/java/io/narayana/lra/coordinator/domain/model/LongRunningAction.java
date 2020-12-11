@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -68,28 +67,26 @@ public class LongRunningAction extends BasicAction {
     private URI id;
     private URI parentId;
     private String clientId;
-    private List<LRARecord> pending;
+    private List<LRAParticipantRecord> pending;
     private LRAStatus status;
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
     private ScheduledFuture<?> scheduledAbort;
-    private boolean inFlight;
-    private LRAService lraService;
-    private String uid;
+    private final LRAService lraService;
+    LRAParentAbstractRecord par;
 
-    public LongRunningAction(LRAService lraService, String baseUrl, URI parentId, String clientId) throws URISyntaxException {
+    public LongRunningAction(LRAService lraService, String baseUrl, LongRunningAction parent, String clientId) throws URISyntaxException {
         super(new Uid());
 
-        this.uid = get_uid().fileStringForm();
         this.lraService = lraService;
 
-        if (parentId != null) {
-            this.id = Current.buildFullLRAUrl(String.format("%s/%s", baseUrl, get_uid().fileStringForm()), parentId);
+        if (parent != null) {
+            this.id = Current.buildFullLRAUrl(String.format("%s/%s", baseUrl, get_uid().fileStringForm()), parent.getId());
+            this.parentId = parent.getId();
         } else {
             this.id = new URI(String.format("%s/%s", baseUrl, get_uid().fileStringForm()));
         }
-        this.inFlight = true;
-        this.parentId = parentId;
+
         this.clientId = clientId;
         this.finishTime = null;
         this.status = LRAStatus.Active;
@@ -100,9 +97,7 @@ public class LongRunningAction extends BasicAction {
     public LongRunningAction(LRAService lraService, Uid rcvUid) {
         super(rcvUid);
 
-        this.uid = rcvUid.fileStringForm();
         this.lraService = lraService;
-        this.inFlight = false;
         this.id = null;
         this.parentId = null;
         this.clientId = null;
@@ -210,8 +205,8 @@ public class LongRunningAction extends BasicAction {
                     return false;
                 }
 
-                if (record instanceof LRARecord) {
-                    LRARecord lraRecord = (LRARecord) record;
+                if (record instanceof LRAParticipantRecord) {
+                    LRAParticipantRecord lraRecord = (LRAParticipantRecord) record;
                     lraRecord.setLRAService(lraService);
                     lraRecord.setLRA(this);
                 }
@@ -235,11 +230,10 @@ public class LongRunningAction extends BasicAction {
 
         // restore_state may have put failed records onto the prepared list so move them back again:
         for (AbstractRecord rec = preparedList.peekFront(); rec != null; rec = preparedList.peekNext(rec)) {
-            if (rec instanceof LRARecord) {
-                LRARecord p = (LRARecord) rec;
+            if (rec instanceof LRAParticipantRecord) {
+                LRAParticipantRecord p = (LRAParticipantRecord) rec;
 
                 if (p.isFailed()) {
-                    boolean moveRec = true;
                     AbstractRecord r;
 
                     preparedList.remove(p);
@@ -257,8 +251,6 @@ public class LongRunningAction extends BasicAction {
                 }
             }
         }
-
-        uid = get_uid().fileStringForm();
 
         try {
             String s = os.unpackString();
@@ -360,10 +352,6 @@ public class LongRunningAction extends BasicAction {
         return status;
     }
 
-    protected void setLRAStatus(int actionStatus) {
-        status = toLRAStatus(actionStatus);
-    }
-
     public boolean isRecovering() {
         return status.equals(LRAStatus.Cancelling) || status.equals(LRAStatus.Closing);
     }
@@ -393,8 +381,8 @@ public class LongRunningAction extends BasicAction {
                 /* FALLTHRU */
             case FailedToCancel:
                 return true;
-            default:
-                return false;
+            default: // if the participant lists are empty then assume finished (nb lists are processed by removal)
+                return getSize(pendingList) == 0 && getSize(preparedList) == 0 && getSize(heuristicList) == 0;
         }
     }
 
@@ -435,10 +423,14 @@ public class LongRunningAction extends BasicAction {
 
     // in this version close need to run as blocking code {@link Vertx().executeBlocking}
     private int doEnd(boolean cancel) {
-        inFlight = false;
         int res = status();
         boolean nested = !isTopLevel();
-        updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+
+        if (status == LRAStatus.Active) {
+            updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
+        } else if (isFinished()) {
+            return res;
+        }
 
         if (scheduledAbort != null) {
             scheduledAbort.cancel(false);
@@ -461,9 +453,15 @@ public class LongRunningAction extends BasicAction {
                      */
 
                     // repopulate the pending list TODO it won't neccessarily be present during recovery
-                    pendingList = new RecordList();
-                    preparedList = new RecordList();
-                    failedList = new RecordList();
+                    if (pendingList == null) {
+                        pendingList = new RecordList();
+                    }
+                    if (preparedList == null) {
+                        preparedList = new RecordList();
+                    }
+                    if (failedList == null) {
+                        failedList = new RecordList();
+                    }
 
                     moveTo(pendingList, preparedList);
                     moveTo(heuristicList, preparedList);
@@ -475,7 +473,7 @@ public class LongRunningAction extends BasicAction {
 
                     res = status();
 
-                    status = toLRAStatus(status());
+                    updateState(toLRAStatus(status()));
                 } else {
                     // forget calls for nested participants
                     if (forgetAllParticipants()) {
@@ -523,12 +521,12 @@ public class LongRunningAction extends BasicAction {
         }
 
         if (getSize(heuristicList) != 0) {
-            status = cancel ? LRAStatus.Cancelling : LRAStatus.Closing;
+            updateState(cancel ? LRAStatus.Cancelling : LRAStatus.Closing);
         } else if (getSize(failedList) != 0) {
-            status = cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose;
+            updateState(cancel ? LRAStatus.FailedToCancel : LRAStatus.FailedToClose);
         } else if (getSize(pendingList) != 0 || getSize(preparedList) != 0) {
-            status = LRAStatus.Closing;
-        }
+            updateState(LRAStatus.Closing);
+        } // otherwise status is (cancel ? LRAStatus.Cancelled : LRAStatus.Closed)
 
         if (!isRecovering()) {
             if (lraService != null) {
@@ -555,10 +553,14 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    private boolean updateState(LRAStatus nextState) {
-        status = nextState;
+    protected boolean updateState(LRAStatus nextState) {
+        if (status != nextState) {
+            status = nextState; // we trust that nextState is reachable from the current one
 
-        return (pendingList == null || pendingList.size() == 0) || deactivate();
+            return (pendingList == null || pendingList.size() == 0) || deactivate();
+        }
+
+        return true;
     }
 
     protected void checkParticipant(RecordList participants) {
@@ -566,8 +568,8 @@ public class LongRunningAction extends BasicAction {
         AbstractRecord r;
 
         while ((r = i.iterate()) != null) {
-            if (r instanceof LRARecord) {
-                LRARecord rec = (LRARecord) r;
+            if (r instanceof LRAParticipantRecord) {
+                LRAParticipantRecord rec = (LRAParticipantRecord) r;
 
                 rec.setLraService(getLraService());
                 rec.setLRA(this);
@@ -592,8 +594,8 @@ public class LongRunningAction extends BasicAction {
                 AbstractRecord r;
 
                 while ((r = i.iterate()) != null) {
-                    if (r instanceof LRARecord) {
-                        LRARecord rec = (LRARecord) r;
+                    if (r instanceof LRAParticipantRecord) {
+                        LRAParticipantRecord rec = (LRAParticipantRecord) r;
                         if (!rec.isFinished()) {
                             return false;
                         }
@@ -608,9 +610,9 @@ public class LongRunningAction extends BasicAction {
     protected boolean isInEndState() {
         // update the status first by checking for heuristics and failed participants
         if (status == LRAStatus.Cancelling && allFinished(heuristicList, failedList)) {
-            status = (failedList == null || failedList.size() == 0) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel;
+            updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Cancelled : LRAStatus.FailedToCancel);
         } else if (status == LRAStatus.Closing && allFinished(heuristicList, failedList)) {
-            status = (failedList == null || failedList.size() == 0) ? LRAStatus.Closed : LRAStatus.FailedToClose;
+            updateState((failedList == null || failedList.size() == 0) ? LRAStatus.Closed : LRAStatus.FailedToClose);
         }
 
         return isFinished();
@@ -620,7 +622,7 @@ public class LongRunningAction extends BasicAction {
         return list == null ? 0 : list.size();
     }
 
-    private LRAStatus toLRAStatus(int atomicActionStatus) {
+    protected LRAStatus toLRAStatus(int atomicActionStatus) {
         switch (atomicActionStatus) {
             case ActionStatus.ABORTING:
                 // FALLTHRU
@@ -639,9 +641,9 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    public LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
-                                       long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        LRARecord participant = findLRAParticipant(participantUrl, false);
+    public LRAParticipantRecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase,
+                                                  long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+        LRAParticipantRecord participant = findLRAParticipant(participantUrl, false);
 
         if (participant != null) {
             return participant; // must have already been enlisted
@@ -659,9 +661,9 @@ public class LongRunningAction extends BasicAction {
         return participant;
     }
 
-    private LRARecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
-                                        long timeLimit, String compensatorData) throws UnsupportedEncodingException {
-        LRARecord p = new LRARecord(this, lraService, participantUrl, compensatorData);
+    private LRAParticipantRecord enlistParticipant(URI coordinatorUrl, String participantUrl, String recoveryUrlBase, String terminateUrl,
+                                                   long timeLimit, String compensatorData) throws UnsupportedEncodingException {
+        LRAParticipantRecord p = new LRAParticipantRecord(this, lraService, participantUrl, compensatorData);
         String pid = p.get_uid().fileStringForm();
 
         String txId = URLEncoder.encode(coordinatorUrl.toASCIIString(), "UTF-8");
@@ -692,7 +694,7 @@ public class LongRunningAction extends BasicAction {
             return true;
         }
 
-        pending.removeIf(LRARecord::forget);
+        pending.removeIf(LRAParticipantRecord::forget);
 
         return pending.isEmpty();
     }
@@ -711,24 +713,24 @@ public class LongRunningAction extends BasicAction {
         pending = new ArrayList<>();
 
         while ((r = i.iterate()) != null) {
-            if (r instanceof LRARecord) {
-                pending.add((LRARecord) r);
+            if (r instanceof LRAParticipantRecord) {
+                pending.add((LRAParticipantRecord) r);
             }
         }
     }
 
-    private LRARecord findLRAParticipant(String participantUrl, boolean remove) {
-        LRARecord rec;
+    private LRAParticipantRecord findLRAParticipant(String participantUrl, boolean remove) {
+        LRAParticipantRecord rec;
 
         try {
-            URI recoveryUrl = new URI(LRARecord.cannonicalForm(participantUrl));
+            URI recoveryUrl = new URI(LRAParticipantRecord.cannonicalForm(participantUrl));
 
             rec = findLRAParticipantByRecoveryUrl(recoveryUrl, remove, pendingList, preparedList, heuristicList, failedList);
 
         } catch (URISyntaxException ignore) {
             String pUrl;
             try {
-                pUrl = LRARecord.extractCompensator(id, participantUrl);
+                pUrl = LRAParticipantRecord.extractCompensator(id, participantUrl);
             } catch (URISyntaxException e) {
                 return null;
             }
@@ -738,7 +740,7 @@ public class LongRunningAction extends BasicAction {
         return rec;
     }
 
-    private LRARecord findLRAParticipant(String participantUrl, boolean remove, RecordList...lists) {
+    private LRAParticipantRecord findLRAParticipant(String participantUrl, boolean remove, RecordList...lists) {
         for (RecordList list : lists) {
             if (list != null) {
                 RecordListIterator i = new RecordListIterator(list);
@@ -746,15 +748,15 @@ public class LongRunningAction extends BasicAction {
 
                 if (participantUrl.indexOf(',') != -1) {
                     try {
-                        participantUrl = LRARecord.extractCompensator(id, participantUrl);
+                        participantUrl = LRAParticipantRecord.extractCompensator(id, participantUrl);
                     } catch (URISyntaxException e) {
                         continue;
                     }
                 }
 
                 while ((r = i.iterate()) != null) {
-                    if (r instanceof LRARecord) {
-                        LRARecord rr = (LRARecord) r;
+                    if (r instanceof LRAParticipantRecord) {
+                        LRAParticipantRecord rr = (LRAParticipantRecord) r;
                         // can't use == because this may be a recovery scenario
                         if (participantUrl.equals(rr.getCompensator())) {
                             if (remove) {
@@ -771,15 +773,15 @@ public class LongRunningAction extends BasicAction {
         return null;
     }
 
-    private LRARecord findLRAParticipantByRecoveryUrl(URI recoveryUrl, boolean remove, RecordList...lists) {
+    private LRAParticipantRecord findLRAParticipantByRecoveryUrl(URI recoveryUrl, boolean remove, RecordList...lists) {
         for (RecordList list : lists) {
             if (list != null) {
                 RecordListIterator i = new RecordListIterator(list);
                 AbstractRecord r;
 
                 while ((r = i.iterate()) != null) {
-                    if (r instanceof LRARecord) {
-                        LRARecord rr = (LRARecord) r;
+                    if (r instanceof LRAParticipantRecord) {
+                        LRAParticipantRecord rr = (LRAParticipantRecord) r;
                         // can't use == because this may be a recovery scenario
                         if (rr.getRecoveryURI().equals(recoveryUrl)) {
                             if (remove) {
@@ -831,7 +833,35 @@ public class LongRunningAction extends BasicAction {
     }
 
     public int begin(Long timeLimit) {
+        if (status() != ActionStatus.CREATED) {
+            return status(); // cannot begin an action twice
+        }
+
         int res = super.Begin(null);
+
+        if (parentId != null) {
+            // We want LRAs to be TopLevelActions (TLA).
+            // Normally if we were doing transaction to thread association we would pop the parent,
+            // however LRA does not use thread association (the context is passed explicitly,
+            // the reason for this is that services do not have access to ArjunaCore and use
+            // JAX-RS to propagate the context
+            LongRunningAction localParent = lraService.lookupTransaction(parentId);
+
+            if (localParent != null) {
+                // this parent is in-VM
+                par = new LRAParentAbstractRecord(localParent, this); // the new LRA we want parent to know about
+
+                if (localParent.add(par) != AddOutcome.AR_ADDED) {
+                    return ActionStatus.INVALID;
+                }
+
+                LRAChildAbstractRecord childAR = new LRAChildAbstractRecord(par);
+
+                if (add(childAR) == AddOutcome.AR_REJECTED) {
+                    return ActionStatus.INVALID;
+                }
+            }
+        }
 
         startTime = LocalDateTime.now(ZoneOffset.UTC);
 
@@ -905,7 +935,7 @@ public class LongRunningAction extends BasicAction {
                         LRALogger.logger.debugf("Transaction.abortLRA cancelling LRA `%s", id);
                     }
 
-                    status = LRAStatus.Cancelling;
+                    updateState(LRAStatus.Cancelling);
 
                     CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
                 }
@@ -921,8 +951,8 @@ public class LongRunningAction extends BasicAction {
             AbstractRecord rec;
 
             while (((rec = iter.iterate()) != null)) {
-                if (rec instanceof LRARecord) { //rec.typeIs() == LRARecord.getTypeId()) {
-                    LRARecord lraRecord = (LRARecord) rec;
+                if (rec instanceof LRAParticipantRecord) { //rec.typeIs() == LRARecord.getTypeId()) {
+                    LRAParticipantRecord lraRecord = (LRAParticipantRecord) rec;
 
                     participants.put(lraRecord.getRecoveryURI().toASCIIString(), lraRecord.getParticipantPath());
                 }
@@ -936,7 +966,7 @@ public class LongRunningAction extends BasicAction {
     }
 
     public void updateRecoveryURI(String compensatorUri, String recoveryUri) {
-        LRARecord lraRecord = findLRAParticipant(compensatorUri, false);
+        LRAParticipantRecord lraRecord = findLRAParticipant(compensatorUri, false);
 
         if (lraRecord != null) {
             try {
@@ -957,25 +987,6 @@ public class LongRunningAction extends BasicAction {
         }
     }
 
-    public boolean isInFlight() {
-        return inFlight;
-    }
-
-    void timedOut(LRARecord lraRecord) {
-        // a participant has timed out so cancel the whole LRA
-        ReentrantLock lock = lraService.tryLockTransaction(getId());
-
-        if (lock != null) {
-            try {
-                if (status == LRAStatus.Active) {
-                    doEnd(true);
-                } // else it is too late to cancel
-            } finally {
-                lock.unlock();
-            }
-        }  // else another thread finishing this LRA so it is too late to cancel
-    }
-
     URI getParentId() {
         return parentId;
     }
@@ -993,11 +1004,18 @@ public class LongRunningAction extends BasicAction {
         return !isFinished() || hasElements(heuristicList);
     }
 
-    Map<String, String> getFailedParticipants() {
-        Map<String, String> participants = new ConcurrentHashMap<>();
+    void forget() {
+        if (heuristicList != null && heuristicList.size() != 0) {
+            RecordListIterator i = new RecordListIterator(heuristicList);
+            AbstractRecord r;
 
-        getRecoveryCoordinatorUrls(participants, failedList);
+            while ((r = i.iterate()) != null) {
+                if (r instanceof LRAParticipantRecord) {
+                    LRAParticipantRecord rec = (LRAParticipantRecord) r;
 
-        return participants;
+                    rec.forget();
+                }
+            }
+        }
     }
 }

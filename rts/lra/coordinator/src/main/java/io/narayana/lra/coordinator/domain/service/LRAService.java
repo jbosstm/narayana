@@ -21,25 +21,22 @@
  */
 package io.narayana.lra.coordinator.domain.service;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
-import io.narayana.lra.coordinator.domain.model.LRARecord;
-import io.narayana.lra.coordinator.internal.Implementations;
+import io.narayana.lra.coordinator.domain.model.LRAParticipantRecord;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
 
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -58,16 +55,14 @@ import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static java.util.stream.Collectors.toList;
 
-@ApplicationScoped
 public class LRAService {
     private static final Pattern LINK_REL_PATTERN = Pattern.compile("(\\w+)=\"([^\"]+)\"|([^\\s]+)");
 
-    private Map<URI, LongRunningAction> lras = new ConcurrentHashMap<>();
-    private Map<URI, LongRunningAction> recoveringLRAs = new ConcurrentHashMap<>();
-    private Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
-
-    private Map<String, String> participants = new ConcurrentHashMap<>();
-    private LRARecoveryModule lraRecoveryModule;
+    private final Map<URI, LongRunningAction> lras = new ConcurrentHashMap<>();
+    private final Map<URI, LongRunningAction> recoveringLRAs = new ConcurrentHashMap<>();
+    private final Map<URI, ReentrantLock> locks = new ConcurrentHashMap<>();
+    private final Map<String, String> participants = new ConcurrentHashMap<>();
+    private LRARecoveryModule recoveryModule;
 
     public LongRunningAction getTransaction(URI lraId) throws NotFoundException {
         if (!lras.containsKey(lraId)) {
@@ -105,6 +100,14 @@ public class LRAService {
         return lras.get(lraId);
     }
 
+    public LongRunningAction lookupTransaction(URI lraId) {
+        try {
+            return lraId == null ? null : getTransaction(lraId);
+        } catch (NotFoundException e) {
+            return null;
+        }
+    }
+
     public LRAData getLRA(URI lraId) {
         LongRunningAction lra = getTransaction(lraId);
         return lra.getLRAData();
@@ -131,7 +134,7 @@ public class LRAService {
     public List<LRAData> getAll(LRAStatus lraStatus) {
         if (lraStatus == null) {
             List<LRAData> all = lras.values().stream()
-                    .map(t -> t.getLRAData()).collect(toList());
+                    .map(LongRunningAction::getLRAData).collect(toList());
             all.addAll(getAllRecovering());
             return all;
         }
@@ -155,7 +158,7 @@ public class LRAService {
             RecoveryManager.manager().scan();
         }
 
-        return recoveringLRAs.values().stream().map(t -> t.getLRAData()).collect(toList());
+        return recoveringLRAs.values().stream().map(LongRunningAction::getLRAData).collect(toList());
     }
 
     public List<LRAData> getAllRecovering() {
@@ -190,7 +193,7 @@ public class LRAService {
         String uid = LRAConstants.getLRAUid(lraId);
 
         try {
-            return lraRecoveryModule.removeCommitted(new Uid(uid));
+            return getRM().removeCommitted(new Uid(uid));
         } catch (Exception e) {
             return false; // the uid segment is invalid
         }
@@ -213,6 +216,10 @@ public class LRAService {
         locks.remove(lraId);
     }
 
+    public void recover() {
+        getRM().recover();
+    }
+
     public void updateRecoveryURI(URI lraId, String compensatorUrl, String recoveryURI, boolean persist) {
         assert recoveryURI != null;
         assert compensatorUrl != null;
@@ -230,24 +237,18 @@ public class LRAService {
         return participants.get(rcvCoordId);
     }
 
-    public synchronized URI startLRA(String baseUri, URI parentLRA, String clientId, Long timelimit) {
+    public synchronized LongRunningAction startLRA(String baseUri, URI parentLRA, String clientId, Long timelimit) {
         LongRunningAction lra;
+        int status;
 
         try {
-            lra = new LongRunningAction(this, baseUri, parentLRA, clientId);
+            lra = new LongRunningAction(this, baseUri, lookupTransaction(parentLRA), clientId);
         } catch (URISyntaxException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.PRECONDITION_FAILED)
                     .entity(String.format("Invalid base URI: '%s'", baseUri)).build());
         }
 
-        if (BasicAction.Current() != null) {
-            if (LRALogger.logger.isInfoEnabled()) {
-                LRALogger.logger.infof("LRAServicve.startLRA LRA %s is already associated%n",
-                        BasicAction.Current().get_uid().fileStringForm());
-            }
-        }
-
-        int status = lra.begin(timelimit);
+        status = lra.begin(timelimit);
 
         if (status != ActionStatus.RUNNING) {
             lraTrace(lra.getId(), "failed to start LRA");
@@ -258,15 +259,9 @@ public class LRAService {
             throw new InternalServerErrorException(errorMsg,
                     Response.status(INTERNAL_SERVER_ERROR).entity(errorMsg).build());
         } else {
-            try {
-                addTransaction(lra);
+            addTransaction(lra);
 
-                lraTrace(lra.getId(), "started LRA");
-
-                return lra.getId();
-            } finally {
-                AtomicAction.suspend();
-            }
+            return lra;
         }
     }
 
@@ -356,7 +351,7 @@ public class LRAService {
             }
         }
 
-        LRARecord participant;
+        LRAParticipantRecord participant;
 
         try {
             participant = transaction.enlistParticipant(lra,
@@ -381,7 +376,7 @@ public class LRAService {
     }
 
     public boolean hasTransaction(URI id) {
-        return lras.containsKey(id);
+        return id != null && (lras.containsKey(id) || recoveringLRAs.containsKey(id));
     }
 
     public boolean hasTransaction(String id) {
@@ -414,60 +409,43 @@ public class LRAService {
         return lra.setTimeLimit(timelimit);
     }
 
-    public boolean isLocal(URI lraId) {
-        return hasTransaction(lraId);
-    }
-
     public List<LRAData> getFailedLRAs() {
         Map<URI, LongRunningAction> failedLRAs = new ConcurrentHashMap<>();
 
-        lraRecoveryModule.getFailedLRAs(failedLRAs);
+        getRM().getFailedLRAs(failedLRAs);
 
-        return failedLRAs.values().stream().map(t -> t.getLRAData()).collect(toList());
+        return failedLRAs.values().stream().map(LongRunningAction::getLRAData).collect(toList());
     }
 
-    /**
-     * When the deployment is loaded register for recovery
-     */
-    @PostConstruct
-    void enableRecovery() {
-        assert lraRecoveryModule == null;
-
-        if (LRALogger.logger.isDebugEnabled()) {
-            LRALogger.logger.debugf("LRAServicve.enableRecovery");
+    private LRARecoveryModule getRM() {
+        // since this method is reentrant we do not need any synchronization
+        if (recoveryModule != null) {
+            return recoveryModule;
         }
 
-        lraRecoveryModule = new LRARecoveryModule(this);
-        RecoveryManager.manager().addModule(lraRecoveryModule);
-        Implementations.install();
+        List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
 
-        lraRecoveryModule.getRecoveringLRAs(recoveringLRAs);
+        for (RecoveryModule rm : modules) {
+            if (rm instanceof LRARecoveryModule) {
+                recoveryModule = (LRARecoveryModule) rm;
+                recoveryModule.getRecoveringLRAs(recoveringLRAs);
 
-        for (LongRunningAction transaction : recoveringLRAs.values()) {
-            transaction.getRecoveryCoordinatorUrls(participants);
-        }
-    }
+                for (LongRunningAction transaction : recoveringLRAs.values()) {
+                    transaction.getRecoveryCoordinatorUrls(participants);
+                }
 
-    /**
-     * When the deployment is unloaded unregister for recovery
-     */
-    @PreDestroy
-    void disableRecovery() {
-        if (lraRecoveryModule != null) {
-
-            RecoveryManager.manager().removeModule(lraRecoveryModule, false);
-            Implementations.uninstall();
-
-            lraRecoveryModule = null;
-
-            if (LRALogger.logger.isDebugEnabled()) {
-                LRALogger.logger.debugf("LRAServicve.disableRecovery");
+                return recoveryModule;
             }
         }
+
+        String errorMsg = LRALogger.i18NLogger.error_recovery_missing_module();
+        LRALogger.logger.error(errorMsg);
+
+        throw new RuntimeException(errorMsg); // misconfiguration - missing LRA recovery module
     }
 
     private List<LRAData> getDataByStatus(Map<URI, LongRunningAction> lrasToFilter, LRAStatus status) {
         return lrasToFilter.values().stream().filter(t -> t.getLRAStatus() == status)
-                .map(t -> t.getLRAData()).collect(toList());
+                .map(LongRunningAction::getLRAData).collect(toList());
     }
 }

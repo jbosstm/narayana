@@ -82,9 +82,8 @@ public interface lraI18NLogger {
     @Message(id = 25009, value = "LRA participant class '%s' with asynchronous temination but no @Status or @Forget annotations")
     void error_asyncTerminationBeanMissStatusAndForget(Class<?> clazz);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25010, value = "LRA finished with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraTerminationUnexpectedStatus(int status, String response);
+    String error_lraTerminationUnexpectedStatus(int status, String response);
 
     @LogMessage(level = ERROR)
     @Message(id = 25011, value = "Cannot access coordinator '%s' when getting status for LRA '%s'")
@@ -220,6 +219,9 @@ public interface lraI18NLogger {
 
     @Message(id = 25145, value = "Unable to process LRA annotations: %s'")
     String warn_LRAStatusInDoubt(String reason);
+
+    @Message(id = 25146, value = "Missing recovery module for LRAs")
+    String error_recovery_missing_module();
 
     /*
         Allocate new messages directly above this notice.
