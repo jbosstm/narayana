@@ -87,8 +87,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     private static final Pattern START_END_QUOTES_PATTERN = Pattern.compile("^\"|\"$");
     private static final long DEFAULT_TIMEOUT_MILLIS = 0L;
-    // i18nMessageCode corresponding to lraI18NLogger#warn_LRAStatusInDoubt
-    private static final int i18nMessageCode = 25145;
+
     @Context
     protected ResourceInfo resourceInfo;
 
@@ -121,7 +120,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
-        // TODO filters for asynchronous JAX-RS motheods should not throw exceptions
+        // Note that this filter uses abortWith instead of throwing exceptions on encountering exceptional
+        // conditions. This facilitates async because filters for asynchronous JAX-RS methods are
+        // not allowed to throw exceptions.
         Method method = resourceInfo.getResourceMethod();
         MultivaluedMap<String, String> headers = containerRequestContext.getHeaders();
         LRA.Type type = null;
@@ -539,7 +540,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 String failureMessage =  processLRAOperationFailures(progress);
 
                 if (failureMessage != null) {
-                    LRALogger.i18NLogger.warn_LRAStatusInDoubt(failureMessage);
+                    LRALogger.logger.warn(LRALogger.i18NLogger.warn_LRAStatusInDoubt(failureMessage));
 
                     // the actual failure(s) will also have been added to the i18NLogger logs at the time they occured
                     responseContext.setEntity(failureMessage, null, MediaType.TEXT_PLAIN_TYPE);
@@ -652,7 +653,11 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
          * <details of successful ops>: comma separated list of successful operation details "<op name> (<op description>)"
          */
 
-        return badOps.length() != 0 ? String.format("%d-%s: %s (%s)", i18nMessageCode, code, badOps, goodOps) : null;
+        if (badOps.length() != 0) {
+            return LRALogger.i18NLogger.warn_LRAStatusInDoubt(String.format("%s: %s (%s)", code, badOps, goodOps));
+        }
+
+        return null;
     }
 
     private boolean progressDoesNotContain(ArrayList<Progress> progress, ProgressStep step) {

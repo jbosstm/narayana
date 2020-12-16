@@ -125,6 +125,11 @@ public class NarayanaLRAClient implements Closeable {
      * (but it will be made available with improved guarantees in a subsequent release).
      */
     private static final long CLIENT_TIMEOUT = Long.getLong("lra.internal.client.timeout", 10);
+    private static final long START_TIMEOUT = Long.getLong("lra.internal.client.timeout.start", CLIENT_TIMEOUT);
+    private static final long JOIN_TIMEOUT = Long.getLong("lra.internal.client.timeout.join", CLIENT_TIMEOUT);
+    private static final long END_TIMEOUT = Long.getLong("lra.internal.client.end.timeout", CLIENT_TIMEOUT);
+    private static final long LEAVE_TIMEOUT = Long.getLong("lra.internal.client.leave.timeout", CLIENT_TIMEOUT);
+    private static final long QUERY_TIMEOUT = Long.getLong("lra.internal.client.query.timeout", CLIENT_TIMEOUT);
 
     private URI coordinatorUrl;
 
@@ -206,7 +211,7 @@ public class NarayanaLRAClient implements Closeable {
                         .request()
                         .async()
                         .get()
-                        .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+                        .get(QUERY_TIMEOUT, TimeUnit.SECONDS);
 
             if (response.getStatus() != OK.getStatusCode()) {
                 LRALogger.logger.debugf("Error getting all LRAs from the coordinator, response status: %d", response.getStatus());
@@ -289,7 +294,7 @@ public class NarayanaLRAClient implements Closeable {
                 .request()
                 .async()
                 .post(null)
-                .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+                .get(START_TIMEOUT, TimeUnit.SECONDS);
 
             // validate the HTTP status code says an LRA resource was created
             if (isUnexpectedResponseStatus(response, Response.Status.CREATED)) {
@@ -389,7 +394,7 @@ public class NarayanaLRAClient implements Closeable {
                 .request()
                 .async()
                 .put(Entity.text(body))
-            .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+            .get(LEAVE_TIMEOUT, TimeUnit.SECONDS);
 
             if (OK.getStatusCode() != response.getStatus()) {
                 LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(),
@@ -566,7 +571,7 @@ public class NarayanaLRAClient implements Closeable {
                 .request()
                     .async()
                 .get()
-                    .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+                    .get(QUERY_TIMEOUT, TimeUnit.SECONDS);
 
             if (response.getStatus() == NOT_FOUND.getStatusCode()) {
                 String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
@@ -703,7 +708,7 @@ public class NarayanaLRAClient implements Closeable {
                     .header("Link", linkHeader)
                         .async()
                     .put(Entity.text(compensatorData == null ? linkHeader : compensatorData))
-                .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+                .get(JOIN_TIMEOUT, TimeUnit.SECONDS);
 
             String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
@@ -761,7 +766,7 @@ public class NarayanaLRAClient implements Closeable {
                         .request()
                         .async()
                         .put(null)
-                        .get(CLIENT_TIMEOUT, TimeUnit.SECONDS);
+                        .get(END_TIMEOUT, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new WebApplicationException("end LRA client request timed out, try again later",
                         Response.Status.SERVICE_UNAVAILABLE.getStatusCode());

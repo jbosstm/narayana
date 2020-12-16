@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -189,6 +190,7 @@ public class Coordinator {
     @POST
     @Path("start")
     @Produces(MediaType.TEXT_PLAIN)
+    @Bulkhead
     @Operation(summary = "Start a new LRA",
         description = "The LRA model uses a presumed nothing protocol: the coordinator must communicate\n"
             + "with Compensators in order to inform them of the LRA activity. Every time a\n"

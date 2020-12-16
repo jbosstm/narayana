@@ -29,6 +29,12 @@
             <version>${version.microprofile.lra.api}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+            <artifactId>microprofile-fault-tolerance-api</artifactId>
+            <version>${version.microprofile.fault-tolerance}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-service-base</artifactId>
             <version>${project.version}</version>

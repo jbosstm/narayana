@@ -218,10 +218,8 @@ public interface lraI18NLogger {
     @Message(id = 25044, value = "Error when encoding parent LRA id URL '%s' to String")
     void error_invalidFormatToEncodeParentUri(URI parentUri, @Cause Throwable t);
 
-    // message codes 251xx are for reporting problems discovered during JAX-RS filter processing
-    @LogMessage(level = WARN)
     @Message(id = 25145, value = "Unable to process LRA annotations: %s'")
-    void warn_LRAStatusInDoubt(String reason);
+    String warn_LRAStatusInDoubt(String reason);
 
     /*
         Allocate new messages directly above this notice.
