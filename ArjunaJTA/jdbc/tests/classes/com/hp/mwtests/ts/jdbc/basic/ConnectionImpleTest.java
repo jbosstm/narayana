@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.sql.XAConnection;
@@ -36,11 +37,13 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -148,6 +151,21 @@ public class ConnectionImpleTest {
         connectionToTest.clearWarnings(); // Initialises the connection
         connectionToTest.close();
         verify(connection, times(1)).close();
+        // check that XAResource was enlisted and delisted to transaction
+        verify(xaResource, atLeast(1)).start(Mockito.any(), Mockito.anyInt());
+        verify(xaResource, atLeast(1)).end(Mockito.any(), Mockito.anyInt());
+    }
+
+    @Test
+    public void noEnlistNoDelist() throws Exception {
+        transactionManager.begin();
+        ConnectionImple connectionToTest = getConnectionToTest();
+        connectionToTest.clearWarnings(); // Initialises the connection
+        connectionToTest.close();
+        verify(connection, times(1)).close();
+        // check that XAResource is not delisted when not enlisted
+        verify(xaResource, times(0)).start(Mockito.any(), Mockito.anyInt());
+        verify(xaResource, times(0)).end(Mockito.any(), Mockito.anyInt());
     }
 
     @Test

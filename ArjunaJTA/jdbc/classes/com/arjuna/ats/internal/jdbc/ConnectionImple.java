@@ -298,12 +298,13 @@ public class ConnectionImple implements Connection
 	        {
 	            if (_transactionalDriverXAConnectionConnection.validTransaction(tx))
 	            {
-	            	if (tx instanceof com.arjuna.ats.jta.transaction.Transaction && _transactionalDriverXAConnectionConnection.getResource() != null &&
-							((com.arjuna.ats.jta.transaction.Transaction) tx).getResources().get(_transactionalDriverXAConnectionConnection.getResource()) == null) {
-	            		// This connection was not enlisted to transaction
-						// Calling delistResource on not enlisted resource is illegal thus only closing and returning back
-	            		return;
-					}
+	                if (tx instanceof com.arjuna.ats.jta.transaction.Transaction &&
+	                    _transactionalDriverXAConnectionConnection.getResource() != null &&
+	                    ((com.arjuna.ats.jta.transaction.Transaction) tx).getResources().get(_transactionalDriverXAConnectionConnection.getResource()) == null) {
+	                    // This connection was not enlisted to transaction
+	                    // Calling delistResource on not enlisted resource is illegal thus only closing and returning back
+	                    return;
+	                }
 	                if ((tx.getStatus() == Status.STATUS_ACTIVE && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMSUCCESS)) ||
                             (tx.getStatus() == Status.STATUS_MARKED_ROLLBACK && !tx.delistResource(_transactionalDriverXAConnectionConnection.getResource(), XAResource.TMFAIL)))
 	                    throw new SQLException(
@@ -311,8 +312,8 @@ public class ConnectionImple implements Connection
 	            }
 	            else
 	            {
-					throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
-				}
+	                throw new SQLException(jdbcLogger.i18NLogger.get_closeerrorinvalidtx(tx.toString()));
+	            }
 	        }
 		}
 	    catch (IllegalStateException ex)
