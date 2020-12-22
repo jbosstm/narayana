@@ -28,7 +28,7 @@
     <packaging>pom</packaging>
     <name>BlackTie all files</name>
     <description>BlackTie all files</description>
-    <url>http://www.jboss.org/blacktie</url>
+    <url>https://www.jboss.org/blacktie</url>
     <developers>
         <developer>
             <id>tomjenkinson</id>
