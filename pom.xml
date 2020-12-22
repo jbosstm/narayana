@@ -134,7 +134,7 @@
     <pluginRepository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Repository Group</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -163,7 +163,7 @@
     <repository>
       <id>download-java-net</id>
       <name>download-java-net</name>
-      <url>http://download.java.net/maven/2/</url>
+      <url>https://download.java.net/maven/2/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
