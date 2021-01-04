@@ -107,6 +107,6 @@ goto:eof
    for /f "tokens=1,2,3,4 delims=/" %%a in ("%GIT_BRANCH%") do set IS_PULL=%%b&set PULL_NUM=%%c
    if not "%IS_PULL%"=="pull" goto:eof
    
-   curl -k -d "{ \"body\": \"%~1\" }" -ujbosstm-bot:%BOT_PASSWORD% https://api.github.com/repos/%GIT_ACCOUNT%/%GIT_REPO%/issues/%PULL_NUM%/comments
+   curl -k -d "{ \"body\": \"%~1\" }" -H "Authorization: token %GITHUB_TOKEN%" https://api.github.com/repos/%GIT_ACCOUNT%/%GIT_REPO%/issues/%PULL_NUM%/comments
 
 goto:eof

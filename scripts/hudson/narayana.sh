@@ -213,7 +213,7 @@ function initGithubVariables
      if [ "$PULL_NUMBER" != "" ]
      then
          [ "x${PULL_DESCRIPTION}" = "x" ] &&\
-             PULL_DESCRIPTION=$(curl -ujbosstm-bot:$BOT_PASSWORD -s https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER)
+             PULL_DESCRIPTION=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/pulls/$PULL_NUMBER)
          [ "x${PULL_DESCRIPTION_BODY}" = "x" ] &&\
              PULL_DESCRIPTION_BODY=$(printf '%s' "$PULL_DESCRIPTION" | grep \"body\":)
      else
@@ -229,7 +229,7 @@ function comment_on_pull
     if [ "$PULL_NUMBER" != "" ]
     then
         JSON="{ \"body\": \"$1\" }"
-        curl -d "$JSON" -ujbosstm-bot:$BOT_PASSWORD https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
+        curl -d "$JSON" -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GIT_ACCOUNT/$GIT_REPO/issues/$PULL_NUMBER/comments
     else
         echo "Not a pull request, so not commenting"
     fi
