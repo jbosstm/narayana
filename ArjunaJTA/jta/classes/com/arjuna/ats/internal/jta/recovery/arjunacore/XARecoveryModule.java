@@ -736,7 +736,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
                             + ((trans != null) ? trans.length : 0)
                             + " xids in doubt");
                 }
-				if (jtaLogger.logger.isTraceEnabled()) {
+				if (jtaLogger.logger.isTraceEnabled() && trans != null) {
 					for (Xid xid : trans) {
 						byte[] globalTransactionId = xid.getGlobalTransactionId();
 						byte[] branchQualifier = xid.getBranchQualifier();
