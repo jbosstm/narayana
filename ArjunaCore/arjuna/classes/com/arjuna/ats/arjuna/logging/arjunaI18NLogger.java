@@ -1613,6 +1613,12 @@ public interface arjunaI18NLogger {
 			"If you consider starting in a different mode then first terminate the currently running recovery manager.", format = MESSAGE_FORMAT)
 	String get_recovery_manager_already_started_in_different_mode(int startedRecoveryManagerMode, int modeProvidedToMethodParameter);
 
+	@Message(id = 12402, value = "PMemSlots instance already initialized, can't call init again", format = MESSAGE_FORMAT)
+	String get_pmemslots_already_initialized();
+
+	@Message(id = 12403, value = "Can't create pmem store in ''{0}''  - may not be an fs-dax location", format = MESSAGE_FORMAT)
+	String get_pmem_not_supported(String dir);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
