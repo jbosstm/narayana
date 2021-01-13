@@ -108,8 +108,8 @@ then
   # jenkins XSS needs a token
   COOKIE_PATH=/tmp/cookie_jenkins_crumb.txt
   crumb=$(curl -s -c "$COOKIE_PATH" 'http://narayanaci1.eng.hst.ams2.redhat.com/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)')
-  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/build?delay=0sec --data-urlencode json="$json"
-  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/build?delay=0sec --data-urlencode json="$json"
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/build?delay=0sec --data-urlencode json="$json"
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/build?delay=0sec --data-urlencode json="$json"
   set +e
   git fetch upstream --tags
   #./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
@@ -222,24 +222,24 @@ docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
 docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
 docker push  docker.io/jbosstm/lra-coordinator:latest
 
-xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/ &
+xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/ &
 
-curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz | head -1 | grep 20
+curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz | head -1 | grep 20
 while [ $? != 0 ];
 do
-  echo date "Wait 60 seconds or press enter when http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz is available"
+  echo date "Wait 60 seconds or press enter when http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz is available"
   read -t 60
-  curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz | head -1 | grep 20
+  curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz | head -1 | grep 20
 done
-wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
+wget http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-centos54x64-bin.tar.gz
 scp blacktie-${CURRENT}-centos54x64-bin.tar.gz jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/&
 
-curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip | head -1 | grep 20
+curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip | head -1 | grep 20
 while [ $? != 0 ];
 do
-  echo date "Wait 60 seconds or press enter when http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip is available"
+  echo date "Wait 60 seconds or press enter when http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip is available"
   read -t 60
-  curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip | head -1 | grep 20
+  curl -Is http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip | head -1 | grep 20
 done
-wget http://narayanaci1.eng.hst.ams2.redhat.com/view/Release/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
+wget http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/lastSuccessfulBuild/artifact/blacktie/blacktie/target/blacktie-${CURRENT}-vc9x32-bin.zip
 scp blacktie-${CURRENT}-vc9x32-bin.zip jbosstm@filemgmt.jboss.org:/downloads_htdocs/jbosstm/${CURRENT}/binary/
