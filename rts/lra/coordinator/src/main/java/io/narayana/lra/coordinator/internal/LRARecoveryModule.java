@@ -22,11 +22,17 @@
 package io.narayana.lra.coordinator.internal;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import io.narayana.lra.coordinator.domain.model.LRAChildAbstractRecord;
+import io.narayana.lra.coordinator.domain.model.LRAParentAbstractRecord;
+import io.narayana.lra.coordinator.domain.model.LRAParticipantRecord;
 import io.narayana.lra.logging.LRALogger;
 import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
@@ -41,13 +47,14 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.function.Consumer;
 
 public class LRARecoveryModule implements RecoveryModule {
-    public LRARecoveryModule(LRAService lraService) {
-        this.lraService = lraService;
+    public LRARecoveryModule() {
+        this.lraService = new LRAService();
 
         if (_recoveryStore == null) {
             _recoveryStore = StoreManager.getRecoveryStore();
@@ -58,14 +65,62 @@ public class LRARecoveryModule implements RecoveryModule {
         RecordTypeManager.manager().add(new RecordTypeMap() {
             @Override
             public Class<? extends AbstractRecord> getRecordClass() {
-                return null;
+                return LRAParticipantRecord.class;
             }
 
             @Override
             public int getType() {
-                return 0;
+                return RecordType.LRA_RECORD;
             }
         });
+        RecordTypeManager.manager().add(new RecordTypeMap() {
+            @Override
+            public Class<? extends AbstractRecord> getRecordClass() {
+                return LRAParentAbstractRecord.class;
+            }
+
+            @Override
+            public int getType() {
+                return RecordType.LRA_PARENT_RECORD;
+            }
+        });
+        RecordTypeManager.manager().add(new RecordTypeMap() {
+            @Override
+            public Class<? extends AbstractRecord> getRecordClass() {
+                return LRAChildAbstractRecord.class;
+            }
+
+            @Override
+            public int getType() {
+                return RecordType.LRA_CHILD_RECORD;
+            }
+        });
+    }
+
+    private static LRAService service;
+    public static LRAService getService() {
+        if (service == null) {
+            RecoveryManager.manager();
+            service = getRM().getServiceInstance();
+        }
+
+        return service;
+    }
+
+    public LRAService getServiceInstance() {
+        return lraService;
+    }
+
+    public static LRARecoveryModule getRM() {
+        List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
+
+        for (RecoveryModule rm : modules) {
+            if (rm instanceof LRARecoveryModule) {
+                return (LRARecoveryModule) rm;
+            }
+        }
+
+        throw new RuntimeException(); // misconfiguration
     }
 
     /**
@@ -215,6 +270,15 @@ public class LRARecoveryModule implements RecoveryModule {
         }
 
         return false;
+    }
+
+    public void recover() {
+        periodicWorkFirstPass();
+        periodicWorkSecondPass();
+    }
+
+    public void recover(URI lraId) {
+        recover();
     }
 
     public void getFailedLRAs(Map<URI, LongRunningAction> lras) {

@@ -21,133 +21,68 @@
  */
 package io.narayana.lra.coordinator;
 
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import io.narayana.lra.LRAData;
 import io.narayana.lra.client.NarayanaLRAClient;
-import io.narayana.lra.coordinator.domain.model.LongRunningAction;
+import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
-import org.jboss.arquillian.container.test.api.Config;
-import org.jboss.arquillian.container.test.api.ContainerController;
-import org.jboss.arquillian.container.test.api.Deployer;
-import org.jboss.arquillian.test.api.ArquillianResource;
 
+import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
+import org.jboss.resteasy.test.TestPortProvider;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
 
 public abstract class TestBase {
+
+    static UndertowJaxrsServer server;
+    static LRAService service;
+
+    NarayanaLRAClient lraClient;
+    String coordinatorPath;
+
     @Rule
     public TestName testName = new TestName();
 
-    private static final String COORDINATOR_CONTAINER = "lra-coordinator";
-
-    static final String COORDINATOR_DEPLOYMENT = COORDINATOR_CONTAINER;
-
-    private static Path storeDir;
-
-    protected NarayanaLRAClient lraClient;
-
-    @ArquillianResource
-    private ContainerController containerController;
-
-    @ArquillianResource
-    private Deployer deployer;
-
     @BeforeClass
-    public static void beforeClass() {
-        storeDir = Paths.get(String.format("%s/standalone/data/tx-object-store", System.getProperty("env.JBOSS_HOME", "null")));
+    public static void start() {
+        service = new LRAService();
+        System.setProperty("lra.coordinator.url", TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME));
+        RecoveryManager.manager();
     }
 
     @Before
-    public void before() throws URISyntaxException, MalformedURLException {
+    public void before() {
         LRALogger.logger.debugf("Starting test %s", testName);
+        server = new UndertowJaxrsServer().start();
+
         lraClient = new NarayanaLRAClient();
+
+        coordinatorPath = TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME);
     }
 
     @After
     public void after() {
         LRALogger.logger.debugf("Finished test %s", testName);
+        clearObjectStore();
         lraClient.close();
-    }
-
-    void startContainer(String bytemanScript) {
-        Config config = new Config();
-        String javaVmArguments = System.getProperty("server.jvm.args");
-
-        clearRecoveryLog();
-
-        if (bytemanScript != null) {
-            String testClassesDir = System.getProperty("maven.test.classes.dir");
-            javaVmArguments = javaVmArguments.replaceAll("=listen", "=script:" + testClassesDir + "/scripts/@BMScript@.btm,listen");
-            javaVmArguments = javaVmArguments.replace("@BMScript@", bytemanScript);
-        }
-
-        config.add("javaVmArguments", javaVmArguments);
-
-        containerController.start(COORDINATOR_CONTAINER, config.map());
-        deployer.deploy(COORDINATOR_DEPLOYMENT);
-    }
-
-    void restartContainer() {
-        try {
-            // ensure that the controller is not running
-            containerController.kill(COORDINATOR_CONTAINER);
-            LRALogger.logger.debug("jboss-as kill worked");
-        } catch (Exception e) {
-            LRALogger.logger.debugf("jboss-as kill: %s", e.getMessage());
-        }
-
-        Config config = new Config();
-        String javaVmArguments = System.getProperty("server.jvm.args");
-        config.add("javaVmArguments", javaVmArguments);
-        containerController.start(COORDINATOR_CONTAINER);
-    }
-
-    void stopContainer() {
-        if (containerController.isStarted(COORDINATOR_CONTAINER)) {
-            LRALogger.logger.debug("Stopping container");
-
-            deployer.undeploy(COORDINATOR_DEPLOYMENT);
-
-            containerController.stop(COORDINATOR_CONTAINER);
-            containerController.kill(COORDINATOR_CONTAINER);
-        }
+        server.stop();
     }
 
     int recover() {
-        Client client = ClientBuilder.newClient();
+        List<LRAData> recoveringLRAs = service.getAllRecovering(true);
 
-        try (Response response = client.target(lraClient.getRecoveryUrl())
-                .request()
-                .get()) {
-
-            Assert.assertEquals("Unexpected status from recovery call to " + lraClient.getRecoveryUrl(), 200, response.getStatus());
-
-            // the result will be a List<LRAStatusHolder> of recovering LRAs but we just need the count
-            String recoveringLRAs = response.readEntity(String.class);
-
-            return recoveringLRAs.length() - recoveringLRAs.replace(".", "").length();
-        } finally {
-            client.close();
-        }
+        return recoveringLRAs.size();
     }
 
     void doWait(long millis) throws InterruptedException {
@@ -156,35 +91,26 @@ public abstract class TestBase {
         }
     }
 
-    private void clearRecoveryLog() {
-        try (Stream<Path> recoveryLogFiles = Files.walk(storeDir)) {
-            recoveryLogFiles
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (IOException ioe) {
-            // transaction logs will only exists after there has been a previous run
-            LRALogger.logger.debugf(ioe,"Cannot finish delete operation on recovery log dir '%s'", storeDir);
-        }
-    }
-
-    String getFirstLRA() {
-        Path lraDir = Paths.get(storeDir.toString(), "ShadowNoFileLockStore", "defaultStore", LongRunningAction.getType());
-
-        try {
-            Optional<Path> lra = Files.list(new File(lraDir.toString()).toPath()).findFirst();
-
-            return lra.map(path -> path.getFileName().toString()).orElse(null);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     LRAStatus getStatus(URI lra) {
         try {
             return lraClient.getStatus(lra);
         } catch (NotFoundException ignore) {
             return null;
+        }
+    }
+
+    void clearObjectStore() {
+
+        List<LRAData> LRAList = new ArrayList<>();
+
+        try {
+            LRAList = service.getAll();
+        } catch (Exception ex) {
+            LRALogger.logger.debugf(ex,"Cannot fetch LRAs through LRAService");
+        }
+
+        for (LRAData lra : LRAList) {
+            service.remove(lra.getLraId());
         }
     }
 }

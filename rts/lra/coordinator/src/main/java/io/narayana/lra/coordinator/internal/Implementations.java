@@ -24,7 +24,7 @@ package io.narayana.lra.coordinator.internal;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
-import io.narayana.lra.coordinator.domain.model.LRARecord;
+import io.narayana.lra.coordinator.domain.model.LRAParticipantRecord;
 
 /**
  * Module specific class that is responsible for adding any implementations
@@ -36,8 +36,8 @@ import io.narayana.lra.coordinator.domain.model.LRARecord;
  */
 
 class LRACompensatorMap implements RecordTypeMap {
-    public Class<LRARecord> getRecordClass() {
-        return LRARecord.class;
+    public Class<LRAParticipantRecord> getRecordClass() {
+        return LRAParticipantRecord.class;
     }
 
     public int getType() {

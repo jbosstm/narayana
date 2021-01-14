@@ -88,11 +88,11 @@ class RecoveringLRA extends LongRunningAction {
                     // NB we don't Abort a BasicAction since that can bypass creation of a log
                     super.phase2Commit(true);
 
-                    runPostLRAActions();
+                    runPostLRAActions(); // nb the participant record may have already ran the after action
 
                     // if there are no more heuristics or failures then update the status of the LRA
                     if (heuristicList.size() == 0 && failedList.size() == 0) {
-                        setLRAStatus(_theStatus);
+                        updateState(toLRAStatus(_theStatus));
                     }
 
                     switch (getLRAStatus()) {

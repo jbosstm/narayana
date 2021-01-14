@@ -22,4 +22,7 @@
 -->
 <properties>
     <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">
+        io.narayana.lra.coordinator.internal.LRARecoveryModule
+    </entry>
 </properties>

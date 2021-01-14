@@ -23,6 +23,7 @@ package io.narayana.lra.coordinator.api;
 
 import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
+import io.narayana.lra.coordinator.internal.LRARecoveryModule;
 import io.narayana.lra.logging.LRALogger;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -35,7 +36,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -44,13 +44,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.narayana.lra.LRAConstants.RECOVERY_COORDINATOR_PATH_NAME;
 import static io.narayana.lra.LRAConstants.COORDINATOR_PATH_NAME;
@@ -61,15 +64,25 @@ import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME + "/" + RECOVERY_COORDINATOR_PATH_NAME)
 @Tag(name = "LRA Recovery")
-public class RecoveryCoordinator {
+public class RecoveryCoordinator extends Application {
 
     private final Logger logger = Logger.getLogger(RecoveryCoordinator.class.getName());
 
     @Context
     private UriInfo context;
 
-    @Inject
-    LRAService lraService;
+    private final LRAService lraService;
+
+    public RecoveryCoordinator() {
+        lraService = LRARecoveryModule.getService();
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        HashSet<Class<?>> classes = new HashSet<>();
+        classes.add(RecoveryCoordinator.class);
+        return classes;
+    }
 
     // Performing a GET on the recovery URL (return from a join request) will return the original <participant URL>
     @GET
