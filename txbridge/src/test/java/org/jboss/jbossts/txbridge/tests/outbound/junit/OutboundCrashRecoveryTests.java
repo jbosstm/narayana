@@ -86,7 +86,7 @@ public class OutboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         deployer.deploy(OUTBOUND_CLIENT_DEPLOYMENT_NAME);
 
         instrumentor.setRedirectedSubmissionsFile(null);
-        instrumentationOnServerReboot();
+        instrument(instrumentor);
 
         instrumentor.injectOnCall(TestServiceImpl.class, "doNothing", "$0.enlistVolatileParticipant(1), $0.enlistDurableParticipant(1)");
     }
@@ -105,7 +105,7 @@ public class OutboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
     }
 
     @Override
-    protected void instrumentationOnServerReboot() throws Exception {
+    public void instrument(Instrumentor instrumentor) throws Exception {
         instrumentedTestVolatileParticipant = instrumentor.instrumentClass(TestVolatileParticipant.class);
         instrumentedTestDurableParticipant = instrumentor.instrumentClass(TestDurableParticipant.class);
     }
