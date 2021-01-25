@@ -20,6 +20,8 @@
  */
 package org.jboss.jbossts.txbridge.tests.inbound.junit;
 
+import com.arjuna.ats.arjuna.common.CoreEnvironmentBean;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import org.jboss.arquillian.container.test.api.*;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -42,6 +44,8 @@ import org.junit.runner.RunWith;
 import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 
 
@@ -112,11 +116,10 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
     }
 
     @Override
-    protected void instrumentationOnServerReboot() throws Exception {
+    public void instrument(Instrumentor instrumentor) throws Exception {
         instrumentedTestSynchronization = instrumentor.instrumentClass(TestSynchronization.class);
         instrumentedTestXAResource = instrumentor.instrumentClass(TestXAResourceRecovered.class);
     }
-
 
     @Test
     @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
@@ -210,10 +213,6 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
 
         execute(baseURL + TestClient.URL_PATTERN, false);
 
-        durableParticipant.assertMethodCalled("prepare");
-        durableParticipant.assertMethodNotCalled("rollback");
-        durableParticipant.assertMethodNotCalled("commit");
-
         instrumentedTestSynchronization.assertKnownInstances(1);
         instrumentedTestSynchronization.assertMethodCalled("beforeCompletion");
         instrumentedTestSynchronization.assertMethodNotCalled("afterCompletion");
@@ -231,6 +230,38 @@ public class InboundCrashRecoveryTests extends AbstractCrashRecoveryTests {
         instrumentedTestXAResource.assertKnownInstances(1);
         instrumentedTestXAResource.assertMethodCalled("recover");
         instrumentedTestXAResource.assertMethodCalled("rollback");
+        instrumentedTestXAResource.assertMethodNotCalled("commit");
+    }
+
+    /**
+     * Verification that a container depends on container the node name
+     * when recovering inbound bridge participants.
+     */
+    @Test
+    @OperateOnDeployment(INBOUND_CLIENT_DEPLOYMENT_NAME)
+    public void testDifferentNodeName(@ArquillianResource URL baseURL) throws Exception {
+        InstrumentedClass durableParticipant = instrumentor.instrumentClass(BridgeDurableParticipant.class);
+
+        instrumentor.injectOnCall(TestClient.class, "terminateTransaction", "$2 = true"); // shouldCommit=true
+        instrumentor.crashAtMethodExit(BridgeDurableParticipant.class, "prepare");
+
+        execute(baseURL + TestClient.URL_PATTERN, false);
+
+        instrumentedTestXAResource.assertKnownInstances(1);
+        instrumentedTestXAResource.assertMethodCalled("prepare");
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
+        instrumentedTestXAResource.assertMethodNotCalled("commit");
+
+        rebootServer(controller, instr -> {
+            this.instrument(instr);
+            instr.injectOnCall(CoreEnvironmentBean.class, "setNodeIdentifier", "$1 = \"differentName\"");
+            instr.injectOnCall(JTAEnvironmentBean.class, "setXaRecoveryNodes", "$1 = java.util.Arrays.asList(new String[]{\"differentName\"})");
+        });
+
+        doRecovery();
+
+        instrumentedTestXAResource.assertMethodCalled("recover");
+        instrumentedTestXAResource.assertMethodNotCalled("rollback");
         instrumentedTestXAResource.assertMethodNotCalled("commit");
     }
 
