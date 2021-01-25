@@ -23,6 +23,7 @@ package org.jboss.jbossts.txbridge.tests.common;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
+import org.jboss.byteman.contrib.dtest.Instrumentor;
 import org.jboss.logging.Logger;
 
 import java.io.*;
@@ -35,35 +36,25 @@ import java.util.regex.Pattern;
  *
  * @author Ivo Studensky (istudens@redhat.com)
  */
-public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests {
+public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests implements OnServerRebootInstrumentator {
     private static Logger log = Logger.getLogger(AbstractCrashRecoveryTests.class);
 
-
-    /**
-     * Instrumentation to be done on server reboot.
-     * For details see @link #rebootServer.
-     * Note: Before each server restart it is necessary to store the instrumentation into a file and then start up the server
-     * with that file as a parameter for byteman to ensure the appropriate classes are instrumented once the server is up.
-     *
-     * @throws Exception
-     */
-    protected abstract void instrumentationOnServerReboot() throws Exception;
-
+    @Override
+    public abstract void instrument(Instrumentor instrumentor) throws Exception;
 
     protected void cleanTxStore() throws Exception {
         String jbossHome = System.getenv("JBOSS_HOME");
         removeContents(new File(jbossHome, "standalone/data/tx-object-store/"));
     }
 
-
-    protected void rebootServer(ContainerController controller) throws Exception {
+    protected void rebootServer(ContainerController controller, OnServerRebootInstrumentator onServerRebootInstrumentator) throws Exception {
 
         instrumentor.removeLocalState();
         File rulesFile = File.createTempFile("jbosstxbridgetests", "");
         rulesFile.deleteOnExit();
         instrumentor.setRedirectedSubmissionsFile(rulesFile);
 
-        instrumentationOnServerReboot();
+        onServerRebootInstrumentator.instrument(instrumentor);
 
         // just let Arquillian know that server has been killed
         // note: in fact the server has been killed by byteman before
@@ -74,6 +65,13 @@ public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests {
         javaVmArguments = javaVmArguments.replaceFirst("byteman-dtest.jar", Matcher.quoteReplacement("byteman-dtest.jar,script:" + rulesFile.getAbsolutePath()));
         log.trace("javaVmArguments = " + javaVmArguments);
         controller.start(CONTAINER, new Config().add("javaVmArguments", javaVmArguments).map());
+
+        // all following instrumentation will be submitted directly to  server
+        instrumentor.setRedirectedSubmissionsFile(null);
+    }
+
+    protected void rebootServer(ContainerController controller) throws Exception {
+        rebootServer(controller, this);
     }
 
 
