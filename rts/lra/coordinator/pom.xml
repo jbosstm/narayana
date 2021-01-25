@@ -145,6 +145,7 @@
             <properties>
                 <lra.coordinator.host>localhost</lra.coordinator.host>
                 <lra.coordinator.url>http://localhost:8080/${lra.coordinator.path}</lra.coordinator.url>
+                <skipITs>false</skipITs>
             </properties>
             <dependencies>
                 <dependency>
@@ -187,6 +188,7 @@
             <properties>
                 <lra.coordinator.host>[::1]</lra.coordinator.host>
                 <lra.coordinator.url>http://[::1]:8080/${lra.coordinator.path}</lra.coordinator.url>
+                <skipITs>false</skipITs>
             </properties>
             <dependencies>
                 <dependency>
