@@ -338,6 +338,7 @@
                     <exclude>**/JTSTestCase.java</exclude>
                     <exclude>**/LastOnePhaseResource.java</exclude>
                     <exclude>**/implicit/**</exclude>
+                    <exclude>**/subordinate/TransactionImpleUnitTest.java</exclude>
                   </excludes>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
