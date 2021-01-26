@@ -26,7 +26,7 @@
 
   <groupId>org.jboss.narayana.vertx</groupId>
   <artifactId>stm-error-demo</artifactId>
-  <version>5.9.11.Final</version>
+  <version>5.9.12.Final-SNAPSHOT</version>
 
   <properties>
     <!-- the main class -->
