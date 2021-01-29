@@ -32,7 +32,9 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.coordinator.domain.model.LongRunningAction;
+import io.narayana.lra.coordinator.domain.model.FailedLongRunningAction;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 
@@ -111,7 +113,7 @@ public class LRARecoveryModule implements RecoveryModule {
          // uids per transaction type
         InputObjectState aa_uids = new InputObjectState();
 
-        if (getUids(aa_uids)) {
+        if (getUids(_transactionType, aa_uids)) {
             processTransactionsStatus(processTransactions(aa_uids));
         }
     }
@@ -126,6 +128,7 @@ public class LRARecoveryModule implements RecoveryModule {
 
             LRAStatus lraStatus = lra.getLRAStatus();
             if (LRAStatus.FailedToCancel.equals(lraStatus) || LRAStatus.FailedToClose.equals(lraStatus)) {
+                moveEntryToFailedLRAPath(recoverUid);
                 return;
             }
 
@@ -157,6 +160,37 @@ public class LRARecoveryModule implements RecoveryModule {
         }
     }
 
+    public boolean moveEntryToFailedLRAPath (final Uid failedUid) {
+        String failedLRAType = FailedLongRunningAction.FAILED_LRA_TYPE;
+        boolean moved = false;
+        try {
+            InputObjectState inputState = _recoveryStore.read_committed(failedUid, _transactionType);
+            InputObjectState failedLRAUidState = _recoveryStore.read_committed(failedUid, failedLRAType);
+            if (inputState != null) {
+                if (failedLRAUidState != null) {
+                    // Record already exists in failedLRARecord location, hence removing it from the LRARecord location
+                    moved = true;
+                    if (!_recoveryStore.remove_committed(failedUid, _transactionType)) {
+                        LRALogger.i18NLogger.warn_UnableToRemoveDuplicateFailedLRARecord(
+                                failedUid.toString(), failedLRAType, _transactionType);
+                        moved = false;
+                    }
+                    return moved;
+                }
+
+                if (_recoveryStore.write_committed(failedUid, failedLRAType, new OutputObjectState(inputState))) {
+                    moved = _recoveryStore.remove_committed(failedUid, _transactionType);
+                    if (moved) {
+                        LRALogger.logger.infof("Failed lra record (Uid: %s) moved to new location type: %s", failedUid, failedLRAType);
+                    }
+                }
+            }
+        } catch (ObjectStoreException e) {
+            LRALogger.i18NLogger.warn_move_lra_record(failedUid.toString(), e.getMessage());
+        }
+        return moved;
+    }
+
     private Collection<Uid> processTransactions(InputObjectState uids) {
         Collection<Uid> uidCollection = new ArrayList<>();
 
@@ -166,7 +200,7 @@ public class LRARecoveryModule implements RecoveryModule {
 
         Consumer<Uid> uidUnpacker = uidCollection::add;
 
-        forEach(uids, uidUnpacker);
+        forEach(uids, uidUnpacker, _transactionType);
 
         return uidCollection;
     }
@@ -197,7 +231,7 @@ public class LRARecoveryModule implements RecoveryModule {
         InputObjectState aa_uids = new InputObjectState();
 
         // for LRA call reactivate and add it to the input list
-        if (getUids(aa_uids)) {
+        if (getUids(_transactionType, aa_uids)) {
             Collection<Uid> uids = processTransactions(aa_uids);
             uids.forEach(uid -> {
                 int status = _transactionStatusConnectionMgr.getTransactionStatus(_transactionType, uid);
@@ -244,7 +278,7 @@ public class LRARecoveryModule implements RecoveryModule {
     public void getFailedLRAs(Map<URI, LongRunningAction> lras) {
         InputObjectState aa_uids = new InputObjectState();
         Consumer<Uid> failedLRACreator = uid -> {
-            LongRunningAction lra = new LongRunningAction(service, new Uid(uid));
+            FailedLongRunningAction lra = new FailedLongRunningAction(service, new Uid(uid));
             lra.activate();
 
             LRAStatus status = lra.getLRAStatus();
@@ -253,24 +287,24 @@ public class LRARecoveryModule implements RecoveryModule {
             }
         };
 
-        if (getUids(aa_uids)) {
-            forEach(aa_uids, failedLRACreator);
+        if (getUids(FailedLongRunningAction.FAILED_LRA_TYPE, aa_uids)) {
+            forEach(aa_uids, failedLRACreator, FailedLongRunningAction.FAILED_LRA_TYPE);
         }
     }
 
-    private boolean getUids(InputObjectState aa_uids) {
+    private boolean getUids(final String type, InputObjectState aa_uids) {
         synchronized (this) {
             try {
-                return _recoveryStore.allObjUids(_transactionType, aa_uids);
+                return _recoveryStore.allObjUids(type, aa_uids);
             } catch (ObjectStoreException e) {
                 if (LRALogger.logger.isTraceEnabled()) {
                     LRALogger.logger.tracef(e,
                             "LRARecoverModule: Object store exception %s while unpacking records of type %s",
-                            e.getMessage(), _transactionType);
+                            e.getMessage(), type);
                 } else if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof(
                             "LRARecoverModule: Object store exception %s while unpacking records of type %s",
-                            e.getMessage(), _transactionType);
+                            e.getMessage(), type);
                 }
 
                 return false;
@@ -284,11 +318,13 @@ public class LRARecoveryModule implements RecoveryModule {
      *
      * @param uids the uids to iterate over
      * @param consumer the consumer that should be called for each Uid
+     * @param transactionType within the Object Store for LRAs
      */
     // This method could be moved to an ArjunaCore class (such as UidHelper) if its useful,
     // in which case make the method returns a boolean:
     //     * @return false if there was an error processing the collection of uids
-    private void forEach(InputObjectState uids, Consumer<Uid> consumer) {
+    // The @param transactionType is only used for logging purpose
+    private void forEach(InputObjectState uids, Consumer<Uid> consumer, final String transactionType) {
         do {
             try {
                 Uid uid = new Uid(uids.unpackBytes());
@@ -302,11 +338,11 @@ public class LRARecoveryModule implements RecoveryModule {
                 if (LRALogger.logger.isTraceEnabled()) {
                     LRALogger.logger.tracef(e,
                             "LRARecoverModule: Object store exception %s while unpacking a record of type %s",
-                            e.getMessage(), _transactionType);
+                            e.getMessage(), transactionType);
                 } else if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof(
                             "LRARecoverModule: Object store exception %s while unpacking a record of type: %s",
-                            e.getMessage());
+                            e.getMessage(), transactionType);
                 }
 
                 return;

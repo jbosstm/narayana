@@ -168,6 +168,9 @@ public class LRAService {
     }
 
     public void finished(LongRunningAction transaction, boolean fromHierarchy) {
+        if (transaction.isFailed()) {
+            getRM().moveEntryToFailedLRAPath(transaction.get_uid());
+        }
         if (transaction.isRecovering()) {
             recoveringLRAs.put(transaction.getId(), transaction);
         } else if (fromHierarchy || transaction.isTopLevel()) {
