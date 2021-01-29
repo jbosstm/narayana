@@ -528,15 +528,15 @@ public class LongRunningAction extends BasicAction {
             updateState(LRAStatus.Closing);
         } // otherwise status is (cancel ? LRAStatus.Cancelled : LRAStatus.Closed)
 
+        finishTime = LocalDateTime.now(ZoneOffset.UTC);
+
+        updateState(); // ensure the record is removed if it finished otherwise persisted the state
+
         if (!isRecovering()) {
             if (lraService != null) {
                 lraService.finished(this, false);
             }
         }
-
-        finishTime = LocalDateTime.now(ZoneOffset.UTC);
-
-        updateState(); // ensure the record is removed if it finished otherwise persisted the state
 
         return res;
     }

@@ -26,6 +26,7 @@ import io.narayana.lra.LRAConstants;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithStatusURI;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
+import io.narayana.lra.coordinator.domain.model.FailedLongRunningAction;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
@@ -196,6 +197,81 @@ public class FailedLRAIT {
         // the participant should now be in a failed state so the record can be deleted
         int statusDeleted = removeFailedLRA(lraId);
         assertEquals("deleting a failed LRA", 204, statusDeleted);
+    }
+
+    /**
+     * test that a created failure record is moved to failedLRAType location
+     */
+    @Test
+    public void testToMoveFailedLRARecords() throws Exception {
+        URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
+                LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
+        // Checks if the record exists in the LRARecords location
+        if (!validateFailedRecordMoved(lraId)) {
+            fail("lra not in failed list location : " + FailedLongRunningAction.FAILED_LRA_TYPE);
+        }
+        // Removing Failed LRA record.
+        removeFailedLRA(lraId);
+    }
+
+    /**
+     * Validate if Failed LRA is moved to failed lraRecord's Location.
+     *
+     * @param lra the LRA whose state is to be validated
+     * @return true if the Failed LRA record is moved to another location
+     * @throws Exception if the state cannot be determined
+     */
+    private boolean validateFailedRecordMoved(URI lra) throws Exception {
+        boolean isMoved = false;
+        String failedLRAId = null;
+        List<JSONObject> failedRecords = getFailedRecords(lra);
+        for (JSONObject failedLRA : failedRecords) {
+            String lraId = (String) failedLRA.get("lraId");
+            lraId = lraId.replaceAll("\\\\", "");
+            if (lraId.contains(lra.toASCIIString())) {
+                failedLRAId = lraId;
+            }
+        }
+        List<JSONObject> allRecords = getAllRecords(lra);
+        if (allRecords.isEmpty() && failedLRAId != null) {
+            isMoved = true;
+        } else {
+            isMoved = true;
+            for (JSONObject lraRec : allRecords) {
+                String lraId = (String) lraRec.get("lraId");
+                lraId = lraId.replaceAll("\\\\", "");
+                if (lraId.contains(failedLRAId)) {
+                    return false;
+                }
+            }
+        }
+
+        return isMoved;
+    }
+
+    private List<JSONObject> getAllRecords(URI lra) throws Exception {
+        Response response = null;
+        String coordinatorUrl = LRAConstants.getLRACoordinatorUrl(lra) + "/";
+
+        try {
+            response = client.target(coordinatorUrl).path("").request().get();
+
+            Assert.assertTrue("Missing response body when querying for all LRAs", response.hasEntity());
+            String allLRAs = response.readEntity(String.class);
+
+            JSONArray jsonArray = new JSONArray(allLRAs);
+            List<JSONObject> allLRAList = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                allLRAList.add(new JSONObject(jsonArray.getString(i)));
+            }
+
+            return allLRAList;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
     }
 
     private URI invokeInTransaction(String resourcePrefix, String resourcePath, int expectedStatus) {

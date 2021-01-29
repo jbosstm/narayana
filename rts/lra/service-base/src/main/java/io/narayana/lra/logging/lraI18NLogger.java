@@ -220,6 +220,16 @@ public interface lraI18NLogger {
     @Message(id = 25145, value = "Unable to process LRA annotations: %s'")
     String warn_LRAStatusInDoubt(String reason);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25146, value = "Unable to remove the failed duclicate failed LRA record (Uid: '%s') " +
+            "(which is already present in the failedLRA record location type: '%s'.) from LRA Record location: '%s'")
+    void warn_UnableToRemoveDuplicateFailedLRARecord(String failedUid, String failedLRAType, String lraType);
+
+    @LogMessage(level = WARN)
+    @Message(id = 25147, value = "An exception was thrown while moving failed LRA record (Uid: '%s'). " +
+            "Reason: '%s'")
+    void warn_move_lra_record(String failedUid, String exceptionMessage);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
