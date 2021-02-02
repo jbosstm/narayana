@@ -93,7 +93,7 @@
     <dependency>
       <groupId>io.mashona</groupId>
       <artifactId>mashona-logwriting</artifactId>
-      <version>1.0.0.Beta1</version>
+      <version>${version.io.mashona}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
