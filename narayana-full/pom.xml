@@ -417,6 +417,14 @@
           </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>io.mashona</groupId>
+          <artifactId>mashona-logwriting</artifactId>
+          <version>${version.io.mashona}</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>community</id>
