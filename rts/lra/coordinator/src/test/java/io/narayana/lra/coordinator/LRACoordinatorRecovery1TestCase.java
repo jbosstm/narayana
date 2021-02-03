@@ -51,6 +51,7 @@ import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.MalformedURLException;
@@ -134,7 +135,7 @@ public class LRACoordinatorRecovery1TestCase extends TestBase {
         // start an LRA with a short time limit by invoking a resource annotated with @LRA
         try (Response response = client.target(lraListenerURI).path(LRA_LISTENER_ACTION)
                 .request()
-                .put(null)) {
+                .put(Entity.text(""))) {
 
             Assert.assertEquals("LRA participant action", 200, response.getStatus());
 

@@ -416,7 +416,7 @@ public class NarayanaLRAClient implements Closeable {
                 .path(String.format(LEAVE_PATH, LRAConstants.getLRAUid(lraId)))
                 .request()
                 .async()
-                .put(Entity.text(body))
+                .put(body == null ? Entity.text("") : Entity.text(body))
             .get(LEAVE_TIMEOUT, TimeUnit.SECONDS);
 
             if (OK.getStatusCode() != response.getStatus()) {
@@ -779,7 +779,7 @@ public class NarayanaLRAClient implements Closeable {
                         .path(confirm ? String.format(CLOSE_PATH, lraUid) : String.format(CANCEL_PATH, lraUid))
                         .request()
                         .async()
-                        .put(null)
+                        .put(Entity.text(""))
                         .get(END_TIMEOUT, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new WebApplicationException("end LRA client request timed out, try again later",

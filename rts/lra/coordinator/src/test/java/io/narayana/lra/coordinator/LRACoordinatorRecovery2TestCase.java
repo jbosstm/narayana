@@ -51,6 +51,7 @@ import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.MalformedURLException;
@@ -176,7 +177,7 @@ public class LRACoordinatorRecovery2TestCase extends TestBase {
         try (Response response = client.target(lraListenerURI).path(LRA_LISTENER_UNTIMED_ACTION)
                 .request()
                 .header(LRA_HTTP_CONTEXT_HEADER, longLRA)
-                .put(null)) {
+                .put(Entity.text(""))) {
 
             Assert.assertEquals("LRA participant action", 200, response.getStatus());
         }
