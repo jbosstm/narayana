@@ -256,6 +256,18 @@ under the License.
         </repository>
       </repositories>
     </profile>
+    <profile>
+      <id>httpsdownloadjavanet</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>download-java-net</id>
+          <url>https://download.java.net/maven/2</url>
+        </repository>
+      </repositories>
+    </profile>
   </profiles>
 
   <!-- activeProfiles
