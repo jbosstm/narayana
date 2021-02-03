@@ -334,7 +334,7 @@ public class LRARecord extends AbstractRecord implements Comparable<AbstractReco
                         .header(LRA_HTTP_PARENT_CONTEXT_HEADER, parentId) // make the context available to participants
                         .header(LRA_HTTP_RECOVERY_HEADER, recoveryURI.toASCIIString())
                         .async()
-                        .put(null)
+                        .put(Entity.text(""))
                         .get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
                 httpStatus = response.getStatus();
