@@ -466,7 +466,7 @@
     <version.jfree>1.0.9</version.jfree>
     <version.com.h2database>1.4.195</version.com.h2database>
     <version.org.apache.tomcat>9.0.7</version.org.apache.tomcat>
-    <version.org.apache.ant>1.8.2</version.org.apache.ant>
+    <version.org.apache.ant>1.10.9</version.org.apache.ant>
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
     <version.com.oracle>10.2.0.4</version.com.oracle>
