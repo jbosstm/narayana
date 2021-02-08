@@ -26,8 +26,8 @@
         <version.jboss-modules>1.10.2.Final</version.jboss-modules>
 
         <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->
-        <version.microprofile.lra.api>1.0-RC2</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-RC2</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0</version.microprofile.lra.tck>
         <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
 
         <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
@@ -47,6 +47,10 @@
     </properties>
 
     <repositories>
+        <repository>
+            <id>lra-1.0-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/orgeclipsemicroprofile-1423/</url>
+        </repository>
         <repository>
             <id>jboss-public-releases-repository-group</id>
             <name>JBoss Public Releases Maven Repository Group</name>
