@@ -31,8 +31,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.json.JsonObject;
-
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
@@ -113,9 +111,11 @@ public interface lraI18NLogger {
     @Message(id = 25017, value = "Trying to aquire an in use connection for coordinator '%s'")
     void error_connectionInUse(URI coordinator);
 
+    /*
     @LogMessage(level = INFO)
     @Message(id = 25018, value = "Error parsing json LRAStatus from JSON '%s'")
     void warn_failedParsingStatusFromJson(JsonObject json, @Cause Throwable t);
+     */
 
     @LogMessage(level = ERROR)
     @Message(id = 25019, value = "Invalid query format '%s' to get lra statuses")

@@ -17,13 +17,14 @@
     <packaging>pom</packaging>
 
     <properties>
-        <version.json.api>1.1</version.json.api>
         <version.jackson>2.9.10.1</version.jackson>
 
         <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
         <version.cdi-api>2.0</version.cdi-api>
         <version.servlet-api>2.5</version.servlet-api>
         <version.jboss-modules>1.10.2.Final</version.jboss-modules>
+        <version.jboss.json-api>1.0.0.Final</version.jboss.json-api>
+        <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
 
         <version.microprofile.lra.api>1.0-RC2</version.microprofile.lra.api>
         <version.microprofile.lra.tck>1.0-RC2</version.microprofile.lra.tck>
@@ -74,19 +75,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- for Intellij -->
-        <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-all-7.0</artifactId>
-            <version>1.0.3.Final</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.javax.ws.rs-api}</version>
-        </dependency>
-
         <!-- for testing -->
         <dependency>
             <groupId>junit</groupId>
