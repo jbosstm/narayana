@@ -18,6 +18,11 @@
       <artifactId>microprofile-lra-api</artifactId>
       <version>${version.microprofile.lra.api}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.ws.rs</groupId>
+      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+      <version>${version.javax.ws.rs-api}</version>
+    </dependency>
 
     <!-- jboss logging -->
     <dependency>
