@@ -30,14 +30,20 @@
             <version>${version.microprofile.lra.api}</version>
         </dependency>
         <dependency>
-          <groupId>org.jboss.narayana.rts</groupId>
-          <artifactId>lra-service-base</artifactId>
-          <version>${project.version}</version>
+            <groupId>org.jboss.narayana.rts</groupId>
+            <artifactId>lra-service-base</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.json</groupId>
             <artifactId>jboss-json-api_1.0_spec</artifactId>
-            <version>1.0.0.Final</version>
+            <version>${version.jboss.json-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version.cdi-api}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
