@@ -31,7 +31,7 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <url>http://www.jboss.org/jbosstm</url>
  
   <properties>
-    <version.thorntail>2.6.0.Final</version.thorntail>
+    <version.thorntail>2.7.0.Final</version.thorntail>
     <version.quarkus>1.8.3.Final</version.quarkus>
     <version.resteasy-client>${version.org.jboss.resteasy}</version.resteasy-client>
 
