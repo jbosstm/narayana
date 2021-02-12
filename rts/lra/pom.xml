@@ -25,7 +25,6 @@
         <version.servlet-api>2.5</version.servlet-api>
         <version.jboss-modules>1.10.2.Final</version.jboss-modules>
 
-        <version.arquillian>1.2.1.Final</version.arquillian> <!-- cannot use the up-to-date Arquillian https://issues.jboss.org/browse/THORN-2090 -->
         <version.microprofile.lra.api>1.0</version.microprofile.lra.api>
         <version.microprofile.lra.tck>1.0</version.microprofile.lra.tck>
         <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
@@ -71,7 +70,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.org.jboss.arquillian.core}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
