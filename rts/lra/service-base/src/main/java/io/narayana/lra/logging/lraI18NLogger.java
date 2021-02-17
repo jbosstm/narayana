@@ -220,9 +220,6 @@ public interface lraI18NLogger {
     @Message(id = 25145, value = "Unable to process LRA annotations: %s'")
     String warn_LRAStatusInDoubt(String reason);
 
-    @Message(id = 25146, value = "Missing recovery module for LRAs")
-    String error_recovery_missing_module();
-
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.

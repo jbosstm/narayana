@@ -57,31 +57,37 @@ public class LRARecoveryModule implements RecoveryModule {
     }
 
     public static LRAService getService() {
-        if (service == null) {
-            // service is a cached static value and is only set once (to the instance variable
-            // held by the LRARecoveryModule singleton).
-            // This means that if two threads try to set it they will set it to the same value.
-            // Also, the code called by this routine which (indirectly) creates the recovery module
-            // is also reentrant. Therefore this routine is reentrant and there is no necessity for
-            // synchronisation
-            RecoveryManager.manager();
+        return getInstance().service; // this call triggers the creation of the LRARecoveryModule singleton which contains service
+    }
 
-            List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
-
-            for (RecoveryModule rm : modules) {
-                if (rm instanceof LRARecoveryModule) {
-                    return service;
-                }
-            }
-
-            String errorMsg = LRALogger.i18NLogger.error_recovery_missing_module();
-
-            LRALogger.logger.error(errorMsg);
-
-            throw new RuntimeException(errorMsg); // misconfiguration
+    public static LRARecoveryModule getInstance() {
+        if (lraRecoveryModule != null) {
+            return lraRecoveryModule;
         }
 
-        return service;
+        // see if periodic recovery already knows about this recovery module
+        // note that this lookup code is re-entrant hence no synchronization:
+        List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
+
+        RecoveryManager.manager();
+
+        for (RecoveryModule rm : modules) {
+            if (rm instanceof LRARecoveryModule) {
+                lraRecoveryModule = (LRARecoveryModule) rm;
+                return lraRecoveryModule;
+            }
+        }
+
+        // When running in WildFly the jbossts-properties.xml config is overridden so we need to add the module directly
+        // Until we have a WildFly subsystem for LRA register the recovery module manually:
+        synchronized (LRARecoveryModule.class) {
+            if (lraRecoveryModule != null) {
+                lraRecoveryModule = new LRARecoveryModule();
+                RecoveryManager.manager().addModule(lraRecoveryModule); // register it for periodic recovery
+            }
+        }
+
+        return lraRecoveryModule;
     }
 
     /**
@@ -309,7 +315,7 @@ public class LRARecoveryModule implements RecoveryModule {
         } while (true);
     }
 
-    private static LRAService service;
+    private LRAService service;
 
     // 'type' within the Object Store for LRAs.
     private final String _transactionType = LongRunningAction.getType();
@@ -320,4 +326,6 @@ public class LRARecoveryModule implements RecoveryModule {
     // This object manages the interface to all TransactionStatusManager
     // processes(JVMs) on this system/node.
     private final TransactionStatusConnectionManager _transactionStatusConnectionMgr;
+
+    private static LRARecoveryModule lraRecoveryModule;
 }

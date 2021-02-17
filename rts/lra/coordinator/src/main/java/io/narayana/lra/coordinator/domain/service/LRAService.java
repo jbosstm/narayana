@@ -22,10 +22,8 @@
 package io.narayana.lra.coordinator.domain.service;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.logging.LRALogger;
@@ -423,25 +421,7 @@ public class LRAService {
             return recoveryModule;
         }
 
-        List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
-
-        for (RecoveryModule rm : modules) {
-            if (rm instanceof LRARecoveryModule) {
-                recoveryModule = (LRARecoveryModule) rm;
-                recoveryModule.getRecoveringLRAs(recoveringLRAs);
-
-                for (LongRunningAction transaction : recoveringLRAs.values()) {
-                    transaction.getRecoveryCoordinatorUrls(participants);
-                }
-
-                return recoveryModule;
-            }
-        }
-
-        String errorMsg = LRALogger.i18NLogger.error_recovery_missing_module();
-        LRALogger.logger.error(errorMsg);
-
-        throw new RuntimeException(errorMsg); // misconfiguration - missing LRA recovery module
+        return LRARecoveryModule.getInstance();
     }
 
     private List<LRAData> getDataByStatus(Map<URI, LongRunningAction> lrasToFilter, LRAStatus status) {
