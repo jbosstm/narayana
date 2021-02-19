@@ -7,8 +7,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lra-coordinator</artifactId>
-    <name>LRA Coordinator</name>
+    <artifactId>lra-coordinator-quarkus</artifactId>
+    <name>Quarkus LRA Coordinator</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -151,6 +151,15 @@
                 </plugin>
               </plugins>
           </build>
+      </profile>
+      <profile>
+        <id>quarkus-uber</id>
+        <activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+          <quarkus.package.type>uber-jar</quarkus.package.type>
+        </properties>
       </profile>
     </profiles>
 </project>
