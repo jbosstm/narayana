@@ -240,7 +240,7 @@ public class FailedLRAIT {
             for (JSONObject lraRec : allRecords) {
                 String lraId = (String) lraRec.get("lraId");
                 lraId = lraId.replaceAll("\\\\", "");
-                if (lraId.contains(failedLRAId)) {
+                if (failedLRAId == null || lraId.contains(failedLRAId)) {
                     return false;
                 }
             }
@@ -287,9 +287,15 @@ public class FailedLRAIT {
             Assert.assertTrue("Expecting a non empty body in response from " + resourcePrefix + "/" + resourcePath,
                     response.hasEntity());
 
-            return new URI(response.readEntity(String.class));
-        } catch (URISyntaxException use) {
-            throw new IllegalStateException("baseUrl '" + baseURL + "' cannot be converted to URI");
+            String entity = response.readEntity(String.class);
+
+            Assert.assertEquals(
+                    "response from " + resourcePrefix + "/" + resourcePath + " was " + entity,
+                    expectedStatus, response.getStatus());
+
+            return new URI(entity);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("response cannot be converted to URI: " + e.getMessage());
         } finally {
             if (response != null) {
                 response.close();

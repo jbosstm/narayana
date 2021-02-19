@@ -66,9 +66,11 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
@@ -96,7 +98,13 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
 @Tag(name = "LRA Coordinator")
+@OpenAPIDefinition(
+        info = @Info(title = "LRA Coordinator", version = Coordinator.LRA_API_VERSION),
+        tags = @Tag(name = "LRA Coordinator")
+)
 public class Coordinator extends Application {
+    static final String LRA_API_VERSION = "1.0-RC1";
+
     @Context
     private UriInfo context;
 
