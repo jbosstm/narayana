@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -69,13 +68,12 @@ public class LRARecoveryModule implements RecoveryModule {
 
         // see if periodic recovery already knows about this recovery module
         // note that this lookup code is re-entrant hence no synchronization:
-        List<RecoveryModule> modules = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules();
-
         RecoveryManager.manager();
 
-        for (RecoveryModule rm : modules) {
+        for (RecoveryModule rm : recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryModules()) {
             if (rm instanceof LRARecoveryModule) {
                 lraRecoveryModule = (LRARecoveryModule) rm;
+
                 return lraRecoveryModule;
             }
         }
@@ -83,8 +81,9 @@ public class LRARecoveryModule implements RecoveryModule {
         // When running in WildFly the jbossts-properties.xml config is overridden so we need to add the module directly
         // Until we have a WildFly subsystem for LRA register the recovery module manually:
         synchronized (LRARecoveryModule.class) {
-            if (lraRecoveryModule != null) {
+            if (lraRecoveryModule == null) {
                 lraRecoveryModule = new LRARecoveryModule();
+
                 RecoveryManager.manager().addModule(lraRecoveryModule); // register it for periodic recovery
             }
         }
