@@ -461,7 +461,7 @@
     <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
     <version.commons-io>2.8.0</version.commons-io>
     <version.log4j>1.2.17</version.log4j>
-    <version.org.slf4j>1.7.2.jbossorg-1</version.org.slf4j>
+    <version.org.slf4j>1.7.30</version.org.slf4j>
     <version.dom4j>1.6.1</version.dom4j>
     <version.jfree>1.0.9</version.jfree>
     <version.com.h2database>1.4.195</version.com.h2database>
