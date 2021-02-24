@@ -6,7 +6,7 @@
 	</fileset>
 	
 	<pathelement location="${basedir}/classes"/>
-	<pathelement location="${basedir}/lib/slf4j-api-1.5.6.jar"/>
+	<pathelement location="${basedir}/lib/slf4j-api-1.7.30.jar"/>
 </path>
 
 <target name="xdoclet.init-jmx" depends="init" >
