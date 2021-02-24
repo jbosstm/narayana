@@ -10,6 +10,7 @@
     <xi:include href="jta/jta.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="jts/jts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="xts/xts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+    <xi:include href="lra/lra.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="rts/rts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="stm/stm.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="blacktie/blacktie.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />

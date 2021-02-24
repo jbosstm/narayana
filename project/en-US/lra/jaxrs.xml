@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "../project_documentation.ent">
+%BOOK_ENTITIES;
+]>
+<section>
+    <title>JAX-RS services</title>
+
+    <para>
+    Primary support is for JAX-RS based services to participate in transactional
+    Long Running Actions (LRAs). Full details are available in the MP-LRA
+    specification document
+    <ulink url="https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.adoc"></ulink>.
+    Also look in the examples section <xref linkend="lra-examples" /> below and in the MP-LRA TCK.
+    </para>
+</section>
