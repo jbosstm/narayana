@@ -72,6 +72,16 @@ public class ConnectionProxy implements Connection {
         return xaConnection.createSession(transacted, acknowledgeMode);
     }
 
+    @Override
+    public Session createSession(int sessionMode) throws JMSException {
+        return xaConnection.createSession(sessionMode);
+    }
+
+    @Override
+    public Session createSession() throws JMSException {
+        return xaConnection.createSession();
+    }
+
     /**
      * Simply close the proxied connection if there is no active transaction. Or register a
      * {@link ConnectionClosingSynchronization} if active transaction exists.
@@ -172,6 +182,11 @@ public class ConnectionProxy implements Connection {
         return xaConnection.createConnectionConsumer(destination, messageSelector, sessionPool, maxMessages);
     }
 
+    @Override
+    public ConnectionConsumer createSharedConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool, int maxMessages) throws JMSException {
+        return xaConnection.createSharedConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
+    }
+
     /**
      * Delegate to {@link #xaConnection}.
      *
@@ -181,6 +196,11 @@ public class ConnectionProxy implements Connection {
     public ConnectionConsumer createDurableConnectionConsumer(Topic topic, String subscriptionName, String messageSelector,
             ServerSessionPool sessionPool, int maxMessages) throws JMSException {
         return xaConnection.createDurableConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
+    }
+
+    @Override
+    public ConnectionConsumer createSharedDurableConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool, int maxMessages) throws JMSException {
+        return xaConnection.createSharedDurableConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
     }
 
     /**
