@@ -259,6 +259,16 @@ public class SessionProxy implements Session {
     }
 
     @Override
+    public MessageConsumer createSharedConsumer(Topic topic, String sharedSubscriptionName) throws JMSException {
+        return xaSession.createSharedConsumer(topic, sharedSubscriptionName);
+    }
+
+    @Override
+    public MessageConsumer createSharedConsumer(Topic topic, String sharedSubscriptionName, String messageSelector) throws JMSException {
+        return xaSession.createSharedConsumer(topic, sharedSubscriptionName, messageSelector);
+    }
+
+    @Override
     public Queue createQueue(String s) throws JMSException {
         if (sessionCloseScheduled) {
             throw new JMSException("Session is already scheduled to be closed");
@@ -288,6 +298,26 @@ public class SessionProxy implements Session {
             throw new JMSException("Session is already scheduled to be closed");
         }
         return xaSession.createDurableSubscriber(topic, s, s1, b);
+    }
+
+    @Override
+    public MessageConsumer createDurableConsumer(Topic topic, String name) throws JMSException {
+        return xaSession.createDurableConsumer(topic, name);
+    }
+
+    @Override
+    public MessageConsumer createDurableConsumer(Topic topic, String name, String messageSelector, boolean noLocal) throws JMSException {
+        return xaSession.createDurableConsumer(topic, name, messageSelector, noLocal);
+    }
+
+    @Override
+    public MessageConsumer createSharedDurableConsumer(Topic topic, String name) throws JMSException {
+        return createSharedDurableConsumer(topic, name);
+    }
+
+    @Override
+    public MessageConsumer createSharedDurableConsumer(Topic topic, String name, String messageSelector) throws JMSException {
+        return createSharedDurableConsumer(topic, name, messageSelector);
     }
 
     @Override
