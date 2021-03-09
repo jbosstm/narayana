@@ -1,0 +1,18 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
+	<entry key="RecoveryEnvironmentBean.recoveryModuleClassNames">io.narayana.lra.coordinator.internal.LRARecoveryModule</entry>
+
+	<entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.h2.jdbcx.JdbcDataSource;URL=jdbc:h2:./h2/JBTMDB;User=sa;Password=sa</entry>
+	<entry key="ObjectStoreEnvironmentBean.tablePrefix">Action</entry>
+	<entry key="ObjectStoreEnvironmentBean.dropTable">true</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.h2.jdbcx.JdbcDataSource;URL=jdbc:h2:./h2/JBTMDB;User=sa;Password=sa</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.tablePrefix">stateStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.stateStore.dropTable">true</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.jdbcAccess">com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.DynamicDataSourceJDBCAccess;ClassName=org.h2.jdbcx.JdbcDataSource;URL=jdbc:h2:./h2/JBTMDB;User=sa;Password=sa</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.tablePrefix">Communication</entry>
+	<entry key="ObjectStoreEnvironmentBean.communicationStore.dropTable">true</entry>
+</properties>
