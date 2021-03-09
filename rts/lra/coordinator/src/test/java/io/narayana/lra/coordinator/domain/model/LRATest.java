@@ -727,17 +727,17 @@ public class LRATest {
             lraId = String.format("%s/%s", lraClient.getCoordinatorUrl(), lraId);
         }
 
-        assertNotNull("LRA should have been added to the object store before byteman killed the JVM", lraId);
+        assertNotNull("LRA should have been added to the object store before the JVM was killed", lraId);
         lraId = String.format("%s/%s", lraClient.getCoordinatorUrl(), lraId);
-
-        // the resource request should have stopped the server
-        // wait for a period longer than the timeout before restarting the coordinator
-        Thread.sleep(LRA_SHORT_TIMELIMIT * 1000);
 
         // restart the container
         server.start();
         server.deploy(Coordinator.class);
         server.deploy(LRAParticipant.class);
+
+        // the resource request should have stopped the server
+        // wait for a period longer than the timeout before restarting the coordinator
+        Thread.sleep(LRA_SHORT_TIMELIMIT * 1000);
 
         // check recovery
         LRAStatus status = getStatus(new URI(lraId));

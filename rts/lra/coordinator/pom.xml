@@ -80,6 +80,12 @@
             <version>${version.org.jboss.servlet.api}</version>
         </dependency>
         <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-client</artifactId>
             <version>${project.version}</version>
@@ -113,6 +119,12 @@
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-undertow</artifactId>
             <version>${version.org.jboss.resteasy}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.com.h2database}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
