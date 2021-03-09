@@ -19,7 +19,7 @@ It would be good to work not just with the HTTP (REST API) but being able to com
 
 The Debezium project comes with a proof of concept of saga pattern on top of the outbox pattern. It would be good to integrate the effort with LRA.
 
-== Serverless LRA (Martin)
+== Serverless LRA
 
 Integration with Funqy in quarkus to provide a way for serverless functions to be plugged into LRA processing.
 
