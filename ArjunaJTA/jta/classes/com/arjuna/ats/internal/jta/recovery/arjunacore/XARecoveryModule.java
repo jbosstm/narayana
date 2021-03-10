@@ -61,6 +61,7 @@ import com.arjuna.ats.arjuna.recovery.ExtendedRecoveryModule;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.recovery.SerializableXAResourceDeserializer;
