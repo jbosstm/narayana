@@ -112,6 +112,7 @@ public class Coordinator extends Application {
     private UriInfo context;
 
     private final LRAService lraService;
+    private final RecoveryCoordinator recoveryCoordinator;
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -122,6 +123,12 @@ public class Coordinator extends Application {
 
     public Coordinator() {
         lraService = LRARecoveryModule.getService();
+        recoveryCoordinator = new RecoveryCoordinator();
+    }
+
+    @Path(RECOVERY_COORDINATOR_PATH_NAME)
+    public RecoveryCoordinator getRecoveryCoordinator() {
+        return recoveryCoordinator;
     }
 
     @GET
