@@ -31,12 +31,17 @@
 
 package com.arjuna.ats.internal.jta.utils;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.internal.jta.xa.XID;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.List;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -75,6 +80,16 @@ public class XAUtils
 		}
 
 		return optimize;
+	}
+
+	public static boolean isSameRM(XAResource r1, XAResource r2) throws XAException {
+		if (xaResourceIsSameRMClassNames.size() > 0) {
+			if (xaResourceIsSameRMClassNames.contains(r1.getClass().getName()) || xaResourceIsSameRMClassNames.contains(r2.getClass().getName())) {
+				return false;
+			}
+		}
+
+		return r1.isSameRM(r2);
 	}
 
 	/**
@@ -121,6 +136,10 @@ public class XAUtils
          }
          return xidImple.getXID();
 	}
+
+	private static final List<String> xaResourceIsSameRMClassNames = BeanPopulator
+			.getDefaultInstance(JTAEnvironmentBean.class)
+			.getXaResourceIsSameRMClassNames();
 
 	private static final String ORACLE = "oracle";
 }
