@@ -122,6 +122,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
 	private boolean transactionToThreadListenersEnabled = false;
 
+	private List<String> xaResourceIsSameRMClassNames = new ArrayList<>();
 	/**
      * Returns true if subtransactions are allowed.
      * Warning: subtransactions are not JTA spec compliant and most XA resource managers don't understand them.
@@ -1338,4 +1339,41 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 	public void setTransactionToThreadListenersEnabled(boolean transactionToThreadListenersEnabled) {
 		this.transactionToThreadListenersEnabled = transactionToThreadListenersEnabled;
 	}
+
+    /**
+     * Returns the class names of the XAResource types whose isSameRM method is overridden to return false.
+     * This override is useful because some drivers do not implement isSameRM correctly.
+     *
+     * Default: empty list.
+     *
+     * @return the class names of XAResource types that should be overriden.
+     */
+    public List<String> getXaResourceIsSameRMClassNames()
+    {
+        synchronized(this)
+        {
+            return new ArrayList<String>(xaResourceIsSameRMClassNames);
+        }
+    }
+
+    /**
+     * Sets the class names of the XAResource types whose isSameRM method is overridden to return false.
+     * This override is useful because some drivers do not implement isSameRM correctly.
+     *
+     * @param xaResourceIsSameRMClassNames the class names of XAResource types that should be overriden.
+     */
+    public void setXaResourceIsSameRMClassNames(List<String> xaResourceIsSameRMClassNames)
+    {
+        synchronized(this)
+        {
+            if(xaResourceIsSameRMClassNames == null)
+            {
+                this.xaResourceIsSameRMClassNames = new ArrayList<>();
+            }
+            else if(!xaResourceIsSameRMClassNames.equals(this.xaResourceIsSameRMClassNames))
+            {
+                this.xaResourceIsSameRMClassNames = new ArrayList<>(xaResourceIsSameRMClassNames);
+            }
+        }
+    }
 }

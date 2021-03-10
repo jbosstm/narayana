@@ -42,6 +42,7 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.xa.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -141,7 +142,7 @@ public class RecoveryXids
 	    if (xares == null)
 		return false;
 	    else
-		return xares.getXaResource().isSameRM(_xares.getXaResource());
+		return XAUtils.isSameRM(xares.getXaResource(), _xares.getXaResource());
 	}
 	catch (Exception ex)
 	{

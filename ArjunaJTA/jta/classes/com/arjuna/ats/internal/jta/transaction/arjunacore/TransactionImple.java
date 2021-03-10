@@ -1062,7 +1062,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		for (Object resource : _duplicateResources.keySet()) {
 			XAResource dupXar = (XAResource) resource;
-			if (_theXAResource.isSameRM(dupXar)) {
+			if (XAUtils.isSameRM(_theXAResource, dupXar)) {
 				try {
 					doEnd(_tranID, dupXar, xaState, txInfoState);
 				} catch (XAException e) {
@@ -1521,7 +1521,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					XAResource x = (XAResource) el.nextElement();
 
-					if (x.isSameRM(xaRes))
+					if (XAUtils.isSameRM(x, xaRes))
 					{
 						TxInfo info = (TxInfo) _resources.get(x);
 
@@ -1539,7 +1539,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					XAResource x = (XAResource) el.nextElement();
 
-					if (x.isSameRM(xaRes))
+					if (XAUtils.isSameRM(x, xaRes))
 					{
 						TxInfo info = (TxInfo) _resources.get(x);
 
@@ -1578,7 +1578,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					{
 						XAResource x = (XAResource) el.nextElement();
 
-						if (x.isSameRM(xaRes))
+						if (XAUtils.isSameRM(x, xaRes))
 						{
 							return (TxInfo) _resources.get(x);
 						}
@@ -1593,7 +1593,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					{
 						XAResource x = (XAResource) el.nextElement();
 
-						if (x.isSameRM(xaRes))
+						if (XAUtils.isSameRM(x, xaRes))
 						{
 							return (TxInfo) _duplicateResources.get(x);
 						}
