@@ -122,14 +122,17 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 ######################################################################
 
 # https://github.com/oracle/docker-images/tree/master/OracleDatabase
-# docker run --name oracle-ci --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=oracle oracle/database:11.2.0.2-xe
-# docker run --rm -ti oracle/database:11.2.0.2-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
-# CREATE USER dtf11 IDENTIFIED BY dtf11; 
-# GRANT CONNECT, RESOURCE TO dtf11;
-# CREATE USER dtf12 IDENTIFIED BY dtf12;
-# GRANT CONNECT, RESOURCE TO dtf12;
-# alter system set processes=300 scope=spfile;
-# shut immediate;
+# In a shell run: docker run --name oracle-ci --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=oracle oracle/database:11.2.0.2-xe
+#   That leaves the docker container running
+# In a second shell: docker run --rm -ti oracle/database:11.2.0.2-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
+#   CREATE USER dtf11 IDENTIFIED BY dtf11; 
+#   GRANT CONNECT, RESOURCE TO dtf11;
+#   CREATE USER dtf12 IDENTIFIED BY dtf12;
+#   GRANT CONNECT, RESOURCE TO dtf12;
+#   alter system set processes=300 scope=spfile;
+#   shut immediate;
+#   exit
+# Exit both shells docker run commands
 # docker start oracle-ci
 
 DB1_THIN_JNDI_NumberOfDrivers=2
