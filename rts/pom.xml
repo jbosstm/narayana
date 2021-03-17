@@ -90,28 +90,37 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     </profile>
     <profile>
 	  <id>jdk11</id>
-          <activation>
-             <jdk>[11,)</jdk>
-          </activation>
-          <properties>
-             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-	  </properties>
-	  <dependencies>
-             <dependency>
-                <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-		<scope>provided</scope>
-             </dependency>
-	  </dependencies>
-      </profile>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+        <properties>
+          <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+          <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+        </properties>
+      <dependencies>
+        <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+        <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
     <profile>
     <id>community</id>
       <modules>
         <module>lra</module>
         <module>sra</module>
       </modules>
+      <dependencies>
+        <dependency>
+          <groupId>orson</groupId>
+          <artifactId>orson</artifactId>
+          <version>${version.orson}</version>
+          <scope>system</scope>
+          <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
   <modules>
