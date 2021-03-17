@@ -70,6 +70,12 @@
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>lra-coordinator-jar</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>orson</groupId>
+                <artifactId>orson</artifactId>
+              </exclusion>
+            </exclusions> 
         </dependency>
         <dependency>
           <groupId>org.eclipse.microprofile.lra</groupId>
