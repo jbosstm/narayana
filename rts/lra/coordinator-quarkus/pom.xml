@@ -155,7 +155,9 @@
       <profile>
         <id>quarkus-uber</id>
         <activation>
-          <activeByDefault>true</activeByDefault>
+          <property>
+            <name>!no-quarkus-uber</name>
+          </property>
         </activation>
         <properties>
           <quarkus.package.type>uber-jar</quarkus.package.type>
