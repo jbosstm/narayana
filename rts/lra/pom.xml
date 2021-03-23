@@ -25,7 +25,6 @@
         <version.cdi-api>2.0</version.cdi-api>
         <version.servlet-api>2.5</version.servlet-api>
         <version.jboss-modules>1.10.2.Final</version.jboss-modules>
-        <version.jboss.json-api>1.0.0.Final</version.jboss.json-api>
         <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
 
         <version.microprofile.lra.api>1.0-RC2</version.microprofile.lra.api>
