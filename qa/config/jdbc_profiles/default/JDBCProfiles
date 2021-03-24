@@ -31,21 +31,27 @@
 #https://hub.docker.com/r/ibmcom/db2/
 # docker run -itd --name db2-ci --privileged=true -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept -e DBNAME=BTDB1 -p 50000:50000 ibmcom/db2:latest db2start
 # docker exec -it db2-ci bash
-# Edit line 193 of /var/db2_setup/lib/setup_db2_instance.sh to remove something like ${instance_name?} from the line
+# Edit line 193 of /var/db2_setup/lib/setup_db2_instance.sh to change "${instance_name?}" to "db2inst1" from the line
 #useradd db2
 #passwd db2
+#exit
+#docker stop db2-ci
+#docker start db2-ci
+# Check for BTDB1 to be created
+#docker logs -f db2-ci
+#docker exec -it db2-ci bash
 #su - db2inst1
 #db2
 #CONNECT TO BTDB1
 #GRANT CONNECT ON DATABASE TO USER db2
+#quit
 
 ######################################################################
 # PostgreSQL JNDI Pair
 ######################################################################
 
-# docker run --name postgres-ci -e DB_USER="postgres" -e DB_PASSWORD="postgres" -d -p 5432:5432 postgres:9.4
+# docker run --name postgres-ci -e POSTGRES_USER="postgres" -e POSTGRES_PASSWORD="postgres" -d -p 5432:5432 postgres:9.4
 # docker start postgres-ci
-# /var/lib/pgsql/data - conf files for tcp/ip and auth
 # docker exec -it postgres-ci bash
 # su - postgres
 # createdb jbossts
@@ -59,8 +65,8 @@
 # exit
 # sed -i "s/#max_prepared_transactions = 0/max_prepared_transactions = 100/g" ./var/lib/postgresql/data/postgresql.conf
 # exit
-#docker stop postgres-ci
-#docker start postgres-ci
+# docker stop postgres-ci
+# docker start postgres-ci
 
 DB1_PGSQL_JNDI_NumberOfDrivers=2
 DB1_PGSQL_JNDI_Driver0=org.postgresql.Driver
@@ -86,16 +92,16 @@ DB2_PGSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 # MySQL JNDI Pair
 ######################################################################
 
-#docker run --name mariadb-ci -e MYSQL_ROOT_PASSWORD="admin1234" -d -p 3306:3306 mariadb:latest
-## doesn't seem to work due - docker run --rm -ti mariadb:latest mysql -p
+# docker run --name mariadb-ci -e MYSQL_ROOT_PASSWORD="admin1234" -d -p 3306:3306 mariadb:latest
 # docker exec -it mariadb-ci bash
-# mysql
+# mysql -p
 # create database jbossts;
 # CREATE USER dtf11 IDENTIFIED BY 'dtf11';
 # grant all on jbossts.* to 'dtf11'@'%' identified by 'dtf11';
 # CREATE USER dtf12 IDENTIFIED BY 'dtf12';
 # grant all on jbossts.* to 'dtf12'@'%' identified by 'dtf12';
 # flush privileges;
+# exit
  
 DB1_MYSQL_JNDI_NumberOfDrivers=2
 DB1_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
@@ -122,9 +128,13 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 ######################################################################
 
 # https://github.com/oracle/docker-images/tree/master/OracleDatabase
-# In a shell run: docker run --name oracle-ci --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=oracle oracle/database:11.2.0.2-xe
-#   That leaves the docker container running
-# In a second shell: docker run --rm -ti oracle/database:11.2.0.2-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
+# git clone https://github.com/oracle/docker-images.git
+# cd docker-images/OracleDatabase/SingleInstance/dockerfiles/11.2.0.2
+# Read the Dockerfile.xe
+# docker build -t oracle/database:11.2.0.2-xe .
+# docker run --name oracle-ci --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=oracle oracle/database:11.2.0.2-xe
+# Leave the docker container running and then in a second shell
+# docker run --rm -ti oracle/database:11.2.0.2-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
 #   CREATE USER dtf11 IDENTIFIED BY dtf11; 
 #   GRANT CONNECT, RESOURCE TO dtf11;
 #   CREATE USER dtf12 IDENTIFIED BY dtf12;
