@@ -127,14 +127,14 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 # Oracle thin JNDI Pair
 ######################################################################
 
-# https://github.com/oracle/docker-images/tree/master/OracleDatabase
 # git clone https://github.com/oracle/docker-images.git
-# cd docker-images/OracleDatabase/SingleInstance/dockerfiles/11.2.0.2
-# Read the Dockerfile.xe
-# docker build -t oracle/database:11.2.0.2-xe .
-# docker run --name oracle-ci --shm-size=1g -p 1521:1521 -p 8080:8080 -e ORACLE_PWD=oracle oracle/database:11.2.0.2-xe
+# cd docker-images/OracleDatabase/SingleInstance/dockerfiles
+# Consider changes after https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/dockerfiles/18.4.0/Dockerfile.xe#L61 if https://github.com/fuzziebrain/docker-oracle-xe/issues/15#issuecomment-578452720 is relevant
+# ./buildContainerImage.sh -x -v 18.4.0
+
+# docker run --name oracle-ci -p 1521:1521 -p 5500:5500 -e ORACLE_PWD=oracle oracle/database:18.4.0-xe
 # Leave the docker container running and then in a second shell
-# docker run --rm -ti oracle/database:11.2.0.2-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
+# docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
 #   CREATE USER dtf11 IDENTIFIED BY dtf11; 
 #   GRANT CONNECT, RESOURCE TO dtf11;
 #   CREATE USER dtf12 IDENTIFIED BY dtf12;
