@@ -32,11 +32,16 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -3377,6 +3382,37 @@ public class BasicAction extends StateManager
         return isCurrent;
     }
 
+    // called by the reaper system via TwoPhaseCoordinator.recordStackTraces
+    protected synchronized void recordStackTraces() {
+        Map<String,String> currentCapture = createStackTraces();
+        StackTraceCapture stackTraceCapture = new StackTraceCapture(System.currentTimeMillis(), currentCapture);
+        threadStackTraceHistoryList.add(stackTraceCapture);
+    }
+
+    // called by the reaper system via TwoPhaseCoordinator.outputCapturedStackTraces
+    protected synchronized void outputCapturedStackTraces() {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+        for(StackTraceCapture stackTraceCapture : threadStackTraceHistoryList) {
+            for(Map.Entry<String,String> entry : createStackTraces().entrySet()) {
+                tsLogger.i18NLogger.info_historic_stack_trace(objectUid, entry.getKey(), dateFormat.format(new Date(stackTraceCapture.getTime())), entry.getValue());
+            }
+        }
+    }
+
+    protected synchronized Map<String,String> createStackTraces() {
+        Map<String,String> results = new HashMap<>();
+        for (Thread entry : _childThreads.values()) {
+            StackTraceElement[] stackTrace = entry.getStackTrace();
+            StringBuilder sb = new StringBuilder();
+            for (StackTraceElement element : stackTrace) {
+                sb.append(element.toString());
+                sb.append("\n");
+            }
+            results.put(entry.getName(), sb.toString());
+        }
+        return results;
+    }
+
     private final boolean checkChildren (boolean isCommit)
     {
         boolean problem = false;
@@ -3403,14 +3439,8 @@ public class BasicAction extends StateManager
                     // This was added for JBTM-2476 - it could be used during commit
                     // but as the commit path needs to be optimum and getStackTrace is expensive
                     // I did not include it
-                    for (Thread entry : _childThreads.values()) {
-                        StackTraceElement[] stackTrace = entry.getStackTrace();
-                        StringBuilder sb = new StringBuilder();
-                        for (StackTraceElement element : stackTrace) {
-                            sb.append(element.toString());
-                            sb.append("\n");
-                        }
-                        tsLogger.i18NLogger.warn_multiple_threads(objectUid, entry.getName(), sb.toString());
+                    for(Map.Entry<String,String> entry : createStackTraces().entrySet()) {
+                        tsLogger.i18NLogger.warn_multiple_threads(objectUid, entry.getKey(), entry.getValue());
                     }
                 }
 
@@ -3767,7 +3797,27 @@ public class BasicAction extends StateManager
     private List<Throwable> deferredThrowables = new ArrayList<>();
 
     protected boolean subordinate;
-    
+
+    protected final List<StackTraceCapture> threadStackTraceHistoryList = new ArrayList<>();
+}
+
+// a point in time snapshot of N Thread stacks, see threadStackTraceHistoryList and makeStackTraces
+class StackTraceCapture {
+    private final long time;
+    private final Map<String,String> stackTraces;
+
+    public StackTraceCapture(long time, Map<String, String> stackTraces) {
+        this.time = time;
+        this.stackTraces = stackTraces;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public Map<String, String> getStackTraces() {
+        return stackTraces;
+    }
 }
 
 class BasicActionFinalizer

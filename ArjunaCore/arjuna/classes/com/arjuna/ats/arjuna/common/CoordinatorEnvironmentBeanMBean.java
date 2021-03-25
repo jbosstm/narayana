@@ -62,6 +62,10 @@ public interface CoordinatorEnvironmentBeanMBean
 
     int getTxReaperZombieMax();
 
+    long getTxReaperTraceGracePeriod();
+
+    long getTxReaperTraceInterval();
+
     int getDefaultTimeout();
 
     boolean isTransactionStatusManagerEnable();

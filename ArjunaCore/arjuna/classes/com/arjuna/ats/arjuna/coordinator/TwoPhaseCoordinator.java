@@ -586,7 +586,23 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
         return synchs;
     }
 
-    private SortedSet<SynchronizationRecord> _synchs;
+	@Override
+	public synchronized void recordStackTraces() {
+		// callback for the Reaper to tell us when it's time to take a snapshot of our threads.
+		// the heavy lifting is actually done up in BasicAction, but we're Reapable and it's not.
+		super.recordStackTraces();
+	}
+
+	@Override
+	public synchronized void outputCapturedStackTraces() {
+		// callback for the Reaper to tell us when it's time to dump any previously captured
+		// thread traces, which is usually right before a timeout (cancel)
+		// as above, the heavy lifting is actually done up in BasicAction, but we're Reapable and it's not.
+		super.outputCapturedStackTraces();
+	}
+
+
+	private SortedSet<SynchronizationRecord> _synchs;
     private List<Future<Boolean>> runningSynchronizations = null;
     private CompletionService<Boolean> synchronizationCompletionService = null;
     private boolean executingInterposedSynchs = false;
