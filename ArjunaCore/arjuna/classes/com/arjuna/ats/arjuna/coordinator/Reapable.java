@@ -42,12 +42,20 @@ import com.arjuna.ats.arjuna.common.Uid;
 public interface Reapable
 {
 
-    public boolean running ();
+    boolean running();
 
-    public boolean preventCommit ();
+    boolean preventCommit();
 
-    public int cancel ();
+    int cancel();
 
-    public Uid get_uid ();
+    Uid get_uid();
+
+    default void recordStackTraces() {
+        // default null-op
+    }
+
+    default void outputCapturedStackTraces() {
+        // default null-op
+    }
     
 }

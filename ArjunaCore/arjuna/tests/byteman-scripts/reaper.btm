@@ -111,7 +111,7 @@ ENDRULE
 
 RULE pause transaction reaper worker 1
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD doCancellations
+METHOD doWork
 AT SYNCHRONIZE
 BIND NOTHING
 IF isRendezvous("reaperworker1", 2)
@@ -125,7 +125,7 @@ ENDRULE
 
 RULE pause transaction reaper worker 2
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD doCancellations
+METHOD doWork
 AT SYNCHRONIZE 2
 BIND NOTHING
 IF isRendezvous("reaperworker2", 2)
@@ -139,7 +139,7 @@ ENDRULE
 
 RULE pause transaction reaper worker 3
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD doCancellations
+METHOD doWork
 AT CALL cancel
 BIND NOTHING
 IF isRendezvous("reaperworker3", 2)
@@ -153,7 +153,7 @@ ENDRULE
 
 RULE pause transaction reaper worker 4
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-METHOD doCancellations
+METHOD doWork
 AT CALL preventCommit
 BIND NOTHING
 IF isRendezvous("reaperworker4", 2)
@@ -297,7 +297,7 @@ ENDRULE
 # debug tracing rules
 # RULE ReaperTestCase trace element remove
 # CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
-# METHOD doCancellations
+# METHOD doWork
 # AT CALL removeElement
 # BIND NOTHING
 # IF TRUE

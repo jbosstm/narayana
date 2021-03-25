@@ -45,24 +45,35 @@ public class ReaperElement implements Comparable<ReaperElement>
       * the relative cost of recreating them over keeping them around.
       */
 
-	public ReaperElement(Reapable control, int timeout)
+    public ReaperElement(Reapable control, int cancelIntervalSeconds) {
+        this(control, cancelIntervalSeconds, Long.MAX_VALUE);
+    }
+
+    public ReaperElement(Reapable control, int cancelIntervalSeconds, long traceGracePeriodMills)
 	{
 		if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("ReaperElement::ReaperElement ( " + control + ", "
-                    + timeout + " )");
+                    + cancelIntervalSeconds + " )");
         }
 
 		_control = control;
-		_timeout = timeout;
+		_timeout = cancelIntervalSeconds;
 		_status = RUN;
         _worker = null;
+
+        long now = System.currentTimeMillis();
 
 		/*
 		 * Given a timeout period in seconds, calculate its absolute value from
 		 * the current time of day in milliseconds.
 		 */
+        _transactionTimeoutAbsoluteMillis = (cancelIntervalSeconds * 1000L) + now;
+        _nextCheckAbsoluteMillis = _transactionTimeoutAbsoluteMillis;
 
-		_absoluteTimeoutMills = (timeout * 1000L) + System.currentTimeMillis();
+        // if stack tracing will kick in before timeout, the wakeup time is that instead
+        if(traceGracePeriodMills < cancelIntervalSeconds*1000L) {
+            _nextCheckAbsoluteMillis = traceGracePeriodMills + now;
+        }
 
         // add additional variation to distinguish instances created in the same millisecond.
         _bias = getBiasCounter();
@@ -88,7 +99,7 @@ public class ReaperElement implements Comparable<ReaperElement>
             return 0;
         }
 
-        if(_absoluteTimeoutMills == other._absoluteTimeoutMills) {
+        if(_nextCheckAbsoluteMillis == other._nextCheckAbsoluteMillis) {
             if (_bias == other._bias) {
                 if(_control.get_uid().equals(other._control.get_uid())) {
                     return 0;
@@ -101,7 +112,7 @@ public class ReaperElement implements Comparable<ReaperElement>
                 return (_bias > other._bias) ? 1 : -1;
             }
         } else {
-            return (_absoluteTimeoutMills > other._absoluteTimeoutMills) ? 1 : -1;
+            return (_nextCheckAbsoluteMillis > other._nextCheckAbsoluteMillis) ? 1 : -1;
         }
 	}
 
@@ -128,7 +139,8 @@ public class ReaperElement implements Comparable<ReaperElement>
 
     public final Reapable _control;
 
-	private long _absoluteTimeoutMills;
+	private long _nextCheckAbsoluteMillis;
+	private long _transactionTimeoutAbsoluteMillis;
     private final int _bias;
 
     // bias is used to distinguish/sort instances with the same _absoluteTimeoutMills
@@ -164,6 +176,14 @@ public class ReaperElement implements Comparable<ReaperElement>
          * the element is associated with a running transaction. the
          * following transitions can occur, performed either by the
          * reaper (R) or the worker (W)
+         *
+         * RUN --> TRACE (R)
+         * TRACE --> RUN (W)
+         *
+         * the element may loop between RUN and TRACE zero or more times in its life
+         * before going into SCHEDULE_CANCEL. It's assumed that capturing the traces
+         * is potentially expensive but that it won't become wedged as cancellation
+         * can, so it doesn't lead to other states in the same way as cancellation.
          *
          * RUN --> SCHEDULE_CANCEL (R)
          *
@@ -267,6 +287,12 @@ public class ReaperElement implements Comparable<ReaperElement>
 
         public static final int ZOMBIE = 6;
 
+        /**
+         * status of a reaper element  which has been queued for
+         * stack trace capture by a reaper worker.
+         */
+        public static final int TRACE = 7;
+
         /*
          * convenience method to provide printable string for current status
          * for use in debugging/logging. should only be called while
@@ -291,27 +317,37 @@ public class ReaperElement implements Comparable<ReaperElement>
                    return "COMPLETE";
               case ZOMBIE:
                    return "ZOMBIE";
+              case TRACE:
+                  return "TRACE";
               default:
                    return "UNKNOWN";
               }
          }
 
     /**
-     * Returns absolute timeout in milliseconds
-     * @return The absolute timeout in millis
+     * Returns the absolute time of the next status check, in milliseconds
+     * @return The absolute wakeup time, in millis
      */
-    public long getAbsoluteTimeout()
+    public long getNextCheckAbsoluteMillis()
     {
-        return _absoluteTimeoutMills;
+        return _nextCheckAbsoluteMillis;
     }
 
     /**
-     * Sets the absolute timeout.
+     * Sets the absolute time of the next status check (i.e. wakeup) for this element.
      *
-     * @param absoluteTimeout value in milliseconds
+     * @param nextCheckAbsoluteMillis value in milliseconds
      */
-    public void setAbsoluteTimeout(long absoluteTimeout)
+    public void setNextCheckAbsoluteMillis(long nextCheckAbsoluteMillis)
     {
-        this._absoluteTimeoutMills = absoluteTimeout;
+        this._nextCheckAbsoluteMillis = nextCheckAbsoluteMillis;
+    }
+
+    /**
+     * Returns the absolute time of the transaction expiry, in milliseconds
+     * @return The absolute timeout time, in millis
+     */
+    public long getTransactionTimeoutAbsoluteMillis() {
+        return _transactionTimeoutAbsoluteMillis;
     }
 }

@@ -94,12 +94,12 @@ public class ReaperElementManager
         // assume it must be in the sorted list, as it was likely obtained via getFirst...
         removeSorted(reaperElement);
         // we could add delay to the original timeout, but using current time is probably safer.
-        reaperElement.setAbsoluteTimeout((System.currentTimeMillis() + delayMillis));
+        reaperElement.setNextCheckAbsoluteMillis((System.currentTimeMillis() + delayMillis));
         // reinsert into its new position.
         insertSorted(reaperElement);
 
         // getFirst takes care of flushing the pending set for us.
-        return getFirst().getAbsoluteTimeout();
+        return getFirst().getNextCheckAbsoluteMillis();
     }
 
     // use only for testing, it's nasty from a performance perspective.
@@ -115,7 +115,7 @@ public class ReaperElementManager
     public synchronized void setAllTimeoutsToZero() {
         flushPending();
         for(ReaperElement reaperElement : elementsOrderedByTimeout) {
-            reaperElement.setAbsoluteTimeout(0);
+            reaperElement.setNextCheckAbsoluteMillis(0);
         }
     }
 
