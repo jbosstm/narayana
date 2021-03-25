@@ -70,6 +70,8 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile long txReaperCancelWaitPeriod = TransactionReaper.defaultCancelWaitPeriod;
     private volatile long txReaperCancelFailWaitPeriod = TransactionReaper.defaultCancelFailWaitPeriod;
     private volatile int txReaperZombieMax = TransactionReaper.defaultZombieMax;
+    private volatile long txReaperTraceGracePeriod = TransactionReaper.defaultUntracedPeriod;
+    private volatile long txReaperTraceInterval = TransactionReaper.defaultTracePeriod;
 
     private volatile int defaultTimeout = 60; // seconds
     private volatile boolean transactionStatusManagerEnable = true;
@@ -517,6 +519,47 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setTxReaperZombieMax(int txReaperZombieMax)
     {
         this.txReaperZombieMax = txReaperZombieMax;
+    }
+
+    /**
+     * Returns the number of milliseconds delay after a transaction is started,
+     * before the reaper will start taking periodic stack traces from it.
+     *
+     * Default: 180000 (3 minutes)
+     *
+     * @return the reaper tracing grace period, in milliseconds.
+     */
+    public long getTxReaperTraceGracePeriod() {
+        return txReaperTraceGracePeriod;
+    }
+
+    /**
+     * Sets the delay after a transaction is started, before it is eligible for periodic tracing.
+     *
+     * @param txReaperTraceGracePeriod in milliseconds.
+     */
+    public void setTxReaperTraceGracePeriod(long txReaperTraceGracePeriod) {
+        this.txReaperTraceGracePeriod = txReaperTraceGracePeriod;
+    }
+
+    /**
+     * Returns the number of milliseconds interval between transaction stack trace snapshots.
+     *
+     * Default: 30000 (30 seconds)
+     *
+     * @return the reaper tracing interval, in milliseconds.
+     */
+    public long getTxReaperTraceInterval() {
+        return txReaperTraceInterval;
+    }
+
+    /**
+     * Sets the interval between stack trace snapshots.
+     *
+     * @param txReaperTraceInterval in milliseconds.
+     */
+    public void setTxReaperTraceInterval(long txReaperTraceInterval) {
+        this.txReaperTraceInterval = txReaperTraceInterval;
     }
 
     /**

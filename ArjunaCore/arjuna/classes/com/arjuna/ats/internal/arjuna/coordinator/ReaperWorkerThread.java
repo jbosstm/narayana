@@ -59,10 +59,10 @@ public void run ()
              // this thread to cancel
 
              if (tsLogger.logger.isTraceEnabled()) {
-                 tsLogger.logger.trace("Thread "+Thread.currentThread()+" waiting for cancelled TXs");
+                 tsLogger.logger.trace("Thread "+Thread.currentThread()+" waiting for transaction check tasks");
              }
 
-             _theReaper.waitForCancellations();
+             _theReaper.waitForWork();
 
              // check for shutdown before we wait again
 
@@ -72,10 +72,10 @@ public void run ()
              // get the reaper to cancel any TXs queued for cancellation.
 
              if (tsLogger.logger.isTraceEnabled()) {
-                 tsLogger.logger.trace("Thread "+Thread.currentThread()+" performing cancellations");
+                 tsLogger.logger.trace("Thread "+Thread.currentThread()+" performing transaction check work");
              }
 
-             _theReaper.doCancellations();
+             _theReaper.doWork();
 
             // check for shutdown before we wait again
 

@@ -30,6 +30,7 @@ import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import org.jboss.logging.annotations.Cause;
@@ -510,9 +511,9 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = WARN)
 	public void warn_coordinator_TransactionReaper_16(String arg0, Uid arg1, @Cause() Throwable arg2);
 
-	@Message(id = 12117, value = "TransactionReaper::check timeout for TX {0} in state  {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = WARN)
-	public void warn_coordinator_TransactionReaper_18(Uid arg0, String arg1);
+	@Message(id = 12117, value = "TransactionReaper::check processing TX {0} in state  {1}", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_coordinator_TransactionReaper_18(Uid arg0, String arg1);
 
 	@Message(id = 12118, value = "TransactionReaper NORMAL mode is deprecated. Update config to use PERIODIC for equivalent behaviour.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
@@ -1618,6 +1619,11 @@ public interface arjunaI18NLogger {
 
 	@Message(id = 12403, value = "Can't create pmem store in ''{0}''  - may not be an fs-dax location", format = MESSAGE_FORMAT)
 	String get_pmem_not_supported(String dir);
+
+	// see also 12381/warn_multiple_threads
+	@Message(id = 12404, value = "Action id {0} - thread {1} at time {2} had stackTrace {3}", format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	void info_historic_stack_trace(Uid objectUid, String threadName, String date, String stackTrace);
 
     /*
         Allocate new messages directly above this notice.
