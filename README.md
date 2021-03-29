@@ -26,11 +26,12 @@ https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInN
 
 Requirements
 ------------
-To build this project JDK 1.8 (or greater) is required.
+To build this project you will need a JDK (Java Development Kit) with a minimum version of 1.8.
+Note that it is not sufficient to use a JRE because the build requires access to an IDL compiler so ensure
+that the JAVA_HOME environment variable is set correctly and ensure that the JDK bin directory is included in the
+PATH environment variable.
 
-When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.8:
-
-	export JAVA_HOME=`/usr/libexec/java_home -v 1.8` 
+The commands to do this will vary depending upon which operating system you are building on.
 
 Building Naryana
 ----------------
