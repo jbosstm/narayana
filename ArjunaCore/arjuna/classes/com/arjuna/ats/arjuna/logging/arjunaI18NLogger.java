@@ -512,8 +512,8 @@ public interface arjunaI18NLogger {
 	public void warn_coordinator_TransactionReaper_16(String arg0, Uid arg1, @Cause() Throwable arg2);
 
 	@Message(id = 12117, value = "TransactionReaper::check processing TX {0} in state  {1}", format = MESSAGE_FORMAT)
-	@LogMessage(level = INFO)
-	public void info_coordinator_TransactionReaper_18(Uid arg0, String arg1);
+	@LogMessage(level = WARN)
+	public void warn_coordinator_TransactionReaper_18(Uid arg0, String arg1);
 
 	@Message(id = 12118, value = "TransactionReaper NORMAL mode is deprecated. Update config to use PERIODIC for equivalent behaviour.", format = MESSAGE_FORMAT)
 	@LogMessage(level = WARN)
