@@ -649,12 +649,10 @@ function xts_tests {
   fi
 
   [ $? -eq 0 ] || fatal "XTS: SOME TESTS failed"
-  if [ $ran_crt = 1 ]; then
-    if [[ $# == 0 || $# -gt 0 && "$1" != "-DskipTests" ]]; then
-      (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
-      if [[ $? != 0 && $ISIBM != 0 && -z $CODE_COVERAGE_ARGS ]]; then
-        fatal "Simplify CRASH RECOVERY logs failed"
-      fi
+  if [ $ran_crt = 1 ] && [[ ! "$@" =~ "-DskipTests" ]]; then
+    (cd XTS/localjunit/crash-recovery-tests && java -cp target/classes/ com.arjuna.qa.simplifylogs.SimplifyLogs ./target/log/ ./target/log-simplified)
+    if [[ $? != 0 && $ISIBM != 0 && -z $CODE_COVERAGE_ARGS ]]; then
+      fatal "Simplify CRASH RECOVERY logs failed"
     fi
   fi
 }
