@@ -146,7 +146,11 @@ public class TransactionReaper
                 }
             }
 
-            tsLogger.i18NLogger.info_coordinator_TransactionReaper_18(reaperElement._control.get_uid(), reaperElement.statusName());
+            if(reaperElement._status != ReaperElement.RUN ||
+                    reaperElement.getNextCheckAbsoluteMillis() >= reaperElement.getTransactionTimeoutAbsoluteMillis()){
+                // log warning, except when we're just going to perform a stacktrace.
+                tsLogger.i18NLogger.warn_coordinator_TransactionReaper_18(reaperElement._control.get_uid(), reaperElement.statusName());
+            }
 
             // if we have to synchronize on multiple objects we always
             // do so in a fixed order ReaperElement before Reaper and

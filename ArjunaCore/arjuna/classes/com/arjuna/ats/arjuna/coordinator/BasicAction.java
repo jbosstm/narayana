@@ -3393,7 +3393,7 @@ public class BasicAction extends StateManager
     protected synchronized void outputCapturedStackTraces() {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
         for(StackTraceCapture stackTraceCapture : threadStackTraceHistoryList) {
-            for(Map.Entry<String,String> entry : createStackTraces().entrySet()) {
+            for(Map.Entry<String,String> entry : stackTraceCapture.getStackTraces().entrySet()) {
                 tsLogger.i18NLogger.info_historic_stack_trace(objectUid, entry.getKey(), dateFormat.format(new Date(stackTraceCapture.getTime())), entry.getValue());
             }
         }
