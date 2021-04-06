@@ -62,6 +62,13 @@ public class TestTransactionalBean {
         throw throwable.newInstance();
     }
 
+    @Transactional(dontRollbackOn = Error.class)
+    public void invokeWithRequiresAndDontRollbackOnError(Class<? extends Throwable> throwable) throws Throwable {
+
+        AssertionParticipant.enlist();
+        throw throwable.newInstance();
+    }
+
     @Transactional(dontRollbackOn = TestException.class, rollbackOn = TestException.class)
     public void invokeWithDefaultAndDoAndDontRollbackOn(Class<? extends Throwable> throwable) throws Throwable {
 
