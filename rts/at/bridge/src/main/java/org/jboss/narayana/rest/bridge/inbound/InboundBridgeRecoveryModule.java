@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.resource.spi.XATerminator;
 import javax.transaction.xa.XAException;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -102,7 +103,7 @@ public class InboundBridgeRecoveryModule implements RecoveryModule {
             try {
                 final SubordinateTransaction st = SubordinationManager.getTransactionImporter().recoverTransaction(uid);
             } catch (XAException e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_inboundBridgeRecoveryModulePeriodicWorkSecondPass(e.getMessage(), e);
             }
         }
 
@@ -146,7 +147,7 @@ public class InboundBridgeRecoveryModule implements RecoveryModule {
                 } while (!finished);
             }
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_InboundBridgeRecoveryModulegetUidsToRecover(e.getMessage(), e);
         }
 
         return uids;
@@ -170,7 +171,7 @@ public class InboundBridgeRecoveryModule implements RecoveryModule {
                 try {
                     xaTerminator.rollback(bridge.getXid());
                 } catch (XAException e) {
-                    LOG.warn(e.getMessage(), e);
+                    RESTATLogger.atI18NLogger.warn_inboundBridgeRecoveryModuleAddBridgesToMapping(e.getMessage(), e);
                 }
             }
         }

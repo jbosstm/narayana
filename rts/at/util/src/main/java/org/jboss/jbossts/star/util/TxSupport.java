@@ -42,6 +42,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.provider.HttpResponseException;
 import org.jboss.jbossts.star.util.media.txstatusext.CoordinatorElement;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
@@ -481,6 +482,7 @@ public class TxSupport
             try {
                 body = (status != -1 ? getContent(connection) : "");
             } catch (IOException e) {
+                RESTATLogger.atI18NLogger.info_txSupportHttpRequest(e.getMessage(), e);
                 body = "";
             }
 
@@ -547,6 +549,7 @@ public class TxSupport
             if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED)
                 links.put("location", connection.getHeaderField("location"));
         } catch (IOException e) {
+            RESTATLogger.atI18NLogger.warn_txSupportAddLocationHeader(e.getMessage(), e);
         }
     }
 
@@ -671,7 +674,7 @@ public class TxSupport
             try {
                 return Integer.parseInt(v);
             } catch (NumberFormatException e) {
-                //
+                RESTATLogger.atI18NLogger.warn_txSupportGetIntValue(e.getMessage(), e);
             }
 
         return defValue;

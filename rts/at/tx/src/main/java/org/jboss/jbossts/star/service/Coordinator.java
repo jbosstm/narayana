@@ -41,6 +41,8 @@ import com.arjuna.ats.arjuna.objectstore.RecoveryStore;
 import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.provider.ResourceNotFoundException;
 import org.jboss.jbossts.star.provider.TransactionStatusException;
 import org.jboss.jbossts.star.resource.RESTRecord;
@@ -374,7 +376,7 @@ public class Coordinator
 
             throw new TransactionStatusException("Transaction failed to start: " + status);
         } catch (Exception e) {
-            log.debugf(e, "begin");
+            RESTATLogger.atI18NLogger.warn_failedToStartTransactionCorrdinator(e);
             throw new TransactionStatusException("Transaction failed to start: " + e);
         }
         finally
@@ -738,7 +740,7 @@ public class Coordinator
                 } while (!finished);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            RESTATLogger.atI18NLogger.warn_getUidsVolatileParticipantResource(e.getMessage(), e);
         }
 
         return uids;
@@ -780,7 +782,8 @@ public class Coordinator
                     }
                 }
             } catch (Throwable e) {
-                log.warnf("Could not reactivate pending transaction %s (reason: %s)", txn.get_uid(), e.getMessage());
+                RESTATLogger.atI18NLogger.warn_getRecoveringTransactions(e.getMessage(), e,
+        				txn.get_uid().fileStringForm());
             }
 
             recoveringTransactions.put(key, txn);
@@ -790,4 +793,3 @@ public class Coordinator
         return recoveringTransactions;
     }
 }
-

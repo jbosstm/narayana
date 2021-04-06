@@ -34,6 +34,8 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.SubordinateAtomicAction;
 import com.arjuna.ats.jta.recovery.XAResourceOrphanFilter;
+
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.logging.Logger;
 
 /**
@@ -103,9 +105,9 @@ public class InboundBridgeOrphanFilter implements XAResourceOrphanFilter {
                 } while (!finished);
             }
         } catch (ObjectStoreException e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_loadInStoreInboundBridgeOrphanFilter(e);
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_isInStoreInboundBridgeOrphanFilter(e);
         }
 
         return false;
