@@ -21,6 +21,7 @@
  */
 package org.jboss.narayana.rest.bridge.inbound;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.api.Participant;
 import org.jboss.narayana.rest.integration.api.ParticipantDeserializer;
@@ -45,7 +46,7 @@ public class InboundBridgeParticipantDeserializer implements ParticipantDeserial
         try {
             object = objectInputStream.readObject();
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_deserializeInboundBridgeParticipantDeserializer(e.getMessage(), e);
             return null;
         }
 
