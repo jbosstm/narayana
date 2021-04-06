@@ -22,6 +22,7 @@
 
 package com.hp.mwtests.ts.jta.cdi.transactional;
 
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -43,6 +44,7 @@ import javax.transaction.UserTransaction;
  */
 @RunWith(Arquillian.class)
 public class TransactionalImplTest {
+    private static final Logger log = Logger.getLogger(TransactionalImplTest.class);
 
     @Inject
     UserTransaction userTransaction;
@@ -137,6 +139,80 @@ public class TransactionalImplTest {
         Utills.assertTransactionActive(false);
 
         AssertionParticipant.assertCommitted();
+    }
+
+    @Test
+    public void testDefaultThrowError() throws Throwable {
+        // java.lang.Error is un-checked exception and rollback is expected
+
+        Utills.assertTransactionActive(false);
+
+        try {
+            testTransactionalBean.invokeWithDefault(Error.class);
+            Assert.fail("Expected Throwable to be thrown and rollback the transaction, but it was not");
+        } catch (Throwable t) {
+            log.debug("Expected behaviour: Error was thrown from the method", t);
+        }
+
+        Utills.assertTransactionActive(false);
+        AssertionParticipant.assertRolledBack();
+    }
+
+    @Test
+    public void testThrowErrorWithDontRollbackOn() throws Throwable {
+
+        Utills.assertTransactionActive(false);
+
+        try {
+            testTransactionalBean.invokeWithRequiresAndDontRollbackOnError(Error.class);
+            Assert.fail("Expected Throwable to be thrown but not rolling back the transaction, but it was not thrown");
+        } catch (Throwable t) {
+            log.debug("Expected behaviour: Error was thrown from the method", t);
+        }
+
+        Utills.assertTransactionActive(false);
+        AssertionParticipant.assertCommitted();
+    }
+
+    @Test
+    public void testDefaultThrowErrorWhenAcquiringTxn() throws Exception {
+        // java.lang.Error is un-checked exception and rollback is expected
+
+        TransactionManager tm = Utills.getTransactionManager();
+        Utills.assertTransactionActive(false);
+        tm.begin();
+
+        try {
+            Utills.assertTransactionActive(true);
+            testTransactionalBean.invokeWithDefault(Error.class);
+            Assert.fail("Expected Throwable to be thrown and rollback the transaction, but it was not");
+        } catch (Throwable t) {
+            log.debug("Expected behaviour: Error was thrown from the method", t);
+        }
+        tm.rollback();
+        AssertionParticipant.assertRolledBack();
+    }
+
+    @Test
+    public void testThrowErrorWithDontRollbackOnWhenAcquiringTxn() throws Throwable {
+
+        TransactionManager tm = Utills.getTransactionManager();
+        Utills.assertTransactionActive(false);
+        tm.begin();
+
+        try {
+            testTransactionalBean.invokeWithRequiresAndDontRollbackOnError(Error.class);
+            Assert.fail("Expected Throwable to be thrown but not rolling back the transaction, but it was not thrown");
+        } catch (Throwable t) {
+            log.debug("Expected behaviour: Error was thrown from the method", t);
+        }
+
+        Utills.assertTransactionActive(true);
+
+        tm.commit();
+        AssertionParticipant.assertCommitted();
+
+        Utills.assertTransactionActive(false);
     }
 
     @Test
