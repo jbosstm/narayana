@@ -88,13 +88,19 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <version>${version.org.jboss.logging.jboss-logging}</version>
-      <scope>provided</scope>
-    </dependency>
+      <!-- jboss logging -->
+	<dependency>
+	      <groupId>org.jboss.logging</groupId>
+	      <artifactId>jboss-logging-processor</artifactId>
+	      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+	      <scope>provided</scope>
+	</dependency>
+	    <dependency>
+	      <groupId>org.jboss.logging</groupId>
+	      <artifactId>jboss-logging</artifactId>
+	      <version>${version.org.jboss.logging.jboss-logging}</version>
+	      <scope>provided</scope>
+	</dependency>
   </dependencies>
   <build>
     <plugins>

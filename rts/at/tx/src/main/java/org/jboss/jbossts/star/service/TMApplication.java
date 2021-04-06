@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.provider.HttpResponseMapper;
 import org.jboss.jbossts.star.provider.NotFoundMapper;
 import org.jboss.jbossts.star.provider.TMUnavailableMapper;
@@ -67,9 +68,8 @@ public class TMApplication extends Application
             Collections.addAll(classes, mappers);
             Collections.addAll(classes, extraClasses);
         }
-        catch (Throwable e)
-        {
-            log.warnf("TM JAX-RS application failed to start: %s", e.getMessage());
+        catch (Throwable e){
+          RESTATLogger.atI18NLogger.warn_jaxrsTM(e.getMessage(), e);
         }
     }
 

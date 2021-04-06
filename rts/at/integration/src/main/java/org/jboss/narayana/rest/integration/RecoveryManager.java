@@ -7,6 +7,8 @@ import com.arjuna.ats.arjuna.objectstore.StoreManager;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.jbossts.star.util.TxMediaType;
 import org.jboss.logging.Logger;
@@ -90,7 +92,7 @@ public final class RecoveryManager {
             // to identify the uid from the participant persisted into the object store in order to delete it later
             persistedParticipants.put(participantInformation.getId(), uid);
         } catch (Exception e) {
-            LOG.warn("Failure while persisting participant information.", e);
+            RESTATLogger.atI18NLogger.warn_persistParticipantInformationRecoveryManager(e.getMessage(), e);
         }
     }
 
@@ -107,7 +109,8 @@ public final class RecoveryManager {
                 recoveryStore.remove_committed(new Uid(participantId), PARTICIPANT_INFORMATION_RECORD_TYPE);
                 persistedParticipants.remove(participantId);
             } catch (ObjectStoreException ose) {
-                LOG.warn("Failure while removing participant information from the object store.", ose);
+                RESTATLogger.atI18NLogger.warn_failureRemovingParticipantObjectStore(
+        				"Failure while removing participant information from the object store.", ose);
             }
         }
     }
@@ -172,9 +175,9 @@ public final class RecoveryManager {
                     }
                 }
             } catch (ObjectStoreException e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_recoverParticipantsRecoveryManager(e.getMessage(), e);
             } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_ioRecoverParticipantsRecoveryManager(e.getMessage(), e);
             }
         } else {
             LOG.warn("Participants cannot be loaded from the object store, because base URL was not set.");
@@ -219,9 +222,9 @@ public final class RecoveryManager {
                 removeParticipantInformation(participantInformation);
                 // TODO is it OK to leave participant not rolled back in case of Exception?
             } catch (HeuristicException e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_heuristicCreateParticipantsRecoveryManager(e.getMessage(), e);
             } catch (ParticipantException e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_participantCreateParticipantsRecoveryManager(e.getMessage(), e);
             }
             return null;
         }
@@ -262,7 +265,7 @@ public final class RecoveryManager {
                 return false;
             }
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_synchronizeParticipantUrlWithCoordinatorRecoveryManager(e.getMessage(), e);
             return false;
         }
 

@@ -1,5 +1,6 @@
 package org.jboss.narayana.rest.integration;
 
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.jbossts.star.util.TxMediaType;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
@@ -76,7 +77,7 @@ public class VolatileParticipantResource {
         try {
             volatileParticipant.beforeCompletion();
         } catch (Throwable t) {
-            LOG.warn("Before completion failed", t);
+            RESTATLogger.atI18NLogger.warn_beforeVolatileParticipantResource(t.getMessage(), t);
             return false;
         }
 
@@ -91,7 +92,7 @@ public class VolatileParticipantResource {
         try {
             volatileParticipant.afterCompletion(txStatus);
         } catch (Throwable t) {
-            LOG.warn("After completion failed", t);
+            RESTATLogger.atI18NLogger.warn_afterVolatileParticipantResource(t.getMessage(), t);
             return false;
         } finally {
             ParticipantsContainer.getInstance().removeVolatileParticipant(participantId);

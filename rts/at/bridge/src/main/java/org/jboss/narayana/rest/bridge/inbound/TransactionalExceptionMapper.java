@@ -12,11 +12,11 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class TransactionalExceptionMapper implements ExceptionMapper<TransactionalException> {
-
     public static final String TRANSACTIONA_REQUIRED_MESSAGE = "REST-AT transaction is required for this request.";
 
     public static final String INVALID_TRANSACTIONA_MESSAGE = "REST-AT transaction is not supported by this resource.";
 
+   
     @Override
     public Response toResponse(TransactionalException exception) {
         if (exception.getCause() instanceof InvalidTransactionException) {

@@ -22,6 +22,8 @@
 package org.jboss.narayana.rest.bridge.inbound;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+
+import org.jboss.jbossts.star.logging.RESTATLogger;
 import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.api.Aborted;
 import org.jboss.narayana.rest.integration.api.HeuristicException;
@@ -145,7 +147,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
             try {
                 inboundBridge.stop();
             } catch (Exception e) {
-                LOG.warn(e.getMessage(), e);
+                RESTATLogger.atI18NLogger.warn_failedToStopBridge(e.getMessage(), e);
             }
         }
     }
@@ -159,6 +161,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
                 prepareResult = SubordinationManager.getXATerminator().prepare(inboundBridge.getXid());
             }
         } catch (XAException e) {
+            RESTATLogger.atI18NLogger.warn_subordinateVoteXAException(e.getMessage(), e);
         }
 
         return prepareResultToVote(prepareResult);
@@ -166,13 +169,13 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
     private void commitSubordinate() throws HeuristicException {
         final InboundBridge inboundBridge = getInboundBridge();
-
+        
         try {
             if (inboundBridge != null) {
                 SubordinationManager.getXATerminator().commit(inboundBridge.getXid(), false);
             }
         } catch (XAException e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_subordinateCommitXAException(e.getMessage(), e);
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:
@@ -195,7 +198,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
                 SubordinationManager.getXATerminator().rollback(inboundBridge.getXid());
             }
         } catch (XAException e) {
-            LOG.warn(e.getMessage(), e);
+            RESTATLogger.atI18NLogger.warn_subordinateRollbackXAException(e.getMessage(), e);
 
             switch (e.errorCode) {
                 case XAException.XA_HEURCOM:
@@ -229,4 +232,4 @@ public class InboundBridgeParticipant implements Participant, Serializable {
         }
     }
 
-}
+}	
