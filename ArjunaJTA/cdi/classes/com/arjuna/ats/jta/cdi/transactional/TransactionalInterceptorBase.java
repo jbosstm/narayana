@@ -23,6 +23,7 @@
 package com.arjuna.ats.jta.cdi.transactional;
 
 
+import com.arjuna.ats.jta.cdi.SneakyThrow;
 import com.arjuna.ats.jta.cdi.TransactionExtension;
 import com.arjuna.ats.jta.cdi.async.ContextPropagationAsyncHandler;
 import com.arjuna.ats.jta.cdi.RunnableWithException;
@@ -178,7 +179,7 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
         try {
             ret = ic.proceed();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throwing = true;
             handleException(ic, e, tx);
         } finally {
@@ -201,8 +202,8 @@ public abstract class TransactionalInterceptorBase implements Serializable {
 
         try {
             return ic.proceed();
-        } catch (Exception e) {
-            handleException(ic, e, tx);
+        } catch (Throwable t) {
+            handleException(ic, t, tx);
         }
         throw new RuntimeException("UNREACHABLE");
     }
@@ -216,11 +217,11 @@ public abstract class TransactionalInterceptorBase implements Serializable {
      * The handleException considers the transaction to be marked for rollback only in case the thrown exception
      * comes with this effect (see {@link TransactionHandler#handleExceptionNoThrow(Transactional, Throwable, Transaction)}
      * and consider the {@link Transactional#dontRollbackOn()}.
-     * If so then this method rethrows the {@link Exception} passed as the parameter 'e'.
+     * If so then this method rethrows the {@link Throwable} passed as the parameter 't'.
      */
-    protected void handleException(InvocationContext ic, Exception e, Transaction tx) throws Exception {
-        TransactionHandler.handleExceptionNoThrow(getTransactional(ic), e, tx);
-        throw e;
+    protected void handleException(InvocationContext ic, Throwable t, Transaction tx) throws Exception {
+        TransactionHandler.handleExceptionNoThrow(getTransactional(ic), t, tx);
+        SneakyThrow.sneakyThrow(t);
     }
 
     protected boolean setUserTransactionAvailable(boolean available) {

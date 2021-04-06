@@ -34,26 +34,28 @@ public final class TransactionHandler {
 
     /**
      * For cases that the transaction should be marked for rollback
-     * ie. when {@link RuntimeException} is thrown or when the exception si marked in {@link Transactional#rollbackOn()}
+     * ie. when {@link RuntimeException} is thrown or when {@link Error} is thrown
+     * or when the exception si marked in {@link Transactional#rollbackOn()}
      * then {@link Transaction#setRollbackOnly()} is invoked.
      */
-    public static void handleExceptionNoThrow(Transactional transactional, Throwable e, Transaction tx)
+    public static void handleExceptionNoThrow(Transactional transactional, Throwable t, Transaction tx)
             throws IllegalStateException, SystemException {
 
         for (Class<?> dontRollbackOnClass : transactional.dontRollbackOn()) {
-            if (dontRollbackOnClass.isAssignableFrom(e.getClass())) {
+            if (dontRollbackOnClass.isAssignableFrom(t.getClass())) {
                 return;
             }
         }
 
         for (Class<?> rollbackOnClass : transactional.rollbackOn()) {
-            if (rollbackOnClass.isAssignableFrom(e.getClass())) {
+            if (rollbackOnClass.isAssignableFrom(t.getClass())) {
                 tx.setRollbackOnly();
                 return;
             }
         }
 
-        if (e instanceof RuntimeException) {
+        // RuntimeException and Error are un-checked exceptions and rollback is expected
+        if (t instanceof RuntimeException || t instanceof Error) {
             tx.setRollbackOnly();
             return;
         }
