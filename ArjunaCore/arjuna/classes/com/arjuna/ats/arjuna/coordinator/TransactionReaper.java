@@ -174,10 +174,8 @@ public class TransactionReaper
                             long now = System.currentTimeMillis();
                             long remaining = reaperElement.getTransactionTimeoutAbsoluteMillis()-now;
                             if(remaining > _traceInterval) {
-                                reaperElement.setNextCheckAbsoluteMillis(now+_traceInterval);
                                 reinsertElement(reaperElement, _traceInterval);
                             } else {
-                                reaperElement.setNextCheckAbsoluteMillis(reaperElement.getTransactionTimeoutAbsoluteMillis());
                                 reinsertElement(reaperElement, remaining);
                             }
 
