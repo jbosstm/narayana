@@ -252,18 +252,29 @@ public class RecoveryXids
     /**
      * JBTM-1255 this is required to reinstate JBTM-924, see message in @see RecoveryXids#isStale() 
      */
-    private static final int staleSafetyIntervalMillis; // The advice is that this (if made configurable is twice the safety interval)
+    private static volatile int staleSafetyIntervalMillis; // The advice is that this (if made configurable is twice the safety interval)
     
     // JBTM-916 removed final so 10000 is not inlined into source code until we make this configurable
 	// https://issues.jboss.org/browse/JBTM-842
     private static int safetyIntervalMillis; // may eventually want to make this configurable?
     
     static {
-        safetyIntervalMillis = jtaPropertyManager.getJTAEnvironmentBean().getOrphanSafetyInterval();
+        setSafetyIntervalMillis(jtaPropertyManager.getJTAEnvironmentBean().getOrphanSafetyInterval());
+    }
+
+    /**
+     * Setting up the safety interval millis. The value defines what time has to elapse
+     * for the participant record being considered as stale.
+     * When value is set lower than 0 then default value of {@code 20_000} milliseconds is used.
+     *
+     * @param safetyIntervalMillis number of milliseconds after the record is declared to be stale
+     */
+    public static synchronized void setSafetyIntervalMillis(int safetyIntervalMillis) {
+        RecoveryXids.safetyIntervalMillis = safetyIntervalMillis;
         if (safetyIntervalMillis > 0) {
             staleSafetyIntervalMillis = safetyIntervalMillis * 2;
         } else {
-            staleSafetyIntervalMillis = 20000;
+            staleSafetyIntervalMillis = 20_000;
         }
     }
 }
