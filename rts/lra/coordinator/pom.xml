@@ -260,6 +260,29 @@
             </properties>
         </profile>
         <profile>
+            <id>openapi-schema</id>
+            <activation>
+                <property>
+                    <name>openapi-schema</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>smallrye-open-api-maven-plugin</artifactId>
+                        <groupId>io.smallrye</groupId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate-schema</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>
