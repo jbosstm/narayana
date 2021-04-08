@@ -29,6 +29,14 @@ The Narayana LRA API is documented with Open API annotations at the java
 classes. The Open API definition needs to be published at the http://narayana.io
 page.
 
+The API can be generated as `yaml/json` file with
+
+[source,sh]
+----
+cd coordinator
+mvn process-classes -Popenapi-schema
+----
+
 == Changes in LRA REST API
 
 The Narayana LRA REST API is expected to support for at least two previous
