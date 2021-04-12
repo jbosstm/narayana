@@ -27,8 +27,8 @@
         <version.jboss-modules>1.10.2.Final</version.jboss-modules>
         <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
 
-        <version.microprofile.lra.api>1.0-RC2</version.microprofile.lra.api>
-        <version.microprofile.lra.tck>1.0-RC2</version.microprofile.lra.tck>
+        <version.microprofile.lra.api>1.0-RC3</version.microprofile.lra.api>
+        <version.microprofile.lra.tck>1.0-RC3</version.microprofile.lra.tck>
         <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
 
         <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
