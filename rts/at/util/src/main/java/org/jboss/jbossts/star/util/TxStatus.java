@@ -45,9 +45,12 @@ public enum TxStatus {
         this.twoPhaseOutcome = twoPhaseOutcome;
     }
 
-    public int status() { return status; }
-    public int twoPhaseOutcome() { return twoPhaseOutcome; }
-
+    public int status() {
+        return status;
+    }
+    public int twoPhaseOutcome() {
+        return twoPhaseOutcome;
+    }
     public static boolean isPrepare(String status) {
         return fromStatus(status).equals(TxStatus.TransactionPrepared);
     }
@@ -118,8 +121,7 @@ public enum TxStatus {
         return isComplete();
     }
 
-    public boolean isFinished()
-    {
+    public boolean isFinished(){
         switch (status) {
             case ActionStatus.COMMITTED  :
             case ActionStatus.H_COMMIT   :
@@ -149,8 +151,7 @@ public enum TxStatus {
         }
     }
 
-    public boolean isFinishing()
-    {
+    public boolean isFinishing(){
         switch (status) {
             case ActionStatus.PREPARING  :
             case ActionStatus.COMMITTING   :
@@ -161,10 +162,8 @@ public enum TxStatus {
         }
     }
 
-    public boolean hasHeuristic()
-    {
-        switch (status)
-        {
+    public boolean hasHeuristic(){
+        switch (status){
             case ActionStatus.H_COMMIT   :
             case ActionStatus.H_MIXED    :
             case ActionStatus.H_HAZARD   :

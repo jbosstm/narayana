@@ -25,7 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.util.*;
+import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -38,9 +41,8 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 /**
  * Log record for driving participants through 2PC and recovery
  */
-public class RESTRecord extends AbstractRecord implements Comparable
-{
-    protected final static Logger log = Logger.getLogger(RESTRecord.class);
+public class RESTRecord extends AbstractRecord implements Comparable{
+    protected static final Logger log = Logger.getLogger(RESTRecord.class);
     private String participantURI;
 
     // two phase aware participant completion URI
@@ -66,8 +68,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         status = TxStatus.TransactionStatusUnknown;
     }
 
-    public RESTRecord(String txId, String coordinatorURI, String participantURI, String terminateURI)
-    {
+    public RESTRecord(String txId, String coordinatorURI, String participantURI, String terminateURI){
         super(new Uid());
 
         if (log.isTraceEnabled())
@@ -108,18 +109,15 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return recoveryURI;
     }
 
-    protected String getParticipantURI()
-    {
+    protected String getParticipantURI(){
         return participantURI;
     }
 
-    public int typeIs()
-    {
+    public int typeIs(){
         return RecordType.RESTAT_RECORD;
     }
 
-    public Object value()
-    {
+    public Object value(){
         return status.name();
     }
 
@@ -131,30 +129,25 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return age;
     }
 
-    public void setValue(Object o)
-    {
+    public void setValue(Object o){
     }
 
-    public int nestedAbort()
-    {
+    public int nestedAbort(){
         return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public int nestedCommit()
-    {
+    public int nestedCommit(){
         return TwoPhaseOutcome.FINISH_OK;
     }
 
     /*
     * Not sub-transaction aware.
     */
-    public int nestedPrepare()
-    {
+    public int nestedPrepare(){
         return TwoPhaseOutcome.PREPARE_OK; // do nothing
     }
 
-    private void check_suspend(Fault f)
-    {
+    private void check_suspend(Fault f){
         if (fault.equals(f))
         {
             try
@@ -169,8 +162,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         }
     }
 
-    private void check_halt(Fault f)
-    {
+    private void check_halt(Fault f){
         if (fault.equals(f))
         {
             log.infof("%s: halt VM", f);
@@ -178,13 +170,11 @@ public class RESTRecord extends AbstractRecord implements Comparable
         }
     }
 
-    private int statusToOutcome()
-    {
+    private int statusToOutcome(){
         return statusToOutcome(status);
     }
 
-    private int statusToOutcome(TxStatus status)
-    {
+    private int statusToOutcome(TxStatus status){
         try {
             if (!status.equals(TxStatus.TransactionStatusUnknown))
                 return status.twoPhaseOutcome();
@@ -211,8 +201,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return super.forgetHeuristic();
     }
 
-    public int topLevelPrepare()
-    {
+    public int topLevelPrepare(){
         if (log.isTraceEnabled())
             log.tracef("prepare %s", prepareURI);
 
@@ -255,8 +244,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return TwoPhaseOutcome.PREPARE_NOTOK;
     }
 
-    public int topLevelAbort()
-    {
+    public int topLevelAbort(){
         if (log.isTraceEnabled())
             log.debugf("trace %s", rollbackURI);
 
@@ -284,8 +272,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return statusToOutcome();
     }
 
-    public int topLevelCommit()
-    {
+    public int topLevelCommit(){
         if (log.isTraceEnabled())
             log.tracef("commit %s", commitURI);
 
@@ -298,8 +285,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return doCommit(TxStatus.TransactionCommitted);
     }
 
-    public int nestedOnePhaseCommit()
-    {
+    public int nestedOnePhaseCommit(){
         return TwoPhaseOutcome.FINISH_ERROR;
     }
 
@@ -309,13 +295,11 @@ public class RESTRecord extends AbstractRecord implements Comparable
      * additional recoverable state, such as a reference to the transaction
      * coordinator, since it will not have an intentions list anyway.
      */
-    public int topLevelOnePhaseCommit()
-    {
+    public int topLevelOnePhaseCommit(){
         return doCommit(TxStatus.TransactionCommittedOnePhase);
     }
 
-    private int doCommit(TxStatus nextState)
-    {
+    private int doCommit(TxStatus nextState){
         TxSupport txs = new TxSupport();
 
         check_halt(Fault.commit_halt);
@@ -353,8 +337,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
             if (log.isTraceEnabled())
                 log.tracef("COMMIT OK at commitURI: %s", commitUri);
         }
-        catch (HttpResponseException e)
-        {
+        catch (HttpResponseException e){
             if (log.isDebugEnabled())
                 log.debugf(e, "commit exception: HTTP code: %s body: %s", e.getActualResponse(), txs.getBody());
 
@@ -371,8 +354,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return statusToOutcome(status);
     }
 
-    private boolean checkFinishError(int expected, TxStatus nextState) throws HttpResponseException
-    {
+    private boolean checkFinishError(int expected, TxStatus nextState) throws HttpResponseException{
         if (expected == HttpURLConnection.HTTP_NOT_FOUND)
         {
             // the participant may have moved so check the coordinator participantURI
@@ -431,8 +413,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
      * last known location of the participant.
      * @return true if the participant did move
      */
-    private boolean hasParticipantMoved()
-    {
+    private boolean hasParticipantMoved(){
         try
         {
             if (log.isTraceEnabled())
@@ -503,8 +484,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         return false;
     }
 
-    public boolean save_state(OutputObjectState os, int t)
-    {
+    public boolean save_state(OutputObjectState os, int t){
         try
         {
             os.packString(txId);
@@ -531,8 +511,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
         }
     }
 
-    public boolean restore_state(InputObjectState os, int t)
-    {
+    public boolean restore_state(InputObjectState os, int t){
         try
         {
             txId = os.unpackString();
@@ -564,46 +543,37 @@ public class RESTRecord extends AbstractRecord implements Comparable
         }
     }
 
-    public String type()
-    {
+    public String type(){
         return RESTRecord.typeName();
     }
 
-    public static String typeName()
-    {
+    public static String typeName(){
         return "/StateManager/AbstractRecord/RESTRecord";
     }
 
-    public boolean doSave()
-    {
+    public boolean doSave(){
         return true;
     }
 
-    public void merge(AbstractRecord a)
-    {
+    public void merge(AbstractRecord a){
     }
 
-    public void alter(AbstractRecord a)
-    {
+    public void alter(AbstractRecord a){
     }
 
-    public boolean shouldAdd(AbstractRecord a)
-    {
+    public boolean shouldAdd(AbstractRecord a){
         return (a.typeIs() == typeIs());
     }
 
-    public boolean shouldAlter(AbstractRecord a)
-    {
+    public boolean shouldAlter(AbstractRecord a){
         return false;
     }
 
-    public boolean shouldMerge(AbstractRecord a)
-    {
+    public boolean shouldMerge(AbstractRecord a){
         return false;
     }
 
-    public boolean shouldReplace(AbstractRecord a)
-    {
+    public boolean shouldReplace(AbstractRecord a){
         return false;
     }
 
@@ -619,8 +589,7 @@ public class RESTRecord extends AbstractRecord implements Comparable
     }
     Fault fault = Fault.none;
 
-    public void setFault(String name)
-    {
+    public void setFault(String name){
         for (Fault f : Fault.values())
         {
             if (f.name().equals(name))

@@ -31,7 +31,7 @@ public class ClientIntegrationTest extends BaseTest {
     public static void startServer() throws Exception {
         startContainer(TxSupport.TXN_MGR_URL, "org.jboss.jbossts.star.test", BaseTest.TransactionalResource.class);
     }
-    
+
     @Test
     public void testTransactionUrls() throws Exception {
         specTest.testTransactionUrls();
