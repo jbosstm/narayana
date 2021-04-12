@@ -16,7 +16,7 @@ public class TransactionalExceptionMapper implements ExceptionMapper<Transaction
 
     public static final String INVALID_TRANSACTIONA_MESSAGE = "REST-AT transaction is not supported by this resource.";
 
-   
+
     @Override
     public Response toResponse(TransactionalException exception) {
         if (exception.getCause() instanceof InvalidTransactionException) {

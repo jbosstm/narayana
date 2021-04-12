@@ -30,10 +30,8 @@ import org.jboss.resteasy.util.HttpResponseCodes;
  * Map service unavailable exceptions
  */
 @Provider
-public class TMUnavailableMapper implements ExceptionMapper<TMUnavailableException>
-{
-   public Response toResponse(TMUnavailableException exception)
-   {
+public class TMUnavailableMapper implements ExceptionMapper<TMUnavailableException>{
+   public Response toResponse(TMUnavailableException exception){
       return Response.status(HttpResponseCodes.SC_SERVICE_UNAVAILABLE).build();
    }
 }

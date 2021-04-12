@@ -30,10 +30,8 @@ import org.jboss.resteasy.util.HttpResponseCodes;
  * 404 mapper
  */
 @Provider
-public class NotFoundMapper implements ExceptionMapper<ResourceNotFoundException>
-{
-   public Response toResponse(ResourceNotFoundException exception)
-   {
+public class NotFoundMapper implements ExceptionMapper<ResourceNotFoundException>{
+   public Response toResponse(ResourceNotFoundException exception){
       return Response.status(HttpResponseCodes.SC_NOT_FOUND).build();
    }
 }

@@ -28,7 +28,9 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <name>Narayana: restat</name>
   <description>RESTful Atomic Transactions</description>
   <url>http://www.jboss.org/jbosstm</url>
- 
+  <properties>
+   <checkstyle.skip>false</checkstyle.skip>
+ </properties>
   <build>
     <plugins>
       <plugin>

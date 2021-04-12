@@ -23,14 +23,12 @@ package org.jboss.jbossts.star.service;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-public class ContextListener implements ServletContextListener
-{
-	public void contextInitialized(ServletContextEvent event)
-	{
-//        String value = event.getServletContext().getInitParameter("resteasy.servlet.mapping.prefix");
+public class ContextListener implements ServletContextListener{
+       public void contextInitialized(ServletContextEvent event){
+//      String value = event.getServletContext().getInitParameter("resteasy.servlet.mapping.prefix");
         System.setProperty("resttx.context.path", event.getServletContext().getContextPath());
-	}
+    }
 
-	public void contextDestroyed(ServletContextEvent event) {
-	}
+public void contextDestroyed(ServletContextEvent event){
+    }
 }

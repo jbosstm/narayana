@@ -21,15 +21,21 @@
 package org.jboss.jbossts.star.test;
 
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.util.*;
-import org.jboss.jbossts.star.util.media.txstatusext.*;
+import org.jboss.jbossts.star.util.TxStatusMediaType;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.jbossts.star.util.media.txstatusext.CoordinatorElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatusElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TwoPhaseAwareParticipantElement;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assert;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /*
  * The comments that are preceded by line numbers refer to text in version 8 of the specification
