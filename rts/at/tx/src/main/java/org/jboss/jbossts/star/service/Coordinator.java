@@ -20,16 +20,34 @@
  */
 package org.jboss.jbossts.star.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -48,21 +66,27 @@ import org.jboss.jbossts.star.provider.TransactionStatusException;
 import org.jboss.jbossts.star.resource.RESTRecord;
 import org.jboss.jbossts.star.resource.RecoveringTransaction;
 import org.jboss.jbossts.star.resource.Transaction;
-import org.jboss.jbossts.star.util.*;
-import org.jboss.jbossts.star.util.media.txstatusext.*;
+import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxStatusMediaType;
+import org.jboss.jbossts.star.util.TxSupport;
+import org.jboss.jbossts.star.util.media.txstatusext.CoordinatorElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
+import org.jboss.jbossts.star.util.media.txstatusext.TwoPhaseAwareParticipantElement;
 import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
 @Path(TxSupport.TX_PATH)
-public class Coordinator
-{
+public class Coordinator{
     static final String RC_SEGMENT = "recovery-coordinator";
 
-    protected final static Logger log = Logger.getLogger(Coordinator.class);
+    protected static final Logger log = Logger.getLogger(Coordinator.class);
 
-    private final static String REST_TXN_TYPE = new AtomicAction().type();
+    private static final String REST_TXN_TYPE = new AtomicAction().type();
 
     private static Map<String, Transaction> transactions = new ConcurrentHashMap<String, Transaction>();
     // each participant may only be enlisted in one transaction - map each registration id to a map of
@@ -74,7 +98,7 @@ public class Coordinator
     // active and prepared signalized how many transactions are currently active and/or prepared
     private static final AtomicInteger active = new AtomicInteger(0);
     private static final AtomicInteger prepared = new AtomicInteger(0);
-    // commited and aborted makes a sum of how many transactions were committed/aborted till now 
+    // commited and aborted makes a sum of how many transactions were committed/aborted till now
     private static final AtomicInteger committed = new AtomicInteger(0);
     private static final AtomicInteger aborted = new AtomicInteger(0);
 
@@ -90,8 +114,7 @@ public class Coordinator
     @GET
     @Path(TxSupport.TX_SEGMENT)
     @Produces(TxMediaType.TX_LIST_MEDIA_TYPE)
-    public Response getAllTransactions(@Context UriInfo info)//, String content)
-    {
+    public Response getAllTransactions(@Context UriInfo info){//, String content)
         log.trace("coordinator: list: transaction-coordinator");
         StringBuilder txns = new StringBuilder();
         Iterator<String> i;
@@ -125,7 +148,7 @@ public class Coordinator
     /**
      * Performing a GET on the transaction-manager URI with media type application/txstatusext+xml
      * returns extended information about the transaction-manager resource such as how long it has
-     * been up and all transaction-coordinator URIs. 
+     * been up and all transaction-coordinator URIs.
      *
      * @param info Request context
      * @return TransactionManagerElement
@@ -153,8 +176,8 @@ public class Coordinator
     /**
      * Performing a GET on the transaction-manager URI sufficed with /statistics
      * returns statistics of the transaction manager.
-     * Numbers of active, prepared, committed, and aborted transactions are returned. 
-     * 
+     * Numbers of active, prepared, committed, and aborted transactions are returned.
+     *
      * @return TransactionStatisticsElement
      */
     @GET
@@ -178,8 +201,7 @@ public class Coordinator
     @HEAD
     @Path(TxSupport.TX_SEGMENT + "{id}")
     @Produces(TxMediaType.TX_LIST_MEDIA_TYPE)
-    public Response getTransactionURIs(@Context UriInfo info, @PathParam("id") String id)
-    {
+    public Response getTransactionURIs(@Context UriInfo info, @PathParam("id") String id){
         log.tracef("coordinator txn head request for txn %s", id);
         getTransaction(id); // throws an exception if the transaction does not exist
 
@@ -203,8 +225,7 @@ public class Coordinator
     @GET
     @Path(TxSupport.TX_SEGMENT + "{id}")
     @Produces(TxMediaType.TX_STATUS_MEDIA_TYPE)
-    public Response getTransactionStatus(@Context UriInfo info, @PathParam("id") String id)
-    {
+    public Response getTransactionStatus(@Context UriInfo info, @PathParam("id") String id){
         log.tracef("coordinator: status: transaction-coordinator/%s", id);
         Transaction txn = getTransaction(id);
         Response.ResponseBuilder builder = Response.ok(TxSupport.toStatusContent(txn.getStatus()));
@@ -216,7 +237,6 @@ public class Coordinator
      * Performing a GET on the transaction URL with media type application/txstatusext+xml
      * returns extended information about the transaction, such as its status,
      * number of participants, and their individual URIs.
-     * 
      * @param info Request context
      * @param id URL template parameter for the id of the transaction
      * @return HTTP response representing extended transaction status information
@@ -224,8 +244,7 @@ public class Coordinator
     @GET
     @Path(TxSupport.TX_SEGMENT + "{id}")
     @Produces(TxMediaType.TX_STATUS_EXT_MEDIA_TYPE)
-    public Response getTransactionExtStatus(@Context UriInfo info, @PathParam("id") String id)
-    {
+    public Response getTransactionExtStatus(@Context UriInfo info, @PathParam("id") String id){
         log.tracef("coordinator: status: transaction-coordinator/%s", id);
         Transaction txn = getTransaction(id);
         String terminator = TxLinkNames.TERMINATOR;
@@ -268,8 +287,7 @@ public class Coordinator
     @SuppressWarnings({"UnusedDeclaration"})
     @DELETE
     @Path(TxSupport.TX_SEGMENT + "{id}")
-    public Response deleteTransaction(@PathParam("id") String id)
-    {
+    public Response deleteTransaction(@PathParam("id") String id){
         return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
     }
 
@@ -345,8 +363,7 @@ public class Coordinator
     @Path(TxSupport.TX_SEGMENT)
     @Consumes(TxMediaType.POST_MEDIA_TYPE)
 //    @Produces("application/vnd.rht.txstatus+text;version=0.1")
-    public Response beginTransaction(@Context UriInfo info, @Context HttpHeaders headers, @DefaultValue("") String content)
-    {
+    public Response beginTransaction(@Context UriInfo info, @Context HttpHeaders headers, @DefaultValue("") String content){
         log.tracef("coordinator: POST /transaction-manager content: %s", content);
         Transaction tx = new Transaction(this, "coordinator");
         int timeout = TxSupport.getIntValue(content, TxMediaType.TIMEOUT_PROPERTY, 0); // default is 0 - never timeout
@@ -404,8 +421,7 @@ public class Coordinator
     */
     @PUT
     @Path(TxSupport.TX_SEGMENT + "{TxId}/" + TxLinkNames.TERMINATOR)
-    public Response terminateTransaction(@PathParam("TxId")String txId, @QueryParam("fault") @DefaultValue("")String fault, String content)
-    {
+    public Response terminateTransaction(@PathParam("TxId")String txId, @QueryParam("fault") @DefaultValue("")String fault, String content){
         log.tracef("coordinator: commit: transaction-manager/%s/terminator : content: %s", txId, content);
 
         Transaction tx = getTransaction(txId);
@@ -422,14 +438,14 @@ public class Coordinator
         if (!currentStatus.isRunning() && !currentStatus.isRollbackOnly())
             return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
 
-		/*
-			ABORT_ONLY is not in the spec for the same reasons as it's not in the WS-TX and WS-CAF where
-			it is assumed that only the txn originator can end the tx:
-			- simply register a synchronization in the transaction that prevented a commit from happening;
-			and I haven't implemented synchronisations yet. 
-			It is unclear why allowing similar functionality via synchronisations doesn't open up a similar
-			security hole.
-		*/
+        /*
+            ABORT_ONLY is not in the spec for the same reasons as it's not in the WS-TX and WS-CAF where
+            it is assumed that only the txn originator can end the tx:
+            - simply register a synchronization in the transaction that prevented a commit from happening;
+            and I haven't implemented synchronisations yet.
+            It is unclear why allowing similar functionality via synchronisations doesn't open up a similar
+            security hole.
+       */
         TxStatus txStatus = TxStatus.fromStatus(how);
         tx.setFault(fault);
         AtomicAction.resume(tx);
@@ -465,7 +481,7 @@ public class Coordinator
 
         return Response.status(scRes).entity(TxSupport.toStatusContent(status)).build();
     }
-    
+
     public void removeTxState(int status, Transaction tx, final Collection<String> enlistmentIds) {
 
         String txId = tx.get_uid().fileStringForm();
@@ -510,8 +526,7 @@ public class Coordinator
     @POST
     @Path(TxSupport.TX_SEGMENT + "{TxId}")
     public Response enlistParticipant(@HeaderParam("Link") String linkHeader, @Context UriInfo info,
-                                      @PathParam("TxId")String txId, String content)
-    {
+                                      @PathParam("TxId")String txId, String content){
         log.tracef("enlistParticipant request uri %s txid: %s Link: %s content: %s",
                 info.getRequestUri(), txId,
                 linkHeader != null ? linkHeader : "null",
@@ -521,7 +536,7 @@ public class Coordinator
 
         /*
          * If the transaction is not TransactionActive then the implementation MUST return a 412 status
-         * code 
+         * code
          */
         if (!tx.isRunning())
             return Response.status(HttpURLConnection.HTTP_PRECON_FAILED).build();
@@ -583,7 +598,7 @@ public class Coordinator
 
     /**
      * Register a volatile participant in a tx
-     * 
+     *
      * @param linkHeader link header
      * @param info  URI info
      * @param txId id of transaction
@@ -622,8 +637,7 @@ public class Coordinator
      */
     @GET
     @Path(RC_SEGMENT + "/{TxId}/{RecCoordId}")
-    public Response lookupParticipant(@PathParam("TxId")String txId, @PathParam("RecCoordId")String enlistmentId)
-    {
+    public Response lookupParticipant(@PathParam("TxId")String txId, @PathParam("RecCoordId")String enlistmentId){
         log.tracef("coordinator: lookup: transaction-coordinator: %s/%s", txId, enlistmentId);
         HashMap<String, String> p = participants.get(enlistmentId);
 
@@ -652,8 +666,7 @@ public class Coordinator
     @PUT
     @Path(RC_SEGMENT + "/{TxId}/{RecCoordId}")
     public Response replaceParticipant(@HeaderParam("Link") String linkHeader, @PathParam("TxId")String txId,
-                                       @PathParam("RecCoordId")String enlistmentId)
-    {
+                                       @PathParam("RecCoordId")String enlistmentId){
         Map<String, String> links = TxSupport.decodeLinkHeader(linkHeader);
         String terminatorUrl = links.get(TxLinkNames.PARTICIPANT_TERMINATOR);
         String participantUrl = links.get(TxLinkNames.PARTICIPANT_RESOURCE);
@@ -676,22 +689,20 @@ public class Coordinator
 
     @POST
     @Path(RC_SEGMENT + "/{RecCoordId}")
-    public Response postParticipant(@PathParam("RecCoordId")String enlistmentId)
-    {
+    public Response postParticipant(@PathParam("RecCoordId")String enlistmentId){
         log.tracef("coordinator: replace via Post: recovery-coordinator/%s", enlistmentId);
         return Response.status(HttpURLConnection.HTTP_UNAUTHORIZED).build();
     }
 
     /**
      * Performing DELETE on participant's recovery URL removes participant from the transaction.
-     * 
+     *
      * @param enlistmentId The resource reference
      * @return HTTP status code
      */
     @DELETE
     @Path(RC_SEGMENT + "/{RecCoordId}")
-    public Response deleteParticipant(@PathParam("RecCoordId")String enlistmentId)
-    {
+    public Response deleteParticipant(@PathParam("RecCoordId")String enlistmentId){
         log.tracef("coordinator: participant leaving via Delete: recovery-coordinator/%s", enlistmentId);
         HashMap<String, String> p = participants.get(enlistmentId);
         Transaction txn;
@@ -701,12 +712,11 @@ public class Coordinator
 
         if (txn.forgetParticipant(p.get(TxLinkNames.PARTICIPANT_RESOURCE)))
             return Response.status(HttpURLConnection.HTTP_OK).build();
-        
+
         return Response.status(HttpURLConnection.HTTP_CONFLICT).build();
     }
 
-    private Transaction getTransaction(String txId)
-    {
+    private Transaction getTransaction(String txId){
         Transaction tx = transactions.get(txId);
 
         if (tx == null) {
@@ -783,7 +793,7 @@ public class Coordinator
                 }
             } catch (Throwable e) {
                 RESTATLogger.atI18NLogger.warn_getRecoveringTransactions(e.getMessage(), e,
-        				txn.get_uid().fileStringForm());
+                txn.get_uid().fileStringForm());
             }
 
             recoveringTransactions.put(key, txn);

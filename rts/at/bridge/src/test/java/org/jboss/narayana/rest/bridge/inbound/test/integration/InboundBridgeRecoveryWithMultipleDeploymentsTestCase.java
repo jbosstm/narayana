@@ -25,7 +25,6 @@ import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatusElement;
 import org.jboss.narayana.rest.bridge.inbound.test.common.LoggingRestATResource;
 import org.jboss.narayana.rest.bridge.inbound.test.common.LoggingXAResource;
 import org.jboss.narayana.rest.bridge.inbound.test.common.RestATManagementResource;

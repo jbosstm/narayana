@@ -20,7 +20,12 @@
  */
 package org.jboss.jbossts.star.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -49,16 +54,16 @@ import org.jboss.jbossts.star.util.media.txstatusext.TransactionManagerElement;
 import org.jboss.jbossts.star.util.media.txstatusext.TransactionStatisticsElement;
 import org.jboss.logging.Logger;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Link;
 import java.security.KeyStore;
-import javax.net.ssl.*;
 
 /**
  * Various utilities for sending HTTP messages
  * @deprecated
  */
-public class TxSupport
-{
+public class TxSupport{
     protected static final Logger log = Logger.getLogger(TxSupport.class);
 
     /**
@@ -125,8 +130,7 @@ public class TxSupport
     }
 
     public static void addLinkHeader(Response.ResponseBuilder response, UriInfo info, String title, String name,
-                                     String ... pathComponents)
-    {
+                                     String ... pathComponents){
         String basePath = info.getMatchedURIs().get(0);
         UriBuilder builder = info.getBaseUriBuilder();
         builder.path(basePath);
@@ -140,15 +144,13 @@ public class TxSupport
     }
 
     public static void setLinkHeader(Response.ResponseBuilder builder, String title, String rel, String href,
-                                     String type)
-    {
+                                     String type){
         Link link = Link.fromUri(href).title(title).rel(rel).type(type).build();
 
         setLinkHeader(builder, link);
     }
 
-    public static void setLinkHeader(Response.ResponseBuilder builder, Link link)
-    {
+    public static void setLinkHeader(Response.ResponseBuilder builder, Link link){
         builder.header("Link", link);
     }
 
@@ -657,8 +659,7 @@ public class TxSupport
         }
     }
 
-    public static String getStringValue(String content, String name)
-    {
+    public static String getStringValue(String content, String name){
         Map<String, String> matches = new HashMap<String, String>();
 
         TxSupport.matchNames(matches, content, null);
@@ -666,8 +667,7 @@ public class TxSupport
         return matches.get(name);
     }
 
-    public static int getIntValue(String content, String name, int defValue)
-    {
+    public static int getIntValue(String content, String name, int defValue){
         String v = getStringValue(content, name);
 
         if (v != null)
@@ -680,8 +680,7 @@ public class TxSupport
         return defValue;
     }
 
-    public static UriBuilder getUriBuilder(UriInfo info, int npaths, String ... paths)
-    {
+    public static UriBuilder getUriBuilder(UriInfo info, int npaths, String ... paths){
         UriBuilder builder = info.getBaseUriBuilder();
 
         if (npaths > 0){
@@ -701,8 +700,7 @@ public class TxSupport
         return builder;
     }
 
-    public static URI getUri(UriInfo info, int npaths, String ... paths)
-    {
+    public static URI getUri(UriInfo info, int npaths, String ... paths){
         return getUriBuilder(info, npaths, paths).build();
     }
 
@@ -712,8 +710,7 @@ public class TxSupport
         return getUri(info, info.getPathSegments().size(), paths).toASCIIString();
     }
 
-    public static String buildURI(UriBuilder builder, String ... pathComponents)
-    {
+    public static String buildURI(UriBuilder builder, String ... pathComponents){
         for (String component : pathComponents)
             builder.path(component);
 

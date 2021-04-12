@@ -30,7 +30,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ws.rs.client.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,8 +52,7 @@ public class CoordinatorTest extends BaseTest {
 
     // list transactions
     @Test
-    public void testListTransactions() throws IOException
-    {
+    public void testListTransactions() throws IOException{
         TxSupport[] txns = {new TxSupport(), new TxSupport()};
         int txnCount = new TxSupport().txCount();
 
@@ -69,8 +72,7 @@ public class CoordinatorTest extends BaseTest {
 
     // 1PC commit abort
     @Test
-    public void test1PCAbort() throws Exception
-    {
+    public void test1PCAbort() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String pid = null;
@@ -95,8 +97,7 @@ public class CoordinatorTest extends BaseTest {
 
     // 1PC commit
     @Test
-    public void test1PCCommit() throws Exception
-    {
+    public void test1PCCommit() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String pid = null;
@@ -120,8 +121,7 @@ public class CoordinatorTest extends BaseTest {
     }
 
     @Test
-    public void test1PCCommitUnaware() throws Exception
-    {
+    public void test1PCCommitUnaware() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String pid = null;
@@ -151,8 +151,7 @@ public class CoordinatorTest extends BaseTest {
 
 
     @Test
-    public void test1PCCommitUnawareWithoutOnePhase() throws Exception
-    {
+    public void test1PCCommitUnawareWithoutOnePhase() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String pid = null;
@@ -182,8 +181,7 @@ public class CoordinatorTest extends BaseTest {
 
     // 2PC commit
     @Test
-    public void test2PC() throws Exception
-    {
+    public void test2PC() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String[] pid = new String[2];
@@ -216,8 +214,7 @@ public class CoordinatorTest extends BaseTest {
     }
 
     @Test
-    public void test2PCCommitWithoutResponse() throws Exception
-    {
+    public void test2PCCommitWithoutResponse() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String[] pid = new String[2];
@@ -249,8 +246,7 @@ public class CoordinatorTest extends BaseTest {
     }
 
     @Test
-    public void test2PCRollbackWithoutResponse() throws Exception
-    {
+    public void test2PCRollbackWithoutResponse() throws Exception{
         TxSupport txn = new TxSupport();
         String pUrl = PURL;
         String[] pid = new String[2];
@@ -283,8 +279,7 @@ public class CoordinatorTest extends BaseTest {
 
     // commit an invalid transaction
     @Test
-    public void testCommitInvalidTx() throws IOException
-    {
+    public void testCommitInvalidTx() throws IOException{
         // start a transaction
         TxSupport txn = new TxSupport().startTx();
 
@@ -297,7 +292,7 @@ public class CoordinatorTest extends BaseTest {
         // commit it properly
         txn.commitTx();
     }
-    
+
     @Test
     public void testTimeoutCleanup() throws InterruptedException {
         TxSupport txn = new TxSupport();
@@ -307,7 +302,7 @@ public class CoordinatorTest extends BaseTest {
 
         // Let the txn timeout
         Thread.sleep(2000);
-        
+
         Assert.assertEquals(txnCount, txn.txCount());
     }
 

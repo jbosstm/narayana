@@ -43,7 +43,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -65,7 +68,12 @@ import org.jboss.jbossts.star.provider.TMUnavailableMapper;
 import org.jboss.jbossts.star.provider.TransactionStatusMapper;
 import org.jboss.jbossts.star.service.Coordinator;
 import org.jboss.jbossts.star.service.TMApplication;
-import org.jboss.jbossts.star.util.*;
+import org.jboss.jbossts.star.util.HttpConnectionCreator;
+import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxStatusMediaType;
+import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
@@ -79,7 +87,7 @@ import com.sun.grizzly.http.SelectorThread;
 //import com.sun.jersey.api.container.grizzly.GrizzlyWebContainerFactory;
 
 public class BaseTest {
-    protected final static Logger log = Logger.getLogger(BaseTest.class);
+    protected static final Logger log = Logger.getLogger(BaseTest.class);
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
     protected static boolean USE_RESTEASY = false;
@@ -106,8 +114,7 @@ public class BaseTest {
         TXN_MGR_URL = txnMgrUrl;
     }
 
-    protected static void startUndertow(Class<?> ... classes) throws Exception
-    {
+    protected static void startUndertow(Class<?> ... classes) throws Exception{
         undertow = new UndertowJaxrsServer();
 
         undertow.start(Undertow.builder().addHttpListener(PORT, "localhost"));
@@ -117,8 +124,7 @@ public class BaseTest {
         System.out.printf("server is ready:");
     }
 
-    protected static void startRestEasy(Class<?> ... classes) throws Exception
-    {
+    protected static void startRestEasy(Class<?> ... classes) throws Exception{
         server = new TJWSEmbeddedJaxrsServer();
         server.setPort(PORT);
         server.start();
@@ -296,18 +302,15 @@ public class BaseTest {
     }
 
     @Test
-    public void nullTest() throws Exception
-    {
+    public void nullTest() throws Exception{
         // need at least one test
     }
 
-    protected String enlistResource(TxSupport txn, String pUrl)
-    {
+    protected String enlistResource(TxSupport txn, String pUrl){
         return txn.enlistTestResource(pUrl, false);
     }
 
-    private StringBuilder getResourceUpdateUrl(String pUrl, String pid, String name, String value)
-    {
+    private StringBuilder getResourceUpdateUrl(String pUrl, String pid, String name, String value){
         StringBuilder sb = new StringBuilder(pUrl);
 
         if (pid != null)
@@ -332,21 +335,18 @@ public class BaseTest {
      * @param value the new value of the property
      * @return the response body
      */
-    protected String modifyResource(TxSupport txn, String pUrl, String pid, String name, String value)
-    {
+    protected String modifyResource(TxSupport txn, String pUrl, String pid, String name, String value){
         // tell the resource to modify some data and pass the transaction enlistment url along with the request
         return txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK},
                 getResourceUpdateUrl(pUrl, pid, name, value).toString(), "GET", TxMediaType.PLAIN_MEDIA_TYPE);
     }
 
-    protected String getResourceProperty(TxSupport txn, String pUrl, String pid, String name)
-    {
+    protected String getResourceProperty(TxSupport txn, String pUrl, String pid, String name){
         return txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NO_CONTENT},
                 getResourceUpdateUrl(pUrl, pid, name, null).toString(), "GET", TxMediaType.PLAIN_MEDIA_TYPE);
     }
 
-    private static class Work
-    {
+    private static class Work{
         String id;
         String tid;
         String uri;
@@ -395,8 +395,7 @@ public class BaseTest {
     }
 
     @Path(PSEGMENT)
-    public static class TransactionalResource
-    {
+    public static class TransactionalResource{
         private static int pid = 0;
         static Map<String, Work> faults = new HashMap<String, Work> ();
 
@@ -442,8 +441,7 @@ public class BaseTest {
                                @QueryParam("arg") @DefaultValue("") String arg,
                                @QueryParam("twoPhaseAware") @DefaultValue("true") String twoPhaseAware,
                                @QueryParam("isVolatile") @DefaultValue("false") String isVolatileParticipant,
-                               @QueryParam("register") @DefaultValue("true") String register)
-        {
+                               @QueryParam("register") @DefaultValue("true") String register){
             Work work = faults.get(pId);
             String res = null;
             boolean isVolatile = "true".equals(isVolatileParticipant);

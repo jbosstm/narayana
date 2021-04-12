@@ -169,7 +169,7 @@ public class InboundBridgeParticipant implements Participant, Serializable {
 
     private void commitSubordinate() throws HeuristicException {
         final InboundBridge inboundBridge = getInboundBridge();
-        
+
         try {
             if (inboundBridge != null) {
                 SubordinationManager.getXATerminator().commit(inboundBridge.getXid(), false);
@@ -232,4 +232,4 @@ public class InboundBridgeParticipant implements Participant, Serializable {
         }
     }
 
-}	
+}

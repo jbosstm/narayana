@@ -109,8 +109,7 @@ public final class RecoveryManager {
                 recoveryStore.remove_committed(new Uid(participantId), PARTICIPANT_INFORMATION_RECORD_TYPE);
                 persistedParticipants.remove(participantId);
             } catch (ObjectStoreException ose) {
-                RESTATLogger.atI18NLogger.warn_failureRemovingParticipantObjectStore(
-        				"Failure while removing participant information from the object store.", ose);
+                RESTATLogger.atI18NLogger.warn_failureRemovingParticipantObjectStore("Failure while removing participant information from the object store.", ose);
             }
         }
     }

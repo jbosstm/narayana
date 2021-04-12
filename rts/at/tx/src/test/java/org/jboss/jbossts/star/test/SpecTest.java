@@ -22,13 +22,19 @@ package org.jboss.jbossts.star.test;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 import org.jboss.jbossts.star.provider.HttpResponseException;
-import org.jboss.jbossts.star.util.*;
+import org.jboss.jbossts.star.util.TxLinkNames;
+import org.jboss.jbossts.star.util.TxMediaType;
+import org.jboss.jbossts.star.util.TxStatus;
+import org.jboss.jbossts.star.util.TxStatusMediaType;
+import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Assert;
 
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
