@@ -11,52 +11,76 @@
     <artifactId>sra-parent</artifactId>
     <name>SRA PoC</name>
     <description>SRA PoC</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
+     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${version.quarkus}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <finalName>lra-test</finalName>
-        <plugins>
+        <finalName>sra-test</finalName>
+            <plugins>
             <plugin>
-                <groupId>io.thorntail</groupId>
-                <artifactId>thorntail-maven-plugin</artifactId>
-                <version>${version.thorntail}</version>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${version.quarkus}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>package</goal>
+                            <goal>build</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-jar-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <goals>
+                      <goal>test-jar</goal>
+                     </goals>
+                    </execution>
+                  </executions>
+                  <inherited>false</inherited>
+            </plugin>
         </plugins>
     </build>
-
     <dependencies>
-        <!-- WildFly Thorntail Fractions -->
+        <!-- Quarkus dependencies -->
         <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>jaxrs</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>transactions</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>jaxrs-jsonp</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-fault-tolerance</artifactId>
+        </dependency>
         <!-- REST-AT coordinator -->
         <dependency>
             <groupId>org.jboss.narayana.rts</groupId>
             <artifactId>restat-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
@@ -69,7 +93,12 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
+            <version>${version.org.eclipse.microprofile.openapi}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- JAXRS 2 Client API implementation -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
