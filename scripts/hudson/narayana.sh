@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 function fatal {
   if [[ -z $PROFILE ]]; then
@@ -58,18 +59,16 @@ function init_test_options {
     [ $IBM_ORB ] || IBM_ORB=0
     [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.thorntail.test -Dtrace.lra.coordinator"
 
-    AS_TESTS=0
-
     if ! get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
         export COMMENT_ON_PULL=""
-        export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
         export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -79,7 +78,7 @@ function init_test_options {
         if [[ ! $PULL_DESCRIPTION_BODY == *!TOMCAT* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=1 LRA_TESTS=0
         else
@@ -97,7 +96,7 @@ function init_test_options {
     elif [[ $PROFILE == "RTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!RTS* ]]; then
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -106,7 +105,7 @@ function init_test_options {
     elif [[ $PROFILE == "JACOCO" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!JACOCO* ]]; then
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
           export TOMCAT_TESTS=1 LRA_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
@@ -116,7 +115,7 @@ function init_test_options {
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -125,7 +124,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTA* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -134,7 +133,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_JACORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JACORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -143,7 +142,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_JDKORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -152,7 +151,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_OPENJDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
           export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -161,7 +160,7 @@ function init_test_options {
     elif [[ $PROFILE == "BLACKTIE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!BLACKTIE* ]]; then
           comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -170,7 +169,7 @@ function init_test_options {
     elif [[ $PROFILE == "PERFORMANCE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!PERF* ]]; then
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -179,7 +178,7 @@ function init_test_options {
     elif [[ $PROFILE == "LRA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=1 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=1
         else
@@ -188,7 +187,7 @@ function init_test_options {
     elif [[ $PROFILE == "DB_TESTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!DB_TESTS* ]]; then
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -202,6 +201,7 @@ function init_test_options {
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
     [ $AS_BUILD ] && [ -z "$JBOSS_HOME" ] || AS_BUILD=0 # git clone and build a fresh copy of the AS when JBOSS_HOME is not provided
     [ $AS_DOWNLOAD ] && [ -z "$JBOSS_HOME" ] || AS_DOWNLOAD=0 # download AS when JBOSS_HOME is not provided
+    [ $AS_TESTS ] || AS_TESTS=0 # Run WildFly/JBoss EAP testsuite
     [ $BLACKTIE ] || BLACKTIE=0 # Build BlackTie
     [ $OSGI_TESTS ] || OSGI_TESTS=0 # OSGI tests
     [ $TXF_TESTS ] || TXF_TESTS=0 # compensations tests
@@ -343,12 +343,12 @@ function build_narayana {
   return 0
 }
 
-function build_as {
-  echo "Building AS"
+function clone_as {
+  echo "Cloning AS sources from git://github.com/jbosstm/jboss-as.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
-    echo "Updating existing checkout of AS7"
+    echo "Updating existing checkout of WildFly"
     cd jboss-as
 
     git remote | grep upstream
@@ -368,7 +368,7 @@ function build_as {
     git rebase --abort
     rm -rf .git/rebase-apply
   else
-    echo "First time checkout of AS7"
+    echo "First time checkout of WildFly"
     git clone git://github.com/jbosstm/jboss-as.git -o jbosstm
     [ $? -eq 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
 
@@ -398,9 +398,17 @@ function build_as {
     rm -rf .git
   fi
 
+  cd $WORKSPACE
+}
+
+function build_as {
+  echo "Building JBoss EAP/WildFly"
+
+  cd $WORKSPACE/jboss-as
+
   # building WildFly
   export MAVEN_OPTS="-XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC $MAVEN_OPTS"
-  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION}
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./build.sh clean install -B -DskipTests -Dts.smoke=false $IPV6_OPTS -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@"
   [ $? -eq 0 ] || fatal "AS build failed"
 
   WILDFLY_VERSION_FROM_JBOSS_AS=`awk '/wildfly-parent/ { while(!/<version>/) {getline;} print; }' ${WORKSPACE}/jboss-as/pom.xml | cut -d \< -f 2|cut -d \> -f 2`
@@ -411,37 +419,54 @@ function build_as {
   # init files under JBOSS_HOME before AS TESTS is started
   init_jboss_home
 
-  # running WildFly testsuite if configured to be run by axis AS_TESTS
-  if [ $AS_TESTS = 1 ]; then
-    JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./integration-tests.sh clean verify -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae
-    [ $? -eq 0 ] || fatal "AS tests failed"
-  fi
-
   cd $WORKSPACE
 }
 
-function download_wildfly_nightly_build {
-  echo "Download WildFly Nightly Build"
+function tests_as {
+  # running WildFly testsuite if configured to be run by axis AS_TESTS
+  if [ $AS_TESTS_TRACE ]; then
+    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone.xml"
+    enable_as_trace "$JBOSS_HOME/standalone/configuration/standalone-full.xml"
+  fi
+
+  cd "${WORKSPACE}/jboss-as"
+  JAVA_OPTS="-Xms1303m -Xmx1303m -XX:MaxPermSize=512m $JAVA_OPTS" ./integration-tests.sh -B $IPV6_OPTS -Dtimeout.factor=300 -Dsurefire.forked.process.timeout=12000 -Dsurefire.extra.args='-Xmx512m' -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} -Djboss.dist="$JBOSS_HOME" -DallTests=true -fae "$@" clean verify
+  [ $? -eq 0 ] || fatal "AS tests failed"
+  cd $WORKSPACE
+}
+
+function download_as {
+  echo "Download WildFly Build"
 
   cd $WORKSPACE
-  wget --user=guest --password=guest -nv https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip
-  unzip -qo artifacts.zip
+  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  wget --user=guest --password=guest -nv ${AS_LOCATION}
+  local zipFileName=${AS_LOCATION##*/}
+  unzip -qo "$zipFileName"
+  export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zipFileName%.zip}"}
+
+  ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
+  ### which is changing time to time
   # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
   local wildflyLatestZipWrapper=$(ls wildfly-latest-*.zip | head -n 1)
   if [ -f "${wildflyLatestZipWrapper}" ]; then # wrapper zip exists, let's unzip it to proceed further to distro zip
     unzip -qo "${wildflyLatestZipWrapper}"
-    [ $? -ne 0 ] && echo "Cannot unzip WildFly nightly build wrapper zip file '${wildflyLatestZipWrapper}'" && return 2
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build wrapper zip file '${wildflyLatestZipWrapper}'"
     rm -f $wildflyLatestZipWrapper
+    export JBOSS_HOME="${PWD}/${wildflyLatestZipWrapper%.zip}"
   fi
+  # if SNAPSHOT zip still exists, unzip it further
   local wildflyDistZip=$(ls wildfly-*-SNAPSHOT.zip | head -n 1)
-  [ "x$wildflyDistZip" = "x" ] && echo "Cannot find any zip file of SNAPSHOT WildFly distribution in the nightly build artifacts" && return 1
-  unzip -qo "${wildflyDistZip}"
-  [ $? -ne 0 ] && echo "Cannot unzip WildFly nightly build distribution zip file '${wildflyDistZip}'" && return 3
-  export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
-  [ ! -d "${JBOSS_HOME}" ] && echo "After unzipping the file '${wildflyDistZip}' the JBOSS_HOME directory at '${JBOSS_HOME}' does not exist" && return 4
+  if [ -f "${wildflyDistZip}" ]; then
+    unzip -qo "${wildflyDistZip}"
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build distribution zip file '${wildflyDistZip}'"
+    export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
+  fi
+
+  [ ! -d "${JBOSS_HOME}" ] && fatal "After unzipping the file '$zipFileName' (and possible zip wrapper '${wildflyDistZip}') the JBOSS_HOME directory at '${JBOSS_HOME}' does not exist"
   # cleaning
   rm -f artifacts.zip
-  rm -f wildfly-*-SNAPSHOT*.zip
+  rm -f wildfly-*.zip
 
   # init files under JBOSS_HOME before tests are started
   init_jboss_home
@@ -618,12 +643,12 @@ function compensations_tests {
 function xts_tests {
   echo "#1 XTS: WSTX11 INTEROP, UNIT TESTS and CRASH RECOVERY TESTS"
 
-  [ $XTS_TRACE ] && enable_xts_trace
+  CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+  [ $XTS_TRACE ] && enable_as_trace "$CONF"
 
   cd $WORKSPACE
   ran_crt=1
 
-  CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
   grep async-registration "$CONF"
   sed -e 's#<[^<]*async-registration[^>]*>##g' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e 's#\(<subsystem.*xts.*\)#\1\n            <async-registration enabled="true"/>#' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
@@ -659,9 +684,9 @@ function xts_tests {
 
 function tx_bridge_tests {
   echo "XTS: TXBRIDGE TESTS update conf"
-  [ $XTS_TRACE ] && enable_xts_trace
-  cd $WORKSPACE
   CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+  [ $XTS_TRACE ] && enable_as_trace "$CONF"
+  cd $WORKSPACE
   grep recovery-listener "$CONF"
   sed -e s/recovery-listener=\"true\"//g   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
   sed -e "s#\(recovery-environment\) \(socket-binding\)#\\1 recovery-listener=\"true\" \\2#"   $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
@@ -742,11 +767,11 @@ cat << EOF > $WORKSPACE/qa/dist/narayana-full-${NARAYANA_CURRENT_VERSION}/etc/lo
 EOF
 }
 
-function enable_xts_trace {
-    echo "Enable XTS trace logs"
-    CONF="${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"
+function enable_as_trace {
+    CONF=${1:-"${JBOSS_HOME}/standalone/configuration/standalone-xts.xml"}
+    echo "Enable trace logs for file '$CONF'"
 
-    sed -e '/<logger category="com.arjuna">$/N;s/<logger category="com.arjuna">\n *<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
+    sed -e '/<logger category="com.arjuna">$/N;s/<logger category="com.arjuna">\n *<level name="WARN"\/>/<logger category="com.arjuna"><level name="TRACE"\/><\/logger><logger category="org.jboss.narayana"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts"><level name="TRACE"\/><\/logger><logger category="org.jboss.jbossts.txbridge"><level name="TRACE"\/>/' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
     sed -e '/<console-handler name="CONSOLE">$/N;s/<console-handler name="CONSOLE">\n *<level name="INFO"\/>/<console-handler name="CONSOLE"><level name="TRACE"\/>/' $CONF > "$CONF.tmp" && mv "$CONF.tmp" "$CONF"
 }
 
@@ -1077,8 +1102,10 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
+[[ $AS_CLONE = 1  ||  $AS_BUILD = 1 ]] && clone_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
-[ $AS_DOWNLOAD = 1 ] && download_wildfly_nightly_build "$@"
+[ $AS_DOWNLOAD = 1 ] && download_as "$@"
+[ $AS_TESTS = 1 ] && tests_as "$@"
 [ $BLACKTIE = 1 ] && blacktie "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
