@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
 public class HotelService extends BookingStore {
-    public Booking book(String bid, String hotel, Integer beds) {;
+    public Booking book(String bid, String hotel, Integer beds) {
         Booking booking = new Booking(bid, hotel, beds, "Hotel");
 
         add(booking);

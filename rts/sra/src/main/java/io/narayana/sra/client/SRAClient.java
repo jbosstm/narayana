@@ -53,6 +53,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,16 +64,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (SRAs) but the prefered mechanism is to use
- * the annotation in the {@link org.jboss.narayana.rts.lra.annotation} package
+ * the annotation in the {@link io.narayana.sra.annotation} package
  */
 @RequestScoped
 public class SRAClient implements SRAClientAPI, Closeable {
     public static final String SRA_HTTP_HEADER = "Short-Running-Action";
     public static final String RTS_HTTP_RECOVERY_HEADER = "Short-Running-Action-Recovery";
 
-    public static final String COORDINATOR_PATH_NAME = "tx/transaction-manager";
+    public static final String COORDINATOR_PATH_NAME = "rest-at-coordinator/tx/transaction-manager";
     public static final String RECOVERY_COORDINATOR_PATH_NAME = "tx/transaction-manager";
 
+    public static final String COORDINATOR_PATH_PROP = "at.http.path";
     public static final String CORRDINATOR_HOST_PROP = "at.http.host";
     public static final String CORRDINATOR_PORT_PROP = "at.http.port";
 
@@ -413,38 +415,38 @@ public class SRAClient implements SRAClientAPI, Closeable {
         return getStatus(lraId, isCompletedUrlFormat);
     }
 
-    public Map<String, String> getTerminationUris(Class<?> compensatorClass, URI baseUri, boolean validate) {
+    public Map<String, String> getTerminationUris(URL aaId, Class<?> compensatorClass, URI baseUri, boolean validate) {
         Map<String, String> paths = new HashMap<>();
 
         Annotation resourcePathAnnotation = compensatorClass.getAnnotation(Path.class);
         String resourcePath = resourcePathAnnotation == null ? "/" : ((Path) resourcePathAnnotation).value();
-
-        String uriPrefix = String.format("%s:%s%s",
+        final String uid = aaId.toString().replaceFirst(".*/([^/?]+).*", "$1");
+        final String uriPrefix = String.format("%s:%s%s",
                 baseUri.getScheme(), baseUri.getSchemeSpecificPart(), resourcePath.substring(1));
 
         final int[] validCnt = {0};
 
         Arrays.stream(compensatorClass.getMethods()).forEach(method -> {
-            Annotation pathAnnotation = method.getAnnotation(Path.class);
+            Path pathAnnotation = method.getAnnotation(Path.class);
 
             if (pathAnnotation != null) {
-                if (checkMethod(paths, STATUS, (Path) pathAnnotation, method.getAnnotation(Status.class), uriPrefix)) {
+                if (checkMethod(paths, STATUS, pathAnnotation, method.getAnnotation(Status.class), uriPrefix, uid)) {
                     validCnt[0] += 1;
                 }
 
-                if (checkMethod(paths, PREPARE, (Path) pathAnnotation, method.getAnnotation(Prepare.class), uriPrefix)) {
+                if (checkMethod(paths, PREPARE, pathAnnotation, method.getAnnotation(Prepare.class), uriPrefix, uid)) {
                     validCnt[0] += 1;
                 }
 
-                if (checkMethod(paths, COMMIT, (Path) pathAnnotation, method.getAnnotation(Commit.class), uriPrefix)) {
+                if (checkMethod(paths, COMMIT, pathAnnotation, method.getAnnotation(Commit.class), uriPrefix, uid)) {
                     validCnt[0] += 1;
                 }
 
-                if (checkMethod(paths, ROLLBACK, (Path) pathAnnotation, method.getAnnotation(Rollback.class), uriPrefix)) {
+                if (checkMethod(paths, ROLLBACK, pathAnnotation, method.getAnnotation(Rollback.class), uriPrefix, uid)) {
                     validCnt[0] += 1;
                 }
 
-                checkMethod(paths, ONEPHASECOMMIT, (Path) pathAnnotation, method.getAnnotation(OnePhaseCommit.class), uriPrefix);
+                checkMethod(paths, ONEPHASECOMMIT, pathAnnotation, method.getAnnotation(OnePhaseCommit.class), uriPrefix, uid);
             }
         });
 
@@ -467,11 +469,13 @@ public class SRAClient implements SRAClientAPI, Closeable {
                                 String rel,
                                 Path pathAnnotation,
                                 Annotation annotationClass,
-                                String uriPrefix) {
+                                String uriPrefix,
+                                String aaId) {
         if (annotationClass == null)
             return false;
 
-        paths.put(rel, uriPrefix + pathAnnotation.value());
+        // TODO remove hardcoded JAX-RS template param
+        paths.put(rel, String.format("%s%s", uriPrefix, pathAnnotation.value().replaceAll("\\{txid}", aaId)));
 
         return true;
     }

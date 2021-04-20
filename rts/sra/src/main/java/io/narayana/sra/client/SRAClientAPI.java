@@ -77,7 +77,7 @@ public interface SRAClientAPI {
 
     /**
      * Lookup active SRAs
-     * 
+     *
      * @throws GenericSRAException Comms error
      */
     List<SRAInfo> getActiveSRAs() throws GenericSRAException;
@@ -103,7 +103,7 @@ public interface SRAClientAPI {
 
     /**
      * Indicates whether an SRA is active
-     * 
+     *
      * @param lraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
@@ -111,7 +111,7 @@ public interface SRAClientAPI {
 
     /**
      * Indicates whether an SRA was compensated
-     * 
+     *
      * @param lraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
@@ -119,7 +119,7 @@ public interface SRAClientAPI {
 
     /**
      * Indicates whether an SRA is complete
-     * 
+     *
      * @param lraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
@@ -127,7 +127,7 @@ public interface SRAClientAPI {
 
     /**
      * A SRAParticipant can join with the SRA at any time prior to the completion of an activity
-     * 
+     *
      * @param lraId   The unique identifier of the SRA (required)
      * @param timelimit The time limit (in seconds) that the SRAParticipant can guarantee that it
      *                can compensate the work performed by the io.narayana.sra.demo.service. After this time period has elapsed,

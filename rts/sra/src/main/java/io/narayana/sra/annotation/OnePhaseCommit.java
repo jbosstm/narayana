@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * If a resource class contains multiple OnePhaseCommit annotations an arbitrary one is chosen.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface OnePhaseCommit {
 }

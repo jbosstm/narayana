@@ -60,13 +60,13 @@ import static io.narayana.sra.client.SRAClient.RTS_HTTP_RECOVERY_HEADER;
 public class ServerSRAFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     @Inject
-    private SRAClient lraClient;
+    SRAClient lraClient;
 
     private static final String CANCEL_ON_FAMILY_PROP = "CancelOnFamily";
     private static final String CANCEL_ON_PROP = "CancelOn";
     private static final String TERMINAL_LRA_PROP = "terminateLRA";
 
-    private static Boolean isTrace = Boolean.getBoolean("trace");
+    private static final Boolean isTrace = Boolean.getBoolean("trace");
 
     @Context
     protected ResourceInfo resourceInfo;
@@ -219,7 +219,7 @@ public class ServerSRAFilter implements ContainerRequestFilter, ContainerRespons
         if (!endAnnotation && enlist) { // don't enlist for methods marked with Compensate, Complete or Leave
             URI baseUri = containerRequestContext.getUriInfo().getBaseUri();
 
-            Map<String, String> terminateURIs = lraClient.getTerminationUris(resourceInfo.getResourceClass(), baseUri, true);
+            Map<String, String> terminateURIs = lraClient.getTerminationUris(lraId, resourceInfo.getResourceClass(), baseUri, true);
             String timeLimitStr = terminateURIs.get(SRAClient.TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? SRAClient.DEFAULT_TIMEOUT_MILLIS : Long.valueOf(timeLimitStr);
 

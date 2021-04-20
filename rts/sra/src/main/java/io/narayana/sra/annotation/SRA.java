@@ -55,13 +55,6 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface SRA {
-
-    /**
-     * The Type element of the SRA annotation indicates whether a bean method
-     * is to be executed within the context of a SRA.
-     */
-    Type value() default Type.REQUIRED;
-
     enum Type {
         /**
          *  If called outside a SRA context a JAX-RS filter will begin a new SRA for the duration of the
@@ -112,6 +105,12 @@ public @interface SRA {
          */
         NEVER
     }
+
+    /**
+     * The Type element of the SRA annotation indicates whether a bean method
+     * is to be executed within the context of a SRA.
+     */
+    Type value() default Type.REQUIRED;
 
     /**
      * Create a local JTA transaction context such that existing transactional JavaEE code may be called

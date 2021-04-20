@@ -22,7 +22,6 @@
 package io.narayana.sra.demo.service;
 
 import io.narayana.sra.demo.model.Booking;
-import io.narayana.sra.demo.model.BookingStatus;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -53,7 +52,7 @@ public class BookingStore {
         return bookings.remove(id);
     }
 
-    public void updateBookingStatus(String bookingId, BookingStatus status) {
+    public void updateBookingStatus(String bookingId, Booking.BookingStatus status) {
         get(bookingId).setStatus(status);
     }
 }
