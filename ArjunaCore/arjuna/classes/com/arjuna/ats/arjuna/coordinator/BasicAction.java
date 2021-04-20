@@ -3401,6 +3401,7 @@ public class BasicAction extends StateManager
 
     protected synchronized Map<String,String> createStackTraces() {
         Map<String,String> results = new HashMap<>();
+        if (_childThreads == null) return results;
         for (Thread entry : _childThreads.values()) {
             StackTraceElement[] stackTrace = entry.getStackTrace();
             StringBuilder sb = new StringBuilder();
