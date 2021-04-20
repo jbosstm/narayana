@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * a 409 code. Any response other than 200 MUST cause the SRA to roll back.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Prepare {
 }

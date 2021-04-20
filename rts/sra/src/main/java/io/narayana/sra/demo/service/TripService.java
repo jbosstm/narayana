@@ -24,7 +24,6 @@ package io.narayana.sra.demo.service;
 import io.narayana.sra.client.SRAClient;
 import io.narayana.sra.client.SRAClientAPI;
 import io.narayana.sra.demo.model.Booking;
-import io.narayana.sra.demo.model.BookingStatus;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -40,13 +39,13 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class TripService extends BookingStore{
     @Inject
-    private SRAClientAPI lraClient;
+    SRAClientAPI lraClient;
 
     public Booking confirmBooking(Booking tripBooking) {
         System.out.printf("Confirming tripBooking id %s (%s) status: %s%n",
                 tripBooking.getId(), tripBooking.getName(), tripBooking.getStatus());
 
-        if (tripBooking.getStatus() == BookingStatus.CANCEL_REQUESTED)
+        if (tripBooking.getStatus() == Booking.BookingStatus.CANCEL_REQUESTED)
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                     .entity("Trying to setConfirmed a tripBooking which needs to be cancelled")
                     .build());
@@ -75,7 +74,7 @@ public class TripService extends BookingStore{
         System.out.printf("Canceling booking id %s (%s) status: %s%n",
                 booking.getId(), booking.getName(), booking.getStatus());
 
-        if (booking.getStatus() != BookingStatus.CANCEL_REQUESTED && booking.getStatus() != BookingStatus.PROVISIONAL)
+        if (booking.getStatus() != Booking.BookingStatus.CANCEL_REQUESTED && booking.getStatus() != Booking.BookingStatus.PROVISIONAL)
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity("To late to requestCancel booking").build());
 
         Booking prev = add(booking);

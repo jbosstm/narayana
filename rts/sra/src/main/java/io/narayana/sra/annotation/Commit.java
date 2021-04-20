@@ -23,6 +23,7 @@ package io.narayana.sra.annotation;
 
 import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -33,7 +34,7 @@ import java.lang.annotation.Target;
  * contains multiple Commit annotations an arbitrary one is chosen.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Commit {
 }

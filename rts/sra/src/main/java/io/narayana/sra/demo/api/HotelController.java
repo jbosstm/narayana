@@ -23,21 +23,22 @@ package io.narayana.sra.demo.api;
 
 import io.narayana.sra.annotation.SRA;
 import io.narayana.sra.client.SRAParticipant;
-import io.narayana.sra.client.SRAStatus;
 import io.narayana.sra.demo.model.Booking;
-import io.narayana.sra.demo.model.BookingStatus;
 import io.narayana.sra.demo.service.HotelService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import static io.narayana.sra.client.SRAClient.SRA_HTTP_HEADER;
 
 @RequestScoped
 @Path(HotelController.HOTEL_PATH)
@@ -48,13 +49,14 @@ public class HotelController extends SRAParticipant {
     public static final String HOTEL_BEDS_PARAM = "beds";
 
     @Inject
-    private HotelService hotelService;
+    HotelService hotelService;
 
     @POST
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     @SRA(SRA.Type.REQUIRED)
-    public Booking bookRoom(@QueryParam(HOTEL_NAME_PARAM) @DefaultValue("Default") String hotelName,
+    public Booking bookRoom(@HeaderParam(SRA_HTTP_HEADER) String sraId,
+                            @QueryParam(HOTEL_NAME_PARAM) @DefaultValue("Default") String hotelName,
                             @QueryParam(HOTEL_BEDS_PARAM) @DefaultValue("1") Integer beds,
                             @QueryParam("mstimeout") @DefaultValue("500") Long timeout) {
         return hotelService.book(getCurrentActivityId(), hotelName, beds);
@@ -73,10 +75,10 @@ public class HotelController extends SRAParticipant {
         System.out.printf("SRA: %s: Updating hotel participant state to: %s", bookingId, status);
         switch (status) {
             case TransactionCommitted:
-                hotelService.updateBookingStatus(bookingId, BookingStatus.CONFIRMED);
+                hotelService.updateBookingStatus(bookingId, Booking.BookingStatus.CONFIRMED);
                 return status;
             case TransactionRolledBack:
-                hotelService.updateBookingStatus(bookingId, BookingStatus.CANCELLED);
+                hotelService.updateBookingStatus(bookingId, Booking.BookingStatus.CANCELLED);
                 return status;
             default:
                 return status;
