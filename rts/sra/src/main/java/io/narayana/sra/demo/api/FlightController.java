@@ -23,9 +23,7 @@ package io.narayana.sra.demo.api;
 
 import io.narayana.sra.annotation.SRA;
 import io.narayana.sra.client.SRAParticipant;
-import io.narayana.sra.client.SRAStatus;
 import io.narayana.sra.demo.model.Booking;
-import io.narayana.sra.demo.model.BookingStatus;
 import io.narayana.sra.demo.service.FlightService;
 
 import javax.enterprise.context.RequestScoped;
@@ -40,6 +38,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import static io.narayana.sra.client.SRAClient.SRA_HTTP_HEADER;
+
 @RequestScoped
 @Path(FlightController.FLIGHT_PATH)
 @SRA(SRA.Type.SUPPORTS)
@@ -50,18 +50,18 @@ public class FlightController extends SRAParticipant {
     public static final String FLIGHT_SEATS_PARAM = "flightSeats";
 
     @Inject
-    private FlightService flightService;
+    FlightService flightService;
 
     @POST
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     @SRA(SRA.Type.REQUIRED)
-    public Booking bookFlight(@HeaderParam("txid") String lraId,
+    public Booking bookFlight(@HeaderParam(SRA_HTTP_HEADER) String sraId,
                               @QueryParam(FLIGHT_NUMBER_PARAM) @DefaultValue("") String flightNumber,
                               @QueryParam(FLIGHT_SEATS_PARAM) @DefaultValue("1") Integer seats,
                               @QueryParam("mstimeout") @DefaultValue("500") Long timeout) {
 
-        return flightService.book(lraId, flightNumber, seats);
+        return flightService.book(sraId, flightNumber, seats);
     }
 
     @GET
@@ -77,10 +77,10 @@ public class FlightController extends SRAParticipant {
         System.out.printf("SRA: %s: Updating flight participant state to: %s", bookingId, status);
         switch (status) {
             case TransactionCommitted:
-                flightService.updateBookingStatus(bookingId, BookingStatus.CONFIRMED);
+                flightService.updateBookingStatus(bookingId, Booking.BookingStatus.CONFIRMED);
                 return status;
             case TransactionRolledBack:
-                flightService.updateBookingStatus(bookingId, BookingStatus.CANCELLED);
+                flightService.updateBookingStatus(bookingId, Booking.BookingStatus.CANCELLED);
                 return status;
             default:
                 return status;

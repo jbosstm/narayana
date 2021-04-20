@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * be invoked when the time limit is reached.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface TimeLimit {
     long limit() default 0;

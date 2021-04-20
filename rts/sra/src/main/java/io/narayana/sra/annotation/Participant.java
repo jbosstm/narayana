@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  * remains valid, after which the corresponding @Compensate method will be called.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Participant {
 }

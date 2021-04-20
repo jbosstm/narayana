@@ -47,6 +47,10 @@ public class Booking {
 
     private IOException decodingException;
 
+    public Booking() {
+        this(null, null, 0, null);
+    }
+
     public Booking(String id, String name, Integer quantity, String type) {
         this(id, name, quantity, type, BookingStatus.PROVISIONAL, null);
     }
@@ -234,4 +238,8 @@ public class Booking {
     public int hashCode() {
         return getId().hashCode();
     }*/
+
+    public enum BookingStatus {
+        CONFIRMED, CANCELLED, PROVISIONAL, CONFIRMING, CANCEL_REQUESTED
+    }
 }

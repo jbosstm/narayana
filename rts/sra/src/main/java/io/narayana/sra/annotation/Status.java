@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * is made on the method.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Status {
 }

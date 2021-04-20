@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * participant remains valid, after which the corresponding @Rollback method will be called.
  */
 @InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Rollback {
 }
