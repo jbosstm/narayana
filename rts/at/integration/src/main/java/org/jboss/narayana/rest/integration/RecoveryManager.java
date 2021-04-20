@@ -104,7 +104,7 @@ public final class RecoveryManager {
         final RecoveryStore recoveryStore = StoreManager.getRecoveryStore();
         String participantId = participantInformation.getId();
 
-        if(persistedParticipants.get(participantId) != null) {
+        if (persistedParticipants.get(participantId) != null) {
             try {
                 recoveryStore.remove_committed(new Uid(participantId), PARTICIPANT_INFORMATION_RECORD_TYPE);
                 persistedParticipants.remove(participantId);

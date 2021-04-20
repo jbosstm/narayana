@@ -70,7 +70,7 @@ public class ValidTestVersionsRule implements MethodRule {
     }
 
     private String findVersionField(Object objectToSearch) {
-        for(Field field: objectToSearch.getClass().getDeclaredFields()) {
+        for (Field field: objectToSearch.getClass().getDeclaredFields()) {
             if (field.getName().equals(VERSION_FIELD_NAME) && field.getType().isAssignableFrom(String.class)) {
                 try {
                     field.setAccessible(true);

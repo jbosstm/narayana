@@ -7,7 +7,7 @@ Please make sure your PR meets the following requirements:
 Our style rules for submitting code are as follows:
 
 * If you add a new file it MUST adhere to our checkstyle ruleset.
-  1. If you change a file (in a non trivial way) you are allowed (MAY) to reformat the code to conform to our checkstyle ruleset (`org.wildfly.checkstyle:wildfly-checkstyle-config`).
+  1. If you change a file (in a non trivial way) you are allowed (MAY) to reformat the code to conform to our checkstyle ruleset (`org.jboss.narayana:checkstyle`).
   2. If you choose not to reformat it then you SHOULD, where possible, try to follow the same style that's already in use for that file.
 
 

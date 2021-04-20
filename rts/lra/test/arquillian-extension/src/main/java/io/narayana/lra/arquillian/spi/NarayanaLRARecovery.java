@@ -45,7 +45,7 @@ public class NarayanaLRARecovery implements LRARecoveryService {
         String[] resourceClassNames = new String[]{
                 "org.eclipse.microprofile.lra.tck.participant.api.LraResource",
                 "org.eclipse.microprofile.lra.tck.participant.api.RecoveryResource"};
-        for(String resourceClassName: resourceClassNames) {
+        for (String resourceClassName: resourceClassNames) {
             try {
                 Class<?> clazz = Class.forName(resourceClassName);
                 LRAAnnotationAdjuster.processWithClass(clazz);

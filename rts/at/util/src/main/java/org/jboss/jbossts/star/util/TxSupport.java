@@ -63,7 +63,7 @@ import java.security.KeyStore;
  * Various utilities for sending HTTP messages
  * @deprecated
  */
-public class TxSupport{
+public class TxSupport {
     protected static final Logger log = Logger.getLogger(TxSupport.class);
 
     /**
@@ -130,7 +130,7 @@ public class TxSupport{
     }
 
     public static void addLinkHeader(Response.ResponseBuilder response, UriInfo info, String title, String name,
-                                     String ... pathComponents){
+                                     String ... pathComponents) {
         String basePath = info.getMatchedURIs().get(0);
         UriBuilder builder = info.getBaseUriBuilder();
         builder.path(basePath);
@@ -144,13 +144,13 @@ public class TxSupport{
     }
 
     public static void setLinkHeader(Response.ResponseBuilder builder, String title, String rel, String href,
-                                     String type){
+                                     String type) {
         Link link = Link.fromUri(href).title(title).rel(rel).type(type).build();
 
         setLinkHeader(builder, link);
     }
 
-    public static void setLinkHeader(Response.ResponseBuilder builder, Link link){
+    public static void setLinkHeader(Response.ResponseBuilder builder, Link link) {
         builder.header("Link", link);
     }
 
@@ -164,7 +164,7 @@ public class TxSupport{
 
         // the returned document contains transaction URLs delimited by the TXN_LIST_SEP character
         // If the string is empty split returns an array of size 1 with the empty string as the element
-        if(content.length() == 0) {
+        if (content.length() == 0) {
             return txns;
         }
         for (String txn : content.split(URI_SEPARATOR))
@@ -659,7 +659,7 @@ public class TxSupport{
         }
     }
 
-    public static String getStringValue(String content, String name){
+    public static String getStringValue(String content, String name) {
         Map<String, String> matches = new HashMap<String, String>();
 
         TxSupport.matchNames(matches, content, null);
@@ -667,7 +667,7 @@ public class TxSupport{
         return matches.get(name);
     }
 
-    public static int getIntValue(String content, String name, int defValue){
+    public static int getIntValue(String content, String name, int defValue) {
         String v = getStringValue(content, name);
 
         if (v != null)
@@ -680,10 +680,10 @@ public class TxSupport{
         return defValue;
     }
 
-    public static UriBuilder getUriBuilder(UriInfo info, int npaths, String ... paths){
+    public static UriBuilder getUriBuilder(UriInfo info, int npaths, String ... paths) {
         UriBuilder builder = info.getBaseUriBuilder();
 
-        if (npaths > 0){
+        if (npaths > 0) {
             List<PathSegment> segments = info.getPathSegments();
 
             for (int i = 0; i < npaths; i++)
@@ -700,7 +700,7 @@ public class TxSupport{
         return builder;
     }
 
-    public static URI getUri(UriInfo info, int npaths, String ... paths){
+    public static URI getUri(UriInfo info, int npaths, String ... paths) {
         return getUriBuilder(info, npaths, paths).build();
     }
 
@@ -710,7 +710,7 @@ public class TxSupport{
         return getUri(info, info.getPathSegments().size(), paths).toASCIIString();
     }
 
-    public static String buildURI(UriBuilder builder, String ... pathComponents){
+    public static String buildURI(UriBuilder builder, String ... pathComponents) {
         for (String component : pathComponents)
             builder.path(component);
 

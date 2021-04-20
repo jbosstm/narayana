@@ -23,8 +23,8 @@
 /**
  * transaction status exception
  */
-public class TransactionStatusException extends RuntimeException{
-    public TransactionStatusException(String message){
+public class TransactionStatusException extends RuntimeException {
+    public TransactionStatusException(String message) {
         super(message);
     }
 }

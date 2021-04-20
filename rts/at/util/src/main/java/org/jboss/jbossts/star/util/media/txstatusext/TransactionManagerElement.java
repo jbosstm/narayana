@@ -31,7 +31,7 @@ import java.util.List;
 public class TransactionManagerElement {
     private Date created;
     private TransactionStatisticsElement statistics;
-    private List <String> coordinatorURIs = new ArrayList<String>();
+    private List<String> coordinatorURIs = new ArrayList<String>();
     private List<CoordinatorElement> coordinators = new ArrayList<CoordinatorElement>();
 
     @XmlElement

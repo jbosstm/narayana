@@ -40,13 +40,13 @@ import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
-public class TMApplication extends Application{
+public class TMApplication extends Application {
     private static final Logger log = Logger.getLogger(TMApplication.class);
 
     HashSet<Object> singletons = new HashSet<Object>();
     Set<Class<?>> classes = new HashSet<Class<?>> ();
 
-    public TMApplication(Class<?> ... extraClasses){
+    public TMApplication(Class<?> ... extraClasses) {
 //        singletons.addAll(Arrays.asList(resources));
         try
         {
@@ -57,11 +57,11 @@ public class TMApplication extends Application{
                 RecoveryManager.manager();
 
            // register RESTRecord record type so that it is persisted in the object store correctly
-           RecordTypeManager.manager().add(new RecordTypeMap(){
-               public Class<? extends AbstractRecord> getRecordClass (){
+           RecordTypeManager.manager().add(new RecordTypeMap() {
+               public Class<? extends AbstractRecord> getRecordClass () {
                    return RESTRecord.class;
                    }
-               public int getType (){
+               public int getType () {
                    return RecordType.RESTAT_RECORD;
                    }
            });
@@ -69,19 +69,18 @@ public class TMApplication extends Application{
             Collections.addAll(classes, resourceClasses);
             Collections.addAll(classes, mappers);
             Collections.addAll(classes, extraClasses);
-        }
-        catch (Throwable e){
+        } catch (Throwable e) {
           RESTATLogger.atI18NLogger.warn_jaxrsTM(e.getMessage(), e);
         }
     }
 
     @Override
-    public Set<Class<?>> getClasses(){
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 
     @Override
-    public Set<Object> getSingletons(){
+    public Set<Object> getSingletons() {
         return singletons;
     }
 
