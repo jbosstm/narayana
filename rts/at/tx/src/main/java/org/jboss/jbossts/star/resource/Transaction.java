@@ -46,7 +46,7 @@ import org.jboss.jbossts.star.util.media.txstatusext.TwoPhaseAwareParticipantEle
 import org.jboss.logging.Logger;
 
 @XmlRootElement(name = "transaction")
-public class Transaction extends AtomicAction{
+public class Transaction extends AtomicAction {
     protected static final Logger log = Logger.getLogger(Transaction.class);
 
     private long age = System.currentTimeMillis();
@@ -55,12 +55,12 @@ public class Transaction extends AtomicAction{
     private String recoveryUrl = null;
     private Collection<String> volatileParticipants; // synchronizations
 
-    public Transaction(){
+    public Transaction() {
         super();
         volatileParticipants = new ArrayList<String>();
     }
 
-    public Transaction(Coordinator coordinator, String initiator){
+    public Transaction(Coordinator coordinator, String initiator) {
         this();
         this.coordinator = coordinator;
         this.initiator = initiator;
@@ -85,17 +85,17 @@ public class Transaction extends AtomicAction{
     }
 
     @XmlElement
-    public String getInitiator(){
+    public String getInitiator() {
         return initiator;
     }
 
     @XmlElement
-    public String getAge(){
+    public String getAge() {
         return Long.toString(System.currentTimeMillis() - age);
     }
 
     @XmlAttribute
-    public String getStatus(){
+    public String getStatus() {
         return getStatus(lookupStatus());
     }
 
@@ -103,7 +103,7 @@ public class Transaction extends AtomicAction{
         return status();
     }
 
-    public String getStatus(int status){
+    public String getStatus(int status) {
         TxStatus txStatus = TxStatus.fromActionStatus(status);
 
         if (txStatus.equals(TxStatus.TransactionStatusUnknown))
@@ -116,7 +116,7 @@ public class Transaction extends AtomicAction{
         return TxStatus.fromActionStatus(lookupStatus());
     }
 
-    public String getRecoveryUrl(){
+    public String getRecoveryUrl() {
         return recoveryUrl;
     }
 
@@ -177,7 +177,7 @@ public class Transaction extends AtomicAction{
         return false;
     }
 
-    public void getParticipants(Collection<String> enlistmentIds){
+    public void getParticipants(Collection<String> enlistmentIds) {
         if (pendingList == null)
             return;
 
@@ -193,7 +193,7 @@ public class Transaction extends AtomicAction{
         }
     }
 
-    public void setFault(String fault){
+    public void setFault(String fault) {
         if (pendingList == null)
             return;
 
@@ -209,14 +209,14 @@ public class Transaction extends AtomicAction{
         }
     }
 
-    public boolean isFinishing(){
+    public boolean isFinishing() {
         return getTxStatus().isFinishing();
     }
-    public boolean isAlive(){
+    public boolean isAlive() {
         return getTxStatus().isActive();
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return getTxStatus().isRunning();
     }
 

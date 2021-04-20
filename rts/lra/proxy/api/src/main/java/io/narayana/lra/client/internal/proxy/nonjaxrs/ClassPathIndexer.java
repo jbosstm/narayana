@@ -90,7 +90,7 @@ class ClassPathIndexer {
 
         // ModuleClassLoader is available at the classpath and we can try to use it to list loaded resources
         ClassLoader currentThreadClassLoader = Thread.currentThread().getContextClassLoader();
-        if(currentThreadClassLoader instanceof ModuleClassLoader) {
+        if (currentThreadClassLoader instanceof ModuleClassLoader) {
             Iterator<Resource> resources = ((ModuleClassLoader) currentThreadClassLoader).iterateResources("", true);
             while (resources.hasNext()) {
                 Resource resource = resources.next();

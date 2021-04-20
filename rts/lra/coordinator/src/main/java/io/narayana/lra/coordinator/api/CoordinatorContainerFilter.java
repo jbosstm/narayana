@@ -86,7 +86,7 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        if(!responseContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)) {
+        if (!responseContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME)) {
             // when app code did not provide version to header to be returned back
             // then using the api version which came within request; when provided neither then the current version of the api
             String responseVersion = requestContext.getHeaders().containsKey(LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME) ?

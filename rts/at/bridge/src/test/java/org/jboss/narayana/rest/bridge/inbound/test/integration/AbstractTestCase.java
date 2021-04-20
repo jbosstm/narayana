@@ -96,7 +96,7 @@ public abstract class AbstractTestCase {
     public void after() {
         try {
             txSupport.rollbackTx();
-        } catch (Throwable t){
+        } catch (Throwable t) {
         }
 
         try {
@@ -237,12 +237,12 @@ public abstract class AbstractTestCase {
      * is placed exactly once in the {@link JSONArray}.
      */
     protected void assertJsonArray(JSONArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) throws JSONException {
-        if(recordToAssert == null) throw new NullPointerException("recordToAssert");
+        if (recordToAssert == null) throw new NullPointerException("recordToAssert");
         boolean containsJsonArrayExpectedCount = containsJsonArray(invocationsJSONArray, recordToAssert, expectedRecordFoundCount);
         if (!containsJsonArrayExpectedCount) {
             String formattedTimesString = expectedRecordFoundCount + " times";
-            if(expectedRecordFoundCount == 1) formattedTimesString = "once";
-            if(expectedRecordFoundCount == 2) formattedTimesString = "twice";
+            if (expectedRecordFoundCount == 1) formattedTimesString = "once";
+            if (expectedRecordFoundCount == 2) formattedTimesString = "twice";
             Assert.fail("Invocation result returned as a JSON array '" + invocationsJSONArray + "' "
                     + "expected to contain the record '" + recordToAssert + "' " + formattedTimesString);
         }
@@ -250,8 +250,8 @@ public abstract class AbstractTestCase {
 
     protected boolean containsJsonArray(JSONArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) throws JSONException {
         int recordFoundCount = 0;
-        for(int i = 0; i < invocationsJSONArray.length(); i++) {
-            if(recordToAssert.equals(invocationsJSONArray.get(i))) {
+        for (int i = 0; i < invocationsJSONArray.length(); i++) {
+            if (recordToAssert.equals(invocationsJSONArray.get(i))) {
                 recordFoundCount++;
             }
         }

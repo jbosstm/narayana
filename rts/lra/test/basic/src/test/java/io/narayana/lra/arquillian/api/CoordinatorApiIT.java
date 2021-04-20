@@ -371,7 +371,7 @@ public class CoordinatorApiIT {
         }
 
         String encodedLraId1 = URLEncoder.encode(lraId1.toString(), StandardCharsets.UTF_8.name());
-        try(Response response = client.target(coordinatorUrl)
+        try (Response response = client.target(coordinatorUrl)
                 .path("start")
                 .queryParam(CLIENT_ID_PARAM_NAME, testRule.getMethodName() + "_2")
                 .queryParam(PARENT_LRA_PARAM_NAME, encodedLraId1)

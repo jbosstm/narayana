@@ -62,7 +62,7 @@ public final class ParticipantInformation {
     @Override
     public String toString() {
         return "<ParticipantInformation: id=" + id + ", applicationId=" + applicationId + ", recoveryURL=" + recoveryURL
-                + ", participant=" + participant + ", status=" + status+ ">";
+                + ", participant=" + participant + ", status=" + status + ">";
     }
 
 }

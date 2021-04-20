@@ -67,15 +67,15 @@ public class SpdyEnabledHttpServer {
 
         WebappContext context = new WebappContext("GrizzlyContext", path);
         ServletRegistration registration;
-        if(c != null) {
+        if (c != null) {
             registration = context.addServlet(c.getName(), c);
         } else {
             registration = context.addServlet(servlet.getClass().getName(), servlet);
         }
         registration.addMapping("/*");
 
-        if(contextInitParams != null) {
-            for(Map.Entry<String, String> e : contextInitParams.entrySet()) {
+        if (contextInitParams != null) {
+            for (Map.Entry<String, String> e : contextInitParams.entrySet()) {
                 context.setInitParameter(e.getKey(), e.getValue());
             }
         }
@@ -122,7 +122,7 @@ public class SpdyEnabledHttpServer {
 
         listener.setSecure(secure);
 
-        if(sslEngineConfigurator != null) {
+        if (sslEngineConfigurator != null) {
             listener.setSSLEngineConfig(sslEngineConfigurator);
         }
 

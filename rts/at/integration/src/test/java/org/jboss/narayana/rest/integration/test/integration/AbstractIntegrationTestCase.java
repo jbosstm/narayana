@@ -46,7 +46,7 @@ public abstract class AbstractIntegrationTestCase {
     public void after() {
         try {
             txSupport.rollbackTx();
-        } catch (Throwable t){
+        } catch (Throwable t) {
         }
     }
 

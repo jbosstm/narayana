@@ -17,7 +17,7 @@
  */
 package org.jboss.jbossts.star.util;
 
-public class TxStatusMediaType extends TxMediaType{
+public class TxStatusMediaType extends TxMediaType {
     public static final String STATUS_PROPERTY = "txstatus";
 
     public static final String TX_ACTIVE = toMediaType(TxStatus.TransactionActive);
