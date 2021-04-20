@@ -78,7 +78,7 @@ public class JDBCObjectStoreTest extends TestBase {
 
             // Simple SQL statement to fetch all data from the (PREFIX)JBOSSTSTXTABLE
             ResultSet resultSet = st.executeQuery("SELECT * FROM " +
-                    (Objects.isNull(tablePrefix)? "" : tablePrefix) +
+                    (Objects.isNull(tablePrefix) ? "" : tablePrefix) +
                     "JBOSSTSTXTABLE");
 
             // Fetches all info from the first row of the ResultSet

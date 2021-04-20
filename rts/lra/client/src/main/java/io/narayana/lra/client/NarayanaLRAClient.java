@@ -830,7 +830,7 @@ public class NarayanaLRAClient implements Closeable {
                 uri.toURL();
             } catch (MalformedURLException mue) {
                 throwGenericLRAException(null, NOT_ACCEPTABLE.getStatusCode(),
-                        String.format(message, mue.getClass().getName() +":" + mue.getMessage()) + " uri=" + uri, mue);
+                        String.format(message, mue.getClass().getName() + ":" + mue.getMessage()) + " uri=" + uri, mue);
             }
         }
     }

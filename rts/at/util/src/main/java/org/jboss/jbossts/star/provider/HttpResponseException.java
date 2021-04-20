@@ -25,39 +25,39 @@
  * @deprecated The new class will be updated to extend Exception instead of Error
  */
 @Deprecated // The new class will be updated to extend Exception instead of Error
-public class HttpResponseException extends Error{
+public class HttpResponseException extends Error {
     private int expectedResponse;
     private int actualResponse;
     private String body;
 
-    public HttpResponseException(Throwable cause, String body, int expectedResponse, int actualResponse){
+    public HttpResponseException(Throwable cause, String body, int expectedResponse, int actualResponse) {
         super(cause);
         this.body = body;
         this.expectedResponse = expectedResponse;
         this.actualResponse = actualResponse;
     }
 
-    public HttpResponseException(Throwable cause, String body, int[] expectedResponses, int actualResponse){
+    public HttpResponseException(Throwable cause, String body, int[] expectedResponses, int actualResponse) {
         this(cause, body, (expectedResponses != null && expectedResponses.length != 0 ? expectedResponses[0] : -1), actualResponse);
     }
 
-    public HttpResponseException(int expectedResponse, int actualResponse){
+    public HttpResponseException(int expectedResponse, int actualResponse) {
         this(null, null, expectedResponse, actualResponse);
     }
 
-    public int getExpectedResponse(){
+    public int getExpectedResponse() {
         return expectedResponse;
     }
 
-    public int getActualResponse(){
+    public int getActualResponse() {
         return actualResponse;
     }
 
-    public String getBody(){
+    public String getBody() {
         return body;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         if (getCause() != null)
             return super.getMessage();
 

@@ -120,7 +120,7 @@ public class LRAParticipant {
 
     @GET
     @Path(CONTINUE_LRA)
-    @LRA(value = LRA.Type.MANDATORY, end=false)
+    @LRA(value = LRA.Type.MANDATORY, end = false)
     public Response continueLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
         return Response.status(Response.Status.OK).entity(lraId.toASCIIString()).build();
     }

@@ -23,8 +23,8 @@
 /**
  * Unable to contact the REST based Transaction Coordinator
  */
-public class TMUnavailableException extends RuntimeException{
-    public TMUnavailableException(String message){
+public class TMUnavailableException extends RuntimeException {
+    public TMUnavailableException(String message) {
         super(message);
     }
 }

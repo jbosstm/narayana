@@ -28,9 +28,9 @@ import javax.ws.rs.ext.Provider;
  * Maps an HttpResponseException to the HTTP code embedded in the exception
  */
 @Provider
-public class HttpResponseMapper implements ExceptionMapper<HttpResponseException>{
+public class HttpResponseMapper implements ExceptionMapper<HttpResponseException> {
 
-   public Response toResponse(HttpResponseException exception){
+   public Response toResponse(HttpResponseException exception) {
 
       return Response.status(exception.getActualResponse()).build();
    }

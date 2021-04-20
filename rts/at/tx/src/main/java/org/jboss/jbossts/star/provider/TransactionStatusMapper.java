@@ -30,8 +30,8 @@ import org.jboss.resteasy.util.HttpResponseCodes;
  * map transaction status exceptions
  */
 @Provider
-public class TransactionStatusMapper implements ExceptionMapper<TransactionStatusException>{
-   public Response toResponse(TransactionStatusException exception){
+public class TransactionStatusMapper implements ExceptionMapper<TransactionStatusException> {
+   public Response toResponse(TransactionStatusException exception) {
       return Response.status(HttpResponseCodes.SC_CONFLICT).build();
    }
 }

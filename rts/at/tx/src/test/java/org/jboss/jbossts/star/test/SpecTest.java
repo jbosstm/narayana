@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
  */
 public class SpecTest extends BaseTest {
     // jax-rs does not support TRACE, CONNECT and PATCH
-    private static enum HTTP_METHOD {HEAD, GET, POST, PUT, DELETE, OPTIONS}
+    private static enum HTTP_METHOD { HEAD, GET, POST, PUT, DELETE, OPTIONS }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
