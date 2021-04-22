@@ -160,6 +160,13 @@ public class TransactionReaper
 
             synchronized(reaperElement) {
                 switch (reaperElement._status) {
+                    case ReaperElement.TRACE:
+                        // either the worker is running slow (perhaps it got wedged on another tx's cancel) or
+                        // the getTransactionTimeoutAbsoluteMillis was very close to the getNextCheckAbsoluteMillis.
+                        // Either way, the worker didn't complete the stackTrace and return the state to RUN yet
+                        // But no matter, we can treat this case as RUN, which will either reschedule to the next
+                        // TRACE time, or move us to SCHEDULE_CANCEL
+                    // no break; here, we want to fall through...
                     case ReaperElement.RUN: {
 
                         if(reaperElement.getNextCheckAbsoluteMillis() < reaperElement.getTransactionTimeoutAbsoluteMillis()) {
