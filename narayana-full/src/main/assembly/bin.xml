@@ -117,6 +117,16 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
+				<include>org.jboss.narayana.jta:narayana-jta-jakarta:jar</include>
+			</includes>
+			<outputDirectory>lib/jta</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<includes>
 				<include>org.jboss.narayana:jbosstxbridge</include>
 			</includes>
 			<outputDirectory>lib/txbridge</outputDirectory>
