@@ -25,8 +25,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Exercises TransactionReaper periodic stack tracing functionality.
@@ -45,7 +44,7 @@ public class ReaperStacktracingTest {
         arjPropertyManager.getCoordinatorEnvironmentBean().setTxReaperTraceInterval(200);
 
         TransactionReaper reaper = TransactionReaper.transactionReaper();
-        MockReapable reapable = new MockReapable(new Uid());
+        MockReapable reapable = new MockReapable(new Uid(), 0);
         long startTime = System.currentTimeMillis();
         reaper.insert(reapable, 1);
         Thread.sleep(1200);
@@ -67,6 +66,31 @@ public class ReaperStacktracingTest {
         assertWithinTolerance(startTime+1000, reapable.cancelCallTimes.get(0));
     }
 
+    @Test
+    public void testSlowTracingReaper() throws Exception {
+
+        // [JBTM-3468] arrange matters such that a tracing request is blocked by another tx's slow timeout,
+        // such that the reaper will see the TRACE itself timeout and need to be requeued:
+
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTxReaperTraceGracePeriod(1100);
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTxReaperTraceInterval(100);
+
+        TransactionReaper reaper = TransactionReaper.transactionReaper();
+        MockReapable tracingReapable = new MockReapable(new Uid(), 0);
+        MockReapable blockingReapable = new MockReapable(new Uid(), 1000);
+
+        reaper.insert(blockingReapable, 1);
+        reaper.insert(tracingReapable, 2);
+
+        Thread.sleep(2200);
+        TransactionReaper.terminate(false);
+
+        assertTrue(blockingReapable.cancelCallTimes.size() > 0);
+        assertTrue(blockingReapable.recordStackTracesCallTimes.isEmpty());
+        assertTrue(tracingReapable.cancelCallTimes.size() > 0);
+        assertFalse(tracingReapable.recordStackTracesCallTimes.isEmpty());
+    }
+
     public void assertWithinTolerance(long a, long b) {
         long diff = Math.abs(a-b);
         // 100ms should be enough to give us some wiggle room with startup overhead and thread scheduling
@@ -76,13 +100,15 @@ public class ReaperStacktracingTest {
     public class MockReapable implements Reapable
     {
         private Uid uid;
+        private final int wedgeTime;
         public List<Long> cancelCallTimes = new ArrayList<>();
         public List<Long> recordStackTracesCallTimes = new ArrayList<>();
         public List<Long> outputCapturedStackTracesCallTimes = new ArrayList<>();
 
-        public MockReapable(Uid uid)
+        public MockReapable(Uid uid, int wedgeTime)
         {
             this.uid = uid;
+            this.wedgeTime = wedgeTime;
         }
 
         public boolean running()
@@ -103,6 +129,11 @@ public class ReaperStacktracingTest {
         public int cancel()
         {
             cancelCallTimes.add(System.currentTimeMillis());
+            try {
+                if(wedgeTime > 0) {
+                    Thread.sleep(wedgeTime);
+                }
+            } catch (InterruptedException e) {}
             return ActionStatus.ABORTED;
         }
 
