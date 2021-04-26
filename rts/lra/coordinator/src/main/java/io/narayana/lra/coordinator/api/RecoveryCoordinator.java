@@ -92,7 +92,7 @@ public class RecoveryCoordinator {
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
 
         if (compensatorUrl == null) {
-            LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
+            LRALogger.i18nLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
             throw new NotFoundException(rcvCoordId);
         }
 
@@ -130,7 +130,7 @@ public class RecoveryCoordinator {
             try {
                 lra = new URI(lraId);
             } catch (URISyntaxException e) {
-                LRALogger.i18NLogger.error_invalidFormatOfLraIdReplacingCompensatorURI(lraId, compensatorUrl, e);
+                LRALogger.i18nLogger.error_invalidFormatOfLraIdReplacingCompensatorURI(lraId, compensatorUrl, e);
                 String errMsg = String.format("%s: %s", lraId, e.getMessage());
                 throw new WebApplicationException(errMsg, e,
                         Response.status(INTERNAL_SERVER_ERROR.getStatusCode()).entity(errMsg).build());
@@ -141,7 +141,7 @@ public class RecoveryCoordinator {
             return context.getRequestUri().toASCIIString();
         }
 
-        LRALogger.i18NLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
+        LRALogger.i18nLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
         String errorMsg = lraId + ": Cannot find compensator URL " + compensatorUrl;
         throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(rcvCoordId).build());
     }

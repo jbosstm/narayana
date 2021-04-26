@@ -82,7 +82,7 @@ public class LRACDIExtension implements Extension {
                     try {
                         participant.setInstance(participant.getJavaClass().newInstance());
                     } catch (InstantiationException | IllegalAccessException e) {
-                        LRALogger.i18NLogger.error_cannotProcessParticipant(e);
+                        LRALogger.i18nLogger.error_cannotProcessParticipant(e);
                     }
                 }
             }

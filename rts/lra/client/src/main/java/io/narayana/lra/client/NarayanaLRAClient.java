@@ -198,7 +198,7 @@ public class NarayanaLRAClient implements Closeable {
         try {
             this.coordinatorUrl = LRAConstants.getLRACoordinatorUrl(lraId);
         } catch (IllegalStateException e) {
-            LRALogger.i18NLogger.error_invalidLraIdFormatToConvertToCoordinatorUrl(lraId.toASCIIString(), e);
+            LRALogger.i18nLogger.error_invalidLraIdFormatToConvertToCoordinatorUrl(lraId.toASCIIString(), e);
             throwGenericLRAException(lraId, BAD_REQUEST.getStatusCode(), e.getClass().getName() + ":" + e.getMessage(), null);
         }
     }
@@ -326,7 +326,7 @@ public class NarayanaLRAClient implements Closeable {
                 String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
 
                 if (verbose) {
-                    LRALogger.i18NLogger.error_lraCreationUnexpectedStatus(response.getStatus(), responseEntity);
+                    LRALogger.i18nLogger.error_lraCreationUnexpectedStatus(response.getStatus(), responseEntity);
                 }
                 throwGenericLRAException(null, response.getStatus(), // TODO the catch (Exception) block already catches this one
                         "LRA start returned an unexpected status code: " + response.getStatus() + ", response '" + responseEntity + "'", null);
@@ -342,7 +342,7 @@ public class NarayanaLRAClient implements Closeable {
             return lra;
         } catch (UnsupportedEncodingException uee) {
             if (verbose) {
-                LRALogger.i18NLogger.error_invalidFormatToEncodeParentUri(parentLRA, uee);
+                LRALogger.i18nLogger.error_invalidFormatToEncodeParentUri(parentLRA, uee);
             }
             throwGenericLRAException(null, INTERNAL_SERVER_ERROR.getStatusCode(),
                     "Cannot connect to the LRA coordinator: " + coordinatorUrl + " as provided parent LRA URL '" + parentLRA +
@@ -425,7 +425,7 @@ public class NarayanaLRAClient implements Closeable {
                 .get(LEAVE_TIMEOUT, TimeUnit.SECONDS);
 
             if (OK.getStatusCode() != response.getStatus()) {
-                LRALogger.i18NLogger.error_lraLeaveUnexpectedStatus(response.getStatus(),
+                LRALogger.i18nLogger.error_lraLeaveUnexpectedStatus(response.getStatus(),
                         response.hasEntity() ? response.readEntity(String.class) : "");
                 throwGenericLRAException(null, response.getStatus(), "Leaving LRA " + lraId + " from coordinator " + coordinatorUrl
                     + " finished with unexpected response code: " + response.getStatusInfo(), null);
@@ -497,7 +497,7 @@ public class NarayanaLRAClient implements Closeable {
         });
 
         if (asyncTermination[0] && !paths.containsKey(STATUS) && !paths.containsKey(FORGET)) {
-            LRALogger.i18NLogger.error_asyncTerminationBeanMissStatusAndForget(compensatorClass);
+            LRALogger.i18nLogger.error_asyncTerminationBeanMissStatusAndForget(compensatorClass);
 
             throw new WebApplicationException(
                     Response.status(BAD_REQUEST)
@@ -613,13 +613,13 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (response.getStatus() != OK.getStatusCode()) {
-                LRALogger.i18NLogger.error_invalidStatusCode(coordinatorUrl, response.getStatus(), lraId);
+                LRALogger.i18nLogger.error_invalidStatusCode(coordinatorUrl, response.getStatus(), lraId);
                 throwGenericLRAException(uri, response.getStatus(),
                     "LRA coordinator returned an invalid status code", null);
             }
 
             if (!response.hasEntity()) {
-                LRALogger.i18NLogger.error_noContentOnGetStatus(coordinatorUrl, lraId);
+                LRALogger.i18nLogger.error_noContentOnGetStatus(coordinatorUrl, lraId);
                 throwGenericLRAException(uri, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "LRA coordinator#getStatus returned 200 OK but no content: lra: " + lraId, null);
             }
@@ -628,7 +628,7 @@ public class NarayanaLRAClient implements Closeable {
             try {
                 return fromString(response.readEntity(String.class));
             } catch (IllegalArgumentException iae) {
-                LRALogger.i18NLogger.error_invalidArgumentOnStatusFromCoordinator(coordinatorUrl, lraId, iae);
+                LRALogger.i18nLogger.error_invalidArgumentOnStatusFromCoordinator(coordinatorUrl, lraId, iae);
                 throwGenericLRAException(uri,Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                     "LRA coordinator returned an invalid status", iae);
             }
@@ -734,17 +734,17 @@ public class NarayanaLRAClient implements Closeable {
 
             String responseEntity = response.hasEntity() ? response.readEntity(String.class) : "";
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                LRALogger.i18NLogger.error_tooLateToJoin(lraId, responseEntity);
+                LRALogger.i18nLogger.error_tooLateToJoin(lraId, responseEntity);
                 String errorMsg = lraId + ": Too late to join with this LRA";
                 throw new WebApplicationException(errorMsg,
                         Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
             } else if (response.getStatus() == NOT_FOUND.getStatusCode()) {
-                LRALogger.i18NLogger.info_failedToEnlistingLRANotFound(
+                LRALogger.i18nLogger.info_failedToEnlistingLRANotFound(
                         lraId, coordinatorUrl, NOT_FOUND.getStatusCode(), NOT_FOUND.getReasonPhrase(), GONE.getStatusCode(), GONE.getReasonPhrase());
                 throw new WebApplicationException(uri.toASCIIString(),
                         Response.status(GONE).entity(uri.toASCIIString()).build());
             } else if (response.getStatus() != OK.getStatusCode()) {
-                LRALogger.i18NLogger.error_failedToEnlist(lraId, coordinatorUrl, response.getStatus());
+                LRALogger.i18nLogger.error_failedToEnlist(lraId, coordinatorUrl, response.getStatus());
                 throwGenericLRAException(uri, response.getStatus(), "unable to register participant", null);
             }
 
@@ -794,7 +794,7 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (isUnexpectedResponseStatus(response, OK, Response.Status.ACCEPTED, NOT_FOUND)) {
-                String warnMsg = LRALogger.i18NLogger.error_lraTerminationUnexpectedStatus(response.getStatus(),
+                String warnMsg = LRALogger.i18nLogger.error_lraTerminationUnexpectedStatus(response.getStatus(),
                         response.hasEntity() ? response.readEntity(String.class) : "");
 
                 LRALogger.logger.warn(warnMsg);
@@ -802,7 +802,7 @@ public class NarayanaLRAClient implements Closeable {
             }
 
             if (response.getStatus() == NOT_FOUND.getStatusCode()) {
-                String errorMsg = LRALogger.i18NLogger.get_couldNotCompleteCompensateOnReturnedStatus(
+                String errorMsg = LRALogger.i18nLogger.get_couldNotCompleteCompensateOnReturnedStatus(
                         confirm ? "close" : "compensate", lra, coordinatorUrl, NOT_FOUND.getReasonPhrase());
                 LRALogger.logger.info(errorMsg);
                 throw new NotFoundException(errorMsg,

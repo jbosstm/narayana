@@ -138,7 +138,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             this.recoveryURI = null;
             this.compensatorData = compensatorData;
         } catch (URISyntaxException e) {
-            LRALogger.i18NLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI);
+            LRALogger.i18nLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI);
             String errorMsg = lraId + ": Invalid LRA id: " + e.getMessage();
             throw new WebApplicationException(errorMsg, e,
                     Response.status(BAD_REQUEST).entity(errorMsg).build());

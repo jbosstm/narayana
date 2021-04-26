@@ -115,7 +115,7 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
         }
 
         if (!Arrays.stream(NARAYANA_LRA_API_SUPPORTED_VERSIONS).anyMatch(v -> v.equals(apiVersionString))) {
-            String errorMsg = LRALogger.i18NLogger.get_wrongAPIVersionDemanded(
+            String errorMsg = LRALogger.i18nLogger.get_wrongAPIVersionDemanded(
                     apiVersionString, NARAYANA_LRA_API_SUPPORTED_VERSIONS.toString());
             throw new WebApplicationException(errorMsg,
                     Response.status(EXPECTATION_FAILED).entity(errorMsg)
