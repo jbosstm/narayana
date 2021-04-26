@@ -213,7 +213,7 @@ public class LongRunningAction extends BasicAction {
 
             }
         } catch (IOException | NullPointerException e1) {
-            LRALogger.i18NLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), e1);
+            LRALogger.i18nLogger.warn_coordinatorNorecordfound(Integer.toString(record_type), e1);
 
             return false;
         }

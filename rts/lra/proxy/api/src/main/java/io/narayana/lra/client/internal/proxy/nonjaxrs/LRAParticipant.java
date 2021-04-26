@@ -242,7 +242,7 @@ public class LRAParticipant {
             Object result = participantResult.getValue();
 
             if (shouldInvokeParticipantMethod(result)) {
-                LRALogger.i18NLogger.warn_participantReturnsImmediateStateFromCompletionStage(
+                LRALogger.i18nLogger.warn_participantReturnsImmediateStateFromCompletionStage(
                     getJavaClass().getName(), lraId.toASCIIString());
                 return invokeParticipantMethod(method, lraId, parentId, type);
             }

@@ -170,7 +170,7 @@ public class LRARecoveryModule implements RecoveryModule {
                     // Record already exists in failedLRARecord location, hence removing it from the LRARecord location
                     moved = true;
                     if (!_recoveryStore.remove_committed(failedUid, _transactionType)) {
-                        LRALogger.i18NLogger.warn_UnableToRemoveDuplicateFailedLRARecord(
+                        LRALogger.i18nLogger.warn_UnableToRemoveDuplicateFailedLRARecord(
                                 failedUid.toString(), failedLRAType, _transactionType);
                         moved = false;
                     }
@@ -185,7 +185,7 @@ public class LRARecoveryModule implements RecoveryModule {
                 }
             }
         } catch (ObjectStoreException e) {
-            LRALogger.i18NLogger.warn_move_lra_record(failedUid.toString(), e.getMessage());
+            LRALogger.i18nLogger.warn_move_lra_record(failedUid.toString(), e.getMessage());
         }
         return moved;
     }
