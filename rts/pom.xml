@@ -29,20 +29,6 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <name>Narayana: RESTful transactions</name>
   <description>RESTful transactions</description>
   <url>http://www.jboss.org/jbosstm</url>
-  <dependencies>
-    <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <version>2.0.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-      <version>2.0.1.Final</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
 
   <properties>
     <version.thorntail>2.7.0.Final</version.thorntail>
@@ -65,10 +51,10 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     <dependencies>
       <dependency>
         <groupId>io.thorntail</groupId>
-          <artifactId>bom-all</artifactId>
-          <version>${version.thorntail}</version>
-          <scope>import</scope>
-          <type>pom</type>
+        <artifactId>bom-all</artifactId>
+        <version>${version.thorntail}</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency> 
     </dependencies>
   </dependencyManagement>
@@ -104,30 +90,30 @@ Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     </profile>
     <profile>
 	  <id>jdk11</id>
-          <activation>
-             <jdk>[11,)</jdk>
-          </activation>
-          <properties>
-             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-	  </properties>
-	  <dependencies>
-             <dependency>
-                <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-		<scope>provided</scope>
-             </dependency>
-	  </dependencies>
+        <activation>
+          <jdk>[11,)</jdk>
+        </activation>
+        <properties>
+          <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+	      <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+	    </properties>
+	    <dependencies>
+          <dependency>
+            <groupId>org.jboss.spec.javax.xml.bind</groupId>
+            <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+            <scope>provided</scope>
+          </dependency>
+	    </dependencies>
       </profile>
-    <profile>
-    <id>community</id>
-      <modules>
-        <module>lra</module>
-        <module>sra</module>
-      </modules>
-    </profile>
-  </profiles>
+      <profile>
+        <id>community</id>
+        <modules>
+          <module>lra</module>
+          <module>sra</module>
+        </modules>
+      </profile>
+    </profiles>
   <modules>
     <module>at</module>
   </modules>
