@@ -29,5 +29,5 @@ public final class LRALogger {
     }
 
     public static final Logger logger = Logger.getLogger("io.narayana.lra");
-    public static final lraI18NLogger i18NLogger = Logger.getMessageLogger(lraI18NLogger.class, "io.narayana.lra");
+    public static final LraI18nLogger i18nLogger = Logger.getMessageLogger(LraI18nLogger.class, "io.narayana.lra");
 }

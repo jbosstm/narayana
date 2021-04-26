@@ -39,7 +39,7 @@ import org.jboss.logging.annotations.MessageLogger;
  * i18n log messages for the lra module.
  */
 @MessageLogger(projectCode = "LRA")
-public interface lraI18NLogger {
+public interface LraI18nLogger {
 
     /*
         Message IDs are unique and non-recyclable.
@@ -126,40 +126,36 @@ public interface lraI18NLogger {
     @Message(id = 25020, value = "Cannot process non JAX-RS LRA participant")
     void error_cannotProcessParticipant(@Cause ReflectiveOperationException e);
 
-    @LogMessage(level = WARN)
-    @Message(id = 25021, value = "CDI cannot be detected, non JAX-RS LRA participants will not be processed")
-    void warn_nonJaxRsParticipantsNotAllowed();
-
     @LogMessage(level = ERROR)
-    @Message(id = 25022, value = "Invalid format of LRA id to be converted to LRA coordinator url, was '%s'")
+    @Message(id = 25021, value = "Invalid format of LRA id to be converted to LRA coordinator url, was '%s'")
     void error_invalidLraIdFormatToConvertToCoordinatorUrl(String lraId, @Cause Throwable t);
 
     @LogMessage(level = INFO)
-    @Message(id = 25023, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%d (%s)'. Returning '%d (%s)'.")
+    @Message(id = 25022, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%d (%s)'. Returning '%d (%s)'.")
     void info_failedToEnlistingLRANotFound(URL lraId, URI coordinatorUri, int coordinatorStatusCode,
             String coordinatorStatusMsg, int returnStatusCode, String returnStatusMsg);
 
-    @Message(id = 25024, value = "Could not %s LRA '%s': coordinator '%s' responded with status '%s'")
+    @Message(id = 25023, value = "Could not %s LRA '%s': coordinator '%s' responded with status '%s'")
     String get_couldNotCompleteCompensateOnReturnedStatus(String actionName, URI lraId, URI coordinatorUri, String status);
 
     @LogMessage(level = ERROR)
-    @Message(id = 25025, value = "Error when encoding parent LRA id URL '%s' to String")
+    @Message(id = 25024, value = "Error when encoding parent LRA id URL '%s' to String")
     void error_invalidFormatToEncodeParentUri(URI parentUri, @Cause Throwable t);
 
-    @Message(id = 25026, value = "Unable to process LRA annotations: %s'")
+    @Message(id = 25025, value = "Unable to process LRA annotations: %s'")
     String warn_LRAStatusInDoubt(String reason);
 
     @LogMessage(level = WARN)
-    @Message(id = 25027, value = "Unable to remove the failed duclicate failed LRA record (Uid: '%s') " +
+    @Message(id = 25026, value = "Unable to remove the failed duclicate failed LRA record (Uid: '%s') " +
             "(which is already present in the failedLRA record location type: '%s'.) from LRA Record location: '%s'")
     void warn_UnableToRemoveDuplicateFailedLRARecord(String failedUid, String failedLRAType, String lraType);
 
     @LogMessage(level = WARN)
-    @Message(id = 25028, value = "An exception was thrown while moving failed LRA record (Uid: '%s'). " +
+    @Message(id = 25027, value = "An exception was thrown while moving failed LRA record (Uid: '%s'). " +
             "Reason: '%s'")
     void warn_move_lra_record(String failedUid, String exceptionMessage);
 
-    @Message(id = 25029, value = "Demanded API version '%s' is not in the list of the supported versions '%s'. " +
+    @Message(id = 25028, value = "Demanded API version '%s' is not in the list of the supported versions '%s'. " +
             "Please, provide the right version for the API.")
     String get_wrongAPIVersionDemanded(String demandedApiVersion, String supportedVersions);
 

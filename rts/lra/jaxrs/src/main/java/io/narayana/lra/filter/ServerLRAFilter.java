@@ -97,9 +97,6 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     private final NarayanaLRAClient lraClient;
 
     public ServerLRAFilter() {
-        if (lraParticipantRegistry == null) {
-            LRALogger.i18NLogger.warn_nonJaxRsParticipantsNotAllowed();
-        }
         lraClient = new NarayanaLRAClient();
     }
 
@@ -473,7 +470,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     progress = updateProgress(progress, ProgressStep.CancelFailed, e.getMessage());
                 } catch (ProcessingException e) {
                     Method method = resourceInfo.getResourceMethod();
-                    LRALogger.i18NLogger.warn_lraFilterContainerRequest("ProcessingException: " + e.getMessage(),
+                    LRALogger.i18nLogger.warn_lraFilterContainerRequest("ProcessingException: " + e.getMessage(),
                             method.getDeclaringClass().getName() + "#" + method.getName(), current.toASCIIString());
 
                     progress = updateProgress(progress, ProgressStep.CancelFailed, e.getMessage());
@@ -523,7 +520,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             if (responseContext.getStatus() == Response.Status.OK.getStatusCode() &&
                     NarayanaLRAClient.isAsyncCompletion(resourceInfo.getResourceMethod())) {
-                LRALogger.i18NLogger.warn_lraParticipantqForAsync(
+                LRALogger.i18nLogger.warn_lraParticipantqForAsync(
                         resourceInfo.getResourceMethod().getDeclaringClass().getName(),
                         resourceInfo.getResourceMethod().getName(),
                         Response.Status.ACCEPTED.getStatusCode(),
@@ -654,7 +651,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
          */
 
         if (badOps.length() != 0) {
-            return LRALogger.i18NLogger.warn_LRAStatusInDoubt(String.format("%s: %s (%s)", code, badOps, goodOps));
+            return LRALogger.i18nLogger.warn_LRAStatusInDoubt(String.format("%s: %s (%s)", code, badOps, goodOps));
         }
 
         return null;
@@ -684,7 +681,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         containerRequestContext.setProperty(ABORT_WITH_PROP, reasons);
 
         Method method = resourceInfo.getResourceMethod();
-        LRALogger.i18NLogger.warn_lraFilterContainerRequest(message,
+        LRALogger.i18nLogger.warn_lraFilterContainerRequest(message,
                 method.getDeclaringClass().getName() + "#" + method.getName(),
                 lraId == null ? "context" : lraId);
     }
