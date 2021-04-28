@@ -6,6 +6,21 @@
   <version>5.11.2.Final-SNAPSHOT</version>
   <name>Narayana: Checkstyle rules</name>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.9.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.1.1</version>
+      </plugin>
+    </plugins>
+  </build>
+
   <profiles>
     <profile>
         <id>release</id>
