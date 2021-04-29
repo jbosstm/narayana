@@ -12,6 +12,8 @@
     <packaging>jar</packaging>
 
     <properties>
+        <version.resteasy-client>${version.org.jboss.resteasy}</version.resteasy-client>
+        <version.junit>4.11</version.junit>
         <narayana.version>${project.version}</narayana.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -80,6 +82,34 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+      <!-- filter out unwanted jars -->
+        <exclusions>
+        <exclusion>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
+      <scope>test</scope>
+    </dependency>
+       <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-undertow</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

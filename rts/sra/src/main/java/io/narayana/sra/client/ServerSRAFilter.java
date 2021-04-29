@@ -28,6 +28,7 @@ import io.narayana.sra.annotation.Rollback;
 import io.narayana.sra.annotation.SRA;
 import io.narayana.sra.annotation.Status;
 import io.narayana.sra.annotation.TimeLimit;
+import java.lang.InterruptedException;
 
 import javax.inject.Inject;
 import javax.ws.rs.Path;
@@ -101,6 +102,7 @@ public class ServerSRAFilter implements ContainerRequestFilter, ContainerRespons
         URL incommingLRA = null;
         String recoveryUrl = null;
         boolean isLongRunning = false;
+        boolean isShortRunning= ((SRA) transactional).delayCommit();
 
         if (transactional == null)
             transactional = method.getDeclaringClass().getDeclaredAnnotation(SRA.class);
@@ -208,7 +210,12 @@ public class ServerSRAFilter implements ContainerRequestFilter, ContainerRespons
 
         // store state with the current thread. TODO for the async version use containerRequestContext.setProperty("lra", Current.peek());
         Current.updateLRAContext(lraId, headers); // make the current LRA available to the called method
-
+        if (!isShortRunning) {
+            containerRequestContext.setProperty(TERMINAL_LRA_PROP, lraId);
+        } else {
+             newLRA = null;
+        }
+        
         if (newLRA != null)
             Current.putState("newLRA", newLRA);
 
