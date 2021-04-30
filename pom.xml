@@ -368,8 +368,8 @@
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>${version.maven.checkstyle-plugin}</version>
           <configuration>
-              <configLocation>narayana-check.xml</configLocation>
-              <suppressionsLocation>narayana-check-suppressions.xml</suppressionsLocation>
+              <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+              <suppressionsLocation>wildfly-checkstyle/suppressions.xml</suppressionsLocation>
               <consoleOutput>true</consoleOutput>
               <failsOnError>true</failsOnError>
               <includeTestSourceDirectory>true</includeTestSourceDirectory>
@@ -380,9 +380,9 @@
           </configuration>
           <dependencies>
               <dependency>
-                  <groupId>org.jboss.narayana</groupId>
-                  <artifactId>checkstyle</artifactId>
-                  <version>${project.version}</version>
+                  <groupId>org.wildfly.checkstyle</groupId>
+                  <artifactId>wildfly-checkstyle-config</artifactId>
+                  <version>${version.org.wildfly.checkstyle-config}</version>
               </dependency>
           </dependencies>
           <executions>
@@ -486,6 +486,7 @@
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1.Final</version.javax.ws.rs-api>
     <version.org.mockito>3.8.0</version.org.mockito>
+    <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
     <version.org.eclipse.microprofile.openapi>1.1.2</version.org.eclipse.microprofile.openapi>
     <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
