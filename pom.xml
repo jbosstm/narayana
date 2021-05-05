@@ -172,6 +172,12 @@
                             <type>jdocbook-style</type>
                             <version>${version.org.jboss.pressgang}</version>
                         </dependency>
+			<dependency>
+			    <groupId>net.sf.docbook</groupId>
+			    <artifactId>docbook-xsl</artifactId>
+			    <version>1.79.1</version>
+			    <type>pom</type>
+			</dependency>
                     </dependencies>
                     <configuration>
                         <sourceDirectory>${project.basedir}</sourceDirectory>
