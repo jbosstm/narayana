@@ -28,28 +28,27 @@
   <properties>
     <version.org.jboss.arquillian.osgi.karaf>2.2.2.Final</version.org.jboss.arquillian.osgi.karaf>
     <version.jboss.osgi.metadata>4.0.0.CR1</version.jboss.osgi.metadata>
-    <version.org.jboss.arquillian.core>1.1.10.Final</version.org.jboss.arquillian.core>
-    <version.shrinkwrap>1.1.2</version.shrinkwrap>
     <version.apache.karaf>4.0.5</version.apache.karaf>
+    <version.org.osgi>5.0.0</version.org.osgi>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>5.0.0</version>
+        <version>${version.org.osgi}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.compendium</artifactId>
-        <version>5.0.0</version>
+        <version>${version.org.osgi}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.osgi</groupId>
          <artifactId>org.osgi.enterprise</artifactId>
-         <version>5.0.0</version>
+         <version>${version.org.osgi}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

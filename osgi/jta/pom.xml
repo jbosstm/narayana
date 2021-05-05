@@ -30,7 +30,6 @@
 
    <properties>
 	   <maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
-           <version.org.jboss.spec.javax.transaction>1.0.0.Final</version.org.jboss.spec.javax.transaction>
 	   <karaf.home>${project.build.directory}/apache-karaf-minimal-${version.apache.karaf}</karaf.home>
    </properties>
 
@@ -54,7 +53,7 @@
 	   <dependency>
 		   <groupId>org.jboss.spec.javax.transaction</groupId>
 		   <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-		   <version>${version.org.jboss.spec.javax.transaction}</version>
+		   <version>${version.org.jboss.spec.javax.transaction-api_1.2_spec}</version>
 		   <scope>provided</scope>
 	   </dependency>
 	   <dependency>
