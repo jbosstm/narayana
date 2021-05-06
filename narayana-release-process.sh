@@ -108,8 +108,8 @@ then
   # jenkins XSS needs a token
   COOKIE_PATH=/tmp/cookie_jenkins_crumb.txt
   crumb=$(curl -s -c "$COOKIE_PATH" 'http://narayanaci1.eng.hst.ams2.redhat.com/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)')
-  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/build?delay=0sec --data-urlencode json="$json"
-  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/build?delay=0sec --data-urlencode json="$json"
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana/build?token=poller&delay=0sec --data-urlencode json="$json"
+  curl -v -b "$COOKIE_PATH" -X POST -H "$crumb" http://narayanaci1.eng.hst.ams2.redhat.com/job/release-narayana-catelyn/build?token=poller&delay=0sec --data-urlencode json="$json"
   set +e
   git fetch upstream --tags
   #./scripts/release/update_jira.py -k JBTM -t 5.next -n $CURRENT
