@@ -137,14 +137,19 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 
 # docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
 # If you get a prompt to login, this command is not working as expected. Close this container, wait a bit longer and then retry
-#   The following commands do not work directly on 18c XE, need to find better commands
+#   
 #   CREATE USER dtf11 IDENTIFIED BY dtf11; 
-#   GRANT CONNECT, RESOURCE TO dtf11;
+#   GRANT CREATE SESSION, RESOURCE TO dtf11;
+#   ALTER USER dtf11 quota unlimited on USERS;
+#
 #   CREATE USER dtf12 IDENTIFIED BY dtf12;
-#   GRANT CONNECT, RESOURCE TO dtf12;
+#   GRANT CREATE SESSION, RESOURCE TO dtf12;
+#   ALTER USER dtf12 quota unlimited on USERS;
+#
 #   alter system set processes=300 scope=spfile;
 #   shut immediate;
 #   exit
+#
 # Exit both shells docker run commands
 # docker start oracle-ci
 
