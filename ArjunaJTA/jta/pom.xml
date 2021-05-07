@@ -409,10 +409,10 @@
 				<scope>system</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.oracle</groupId>
-				<artifactId>ojdbc</artifactId>
+				<groupId>com.oracle.database.jdbc</groupId>
+				<artifactId>ojdbc8</artifactId>
 				<version>${version.com.oracle}</version>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/oracle_10_2_0_4/ojdbc14.jar</systemPath>
+				<systemPath>${orson.jar.location}/../qa/dbdrivers/ojdbc8.jar</systemPath>
 				<scope>system</scope>
 			</dependency>
 		</dependencies>
