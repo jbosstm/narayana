@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.eclipse.microprofile.lra</groupId>
             <artifactId>microprofile-lra-api</artifactId>
-            <version>${version.microprofile.lra.api}</version>
+            <version>${version.microprofile.lra}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>

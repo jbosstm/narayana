@@ -80,7 +80,7 @@
         <dependency>
           <groupId>org.eclipse.microprofile.lra</groupId>
           <artifactId>microprofile-lra-api</artifactId>
-          <version>${version.microprofile.lra.api}</version>
+          <version>${version.microprofile.lra}</version>
         </dependency>
     </dependencies>
 
