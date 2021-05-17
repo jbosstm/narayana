@@ -118,6 +118,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+      <dependency>
+          <groupId>org.jboss.resteasy</groupId>
+          <artifactId>resteasy-cdi</artifactId>
+          <version>4.5.5.Final</version>
+      </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxb-provider</artifactId>
@@ -217,6 +222,52 @@
         <scope>test</scope>
     </dependency>
     <!-- end undertow with RestEasy -->
+      <dependency>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+          <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.interceptor}</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${version.javax.enterprise}</version>
+          <scope>provided</scope>
+          <exclusions>
+              <exclusion>
+                  <artifactId>jboss-interceptor-api</artifactId>
+                  <groupId>org.jboss.interceptor</groupId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>jsr250-api</artifactId>
+                  <groupId>javax.annotation</groupId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.jettison</groupId>
+          <artifactId>jettison</artifactId>
+          <version>${version.org.codehaus.jettison}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.jr</groupId>
+          <artifactId>jackson-jr-objects</artifactId>
+          <version>2.11.1</version>
+      </dependency>
+<dependency>
+    <groupId>javax.json</groupId>
+    <artifactId>javax.json-api</artifactId>
+    <version>1.1.4</version>
+</dependency>
+       <dependency>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+            <version>${version.org.jboss.spec.javax.transaction}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
   </dependencies>
   <build>
     <plugins>
