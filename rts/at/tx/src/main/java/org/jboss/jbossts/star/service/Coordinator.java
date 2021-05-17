@@ -560,9 +560,10 @@ public class Coordinator {
                 .build().toString() + '/';
         String coordinatorId;
 
-        if (tx.isEnlisted(participantURI))
-            return Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
-                    .entity("participant is already enlisted").build();
+        if (tx.isEnlisted(participantURI)) {
+            return Response.created(URI.create(tx.getRecoveryUrl())).build(); // participant is already enlisted
+            // was return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).entity("participant is already enlisted").build();
+        }
 
         if (terminatorURI == null) {
             String commitURI = links.get(TxLinkNames.PARTICIPANT_COMMIT);

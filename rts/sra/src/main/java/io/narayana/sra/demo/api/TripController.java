@@ -21,12 +21,13 @@
  */
 package io.narayana.sra.demo.api;
 
-import io.narayana.sra.annotation.SRA;
-import io.narayana.sra.annotation.Status;
-import io.narayana.sra.client.SRAParticipant;
+import org.jboss.jbossts.star.annotation.SRA;
+import org.jboss.jbossts.star.annotation.Status;
+import org.jboss.jbossts.star.client.SRAParticipant;
 import io.narayana.sra.demo.model.Booking;
 import io.narayana.sra.demo.service.BookingException;
 import io.narayana.sra.demo.service.TripService;
+import org.jboss.jbossts.star.client.SRAStatus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -50,13 +51,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import static io.narayana.sra.client.SRAClient.SRA_HTTP_HEADER;
+import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
 
 @RequestScoped
 @Path(TripController.TRIP_PATH)
 @SRA(SRA.Type.SUPPORTS)
 public class TripController extends SRAParticipant {
     public static final String TRIP_PATH = "/trip";
+    public static final String SERVICE_PORT_PROPERTY = "quarkus.http.port";
 
     private Client hotelClient;
     private Client flightClient;
@@ -70,7 +72,7 @@ public class TripController extends SRAParticipant {
     @PostConstruct
     void initController() {
         try {
-            int servicePort = Integer.getInteger("io.narayana.sra.demo.service.http.port", 8080);
+            int servicePort = Integer.getInteger(SERVICE_PORT_PROPERTY, 8080);
             URL HOTEL_SERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
             URL FLIGHT_SERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 
@@ -109,8 +111,8 @@ public class TripController extends SRAParticipant {
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     // delayClose because we want the LRA to be associated with a booking until the user confirms the booking
-    @SRA(value = SRA.Type.REQUIRED, delayCommit = true)
-    public Response bookTrip( @HeaderParam(SRA_HTTP_HEADER) String sraId,
+    @SRA(value = SRA.Type.REQUIRED, delayCommit = false)
+    public Response bookTrip( @HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
                               @QueryParam(HotelController.HOTEL_NAME_PARAM) @DefaultValue("") String hotelName,
                               @QueryParam(HotelController.HOTEL_BEDS_PARAM) @DefaultValue("1") Integer hotelGuests,
                               @QueryParam(FlightController.FLIGHT_NUMBER_PARAM) @DefaultValue("") String flightNumber,
@@ -132,7 +134,7 @@ public class TripController extends SRAParticipant {
     @Produces(MediaType.APPLICATION_JSON)
     @Status
     @SRA(SRA.Type.NOT_SUPPORTED)
-    public Response status(@HeaderParam(SRA_HTTP_HEADER) String sraId) throws NotFoundException {
+    public Response status(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId) throws NotFoundException {
         Booking booking = tripService.get(sraId);
 
         return Response.ok(booking.getStatus().name()).build(); // TODO convert to a CompensatorStatus if we we're enlisted in an SRA
@@ -147,10 +149,10 @@ public class TripController extends SRAParticipant {
                 .queryParam(HotelController.HOTEL_NAME_PARAM, name)
                 .queryParam(HotelController.HOTEL_BEDS_PARAM, beds);
 
-        Response response = webTarget.request().header(SRA_HTTP_HEADER, sraId).post(Entity.text(""));
+        Response response = webTarget.request().header(RTS_HTTP_CONTEXT_HEADER, sraId).post(Entity.text(""));
 
         if (response.getStatus() != Response.Status.OK.getStatusCode())
-            throw new BookingException(response.getStatus(), "flight booking problem");
+            throw new BookingException(response.getStatus(), "hotel booking problem: " + response.getStatus());
 
         return response.readEntity(Booking.class);
     }
@@ -164,10 +166,10 @@ public class TripController extends SRAParticipant {
                 .queryParam(FlightController.FLIGHT_NUMBER_PARAM, flightNumber)
                 .queryParam(FlightController.FLIGHT_SEATS_PARAM, seats);
 
-        Response response = webTarget.request().header(SRA_HTTP_HEADER, sraId).post(Entity.text(""));
+        Response response = webTarget.request().header(RTS_HTTP_CONTEXT_HEADER, sraId).post(Entity.text(""));
 
         if (response.getStatus() != Response.Status.OK.getStatusCode())
-            throw new BookingException(response.getStatus(), "flight booking problem");
+            throw new BookingException(response.getStatus(), "flight booking problem: " + response.getStatus());
 
         return response.readEntity(Booking.class);
     }

@@ -188,7 +188,7 @@ public class BaseTest {
         if (USE_RESTEASY)
             startRestEasy(classes);
         else if (USE_UNDERTOW)
-            startUndertow(TransactionalResource.class);
+            startUndertow(classes);
         else
             startJersey(packages);
     }
@@ -220,6 +220,12 @@ public class BaseTest {
         startContainer(txnMgrUrl,
                 "org.jboss.jbossts.star.service;org.jboss.jbossts.star.provider;org.jboss.jbossts.star.test",
                 TransactionalResource.class, Coordinator.class);
+    }
+
+    public static void startContainer2(String txnMgrUrl, Class<?> ... resourceClasses) throws Exception {
+        startContainer(txnMgrUrl,
+                "org.jboss.jbossts.star.service;org.jboss.jbossts.star.provider;org.jboss.jbossts.star.test",
+                resourceClasses);
     }
 
     private static void clearObjectStore(String type) {

@@ -21,10 +21,11 @@
  */
 package io.narayana.sra.demo.api;
 
-import io.narayana.sra.annotation.SRA;
-import io.narayana.sra.client.SRAParticipant;
+import org.jboss.jbossts.star.annotation.SRA;
+import org.jboss.jbossts.star.client.SRAParticipant;
 import io.narayana.sra.demo.model.Booking;
 import io.narayana.sra.demo.service.FlightService;
+import org.jboss.jbossts.star.client.SRAStatus;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import static io.narayana.sra.client.SRAClient.SRA_HTTP_HEADER;
+import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
 
 @RequestScoped
 @Path(FlightController.FLIGHT_PATH)
@@ -56,7 +57,7 @@ public class FlightController extends SRAParticipant {
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
     @SRA(SRA.Type.REQUIRED)
-    public Booking bookFlight(@HeaderParam(SRA_HTTP_HEADER) String sraId,
+    public Booking bookFlight(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
                               @QueryParam(FLIGHT_NUMBER_PARAM) @DefaultValue("") String flightNumber,
                               @QueryParam(FLIGHT_SEATS_PARAM) @DefaultValue("1") Integer seats,
                               @QueryParam("mstimeout") @DefaultValue("500") Long timeout) {

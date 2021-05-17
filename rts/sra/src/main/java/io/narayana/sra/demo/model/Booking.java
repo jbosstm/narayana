@@ -48,7 +48,7 @@ public class Booking {
     private IOException decodingException;
 
     public Booking() {
-        this(null, null, 0, null);
+        this("", "", 0, "");
     }
 
     public Booking(String id, String name, Integer quantity, String type) {
@@ -83,7 +83,9 @@ public class Booking {
     }
 
     private void init(String id, String name, Integer quantity, String type, BookingStatus status, Booking[] details) {
-        this.id = id;
+        String[] segments = id.split("/");
+
+        this.id = segments[segments.length - 1]; // this is just a demo so don't check for a single /
         this.name = name == null ? "" : name;
         this.quantity = quantity;
         this.type = type == null ? "" : type;
@@ -220,7 +222,6 @@ public class Booking {
         result = 31 * result + getQuantity().hashCode();
         result = 31 * result + getStatus().hashCode();
         result = 31 * result + getType().hashCode();
-        result = 31 * result + Arrays.hashCode(getDetails());
         return result;
     }
 
