@@ -21,14 +21,15 @@
  */
 package io.narayana.sra.demo.service;
 
-import io.narayana.sra.client.SRAClient;
-import io.narayana.sra.client.SRAClientAPI;
+import org.jboss.jbossts.star.client.SRAClient;
 import io.narayana.sra.demo.model.Booking;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -38,8 +39,11 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class TripService extends BookingStore{
-    @Inject
-    SRAClientAPI lraClient;
+    private SRAClient lraClient;
+
+    public TripService() throws MalformedURLException, URISyntaxException {
+        this.lraClient = new SRAClient();
+    }
 
     public Booking confirmBooking(Booking tripBooking) {
         System.out.printf("Confirming tripBooking id %s (%s) status: %s%n",
@@ -57,13 +61,13 @@ public class TripService extends BookingStore{
 
         // check the booking to see if the client wants to requestCancel any dependent bookings
         Arrays.stream(tripBooking.getDetails()).filter(Booking::isCancelPending).forEach(b -> {
-            lraClient.cancelSRA(SRAClient.lraToURL(b.getId(), "Invalid " + b.getType() + " tripBooking id format"));
+            lraClient.cancelSRA(SRAClient.sraToURL(b.getId(), "Invalid " + b.getType() + " tripBooking id format"));
             b.setCanceled();
         });
 
         tripBooking.setConfirming();
 
-        lraClient.commitSRA(SRAClient.lraToURL(tripBooking.getId()));
+        lraClient.commitSRA(SRAClient.sraToURL(tripBooking.getId()));
 
         tripBooking.setConfirmed();
 
@@ -84,7 +88,7 @@ public class TripService extends BookingStore{
 
         booking.requestCancel();
 
-        lraClient.cancelSRA(SRAClient.lraToURL(booking.getId(), "Invalid trip booking id format"));
+        lraClient.cancelSRA(SRAClient.sraToURL(booking.getId(), "Invalid trip booking id format"));
 
         booking.setCanceled();
 
@@ -92,7 +96,7 @@ public class TripService extends BookingStore{
     }
 
     private Booking mergeBookingResponse(Booking tripBooking) {
-        URL bookingId = SRAClient.lraToURL(tripBooking.getId());
+        URL bookingId = SRAClient.sraToURL(tripBooking.getId());
         List<String> bookingDetails = lraClient.getResponseData(bookingId); // each string is a json encoded tripBooking
 
 //        List<Booking> bookings = bookingDetails.stream().map(Booking::fromJson).collect(Collectors.toList());

@@ -32,7 +32,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>sra-coordinator</finalName>
+        <finalName>sra-participant</finalName>
         <plugins>
             <plugin>
                 <groupId>io.quarkus</groupId>
