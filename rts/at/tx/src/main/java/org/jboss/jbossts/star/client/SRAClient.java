@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * A utility class for controlling the lifecycle of Long Running Actions (SRAs) but the prefered mechanism is to use
@@ -118,6 +119,8 @@ public class SRAClient implements SRAClientAPI, Closeable {
     public static final String TX_COMMITTED = "txstatus=TransactionCommitted";
     public static final String TX_ROLLEDBACK = "txstatus=TransactionRolledBack";
     public static final String TX_ROLLBACK_ONLY = "txstatus=TransactionRollbackOnly";
+
+    private static final Pattern UID_REGEXP_EXTRACT_MATCHER = Pattern.compile(".*/([^/?]+).*");
 
     private static final String MISSING_ANNOTATION_FORMAT =
             "Cannot enlist resource class %s: annotated with Transactional but is missing one or more of {@Commit. @Prepare, @Rollback, @Participant}";
@@ -189,7 +192,19 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
     // extract the uid part from an SRA URL
     public static String getSRAId(String lraId) {
-        return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
+//        return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
+        return lraId == null ? null : UID_REGEXP_EXTRACT_MATCHER.matcher(lraId).replaceFirst("$1");
+    }
+
+    public static String stripUid(URL url) {
+        String urlString = url.toExternalForm();
+        String id = getSRAId(urlString);
+
+        if (id == null) {
+            return urlString;
+        }
+
+        return urlString.substring(0, urlString.length() - id.length() - 1);
     }
 
     public URL toURL(String lraId) throws InvalidSRAId {
@@ -212,8 +227,8 @@ public class SRAClient implements SRAClientAPI, Closeable {
      */
     public void setCurrentSRA(URL coordinatorUrl) {
         try {
-            init(coordinatorUrl);
-        } catch (URISyntaxException e) {
+            init(new URL(stripUid(coordinatorUrl)));
+        } catch (URISyntaxException | MalformedURLException e) {
             throw new GenericSRAException(coordinatorUrl, Response.Status.BAD_REQUEST.getStatusCode(), e.getMessage(), e);
         }
     }
