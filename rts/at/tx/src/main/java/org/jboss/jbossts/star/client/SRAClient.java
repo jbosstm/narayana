@@ -28,7 +28,6 @@ import org.jboss.jbossts.star.annotation.Rollback;
 import org.jboss.jbossts.star.annotation.Status;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -103,18 +102,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
     private static final String isCompletedUrlFormat = "/completed/%s";
     private static final String isCompensatedUrlFormat = "/compensated/%s";
 
-    private static final String confirmFormat = "/%s/close";
-    private static final String compensateFormat = "/%s/cancel";
-    private static final String leaveFormat = "/%s/remove";
-    private static final String renewFormat = "/%s/renew";
-
     private static final String TX_STATUS_MEDIA_TYPE = "application/txstatus";
-    private static final String POST_MEDIA_TYPE = "application/x-www-form-urlencoded";
-    private static final String PLAIN_MEDIA_TYPE = "text/plain";
-    private static final String TX_LIST_MEDIA_TYPE = "application/txlist";
-    private static final String TX_STATUS_EXT_MEDIA_TYPE = "application/txstatusext+xml";
-
-    public static final String STATUS_PROPERTY = "txstatus";
 
     public static final String TX_COMMITTED = "txstatus=TransactionCommitted";
     public static final String TX_ROLLEDBACK = "txstatus=TransactionRolledBack";
@@ -125,12 +113,11 @@ public class SRAClient implements SRAClientAPI, Closeable {
     private static final String MISSING_ANNOTATION_FORMAT =
             "Cannot enlist resource class %s: annotated with Transactional but is missing one or more of {@Commit. @Prepare, @Rollback, @Participant}";
 
-    private static Boolean isTrace = Boolean.getBoolean("trace");
+    private static final Boolean isTrace = Boolean.getBoolean("trace");
 
     private WebTarget target;
     private URI base;
     private Client client;
-    private boolean isUseable;
     private boolean connectionInUse;
     private Map<URL, List<String>> responseDataMap;
 
@@ -146,17 +133,10 @@ public class SRAClient implements SRAClientAPI, Closeable {
         base = new URI(coordinatorUrl.toString());
         target = client.target(base);
 
-        isUseable = true;
-
         if (responseDataMap == null)
             postConstruct();
         else
             responseDataMap.clear();
-    }
-
-
-    public boolean isUseable() {
-        return isUseable;
     }
 
     @PostConstruct
@@ -165,35 +145,30 @@ public class SRAClient implements SRAClientAPI, Closeable {
         responseDataMap = new HashMap<>();
     }
 
-    @PreDestroy
-    public void preDestroy() {
-        isUseable = false;
+    public static URL sraToURL(String sraId) {
+        return sraToURL(sraId, "Invalid SRA id");
     }
 
-    public static URL lraToURL(String lraId) {
-        return lraToURL(lraId, "Invalid SRA id");
-    }
-
-    public static URL lraToURL(String lraId, String message) {
+    public static URL sraToURL(String sraId, String message) {
         try {
-            return new URL(lraId);
+            return new URL(sraId);
         } catch (MalformedURLException e) {
-            throw new GenericSRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),String.format("%s: %s", message, lraId), e);
+            throw new GenericSRAException(null, Response.Status.BAD_REQUEST.getStatusCode(),String.format("%s: %s", message, sraId), e);
         }
     }
 
-    public static String encodeURL(URL lraId, String message) {
+    public static String encodeURL(URL sraId, String message) {
         try {
-            return URLEncoder.encode(lraId.toString(), "UTF-8");
+            return URLEncoder.encode(sraId.toString(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new GenericSRAException(lraId, Response.Status.BAD_REQUEST.getStatusCode(), String.format("%s: %s", message, lraId), e);
+            throw new GenericSRAException(sraId, Response.Status.BAD_REQUEST.getStatusCode(), String.format("%s: %s", message, sraId), e);
         }
     }
 
     // extract the uid part from an SRA URL
-    public static String getSRAId(String lraId) {
-//        return lraId == null ? null : lraId.replaceFirst(".*/([^/?]+).*", "$1");
-        return lraId == null ? null : UID_REGEXP_EXTRACT_MATCHER.matcher(lraId).replaceFirst("$1");
+    public static String getSRAId(String sraId) {
+//        return sraId == null ? null : sraId.replaceFirst(".*/([^/?]+).*", "$1");
+        return sraId == null ? null : UID_REGEXP_EXTRACT_MATCHER.matcher(sraId).replaceFirst("$1");
     }
 
     public static String stripUid(URL url) {
@@ -207,11 +182,11 @@ public class SRAClient implements SRAClientAPI, Closeable {
         return urlString.substring(0, urlString.length() - id.length() - 1);
     }
 
-    public URL toURL(String lraId) throws InvalidSRAId {
+    public URL toURL(String sraId) throws InvalidSRAId {
         try {
-            return new URL(lraId);
+            return new URL(sraId);
         } catch (MalformedURLException e) {
-            throw new InvalidSRAId(lraId, "Invalid syntax", e);
+            throw new InvalidSRAId(sraId, "Invalid syntax", e);
         }
     }
 
@@ -239,7 +214,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
     public URL startSRA(URL parentSRA, String clientID, Long timeout, TimeUnit unit) throws GenericSRAException {
         Response response = null;
-        URL lra;
+        URL sra;
 
         if (clientID == null)
             clientID = "";
@@ -276,11 +251,11 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
             assertNotNull(sraObject, "SRA is null");
 
-            lra = new URL(URLDecoder.decode(sraObject.toString(), "UTF-8"));
+            sra = new URL(URLDecoder.decode(sraObject.toString(), "UTF-8"));
 
-            sraTrace("startSRA returned", lra);
+            sraTrace("startSRA returned", sra);
 
-            Current.push(lra);
+            Current.push(sra);
 
         } catch (UnsupportedEncodingException | MalformedURLException e) {
             throw new GenericSRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage(), e);
@@ -294,23 +269,23 @@ public class SRAClient implements SRAClientAPI, Closeable {
             releaseConnection(response);
         }
 
-        // check that the lra is active
-//        isActiveSRA(lra);
+        // check that the sra is active
+//        isActiveSRA(sra);
 
-        return lra;
+        return sra;
     }
 
-    public String cancelSRA(URL lraId) throws GenericSRAException {
-        return endSRA(lraId, false);
+    public String cancelSRA(URL sraId) throws GenericSRAException {
+        return endSRA(sraId, false);
     }
 
-    public String commitSRA(URL lraId) throws GenericSRAException {
-        return endSRA(lraId, true);
+    public String commitSRA(URL sraId) throws GenericSRAException {
+        return endSRA(sraId, true);
     }
 
     /**
      *
-     * @param lraUrl the URL of the SRA to join
+     * @param sraUrl the URL of the SRA to join
      * @param timelimit how long the io.narayana.sra is prepared to wait for SRA completion
      * @param linkHeader io.narayana.sra protocol URLs in link header format (RFC 5988)
      *
@@ -318,24 +293,24 @@ public class SRAClient implements SRAClientAPI, Closeable {
      *
      * @throws GenericSRAException if the SRA coordinator failed to enlist the io.narayana.sra
      */
-    public String joinSRAWithLinkHeader(URL lraUrl, Long timelimit, String linkHeader) throws GenericSRAException {
-        sraTrace(String.format("joining SRA with compensator link: %s", linkHeader), lraUrl);
-        return enlistCompensator(lraUrl, timelimit, linkHeader);
+    public String joinSRAWithLinkHeader(URL sraUrl, Long timelimit, String linkHeader) throws GenericSRAException {
+        sraTrace(String.format("joining SRA with compensator link: %s", linkHeader), sraUrl);
+        return enlistCompensator(sraUrl, timelimit, linkHeader);
     }
 
-    public void joinSRA(URL lraId, Long timelimit, String compensatorUrl) throws GenericSRAException {
-        sraTrace(String.format("joining SRA with compensator %s", compensatorUrl), lraId);
+    public void joinSRA(URL sraId, Long timelimit, String compensatorUrl) throws GenericSRAException {
+        sraTrace(String.format("joining SRA with compensator %s", compensatorUrl), sraId);
 
-        enlistCompensator(lraId, timelimit, "",
+        enlistCompensator(sraId, timelimit, "",
                 String.format("%s/compensate", compensatorUrl),
                 String.format("%s/complete", compensatorUrl),
                 String.format("%s/leave", compensatorUrl),
                 String.format("%s/status", compensatorUrl));
     }
 
-    public String joinSRA(URL lraId, Long timelimit,
+    public String joinSRA(URL sraId, Long timelimit,
                           String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericSRAException {
-        return enlistCompensator(lraId, timelimit, "", compensateUrl, completeUrl, leaveUrl, statusUrl);
+        return enlistCompensator(sraId, timelimit, "", compensateUrl, completeUrl, leaveUrl, statusUrl);
     }
 
     @Override
@@ -366,9 +341,9 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
             List<SRAInfo> actions = new ArrayList<>();
 
-            String lras = response.readEntity(String.class);
+            String sras = response.readEntity(String.class);
 
-            JsonReader reader = Json.createReader(new StringReader(lras));
+            JsonReader reader = Json.createReader(new StringReader(sras));
             JsonArray ja = reader.readArray();
 
             ja.forEach(jsonValue ->
@@ -383,7 +358,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
     private SRAInfo toSRAStatus(JsonObject jo) {
         try {
             return new SRAInfo(
-                    jo.getString("lraId"),
+                    jo.getString("sraId"),
                     jo.getString("clientId"),
                     jo.getBoolean("complete"),
                     jo.getBoolean("compensated"),
@@ -393,23 +368,23 @@ public class SRAClient implements SRAClientAPI, Closeable {
         } catch (Exception e) {
             System.out.printf("Error parsing json SRAInfo");
 
-            return new SRAInfo(jo.getString("lraId"), jo.getString("lraId"), jo.getBoolean("complete"), jo.getBoolean("compensated"), jo.getBoolean("recovering"), jo.getBoolean("active"), jo.getBoolean("topLevel"));
+            return new SRAInfo(jo.getString("sraId"), jo.getString("sraId"), jo.getBoolean("complete"), jo.getBoolean("compensated"), jo.getBoolean("recovering"), jo.getBoolean("active"), jo.getBoolean("topLevel"));
         }
     }
 
     @Override
-    public Boolean isActiveSRA(URL lraId) throws GenericSRAException {
-        return getStatus(lraId, isActiveUrlFormat);
+    public Boolean isActiveSRA(URL sraId) throws GenericSRAException {
+        return getStatus(sraId, isActiveUrlFormat);
     }
 
     @Override
-    public Boolean isCompensatedSRA(URL lraId) throws GenericSRAException {
-        return getStatus(lraId, isCompensatedUrlFormat);
+    public Boolean isCompensatedSRA(URL sraId) throws GenericSRAException {
+        return getStatus(sraId, isCompensatedUrlFormat);
     }
 
     @Override
-    public Boolean isCompletedSRA(URL lraId) throws GenericSRAException {
-        return getStatus(lraId, isCompletedUrlFormat);
+    public Boolean isCompletedSRA(URL sraId) throws GenericSRAException {
+        return getStatus(sraId, isCompletedUrlFormat);
     }
 
     public Map<String, String> getTerminationUris(URL aaId, Class<?> compensatorClass, UriInfo uriInfo, boolean validate) {
@@ -453,7 +428,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
         }
 
         StringBuilder linkHeaderValue = new StringBuilder();
-// xxx {txid} path param needs filling in - see how ServerLRAFilter does it
+// xxx {txid} path param needs filling in - see how ServerSRAFilter does it
         paths.forEach((k, v) -> makeLink(linkHeaderValue, null, k, v));
 
         paths.put("Link", linkHeaderValue.toString());
@@ -517,13 +492,13 @@ public class SRAClient implements SRAClientAPI, Closeable {
         return true;
     }
 
-    private Boolean getStatus(URL lraId, String statusFormat) {
+    private Boolean getStatus(URL sraId, String statusFormat) {
         Response response = null;
 
         try {
             aquireConnection();
 
-            response = getTarget().path("status").path(String.format(statusFormat, getSRAId(lraId.toString()))).request().get();
+            response = getTarget().path("status").path(String.format(statusFormat, getSRAId(sraId.toString()))).request().get();
 
             return Boolean.valueOf(response.readEntity(String.class));
         } finally {
@@ -542,7 +517,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
         return b.append(link);
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String uriPrefix,
+    private String enlistCompensator(URL sraUrl, long timelimit, String uriPrefix,
                                      String compensateUrl, String completeUrl, String leaveUrl, String statusUrl ) {
         validateURL(completeUrl, false, "Invalid complete URL: %s");
         validateURL(compensateUrl, false, "Invalid compensate URL: %s");
@@ -557,49 +532,49 @@ public class SRAClient implements SRAClientAPI, Closeable {
         terminateURIs.put(SRAClient.STATUS, statusUrl);
 
         // register with the coordinator
-        // put the lra id in an http header
+        // put the sra id in an http header
         StringBuilder linkHeaderValue = new StringBuilder();
 
         terminateURIs.forEach((k, v) -> makeLink(linkHeaderValue, uriPrefix, k, v)); // or use Collectors.joining(",")
 
-        return enlistCompensator(lraUrl, timelimit, linkHeaderValue.toString());
+        return enlistCompensator(sraUrl, timelimit, linkHeaderValue.toString());
     }
 
-    private String enlistCompensator(URL lraUrl, long timelimit, String linkHeader) {
+    private String enlistCompensator(URL sraUrl, long timelimit, String linkHeader) {
         // register with the coordinator
-        // put the lra id in an http header
+        // put the sra id in an http header
         Response response = null;
 
         if (timelimit < 0)
             timelimit = 0L;
 
         try {
-            String uid = lraUrl.toString();// XXX TODO fix it
+            String uid = sraUrl.toString();// XXX TODO fix it
             WebTarget wt = getTarget();
             if (!wt. getUri().toASCIIString().endsWith(uid)) {
-                wt = getTarget().path(getSRAId(lraUrl.toString()));
+                wt = getTarget().path(getSRAId(sraUrl.toString()));
             }
             response = wt
                     .queryParam(TIMELIMIT_PARAM_NAME, timelimit)
                     .request()
                     .header("Link", linkHeader)
-                    .header(RTS_HTTP_CONTEXT_HEADER, lraUrl)
+                    .header(RTS_HTTP_CONTEXT_HEADER, sraUrl)
                     .post(Entity.entity(linkHeader, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
             if (response.getStatus() == Response.Status.PRECONDITION_FAILED.getStatusCode()) {
-                throw new IllegalSRAStateException(lraUrl.toString(), "Too late to join with this SRA", null);
+                throw new IllegalSRAStateException(sraUrl.toString(), "Too late to join with this SRA", null);
             } else if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
                 String reason = response.readEntity(String.class);
 
                 sraTrace(String.format("enlist in SRA failed (%d): %s",
-                        response.getStatus(), response.readEntity(String.class)), lraUrl);
+                        response.getStatus(), response.readEntity(String.class)), sraUrl);
 
-                throw new GenericSRAException(lraUrl, response.getStatus(),
+                throw new GenericSRAException(sraUrl, response.getStatus(),
                         "unable to register particiapnt: " + reason, null);
             } else if (!response.getHeaders().containsKey("Location")) {
                 String reason = response.readEntity(String.class);
 
-                throw new GenericSRAException(lraUrl, response.getStatus(),
+                throw new GenericSRAException(sraUrl, response.getStatus(),
                         "participant registration did not return a recovery URL: " + reason, null);
             }
 
@@ -609,15 +584,15 @@ public class SRAClient implements SRAClientAPI, Closeable {
         }
     }
 
-    private String endSRA(URL lra, boolean commit) throws GenericSRAException {
+    private String endSRA(URL sra, boolean commit) throws GenericSRAException {
         String targetState = commit ? TX_COMMITTED : TX_ROLLEDBACK;
 
         Response response = null;
 
-        sraTrace(String.format("%s SRA", commit ? "commit" : "rollback"), lra);
+        sraTrace(String.format("%s SRA", commit ? "commit" : "rollback"), sra);
 
         try {
-            response = getTarget().path(getSRAId(lra.toString())).path(TERMINATOR).request().put(Entity.entity(targetState, TX_STATUS_MEDIA_TYPE));
+            response = getTarget().path(getSRAId(sra.toString())).path(TERMINATOR).request().put(Entity.entity(targetState, TX_STATUS_MEDIA_TYPE));
 
             assertEquals(response, Response.Status.OK.getStatusCode(),
                     response.getStatus(), "SRA finished with an unexpected status code: " + response.getStatus());
@@ -627,7 +602,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
 
             releaseConnection(response);
 
-            Current.pop(lra);
+            Current.pop(sra);
 
             URL nextSRA = Current.peek();
 
@@ -654,8 +629,8 @@ public class SRAClient implements SRAClientAPI, Closeable {
         }
     }
 
-    private void assertNotNull(Object lra, String message) {
-        if (lra == null)
+    private void assertNotNull(Object sra, String message) {
+        if (sra == null)
             throw new GenericSRAException(null, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), message, null);
     }
 
@@ -672,9 +647,9 @@ public class SRAClient implements SRAClientAPI, Closeable {
         return Current.peek();
     }
 
-    private void sraTrace(String reason, URL lra) {
+    private void sraTrace(String reason, URL sra) {
         if (isTrace)
-            System.out.printf("SRAClient: %s: lra: %s%n", reason, lra == null ? "null" : lra);
+            System.out.printf("SRAClient: %s: sra: %s%n", reason, sra == null ? "null" : sra);
     }
 
     public void close() {
@@ -702,7 +677,7 @@ public class SRAClient implements SRAClientAPI, Closeable {
     }
 
 
-/*    private void setResponseData(URL lraId, String responseData) {
+/*    private void setResponseData(URL sraId, String responseData) {
         if (responseData == null || responseData.isEmpty())
             return;
 
@@ -712,16 +687,16 @@ public class SRAClient implements SRAClientAPI, Closeable {
         try {
             List<String> compensatorData = Arrays.asList(mapper.readValue(responseData, String[].class));
 
-            if (responseDataMap.containsKey(lraId))
-                responseDataMap.get(lraId).addAll(compensatorData);
+            if (responseDataMap.containsKey(sraId))
+                responseDataMap.get(sraId).addAll(compensatorData);
             else
-                responseDataMap.put(lraId, compensatorData);
+                responseDataMap.put(sraId, compensatorData);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }*/
 
-    public List<String> getResponseData(URL lraId) {
-        return responseDataMap.containsKey(lraId) ? responseDataMap.get(lraId) : Collections.emptyList();
+    public List<String> getResponseData(URL sraId) {
+        return responseDataMap.getOrDefault(sraId, Collections.emptyList());
     }
 }

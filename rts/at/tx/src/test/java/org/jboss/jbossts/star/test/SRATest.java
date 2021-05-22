@@ -71,10 +71,10 @@ public class SRATest extends BaseTest {
         private static final String SRA_TEST_DELAY_TRUE_PATH = "delay-true";
         private static final String SRA_TEST_DELAY_FALSE_PATH = "delay-false";
 
-        private Response getResult(boolean cancel, URI lraId) {
+        private Response getResult(boolean cancel, URI sraId) {
             Response.Status status = cancel ? Response.Status.INTERNAL_SERVER_ERROR : Response.Status.OK;
 
-            return Response.status(status).entity(lraId.toASCIIString()).build();
+            return Response.status(status).entity(sraId.toASCIIString()).build();
         }
 
         @GET

@@ -66,10 +66,10 @@ public abstract class SRAParticipant {
         return null;
     }
     /**
-     * Get the LRA context of the currently running method.
-     * Note that @HeaderParam(LRA_HTTP_HEADER) does not match the header (done't know why) so we the httpRequest
+     * Get the SRA context of the currently running method.
+     * Note that @HeaderParam(SRA_HTTP_HEADER) does not match the header (done't know why) so we the httpRequest
      *
-     * @return the LRA context of the currently running method
+     * @return the SRA context of the currently running method
      */
     protected String getCurrentActivityId() {
         return httpRequest.getHeader(RTS_HTTP_CONTEXT_HEADER);
@@ -132,13 +132,13 @@ public abstract class SRAParticipant {
     @Status
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Response status(@PathParam("txid")String sraId) throws NotFoundException {
-//        String lraId = getCurrentActivityId();
+//        String sraId = getCurrentActivityId();
 
         if (sraId == null)
             throw new InvalidSRAId("null", "not present on SRAParticipant#status request", null);
 
         if (!sraParticipantStatusMap.containsKey(sraId))
-            throw new InvalidSRAId(sraId, "SRAParticipant#status request: unknown lra id", null);
+            throw new InvalidSRAId(sraId, "SRAParticipant#status request: unknown sra id", null);
 
         // return status ok together with optional completion data or one of the other codes with a url that
         // returns
@@ -165,7 +165,7 @@ public abstract class SRAParticipant {
 
     /**
      * If the compensator was successful return a 200 status code and optionally an application specific string
-     * that can be used by whoever closed the LRA (that triggered this compensator).
+     * that can be used by whoever closed the SRA (that triggered this compensator).
      * <p>
      * Otherwise return a status url that can be probed to obtain the final outcome when it is ready
      *

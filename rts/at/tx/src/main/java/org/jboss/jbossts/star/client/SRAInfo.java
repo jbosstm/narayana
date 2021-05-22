@@ -82,9 +82,9 @@ public class SRAInfo {
         if (this == o) return true;
         if (!(o instanceof SRAInfo)) return false;
 
-        SRAInfo lraStatus = (SRAInfo) o;
+        SRAInfo sraStatus = (SRAInfo) o;
 
-        return getSraId().equals(lraStatus.getSraId());
+        return getSraId().equals(sraStatus.getSraId());
     }
 
     @Override

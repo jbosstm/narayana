@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Stack;
 
 public class Current {
-    private static final ThreadLocal<Current> lraContexts = new ThreadLocal<>();
+    private static final ThreadLocal<Current> sraContexts = new ThreadLocal<>();
 
     private Stack<URL> stack;
     private Map<String, Object> state;
@@ -40,7 +40,7 @@ public class Current {
     }
 
     public static Object putState(String key, Object value) {
-        Current current = lraContexts.get();
+        Current current = sraContexts.get();
 
         if (current != null)
             return current.updateState(key, value);
@@ -49,7 +49,7 @@ public class Current {
     }
 
     public static Object getState(String key) {
-        Current current = lraContexts.get();
+        Current current = sraContexts.get();
 
         if (current != null && current.state != null)
             return current.state.get(key);
@@ -72,38 +72,38 @@ public class Current {
         if (current.state != null)
             current.state.clear();
 
-        lraContexts.set(null);
+        sraContexts.set(null);
     }
 
     public static URL peek() {
-        Current current = lraContexts.get();
+        Current current = sraContexts.get();
 
         return current != null ? current.stack.peek() : null;
     }
 
     public static URL pop() {
-        Current current = lraContexts.get();
-        URL lraId = null;
+        Current current = sraContexts.get();
+        URL sraId = null;
 
         if (current != null) {
-            lraId = current.stack.pop(); // there must be at least one
+            sraId = current.stack.pop(); // there must be at least one
 
             if (current.stack.empty())
                 clearContext(current);
         }
 
-        return lraId;
+        return sraId;
     }
 
 
-    public static boolean pop(URL lra) {
-        Current current = lraContexts.get();
+    public static boolean pop(URL sra) {
+        Current current = sraContexts.get();
 
         // NB URIs would have been preferable to URLs for testing equality
-        if (current == null || !current.stack.contains(lra))
+        if (current == null || !current.stack.contains(sra))
             return false;
 
-        current.stack.remove(lra);
+        current.stack.remove(sra);
 
         if (current.stack.empty())
             clearContext(current);
@@ -113,30 +113,30 @@ public class Current {
 
     /**
      * push the current context onto the stack of contexts for this thread
-     * @param lraId id of context to push (must not be null)
+     * @param sraId id of context to push (must not be null)
      */
-    public static void push(URL lraId) {
-        Current current = lraContexts.get();
+    public static void push(URL sraId) {
+        Current current = sraContexts.get();
 
         if (current == null) {
-            lraContexts.set(new Current(lraId));
+            sraContexts.set(new Current(sraId));
         } else {
-            if (!current.stack.peek().equals(lraId))
-                current.stack.push(lraId);
+            if (!current.stack.peek().equals(sraId))
+                current.stack.push(sraId);
         }
     }
 
-    public static void updateLRAContext(MultivaluedMap<String, Object> headers) {
-        URL lraId = Current.peek();
+    public static void updateSRAContext(MultivaluedMap<String, Object> headers) {
+        URL sraId = Current.peek();
 
-        if (lraId != null)
-            headers.putSingle(SRAClient.RTS_HTTP_CONTEXT_HEADER, lraId);
+        if (sraId != null)
+            headers.putSingle(SRAClient.RTS_HTTP_CONTEXT_HEADER, sraId);
         else
             headers.remove(SRAClient.RTS_HTTP_CONTEXT_HEADER);
     }
 
     public static void popAll() {
-        lraContexts.set(null);
+        sraContexts.set(null);
     }
 
     public static void clearContext(MultivaluedMap<String, String> headers) {
@@ -144,8 +144,8 @@ public class Current {
         popAll();
     }
 
-    public static void updateLRAContext(URL lraId, MultivaluedMap<String, String> headers) {
-        headers.putSingle(SRAClient.RTS_HTTP_CONTEXT_HEADER, lraId.toString());
-        push(lraId);
+    public static void updateSRAContext(URL sraId, MultivaluedMap<String, String> headers) {
+        headers.putSingle(SRAClient.RTS_HTTP_CONTEXT_HEADER, sraId.toString());
+        push(sraId);
     }
 }

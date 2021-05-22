@@ -46,34 +46,34 @@ public interface SRAClientAPI {
      *
      * Trigger the compensation of the SRA. All compensators will be triggered by the coordinator
      * (ie the compensate message will be sent to each compensators). Upon termination, the URL is
-     * implicitly deleted. The invoker cannot know for sure whether the lra completed or compensated
+     * implicitly deleted. The invoker cannot know for sure whether the sra completed or compensated
      * without enlisting a io.narayana.sra.
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @return compensator sepcific data provided by the application
      *         for nested SRA the API implementation will combine compensator data into a
      *         JSON encoded array. This means that compensators MUST not return any data
      *         that starts with the JSON array start token (ie a '[' character)
      * @throws GenericSRAException Comms error
      */
-    String cancelSRA(URL lraId) throws GenericSRAException;
+    String cancelSRA(URL sraId) throws GenericSRAException;
 
     /**
      * Attempt to close an SRA
      *
      * Trigger the successful completion of the SRA. All compensators will be dropped by the coordinator.
      * The complete message will be sent to the compensators. Upon termination, the URL is implicitly
-     * deleted. The invoker cannot know for sure whether the lra completed or compensated without enlisting
+     * deleted. The invoker cannot know for sure whether the sra completed or compensated without enlisting
      * a io.narayana.sra.
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @return compensator sepcific data provided by the application
      *         for nested SRA the API implementation will combine compensator data into a
      *         JSON encoded array. This means that compensators MUST not return any data
      *         that starts with the JSON array start token (ie a '[' character)
      * @throws GenericSRAException Comms error
      */
-    String commitSRA(URL lraId) throws GenericSRAException;
+    String commitSRA(URL sraId) throws GenericSRAException;
 
     /**
      * Lookup active SRAs
@@ -104,31 +104,31 @@ public interface SRAClientAPI {
     /**
      * Indicates whether an SRA is active
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
-    Boolean isActiveSRA(URL lraId) throws GenericSRAException;
+    Boolean isActiveSRA(URL sraId) throws GenericSRAException;
 
     /**
      * Indicates whether an SRA was compensated
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
-    Boolean isCompensatedSRA(URL lraId) throws GenericSRAException;
+    Boolean isCompensatedSRA(URL sraId) throws GenericSRAException;
 
     /**
      * Indicates whether an SRA is complete
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @throws GenericSRAException Comms error
      */
-    Boolean isCompletedSRA(URL lraId) throws GenericSRAException;
+    Boolean isCompletedSRA(URL sraId) throws GenericSRAException;
 
     /**
      * A SRAParticipant can join with the SRA at any time prior to the completion of an activity
      *
-     * @param lraId   The unique identifier of the SRA (required)
+     * @param sraId   The unique identifier of the SRA (required)
      * @param timelimit The time limit (in seconds) that the SRAParticipant can guarantee that it
      *                can compensate the work performed by the io.narayana.sra.demo.service. After this time period has elapsed,
      *                it may no longer be possible to undo the work within the scope of this (or any enclosing)
@@ -154,13 +154,13 @@ public interface SRAClientAPI {
      *                  it can forget this SRA.  (optional)
      * @throws GenericSRAException Comms error
      */
-    void joinSRA(URL lraId, Long timelimit, String body) throws GenericSRAException;
+    void joinSRA(URL sraId, Long timelimit, String body) throws GenericSRAException;
 
     /**
      * Similar to {@link SRAClientAPI#joinSRA(URL, Long, String)} but the various compensator urls
      * are passed in explicitly
      *
-     * @param lraId The unique identifier of the SRA (required)
+     * @param sraId The unique identifier of the SRA (required)
      * @param timelimit The time limit (in seconds) that the SRAParticipant can guarantee that it
      *                can compensate the work performed by the io.narayana.sra.demo.service
      * @param compensateUrl Performing a POST onthis URL will cause the io.narayana.sra to compensate the work that
@@ -170,7 +170,7 @@ public interface SRAClientAPI {
      * @param statusUrl Performing a GET on this URL will return the status of the compensator {@see joinSRA}
      * @throws GenericSRAException
      */
-    String joinSRA(URL lraId, Long timelimit, String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericSRAException;
+    String joinSRA(URL sraId, Long timelimit, String compensateUrl, String completeUrl, String leaveUrl, String statusUrl) throws GenericSRAException;
 
     /**
      * checks whether there is an SRA associated with the calling thread
@@ -178,5 +178,5 @@ public interface SRAClientAPI {
      */
     URL getCurrent();
 
-    List<String> getResponseData(URL lraId);
+    List<String> getResponseData(URL sraId);
 }
