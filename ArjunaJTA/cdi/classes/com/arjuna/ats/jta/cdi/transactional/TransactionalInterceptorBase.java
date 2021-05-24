@@ -59,6 +59,9 @@ import static java.security.AccessController.doPrivileged;
 public abstract class TransactionalInterceptorBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    // to distinguish Weld implementation where WeldInvocationContext defines context data key
+    private static final String WELD_INTERCEPTOR_BINDINGS_KEY = "org.jboss.weld.interceptor.bindings";
+
     @Inject
     transient javax.enterprise.inject.spi.BeanManager beanManager;
 
@@ -103,9 +106,20 @@ public abstract class TransactionalInterceptorBase implements Serializable {
      * @return instance of {@link Transactional} annotation or null
      */
     private Transactional getTransactional(InvocationContext ic) {
-        if(interceptedBean != null) { // not-null for CDI
+        // when the CDI implementation is Weld then using the Weld API for accessing the annotated type
+        if (ic.getContextData().containsKey(WELD_INTERCEPTOR_BINDINGS_KEY)) {
+            Set<Annotation> annotationBindings = (Set<Annotation>) ic.getContextData().get(WELD_INTERCEPTOR_BINDINGS_KEY);
+            for (Annotation annotation : annotationBindings) {
+                if (annotation.annotationType() == Transactional.class) {
+                    return (Transactional) annotation;
+                }
+            }
+        } else if (interceptedBean != null) { // not-null for CDI
             // getting annotated type and method corresponding of the intercepted bean and method
             AnnotatedType<?> currentAnnotatedType = extension.getBeanToAnnotatedTypeMapping().get(interceptedBean);
+            if (currentAnnotatedType == null) {
+                throw new IllegalStateException(jtaLogger.i18NLogger.get_not_supported_non_weld_interception(interceptedBean.getName()));
+            }
             AnnotatedMethod<?> currentAnnotatedMethod = null;
             for(AnnotatedMethod<?> methodInSearch: currentAnnotatedType.getMethods()) {
                 if(methodInSearch.getJavaMember().equals(ic.getMethod())) {
