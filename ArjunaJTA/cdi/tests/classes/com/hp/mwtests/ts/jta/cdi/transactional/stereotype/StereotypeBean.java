@@ -42,7 +42,7 @@ public class StereotypeBean {
      */
     public void stereotypeRequiredAtBean() throws SystemException {
         // expected @TransactionalRequiredStereotype with REQUIRED
-        if(Status.STATUS_ACTIVE != txnMgr.getStatus())
+        if (Status.STATUS_ACTIVE != txnMgr.getStatus())
             throw new AssertionError("@TransactionalRequiredStereotype defines having an active txn");
     }
 
@@ -53,7 +53,7 @@ public class StereotypeBean {
     @Transactional(value = TxType.NEVER)
     public void transactionalAtMethod() throws SystemException {
         // expected @Transactional with NEVER
-        if(Status.STATUS_NO_TRANSACTION != txnMgr.getStatus())
+        if (Status.STATUS_NO_TRANSACTION != txnMgr.getStatus())
             throw new AssertionError("@Transactional/NEVER defines no active transaction expected");
     }
 }

@@ -56,7 +56,7 @@ public class TransitiveStereotypeTest {
     public void neverStereotypeAtBean() throws Exception {
         stereotypeMethodBean.stereotypeRequiredAtBean();
     }
-    
+
     @Test
     public void transactionalAtMethod() throws Exception {
         stereotypeMethodBean.transactionalAtMethod();
@@ -66,7 +66,7 @@ public class TransitiveStereotypeTest {
     public void transitiveAtBean() throws Exception {
         stereotypeTransitiveBean.process();
     }
-    
+
     /**
      * <p>
      * This test is commented by intention as Weld does not define precise behavior

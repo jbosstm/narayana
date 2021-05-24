@@ -86,7 +86,7 @@ public class TransactionScopeLifecycleEventsTest {
             .addClass(TransactionScopeLifecycleEventsTest.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @Transactional
     void doSomethingTransactional() {
 
@@ -128,5 +128,5 @@ public class TransactionScopeLifecycleEventsTest {
         assertTrue(initializedObserved);
         assertTrue(destroyedObserved);
     }
-    
+
 }

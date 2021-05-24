@@ -121,8 +121,8 @@ public abstract class TransactionalInterceptorBase implements Serializable {
                 throw new IllegalStateException(jtaLogger.i18NLogger.get_not_supported_non_weld_interception(interceptedBean.getName()));
             }
             AnnotatedMethod<?> currentAnnotatedMethod = null;
-            for(AnnotatedMethod<?> methodInSearch: currentAnnotatedType.getMethods()) {
-                if(methodInSearch.getJavaMember().equals(ic.getMethod())) {
+            for (AnnotatedMethod<?> methodInSearch: currentAnnotatedType.getMethods()) {
+                if (methodInSearch.getJavaMember().equals(ic.getMethod())) {
                     currentAnnotatedMethod = methodInSearch;
                     break;
                 }
@@ -131,14 +131,14 @@ public abstract class TransactionalInterceptorBase implements Serializable {
             // check existence of the stereotype on method
             assert currentAnnotatedMethod != null;
             Transactional transactionalMethod = getTransactionalAnnotationRecursive(currentAnnotatedMethod.getAnnotations());
-            if(transactionalMethod != null) return transactionalMethod;
+            if (transactionalMethod != null) return transactionalMethod;
             // stereotype recursive search, covering ones added by an extension too
             Transactional transactionalExtension = getTransactionalAnnotationRecursive(currentAnnotatedType.getAnnotations());
-            if(transactionalExtension != null) return transactionalExtension;
+            if (transactionalExtension != null) return transactionalExtension;
             // stereotypes already merged to one chunk by BeanAttributes.getStereotypes()
-            for(Class<? extends Annotation> stereotype: interceptedBean.getStereotypes()) {
+            for (Class<? extends Annotation> stereotype: interceptedBean.getStereotypes()) {
                 Transactional transactionalAnn = stereotype.getAnnotation(Transactional.class);
-                if(transactionalAnn != null) return transactionalAnn;
+                if (transactionalAnn != null) return transactionalAnn;
             }
         } else { // null for EE components
             Transactional transactional = ic.getMethod().getAnnotation(Transactional.class);
@@ -157,18 +157,18 @@ public abstract class TransactionalInterceptorBase implements Serializable {
     }
 
     private Transactional getTransactionalAnnotationRecursive(Annotation... annotationsOnMember) {
-        if(annotationsOnMember == null) return null;
+        if (annotationsOnMember == null) return null;
         Set<Class<? extends Annotation>> stereotypeAnnotations = new HashSet<>();
 
-        for(Annotation annotation: annotationsOnMember) {
-            if(annotation.annotationType().equals(Transactional.class)) {
+        for (Annotation annotation: annotationsOnMember) {
+            if (annotation.annotationType().equals(Transactional.class)) {
                 return (Transactional) annotation;
             }
             if (beanManager.isStereotype(annotation.annotationType())) {
                 stereotypeAnnotations.add(annotation.annotationType());
             }
         }
-        for(Class<? extends Annotation> stereotypeAnnotation: stereotypeAnnotations) {
+        for (Class<? extends Annotation> stereotypeAnnotation: stereotypeAnnotations) {
             return getTransactionalAnnotationRecursive(beanManager.getStereotypeDefinition(stereotypeAnnotation));
         }
         return null;

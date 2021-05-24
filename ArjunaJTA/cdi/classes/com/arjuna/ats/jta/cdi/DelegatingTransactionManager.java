@@ -24,8 +24,6 @@ package com.arjuna.ats.jta.cdi;
 
 import java.io.Serializable;
 
-import java.util.Objects;
-
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -62,7 +60,7 @@ public abstract class DelegatingTransactionManager implements Serializable, Tran
    *
    * @see #DelegatingTransactionManager(TransactionManager)
    */
-  private transient final TransactionManager delegate;
+  private final transient TransactionManager delegate;
 
   /**
    * Creates a new {@link DelegatingTransactionManager}.
