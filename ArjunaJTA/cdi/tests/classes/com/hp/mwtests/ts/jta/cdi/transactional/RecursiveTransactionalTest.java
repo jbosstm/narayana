@@ -52,82 +52,82 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RecursiveTransactionalTest {
 
-	public static final Runnable DO_NOTHING = new Runnable() {
-		@Override
-		public void run() {
-		}
-	};
+    public static final Runnable DO_NOTHING = new Runnable() {
+        @Override
+        public void run() {
+        }
+    };
 
-	@Inject
-	TestTransactionalInvokerHelper helper;
+    @Inject
+    TestTransactionalInvokerHelper helper;
 
-	@Resource(name = "java:comp/DefaultManagedExecutorService")
-	ExecutorService executorService;
+    @Resource(name = "java:comp/DefaultManagedExecutorService")
+    ExecutorService executorService;
 
-	@Deployment
-	public static WebArchive createTestArchive() {
-		return ShrinkWrap.create(WebArchive.class, "test.war")
-				.addPackage("com.hp.mwtests.ts.jta.cdi.transactional")
-				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-	}
+    @Deployment
+    public static WebArchive createTestArchive() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addPackage("com.hp.mwtests.ts.jta.cdi.transactional")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
 
-	@Test
-	public void testRecursiveTxRequired() {
-		doTest(TxType.REQUIRED);
-	}
+    @Test
+    public void testRecursiveTxRequired() {
+        doTest(TxType.REQUIRED);
+    }
 
-	@Test
-	public void testRecursiveTxRequiresNew() {
-		doTest(TxType.REQUIRES_NEW);
-	}
+    @Test
+    public void testRecursiveTxRequiresNew() {
+        doTest(TxType.REQUIRES_NEW);
+    }
 
-	@Test
-	public void testRecursiveTxMandatory() {
-		doTest(TxType.MANDATORY);
-	}
+    @Test
+    public void testRecursiveTxMandatory() {
+        doTest(TxType.MANDATORY);
+    }
 
-	@Test
-	public void testRecursiveTxSupports() {
-		doTest(TxType.SUPPORTS);
-	}
+    @Test
+    public void testRecursiveTxSupports() {
+        doTest(TxType.SUPPORTS);
+    }
 
-	@Test
-	public void testRecursiveTxNotSupported() {
-		doTest(TxType.NOT_SUPPORTED);
-	}
+    @Test
+    public void testRecursiveTxNotSupported() {
+        doTest(TxType.NOT_SUPPORTED);
+    }
 
-	@Test
-	public void testRecursiveTxNever() {
-		doTest(TxType.NEVER);
-	}
+    @Test
+    public void testRecursiveTxNever() {
+        doTest(TxType.NEVER);
+    }
 
-	private void doTest(TxType txType) {
-		TransactionManagementType oppositeTransactionManagementType = oppositeTransactionManagementType(txType);
-		boolean startTransaction = txType == TxType.MANDATORY;
-		boolean expectedAvailable = oppositeTransactionManagementType == TransactionManagementType.BEAN;
-		Runnable runnable = helper.runWithTransactionManagement(oppositeTransactionManagementType, startTransaction,
-				helper.runAndCheckUserTransactionAvailability(
-						helper.runInTxType(txType,
-								helper.runInTxType(txType, DO_NOTHING)
-						),
-						expectedAvailable
-				)
-		);
-		runnable.run();
-	}
+    private void doTest(TxType txType) {
+        TransactionManagementType oppositeTransactionManagementType = oppositeTransactionManagementType(txType);
+        boolean startTransaction = txType == TxType.MANDATORY;
+        boolean expectedAvailable = oppositeTransactionManagementType == TransactionManagementType.BEAN;
+        Runnable runnable = helper.runWithTransactionManagement(oppositeTransactionManagementType, startTransaction,
+                helper.runAndCheckUserTransactionAvailability(
+                        helper.runInTxType(txType,
+                                helper.runInTxType(txType, DO_NOTHING)
+                        ),
+                        expectedAvailable
+                )
+        );
+        runnable.run();
+    }
 
-	private TransactionManagementType oppositeTransactionManagementType(TxType txType) {
-		switch (txType) {
-			case REQUIRED:
-			case REQUIRES_NEW:
-			case MANDATORY:
-			case SUPPORTS:
-				return TransactionManagementType.BEAN;
-			case NOT_SUPPORTED:
-			case NEVER:
-				return TransactionManagementType.CONTAINER;
-			default:
-				throw new RuntimeException("Unexpected tx type " + txType);
-		}
-	}
+    private TransactionManagementType oppositeTransactionManagementType(TxType txType) {
+        switch (txType) {
+            case REQUIRED:
+            case REQUIRES_NEW:
+            case MANDATORY:
+            case SUPPORTS:
+                return TransactionManagementType.BEAN;
+            case NOT_SUPPORTED:
+            case NEVER:
+                return TransactionManagementType.CONTAINER;
+            default:
+                throw new RuntimeException("Unexpected tx type " + txType);
+        }
+    }
 }

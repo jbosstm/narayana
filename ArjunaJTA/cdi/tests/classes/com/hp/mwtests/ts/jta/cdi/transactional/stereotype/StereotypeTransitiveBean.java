@@ -41,7 +41,7 @@ public class StereotypeTransitiveBean {
      */
     public void process() throws SystemException, TestException {
         // expected: @TransitiveToRequiredNoTransactional with REQUIRED
-        if(Status.STATUS_ACTIVE == txnMgr.getStatus())
+        if (Status.STATUS_ACTIVE == txnMgr.getStatus())
             throw new TestException();
 
         // not expected/fail:

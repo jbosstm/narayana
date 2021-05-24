@@ -31,32 +31,32 @@ import javax.transaction.Transactional;
  */
 @ApplicationScoped
 public class TestTransactionalInvokerBean {
-	@Transactional(Transactional.TxType.REQUIRED)
-	public void invokeInTxRequired(Runnable runnable) {
-		runnable.run();
-	}
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void invokeInTxRequired(Runnable runnable) {
+        runnable.run();
+    }
 
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
-	public void invokeInTxRequiresNew(Runnable runnable) {
-		runnable.run();
-	}
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void invokeInTxRequiresNew(Runnable runnable) {
+        runnable.run();
+    }
 
-	@Transactional(Transactional.TxType.MANDATORY)
-	public void invokeInTxMandatory(Runnable runnable) {
-		runnable.run();
-	}
+    @Transactional(Transactional.TxType.MANDATORY)
+    public void invokeInTxMandatory(Runnable runnable) {
+        runnable.run();
+    }
 
-	@Transactional(Transactional.TxType.NOT_SUPPORTED)
-	public void invokeInTxNotSupported(Runnable runnable) {
-		runnable.run();
-	}
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public void invokeInTxNotSupported(Runnable runnable) {
+        runnable.run();
+    }
 
-	@Transactional(Transactional.TxType.SUPPORTS)
-	public void invokeInTxSupports(Runnable runnable) {
-		runnable.run();
-	}
-	@Transactional(Transactional.TxType.NEVER)
-	public void invokeInTxNever(Runnable runnable) {
-		runnable.run();
-	}
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public void invokeInTxSupports(Runnable runnable) {
+        runnable.run();
+    }
+    @Transactional(Transactional.TxType.NEVER)
+    public void invokeInTxNever(Runnable runnable) {
+        runnable.run();
+    }
 }

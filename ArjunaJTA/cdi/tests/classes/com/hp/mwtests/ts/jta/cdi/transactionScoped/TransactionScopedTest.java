@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.arjuna.ats.jta.common.jtaPropertyManager;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
@@ -44,7 +43,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertTrue;
 

@@ -62,7 +62,7 @@ public abstract class DelegatingTransactionSynchronizationRegistry implements Se
      *
      * @see #DelegatingTransactionSynchronizationRegistry(TransactionSynchronizationRegistry)
      */
-    transient final TransactionSynchronizationRegistry delegate;
+    final transient TransactionSynchronizationRegistry delegate;
 
     /**
      * Creates a new {@link

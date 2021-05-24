@@ -38,6 +38,6 @@ public class AddStereotypeAnnotationExtension implements Extension {
     void processAnnotatedType(@Observes ProcessAnnotatedType<NoAnnotationBean> bean) {
         AnnotatedTypeWrapper<NoAnnotationBean> wrapper = new AnnotatedTypeWrapper<NoAnnotationBean>(bean);
         wrapper.addAnnotation(TransactionalRequiredStereotype.class);
-    	bean.setAnnotatedType(wrapper);
+        bean.setAnnotatedType(wrapper);
     }
 }

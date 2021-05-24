@@ -42,8 +42,8 @@ public class StereotypeChangedByExtensionTest {
     @Deployment
     public static WebArchive createTestArchive() {
         return ShrinkWrap.create(WebArchive.class, "stereotype-test.war")
-        	.addPackage(StereotypeChangedByExtensionTest.class.getPackage())
-        	.addClasses(TransactionalRequiredStereotype.class)
+            .addPackage(StereotypeChangedByExtensionTest.class.getPackage())
+            .addClasses(TransactionalRequiredStereotype.class)
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsServiceProvider(javax.enterprise.inject.spi.Extension.class, AddStereotypeAnnotationExtension.class);
     }

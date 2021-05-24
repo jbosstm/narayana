@@ -22,7 +22,6 @@
 
 package com.arjuna.ats.jta.cdi;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessManagedBean;
-import javax.inject.Singleton;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionScoped;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -45,8 +43,6 @@ import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorNotSupported
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequired;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorRequiresNew;
 import com.arjuna.ats.jta.cdi.transactional.TransactionalInterceptorSupports;
-import com.arjuna.ats.jta.common.JTAEnvironmentBean;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**
  * @author paul.robinson@redhat.com 01/05/2013

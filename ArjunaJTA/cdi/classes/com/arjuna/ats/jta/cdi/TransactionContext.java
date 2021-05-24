@@ -145,7 +145,7 @@ public class TransactionContext implements Context {
         // Note that scope initialization and destruction events are
         // fired by NarayanaTransactionManager.  See
         // https://issues.jboss.org/browse/JBTM-3106 for details.
-        
+
         Transaction transaction = getCurrentTransaction();
         if (transaction == null) {
             return false;
