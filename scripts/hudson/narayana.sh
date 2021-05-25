@@ -62,13 +62,13 @@ function init_test_options {
     if ! get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
         export COMMENT_ON_PULL=""
-        export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+        export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
         export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -78,7 +78,7 @@ function init_test_options {
         if [[ ! $PULL_DESCRIPTION_BODY == *!TOMCAT* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=1 LRA_TESTS=0
         else
@@ -87,7 +87,7 @@ function init_test_options {
     elif [[ $PROFILE == "AS_TESTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!AS_TESTS* ]]; then
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -96,7 +96,7 @@ function init_test_options {
     elif [[ $PROFILE == "RTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!RTS* ]]; then
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -105,7 +105,7 @@ function init_test_options {
     elif [[ $PROFILE == "JACOCO" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!JACOCO* ]]; then
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
           export TOMCAT_TESTS=1 LRA_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
@@ -115,7 +115,7 @@ function init_test_options {
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!XTS* ]]; then
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
-          export AS_BUILD=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
+          export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -124,7 +124,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTA* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -133,7 +133,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_JACORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JACORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -142,7 +142,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_JDKORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -151,7 +151,7 @@ function init_test_options {
     elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_OPENJDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
           export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -160,7 +160,7 @@ function init_test_options {
     elif [[ $PROFILE == "BLACKTIE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!BLACKTIE* ]]; then
           comment_on_pull "Started testing this pull request with BLACKTIE profile on Linux: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -169,7 +169,7 @@ function init_test_options {
     elif [[ $PROFILE == "PERFORMANCE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!PERF* ]]; then
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -178,7 +178,7 @@ function init_test_options {
     elif [[ $PROFILE == "LRA" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
           comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=1
         else
@@ -187,7 +187,7 @@ function init_test_options {
     elif [[ $PROFILE == "DB_TESTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!DB_TESTS* ]]; then
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
-          export AS_BUILD=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 BLACKTIE=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
           export TOMCAT_TESTS=0 LRA_TESTS=0
         else
@@ -199,8 +199,9 @@ function init_test_options {
     fi
     [ $NARAYANA_TESTS ] || NARAYANA_TESTS=0	# run the narayana surefire tests
     [ $NARAYANA_BUILD ] || NARAYANA_BUILD=0 # build narayana
-    [ $AS_BUILD ] && [ -z "$JBOSS_HOME" ] || AS_BUILD=0 # git clone and build a fresh copy of the AS when JBOSS_HOME is not provided
     [ $AS_DOWNLOAD ] && [ -z "$JBOSS_HOME" ] || AS_DOWNLOAD=0 # download AS when JBOSS_HOME is not provided
+    [ $AS_CLONE ]  && [ -z "$JBOSS_HOME" ] || AS_CLONE=0 # git clone the AS when JBOSS_HOME is not provided
+    [ $AS_BUILD ] || AS_BUILD=0 # build the AS
     [ $AS_TESTS ] || AS_TESTS=0 # Run WildFly/JBoss EAP testsuite
     [ $BLACKTIE ] || BLACKTIE=0 # Build BlackTie
     [ $OSGI_TESTS ] || OSGI_TESTS=0 # OSGI tests
@@ -1102,7 +1103,7 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
-[[ $AS_CLONE = 1  ||  $AS_BUILD = 1 ]] && clone_as "$@"
+[ $AS_CLONE = 1 ] && clone_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $AS_DOWNLOAD = 1 ] && download_as "$@"
 [ $AS_TESTS = 1 ] && tests_as "$@"
