@@ -97,7 +97,7 @@ public class TransactionContext implements Context {
     public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
 
         if (!isActive()) {
-            throw new ContextNotActiveException();
+            throw new ContextNotActiveException(jtaLogger.i18NLogger.get_contextual_is_not_active());
         }
         if (contextual == null) {
             throw new RuntimeException(jtaLogger.i18NLogger.get_contextual_is_null());
