@@ -611,6 +611,10 @@ public interface jtaI18NLogger {
     @Message(id = 16151, value = "Not supported for interception factory with non-weld CDI implementation for bean {0}.", format = MESSAGE_FORMAT)
     String get_not_supported_non_weld_interception(String beanName);
 
+    @Message(id = 16152, value = "TransactionScoped context is not active as there is no active transaction on the thread", format = MESSAGE_FORMAT)
+    String get_contextual_is_not_active();
+
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in sequence. Don't reuse ids.

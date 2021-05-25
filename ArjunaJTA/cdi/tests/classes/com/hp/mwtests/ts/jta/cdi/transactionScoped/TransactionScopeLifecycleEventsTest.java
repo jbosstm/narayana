@@ -23,6 +23,7 @@
 package com.hp.mwtests.ts.jta.cdi.transactionScoped;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.BeforeDestroyed;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.Destroyed;
 import javax.enterprise.context.Initialized;
@@ -52,6 +53,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -71,7 +73,7 @@ import static org.junit.Assert.fail;
 public class TransactionScopeLifecycleEventsTest {
 
     private static boolean initializedObserved;
-
+    private static boolean beforeDestroyedObserved;
     private static boolean destroyedObserved;
 
     @Inject
@@ -87,15 +89,23 @@ public class TransactionScopeLifecycleEventsTest {
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
+    @Before
+    public void init() {
+        initializedObserved = false;
+        beforeDestroyedObserved = false;
+        destroyedObserved = false;
+    }
+
     @Transactional
     void doSomethingTransactional() {
 
     }
 
-    void transactionScopeActivated(@Observes @Initialized(TransactionScoped.class) final Object event,
+    void transactionScopeActivated(@Observes @Initialized(TransactionScoped.class) final Object initializedEvent,
                                    final BeanManager beanManager)
         throws SystemException {
-        assertNotNull(event);
+        assertNotNull(initializedEvent);
+        assertTrue(initializedEvent instanceof Transaction);
         assertNotNull(beanManager);
         assertNotNull(this.transactionManager);
         final Transaction transaction = this.transactionManager.getTransaction();
@@ -107,9 +117,9 @@ public class TransactionScopeLifecycleEventsTest {
         initializedObserved = true;
     }
 
-    void transactionScopeDectivated(@Observes @Destroyed(TransactionScoped.class) final Object event,
+    void transactionScopeDectivated(@Observes @Destroyed(TransactionScoped.class) final Object destroyedEvent,
                                     final BeanManager beanManager) throws SystemException {
-        assertNotNull(event);
+        assertNotNull(destroyedEvent);
         assertNotNull(beanManager);
         assertNotNull(this.transactionManager);
         assertNull(this.transactionManager.getTransaction());
@@ -122,11 +132,27 @@ public class TransactionScopeLifecycleEventsTest {
         destroyedObserved = true;
     }
 
+    void transactionScopeBeforeDectivated(@Observes @BeforeDestroyed(TransactionScoped.class) final Object beforeDestroyedEvent,
+                                    final BeanManager beanManager) throws SystemException {
+        assertNotNull(beforeDestroyedEvent);
+        assertTrue(beforeDestroyedEvent instanceof Transaction);
+        assertNotNull(beanManager);
+        assertNotNull(this.transactionManager);
+        assertNotNull(this.transactionManager.getTransaction());
+        final Context transactionContext = beanManager.getContext(TransactionScoped.class);
+        assertNotNull(transactionContext);
+        assertTrue(transactionContext.isActive());
+        assertTrue(beforeDestroyedEvent instanceof Transaction);
+        beforeDestroyedObserved = true;
+    }
+
     @Test
     public void testEffects() {
         self.doSomethingTransactional();
-        assertTrue(initializedObserved);
-        assertTrue(destroyedObserved);
+        assertTrue("Expected observed @Initialized(TransactionScoped.class)", initializedObserved);
+        assertTrue("Expected observed @BeforeDestroyed(TransactionScoped.class)", beforeDestroyedObserved);
+        assertTrue("Expected observed @Destroyed(TransactionScoped.class)", destroyedObserved);
+
     }
 
 }
