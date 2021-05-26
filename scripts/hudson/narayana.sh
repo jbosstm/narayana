@@ -859,9 +859,6 @@ function qa_tests_once {
     let txtimeout=$MFACTOR*120
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
-  # if IPV6_OPTS is not set get the jdbc drivers (we do not run the jdbc tests in IPv6 mode)
-  ant get.drivers
-  [ $? -eq 0 ] || fatal "get drivers failed"
   
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist

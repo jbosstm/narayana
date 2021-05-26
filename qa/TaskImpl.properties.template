@@ -43,12 +43,10 @@ COMMAND_LINE_2=\
   ${path.separator}ext${file.separator}jboss-profiler-jvmti.jar${path.separator}ext${file.separator}jboss-logging-spi.jar\
   ${path.separator}tests${file.separator}build${file.separator}classes${file.separator}\
   ${path.separator}dbdrivers${file.separator}selected_dbdriver${file.separator}*\
-  ${path.separator}dbdrivers${file.separator}DB2_v9.7${file.separator}db2jcc.jar\
-  ${path.separator}dbdrivers${file.separator}jConnect-6_0${file.separator}classes${file.separator}jconn3.jar\
-  ${path.separator}dbdrivers${file.separator}mssql2005_sqljdbc_2.0${file.separator}enu${file.separator}sqljdbc4.jar\
-  ${path.separator}dbdrivers${file.separator}mysql-connector-java-5.1.8-bin.jar\
+  ${path.separator}dbdrivers${file.separator}jcc.jar\
+  ${path.separator}dbdrivers${file.separator}mysql-connector-java.jar\
   ${path.separator}dbdrivers${file.separator}ojdbc8.jar\
-  ${path.separator}dbdrivers${file.separator}postgresql-8.3-605.jdbc4.jar\
+  ${path.separator}dbdrivers${file.separator}postgresql.jar\
   ${path.separator}ext${file.separator}log4j.jar\
   ${path.separator}ext${file.separator}netty.jar
 

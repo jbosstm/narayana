@@ -63,7 +63,7 @@ To debug spawned processes, edit TaskImpl.properties to set debug command line a
 enable a robust debugging mode by setting a system property tasks.remote.debug. This is set in the junit
 process and will set debugging ports up incrementing from port 5000 for the first spawned process.
 
-For jdbc tests, ensure the required drivers are present (see build.xml get.drivers target)
+For jdbc tests, ensure the required drivers are present (cd qa && mvn install)
 and create a suitable config/jdbc_profiles/<name_of_testnode_host>/ file by copying the existing
 config/jdbc_profiles/_template/ directory or rely on the one in config/jdbc_profiles/default
 By convention each test node has two accounts on each database server, with names of '<testnode_hostname>1'
