@@ -11,7 +11,8 @@
 	should have received a copy of the GNU Lesser General Public License, v.2.1 
 	along with this distribution; if not, write to the Free Software Foundation, 
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.narayana.jta</groupId>
     <artifactId>narayana-jta-all</artifactId>
@@ -25,9 +26,9 @@
   <packaging>jar</packaging>
 
   <properties>
-      <server.jvm.args>
-          ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
-      </server.jvm.args>
+    <server.jvm.args>
+      ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
+    </server.jvm.args>
   </properties>
 
   <build>
@@ -63,11 +64,11 @@
               <testExcludes>
                 <exclude>io/narayana/perf/product/*.java</exclude>
               </testExcludes>
-            </configuration> 
+            </configuration>
             <goals>
               <goal>testCompile</goal>
             </goals>
-          </execution>                  
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -98,8 +99,8 @@
     </plugins>
   </build>
   <dependencies>
-    <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and 
-			JCA (for tx inflow) apis. -->
+    <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and
+            JCA (for tx inflow) apis. -->
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.2_spec</artifactId>
@@ -119,11 +120,11 @@
       </exclusions>
     </dependency>
     <dependency>
-        <groupId>org.jboss.spec.javax.interceptor</groupId>
-        <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-        <version>${version.org.jboss.spec.javax.interceptor}</version>
-        <scope>provided</scope>
-    </dependency>    
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.interceptor}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <!-- JCA API -->
       <groupId>org.jboss.ironjacamar</groupId>
@@ -197,232 +198,235 @@
       <version>${version.com.h2database}</version>
       <scope>test</scope>
     </dependency>
-	<dependency>
-		<groupId>postgresql</groupId>
-		<artifactId>postgresql</artifactId>
-		<version>${version.postgresql}</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>mysql</groupId>
-		<artifactId>mysql-connector-java</artifactId>
-		<version>${version.mysql}</version>
-		<scope>test</scope>
-	</dependency>
     <dependency>
-       	<groupId>jboss</groupId>
-		<artifactId>jnpserver</artifactId>
-		<version>4.2.2.GA</version>
-		<scope>test</scope>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${version.postgresql}</version>
+      <scope>test</scope>
     </dependency>
-
-        <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <version>${version.org.jboss.arquillian.core}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.javax.enterprise}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>${version.org.jboss.arquillian.core}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>${version.javax.annotation}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana</groupId>
-          <artifactId>test-utils</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-  </dependencies>
-
-  <profiles>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                  <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-install-plugin</artifactId>
-                      <executions>
-                          <execution>
-                              <id>default-install</id>
-                              <phase>install</phase>
-                          </execution>
-                      </executions>
-                      <inherited>false</inherited>
-                  </plugin>
-              </plugins>
-          </build>
-      </profile>
-        <profile>
-            <id>arq</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>${version.org.wildfly.arquillian}</version>
-                    <scope>test</scope>
-                </dependency>
-        <dependency>
-            <groupId>org.jboss</groupId>
-            <artifactId>jboss-transaction-spi</artifactId>
-            <version>${version.org.jboss.jboss-transaction-spi}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging-spi</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>${version.org.jboss.logging.jboss-logging}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.interceptor</groupId>
-            <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.interceptor}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.transaction}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jumpmind.symmetric.jdbc</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.2-1002-jdbc4</version>
-            <scope>test</scope>
-        </dependency>
-
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${version.com.h2database}</version>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${version.mysql}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jnpserver</artifactId>
+      <version>4.2.2.GA</version>
       <scope>test</scope>
     </dependency>
 
-        <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <version>${version.org.jboss.arquillian.core}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.javax.enterprise}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <version>${version.org.jboss.arquillian.core}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>${version.javax.annotation}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.ejb}</version>
-            <scope>provided</scope>
-        </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables combine.children="append">
-                                <!--
-                                    Used in arquillian.xml
-                                -->
-                                <server.jvm.args>${server.jvm.args}</server.jvm.args>
-                                <node.address>127.0.0.1</node.address>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <excludes>
-                                <exclude>**/io/narayana/perf/product/*</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/integration/*IntegrationTest.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-	<profile>
-		<id>commitMarkableResourcePerf</id>
-		<dependencies>
-			<dependency>
-				<groupId>com.ibm.db2</groupId>
-				<artifactId>jcc</artifactId>
-				<version>${version.com.ibm}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.microsoft.sqlserver</groupId>
-				<artifactId>sqljdbc4</artifactId>
-				<version>${version.com.microsoft.sqlserver}</version>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar</systemPath>
-				<scope>system</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sybase.jdbcx</groupId>
-				<artifactId>jconn4</artifactId>
-				<version>jConnect-7_0</version>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/jConnect-6_0/classes/jconn3.jar</systemPath>
-				<scope>system</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.oracle.database.jdbc</groupId>
-				<artifactId>ojdbc8</artifactId>
-				<version>${version.com.oracle}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</profile>
+    <dependency>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-servlet</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${version.javax.enterprise}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>${version.javax.annotation}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>test-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
     <profile>
-        <id>codeCoverage</id>
-        <properties>
-            <server.jvm.args>
-                ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}
-            </server.jvm.args>
-        </properties>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <inherited>false</inherited>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>arq</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <version>${version.org.wildfly.arquillian}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss</groupId>
+          <artifactId>jboss-transaction-spi</artifactId>
+          <version>${version.org.jboss.jboss-transaction-spi}</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.jboss.logging</groupId>
+              <artifactId>jboss-logging-spi</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging</artifactId>
+          <version>${version.org.jboss.logging.jboss-logging}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+          <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.interceptor}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.transaction</groupId>
+          <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.transaction}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${version.junit}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <version>${version.postgresql}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${version.com.h2database}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.protocol</groupId>
+          <artifactId>arquillian-protocol-servlet</artifactId>
+          <version>${version.org.jboss.arquillian.core}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${version.javax.enterprise}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.arquillian.junit</groupId>
+          <artifactId>arquillian-junit-container</artifactId>
+          <version>${version.org.jboss.arquillian.core}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+          <version>${version.javax.annotation}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.ejb</groupId>
+          <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.ejb}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables combine.children="append">
+                <!--
+                    Used in arquillian.xml
+                -->
+                <server.jvm.args>${server.jvm.args}</server.jvm.args>
+                <node.address>127.0.0.1</node.address>
+              </systemPropertyVariables>
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+              <excludes>
+                <exclude>**/io/narayana/perf/product/*</exclude>
+              </excludes>
+              <includes>
+                <include>**/integration/*IntegrationTest.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>commitMarkableResourcePerf</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.ibm.db2</groupId>
+          <artifactId>jcc</artifactId>
+          <version>${version.com.ibm}</version>
+          <scope>test</scope>
+        </dependency>
+        <!--
+        <dependency>
+          <groupId>com.microsoft.sqlserver</groupId>
+          <artifactId>sqljdbc4</artifactId>
+          <version>${version.com.microsoft.sqlserver}</version>
+          <systemPath>${orson.jar.location}/../qa/dbdrivers/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar
+          </systemPath>
+          <scope>system</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.sybase.jdbcx</groupId>
+          <artifactId>jconn4</artifactId>
+          <version>jConnect-7_0</version>
+          <systemPath>${orson.jar.location}/../qa/dbdrivers/jConnect-6_0/classes/jconn3.jar</systemPath>
+          <scope>system</scope>
+        </dependency>
+        -->
+        <dependency>
+          <groupId>com.oracle.database.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>${version.com.oracle}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>codeCoverage</id>
+      <properties>
+        <server.jvm.args>
+          ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.jacoco} ${jvm.args.modular}
+        </server.jvm.args>
+      </properties>
     </profile>
     <profile>
       <id>jts-ibmorb</id>
@@ -458,25 +462,27 @@
         </plugins>
       </build>
     </profile>
-        <profile>
-            <id>j9</id>
-            <activation>
-                <jdk>[1.9,11)</jdk>
-            </activation>
-            <properties>
-                <jvm.args.modular>
-                    --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
-                </jvm.args.modular>
-            </properties>
-        </profile>
-        <profile>
-            <id>jdk11</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <properties>
-                <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-            </properties>
-        </profile>
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,11)</jdk>
+      </activation>
+      <properties>
+        <jvm.args.modular>
+          --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED
+          --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
+          --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+        </jvm.args.modular>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+      </properties>
+    </profile>
   </profiles>
 </project>

@@ -74,6 +74,27 @@
       <version>${version.org.jboss.spec.javax.servlet}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Jersey -->
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-all</artifactId>
+      <version>${version.asm}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.grizzly</groupId>
+      <artifactId>grizzly-servlet-webserver</artifactId>
+      <version>${version.com.sun.grizzly}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- end Jersey -->
+
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>test-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
       <artifactId>narayana-jta</artifactId>
@@ -97,11 +118,11 @@
         </exclusion>
       </exclusions>
     </dependency>
-      <dependency>
-          <groupId>org.jboss.resteasy</groupId>
-          <artifactId>resteasy-cdi</artifactId>
-          <version>4.5.5.Final</version>
-      </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-cdi</artifactId>
+      <version>4.5.5.Final</version>
+    </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxb-provider</artifactId>
@@ -131,35 +152,6 @@
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
-    </dependency>
-
-    <!-- undertow with RestEasy -->
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-client</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Jersey -->
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>${version.asm}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.grizzly</groupId>
-      <artifactId>grizzly-servlet-webserver</artifactId>
-      <version>${version.com.sun.grizzly}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- end Jersey -->
-
-    <dependency>
-      <groupId>org.jboss.narayana</groupId>
-      <artifactId>test-utils</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -203,6 +195,14 @@
       <version>1.5.4</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- undertow with RestEasy -->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+      <version>${version.org.jboss.resteasy}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-undertow</artifactId>
@@ -222,47 +222,46 @@
       <scope>test</scope>
     </dependency>
     <!-- end undertow with RestEasy -->
-      <dependency>
-          <groupId>org.jboss.spec.javax.interceptor</groupId>
-          <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-          <version>${version.org.jboss.spec.javax.interceptor}</version>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>javax.enterprise</groupId>
-          <artifactId>cdi-api</artifactId>
-          <version>${version.javax.enterprise}</version>
-          <scope>provided</scope>
-          <exclusions>
-              <exclusion>
-                  <artifactId>jboss-interceptor-api</artifactId>
-                  <groupId>org.jboss.interceptor</groupId>
-              </exclusion>
-              <exclusion>
-                  <artifactId>jsr250-api</artifactId>
-                  <groupId>javax.annotation</groupId>
-              </exclusion>
-          </exclusions>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.jettison</groupId>
-          <artifactId>jettison</artifactId>
-          <version>${version.org.codehaus.jettison}</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>javax.json</groupId>
-          <artifactId>javax.json-api</artifactId>
-          <version>1.1.4</version>
-          <scope>provided</scope>
-      </dependency>
-       <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-            <version>${version.org.jboss.spec.javax.transaction}</version>
-            <scope>provided</scope>
-        </dependency>
-
+    <dependency>
+      <groupId>org.jboss.spec.javax.interceptor</groupId>
+      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.interceptor}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${version.javax.enterprise}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.interceptor</groupId>
+          <artifactId>jboss-interceptor-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>jsr250-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
+      <version>${version.org.codehaus.jettison}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <version>1.1.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+      <version>${version.org.jboss.spec.javax.transaction}</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
   <build>

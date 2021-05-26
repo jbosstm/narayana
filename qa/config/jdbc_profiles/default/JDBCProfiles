@@ -104,7 +104,7 @@ DB2_PGSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 # exit
  
 DB1_MYSQL_JNDI_NumberOfDrivers=2
-DB1_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB1_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_MYSQL_JNDI_Binding=mysql1
 DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
@@ -114,7 +114,7 @@ DB1_MYSQL_JNDI_DatabaseName=jbossts
 DB1_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 
 DB2_MYSQL_JNDI_NumberOfDrivers=2
-DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB2_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB2_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_MYSQL_JNDI_Binding=mysql2
 DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
