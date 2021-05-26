@@ -37,7 +37,7 @@
   <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
   <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
 
-  <target name="get.drivers" depends="clean-dbdrivers">
+  <target name="get.drivers">
     <!--
         https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
         http://www.jboss.com/products/platforms/application/supportedconfigurations/
@@ -45,8 +45,6 @@
         https://docspace.corp.redhat.com/clearspace/community/bu/middleware/jboss-qe/lab
         server connection params in config/jdbc_profiles/
         -->
-    <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
-    <get src="${driver.url}/ojdbc14.jar" dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
     <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
     <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar" dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
     <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar" dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
@@ -72,10 +70,6 @@
       </and>
     </condition>
     <available file="${driver.home}" property="have.dbdrivers" value="true"/>
-  </target>
-  <target name="clean-dbdrivers" unless="dbdrivers.cleaned">
-    <delete dir="${driver.home}"/>
-    <property name="dbdrivers.cleaned" value="true"/>
   </target>
   <target name="clean" depends="clean-tests"/>
   <target name="clean-tests">
