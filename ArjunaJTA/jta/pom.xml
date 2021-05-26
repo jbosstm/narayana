@@ -412,8 +412,7 @@
 				<groupId>com.oracle.database.jdbc</groupId>
 				<artifactId>ojdbc8</artifactId>
 				<version>${version.com.oracle}</version>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/ojdbc8.jar</systemPath>
-				<scope>system</scope>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</profile>

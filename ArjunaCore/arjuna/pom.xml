@@ -274,8 +274,7 @@
 				<groupId>com.oracle.database.jdbc</groupId>
 				<artifactId>ojdbc8</artifactId>
 				<version>${version.com.oracle}</version>
-				<scope>system</scope>
-				<systemPath>${orson.jar.location}/../qa/dbdrivers/ojdbc8.jar</systemPath>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 		<build>
