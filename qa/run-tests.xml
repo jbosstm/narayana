@@ -82,7 +82,7 @@
   </target>
   <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
   <target name="test">
-    <property name="driver" value="ojdbc14.jar"/>
+    <property name="driver" value="ojdbc8.jar"/>
     <fail unless="test" message="you need to specify the name of a test"/>
     <install-dbdriver files="${driver}"/>
     <junit-tests tests="${test}"/>
@@ -261,7 +261,7 @@
     <fail if="failed-tests" message="some tests failed"/>
   </target>
   <target name="junit-jdbc-testsuite">
-    <install-dbdriver files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
@@ -290,7 +290,7 @@
   </target>
   <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
   <target name="junit-jdbc-ncl-testsuite">
-    <install-dbdriver files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbcresources01_oracle_thin_jndi"/>
     <junit-tests tests="jdbcresources02_oracle_thin_jndi"/>
     <install-dbdriver files="mysql-connector-java-5.1.8-bin.jar"/>
@@ -302,7 +302,7 @@
   </target>
   <target name="junit-jdbc-crachrec">
     <!-- crashrecovery11 : jdbc resource crash recovery tests. 4 tests, 4 minutes per db -->
-    <install-dbdriver files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="crashrecovery11-oracle_jndi"/>
     <!--mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">
@@ -337,7 +337,7 @@
     <!-- jtatest01 : 6 tests, minute-->
     <junit-tests tests="jtatests01"/>
     <!-- jdbclocals01 : 6 tests, 2 minutes for each db -->
-    <install-dbdriver files="ojdbc14.jar"/>
+    <install-dbdriver files="ojdbc8.jar"/>
     <junit-tests tests="jdbclocals01_oracle_jndi"/>
     <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
     <condition property="mssql.driver" value="sqljdbc4.jar">

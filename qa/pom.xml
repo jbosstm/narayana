@@ -170,8 +170,8 @@
 					<target>1.7</target>
 					<excludes>
 						<exclude>**/astests/**</exclude>
-            <exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_perfprofile01_i.java</exclude>
-            <exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_jtsremote.java</exclude>
+						<exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_perfprofile01_i.java</exclude>
+						<exclude>org/jboss/jbossts/qa/junit/testgroup/TestGroup_jtsremote.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -183,8 +183,16 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 
 				<configuration>
-          <excludeGroupIds>org.jboss.spec.javax.transaction,junit,jboss.profiler.jvmti,org.apache.ant,javax,org.jboss.narayana</excludeGroupIds>
-          <excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
+					<excludeGroupIds>
+						org.jboss.spec.javax.transaction,
+						junit,
+						jboss.profiler.jvmti,
+						org.apache.ant,
+						javax,
+						org.jboss.narayana,
+						com.oracle.database.jdbc
+					</excludeGroupIds>
+					<excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
 					<outputDirectory>./ext</outputDirectory>
 					<overWriteReleases>false</overWriteReleases>
 					<overWriteSnapshots>false</overWriteSnapshots>
@@ -192,6 +200,20 @@
 					<excludeTransitive>true</excludeTransitive>
 					<stripVersion>true</stripVersion>
 				</configuration>
+
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeGroupIds>*</excludeGroupIds>
+							<outputDirectory>${project.build.directory}/../dbdrivers</outputDirectory>
+							<includeArtifactIds>ojdbc8</includeArtifactIds>
+						</configuration>
+					</execution>
+				</executions>
 
 			</plugin>
 		</plugins>
@@ -243,11 +265,16 @@
 			<artifactId>jboss-transaction-spi</artifactId>
 			<version>${version.org.jboss.jboss-transaction-spi}</version>
 		</dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>narayana-jts-idlj</artifactId>
-          <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.jboss.narayana.jts</groupId>
+			<artifactId>narayana-jts-idlj</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>${version.com.oracle}</version>
+		</dependency>
 
 	</dependencies>
   <profiles>
