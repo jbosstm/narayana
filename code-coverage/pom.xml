@@ -18,6 +18,7 @@
     <narayana.home.url>http://narayana.io/</narayana.home.url>
     <copyright.years>2014</copyright.years>
     <surefire.reports.directory>surefire-reports</surefire.reports.directory>
+    <sortpom.skip>true</sortpom.skip>
   </properties>
 
   <profiles>

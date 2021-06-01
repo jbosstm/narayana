@@ -16,13 +16,13 @@
 	02110-1301, USA.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>restat</artifactId>
     <version>5.11.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>restat-util</artifactId>
   <packaging>jar</packaging>
   <name>Narayana: restat util</name>
@@ -60,12 +60,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.spec.javax.ws.rs</groupId>
       <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
       <version>${version.javax.ws.rs-api}</version>
@@ -88,30 +82,40 @@
         </exclusion>
       </exclusions>
     </dependency>
-      <!-- jboss logging -->
-	<dependency>
-	      <groupId>org.jboss.logging</groupId>
-	      <artifactId>jboss-logging-processor</artifactId>
-	      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
-	      <scope>provided</scope>
-	</dependency>
-	    <dependency>
-	      <groupId>org.jboss.logging</groupId>
-	      <artifactId>jboss-logging</artifactId>
-	      <version>${version.org.jboss.logging.jboss-logging}</version>
-	      <scope>provided</scope>
-	</dependency>
+    <!-- jboss logging -->
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
-        <inherited>false</inherited>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <forceCreation>true</forceCreation>
+          <includePom>true</includePom>
+        </configuration>
         <executions>
           <execution>
             <id>create_sources_jar</id>
@@ -121,10 +125,6 @@
             <phase>prepare-package</phase>
           </execution>
         </executions>
-        <configuration>
-          <forceCreation>true</forceCreation>
-          <includePom>true</includePom>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -140,24 +140,28 @@
     </plugins>
   </build>
   <profiles>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                  <plugin>
-                      <groupId>org.apache.maven.plugins</groupId>
-                      <artifactId>maven-install-plugin</artifactId>
-                      <executions>
-                          <execution>
-                              <id>default-install</id>
-                              <phase>install</phase>
-                          </execution>
-                      </executions>
-                      <inherited>false</inherited>
-                  </plugin>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <detectOfflineLinks>false</detectOfflineLinks>
+              <failOnError>false</failOnError>
+            </configuration>
             <executions>
               <execution>
                 <id>create_javadocs</id>
@@ -167,10 +171,6 @@
                 <phase>prepare-package</phase>
               </execution>
             </executions>
-            <configuration>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <failOnError>false</failOnError>
-            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -195,8 +195,8 @@
                 <configuration>
                   <showDeprecation>false</showDeprecation>
                   <compilerArgs>
-                      <arg>--add-modules</arg>
-                  <arg>java.xml.ws</arg>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml.ws</arg>
                   </compilerArgs>
                 </configuration>
               </execution>

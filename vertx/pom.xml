@@ -43,6 +43,10 @@
     </plugins>
   </build>
 
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
+
   <profiles>
     <profile>
       <id>release</id>

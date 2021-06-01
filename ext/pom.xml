@@ -25,6 +25,10 @@
     <name>Narayana: ext</name>
     <description>Narayana: Ext All</description>
 
+    <properties>
+        <sortpom.skip>true</sortpom.skip>
+    </properties>
+
     <profiles>
         <profile>
             <id>codeCoverage</id>

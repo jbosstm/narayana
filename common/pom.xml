@@ -16,6 +16,9 @@
   <name>Narayana: common</name>
   <description>Narayana: common</description>
   <packaging>jar</packaging>
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests</testSourceDirectory>

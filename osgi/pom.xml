@@ -31,6 +31,7 @@
     <version.org.jboss.arquillian.core>1.1.10.Final</version.org.jboss.arquillian.core>
     <version.shrinkwrap>1.1.2</version.shrinkwrap>
     <version.apache.karaf>4.0.5</version.apache.karaf>
+    <sortpom.skip>true</sortpom.skip>
   </properties>
   <dependencyManagement>
     <dependencies>

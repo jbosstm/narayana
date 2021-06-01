@@ -16,6 +16,9 @@
       <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
     </license>
   </licenses>
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
 
   <dependencies>
     <dependency>
