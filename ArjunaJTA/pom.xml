@@ -24,6 +24,9 @@
   <packaging>pom</packaging>
   <name>Narayana: ArjunaJTA</name>
   <description>Narayana: ArjunaJTA</description>
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
   <build>
     <plugins>
       <plugin>

@@ -11,6 +11,9 @@
   <artifactId>stm</artifactId>
   <name>Narayana: STM</name>
   <url>http://maven.apache.org</url>
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
   <build>
     <plugins>
       <plugin>

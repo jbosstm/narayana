@@ -33,6 +33,9 @@
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <sortpom.skip>true</sortpom.skip>
+  </properties>
   <modules>
     <module>byteman_support</module>
     <module>WSAS</module>

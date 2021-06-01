@@ -16,21 +16,21 @@
 	02110-1301, USA.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>restat</artifactId>
     <version>5.11.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>restat-web</artifactId>
   <packaging>war</packaging>
   <name>Narayana: restat webservice</name>
   <description>Bundles tx as a deployable war archive</description>
 
   <properties>
-    <version.artifactId>5.11.3.Final-SNAPSHOT</version.artifactId>
     <artifactId.name>restat-web</artifactId.name>
+    <version.artifactId>5.11.3.Final-SNAPSHOT</version.artifactId>
     <version.override.org.jboss.spec.javax.servlet>1.0.0.Final</version.override.org.jboss.spec.javax.servlet>
   </properties>
   <dependencies>
@@ -38,6 +38,12 @@
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>restat-api</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <version>${version.org.jboss.resteasy}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
@@ -72,12 +78,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
       <artifactId>tjws</artifactId>
       <version>${version.org.jboss.resteasy}</version>
       <scope>test</scope>
@@ -91,17 +91,17 @@
     </dependency>
 
     <dependency>
-        <groupId>org.jboss.arquillian.junit</groupId>
-        <artifactId>arquillian-junit-container</artifactId>
-        <version>${version.org.jboss.arquillian.core}</version>
-        <scope>test</scope>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
-        <groupId>org.jboss.arquillian.protocol</groupId>
-        <artifactId>arquillian-protocol-servlet</artifactId>
-        <version>${version.org.jboss.arquillian.core}</version>
-        <scope>test</scope>
+      <groupId>org.jboss.arquillian.protocol</groupId>
+      <artifactId>arquillian-protocol-servlet</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -110,6 +110,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <forceCreation>true</forceCreation>
+          <includePom>true</includePom>
+        </configuration>
         <executions>
           <execution>
             <id>create_sources_jar</id>
@@ -119,10 +123,6 @@
             <phase>prepare-package</phase>
           </execution>
         </executions>
-        <configuration>
-          <forceCreation>true</forceCreation>
-          <includePom>true</includePom>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -147,8 +147,8 @@
           AS container -->
       <!-- To use, run: mvn package jboss-as:deploy -->
       <plugin>
-          <groupId>org.jboss.as.plugins</groupId>
-          <artifactId>jboss-as-maven-plugin</artifactId>
+        <groupId>org.jboss.as.plugins</groupId>
+        <artifactId>jboss-as-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
@@ -169,10 +169,10 @@
             <executions>
               <execution>
                 <id>jboss-deploy</id>
-                <phase>pre-integration-test</phase>
                 <goals>
                   <goal>deploy</goal>
                 </goals>
+                <phase>pre-integration-test</phase>
                 <configuration>
                   <fileName>${basedir}/target/${artifactId.name}-web-${version.artifactId}.war</fileName>
                   <serverName>default</serverName>
@@ -181,10 +181,10 @@
               </execution>
               <execution>
                 <id>jboss-undeploy</id>
-                <phase>post-integration-test</phase>
                 <goals>
                   <goal>undeploy</goal>
                 </goals>
+                <phase>post-integration-test</phase>
                 <configuration>
                   <fileName>${basedir}/target/${artifactId.name}-web-${version.artifactId}.war</fileName>
                   <serverName>default</serverName>
@@ -202,10 +202,10 @@
             <executions>
               <execution>
                 <id>surefire-it</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>test</goal>
                 </goals>
+                <phase>integration-test</phase>
                 <configuration>
                   <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <trimStackTrace>false</trimStackTrace>
@@ -222,34 +222,34 @@
         </plugins>
       </build>
     </profile>
-        <profile>
-            <!-- An optional Arquillian testing profile that executes tests
+    <profile>
+      <!-- An optional Arquillian testing profile that executes tests
                 in your JBoss AS instance -->
-            <!-- This profile will start a new JBoss AS instance, and execute
+      <!-- This profile will start a new JBoss AS instance, and execute
                 the test, shutting it down when done -->
-            <!-- Run with: mvn clean test -Parq-jbossas-managed -->
-            <id>arq-jbossas-managed</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <!-- An optional Arquillian testing profile that executes tests
+      <!-- Run with: mvn clean test -Parq-jbossas-managed -->
+      <id>arq-jbossas-managed</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <!-- An optional Arquillian testing profile that executes tests
                 in a remote JBoss AS instance -->
-            <!-- Run with: mvn clean test -Parq-jbossas-remote -->
-            <id>arq-jbossas-remote</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
+      <!-- Run with: mvn clean test -Parq-jbossas-remote -->
+      <id>arq-jbossas-remote</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-remote</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
 
   </profiles>
 </project>

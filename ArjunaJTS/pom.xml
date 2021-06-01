@@ -28,6 +28,7 @@
     <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
     <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
     <modular.jdk.args/>
+    <sortpom.skip>true</sortpom.skip>
   </properties>
   <build>
     <plugins>

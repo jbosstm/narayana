@@ -27,6 +27,7 @@
 
 	<properties>
 		<version.org.jboss.netty>3.2.5.Final</version.org.jboss.netty>
+		<sortpom.skip>true</sortpom.skip>
 	</properties>
 
 	<repositories>
