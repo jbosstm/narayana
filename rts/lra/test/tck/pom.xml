@@ -1,62 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-test</artifactId>
-        <version>5.11.3.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>lra-test</artifactId>
+    <version>5.11.3.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>lra-test-tck</artifactId>
-    <name>LRA tests: MicroProfile TCK</name>
+  <artifactId>lra-test-tck</artifactId>
+  <name>LRA tests: MicroProfile TCK</name>
 
-    <properties>        
-        <lra.coordinator.jar.path>${project.basedir}/../../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
-        <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <properties>
+    <lra.coordinator.jar.path>${project.basedir}/../../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
+    <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <dependenciesToScan>
-                        <dependency>org.eclipse.microprofile.lra:microprofile-lra-tck</dependency>
-                    </dependenciesToScan>
-                    <includes>
-                        <include>**/*Test*.java</include>
-                    </includes>
-                    <systemPropertyVariables combine.children="append">
-                        <lra.tck.timeout.factor>${lra.test.timeout.factor}</lra.tck.timeout.factor>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.microprofile.lra</groupId>
+      <artifactId>microprofile-lra-tck</artifactId>
+      <version>${version.microprofile.lra}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-proxy-api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-test-arquillian-extension</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.microprofile.lra</groupId>
-            <artifactId>microprofile-lra-tck</artifactId>
-            <version>${version.microprofile.lra}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-proxy-api</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-test-arquillian-extension</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <dependenciesToScan>
+            <dependency>org.eclipse.microprofile.lra:microprofile-lra-tck</dependency>
+          </dependenciesToScan>
+          <includes>
+            <include>**/*Test*.java</include>
+          </includes>
+          <systemPropertyVariables combine.children="append">
+            <lra.tck.timeout.factor>${lra.test.timeout.factor}</lra.tck.timeout.factor>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
