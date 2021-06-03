@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <!-- JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware 
 		LLC, and individual contributors as indicated by the @author tags. See the 
 		copyright.txt in the distribution for a full listing of individual contributors. 
@@ -18,46 +19,10 @@
     <version>5.11.3.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>narayana-full</artifactId>
   <packaging>pom</packaging>
   <name>Narayana: narayana-full</name>
   <description>Narayana: narayana-full</description>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/bin.xml</descriptor>
-          </descriptors>
-          <tarLongFileMode>gnu</tarLongFileMode>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.jboss.narayana.arjunacore</groupId>
@@ -141,7 +106,6 @@
       <version>${project.version}</version>
     </dependency>
 
-
     <!-- javadoc dependencies -->
     <dependency>
       <groupId>org.jboss.narayana.jta</groupId>
@@ -215,16 +179,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-client</artifactId>
-        <version>${version.org.jboss.resteasy}</version>
-        <scope>provided</scope>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+      <version>${version.org.jboss.resteasy}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-        <groupId>io.smallrye.reactive</groupId>
-        <artifactId>smallrye-reactive-converter-api</artifactId>
-        <version>${version.smallrye-converter-api}</version>
-        <scope>provided</scope>
+      <groupId>io.smallrye.reactive</groupId>
+      <artifactId>smallrye-reactive-converter-api</artifactId>
+      <version>${version.smallrye-converter-api}</version>
+      <scope>provided</scope>
     </dependency>
     <!-- Ensure these are in the distribution -->
     <dependency>
@@ -262,12 +226,12 @@
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
       <version>${version.org.jboss.jboss-transaction-spi}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging-spi</artifactId>
-          </exclusion>
-        </exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging-spi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.stm</groupId>
@@ -276,6 +240,41 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/bin.xml</descriptor>
+          </descriptors>
+          <tarLongFileMode>gnu</tarLongFileMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
@@ -300,7 +299,7 @@
           <name>!idlj-disabled</name>
         </property>
       </activation>
-     
+
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -321,7 +320,7 @@
           <name>ibmorb-enabled</name>
         </property>
       </activation>
-     
+
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
@@ -337,6 +336,14 @@
     </profile>
     <profile>
       <id>release</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.mashona</groupId>
+          <artifactId>mashona-logwriting</artifactId>
+          <version>${version.io.mashona}</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -345,23 +352,21 @@
             <executions>
               <execution>
                 <id>javadoc</id>
-                <phase>package</phase>
                 <goals>
                   <goal>javadoc</goal>
                 </goals>
+                <phase>package</phase>
                 <configuration>
                   <detectJavaApiLink>false</detectJavaApiLink>
                   <includeDependencySources>true</includeDependencySources>
                   <docfilessubdirs>true</docfilessubdirs>
                   <subpackages>com.arjuna.ats:com.arjuna.common:com.arjuna.orbportability:org.jboss.narayana:org.jboss.jbossts:com.arjuna.mw:com.arjuna.wsc:com.arjuna.wsc11:com.arjuna.wst:com.arjuna.wst11:org.jboss.stm</subpackages>
                   <!-- use this instead of excludePackageNames because of MJAVADOC-299 -->
-                  <additionalparam>
-                    -private
+                  <additionalparam>-private
                     -exclude com.arjuna.ats.internal -exclude com.arjuna.common.internal
                     -exclude com.arjuna.orbportability.internal -exclude com.arjuna.ats.jbossatx
                     -exclude com.arjuna.mw.wstx -exclude org.jboss.jbossts.txbridge
-                    -exclude org.jboss.jbossts.xts -exclude org.jboss.jbossts.xts11
-                  </additionalparam>
+                    -exclude org.jboss.jbossts.xts -exclude org.jboss.jbossts.xts11</additionalparam>
                   <groups>
                     <group>
                       <title>Core</title>
@@ -392,12 +397,12 @@
                       <packages>org.jboss.narayana.tomcat.jta</packages>
                     </group>
                   </groups>
-		  <additionalJOptions>
-		      <additionalJOption>${jvm.args.modular}</additionalJOption>
-	          </additionalJOptions>
-		  <dependencySourceExcludes>
-		      <dependencySourceExclude>javax.enterprise:cdi-api</dependencySourceExclude>
-		  </dependencySourceExcludes>
+                  <additionalJOptions>
+                    <additionalJOption>${jvm.args.modular}</additionalJOption>
+                  </additionalJOptions>
+                  <dependencySourceExcludes>
+                    <dependencySourceExclude>javax.enterprise:cdi-api</dependencySourceExclude>
+                  </dependencySourceExcludes>
                 </configuration>
               </execution>
             </executions>
@@ -407,112 +412,103 @@
             <executions>
               <execution>
                 <id>pack-javadoc</id>
-                <phase>package</phase>
-                <configuration>
-                  <target>
-                    <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar"
-                        basedir="${project.build.directory}/site/apidocs/" />
-                  </target>
-                </configuration>
                 <goals>
                   <goal>run</goal>
                 </goals>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <jar basedir="${project.build.directory}/site/apidocs/" destfile="${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar"></jar>
+                  </target>
+                </configuration>
               </execution>
             </executions>
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>io.mashona</groupId>
-          <artifactId>mashona-logwriting</artifactId>
-          <version>${version.io.mashona}</version>
-          <scope>compile</scope>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>community</id>
       <dependencies>
-          <dependency>
-            <groupId>orson</groupId>
-            <artifactId>orson</artifactId>
-            <version>${version.orson}</version>
-            <scope>system</scope>
-            <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
-          </dependency>
-          <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>${version.jfree}</version>
-            <scope>provided</scope>
-          </dependency>
-          <dependency>
-            <groupId>tanukisoft</groupId>
-            <artifactId>wrapper</artifactId>
-            <version>${version.tanukisoft}</version>
-            <scope>provided</scope>
-          </dependency>
+        <dependency>
+          <groupId>orson</groupId>
+          <artifactId>orson</artifactId>
+          <version>${version.orson}</version>
+          <scope>system</scope>
+          <systemPath>${orson.jar.location}/orson-0.5.0.jar</systemPath>
+        </dependency>
+        <dependency>
+          <groupId>jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+          <version>${version.jfree}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>tanukisoft</groupId>
+          <artifactId>wrapper</artifactId>
+          <version>${version.tanukisoft}</version>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
     </profile>
     <profile>
-	  <id>jdk9+</id>
-          <activation>
-             <jdk>[9,)</jdk>
-          </activation>
-          <properties>
-             <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-	     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
-	     <version.jaxws-ri>2.3.0</version.jaxws-ri>
-	  </properties>
-	  <dependencies>
-	     <dependency>
-                <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-		<scope>provided</scope>
-             </dependency>
-	     <dependency>
-                <groupId>org.jboss.spec.javax.xml.ws</groupId>
-                <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
-                <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
-		<scope>provided</scope>
-             </dependency>
-	     <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-ri</artifactId>
-                <version>${version.jaxws-ri}</version>
-		<type>pom</type>
-		<scope>provided</scope>
-		<exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-xjc</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.ws</groupId>
-                        <artifactId>policy</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.stream.buffer</groupId>
-                        <artifactId>streambuffer</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jvnet.staxex</groupId>
-                        <artifactId>stax-ex</artifactId>
-                    </exclusion>
-                </exclusions>
-             </dependency>
-          </dependencies>
-      </profile>
+      <id>jdk9+</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
+        <version.jaxws-ri>2.3.0</version.jaxws-ri>
+        <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+        <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.spec.javax.xml.bind</groupId>
+          <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.xml.ws</groupId>
+          <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+          <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.xml.ws</groupId>
+          <artifactId>jaxws-ri</artifactId>
+          <version>${version.jaxws-ri}</version>
+          <type>pom</type>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-impl</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-xjc</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.xml.ws</groupId>
+              <artifactId>policy</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.xml.stream.buffer</groupId>
+              <artifactId>streambuffer</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.jvnet.staxex</groupId>
+              <artifactId>stax-ex</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>

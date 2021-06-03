@@ -1,226 +1,228 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>rest-tx</artifactId>
-        <version>5.11.3.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>rest-tx</artifactId>
+    <version>5.11.3.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>lra-parent</artifactId>
-    <name>LRA Parent</name>
-    <description>LRA Parent</description>
-    <packaging>pom</packaging>
+  <artifactId>lra-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>LRA Parent</name>
+  <description>LRA Parent</description>
 
-    <properties>
-        <version.jackson>2.9.10.1</version.jackson>
+  <modules>
+    <module>service-base</module>
+    <module>client</module>
+    <module>coordinator</module>
+    <module>coordinator-thorntail</module>
+    <module>coordinator-quarkus</module>
+    <module>coordinator-war</module>
+    <module>proxy</module>
+    <module>annotation-checker</module>
+    <module>test</module>
+    <module>jaxrs</module>
+  </modules>
 
-        <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
-        <version.cdi-api>2.0</version.cdi-api>
-        <version.servlet-api>2.5</version.servlet-api>
-        <version.jboss-modules>1.10.2.Final</version.jboss-modules>
-        <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
+  <properties>
+    <!-- integration tests are disabled by default, use profile to run 'arq' -->
+    <checkstyle.skip>false</checkstyle.skip>
 
-        <version.microprofile.lra>1.0</version.microprofile.lra>
-        <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
+    <lra.test.timeout.factor>1.0</lra.test.timeout.factor>
 
-        <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
-        <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
+    <skipITs>true</skipITs>
+    <sortpom.skip>false</sortpom.skip>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <test.logs.to.file>false</test.logs.to.file>
 
-        <test.logs.to.file>false</test.logs.to.file>
-        <skipITs>true</skipITs> <!-- integration tests are disabled by default, use profile to run 'arq' -->
-        <checkstyle.skip>false</checkstyle.skip>
-        <sortpom.skip>false</sortpom.skip>
+    <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
+    <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
+    <version.cdi-api>2.0</version.cdi-api>
+    <version.jackson>2.9.10.1</version.jackson>
 
-        <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
-        <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
+    <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
+    <version.jboss-modules>1.10.2.Final</version.jboss-modules>
+    <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
 
-        <lra.test.timeout.factor>1.0</lra.test.timeout.factor>
-        <server.jvm.args>${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}</server.jvm.args>
-    </properties>
+    <version.microprofile.lra>1.0</version.microprofile.lra>
+    <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
+    <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
 
-    <repositories>
-        <repository>
-            <id>jboss-public-releases-repository-group</id>
-            <name>JBoss Public Releases Maven Repository Group</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>repo.eclipse.org-snapshots</id>
-            <name>Eclipse MicroProfile Repository - Snapshots</name>
-            <url>https://repo.eclipse.org/content/repositories/microprofile-snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
+    <version.servlet-api>2.5</version.servlet-api>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.org.jboss.arquillian.core}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
+  <dependencyManagement>
     <dependencies>
-        <!-- for testing -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${version.hamcrest}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${version.hamcrest}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-impl-base</artifactId>
-            <scope>test</scope>
-        </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${version.org.jboss.arquillian.core}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
+  </dependencyManagement>
 
-    <build>
+  <dependencies>
+    <!-- for testing -->
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${version.hamcrest}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${version.hamcrest}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap</groupId>
+      <artifactId>shrinkwrap-impl-base</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>jboss-public-releases-repository-group</id>
+      <name>JBoss Public Releases Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>repo.eclipse.org-snapshots</id>
+      <name>Eclipse MicroProfile Repository - Snapshots</name>
+      <url>https://repo.eclipse.org/content/repositories/microprofile-snapshots</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${version.maven-failsafe-plugin}</version>
+        <configuration>
+          <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
+          <skipITs>${skipITs}</skipITs>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
+            <maven.test.classes.dir>${project.build.testOutputDirectory}</maven.test.classes.dir>
+          </systemPropertyVariables>
+          <includes>
+            <!-- Integration tests running at the container -->
+            <include>*IT.java</include>
+            <include>*Tests.java</include>
+            <!-- LRA TCK tests are named with 'Tests.java' -->
+            <include>*TestCase.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Running only integration tests with failsafe plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <!-- Unit tests running with no container involved -->
+            <include>*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>j9</id>
+      <activation>
+        <jdk>[1.9,11)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
+      </properties>
+      <build>
         <plugins>
-            <plugin>
-              <inherited>false</inherited>
-              <groupId>org.sonatype.plugins</groupId>
-              <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-		        <version>${version.maven-failsafe-plugin}</version>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
                 <configuration>
-                    <redirectTestOutputToFile>${test.logs.to.file}</redirectTestOutputToFile>
-                    <skipITs>${skipITs}</skipITs>
-                    <systemPropertyVariables>
-                        <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
-                        <maven.test.classes.dir>${project.build.testOutputDirectory}</maven.test.classes.dir>
-                    </systemPropertyVariables>
-                    <includes>
-                        <!-- Integration tests running at the container -->
-                        <include>*IT.java</include>
-                        <include>*Tests.java</include> <!-- LRA TCK tests are named with 'Tests.java' -->
-                        <include>*TestCase.java</include>
-                    </includes>
+                  <showDeprecation>false</showDeprecation>
+                  <compilerArgs>
+                    <arg>--add-modules</arg>
+                    <arg>java.xml.bind</arg>
+                  </compilerArgs>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Running only integration tests with failsafe plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <!-- Unit tests running with no container involved -->
-                        <include>*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
 
-    <modules>
-        <module>service-base</module>
-        <module>client</module>
-        <module>coordinator</module>
-        <module>coordinator-thorntail</module>
-        <module>coordinator-quarkus</module>
-        <module>coordinator-war</module>
-        <module>proxy</module>
-        <module>annotation-checker</module>
-        <module>test</module>
-        <module>jaxrs</module>
-    </modules>
-
-    <profiles>
-
-      <profile>
-          <id>j9</id>
-          <activation>
-             <jdk>[1.9,11)</jdk>
-          </activation>
-          <properties>
-            <maven.compiler.source>1.9</maven.compiler.source>
-            <maven.compiler.target>1.9</maven.compiler.target>
-          </properties>
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>default-compile</id>
-                    <configuration>
-                      <showDeprecation>false</showDeprecation>
-                      <compilerArgs>
-                        <arg>--add-modules</arg>
-                        <arg>java.xml.bind</arg>
-                      </compilerArgs>
-                    </configuration>
-                  </execution>
-                </executions>
-              </plugin>
-            </plugins>
-          </build>
-      </profile>
-
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-install-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>default-install</id>
-                      <phase>install</phase>
-                    </execution>
-                  </executions>
-                  <inherited>false</inherited>
-                </plugin>
-              </plugins>
-          </build>
-      </profile>
-    </profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

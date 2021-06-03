@@ -1,137 +1,139 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jboss.narayana.rts</groupId>
-        <artifactId>lra-proxy-parent</artifactId>
-        <version>5.11.3.Final-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>lra-proxy-parent</artifactId>
+    <version>5.11.3.Final-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>lra-proxy-test</artifactId>
-    <name>LRA Proxy Test</name>
-    <description>LRA Proxy Test</description>
-    <packaging>war</packaging>
+  <artifactId>lra-proxy-test</artifactId>
+  <packaging>war</packaging>
+  <name>LRA Proxy Test</name>
+  <description>LRA Proxy Test</description>
 
-    <properties>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
-        <thorntail.http.port>8081</thorntail.http.port>
-        <lra.http.host>localhost</lra.http.host>
-        <lra.http.port>8080</lra.http.port>
-        <service.http.port>${thorntail.http.port}</service.http.port>
+  <properties>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <lra.http.host>localhost</lra.http.host>
+    <lra.http.port>8080</lra.http.port>
+    <service.http.port>${thorntail.http.port}</service.http.port>
 
-        <thorntail.debug.params/>
-        <thorntail.logging.params/>
-        <thorntail.debug.port>8787</thorntail.debug.port>
+    <skipITs>true</skipITs>
 
-        <skipITs>true</skipITs>
-    </properties>
+    <thorntail.debug.params></thorntail.debug.params>
+    <thorntail.debug.port>8787</thorntail.debug.port>
+    <thorntail.http.port>8081</thorntail.http.port>
+    <thorntail.logging.params></thorntail.logging.params>
+  </properties>
 
-    <build>
-        <finalName>lra-proxy-test</finalName>
+  <dependencies>
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>${version.cdi-api}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${version.servlet-api}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- JAXRS 2 Client API -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.ws.rs</groupId>
+      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+      <version>${version.javax.ws.rs-api}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${version.jackson}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+      <version>${version.resteasy-client}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.microprofile.lra</groupId>
+      <artifactId>microprofile-lra-api</artifactId>
+      <version>${version.microprofile.lra}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-client</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-proxy-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>lra-proxy-test</finalName>
+    <plugins>
+      <plugin>
+        <groupId>io.thorntail</groupId>
+        <artifactId>thorntail-maven-plugin</artifactId>
+        <configuration>
+          <environment>
+            <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
+          </environment>
+          <properties>
+            <lra.http.host>${lra.http.host}</lra.http.host>
+            <lra.http.port>${lra.http.port}</lra.http.port>
+            <service.http.port>${service.http.port}</service.http.port>
+          </properties>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>${skipITs}</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
         <plugins>
-            <plugin>
-                <groupId>io.thorntail</groupId>
-                <artifactId>thorntail-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <environment>
-                        <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
-                    </environment>
-                    <properties>
-                        <lra.http.host>${lra.http.host}</lra.http.host>
-                        <lra.http.port>${lra.http.port}</lra.http.port>
-                        <service.http.port>${service.http.port}</service.http.port>
-                    </properties>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>${skipITs}</skip>
-                </configuration>
-            </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.cdi-api}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>${version.servlet-api}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- JAXRS 2 Client API -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <version>${version.javax.ws.rs-api}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${version.jackson}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>${version.resteasy-client}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.lra</groupId>
-            <artifactId>microprofile-lra-api</artifactId>
-            <version>${version.microprofile.lra}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-client</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.narayana.rts</groupId>
-            <artifactId>lra-proxy-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
-    <profiles>
-      <profile>
-          <id>release</id>
-          <build>
-              <plugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-install-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>default-install</id>
-                      <phase>install</phase>
-                    </execution>
-                  </executions>
-                  <inherited>false</inherited>
-                </plugin>
-              </plugins>
-          </build>
-      </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 </project>

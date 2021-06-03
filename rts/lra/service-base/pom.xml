@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>lra-parent</artifactId>
     <groupId>org.jboss.narayana.rts</groupId>
+    <artifactId>lra-parent</artifactId>
     <version>5.11.3.Final-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>lra-service-base</artifactId>
   <description>Provides a base module for the funcionality shared between LRA coordination and LRA clients</description>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.microprofile.lra</groupId>
@@ -36,34 +34,34 @@
       <version>${version.org.jboss.logging.jboss-logging}</version>
     </dependency>
   </dependencies>
-  
+
   <build>
     <finalName>${project.artifactId}</finalName>
   </build>
-  
+
   <profiles>
     <profile>
-        <id>release</id>
-        <build>
-            <plugins>
-              <plugin>
-                <inherited>false</inherited>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-              </plugin>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                  <execution>
-                    <id>default-install</id>
-                    <phase>install</phase>
-                  </execution>
-                </executions>
-                <inherited>false</inherited>
-              </plugin>
-            </plugins>
-        </build>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <inherited>false</inherited>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>default-install</id>
+                <phase>install</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
