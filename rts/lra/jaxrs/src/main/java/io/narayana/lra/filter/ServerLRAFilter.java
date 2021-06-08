@@ -94,11 +94,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
     @Inject
     private LRAParticipantRegistry lraParticipantRegistry;
 
-    private final NarayanaLRAClient lraClient;
-
-    public ServerLRAFilter() {
-        lraClient = new NarayanaLRAClient();
-    }
+    private NarayanaLRAClient lraClient;
 
     private boolean isTxInvalid(ContainerRequestContext containerRequestContext, LRA.Type type, URI lraId,
                                 boolean shouldNotBeNull, ArrayList<Progress> progress) {
@@ -190,7 +186,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 }
 
                 try {
-                    lraClient.leaveLRA(incommingLRA, compensatorId);
+                    getLRAClient().leaveLRA(incommingLRA, compensatorId);
                     progress = updateProgress(progress, ProgressStep.Left, null); // leave succeeded
                 } catch (WebApplicationException e) {
                     progress = updateProgress(progress, ProgressStep.LeaveFailed, e.getMessage()); // leave may have failed
@@ -370,7 +366,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         Current.push(lraId);
 
         try {
-            lraClient.setCurrentLRA(lraId); // make the current LRA available to the called method
+            getLRAClient().setCurrentLRA(lraId); // make the current LRA available to the called method
         } catch (Exception e) {
             // should not happen since lraId has already been validated
             // (perhaps we should not use the client API to set the context)
@@ -398,7 +394,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                         participant.augmentTerminationURIs(terminateURIs, baseUri);
                     }
 
-                    recoveryUrl = lraClient.joinLRA(lraId, timeLimit,
+                    recoveryUrl = getLRAClient().joinLRA(lraId, timeLimit,
                             toURI(terminateURIs.get(COMPENSATE)),
                             toURI(terminateURIs.get(COMPLETE)),
                             toURI(terminateURIs.get(FORGET)),
@@ -430,7 +426,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                             String.format("%s %s,", e.getClass().getSimpleName(), e.getMessage()), progress);
                     // the failure plus any previous actions (such as leave and start requests) will be reported via the response filter
                 }
-            } else if (requiresActiveLRA && lraClient.getStatus(lraId) != LRAStatus.Active) {
+            } else if (requiresActiveLRA && getLRAClient().getStatus(lraId) != LRAStatus.Active) {
                 Current.clearContext(headers);
                 Current.pop(lraId);
                 containerRequestContext.removeProperty(SUSPENDED_LRA_PROP);
@@ -459,7 +455,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 try {
                     // do not attempt to cancel if the request filter tried but failed to start a new LRA
                     if (progress == null || progressDoesNotContain(progress, ProgressStep.StartFailed)) {
-                        lraClient.cancelLRA(current);
+                        getLRAClient().cancelLRA(current);
                         progress = updateProgress(progress, ProgressStep.Ended, null);
                     }
                 } catch (NotFoundException ignore) {
@@ -493,9 +489,9 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                     // do not attempt to close or cancel if the request filter tried but failed to start a new LRA
                     if (progress == null || progressDoesNotContain(progress, ProgressStep.StartFailed)) {
                         if (isCancel) {
-                            lraClient.cancelLRA(toClose);
+                            getLRAClient().cancelLRA(toClose);
                         } else {
-                            lraClient.closeLRA(toClose);
+                            getLRAClient().closeLRA(toClose);
                         }
 
                         progress = updateProgress(progress, ProgressStep.Ended, null);
@@ -552,6 +548,15 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
 
             Current.popAll();
         }
+    }
+
+    private NarayanaLRAClient getLRAClient() {
+        if (lraClient == null) {
+            // no need to lock
+            lraClient = new NarayanaLRAClient();
+        }
+
+        return lraClient;
     }
 
     private boolean isJaxRsCancel(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
@@ -701,7 +706,7 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
         String clientId = method.getDeclaringClass().getName() + "#" + method.getName();
 
         try {
-            URI lra = lraClient.startLRA(parentLRA, clientId, timeout, ChronoUnit.MILLIS, false);
+            URI lra = getLRAClient().startLRA(parentLRA, clientId, timeout, ChronoUnit.MILLIS, false);
             updateProgress(progress, ProgressStep.Started, null);
             return lra;
         } catch (WebApplicationException e) {
