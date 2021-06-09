@@ -24,7 +24,7 @@
   <property name="orbtype" value="idlj"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
-  <property name="narayana.version" value="5.12.0.Final"/>
+  <property name="narayana.version" value="5.12.1.Final-SNAPSHOT"/>
 
   <property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
   <property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
