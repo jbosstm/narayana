@@ -27,6 +27,10 @@ to manage the issues. Open an issue directly in this issue tracker.
 If you believe you found a bug, and it's likely possible, please indicate a way to reproduce it, what you are seeing and what you would expect to see.
 Don't forget to indicate your Narayana, Java and Maven version. 
 
+## Making open source more inclusive
+
+Red Hat is committed to eradicating problematic language in all of our interactions, including code, documentation, web properties, etc (https://www.redhat.com/en/blog/making-open-source-more-inclusive-eradicating-problematic-language). Although the Narayana project has no plans to retrospectively update its materials we do ask that all contributors be cognizant of the language they use in all communications related to Narayana.
+
 ### Building master
 
 See the [README](README.md) file in the root directory of the repository.
