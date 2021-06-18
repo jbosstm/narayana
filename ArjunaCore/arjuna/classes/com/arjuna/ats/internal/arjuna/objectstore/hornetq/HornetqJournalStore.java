@@ -129,7 +129,7 @@ public class HornetqJournalStore
                     true,
                     envBean.getBufferSize(),
                     (int)(1000000000d / envBean.getBufferFlushesPerSecond()), // bufferTimeout nanos .000000001 second
-                    envBean.getMaxIO(),
+                    1, // maxIO has no effect in NIO mode
                     envBean.isLogRates());
         }
 
