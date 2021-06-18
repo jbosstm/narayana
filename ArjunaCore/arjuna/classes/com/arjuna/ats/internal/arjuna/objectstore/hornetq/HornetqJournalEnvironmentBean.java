@@ -22,6 +22,7 @@ package com.arjuna.ats.internal.arjuna.objectstore.hornetq;
 
 import java.io.File;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
@@ -50,7 +51,7 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     private volatile String fileExtension = "txlog";
 
-    private volatile int maxIO = 1;
+    private volatile int maxIO = 2;
 
     private volatile String storeDir = System.getProperty("user.dir") + File.separator + "HornetqJournalStore";
 
@@ -225,9 +226,10 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
 
     /**
      * Gets the maximum write requests queue depth.
-     * Minimum 1. Use 1 for NIO. For AIO, recommended 500.
+     * For NIO this property has no effect and will be hard coded to 1.
+     * For AIO, the default is 2 but the recommended value is 500.
      *
-     * Default: 1
+     * Default: 2
      *
      * @return the max number of outstanding requests.
      */
@@ -243,7 +245,15 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
      */
     public void setMaxIO(int maxIO)
     {
-        this.maxIO = maxIO;
+        if (maxIO == 1 && isAsyncIO()) {
+            // this logic is to workaround an artemis feature where maxIO = 1 isn't supported in AIO mode
+            // the feature will be removed in version org.apache.activemq:artemis-journal:2.17.x or later
+            // and then this workaround will be removed.
+            tsLogger.i18NLogger.info_maxIO();
+            this.maxIO = 2;
+        } else {
+            this.maxIO = maxIO;
+        }
     }
 
     /**
@@ -404,6 +414,14 @@ public class HornetqJournalEnvironmentBean implements HornetqJournalEnvironmentB
      * @param asyncIO true to enable AsyncIO, false to disable
      */
     public void setAsyncIO(boolean asyncIO) {
+        if (maxIO == 1) {
+            // this logic is to workaround an artemis feature where maxIO = 1 isn't supported in AIO mode,
+            // the feature will be removed in version org.apache.activemq:artemis-journal:2.17.x or later
+            // and then this workaround will be removed.
+            tsLogger.i18NLogger.info_maxIO();
+            this.maxIO = 2;
+        }
+
         this.asyncIO = asyncIO;
     }
 }
