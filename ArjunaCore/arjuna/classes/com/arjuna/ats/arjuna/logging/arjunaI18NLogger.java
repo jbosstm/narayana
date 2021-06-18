@@ -30,7 +30,6 @@ import static org.jboss.logging.annotations.Message.Format.MESSAGE_FORMAT;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import org.jboss.logging.annotations.Cause;
@@ -46,6 +45,7 @@ import com.arjuna.ats.arjuna.objectstore.ParticipantStore;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2010-06
  */
+@SuppressWarnings("CheckStyle")
 @MessageLogger(projectCode = "ARJUNA")
 public interface arjunaI18NLogger {
 
@@ -1625,6 +1625,10 @@ public interface arjunaI18NLogger {
 	@LogMessage(level = INFO)
 	void info_historic_stack_trace(Uid objectUid, String threadName, String date, String stackTrace);
 
+	@Message(id = 12405, value = "The asyncIO mode for the Artemis journal does not support maxIO=1, using the nearest value which is 2",
+			format = MESSAGE_FORMAT)
+	@LogMessage(level = INFO)
+	public void info_maxIO();
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
