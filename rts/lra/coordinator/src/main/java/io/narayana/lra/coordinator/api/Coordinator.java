@@ -393,11 +393,10 @@ public class Coordinator extends Application {
         LRAStatus status = lra.getLRAStatus();
 
         if (status == null || lra.getLRAStatus() == null) {
-            LRALogger.i18nLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
-            String errMsg = String.format("LRA (parent: %s, nested: %s) is in the wrong state for operation " +
-                    "'getNestedLRAStatus': The LRA is still active.", nestedLraId, lra.getId());
-            throw new WebApplicationException(errMsg,
-                    Response.status(Response.Status.PRECONDITION_FAILED).entity(errMsg).build());
+            String logMsg = LRALogger.i18nLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
+            LRALogger.logger.error(logMsg);
+            throw new WebApplicationException(logMsg,
+                    Response.status(Response.Status.PRECONDITION_FAILED).entity(logMsg).build());
         }
 
         return Response.ok(mapToParticipantStatus(lra.getLRAStatus()).name()).build();
@@ -644,15 +643,14 @@ public class Coordinator extends Application {
                     .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                     .build();
         } catch (URISyntaxException e) {
-            LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
-            String errorMsg = lraId + ": Invalid recovery URL " + recoveryUrl.toString();
-            throw new WebApplicationException(errorMsg, e ,
-                    Response.status(INTERNAL_SERVER_ERROR).entity(errorMsg)
+            String logMsg = LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
+            LRALogger.logger.error(logMsg);
+            throw new WebApplicationException(logMsg, e,
+                    Response.status(INTERNAL_SERVER_ERROR).entity(logMsg)
                             .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
                             .build());
         }
     }
-
     /**
      * A participant can resign from an LRA at any time prior to the completion of an activity by performing a PUT
      * PUT on {@value LRAConstants#COORDINATOR_PATH_NAME}/<LraId>/remove with the URL of the participant.
@@ -697,20 +695,20 @@ public class Coordinator extends Application {
             try {
                 url = new URL(String.format("%s%s/%s", context.getBaseUri(), COORDINATOR_PATH_NAME, lraId));
             } catch (MalformedURLException e1) {
-                LRALogger.i18nLogger.error_invalidStringFormatOfUrl(lraId, e1);
-                String errorMsg = lraId + ": Illegal LRA id format " + e1.getMessage();
-                throw new WebApplicationException(errorMsg, e1,
-                        Response.status(BAD_REQUEST).entity(errorMsg).build());
+                String logMsg = LRALogger.i18nLogger.error_invalidStringFormatOfUrl(lraId, e1);
+                LRALogger.logger.error(logMsg);
+                throw new WebApplicationException(logMsg, e1,
+                        Response.status(BAD_REQUEST).entity(logMsg).build());
             }
         }
 
         try {
             return url.toURI();
         } catch (URISyntaxException e) {
-            LRALogger.i18nLogger.error_invalidStringFormatOfUrl(lraId, e);
-            String errorMsg = lraId + ": Invalid format of LRA id URL format to convert to URI " + e.getMessage();
-            throw new WebApplicationException(errorMsg, e,
-                    Response.status(BAD_REQUEST).entity(errorMsg).build());
+            String logMsg = LRALogger.i18nLogger.error_invalidStringFormatOfUrl(lraId, e);
+            LRALogger.logger.error(logMsg);
+            throw new WebApplicationException(logMsg, e,
+                    Response.status(BAD_REQUEST).entity(logMsg).build());
         }
     }
 }

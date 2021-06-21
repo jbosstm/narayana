@@ -23,7 +23,6 @@
 package io.narayana.lra.logging;
 
 import static org.jboss.logging.Logger.Level.ERROR;
-import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 
 import java.net.URI;
@@ -47,48 +46,38 @@ public interface LraI18nLogger {
           (tweak the message text or params for clarification if you like).
         Allocate new messages by following instructions at the bottom of the file.
      */
-    @LogMessage(level = ERROR)
     @Message(id = 25001, value = "LRA created with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraCreationUnexpectedStatus(int status, String response);
+    String error_lraCreationUnexpectedStatus(int status, String response);
 
-    @LogMessage(level = ERROR)
-    @Message(id = 25002, value = "Leaving LRA ends with an unexpected status code: %d, coordinator response '%s'")
-    void error_lraLeaveUnexpectedStatus(int status, String response);
+    @Message(id = 25002, value = "Leaving LRA: %s, ends with an unexpected status code: %d, coordinator response '%s'")
+    String error_lraLeaveUnexpectedStatus(URI lra, int status, String response);
 
-    @LogMessage(level = WARN)
     @Message(id = 25003, value = "LRA participant class '%s' with asynchronous temination but no @Status or @Forget annotations")
-    void error_asyncTerminationBeanMissStatusAndForget(Class<?> clazz);
+    String error_asyncTerminationBeanMissStatusAndForget(Class<?> clazz);
 
     @Message(id = 25004, value = "LRA finished with an unexpected status code: %d, coordinator response '%s'")
     String error_lraTerminationUnexpectedStatus(int status, String response);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25005, value = "LRA coordinator '%s' returned an invalid status code '%s' for LRA '%s'")
-    void error_invalidStatusCode(URI coordinator, int status, URL lra);
+    String error_invalidStatusCode(URI coordinator, int status, URL lra);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25006, value = "LRA coordinator '%s' returned no content on #getStatus call for LRA '%s'")
-    void error_noContentOnGetStatus(URI coordinator, URL lra);
+    String error_noContentOnGetStatus(URI coordinator, URL lra);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25007, value = "LRA coordinator '%s' returned an invalid status for LRA '%s'")
-    void error_invalidArgumentOnStatusFromCoordinator(URI coordinator, URL lra, @Cause Throwable t);
+    String error_invalidArgumentOnStatusFromCoordinator(URI coordinator, URL lra, @Cause Throwable t);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25008, value = "Too late to join with the LRA '%s', coordinator response: '%s'")
-    void error_tooLateToJoin(URL lra, String response);
+    String error_tooLateToJoin(URL lra, String response);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25009, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%s'")
-    void error_failedToEnlist(URL lra, URI coordinator, int status);
+    String error_failedToEnlist(URL lra, URI coordinator, int status);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25010, value = "Error when converting String '%s' to URL")
-    void error_invalidStringFormatOfUrl(String string, @Cause Throwable t);
+    String error_invalidStringFormatOfUrl(String string, @Cause Throwable t);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25011, value = "Invalid LRA id format to create LRA record from LRA id '%s', link URI '%s'")
-    void error_invalidFormatToCreateLRARecord(String lraId, String linkURI);
+    String error_invalidFormatToCreateLRARecord(String lraId, String linkURI);
 
     @LogMessage(level = ERROR)
     @Message(id = 25012, value = "Cannot found compensator url '%s' for lra '%s'")
@@ -106,13 +95,11 @@ public interface LraI18nLogger {
     @LogMessage(level = WARN)
     void warn_lraParticipantqForAsync(String clazz, String method, int statusCorrect, int statusWrong);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25016, value = "Cannot get status of nested lra '%s' as outer one '%s' is still active")
-    void error_cannotGetStatusOfNestedLraURI(String nestedLraId, URI lraId);
+    String error_cannotGetStatusOfNestedLraURI(String nestedLraId, URI lraId);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25017, value = "Invalid recovery url '%s' to join lra '%s'")
-    void error_invalidRecoveryUrlToJoinLRAURI(String recoveryUrl, URI lraId);
+    String error_invalidRecoveryUrlToJoinLRAURI(String recoveryUrl, URI lraId);
 
     @LogMessage(level = ERROR)
     @Message(id = 25018, value = "Invalid format of lra id '%s' to replace compensator '%s'")
@@ -126,21 +113,18 @@ public interface LraI18nLogger {
     @Message(id = 25020, value = "Cannot process non JAX-RS LRA participant")
     void error_cannotProcessParticipant(@Cause ReflectiveOperationException e);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25021, value = "Invalid format of LRA id to be converted to LRA coordinator url, was '%s'")
-    void error_invalidLraIdFormatToConvertToCoordinatorUrl(String lraId, @Cause Throwable t);
+    String error_invalidLraIdFormatToConvertToCoordinatorUrl(String lraId, @Cause Throwable t);
 
-    @LogMessage(level = INFO)
     @Message(id = 25022, value = "Failed enlisting to LRA '%s', coordinator '%s' responded with status '%d (%s)'. Returning '%d (%s)'.")
-    void info_failedToEnlistingLRANotFound(URL lraId, URI coordinatorUri, int coordinatorStatusCode,
+    String info_failedToEnlistingLRANotFound(URL lraId, URI coordinatorUri, int coordinatorStatusCode,
             String coordinatorStatusMsg, int returnStatusCode, String returnStatusMsg);
 
     @Message(id = 25023, value = "Could not %s LRA '%s': coordinator '%s' responded with status '%s'")
     String get_couldNotCompleteCompensateOnReturnedStatus(String actionName, URI lraId, URI coordinatorUri, String status);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25024, value = "Error when encoding parent LRA id URL '%s' to String")
-    void error_invalidFormatToEncodeParentUri(URI parentUri, @Cause Throwable t);
+    String error_invalidFormatToEncodeParentUri(URI parentUri, @Cause Throwable t);
 
     @Message(id = 25025, value = "Unable to process LRA annotations: %s'")
     String warn_LRAStatusInDoubt(String reason);

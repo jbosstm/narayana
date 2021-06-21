@@ -52,8 +52,7 @@ public interface lraI18NLogger {
     void error_participantExceptionOnCompletion(String name, @Cause ExecutionException e);
 
     @Message(id = 25003, value = "Cannot get status of participant '%s' of lra id '%s'")
-    @LogMessage(level = ERROR)
-    void error_gettingParticipantStatus(String participant, String lraId, @Cause Throwable e);
+    String error_gettingParticipantStatus(String participant, String lraId, @Cause Throwable e);
 
 
     /*
