@@ -638,7 +638,7 @@ public class Coordinator extends Application {
                     .build();
         } catch (URISyntaxException e) {
             LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryUrl.toString(), lraId);
-            String errorMsg = lraId + ": Invalid recovery URL " + recoveryUrl.toString();
+            String errorMsg = "Invalid recovery url " + recoveryUrl.toString() + " to join lra " + lraId;
             throw new WebApplicationException(errorMsg, e ,
                     Response.status(INTERNAL_SERVER_ERROR).entity(errorMsg)
                             .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version)
