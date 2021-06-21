@@ -75,8 +75,9 @@ public class ParticipantProxyResource {
         try {
             return proxyService.getStatus(toURI(lraId, true), participantId).name();
         } catch (URISyntaxException e) {
-            LRAProxyLogger.i18NLogger.error_gettingParticipantStatus(participantId, lraId, e);
-            throw new InvalidLRAStateException("Caller provided an invalid LRA: " + lraId, e);
+            String logMsg = LRAProxyLogger.i18NLogger.error_gettingParticipantStatus(participantId, lraId, e);
+            LRAProxyLogger.logger.error(logMsg);
+            throw new InvalidLRAStateException(logMsg);
         }
     }
 
