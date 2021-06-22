@@ -357,19 +357,19 @@ function clone_as {
     fi
     #Abort any partially complete rebase
     git rebase --abort
-    git checkout 5_BRANCH
-    [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
+    git checkout 5_11_BRANCH
+    [ $? -eq 0 ] || fatal "git checkout 5_11_BRANCH failed"
     git fetch
     [ $? -eq 0 ] || fatal "git fetch git://github.com/jbosstm/jboss-as.git failed"
-    git reset --hard jbosstm/5_BRANCH
-    [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
+    git reset --hard jbosstm/5_11_BRANCH
+    [ $? -eq 0 ] || fatal "git reset 5_11_BRANCH failed"
     git clean -f -d -x
     [ $? -gt 1 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
     echo "First time checkout of WildFly"
-    git clone git://github.com/jbosstm/jboss-as.git -o jbosstm
+    git clone git://github.com/jbosstm/jboss-as.git -b 5_11_BRANCH -o jbosstm
     [ $? -eq 0 ] || fatal "git clone git://github.com/jbosstm/jboss-as.git failed"
 
     cd jboss-as
@@ -389,8 +389,8 @@ function clone_as {
   echo "This is the AS_BRANCH $AS_BRANCH commit"
   echo $(git rev-parse HEAD)
 
-  echo "Rebasing the wildfly upstream/master on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase --ff-only upstream master
+  echo "Rebasing the wildfly upstream/23.x on top of the AS_BRANCH $AS_BRANCH"
+  git pull --rebase --ff-only upstream 23.x
   [ $? -eq 0 ] || fatal "git rebase failed"
   
   if [ $REDUCE_SPACE = 1 ]; then
