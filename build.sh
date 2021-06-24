@@ -36,9 +36,9 @@ DIRNAME=`dirname $0`
 GREP="grep"
 ROOT="/"
 
-# Ignore user's MAVEN_HOME if it is set
-M2_HOME=""
-MAVEN_HOME=""
+# Ignore user's MAVEN_HOME if it is set (M2_HOME is unsupported since Apache Maven 3.5.0)
+unset M2_HOME
+unset MAVEN_HOME
 
 JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]'| awk -F . '{if ($1==1) print $2; else print $1}')
 
@@ -59,15 +59,8 @@ then
 	export MAVEN_OPTS
 fi
 
-#  Default search path for maven.
-MAVEN_SEARCH_PATH="\
-    tools
-    tools/maven \
-    tools/apache/maven \
-    maven"
-
 #  Default arguments
-MVN_OPTIONS="-B -s \"${DIRNAME}/tools/maven/conf/settings.xml\" $BPA"
+MVN_OPTIONS="-B -s \"${DIRNAME}/.mvn/wrapper/settings.xml\" $BPA"
 
 #  Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
@@ -111,19 +104,6 @@ source_if_exists() {
     done
 }
 
-find_maven() {
-    search="$*"
-    for d in $search; do
-        MAVEN_HOME="`pwd`/$d"
-        MVN="$MAVEN_HOME/bin/mvn"
-        if [ -x "$MVN" ]; then
-            #  Found.
-            echo $MAVEN_HOME
-            break
-        fi
-    done
-}
-
 #
 #  Main function.
 #
@@ -152,37 +132,10 @@ main() {
         MVN_OPTIONS="$MVN_OPTIONS -Dorson.jar.location=`cygpath -w $(pwd)/ext/`"
     fi
 
-    #  Try the search path.
-    MAVEN_HOME=`find_maven $MAVEN_SEARCH_PATH`
-
-    #  Try looking up to root.
-    if [ "x$MAVEN_HOME" = "x" ]; then
-        target="build"
-        _cwd=`pwd`
-
-        while [ "x$MAVEN_HOME" = "x" ] && [ "$cwd" != "$ROOT" ]; do
-            cd ..
-            cwd=`pwd`
-            MAVEN_HOME=`find_maven $MAVEN_SEARCH_PATH`
-        done
-
-        #  Make sure we get back.
-        cd $_cwd
-
-        if [ "$cwd" != "$ROOT" ]; then
-            found="true"
-        fi
-
-        #  Complain if we did not find anything.
-        if [ "$found" != "true" ]; then
-            die "Could not locate Maven; check \$MVN or \$MAVEN_HOME."
-        fi
-    fi
-
     #  Make sure we have one.
-    MVN=$MAVEN_HOME/bin/mvn
+    MVN="${DIRNAME}/mvnw"
     if [ ! -x "$MVN" ]; then
-        die "Maven file is not executable: $MVN"
+        die "Maven binary is not executable: $MVN"
     fi
 
     #  Need to specify planet57/buildmagic protocol handler package.
@@ -213,7 +166,7 @@ main() {
     if [ -z "$MVN_GOAL" ]; then MVN_GOAL="install"; fi
 
     #  Export some stuff for maven.
-    export MVN MAVEN_HOME MVN_OPTS MVN_GOAL
+    export MVN MVN_OPTS MVN_GOAL
 
     echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
