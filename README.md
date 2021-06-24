@@ -6,19 +6,19 @@
 Narayana
 ========
 
-Website: http://narayana.io
+Website: https://narayana.io
 
 Twitter: https://twitter.com/narayana_io, using twitter handle [#narayanaio](https://twitter.com/search?q=%23narayanaio)
 
 Getting help
 ------------
 If you need help with using Narayana, please visit our forums at:
-https://developer.jboss.org/en/jbosstm/
+https://groups.google.com/g/narayana-users
 
 If you think you have found an error in our code, please raise an issue over on:
 https://issues.jboss.org/browse/JBTM
 
-If you would like to contribute a pull request to help the project out the file CONTRIBUTING.md contains some guidance on how to do so.
+If you would like to contribute a pull request to help the project out the file [CONTRIBUTING.md](https://github.com/jbosstm/narayana/blob/master/CONTRIBUTING.md) contains some guidance on how to do so.
 
 If you have a performance optimization that you would like to suggest to us, please read our document over here:
 https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInNarayana
@@ -103,7 +103,7 @@ There are three types of tests in the Narayana repository.
   and you need to explicitly enable them by activating profile `arq` (maven flag `-Parq`).
   There is a difficulty that each module have different requirements for the integration tests to be run.
   Most of them requires environmental variable `JBOSS_HOME` to be defined and points to an existing
-  directory of [WildFly](http://wildfly.org/downloads/). But some of them requires additional steps
+  directory of [WildFly](https://wildfly.org/downloads/). But some of them requires additional steps
   for WildFly being configured. The best way to find out details is to check the [narayana.sh script](scripts/hudson/narayana.sh)
   which is used to run CI tests.
 * Integration qa suite resides in the directory `qa/` and contains form of integration tests.
@@ -139,7 +139,7 @@ To get your developer life easier use the checkstyle plugins for your IDE
   file https://github.com/wildfly/wildfly-checkstyle-config
 * install checkstyle plugin to your favourite IDE
     - IntelliJ IDEA: https://plugins.jetbrains.com/plugin/1065-checkstyle-idea
-    - Eclipse: http://eclipse-cs.sourceforge.net
+    - Eclipse: https://checkstyle.org/eclipse-cs/#!/
 * configure plugin to consume the *checkstyle.xml* and being applied to the particular module
 
 The WildFly provides a formatter complying with the checkstyle rules. If interested check the IDE configs
@@ -158,12 +158,3 @@ In addition to driving the build of individual modules, the build files in the b
 ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure, including docs, scripts,
 config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
 JTA and JTA in turn a superset of Core.
-
-3rd party dependency management is done via maven. Note that versions of most 3rd party components are resolved via the JBossAS component-matrix
-pom.xml, even when building standalone releases. The version of JBossAS to use is determined by the top level pom.xml
-You may need to set up maven to use the jboss.org repositories: http://community.jboss.org/wiki/MavenGettingStarted-Users
-
-Maven is provided in the tools/maven section, though later versions of this may work. Download locations are:
-http://www.oracle.com/technetwork/java/javase/downloads/index.html
-http://maven.apache.org/
-
