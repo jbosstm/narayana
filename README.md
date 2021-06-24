@@ -43,7 +43,7 @@ To build Narayana without running tests you can call:
 	./build.[sh|bat] -DskipTests
 
 
-If you are building the "community" profile and are using a different maven installation to the one provided in tools/maven you need to make sure you have the following options:
+If you are building the "community" profile and are using a different maven installation to the one provided by maven wrapper `./mvn` you need to make sure you have the following options:
 
 	-Dorson.jar.location=/full/path/to/checkout/location/ext/
 	
@@ -158,3 +158,8 @@ In addition to driving the build of individual modules, the build files in the b
 ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure, including docs, scripts,
 config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
 JTA and JTA in turn a superset of Core.
+
+3rd party dependency management is done via maven. Note that versions of most 3rd party components are resolved via the WildFly component-matrix
+pom.xml, even when building standalone releases. The version of WildFly to use is determined by the top level pom.xml
+
+Maven is provided via [maven wrapper](https://github.com/takari/maven-wrapper) with command `./mvnw`.
