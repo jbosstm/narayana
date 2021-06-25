@@ -255,6 +255,15 @@ under the License.
           <url>https://repo1.maven.org/maven2</url>
         </repository>
       </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
     <profile>
       <id>httpsdownloadjavanet</id>
