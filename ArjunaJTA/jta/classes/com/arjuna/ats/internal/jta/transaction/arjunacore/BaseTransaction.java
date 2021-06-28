@@ -86,7 +86,7 @@ public class BaseTransaction
 		}
 
 		Integer value = _timeouts.get();
-		int v = 0; // if not set then assume 0. What else can we do?
+		int v;
 
 		if (value != null)
 		{
@@ -174,9 +174,13 @@ public class BaseTransaction
 	public void setTransactionTimeout(int seconds)
 			throws javax.transaction.SystemException
 	{
-		if (seconds >= 0)
+		if (seconds > 0)
 		{
-		    _timeouts.set(new Integer(seconds));
+		    _timeouts.set(Integer.valueOf(seconds));
+		}
+		else if (seconds == 0)
+		{
+			_timeouts.remove();
 		}
 	}
 
@@ -306,6 +310,7 @@ public class BaseTransaction
 
 	private static final boolean _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
 
+	//The value zero is never stored, as it represents the need for using the default timeout.
 	private static final ThreadLocal<Integer> _timeouts = new ThreadLocal<Integer>();
 
 	private static final int _asyncCommitPoolSize = jtaPropertyManager.getJTAEnvironmentBean().getAsyncCommitPoolSize();
