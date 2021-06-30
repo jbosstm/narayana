@@ -121,8 +121,6 @@
       </fileset>
     </copy>
     <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
-    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-xatmi-api"/>
-    <copy file="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" todir="${workdir}/downloads/jatmibroker-nbf-api"/>
     <exec executable="bash" dir="${workdir}" failonerror="true">
       <arg value="-c"/>
       <arg value="rsync --chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r downloads/* jbosstm@filemgmt.jboss.org:${downloads.dir}/${tag}" />
@@ -206,9 +204,6 @@ date: ${date}
 binary: http://www.jboss.org/jbosstm/downloads/${tag}/binary/narayana-full-${tag}-bin.zip
 source: http://www.jboss.org/jbosstm/downloads/${tag}/src/narayana-full-${tag}-src.zip
 
-blacktie:
-  windows: http://www.jboss.org/jbosstm/downloads/${tag}/binary/blacktie-${tag}-vc9x32-bin.zip
-  linux: http://www.jboss.org/jbosstm/downloads/${tag}/binary/blacktie-${tag}-centos54x64-bin.tar.gz</echo>
   </target>
   
   <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
@@ -217,8 +212,6 @@ blacktie:
     <delete dir="${docs-dir}/jatmibroker-xatmi-api/"/>
     <delete dir="${docs-dir}/jatmibroker-nbf-api/"/>
     <unzip src="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" dest="${docs-dir}/api"/>
-    <unzip src="${workdir}/sources/narayana/blacktie/jatmibroker-xatmi/target/blacktie-jatmibroker-xatmi-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-xatmi-api"/>
-    <unzip src="${workdir}/sources/narayana/blacktie/jatmibroker-nbf/target/blacktie-jatmibroker-nbf-${tag}-javadoc.jar" dest="${docs-dir}/jatmibroker-nbf-api"/>
 
     <!-- Update javadocs download url -->
     <exec executable="sed" dir="${config-dir}" outputproperty="first-api-line">
@@ -226,8 +219,6 @@ blacktie:
       <arg value="current_narayana_api.yml"/>
     </exec>
     <echo file="${config-dir}current_narayana_api.yml">${first-api-line}
-viewblacktie: /docs/jatmibroker-xatmi-api/index.html
-viewblacktienbf: /docs/jatmibroker-nbf-api/index.html
 download: http://www.jboss.org/jbosstm/downloads/${tag}/api/narayana-full-${tag}-javadoc.jar</echo>
   </target>
   
