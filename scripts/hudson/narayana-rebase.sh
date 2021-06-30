@@ -1,8 +1,6 @@
 function fatal {
   if [[ -z $PROFILE ]]; then
       comment_on_pull "Tests failed ($BUILD_URL): $1"
-  elif [[ $PROFILE == "BLACKTIE" ]]; then
-      comment_on_pull "$PROFILE profile tests failed on Linux ($BUILD_URL): $1"
   else
       comment_on_pull "$PROFILE profile tests failed ($BUILD_URL): $1"
   fi
