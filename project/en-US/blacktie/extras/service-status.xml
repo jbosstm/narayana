@@ -1,9 +1,0 @@
-<server>
-	<name>[SERVER_NAME]</name>
-	<services>
-		<service>
-			<name>[SERVICE_NAME]</name>
-			<status>[STATUS]</status>
-		</service>
-	</services>
-</server>

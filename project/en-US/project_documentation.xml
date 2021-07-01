@@ -13,7 +13,6 @@
     <xi:include href="lra/lra.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="rts/rts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="stm/stm.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-    <xi:include href="blacktie/blacktie.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="compensations/compensations.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="osgi/osgi.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
     <xi:include href="appendix/appendix.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />

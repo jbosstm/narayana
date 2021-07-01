@@ -1,5 +1,0 @@
-<ENV_VARIABLE>
-	<NAME>ORBOPT</NAME>
-	<VALUE>-ORBUseImR 1 -ORBInitRef
-		NameService=corbaloc::localhost:3528/NameService</VALUE>
-</ENV_VARIABLE>
