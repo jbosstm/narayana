@@ -133,7 +133,7 @@ public class TaskManager
                 if (debugEnabled)
                 {
                     WSCLogger.logger.tracef("queueTask: notifying waiting workers (%s) for task '%s'",
-                            new Integer(waitingCount), task) ;
+                            Integer.valueOf(waitingCount), task) ;
                 }
                 taskList.notify() ;
             }
@@ -254,7 +254,7 @@ public class TaskManager
             if (debugEnabled)
             {
                 WSCLogger.logger.tracev("setMaximumWorkerCount: {0}",
-                        new Object[] {new Integer(this.maximumWorkerCount)}) ;
+                        new Object[] {this.maximumWorkerCount}) ;
             }
 
             synchronized(taskList)
@@ -265,7 +265,7 @@ public class TaskManager
                     if (debugEnabled)
                     {
                         WSCLogger.logger.tracev("setMaximumWorkerCount: reducing pool size from {0} to {1}",
-                                new Object[] {new Integer(workerPool.size()), new Integer(this.maximumWorkerCount)}) ;
+                                new Object[] {workerPool.size(), this.maximumWorkerCount}) ;
                     }
                     taskList.notify() ;
                 }
@@ -394,7 +394,7 @@ public class TaskManager
                             if (debugEnabled)
                             {
                                 WSCLogger.logger.tracev("getTask: notifying waiting thread about excess count {0}",
-                                        new Object[] {new Integer(excessCount)}) ;
+                                        new Object[] {excessCount}) ;
                             }
                             taskList.notify() ;
                         }

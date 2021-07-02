@@ -434,7 +434,7 @@ public class CurrentImple extends LocalObject implements
 
 		if (seconds > 0)
 		{
-			otsTransactionTimeout.set(new Integer(seconds));
+			otsTransactionTimeout.set(seconds);
 		}
 		else
 		{

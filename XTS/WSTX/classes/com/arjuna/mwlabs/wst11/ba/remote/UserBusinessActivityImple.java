@@ -349,7 +349,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     {
         try
         {
-            final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
+            final Long expires = (timeout > 0 ? (long) timeout : null) ;
             final String messageId = MessageId.getMessageId() ;
             final CoordinationContext currentContext = (current != null ? getContext(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(

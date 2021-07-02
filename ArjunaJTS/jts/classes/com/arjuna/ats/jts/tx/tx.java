@@ -214,7 +214,7 @@ public class tx
 	if ((when_return == tx.TX_COMMIT_COMPLETED) ||
 	    (when_return == tx.TX_COMMIT_DESICION_LOGGED))
 	{
-	    __tx_report_heuristics.put(Thread.currentThread(), new Boolean(b));
+	    __tx_report_heuristics.put(Thread.currentThread(), b);
 	}
 	else
 	    toReturn = tx.TX_PROTOCOL_ERROR;
@@ -229,11 +229,11 @@ public class tx
 	Boolean report_heuristics = (Boolean) __tx_report_heuristics.get(Thread.currentThread());
 
 	if (report_heuristics == null)
-	    report_heuristics = new Boolean(true);  // default TRUE
+	    report_heuristics = Boolean.TRUE;  // default TRUE
 
 	try
 	{
-	    boolean when_return = report_heuristics.booleanValue();
+	    boolean when_return = report_heuristics;
 
 	    current.commit(when_return);
 	}

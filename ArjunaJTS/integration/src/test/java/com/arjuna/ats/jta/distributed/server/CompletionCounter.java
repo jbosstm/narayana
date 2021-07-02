@@ -46,9 +46,9 @@ public class CompletionCounter {
 	public void incrementCommit(String nodeName) {
 		Integer integer = commitCounter.get(nodeName);
 		if (integer == null) {
-			integer = new Integer(1);
+			integer = 1;
 		} else {
-			integer = new Integer(integer.intValue() + 1);
+			integer = integer + 1;
 		}
 		commitCounter.put(nodeName, integer);
 
@@ -57,9 +57,9 @@ public class CompletionCounter {
 	public void incrementRollback(String nodeName) {
 		Integer integer = rollbackCounter.get(nodeName);
 		if (integer == null) {
-			integer = new Integer(1);
+			integer = 1;
 		} else {
-			integer = new Integer(integer.intValue() + 1);
+			integer = integer + 1;
 		}
 		rollbackCounter.put(nodeName, integer);
 		synchronized (this) {
@@ -70,7 +70,7 @@ public class CompletionCounter {
 	public int getCommitCount(String nodeName) {
 		Integer integer = commitCounter.get(nodeName);
 		if (integer == null) {
-			integer = new Integer(0);
+			integer = 0;
 		}
 		return integer;
 	}
@@ -78,7 +78,7 @@ public class CompletionCounter {
 	public int getRollbackCount(String nodeName) {
 		Integer integer = rollbackCounter.get(nodeName);
 		if (integer == null) {
-			integer = new Integer(0);
+			integer = 0;
 		}
 		return integer;
 	}

@@ -44,7 +44,7 @@ public class TransactionExecutorAbort implements Callable<Integer>
     @Override
     public Integer call () throws Exception
     {
-        return new Integer(_theTransaction.abort());
+        return _theTransaction.abort();
     }
     
     private AtomicAction _theTransaction;

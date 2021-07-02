@@ -84,12 +84,12 @@ public class IDLCompiler extends Task
 
     public final void setDebug(String debug)
     {
-        _debugOn = new Boolean(debug).booleanValue();
+        _debugOn = Boolean.parseBoolean(debug);
     }
 
     public final void setVerbose(String verbose)
     {
-        _verbose = new Boolean(verbose).booleanValue();
+        _verbose = Boolean.parseBoolean(verbose);
     }
 
     public final void setDestdir(String destDir)
@@ -201,7 +201,7 @@ public class IDLCompiler extends Task
                                         NamedNodeMap paramAttributes = inParamNode.getAttributes();
 
                                         String name = paramAttributes.getNamedItem("name").getNodeValue();
-                                        boolean required = Boolean.valueOf(paramAttributes.getNamedItem("required").getNodeValue()).booleanValue();
+                                        boolean required = Boolean.parseBoolean(paramAttributes.getNamedItem("required").getNodeValue());
                                         String delimiter = null;
 					String replace = null;
 					boolean isClasspath = false;
@@ -221,7 +221,7 @@ public class IDLCompiler extends Task
 
                                         if ( isClasspathNode != null )
 					{
-					    isClasspath = new Boolean(isClasspathNode.getNodeValue()).booleanValue();
+					    isClasspath = Boolean.parseBoolean(isClasspathNode.getNodeValue());
 					}
 
                                         idlDetails.addInParameter(name, required, delimiter, isClasspath, replace);

@@ -72,7 +72,7 @@ public class ActivationRecord extends AbstractRecord
 
     public Object value ()
     {
-        return (Object) new Integer(state);
+        return (Object) state;
     }
 
     public void setValue (Object v)

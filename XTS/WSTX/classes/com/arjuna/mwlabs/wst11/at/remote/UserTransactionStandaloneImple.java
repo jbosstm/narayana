@@ -261,7 +261,7 @@ public class UserTransactionStandaloneImple extends UserTransaction
             //InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/foo.properties");
 
 
-            final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
+            final Long expires = (timeout > 0 ? (long) timeout : null) ;
             this.timeout = timeout;
             final String messageId = MessageId.getMessageId() ;
             final CoordinationContext currentContext = (current != null ? getContext(current) : null);

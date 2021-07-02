@@ -34,7 +34,7 @@ public class JTARMErrorCommitTest {
             fail();
         } catch (RollbackException e) {
         } finally {
-            assertTrue(abortedIds.contains(new Integer(2)));
+            assertTrue(abortedIds.contains(2));
             assertTrue(aborted);
             assertTrue(abortedIds.size() == 1);
         }

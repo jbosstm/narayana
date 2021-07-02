@@ -67,8 +67,8 @@ public class LockManagerProxyUnitTest extends TestCase
     {
         public ExtendedLockable ()
         {
-            _isState = new Double(1.234);
-            _isNotState = new Integer(5678);
+            _isState = 1.234;
+            _isNotState = 5678;
             _field = "Hello World";
         }
         
@@ -125,14 +125,14 @@ public class LockManagerProxyUnitTest extends TestCase
        
        InputObjectState ios = new InputObjectState(os);
        
-       sample._isState = new Double(0.0);
-       sample._isNotState = new Integer(0);
+       sample._isState = 0.0;
+       sample._isNotState = 0;
        sample.set("");
        
        assertTrue(proxy.restore_state(ios, ObjectType.RECOVERABLE));
        
-       assertTrue(sample._isState.doubleValue() == 1.234);
-       assertTrue(sample._isNotState.intValue() == 0);
+       assertTrue(sample._isState == 1.234);
+       assertTrue(sample._isNotState == 0);
        assertEquals(sample.get(), "Hello World");
     }
     
@@ -147,14 +147,14 @@ public class LockManagerProxyUnitTest extends TestCase
        
        A.begin();
        
-       sample._isState = new Double(1.0);
+       sample._isState = 1.0;
        
        assertEquals(proxy.setlock(new Lock(LockMode.WRITE)), LockResult.GRANTED);
        
-       sample._isState = new Double(4.0);
+       sample._isState = 4.0;
        
        A.abort();
        
-       assertEquals(sample._isState, new Double(1.0));
+       assertEquals(sample._isState, 1.0);
     }
 }

@@ -339,7 +339,7 @@ public class UserActivityImple implements UserActivity
 	int val = _defaultTimeout;
 	
 	if (t != null)
-	    val = t.intValue();
+	    val = t;
 	
 	return val;
     }
@@ -364,7 +364,7 @@ public class UserActivityImple implements UserActivity
 	if (timeout < 0)
 	    throw new InvalidTimeoutException();
 	
-	_timeouts.set(new Integer(timeout));
+	_timeouts.set(timeout);
     }
     
     /**
