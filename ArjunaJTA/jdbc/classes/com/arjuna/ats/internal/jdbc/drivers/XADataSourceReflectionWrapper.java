@@ -68,10 +68,10 @@ public class XADataSourceReflectionWrapper
         Object argument = value;
 
         if(type == Integer.TYPE) {
-            argument = new Integer(value);
+            argument = Integer.valueOf(value);
         }
         if(type == Boolean.TYPE) {
-            argument = new Boolean(value);
+            argument = Boolean.valueOf(value);
         }
 
         matchingMethod.invoke(xaDataSource, argument);

@@ -45,7 +45,7 @@ public class TransactionExecutorBegin implements Callable<Integer>
     @Override
     public Integer call () throws Exception
     {
-        return new Integer(_theTransaction.begin(_timeout));
+        return _theTransaction.begin(_timeout);
     }
     
     private int _timeout;

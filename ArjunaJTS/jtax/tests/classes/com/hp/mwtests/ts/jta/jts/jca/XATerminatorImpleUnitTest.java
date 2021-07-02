@@ -171,7 +171,7 @@ public class XATerminatorImpleUnitTest extends TestBase
             if (Arrays.equals(failedResourceXid.getGlobalTransactionId(), (byte[]) getGlobalTransactionId) && Arrays.equals(failedResourceXid.getBranchQualifier(), (byte[]) getBranchQualifier)) {
 
                 Object getHeuristicValue = JMXServer.getAgent().getServer().getAttribute(xaResourceRecord, "HeuristicValue");
-                assertTrue(getHeuristicValue.equals(new Integer(6)));
+                assertTrue(getHeuristicValue.equals(6));
                 JMXServer.getAgent().getServer().invoke(xaResourceRecord, "clearHeuristic", null, null);
             }
 

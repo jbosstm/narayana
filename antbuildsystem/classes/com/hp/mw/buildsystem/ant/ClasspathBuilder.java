@@ -71,7 +71,7 @@ public class ClasspathBuilder extends org.apache.tools.ant.Task
      */
     public void setClear(String clear)
     {
-        _clear = new Boolean(clear).booleanValue();
+        _clear = Boolean.parseBoolean(clear);
     }
 
     /**

@@ -92,7 +92,7 @@ public class ActivationTest extends BaseWSCTest {
             {
         final String messageId = "testRequestWithExpiresWithoutCurrentContext" ;
         final String coordinationType = TestUtil.COORDINATION_TYPE ;
-        final Long expires = new Long(123456L) ;
+        final Long expires = 123456L;
         final CoordinationContext coordinationContext = null ;
 
         executeRequestTest(messageId, coordinationType, expires, coordinationContext) ;
@@ -143,7 +143,7 @@ public class ActivationTest extends BaseWSCTest {
             {
         final String messageId = "testRequestWithExpiresWithCurrentContextWithoutExpires" ;
         final String coordinationType = TestUtil.COORDINATION_TYPE ;
-        final Long expires = new Long(123456L) ;
+        final Long expires = 123456L;
         final CoordinationContext coordinationContext = new CoordinationContext() ;
         coordinationContext.setCoordinationType(coordinationType) ;
         CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
@@ -161,7 +161,7 @@ public class ActivationTest extends BaseWSCTest {
             {
         final String messageId = "testRequestWithExpiresWithCurrentContextWithExpires" ;
         final String coordinationType = TestUtil.COORDINATION_TYPE ;
-        final Long expires = new Long(123456L) ;
+        final Long expires = 123456L;
         final CoordinationContext coordinationContext = new CoordinationContext() ;
         coordinationContext.setCoordinationType(coordinationType) ;
         CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
@@ -185,7 +185,7 @@ public class ActivationTest extends BaseWSCTest {
             expiresInstance = null;
         } else {
             expiresInstance = new Expires();
-            expiresInstance.setValue(expires.longValue());
+            expiresInstance.setValue(expires);
         }
         CreateCoordinationContextResponseType createCoordinationContextResponseType;
 

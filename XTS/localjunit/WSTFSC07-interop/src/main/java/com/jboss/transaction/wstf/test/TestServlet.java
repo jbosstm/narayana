@@ -199,8 +199,8 @@ public class TestServlet extends HttpServlet
     private int getLogCount(final HttpSession session)
     {
         final Object logCountObject = session.getAttribute(TestConstants.ATTRIBUTE_LOG_COUNT) ;
-        final int logCount = (logCountObject == null ? 1 : ((Integer)logCountObject).intValue() + 1) ;
-        session.setAttribute(TestConstants.ATTRIBUTE_LOG_COUNT, new Integer(logCount)) ;
+        final int logCount = (logCountObject == null ? 1 : (Integer) logCountObject + 1) ;
+        session.setAttribute(TestConstants.ATTRIBUTE_LOG_COUNT, logCount) ;
         return logCount ;
     }
     

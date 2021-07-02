@@ -820,21 +820,21 @@ public class LockManagerProxy<T> extends LockManager
         try
         {
             if (afield.getType().equals(Boolean.class))
-                os.packBoolean(((Boolean) afield.get(_theObject)).booleanValue());
+                os.packBoolean((Boolean) afield.get(_theObject));
             else if (afield.getType().equals(Byte.class))
-                os.packByte(((Byte) afield.get(_theObject)).byteValue());
+                os.packByte((Byte) afield.get(_theObject));
             else if (afield.getType().equals(Short.class))
-                os.packShort(((Short) afield.get(_theObject)).shortValue());
+                os.packShort((Short) afield.get(_theObject));
             else if (afield.getType().equals(Integer.class))
-                os.packInt(((Integer) afield.get(_theObject)).intValue());
+                os.packInt((Integer) afield.get(_theObject));
             else if (afield.getType().equals(Long.class))
-                os.packLong(((Long) afield.get(_theObject)).longValue());
+                os.packLong((Long) afield.get(_theObject));
             else if (afield.getType().equals(Float.class))
-                os.packFloat(((Float) afield.get(_theObject)).floatValue());
+                os.packFloat((Float) afield.get(_theObject));
             else if (afield.getType().equals(Double.class))
-                os.packDouble(((Double) afield.get(_theObject)).doubleValue());
+                os.packDouble((Double) afield.get(_theObject));
             else if (afield.getType().equals(Character.class))
-                os.packChar(((Character) afield.get(_theObject)).charValue());
+                os.packChar((Character) afield.get(_theObject));
             else if (afield.getType().equals(String.class))
                 os.packString((String) afield.get(_theObject));
             else if (afield.getType().isAnnotationPresent(Transactional.class))
@@ -1035,21 +1035,21 @@ public class LockManagerProxy<T> extends LockManager
             // TODO arrays
             
             if (afield.getType().equals(Boolean.class))
-                afield.set(_theObject, new Boolean(os.unpackBoolean()));
+                afield.set(_theObject, os.unpackBoolean());
             else if (afield.getType().equals(Byte.class))
-                afield.set(_theObject, new Byte(os.unpackByte()));
+                afield.set(_theObject, os.unpackByte());
             else if (afield.getType().equals(Short.class))
-                afield.set(_theObject, new Short(os.unpackShort()));
+                afield.set(_theObject, os.unpackShort());
             else if (afield.getType().equals(Integer.class))
-                afield.set(_theObject, new Integer(os.unpackInt()));
+                afield.set(_theObject, os.unpackInt());
             else if (afield.getType().equals(Long.class))
-                afield.set(_theObject, new Long(os.unpackLong()));
+                afield.set(_theObject, os.unpackLong());
             else if (afield.getType().equals(Float.class))
-                afield.set(_theObject, new Float(os.unpackFloat()));
+                afield.set(_theObject, os.unpackFloat());
             else if (afield.getType().equals(Double.class))
-                afield.set(_theObject, new Double(os.unpackDouble()));
+                afield.set(_theObject, os.unpackDouble());
             else if (afield.getType().equals(Character.class))
-                afield.set(_theObject, new Character(os.unpackChar()));
+                afield.set(_theObject, os.unpackChar());
             else if (afield.getType().equals(String.class))
                 afield.set(_theObject, os.unpackString());
             else if (afield.getType().isAnnotationPresent(Transactional.class))

@@ -65,7 +65,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                 try
                 {
                     final Expires expiresElement = createCoordinationContext.getExpires() ;
-                    final Long expires = (expiresElement == null ? null : new Long(expiresElement.getValue())) ;
+                    final Long expires = (expiresElement == null ? null : expiresElement.getValue()) ;
                     
                     coordinationContext = contextFactory.create(coordinationType, expires, createCoordinationContext.getCurrentContext(), isSecure) ;
                     final CreateCoordinationContextResponseType response = new CreateCoordinationContextResponseType() ;

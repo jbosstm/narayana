@@ -45,7 +45,7 @@ public class TransactionExecutorCommit implements Callable<Integer>
     @Override
     public Integer call () throws Exception
     {
-        return new Integer(_theTransaction.commit(_heuristics));
+        return _theTransaction.commit(_heuristics);
     }
     
     private boolean _heuristics;

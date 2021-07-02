@@ -64,7 +64,7 @@ public class TransactionServerService implements WrapperListener
         catch (Throwable e)
         {
             e.printStackTrace(System.err);
-            returnCode = new Integer(FAILED_TO_START_RETURN_CODE);
+            returnCode = Integer.valueOf(FAILED_TO_START_RETURN_CODE);
         }
 
         return returnCode;

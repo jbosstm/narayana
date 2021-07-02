@@ -55,7 +55,7 @@ public class ActivationRecordUnitTest
         assertTrue(cr.type() != null);
         assertEquals(cr.doSave(), false);
         
-        assertEquals((Integer) cr.value(), new Integer(ObjectType.ANDPERSISTENT));
+        assertEquals((Integer) cr.value(), Integer.valueOf(ObjectType.ANDPERSISTENT));
 
         assertEquals(cr.nestedPrepare(), TwoPhaseOutcome.PREPARE_READONLY);
         assertEquals(cr.nestedAbort(), TwoPhaseOutcome.FINISH_OK);
