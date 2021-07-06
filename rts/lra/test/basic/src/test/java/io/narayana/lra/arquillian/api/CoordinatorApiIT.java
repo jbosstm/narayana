@@ -25,24 +25,17 @@ package io.narayana.lra.arquillian.api;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.arquillian.ArquillianParametrized;
-import io.narayana.lra.arquillian.Deployer;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.arquillian.TestBase;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.logging.Logger;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
@@ -55,7 +48,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -94,13 +86,8 @@ import static org.hamcrest.core.IsNot.not;
  */
 @RunWith(ArquillianParametrized.class)
 @RunAsClient
-public class CoordinatorApiIT {
+public class CoordinatorApiIT extends TestBase {
     private static final Logger log = Logger.getLogger(CoordinatorApiIT.class);
-
-    private Client client;
-    private NarayanaLRAClient lraClient;
-    private String coordinatorUrl;
-    private List<URI> lrasToAfterFinish;
 
     // not reusing the LRAConstants as the API tests need to be independent to functionality code changes
     static final String LRA_API_VERSION_HEADER_NAME = "Narayana-LRA-API-version";
@@ -121,28 +108,10 @@ public class CoordinatorApiIT {
     @Rule
     public ValidTestVersionsRule testRule = new ValidTestVersionsRule();
 
-    @Deployment
-    public static WebArchive deploy() {
-        return Deployer.deploy(CoordinatorApiIT.class.getSimpleName());
-    }
-
-    @Before
+    @Override
     public void before() {
+        super.before();
         log.info("Running test " + testRule.getMethodName());
-        client = ClientBuilder.newClient();
-        lraClient = new NarayanaLRAClient();
-        coordinatorUrl = lraClient.getCoordinatorUrl();
-        lrasToAfterFinish = new ArrayList<>();
-    }
-
-    @After
-    public void after() {
-        for (URI lraToFinish: lrasToAfterFinish) {
-            lraClient.cancelLRA(lraToFinish);
-        }
-        if (client != null) {
-            client.close();
-        }
     }
 
     /**

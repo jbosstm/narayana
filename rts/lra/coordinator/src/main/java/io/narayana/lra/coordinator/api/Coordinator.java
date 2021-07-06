@@ -141,6 +141,13 @@ public class Coordinator extends Application {
         return classes;
     }
 
+    @Override
+    public Set<Object> getSingletons() {
+        Set<Object> containerFilters = new HashSet<>();
+        containerFilters.add(new CoordinatorContainerFilter());
+        return containerFilters;
+    }
+
     public Coordinator() {
         lraService = LRARecoveryModule.getService();
         recoveryCoordinator = new RecoveryCoordinator();

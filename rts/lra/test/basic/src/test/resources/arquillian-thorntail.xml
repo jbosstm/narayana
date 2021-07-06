@@ -3,7 +3,7 @@
 <arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/schema/arquillian" xsi:schemaLocation="http://jboss.org/schema/arquillian
     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-    <container qualifier="thorntail-managed" default="true" mode="suite">
+    <container qualifier="${arquillian.lra.participant.container.qualifier}" default="true" mode="suite">
         <configuration>
             <property name="host">${test.application.host}</property>
             <property name="port">${thorntail.arquillian.daemon.port:12345}</property>

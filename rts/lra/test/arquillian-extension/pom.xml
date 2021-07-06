@@ -12,17 +12,19 @@
   <description>Arquillian extensions needed for LRA tests to work</description>
 
   <dependencies>
+    <!-- MicroProfile dependencies -->
     <dependency>
       <groupId>org.eclipse.microprofile.lra</groupId>
       <artifactId>microprofile-lra-api</artifactId>
       <version>${version.microprofile.lra}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.microprofile.lra</groupId>
       <artifactId>microprofile-lra-tck</artifactId>
       <version>${version.microprofile.lra}</version>
     </dependency>
+
+    <!-- Narayana dependencies -->
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>narayana-lra</artifactId>
@@ -30,39 +32,43 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>lra-client</artifactId>
+      <artifactId>lra-coordinator-jar</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-api</artifactId>
-      <version>${version.org.jboss.shrinkwrap}</version>
+      <groupId>org.jboss.narayana.rts</groupId>
+      <artifactId>lra-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
+    <!-- Arquillian Maven Resolver -->
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+      <artifactId>shrinkwrap-resolver-api</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-spi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-api</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
+      <version>${version.org.jboss.arquillian.core}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+      <version>${version.org.jboss.shrinkwrap.resolvers}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-shaded</artifactId>
       <version>${version.org.jboss.weld.se}</version>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

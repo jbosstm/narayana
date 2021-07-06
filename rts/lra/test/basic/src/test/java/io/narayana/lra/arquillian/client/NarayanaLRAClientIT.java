@@ -23,33 +23,33 @@
 package io.narayana.lra.arquillian.client;
 
 import io.narayana.lra.LRAData;
-import io.narayana.lra.arquillian.Deployer;
-import io.narayana.lra.client.NarayanaLRAClient;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import io.narayana.lra.arquillian.TestBase;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.rules.TestName;
 
-import javax.inject.Inject;
 import java.net.URI;
 import java.util.List;
 
-@RunWith(Arquillian.class)
-public class NarayanaLRAClientIT {
+public class NarayanaLRAClientIT extends TestBase {
 
-    @Inject
-    private NarayanaLRAClient lraClient;
+    private static final Logger log = Logger.getLogger(NarayanaLRAClientIT.class);
 
-    @Deployment
-    public static WebArchive deploy() {
-        return Deployer.deploy(NarayanaLRAClientIT.class.getSimpleName());
+    @Rule
+    public TestName testName = new TestName();
+
+    @Override
+    public void before() {
+        super.before();
+        log.info("Running test " + testName.getMethodName());
     }
 
     @Test
     public void testGetAllLRAs() {
         URI lra = lraClient.startLRA("test-lra");
+        lrasToAfterFinish.add(lra);
 
         List<LRAData> allLRAs = lraClient.getAllLRAs();
         Assert.assertTrue("Expected to find the LRA " + lra + " amongst all active ones: " + allLRAs,

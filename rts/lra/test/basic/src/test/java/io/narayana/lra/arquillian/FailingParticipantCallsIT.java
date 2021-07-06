@@ -26,14 +26,13 @@ import io.narayana.lra.arquillian.resource.FailingAfterLRAListener;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import org.eclipse.microprofile.lra.tck.service.spi.LRACallbackException;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.rules.TestName;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -42,29 +41,25 @@ import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URL;
 
-@RunWith(Arquillian.class)
-public class FailingParticipantCallsIT {
+public class FailingParticipantCallsIT extends TestBase {
+
+    private static final Logger log = Logger.getLogger(FailingParticipantCallsIT.class);
 
     @ArquillianResource
-    private URL baseURL;
+    public URL baseURL;
 
-    private Client client;
+    @Rule
+    public TestName testName = new TestName();
+
+    @Override
+    public void before() {
+        super.before();
+        log.info("Running test " + testName.getMethodName());
+    }
 
     @Deployment
     public static WebArchive deploy() {
-        return Deployer.deploy(FailingParticipantCallsIT.class.getSimpleName());
-    }
-
-    @Before
-    public void before() {
-        client = ClientBuilder.newClient();
-    }
-
-    @After
-    public void after() {
-        if (client != null) {
-            client.close();
-        }
+        return Deployer.deploy(FailingParticipantCallsIT.class.getSimpleName(), FailingAfterLRAListener.class);
     }
 
     @Test
@@ -84,6 +79,7 @@ public class FailingParticipantCallsIT {
             Assert.assertTrue(response.hasEntity());
 
             lra = URI.create(response.readEntity(String.class));
+            lrasToAfterFinish.add(lra);
         } finally {
             if (response != null) {
                 response.close();
