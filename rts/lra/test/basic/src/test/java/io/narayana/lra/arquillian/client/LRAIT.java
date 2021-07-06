@@ -23,56 +23,52 @@
 package io.narayana.lra.arquillian.client;
 
 import io.narayana.lra.arquillian.Deployer;
+import io.narayana.lra.arquillian.TestBase;
 import io.narayana.lra.arquillian.resource.LRAParticipant;
 import io.narayana.lra.client.NarayanaLRAClient;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.rules.TestName;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URL;
+
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(Arquillian.class)
-public class LRAIT {
+
+public class LRAIT extends TestBase {
+
+    private static final Logger log = Logger.getLogger(LRAIT.class);
     private static final String SHOULD_NOT_BE_ASSOCIATED =
             "The narayana implementation (of the MP-LRA specification) still thinks that there is "
                 + "an active LRA associated with the current thread even though all LRAs should now be finished";
 
     @ArquillianResource
-    private URL baseURL;
+    public URL baseURL;
 
-    private Client client;
+    @Rule
+    public TestName testName = new TestName();
+
+    @Override
+    public void before() {
+        super.before();
+        log.info("Running test " + testName.getMethodName());
+    }
 
     @Deployment
     public static WebArchive deploy() {
-        return Deployer.deploy(LRAIT.class.getSimpleName());
-    }
-
-    @Before
-    public void before() {
-        client = ClientBuilder.newClient();
-    }
-
-    @After
-    public void after() {
-        if (client != null) {
-            client.close();
-        }
+        return Deployer.deploy(LRAIT.class.getSimpleName(), LRAParticipant.class);
     }
 
     /**
@@ -89,6 +85,7 @@ public class LRAIT {
         // Invoke a method which starts a transaction
         // (note that the method LRAParticipant.CREATE_OR_CONTINUE_LRA also invokes other resource methods)
         URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA);
+        lrasToAfterFinish.add(lra1);
         assertEquals("LRA should still be active. The identifier of the LRA was " + lra1,
                 LRAStatus.Active, lraClient.getStatus(lra1));
 
@@ -106,8 +103,10 @@ public class LRAIT {
         NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
         URI lra1 = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
+        lrasToAfterFinish.add(lra1);
         assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
         URI lra2 = invokeInTransaction(null, LRAParticipant.START_NEW_LRA);
+        lrasToAfterFinish.add(lra2);
         assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
 
         invokeInTransaction(lra1, LRAParticipant.END_EXISTING_LRA);
@@ -124,6 +123,7 @@ public class LRAIT {
         NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
         URI lra1 = invokeInTransaction(null, LRAParticipant.CREATE_OR_CONTINUE_LRA2);
+        lrasToAfterFinish.add(lra1);
         invokeInTransaction(lra1, LRAParticipant.END_EXISTING_LRA);
         assertNull(SHOULD_NOT_BE_ASSOCIATED, lraClient.getCurrent());
     }
@@ -141,9 +141,11 @@ public class LRAIT {
 
         // start two LRAs on the current thread
         URI lra1 = lraClient.startLRA("lra1");
+        lrasToAfterFinish.add(lra1);
         assertEquals("lra1 is not associated with the current thread",
                 lra1, lraClient.getCurrent());
         URI lra2 = lraClient.startLRA("lra2");
+        lrasToAfterFinish.add(lra2);
         assertEquals("lra2 is not associated with the current thread",
                 lra2, lraClient.getCurrent());
 
@@ -154,6 +156,7 @@ public class LRAIT {
 
         // b) verify that creating another LRA still works fine
         URI lra3 = lraClient.startLRA("lra3");
+        lrasToAfterFinish.add(lra3);
         assertEquals("lra3 is not associated with the current thread",
                 lra3, lraClient.getCurrent());
 

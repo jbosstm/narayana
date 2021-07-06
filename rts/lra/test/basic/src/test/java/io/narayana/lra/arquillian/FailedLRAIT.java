@@ -25,29 +25,24 @@ package io.narayana.lra.arquillian;
 import io.narayana.lra.LRAConstants;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithStatusURI;
 import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
+import io.narayana.lra.arquillian.resource.SimpleLRAParticipant;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import io.narayana.lra.coordinator.domain.model.FailedLongRunningAction;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -72,33 +67,27 @@ import static org.junit.Assert.fail;
  * The Narayana implementation allows failed LRAs to be directly queried. The following tests validate that the
  * correct failure records are kept until explicitly removed.
  */
-@RunWith(Arquillian.class)
-public class FailedLRAIT {
+public class FailedLRAIT extends TestBase {
     private static final Logger log = Logger.getLogger(FailedLRAIT.class);
 
     @ArquillianResource
-    private URL baseURL;
-
-    private Client client;
+    public URL baseURL;
 
     @Rule
     public TestName testName = new TestName();
 
+    @Override
+    public void before() {
+        super.before();
+        log.info("Running test " + testName.getMethodName());
+    }
+
     @Deployment
     public static WebArchive deploy() {
-        return Deployer.deploy(FailedLRAIT.class.getSimpleName());
-    }
-
-    @Before
-    public void before() {
-        client = ClientBuilder.newClient();
-    }
-
-    @After
-    public void after() {
-        if (client != null) {
-            client.close();
-        }
+        return Deployer.deploy(FailedLRAIT.class.getSimpleName(),
+                LRAParticipantWithStatusURI.class,
+                LRAParticipantWithoutStatusURI.class,
+                SimpleLRAParticipant.class);
     }
 
     static String getRecoveryUrl(URI lraId) {
@@ -112,6 +101,7 @@ public class FailedLRAIT {
     public void testWithStatusCompensateFailed() throws Exception {
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
+        lrasToAfterFinish.add(lraId);
 
         if (!validateStateAndRemove(lraId, LRAStatus.FailedToCancel)) {
             fail("lra not in failed list");
@@ -126,6 +116,7 @@ public class FailedLRAIT {
         // invoke a method that should run with an LRA
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
+        lrasToAfterFinish.add(lraId);
 
         // when the invoked method returns validate that the narayana implementation created a failure record
         if (!validateStateAndRemove(lraId, LRAStatus.FailedToClose)) {
@@ -140,6 +131,7 @@ public class FailedLRAIT {
     public void testCompensateFailed() throws Exception {
         URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
+        lrasToAfterFinish.add(lraId);
 
         if (!validateStateAndRemove(lraId, LRAStatus.FailedToCancel)) {
             fail("lra not in failed list");
@@ -153,6 +145,7 @@ public class FailedLRAIT {
     public void testCompleteFailed() throws Exception {
         URI lraId = invokeInTransaction(LRAParticipantWithoutStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithoutStatusURI.TRANSACTIONAL_CLOSE_PATH, 200);
+        lrasToAfterFinish.add(lraId);
 
         if (!validateStateAndRemove(lraId, LRAStatus.FailedToClose)) {
             fail("lra not in failed list");
@@ -167,6 +160,7 @@ public class FailedLRAIT {
         // start an LRA which will return 202 when asked to compensate
         URI lraId = invokeInTransaction(SIMPLE_PARTICIPANT_RESOURCE_PATH,
                 START_LRA_PATH, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        lrasToAfterFinish.add(lraId);
 
         // verify that deleting the LRA log fails as it's with "Cancelling" status
         int status1 = removeFailedLRA(lraId);
@@ -206,6 +200,7 @@ public class FailedLRAIT {
     public void testToMoveFailedLRARecords() throws Exception {
         URI lraId = invokeInTransaction(LRAParticipantWithStatusURI.LRA_PARTICIPANT_PATH,
                 LRAParticipantWithStatusURI.TRANSACTIONAL_CANCEL_PATH, 500);
+        lrasToAfterFinish.add(lraId);
         // Checks if the record exists in the LRARecords location
         if (!validateFailedRecordMoved(lraId)) {
             fail("lra not in failed list location : " + FailedLongRunningAction.FAILED_LRA_TYPE);

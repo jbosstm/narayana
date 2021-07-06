@@ -56,6 +56,7 @@
     <version.microprofile.lra>1.0</version.microprofile.lra>
     <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
     <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
+    <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
 
     <version.org.jboss.weld.se>3.1.1.Final</version.org.jboss.weld.se>
     <version.servlet-api>2.5</version.servlet-api>

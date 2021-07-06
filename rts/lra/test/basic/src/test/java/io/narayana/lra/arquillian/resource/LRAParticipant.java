@@ -28,7 +28,6 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotFoundException;
@@ -60,8 +59,7 @@ public class LRAParticipant {
     @Context
     UriInfo uriInfo;
 
-    @Inject
-    private NarayanaLRAClient lraClient;
+    private NarayanaLRAClient lraClient = new NarayanaLRAClient();
 
     @GET
     @Path(CREATE_OR_CONTINUE_LRA)

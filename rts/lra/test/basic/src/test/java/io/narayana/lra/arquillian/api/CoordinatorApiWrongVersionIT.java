@@ -22,24 +22,17 @@
 
 package io.narayana.lra.arquillian.api;
 
-import io.narayana.lra.arquillian.Deployer;
-import io.narayana.lra.client.NarayanaLRAClient;
+import io.narayana.lra.arquillian.TestBase;
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -58,11 +51,8 @@ import static org.hamcrest.Matchers.containsString;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-public class CoordinatorApiWrongVersionIT {
+public class CoordinatorApiWrongVersionIT extends TestBase {
     private static final Logger log = Logger.getLogger(CoordinatorApiWrongVersionIT.class);
-
-    private Client client;
-    private String coordinatorUrl;
 
     static final String NARAYANA_LRA_API_VERSION_HEADER = "Narayana-LRA-API-version";
     static final String NOT_SUPPORTED_FUTURE_LRA_VERSION = Integer.MAX_VALUE + ".1";
@@ -70,23 +60,10 @@ public class CoordinatorApiWrongVersionIT {
     @Rule
     public TestName testName = new TestName();
 
-    @Deployment
-    public static WebArchive deploy() {
-        return Deployer.deploy(CoordinatorApiWrongVersionIT.class.getSimpleName());
-    }
-
-    @Before
+    @Override
     public void before() {
+        super.before();
         log.info("Running test " + testName.getMethodName());
-        client = ClientBuilder.newClient();
-        coordinatorUrl = new NarayanaLRAClient().getCoordinatorUrl();
-    }
-
-    @After
-    public void after() {
-        if (client != null) {
-            client.close();
-        }
     }
 
     @Test

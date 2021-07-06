@@ -21,47 +21,29 @@
       <artifactId>narayana-lra</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.thorntail</groupId>
       <artifactId>cdi</artifactId>
       <version>${version.thorntail}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-test-arquillian-extension</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.narayana.rts</groupId>
-      <artifactId>lra-coordinator-jar</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
       <version>${version.org.codehaus.jettison}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
       <version>${version.org.jboss.resteasy}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-json-binding-provider</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
