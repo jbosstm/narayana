@@ -15,7 +15,6 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -60,11 +59,10 @@ public class LRACoordinatorScenarioGenerator extends ScenarioGeneratorBase imple
         // Checks that all required properties are defined
         checkPropertiesExistence(
                 extensionProperties,
-                Arrays.asList(
-                        EXTENSION_DEPLOYMENT_NAME,
-                        EXTENSION_GROUP_NAME,
-                        EXTENSION_CONTAINER_NAME,
-                        EXTENSION_TESTABLE));
+                EXTENSION_DEPLOYMENT_NAME,
+                EXTENSION_GROUP_NAME,
+                EXTENSION_CONTAINER_NAME,
+                EXTENSION_TESTABLE);
 
         GroupDef group = getGroupWithName(extensionProperties.getOrDefault(EXTENSION_GROUP_NAME, ""));
 
@@ -73,15 +71,16 @@ public class LRACoordinatorScenarioGenerator extends ScenarioGeneratorBase imple
             container = getContainerWithName(group, extensionProperties.get(EXTENSION_CONTAINER_NAME));
         } else {
             container = getContainerWithName(extensionProperties.get(EXTENSION_CONTAINER_NAME));
-            if (container == null) {
-                String message = String.format(
-                        "%s: no container was found with name: %s.",
-                        EXTENSION_NAME,
-                        extensionProperties.get(EXTENSION_CONTAINER_NAME));
+        }
 
-                log.error(message);
-                throw new RuntimeException(message);
-            }
+        if (container == null) {
+            String message = String.format(
+                    "%s: no container was found with name: %s.",
+                    EXTENSION_NAME,
+                    extensionProperties.get(EXTENSION_CONTAINER_NAME));
+
+            log.error(message);
+            throw new RuntimeException(message);
         }
 
         String containerName = container.getContainerName();

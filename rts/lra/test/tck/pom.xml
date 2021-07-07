@@ -15,6 +15,7 @@
     <lra.coordinator.jar.path>${project.basedir}/../../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
     <!-- TCK TckTests#timeLimit test needs a short, but non zero, delay -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <skip.wildfly.plugin>false</skip.wildfly.plugin>
   </properties>
 
   <dependencies>

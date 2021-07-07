@@ -1,0 +1,55 @@
+<!--
+~ JBoss, Home of Professional Open Source.
+~ Copyright 2020, Red Hat, Inc., and individual contributors
+~ as indicated by the @author tags. See the copyright.txt file in the
+~ distribution for a full listing of individual contributors.
+~
+~ This is free software; you can redistribute it and/or modify it
+~ under the terms of the GNU Lesser General Public License as
+~ published by the Free Software Foundation; either version 2.1 of
+~ the License, or (at your option) any later version.
+~
+~ This software is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+~ Lesser General Public License for more details.
+~
+~ You should have received a copy of the GNU Lesser General Public
+~ License along with this software; if not, write to the Free
+~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <group qualifier="${arquillian.group.qualifier}" default="true">
+        <container qualifier="${arquillian.lra.coordinator.container.qualifier}" mode="manual">
+            <configuration>
+                <property name="javaVmArguments">${server.jvm.args} -DObjectStoreEnvironmentBean.objectStoreDir=${project.build.directory}/wfly_lra_objectstore -DObjectStoreEnvironmentBean.communicationStore.objectStoreDir=${project.build.directory}/wfly_lra_objectstore</property>
+                <property name="managementAddress">${test.application.host}</property> <!-- default management port is 9990 -->
+                <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
+                <property name="serverConfig">${lra.coordinator.xml.filename}</property>
+            </configuration>
+        </container>
+
+        <container qualifier="${arquillian.lra.participant.container.qualifier}" mode="manual" default="true">
+            <configuration>
+                <!-- -Djboss.socket.binding.port-offset=100 shifts ports in Wildfly. This is used to avoid overlapping between the two instances of Wildfly-->
+                <property name="javaVmArguments">${server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url} -Djboss.socket.binding.port-offset=100</property>
+                <property name="managementAddress">${test.application.host}</property>
+                <property name="managementPort">10090</property>
+                <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
+                <property name="serverConfig">${lra.participant.xml.filename}</property>
+            </configuration>
+        </container>
+    </group>
+
+    <extension qualifier="LRACoordinatorDeployment">
+        <property name="groupName">${arquillian.group.qualifier}</property>
+        <property name="containerName">${arquillian.lra.coordinator.container.qualifier}</property>
+        <property name="deploymentName">${arquillian.lra.coordinator.deployment.qualifier}</property>
+        <property name="testable">false</property>
+    </extension>
+</arquillian>

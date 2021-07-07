@@ -33,11 +33,6 @@ public class Deployer {
         final String ManifestMF = "Manifest-Version: 1.0\n"
                 + "Dependencies: org.jboss.jandex, org.jboss.logging\n";
 
-        // adding Narayana LRA filters under the client test deployment
-        final String filtersAsset = String.format("%s%n%s",
-                io.narayana.lra.filter.ClientLRAResponseFilter.class.getName(),
-                io.narayana.lra.filter.ClientLRARequestFilter.class.getName());
-
         return ShrinkWrap.create(WebArchive.class, appName + ".war")
                 .addPackages(true,
                         "org.eclipse.microprofile.lra",
@@ -48,7 +43,6 @@ public class Deployer {
                         "io.narayana.lra.filter",
                         "io.narayana.lra.provider",
                         "io.narayana.lra.client",
-                        //"io.narayana.lra.arquillian.resource",
                         "io.narayana.lra.arquillian.spi")
                 // adds the lra-participant wanted
                 .addClasses(participants)
@@ -57,7 +51,6 @@ public class Deployer {
                 .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF")
                 // activates the bean and explicitly specifies to work with annotated classes
                 .addAsWebInfResource(new StringAsset("<beans version=\"1.1\" bean-discovery-mode=\"all\"></beans>"), "beans.xml")
-                //.addAsResource(new StringAsset(filtersAsset), "META-INF/services/javax.ws.rs.ext.Providers")
                 .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
                         "META-INF/services/javax.ws.rs.client.ClientBuilder");
     }
