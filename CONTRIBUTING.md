@@ -15,9 +15,15 @@ The DCO text is also included verbatim in the [dco.txt](dco.txt) file in the roo
 
 New files may contain a license header in the following format:
 
-> Copyright The Narayana Authors
-> 
-> SPDX-License-Identifier: LGPL-2.1-only
+```
+/*
+ *
+ * Copyright The Narayana Authors
+ * 
+ * SPDX-License-Identifier: LGPL-2.1-only
+ *
+ */
+```
 
 ## Reporting an issue
 
