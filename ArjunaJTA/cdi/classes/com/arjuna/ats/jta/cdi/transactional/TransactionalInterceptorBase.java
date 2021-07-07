@@ -107,14 +107,16 @@ public abstract class TransactionalInterceptorBase implements Serializable {
      */
     private Transactional getTransactional(InvocationContext ic) {
         // when the CDI implementation is Weld then using the Weld API for accessing the annotated type
-        if (ic.getContextData().containsKey(WELD_INTERCEPTOR_BINDINGS_KEY)) {
+        // when Weld does not provide the annotation we switch to more complicated processing
+        if (interceptedBean != null && ic.getContextData().get(WELD_INTERCEPTOR_BINDINGS_KEY) != null) {
             Set<Annotation> annotationBindings = (Set<Annotation>) ic.getContextData().get(WELD_INTERCEPTOR_BINDINGS_KEY);
             for (Annotation annotation : annotationBindings) {
                 if (annotation.annotationType() == Transactional.class) {
                     return (Transactional) annotation;
                 }
             }
-        } else if (interceptedBean != null) { // not-null for CDI
+        }
+        if (interceptedBean != null) { // not-null for CDI
             // getting annotated type and method corresponding of the intercepted bean and method
             AnnotatedType<?> currentAnnotatedType = extension.getBeanToAnnotatedTypeMapping().get(interceptedBean);
             if (currentAnnotatedType == null) {
