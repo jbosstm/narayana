@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RunAsClient
 @RunWith(Arquillian.class)
-public class TestBase {
+public abstract class TestBase {
 
     public static NarayanaLRAClient lraClient;
     public static String coordinatorUrl;

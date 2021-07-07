@@ -21,10 +21,7 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import io.narayana.lra.LRAData;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -69,17 +66,12 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -710,65 +702,6 @@ public class LRATest {
                 isFinished(uris[i])));
     }
 
-    // This test duplicates LRACoordinatorRecovery1TestCase but using undertow instead of wildfly
-    // LRACoordinatorRecovery2TestCase also needs porting (since it is currently ignored)
-    // note that both tests port with minimal changes
-    @Test
-    public void testRecovery() throws InterruptedException, URISyntaxException {
-        String lraId = null;
-
-        // start an LRA with a short time limit by invoking a resource annotated with @LRA
-        try (Response response = client.target(TestPortProvider.generateURL("/base/test/timed-action")).request().get()) {
-            fail(testName + ": the resource invocation should have stopped the container: " + response.getStatus());
-        } catch (RuntimeException e) {
-            LRALogger.logger.infof("%s: invocation killed the container", testName);
-            lraId = getFirstLRA();
-            assertNotNull("LRA should have been added to the object store before the container was killed", lraId);
-            lraId = String.format("%s/%s", lraClient.getCoordinatorUrl(), lraId);
-        }
-
-        assertNotNull("LRA should have been added to the object store before the JVM was killed", lraId);
-        lraId = String.format("%s/%s", lraClient.getCoordinatorUrl(), lraId);
-
-        // restart the container
-        server.start();
-        server.deploy(Coordinator.class);
-        server.deploy(LRAParticipant.class);
-
-        // the resource request should have stopped the server
-        // wait for a period longer than the timeout before restarting the coordinator
-        Thread.sleep(LRA_SHORT_TIMELIMIT * 1000);
-
-        // check recovery
-        LRAStatus status = getStatus(new URI(lraId));
-
-        LRALogger.logger.infof("%s: Status after restart is %s%n", status == null ? "GONE" : status.name());
-
-        if (status == null || status == LRAStatus.Cancelling) {
-            if (recover() != 0) {
-                recover();
-            }
-        }
-
-        // the LRA with the short timeout should have timed out and cancelled
-        status = getStatus(new URI(lraId));
-
-        assertTrue("LRA with short timeout should have cancelled",
-                status == null || status == LRAStatus.Cancelled);
-
-        // verify that the resource was notified that the LRA finished
-        String listenerStatus = getStatusFromListener();
-
-        assertEquals("LRA listener should have been told that the final state of the LRA was cancelled",
-                LRAStatus.Cancelled.name(), listenerStatus);
-    }
-
-    int recover() {
-        List<LRAData> recoveringLRAs = service.getAllRecovering(true);
-
-        return recoveringLRAs.size();
-    }
-
     @Test
     public void testGrandparentContext() {
         assertNull("testGrandparentContext: current thread should not be associated with any LRAs",
@@ -833,34 +766,6 @@ public class LRATest {
                     200, response.getStatus());
             String recoveryId = response.getHeaderString(LRA_HTTP_RECOVERY_HEADER);
             assertNotNull("recovery id was null", recoveryId);
-        }
-    }
-
-    /**
-     * Ask Listener if it has been notified of the final outcome of the LRA
-     * @return the listeners view of the LRA status
-     */
-    private String getStatusFromListener() {
-        try (Response response = client.target(TestPortProvider.generateURL("/base/test/status"))
-                .request()
-                .get()) {
-
-            assertEquals("LRA participant HTTP status", 200, response.getStatus());
-
-            return response.readEntity(String.class);
-        }
-    }
-
-    String getFirstLRA() {
-        String store = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).getObjectStoreDir();
-        java.nio.file.Path lraDir = Paths.get(store, "ShadowNoFileLockStore", "defaultStore", LongRunningAction.getType());
-
-        try {
-            Optional<java.nio.file.Path> lra = Files.list(new File(lraDir.toString()).toPath()).findFirst();
-
-            return lra.map(path -> path.getFileName().toString()).orElse(null);
-        } catch (IOException e) {
-            return null;
         }
     }
 

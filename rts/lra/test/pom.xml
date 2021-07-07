@@ -161,19 +161,17 @@
         <!-- the AppServerCoordinatorDeploymentObserver creates the deployment named 'lra-coordinator' and deploys it to the app server,
                      the last part of the path with value 'lra-coordinator' is defined by LRA coordinator JAX-RS endpoint -->
         <lra.coordinator.url>http://${lra.coordinator.host}:${lra.coordinator.port}/lra-coordinator/lra-coordinator</lra.coordinator.url>
-
         <lra.coordinator.xml.filename>lra-coordinator.xml</lra.coordinator.xml.filename>
-
         <!-- Qualifier of the container hosting lra-participant -->
         <lra.participant.container.qualifier>lra-participant-server</lra.participant.container.qualifier>
         <!-- Qualifier of the lra-participant of the deployment -->
         <lra.participant.deployment.qualifier>lra-participant</lra.participant.deployment.qualifier>
         <lra.participant.xml.filename>lra-participant.xml</lra.participant.xml.filename>
-
+        <skip.wildfly.plugin>true</skip.wildfly.plugin>
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
         <version.wildfly-maven-plugin>2.1.0.Beta1</version.wildfly-maven-plugin>
-        <skip.wildfly.plugin>false</skip.wildfly.plugin>
+        <lra.coordinator.war.name>lra-coordinator.war</lra.coordinator.war.name>
       </properties>
 
       <dependencies>
@@ -247,11 +245,12 @@
           </plugin>
 
           <!--
-            This profile needs to kick in when Wildfly is used to run this TCK.
-            The reason is that lra-coordinator is not in the LRA specification
-            and, therefore, a scenario with two deployments in a single instance
-            of Wildfly (or distributed in two Wildfly instances) is not compatible
-            with the LRA TCK.
+            Wildfly is activated and configured through wildfly-maven-plugin instead
+            of using an Arquillian cluster. This design choice reflects the preference
+            to be consistent with the mechanism used to deploy lra-coordinator in
+            Quarkus. Moreover, the Microprofile LRA TCK does not allow to use multiple
+            Arquillian containers. As a consequence, lra-coordinator needs to be deployed
+            separately.
           -->
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
@@ -259,11 +258,6 @@
             <version>${version.wildfly-maven-plugin}</version>
             <configuration>
               <skip>${skip.wildfly.plugin}</skip>
-              <!-- To start Wildfly in debug mode
-              <java-opts>
-                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8787</java-opt>
-              </java-opts>
-              -->
             </configuration>
 
             <executions>
@@ -283,7 +277,7 @@
                   <!-- used by deploy-artifact -->
                   <groupId>org.jboss.narayana.rts</groupId>
                   <artifactId>lra-coordinator-war</artifactId>
-                  <name>lra-coordinator.war</name>
+                  <name>${lra.coordinator.war.name}</name>
                   <force>true</force>
                 </configuration>
               </execution>

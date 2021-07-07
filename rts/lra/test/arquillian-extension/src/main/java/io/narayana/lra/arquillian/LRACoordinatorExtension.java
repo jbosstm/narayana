@@ -9,6 +9,9 @@ import io.narayana.lra.arquillian.deployment.scenario.LRACoordinatorScenarioGene
 import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScenarioGenerator;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
+/**
+ * This class is the activation point to use {@link LRACoordinatorScenarioGenerator}
+ */
 public class LRACoordinatorExtension implements LoadableExtension {
 
     @Override

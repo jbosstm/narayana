@@ -52,11 +52,11 @@ public class ScenarioGeneratorBase {
 
         ArquillianDescriptor arquillianDescriptor = arquillianDescriptorInstance.get();
 
-        Optional<Map<String, String>> checkExistance = arquillianDescriptor.getExtensions().stream()
+        Optional<Map<String, String>> checkExistence = arquillianDescriptor.getExtensions().stream()
                 .filter(x -> x.getExtensionName().equals(extensionName))
                 .map(ExtensionDef::getExtensionProperties).findAny();
 
-        if (!checkExistance.isPresent()) {
+        if (!checkExistence.isPresent()) {
             String message = String.format("%s: there is not extension section with name %s defined in the %s file",
                     this.getClass().getSimpleName(),
                     extensionName,
@@ -65,7 +65,7 @@ public class ScenarioGeneratorBase {
             log.warn(message);
         }
 
-        return checkExistance.orElse(null);
+        return checkExistence.orElse(null);
     }
 
     /**
@@ -75,9 +75,9 @@ public class ScenarioGeneratorBase {
      * @param toCheck {@link List} of properties that need to be defined
      * @throws RuntimeException if a property is not found
      */
-    void checkPropertiesExistence(final Map<String, String> properties, final List<String> toCheck) {
+    void checkPropertiesExistence(final Map<String, String> properties, final String... toCheck) {
         // tell me what property need to be defined
-        toCheck.forEach(x -> {
+        Arrays.asList(toCheck).forEach(x -> {
             if (!properties.containsKey(x)) {
                 String message = String.format("%s: the property %s is not defined in the extension",
                         ScenarioGeneratorBase.class.getSimpleName(),

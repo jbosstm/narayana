@@ -11,4 +11,7 @@
             <property name="javaVmArguments">${server.jvm.args} -Dthorntail.http.host=${test.application.host} -Dthorntail.http.port=${test.application.port} -Dlra.coordinator.url=${lra.coordinator.url} -Dlra.tck.timeout.factor=${lra.tck.timeout.factor} ${thorntail.test.logging.category.arjuna} ${thorntail.test.logging.category.narayana}</property>
         </configuration>
     </container>
+
+    <extension qualifier="MpLraTckAppender"></extension>
+
 </arquillian>

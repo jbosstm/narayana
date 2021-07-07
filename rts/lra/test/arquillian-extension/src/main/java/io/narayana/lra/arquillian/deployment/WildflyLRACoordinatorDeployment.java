@@ -40,15 +40,15 @@ public class WildflyLRACoordinatorDeployment implements Deployment<WebArchive> {
             deploymentName = DEFAULT_DEPLOYMENT_QUALIFIER;
         }
 
-        String eclipseLraVersion = System.getProperty("version.microprofile.lra");
+        String lraVersion = System.getProperty("version.microprofile.lra");
         String projectVersion = System.getProperty("project.version");
 
         // Creates the WAR archive
         WebArchive war = ShrinkWrap.create(WebArchive.class, deploymentName + ".war")
                 // Support libraries
                 .addAsLibraries(Maven.resolver()
-                        .resolve("org.eclipse.microprofile.lra:microprofile-lra-api:" + eclipseLraVersion,
-                                "org.eclipse.microprofile.lra:microprofile-lra-tck:" + eclipseLraVersion)
+                        .resolve("org.eclipse.microprofile.lra:microprofile-lra-api:" + lraVersion,
+                                "org.eclipse.microprofile.lra:microprofile-lra-tck:" + lraVersion)
                         .withoutTransitivity().asFile())
                 // Support libraries from the local store of Maven
                 .addAsLibraries(Maven.configureResolver()
