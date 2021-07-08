@@ -107,8 +107,8 @@
 
   <profiles>
     <profile>
-      <!-- when arq profile is activated we expect to start coordinator -->
-      <id>arq</id>
+      <!-- when arq.thorntail profile is activated we expect to start coordinator -->
+      <id>arq.thorntail</id>
       <properties>
         <!-- making the Quarkus coordinator to be started -->
         <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
@@ -149,7 +149,7 @@
     </profile>
 
     <profile>
-      <id>arq.wildfly</id>
+      <id>arq</id>
       <modules>
         <module>crash</module>
       </modules>

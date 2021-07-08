@@ -54,6 +54,7 @@ function init_test_options {
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+    [ $ARQ_LRA_PROF ] || ARQ_LRA_PROF=$ARQ_PROF
     [ $IBM_ORB ] || IBM_ORB=0
     [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.thorntail.test -Dtrace.lra.coordinator"
 
@@ -62,13 +63,13 @@ function init_test_options {
         export COMMENT_ON_PULL=""
         export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
         export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 OPENJDK_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
+        export PERF_TESTS=0 OSGI_TESTS=0 TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
     elif [[ $PROFILE == "CORE" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!MAIN* ]] && [[ ! $PULL_DESCRIPTION_BODY == *!CORE* ]]; then
           comment_on_pull "Started testing this pull request with MAIN profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -78,7 +79,7 @@ function init_test_options {
           [ -z $NARAYANA_BUILD ] && NARAYANA_BUILD=1
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-          export TOMCAT_TESTS=1 LRA_TESTS=0
+          export TOMCAT_TESTS=1 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -87,7 +88,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -96,7 +97,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -105,7 +106,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
-          export TOMCAT_TESTS=1 LRA_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
+          export TOMCAT_TESTS=1 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0 CODE_COVERAGE=1 CODE_COVERAGE_ARGS="-PcodeCoverage -Pfindbugs"
           [ -z ${MAVEN_OPTS+x} ] && export MAVEN_OPTS="-Xms2048m -Xmx2048m"
         else
           export COMMENT_ON_PULL=""
@@ -115,7 +116,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -124,7 +125,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTA profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-tests-nojts JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -133,7 +134,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -142,7 +143,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_JDKORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 SUN_ORB=1 JAC_ORB=0 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -151,7 +152,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1  NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=1 SUN_ORB=0 JAC_ORB=0 QA_TARGET=ci-jts-tests
-          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_TESTS=0
+          export JTA_AS_TESTS=0 TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -160,16 +161,25 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with PERF profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0 PERF_TESTS=1
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
-    elif [[ $PROFILE == "LRA" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!LRA* ]]; then
-          comment_on_pull "Started testing this pull request with LRA profile: $BUILD_URL"
+    elif [[ $PROFILE == "LRA_THORNTAIL" ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!LRA_THORNTAIL* ]]; then
+          comment_on_pull "Started testing this pull request with LRA_THORNTAIL profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=1
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=1 LRA_WILDFLY_TESTS=0
+        else
+          export COMMENT_ON_PULL=""
+        fi
+    elif [[ $PROFILE == "LRA_WILDFLY" ]]; then
+        if [[ ! $PULL_DESCRIPTION_BODY == *!LRA_WILDFLY* ]]; then
+          comment_on_pull "Started testing this pull request with LRA_WILDFLY profile: $BUILD_URL"
+          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=1 AS_TESTS=0 NARAYANA_BUILD=0 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
+          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=1
         else
           export COMMENT_ON_PULL=""
         fi
@@ -178,7 +188,7 @@ function init_test_options {
           comment_on_pull "Started testing this pull request with DB_TESTS profile: $BUILD_URL"
           export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
+          export TOMCAT_TESTS=0 LRA_THORNTAIL_TESTS=0 LRA_WILDFLY_TESTS=0
         else
           export COMMENT_ON_PULL=""
         fi
@@ -198,7 +208,8 @@ function init_test_options {
     [ $XTS_AS_TESTS ] || XTS_AS_TESTS=0 # XTS tests
     [ $RTS_AS_TESTS ] || RTS_AS_TESTS=0 # RTS tests
     [ $RTS_TESTS ] || RTS_TESTS=0 # REST-AT Test
-    [ $LRA_TESTS ] || LRA_TESTS=0 # LRA Test
+    [ $LRA_THORNTAIL_TESTS ] || LRA_THORNTAIL_TESTS=0 # LRA Tests with Thorntail
+    [ $LRA_WILDFLY_TESTS ] || LRA_WILDFLY_TESTS=0 # LRA Tests with Wildfly
     [ $TOMCAT_TESTS ] || TOMCAT_TESTS=0 # Narayana Tomcat tests
     [ $JTA_CDI_TESTS ] || JTA_CDI_TESTS=0 # JTA CDI Tests
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
@@ -210,7 +221,7 @@ function init_test_options {
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
 
-    get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults 
+    get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults
 
     JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]' | awk -F . '{if ($1==1) print $2; else print $1}')
 }
@@ -286,7 +297,7 @@ function kill_qa_suite_processes
       [[ $main == ${pat}* ]] && killit=1
     done
 
-    if [[ $killit == 1 ]]; then 
+    if [[ $killit == 1 ]]; then
       echo "Test suite process $pid still running - terminating it with signal 9"
       kill -9 $pid
     fi
@@ -312,7 +323,7 @@ function build_narayana {
     ./build.sh -f jboss-transaction-spi/pom.xml -B clean install
     [ $? -eq 0 ] || fatal "Build of SPI failed"
   fi
-  
+
   echo "Building Narayana"
   cd $WORKSPACE
 
@@ -324,7 +335,7 @@ function build_narayana {
     [ $? -eq 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
-  
+
   ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
 
   [ $? -eq 0 ] || fatal "narayana build failed"
@@ -381,7 +392,7 @@ function clone_as {
   echo "Rebasing the wildfly upstream/master on top of the AS_BRANCH $AS_BRANCH"
   git pull --rebase --ff-only upstream master
   [ $? -eq 0 ] || fatal "git rebase failed"
-  
+
   if [ $REDUCE_SPACE = 1 ]; then
     echo "Deleting git dir to reduce disk usage"
     rm -rf .git
@@ -519,12 +530,16 @@ function rts_tests {
 }
 
 function lra_tests {
-  echo "#0. LRA Test"
+  if [ $LRA_WILDFLY_TESTS -eq 1 ]; then
+    echo "#0. LRA Tests with Wildfly"
+  else
+    echo "#0. LRA Tests with Thorntail"
+  fi
   ./build.sh install -pl ArjunaCore/arjunacore,rts -am -DskipTests -Pcommunity "$@"
   # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
-  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
-  [ $? = 0 ] || fatal "LRA Test failed"
+  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_LRA_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
+  [ $? = 0 ] || fatal "LRA Tests"
 }
 
 function jta_cdi_tests {
@@ -704,13 +719,13 @@ function add_qa_xargs {
 
 function qa_tests_once {
   echo "QA Test Suite $@"
-  
-  
+
+
   # Download dependencies
   cd $WORKSPACE
   ./build.sh -f qa/pom.xml -B dependency:copy-dependencies
   [ $? -eq 0 ] || fatal "Copy dependency failed"
-  
+
   cd $WORKSPACE/qa
   unset orb
   codeCoverage=false;
@@ -769,7 +784,7 @@ function qa_tests_once {
     let txtimeout=$MFACTOR*120
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
-  
+
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
@@ -833,7 +848,7 @@ function qa_tests_once {
 
     if [ -f TEST-failures.txt ]; then
       echo "Test Failures:"
-      cat TEST-failures.txt 
+      cat TEST-failures.txt
     fi
 
     if [ $codeCoverage = true ]; then
@@ -918,7 +933,7 @@ function perf_tests {
   rm -rf performance
   git clone https://github.com/jbosstm/performance
   cd performance/
-  if [ -n "$PULL_NUMBER" ]; 
+  if [ -n "$PULL_NUMBER" ];
   then
     echo $PULL_DESCRIPTION | grep https://github.com/jbosstm/performance/pull/
     if [[ "$?" -eq 0 ]]; then
@@ -931,7 +946,7 @@ function perf_tests {
       [ $? -eq 0 ] || fatal "git rebase failed"
     fi
   fi
-  
+
   ./scripts/run_bm.sh
   res=$?
   cd $WORKSPACE
@@ -987,9 +1002,9 @@ init_test_options
 # FOR DEBUGGING SUBSEQUENT ISSUES
 if [ -x /usr/bin/free ]; then
     /usr/bin/free
-elif [ -x /usr/bin/vm_stat ]; then 
+elif [ -x /usr/bin/vm_stat ]; then
     /usr/bin/vm_stat
-else 
+else
     echo "Skipping memory report: no free or vm_stat"
 fi
 
@@ -1023,7 +1038,8 @@ export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 [ $XTS_TESTS = 1 ] && xts_tests "$@"
 [ $txbridge = 1 ] && tx_bridge_tests "$@"
 [ $RTS_TESTS = 1 ] && rts_tests "$@"
-[ $LRA_TESTS = 1 ] && lra_tests "$@"
+[ $LRA_THORNTAIL_TESTS = 1 ] && ARQ_LRA_PROF='arq.thorntail' lra_tests "$@"
+[ $LRA_WILDFLY_TESTS = 1 ] && lra_tests "$@"
 [ $TOMCAT_TESTS = 1 ] && tomcat_tests "$@"
 [ $QA_TESTS = 1 ] && qa_tests "$@"
 [ $PERF_TESTS = 1 ] && perf_tests "$@"
