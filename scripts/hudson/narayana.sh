@@ -51,7 +51,7 @@ function get_pull_xargs {
 function init_test_options {
     is_ibm
     ISIBM=$?
-    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.9.12.Final-SNAPSHOT"
+    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.9.12.Final"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
