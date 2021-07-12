@@ -628,10 +628,15 @@ EOT
     rm -rf narayana-tomcat
     git clone https://github.com/jbosstm/narayana-tomcat.git
     echo "Executing Narayana Tomcat tests"
-    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
+    # When the version of Narayana in the jbosstm/narayana-tomcat pom.xml changes, the following line needs to be updated
+    NARAYANA_TOMCAT_NARAYANA_VERSION=5.9.11.Final
+    grep "<version.org.jboss.narayana>${NARAYANA_TOMCAT_NARAYANA_VERSION}</version.org.jboss.narayana>" narayana-tomcat/pom.xml
+    [ $? -eq 0 ] || fatal "The version of Narayana in the jbosstm fork is not the expected version to replace"
+    sed -i "" "s#<version.org.jboss.narayana>${NARAYANA_TOMCAT_NARAYANA_VERSION}</version.org.jboss.narayana>#<version.org.jboss.narayana>${NARAYANA_CURRENT_VERSION}</version.org.jboss.narayana>#g" narayana-tomcat/pom.xml
+    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=h2 "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed H2"
-    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql -Dversion.org.jboss.narayana=${NARAYANA_CURRENT_VERSION} "$@" ${IPV6_OPTS} clean install "$@"
+    ./build.sh -f narayana-tomcat/pom.xml -fae -B -P${ARQ_PROF}-tomcat ${CODE_COVERAGE_ARGS} -Dtest.db.type=pgsql "$@" ${IPV6_OPTS} clean install "$@"
     RESULT=$?
     [ $RESULT = 0 ] || fatal "Narayana Tomcat tests failed Postgres"
     rm -r ${CATALINA_HOME}
