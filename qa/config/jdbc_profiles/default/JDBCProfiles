@@ -39,12 +39,19 @@
 #docker start db2-ci
 # Check for BTDB1 to be created
 #docker logs -f db2-ci
+
+# Wait for a message like
+# /database/config/db2inst1/sqllib/ctrl/db2strst.lck
+# Stop tailing the log
+
 #docker exec -it db2-ci bash
 #su - db2inst1
 #db2
 #CONNECT TO BTDB1
 #GRANT CONNECT ON DATABASE TO USER db2
 #quit
+#exit
+#exit
 
 ######################################################################
 # PostgreSQL JNDI Pair
