@@ -132,7 +132,7 @@ public class LogWriteStateManager extends StateManager
 	    
 	    synchronized (modifyingActions)
 	    {
-		if ((modifyingActions.size() > 0) &&
+		if ((!modifyingActions.isEmpty()) &&
 		    (modifyingActions.get(action.get_uid()) != null))
 		{
 		    return true;

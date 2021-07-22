@@ -233,7 +233,7 @@ public class Listener extends Thread
        // ok, closing a connection socket will cause the connection thread to remove it from the list as it
        // exits so we keep on closing them and waiting until the list is empty
 
-       while(connections.size() > 0) {
+       while(!connections.isEmpty()) {
            Socket conn = connections.get(0);
            try {
                conn.close();

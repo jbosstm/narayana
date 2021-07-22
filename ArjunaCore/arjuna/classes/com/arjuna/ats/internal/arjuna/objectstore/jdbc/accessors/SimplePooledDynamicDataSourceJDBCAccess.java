@@ -70,7 +70,7 @@ public class SimplePooledDynamicDataSourceJDBCAccess extends DynamicDataSourceJD
     public Connection getConnection() throws SQLException {
         WrappedConnection connection;
         synchronized (unallocatedConnections) {
-            if (unallocatedConnections.size() == 0) {
+            if (unallocatedConnections.isEmpty()) {
                 Connection connectionImpl = super.getConnection();
                 unallocatedConnections.add(new WrappedConnection(connectionImpl));
             }

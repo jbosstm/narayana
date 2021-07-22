@@ -870,7 +870,7 @@ public class StateManager
             
             synchronized (modifyingActions)
             {
-                if ((modifyingActions.size() > 0)
+                if ((!modifyingActions.isEmpty())
                         && (modifyingActions.get(action.get_uid()) != null))
                 {
                     return true;
@@ -962,7 +962,7 @@ public class StateManager
         {
 	    createLists();
 
-            if (usingActions.size() > 0)
+            if (!usingActions.isEmpty())
             {
                 Enumeration e = usingActions.keys();
 
@@ -1229,7 +1229,7 @@ public class StateManager
                 {
                     usingActions.remove(action.get_uid());
 
-                    if (usingActions.size() == 0)
+                    if (usingActions.isEmpty())
                     {
                         if (committed)
                         {

@@ -56,7 +56,7 @@ public class TransactionServiceFactory {
         try {
             initialContext =  new InitialContext();
 
-            replacedJndiProperties =  jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties().size() == 0;
+            replacedJndiProperties =  jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties().isEmpty();
 
             if (replacedJndiProperties)
                 jdbcPropertyManager.getJDBCEnvironmentBean().setJndiProperties(initialContext.getEnvironment());

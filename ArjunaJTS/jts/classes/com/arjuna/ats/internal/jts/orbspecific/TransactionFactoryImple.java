@@ -789,7 +789,7 @@ public class TransactionFactoryImple extends
 		{
 			synchronized (ControlImple.allControls)
 			{
-				if (ControlImple.allControls.size() == 0)
+				if (ControlImple.allControls.isEmpty())
 					throw new NoTransaction();
 				else
 				{

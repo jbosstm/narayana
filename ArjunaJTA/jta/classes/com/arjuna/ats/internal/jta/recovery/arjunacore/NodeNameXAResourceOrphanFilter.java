@@ -49,7 +49,7 @@ public class NodeNameXAResourceOrphanFilter implements XAResourceOrphanFilter
     {
         List<String> _xaRecoveryNodes = jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes();
 
-        if(_xaRecoveryNodes == null || _xaRecoveryNodes.size() == 0) {
+        if(_xaRecoveryNodes == null || _xaRecoveryNodes.isEmpty()) {
             doWarning();
             return Vote.ABSTAIN;
         }

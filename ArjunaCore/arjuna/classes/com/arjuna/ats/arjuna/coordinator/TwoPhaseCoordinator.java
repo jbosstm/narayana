@@ -214,7 +214,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
             do {
                 synchronized (_syncLock) {
                     if (processed == runningSynchronizations.size()) {
-                        if (executingInterposedSynchs || interposedSynchs.size() == 0)
+                        if (executingInterposedSynchs || interposedSynchs.isEmpty())
                             break; // all synchronizations have been executed
 
                         // all non interposed synchronizations have been executed
@@ -428,7 +428,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
         while (true) {
             if (processed == runningSynchronizations.size()) {
-                if (!executingInterposedSynchs || _synchs.size() == 0)
+                if (!executingInterposedSynchs || _synchs.isEmpty())
                     break; // all synchronizations have been executed
 
                 // all interposed synchronizations have been executed

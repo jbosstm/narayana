@@ -314,7 +314,7 @@ class LogPurger extends Thread
     {
         synchronized (_entries)
         {
-            if (_entries.size() > 0)
+            if (!_entries.isEmpty())
             {
                 Collection<LogElement> entries = _entries.values();
                 Iterator<LogElement> iter = entries.iterator();
@@ -631,7 +631,7 @@ public class LogStore extends FileSystemStore
 
                         ArrayList<InputObjectState> txs = scanLog(logName, tName);
 
-                        if (txs.size() > 0)
+                        if (!txs.isEmpty())
                         {
                             for (int i = 0; i < txs.size(); i++)
                             {
@@ -878,7 +878,7 @@ public class LogStore extends FileSystemStore
 
         ArrayList<InputObjectState> states = scanLog(td.container.getName(), tn);
 
-        if ((states == null) || (states.size() == 0))
+        if ((states == null) || (states.isEmpty()))
             return null;
 
         for (int i = 0; i < states.size(); i++)
@@ -1064,7 +1064,7 @@ public class LogStore extends FileSystemStore
                      * file!
                      */
 
-                if ((objectStates != null) && (objectStates.size() > 0))
+                if ((objectStates != null) && (!objectStates.isEmpty()))
                 {
                     /*
                           * If we are terminating then we can truncate the log to the
@@ -1279,7 +1279,7 @@ public class LogStore extends FileSystemStore
                         }
                     }
 
-                    if (deletedLogs.size() > 0)
+                    if (!deletedLogs.isEmpty())
                     {
                         /*
                                * make sure we remove them from the first list to save time.

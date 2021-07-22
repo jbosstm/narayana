@@ -136,7 +136,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 		}
 
 		List<String> xaRecoveryNodes = jtaEnvironmentBean.getXaRecoveryNodes();
-        if (xaRecoveryNodes.size() == 0) {
+        if (xaRecoveryNodes.isEmpty()) {
             jtaLogger.i18NLogger.info_recovery_noxanodes();
 			whereFilter = "";
         } else if (xaRecoveryNodes
@@ -618,7 +618,7 @@ public class CommitMarkableResourceRecordRecoveryModule implements
 			batchSize = integer;
 		}
 		try {
-			while (completedXids.size() > 0) {
+			while (!completedXids.isEmpty()) {
 
 				int sendingSize = batchSize < 0 ? completedXids.size()
 						: completedXids.size() < batchSize ? completedXids

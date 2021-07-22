@@ -475,7 +475,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                 }
                 while (!finished);
                 
-                if (values.size() > 0)
+                if (!values.isEmpty())
                 {
                     int index = 0;
 

@@ -270,7 +270,7 @@ public class ServerResource
     {
         synchronized (_children)
         {
-            while (_children.size() > 0)
+            while (!_children.isEmpty())
             {
                 ServerNestedAction child = _children.remove(0);
                 child.setParentHandle(null);

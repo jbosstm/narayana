@@ -654,7 +654,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 		 */
 
 		List<NameScopedXAResource> xaresources = new ArrayList<>();
-		if (_xaRecoverers.size() > 0)
+		if (!_xaRecoverers.isEmpty())
 		{
 			for (int i = 0; i < _xaRecoverers.size(); i++)
 			{
@@ -1074,7 +1074,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 				Vector failureItem = (Vector) _failures.get(theXid);
 				Uid u = (Uid) failureItem.remove(0);
 
-				if (failureItem.size() == 0)
+				if (failureItem.isEmpty())
 					_failures.remove(theXid);
 
 				return u;
@@ -1133,7 +1133,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 			failureItem.remove(uid);
 
 			// if that was the last one, remove the item altogether
-			if (failureItem.size() == 0)
+			if (failureItem.isEmpty())
 				_failures.remove(xid);
 		}
 	}
@@ -1161,7 +1161,7 @@ public class XARecoveryModule implements ExtendedRecoveryModule
 					jndiName = ((XAResourceWrapper)xaResource).getJndiName();
 				}
                 RecoveryXids recoveryXids = _xidScans.get(new NameScopedXAResource(xaResource, jndiName));
-                if (recoveryXids != null && recoveryXids.size() > 0) {
+                if (recoveryXids != null && !recoveryXids.isEmpty()) {
                     return true;
                 }
             }

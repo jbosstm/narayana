@@ -172,7 +172,7 @@ public class ThreadActionData
 				a.removeChildThread(threadId);
 			}
 
-			if (txs.size() == 0)
+			if (txs.isEmpty())
 			{
 				_threadList.set(null);
 			}
@@ -209,7 +209,7 @@ public class ThreadActionData
 		{
 			txs.remove(act);
 
-			if (txs.size() == 0)
+			if (txs.isEmpty())
 			{
 				_threadList.set(null);
 			}

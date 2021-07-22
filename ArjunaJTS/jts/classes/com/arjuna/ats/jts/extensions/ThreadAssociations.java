@@ -102,7 +102,7 @@ public class ThreadAssociations
 		
 		v.removeElement(tx);
 
-		if (v.size() == 0)
+		if (v.isEmpty())
 		    txAssociations.remove(ct);
 	    }
 

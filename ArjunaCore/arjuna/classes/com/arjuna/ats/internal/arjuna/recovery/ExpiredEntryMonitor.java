@@ -83,7 +83,7 @@ public class ExpiredEntryMonitor extends Thread
 	  return false;
       }
 
-      if ( _expiryScanners.size() == 0 )
+      if ( _expiryScanners.isEmpty() )
       {
 	  // nothing to do
 	  

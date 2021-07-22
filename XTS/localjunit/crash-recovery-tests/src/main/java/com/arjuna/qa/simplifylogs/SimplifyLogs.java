@@ -31,7 +31,7 @@ public class SimplifyLogs
             System.out.println("Processing: '" + file.getName() + "'");
             List<String> log = loadLog(file);
             
-            if (log.size() == 0)
+            if (log.isEmpty())
             {
                 System.err.println("Empty file: " + file.getName());
                 continue;
