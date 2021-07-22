@@ -188,7 +188,7 @@ public class ActivityHierarchyImple implements ActivityHierarchy
     {
 	String toReturn = "Activity context:";
 	
-	if ((_hierarchy == null) || (_hierarchy.size() == 0))
+	if ((_hierarchy == null) || (_hierarchy.isEmpty()))
 	    toReturn += " null";
 	else
 	{

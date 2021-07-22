@@ -110,7 +110,7 @@ public class ObjStoreBrowserImpl implements ObjStoreBrowserService{
             attached = false;
         }
 
-        if (recordTypes.size() == 0) {
+        if (recordTypes.isEmpty()) {
             types();
         }
 

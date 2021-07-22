@@ -85,9 +85,9 @@ public class ReaperStacktracingTest {
         Thread.sleep(2200);
         TransactionReaper.terminate(false);
 
-        assertTrue(blockingReapable.cancelCallTimes.size() > 0);
+        assertFalse(blockingReapable.cancelCallTimes.isEmpty());
         assertTrue(blockingReapable.recordStackTracesCallTimes.isEmpty());
-        assertTrue(tracingReapable.cancelCallTimes.size() > 0);
+        assertFalse(tracingReapable.cancelCallTimes.isEmpty());
         assertFalse(tracingReapable.recordStackTracesCallTimes.isEmpty());
     }
 

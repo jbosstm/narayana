@@ -83,7 +83,7 @@ public class XAUtils
 	}
 
 	public static boolean isSameRM(XAResource r1, XAResource r2) throws XAException {
-		if (xaResourceIsSameRMClassNames.size() > 0) {
+		if (!xaResourceIsSameRMClassNames.isEmpty()) {
 			if (xaResourceIsSameRMClassNames.contains(r1.getClass().getName()) || xaResourceIsSameRMClassNames.contains(r2.getClass().getName())) {
 				return false;
 			}

@@ -684,7 +684,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				synchronized (this)
 				{
-					if (_resources.size() == 0)// first ever, so no need for
+					if (_resources.isEmpty())// first ever, so no need for
 					// branch
 					{
 						//branchRequired = false;

@@ -45,7 +45,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  *
@@ -105,7 +105,7 @@ public class JTSXARTest extends JTSOSBTestBase {
 
         Set<UidWrapper> wrappers = validateChildBeans(osb, w.getName(), 1, expectedXAE);
 
-        assertTrue(wrappers.size() > 0);
+        assertFalse(wrappers.isEmpty());
     }
 
     @Test

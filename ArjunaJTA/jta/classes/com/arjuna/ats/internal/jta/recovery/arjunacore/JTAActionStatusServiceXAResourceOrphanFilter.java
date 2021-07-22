@@ -57,7 +57,7 @@ public class JTAActionStatusServiceXAResourceOrphanFilter implements XAResourceO
         if (jtaLogger.logger.isDebugEnabled()) {
             jtaLogger.logger.debug("node name of " + xid + " is " + nodeName);
         }
-        if (xaRecoveryNodes == null || xaRecoveryNodes.size() == 0 || (!xaRecoveryNodes.contains(nodeName) && !xaRecoveryNodes.contains(NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES))) {
+        if (xaRecoveryNodes == null || xaRecoveryNodes.isEmpty() || (!xaRecoveryNodes.contains(nodeName) && !xaRecoveryNodes.contains(NodeNameXAResourceOrphanFilter.RECOVER_ALL_NODES))) {
             return Vote.ABSTAIN;
         }
 

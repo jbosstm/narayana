@@ -99,7 +99,7 @@ public class JMXServer
 		{
 			List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
-			if (servers != null && servers.size() > 0)
+			if (servers != null && !servers.isEmpty())
 				server = servers.get(0);
 			else
 				server = ManagementFactory.getPlatformMBeanServer();

@@ -218,7 +218,7 @@ public class ContextManager
 	     * specific data.
 	     */
 
-	    if (sl.size() == 0)
+	    if (sl.isEmpty())
 	    {
 		sl = null;
 

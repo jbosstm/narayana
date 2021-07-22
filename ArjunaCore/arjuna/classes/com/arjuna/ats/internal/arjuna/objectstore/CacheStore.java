@@ -675,7 +675,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
             synchronized (list)
             {
                 synchronized (_workList) {
-                    if (list.size() > 0) {
+                    if (!list.isEmpty()) {
                         _work = (StoreElement) list.removeLast();
 
                         _numberOfEntries--;
@@ -794,7 +794,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
         synchronized (_workList) {
             for (int i = 0; i < HASH_SIZE; i++)
             {
-                if ((_workList[i] != null) && (_workList[i].size() > 0))
+                if ((_workList[i] != null) && (!_workList[i].isEmpty()))
                     return _workList[i];
             }
 

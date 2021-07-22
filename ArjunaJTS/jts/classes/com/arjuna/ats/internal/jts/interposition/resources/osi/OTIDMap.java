@@ -75,7 +75,7 @@ public class OTIDMap
     {
 	OTIDWrapper element = null;
 	
-	if (_otids.size() > 0)
+	if (!_otids.isEmpty())
 	{
 	    Enumeration e = _otids.elements();
 

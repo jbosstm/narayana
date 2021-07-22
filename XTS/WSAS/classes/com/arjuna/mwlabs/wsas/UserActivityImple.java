@@ -580,7 +580,7 @@ public class UserActivityImple implements UserActivity
 	    {
 		currentActivity = (ActivityImple) hier.pop();
 
-		if (hier.size() == 0)
+		if (hier.isEmpty())
 		    _threadAxData.set(null);
 	    }
 	    catch (EmptyStackException ex)

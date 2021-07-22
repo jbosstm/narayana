@@ -262,7 +262,7 @@ public class BeanPopulator
                 lines.add(value);
             }
 
-            if(lines.size() == 0) {
+            if(lines.isEmpty()) {
                 return; // no relevant value in properties file, so leave bean defaults alone.
             }
         }
