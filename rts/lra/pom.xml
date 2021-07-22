@@ -26,7 +26,6 @@
     <module>coordinator-quarkus</module>
     <module>coordinator-war</module>
     <module>proxy</module>
-    <module>annotation-checker</module>
     <module>test</module>
     <module>jaxrs</module>
   </modules>
