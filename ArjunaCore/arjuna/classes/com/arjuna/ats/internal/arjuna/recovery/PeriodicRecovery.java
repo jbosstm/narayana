@@ -665,7 +665,7 @@ public class PeriodicRecovery extends Thread
     private void doBackoffWait()
     {
         try {
-            _stateLock.wait(_backoffPeriod * 1000L);
+            _stateLock.wait(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod() * 1000L);
         } catch (InterruptedException e) {
             // we can ignore this exception
         }
@@ -680,7 +680,7 @@ public class PeriodicRecovery extends Thread
     private void doPeriodicWait()
     {
         try {
-            _stateLock.wait(_recoveryPeriod * 1000L);
+            _stateLock.wait(recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod() * 1000L);
         } catch (InterruptedException e) {
             // we can ignore this exception
         }
@@ -896,20 +896,6 @@ public class PeriodicRecovery extends Thread
         setStatus(Status.INACTIVE);
         setMode(Mode.ENABLED);
 
-        _recoveryPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod();
-
-        if (_recoveryPeriod != _defaultRecoveryPeriod &&  tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
-                    ": Recovery period set to " + _recoveryPeriod + " seconds");
-        }
-
-        _backoffPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod();
-
-        if (_backoffPeriod != _defaultBackoffPeriod && tsLogger.logger.isDebugEnabled()) {
-            tsLogger.logger.debug("PeriodicRecovery" +
-                    ": Backoff period set to " + _backoffPeriod + " seconds");
-        }
-
         _periodicRecoveryInitilizationOffset = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryInitilizationOffset();
     }
 
@@ -920,17 +906,6 @@ public class PeriodicRecovery extends Thread
     * property file or added dynamically by calls to addModule
     */
    private final Vector<RecoveryModule> _recoveryModules = new Vector<RecoveryModule>();
-
-   /**
-    * time in seconds between the first and second pass in any given scan
-    */
-   private int _backoffPeriod = 0;
-
-    /**
-     * time in seconds for which the periodic recovery thread waits between scan attempts
-     */
-   private int _recoveryPeriod = 0;
-
 
     /**
      * Time in seconds for which the periodic recovery thread waits to start initial scan.

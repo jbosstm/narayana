@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -90,6 +91,11 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setPeriodicRecoveryPeriod(int periodicRecoveryPeriod)
     {
         this.periodicRecoveryPeriod = periodicRecoveryPeriod;
+
+        if (tsLogger.logger.isDebugEnabled() && this.periodicRecoveryPeriod != PeriodicRecovery._defaultRecoveryPeriod) {
+            tsLogger.logger.debug("com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
+                    ": Recovery period was set to " + this.periodicRecoveryPeriod + " seconds");
+        }
     }
 
     /**
@@ -113,6 +119,11 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setRecoveryBackoffPeriod(int recoveryBackoffPeriod)
     {
         this.recoveryBackoffPeriod = recoveryBackoffPeriod;
+
+        if (tsLogger.logger.isDebugEnabled() && this.recoveryBackoffPeriod != PeriodicRecovery._defaultBackoffPeriod) {
+            tsLogger.logger.debug("PeriodicRecovery" +
+                    ": Backoff period was set to " + this.recoveryBackoffPeriod + " seconds");
+        }
     }
 
 

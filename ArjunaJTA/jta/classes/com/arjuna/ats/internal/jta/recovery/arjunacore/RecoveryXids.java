@@ -256,7 +256,7 @@ public class RecoveryXids
     
     // JBTM-916 removed final so 10000 is not inlined into source code until we make this configurable
 	// https://issues.jboss.org/browse/JBTM-842
-    private static int safetyIntervalMillis; // may eventually want to make this configurable?
+    private static volatile int safetyIntervalMillis; // may eventually want to make this configurable?
     
     static {
         setSafetyIntervalMillis(jtaPropertyManager.getJTAEnvironmentBean().getOrphanSafetyInterval());
