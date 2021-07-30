@@ -107,8 +107,8 @@
 
   <profiles>
     <profile>
-      <!-- when arq profile is activated we expect to start coordinator -->
-      <id>arq</id>
+      <!-- when arq.thorntail profile is activated we expect to start coordinator -->
+      <id>arq.thorntail</id>
       <properties>
         <!-- making the Quarkus coordinator to be started -->
         <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
@@ -149,7 +149,7 @@
     </profile>
 
     <profile>
-      <id>arq.wildfly</id>
+      <id>arq</id>
       <modules>
         <module>crash</module>
       </modules>
@@ -159,19 +159,25 @@
         <!-- Qualifier of the lra-coordinator of the deployment -->
         <lra.coordinator.deployment.qualifier>lra-coordinator</lra.coordinator.deployment.qualifier>
         <!-- the AppServerCoordinatorDeploymentObserver creates the deployment named 'lra-coordinator' and deploys it to the app server,
-                     the last part of the path with value 'lra-coordinator' is defined by LRA coordinator JAX-RS endpoint -->
+             the last part of the path with value 'lra-coordinator' is defined by LRA coordinator JAX-RS endpoint -->
         <lra.coordinator.url>http://${lra.coordinator.host}:${lra.coordinator.port}/lra-coordinator/lra-coordinator</lra.coordinator.url>
+        <lra.coordinator.war.name>lra-coordinator.war</lra.coordinator.war.name>
+        <!-- The following filename is used for starting the WildFly instance that hosts the LRA coordinator; this file is a copy of the
+             standalone.xml file provided in WildFly (${env.JBOSS_HOME}/standalone/configuration/standalone.xml). Please, see the plugins
+             section of this profile (specifically, maven-antrun-plugin) for further info -->
         <lra.coordinator.xml.filename>lra-coordinator.xml</lra.coordinator.xml.filename>
         <!-- Qualifier of the container hosting lra-participant -->
         <lra.participant.container.qualifier>lra-participant-server</lra.participant.container.qualifier>
         <!-- Qualifier of the lra-participant of the deployment -->
         <lra.participant.deployment.qualifier>lra-participant</lra.participant.deployment.qualifier>
+        <!-- The following filename is used for starting the WildFly instance that hosts the LRA participant; this file is a copy of the
+             standalone.xml file provided in WildFly (${env.JBOSS_HOME}/standalone/configuration/standalone.xml). Please, see the plugins
+             section of this profile (specifically, maven-antrun-plugin) for further info -->
         <lra.participant.xml.filename>lra-participant.xml</lra.participant.xml.filename>
         <skip.wildfly.plugin>true</skip.wildfly.plugin>
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
         <version.wildfly-maven-plugin>2.1.0.Beta1</version.wildfly-maven-plugin>
-        <lra.coordinator.war.name>lra-coordinator.war</lra.coordinator.war.name>
       </properties>
 
       <dependencies>

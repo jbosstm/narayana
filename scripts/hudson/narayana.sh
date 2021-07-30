@@ -24,7 +24,7 @@ function get_pull_xargs {
   res=$(echo $res | sed 's/"/ /g')
   OLDIFS=$IFS
   IFS=', ' read -r -a array <<< "$res"
-  echo "get_pull_xargs: parsing $1" 
+  echo "get_pull_xargs: parsing $1"
 
   for element in "${array[@]}"
   do
@@ -54,6 +54,7 @@ function init_test_options {
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
+    [ $ARQ_THORNTAIL ] || ARQ_THORNTAIL=arq.thorntail
     [ $IBM_ORB ] || IBM_ORB=0
     [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.thorntail.test -Dtrace.lra.coordinator"
 
@@ -210,7 +211,7 @@ function init_test_options {
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
 
-    get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults 
+    get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults
 
     JAVA_VERSION=$(java -version 2>&1 | grep "\(java\|openjdk\) version" | cut -d\  -f3 | tr -d '"' | tr -d '[:space:]' | awk -F . '{if ($1==1) print $2; else print $1}')
 }
@@ -286,7 +287,7 @@ function kill_qa_suite_processes
       [[ $main == ${pat}* ]] && killit=1
     done
 
-    if [[ $killit == 1 ]]; then 
+    if [[ $killit == 1 ]]; then
       echo "Test suite process $pid still running - terminating it with signal 9"
       kill -9 $pid
     fi
@@ -312,7 +313,7 @@ function build_narayana {
     ./build.sh -f jboss-transaction-spi/pom.xml -B clean install
     [ $? -eq 0 ] || fatal "Build of SPI failed"
   fi
-  
+
   echo "Building Narayana"
   cd $WORKSPACE
 
@@ -324,7 +325,7 @@ function build_narayana {
     [ $? -eq 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
-  
+
   ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
 
   [ $? -eq 0 ] || fatal "narayana build failed"
@@ -381,7 +382,7 @@ function clone_as {
   echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
   git pull --rebase --ff-only upstream main
   [ $? -eq 0 ] || fatal "git rebase failed"
-  
+
   if [ $REDUCE_SPACE = 1 ]; then
     echo "Deleting git dir to reduce disk usage"
     rm -rf .git
@@ -523,8 +524,15 @@ function lra_tests {
   ./build.sh install -pl ArjunaCore/arjunacore,rts -am -DskipTests -Pcommunity "$@"
   # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
+  echo "#0. Running LRA tests using $ARQ_PROF profile"
   PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
-  [ $? = 0 ] || fatal "LRA Test failed"
+  lra_arq=$?
+  echo "#0. Running LRA tests using $ARQ_THORNTAIL profile"
+  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_THORNTAIL $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
+  lra_thorn=$?
+  if [ $lra_arq != 0 ] && [ $lra_thorn != 0 ] ; then fatal "LRA Test failed with failures in both $ARQ_PROF and $ARQ_THORNTAIL profiles" ;  fi
+  if [ $lra_arq != 0 ] ; then fatal "LRA Test failed with failures in $ARQ_PROF profile" ; fi
+  if [ $lra_thorn != 0 ] ; then fatal "LRA tests failed with failures in $ARQ_THORNTAIL profile" ; fi
 }
 
 function jta_cdi_tests {
@@ -704,13 +712,12 @@ function add_qa_xargs {
 
 function qa_tests_once {
   echo "QA Test Suite $@"
-  
-  
+
   # Download dependencies
   cd $WORKSPACE
   ./build.sh -f qa/pom.xml -B dependency:copy-dependencies
   [ $? -eq 0 ] || fatal "Copy dependency failed"
-  
+
   cd $WORKSPACE/qa
   unset orb
   codeCoverage=false;
@@ -769,7 +776,7 @@ function qa_tests_once {
     let txtimeout=$MFACTOR*120
     sed -e "s/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=[0-9]*/COMMAND_LINE_13=-DCoordinatorEnvironmentBean.defaultTimeout=${txtimeout}/" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
   fi
-  
+
   [ -z "${IPV6_OPTS+x}" ] && ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist ||
     ant -Dorbtype=$orbtype "$QA_BUILD_ARGS" dist
 
@@ -833,7 +840,7 @@ function qa_tests_once {
 
     if [ -f TEST-failures.txt ]; then
       echo "Test Failures:"
-      cat TEST-failures.txt 
+      cat TEST-failures.txt
     fi
 
     if [ $codeCoverage = true ]; then
@@ -918,7 +925,7 @@ function perf_tests {
   rm -rf performance
   git clone https://github.com/jbosstm/performance
   cd performance/
-  if [ -n "$PULL_NUMBER" ]; 
+  if [ -n "$PULL_NUMBER" ];
   then
     echo $PULL_DESCRIPTION | grep https://github.com/jbosstm/performance/pull/
     if [[ "$?" -eq 0 ]]; then
@@ -931,7 +938,7 @@ function perf_tests {
       [ $? -eq 0 ] || fatal "git rebase failed"
     fi
   fi
-  
+
   ./scripts/run_bm.sh
   res=$?
   cd $WORKSPACE
@@ -987,9 +994,9 @@ init_test_options
 # FOR DEBUGGING SUBSEQUENT ISSUES
 if [ -x /usr/bin/free ]; then
     /usr/bin/free
-elif [ -x /usr/bin/vm_stat ]; then 
+elif [ -x /usr/bin/vm_stat ]; then
     /usr/bin/vm_stat
-else 
+else
     echo "Skipping memory report: no free or vm_stat"
 fi
 

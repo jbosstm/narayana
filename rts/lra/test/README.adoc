@@ -1,31 +1,35 @@
 = `lra/test` module - integration tests
 
+This module has been designed to simulate an environment with three actors: the LRA coordinator, the LRA participant,
+and a client (which in this case is the test class). This is implemented using three JVMs running separately.
+This reproduces a production scenario where the LRA coordinator runs independently from the LRA participant(s)
+and from the client(s).
+All tests are executed with help of https://arquillian.org[Arquillian] platform. In some tests, Arquillian is coupled
+with maven plugin to start the runtime and deploy the LRA coordinator.
+
 The `lra/test` module contains the following submodules
 
-* link:./arquillian-extension/[`arquillian-extension`] contains set of
-  Arquillian extension classes which makes possible to execute the test modules
-  on supported runtimes
+* link:./arquillian-extension/[`arquillian-extension`] contains Arquillian extension classes
+  which make possible to execute the test modules on supported runtimes
 * link:./basic[`basic`] contains integration tests which are written for testing
   the Narayana features of the
   https://github.com/eclipse/microprofile-lra[LRA specification]
-* link:./tck[`tck`] is a module which is responsible for execution of
+* link:./tck[`tck`] is a module which is responsible for the execution of
   https://github.com/eclipse/microprofile-lra/tree/master/tck[LRA TCK tests]
   with Narayana supported runtimes
-
-All tests are executed with help of https://arquillian.org[Arquillian] platform.
-Arquillian is responsible to launch the runtime and makes possible to execute
-the tests.
+* link:./crash[`crash`] hosts tests that simulate a crash of either the LRA coordinator or
+  the LRA participant or both. So far, only Wildfly is considered in this module as Quarkus
+  does not have an Arquillian adapter to run unmanaged tests
 
 == How to run integration tests
 
-The itegration tests which should be run on the application runtime
-are configured to be started with https://maven.apache.org/surefire/maven-failsafe-plugin/[Maven Failsafe Plugin].
+Integration tests are tested with
+https://maven.apache.org/surefire/maven-failsafe-plugin/[Maven Failsafe Plugin], using the target 'verify'.
 
-To run the tests the target `verify` has to be used.
-Single test with `-Dit.test=...`.
-Debug the Maven test execution with `-Dmaven.failsafe.debug`.
+Single test can be executed with `-Dit.test=...`
+To use Failsafe in debug mode, use `-Dmaven.failsafe.debug`
 
-The Failsafe Plugin link:../pom.xml#114[is configured] to run tests with names
+The Failsafe Plugin link:../pom.xml[is configured] to run tests with names
 `*IT.java`, `*Tests.java` and `*TestCase.java`.
 
 === Application runtimes
@@ -33,14 +37,17 @@ The Failsafe Plugin link:../pom.xml#114[is configured] to run tests with names
 The module is configured to run two runtimes - https://www.wildfly.org[WildFly]
 and link:https://quarkus.io[Quarkus]/link:https://thorntail.io[Thorntail].
 
-The **WildFly** runtime deploys the coordinator and the application with the client
-library at the same application server. The coordinator is deployed as
-a separated `war` archive, and the same the applications which packs together
-the LRA client library.
+When the **WildFly** runtime is used (through the 'arq' profile), two instances of Wildfly are initiated:
+ * The first instance is started using WildFly Maven Plugin, then the LRA coordinator is deployed using the WAR produced
+ by the module `lra/lra-coordinator-war`
+ * The second instance is started using Arquillian, then an LRA participant is deployed
+Moreover, the testing class is hosted on separated JVM.
 
-**Quarkus/Thorntail** splits the deployments to two separate JVMs.
-The Quarkus is started as Narayana LRA coordinator and
-Thorntail packs the client application with the LRA client library.
+Also, the configuration using **Quarkus** (through the 'arq.thorntail') runs the LRA coordinator and the LRA participant(s)
+in two separate JVMs:
+ * Quarkus is started with its maven plugin and configured to host Narayana LRA coordinator
+ * A Thorntail (Arquillian) container hosts the LRA participant
+Again, the testing class is hosted on a separated JVM.
 
 === Running tests with Quarkus/Thorntail
 
@@ -48,10 +55,10 @@ To start integration tests:
 
 [source,sh]
 ----
-mvn clean verify -Parq
+mvn clean verify -Parq.thorntail
 
-# single test in one module
-mvn clean verify -Parq -pl basic -Dit.test=FailedLRAIT
+# single test in one module (example)
+mvn clean verify -Parq.thorntail -pl basic -Dit.test=FailedLRAIT
 ----
 
 .Configuration options of Quarkus/Thorntail
@@ -86,10 +93,10 @@ To start all integration tests:
 [source,sh]
 ----
 export JBOSS_HOME=<path-to-wildfly-distribution-directory>
-mvn clean verify -Parq.wildfly
+mvn clean verify -Parq
 
 # single test in one module
-mvn clean verify -Parq.wildfly -pl basic -Dit.test=FailedLRAIT
+mvn clean verify -Parq -pl basic -Dit.test=FailedLRAIT
 ----
 
 .Configuration options of WildFly
