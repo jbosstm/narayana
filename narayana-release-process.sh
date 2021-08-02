@@ -122,7 +122,7 @@ if [[ $? != 0 ]]
 then
   git fetch upstream; 
   git checkout -b ${WFLYISSUE}
-  git reset --hard upstream/master
+  git reset --hard upstream/main
   CURRENT_VERSION_IN_WFLY=`grep 'narayana>' pom.xml | cut -d \< -f 2|cut -d \> -f 2`
   if [[ $(uname) == CYGWIN* ]]
   then

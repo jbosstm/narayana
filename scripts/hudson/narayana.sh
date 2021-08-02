@@ -374,12 +374,12 @@ function clone_as {
 
   git fetch upstream
   echo "This is the JBoss-AS commit"
-  echo $(git rev-parse upstream/master)
+  echo $(git rev-parse upstream/main)
   echo "This is the AS_BRANCH $AS_BRANCH commit"
   echo $(git rev-parse HEAD)
 
-  echo "Rebasing the wildfly upstream/master on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase --ff-only upstream master
+  echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
+  git pull --rebase --ff-only upstream main
   [ $? -eq 0 ] || fatal "git rebase failed"
   
   if [ $REDUCE_SPACE = 1 ]; then
