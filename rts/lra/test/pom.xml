@@ -161,6 +161,7 @@
         <!-- the AppServerCoordinatorDeploymentObserver creates the deployment named 'lra-coordinator' and deploys it to the app server,
                      the last part of the path with value 'lra-coordinator' is defined by LRA coordinator JAX-RS endpoint -->
         <lra.coordinator.url>http://${lra.coordinator.host}:${lra.coordinator.port}/lra-coordinator/lra-coordinator</lra.coordinator.url>
+        <lra.coordinator.war.name>lra-coordinator.war</lra.coordinator.war.name>
         <lra.coordinator.xml.filename>lra-coordinator.xml</lra.coordinator.xml.filename>
         <!-- Qualifier of the container hosting lra-participant -->
         <lra.participant.container.qualifier>lra-participant-server</lra.participant.container.qualifier>
@@ -171,7 +172,6 @@
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
         <version.wildfly-maven-plugin>2.1.0.Beta1</version.wildfly-maven-plugin>
-        <lra.coordinator.war.name>lra-coordinator.war</lra.coordinator.war.name>
       </properties>
 
       <dependencies>
