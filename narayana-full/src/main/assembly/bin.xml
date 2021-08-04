@@ -107,6 +107,16 @@
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
 			<includes>
+				<include>org.jboss.narayana.jts:narayana-jts-jakarta-idlj:jar</include>
+			</includes>
+			<outputDirectory>lib/jts</outputDirectory>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
+			</outputFileNameMapping>
+			<unpack>false</unpack>
+		</dependencySet>
+		<dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+			<includes>
 				<include>org.jboss.narayana.jta:narayana-jta:jar</include>
 			</includes>
 			<outputDirectory>lib/jta</outputDirectory>

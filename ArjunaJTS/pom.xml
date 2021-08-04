@@ -44,6 +44,7 @@
     <module>orbportability</module>
     <module>jts</module>
     <module>jtax</module>
+    <module>narayana-jts-jakarta-idlj</module>
     <module>integration</module>
   </modules>
   <profiles>
