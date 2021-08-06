@@ -37,7 +37,7 @@ public class LRAParticipantRegistry {
         lraParticipants = new HashMap<>();
     }
 
-    LRAParticipantRegistry(Map<String, LRAParticipant> lraParticipants) {
+    public LRAParticipantRegistry(Map<String, LRAParticipant> lraParticipants) {
         this.lraParticipants = new HashMap<>(lraParticipants);
     }
 
