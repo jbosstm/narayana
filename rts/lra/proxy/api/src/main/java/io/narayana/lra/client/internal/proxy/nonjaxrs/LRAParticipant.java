@@ -73,7 +73,7 @@ public class LRAParticipant {
 
     private Map<URI, ParticipantResult> participantStatusMap = new HashMap<>();
 
-    LRAParticipant(Class<?> javaClass) {
+    public LRAParticipant(Class<?> javaClass) {
         this.javaClass = javaClass;
 
         Arrays.stream(javaClass.getMethods()).forEach(this::processParticipantMethod);
