@@ -358,7 +358,7 @@ public class LRATest {
         // start a new LRA
         Response r2 = client.target(coordinatorPath + "/start").request().post(null);
         assertEquals("Expected 201", Response.Status.CREATED.getStatusCode(), r2.getStatus());
-        String lraId = r2.getHeaderString(LRA_HTTP_CONTEXT_HEADER);
+        String lraId = r2.readEntity(String.class);
         Assert.assertNotNull("missing context header", lraId);
         // RestEasy adds brackets and , to delimit multiple values for a particular header key
         lraId = new StringTokenizer(lraId, "[,]").nextToken();
