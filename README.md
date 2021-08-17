@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/maven-central/v/org.jboss.narayana/narayana-all?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/org.jboss.narayana/narayana-all)
 [![License](https://img.shields.io/badge/License-LGPL%20v2.1-green.svg?style=for-the-badge)](http://www.gnu.org/licenses/lgpl-2.1)
-
+b
 Narayana
 ========
 
