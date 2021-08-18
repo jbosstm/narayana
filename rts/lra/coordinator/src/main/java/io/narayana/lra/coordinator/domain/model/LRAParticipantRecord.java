@@ -130,7 +130,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             }
 
             this.lraId = lra.getId();
-            this.parentId = lraService.getTransaction(this.lraId).getParentId();
+            this.parentId = lra.getParentId();
             this.status = ParticipantStatus.Active;
 
             this.lraService = lraService;
@@ -989,6 +989,10 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
     public URI getEndNotificationUri() {
         return afterURI;
+    }
+
+    public ParticipantStatus getStatus() {
+        return status;
     }
 
     private String getLRAId(URI lraId) {

@@ -230,11 +230,11 @@ public class JTSObjStoreBrowserTest extends TestBase {
         } catch (HeuristicHazard e) {
         }
 
-        createObjStoreBrowser(true); // start an mbean server and object store browser
+        ObjStoreBrowser osb = createObjStoreBrowser(true); // start an mbean server and object store browser
 
         // there should now be an MBean entry corresponding to a JTS record, read it via JMX:
         MBeanServer mbs = JMXServer.getAgent().getServer();
-        Set<ObjectInstance> transactions = mbs.queryMBeans(new ObjectName("jboss.jta:type=ObjectStore,*"), null);
+        Set<ObjectInstance> transactions = mbs.queryMBeans(new ObjectName(osb.getObjStoreBrowserMBeanName() + ",*"), null);
         boolean foundJTSType = false;
         Pattern pattern = Pattern.compile("itype=(.*?),");
 

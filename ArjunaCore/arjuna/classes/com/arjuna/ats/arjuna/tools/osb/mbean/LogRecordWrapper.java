@@ -50,7 +50,7 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 
 	public LogRecordWrapper(Uid uid) {
 		super(null);
-		_uidWrapper.setName("jboss.jta:type=ObjectStore,itype=uninitialised,puid=" + uid.fileStringForm());
+		_uidWrapper.setName(super._uidWrapper.getBrowserMBeanName() + ",itype=uninitialised,puid=" + uid.fileStringForm());
 	}
 
 	public LogRecordWrapper(ActionBean parent, AbstractRecord rec, ParticipantStatus listType, UidWrapper wrapper) {
@@ -59,7 +59,11 @@ public class LogRecordWrapper extends OSEntryBean implements LogRecordWrapperMBe
 	}
 
 	public LogRecordWrapper(ActionBean parent, AbstractRecord rec, ParticipantStatus listType) {
-		this(parent, rec, listType, makeWrapper(parent, rec, LogRecordWrapper.class.getName()));
+		this(parent, rec, listType, LogRecordWrapper.class.getName());
+	}
+
+	public LogRecordWrapper(ActionBean parent, AbstractRecord rec, ParticipantStatus listType, String className) {
+		this(parent, rec, listType, makeWrapper(parent, rec, className));
 	}
 
 	private static UidWrapper makeWrapper(ActionBean parent, AbstractRecord rec, String beanType) {

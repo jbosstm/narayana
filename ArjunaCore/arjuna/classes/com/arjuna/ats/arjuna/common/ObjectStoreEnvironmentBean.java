@@ -88,6 +88,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
 
     private volatile boolean ignoreMBeanHeuristics = true;
 
+    private volatile String jmxToolingMBeanName = "jboss.jta:type=ObjectStore";
+
     /**
      * Returns the maximum allowed size, in bytes, of the cache store's in-memory cache.
      *
@@ -826,5 +828,27 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
      */
     public void setVolatileStoreSupportAllObjUids(boolean volatileStoreSupportAllObjUids) {
         this.volatileStoreSupportAllObjUids = volatileStoreSupportAllObjUids;
+    }
+
+    /**
+     * Set JMX name where the Narayana object store tooling MBean will be registered at.
+     *
+     * @param jmxToolingMBeanName A name of the JMX MBean
+     */
+    public void setJmxToolingMBeanName(String jmxToolingMBeanName) {
+        this.jmxToolingMBeanName = jmxToolingMBeanName;
+    }
+
+    /**
+     * JMX name that the Narayana object store tooling MBean will be registered at.
+     *
+     * The default value is {@code jboss.jta:type=ObjectStore}
+     * which is considered deprecated anw will be changed for {@code narayana.logStore:type=ObjectStore}
+     * in some next Narayana releases.
+     *
+     * @return name of the MBean where tooling objects will be available at
+     */
+    public String getJmxToolingMBeanName() {
+        return jmxToolingMBeanName;
     }
 }

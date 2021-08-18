@@ -28,6 +28,7 @@ import java.util.List;
 import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -53,11 +54,13 @@ public class UidWrapper {
 
 	private String name;
 
-	private ObjStoreBrowser browser;
-	private String beantype;
-    private String className;
-	private String ostype;
-	private Uid uid;
+	private final ObjStoreBrowser browser;
+	private final String browserMBeanName;
+	private final String beantype;
+    private final String className;
+	private final String ostype;
+	private final Uid uid;
+
 	private long tstamp;
 	private OSEntryBean mbean;
 	boolean registered = false;
@@ -78,7 +81,9 @@ public class UidWrapper {
         this.className = className;
 		this.uid = uid;
 		this.tstamp = 0L;
-		this.name = "jboss.jta:type=ObjectStore,itype=" + ostype + ",uid=" + uid.fileStringForm(); // + ",participant=false";
+		this.browserMBeanName = browser != null ?
+				browser.getObjStoreBrowserMBeanName() : arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();
+		this.name = browserMBeanName + ",itype=" + ostype + ",uid=" + uid.fileStringForm(); // + ",participant=false";
 		this.registered = false;
 		this.allowRegistration = allowRegistration;
 	}
@@ -149,6 +154,10 @@ public class UidWrapper {
 
 	public ObjStoreBrowser getBrowser() {
 		return browser;
+	}
+
+	public String getBrowserMBeanName() {
+		return browserMBeanName;
 	}
 
 	@Override

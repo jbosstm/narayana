@@ -33,8 +33,17 @@ public class FailedLongRunningAction extends LongRunningAction {
         super(lraService, rcvUid);
     }
 
+    // used for MBean LRA listing, see com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser
+    public FailedLongRunningAction(Uid rcvUid) {
+        this(new LRAService(), rcvUid);
+    }
+
     @Override
     public String type() {
+        return FAILED_LRA_TYPE;
+    }
+
+    public static String getType() {
         return FAILED_LRA_TYPE;
     }
 }

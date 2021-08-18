@@ -127,7 +127,7 @@ public class ObjStoreBrowserImpl implements ObjStoreBrowserService{
     public void list(String itype) {
         MBeanServer mbs = JMXServer.getAgent().getServer();
         Set<ObjectInstance> transactions;
-        String osMBeanName = "jboss.jta:type=ObjectStore";
+        String osMBeanName = osb.getObjStoreBrowserMBeanName();
 
         if (itype != null) {
             if (select(itype) == false) return;
