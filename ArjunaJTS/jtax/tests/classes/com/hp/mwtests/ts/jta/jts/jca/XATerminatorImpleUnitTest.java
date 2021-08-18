@@ -154,7 +154,7 @@ public class XATerminatorImpleUnitTest extends TestBase
         osb.start();
         osb.probe();
 
-        Set<ObjectName> participants = JMXServer.getAgent().queryNames("jboss.jta:type=ObjectStore,itype=" + com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction.getType().substring(1) +",uid="+savingUid.stringForm().replaceAll(":", "_")+",puid=*", null);
+        Set<ObjectName> participants = JMXServer.getAgent().queryNames(osb.getObjStoreBrowserMBeanName() + ",itype=" + com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction.getType().substring(1) +",uid="+savingUid.stringForm().replaceAll(":", "_")+",puid=*", null);
         assertEquals(1, participants.size());
         JMXServer.getAgent().getServer().invoke(participants.iterator().next(), "clearHeuristic", null, null);
         xa.recover(XAResource.TMSTARTRSCAN);
@@ -162,7 +162,7 @@ public class XATerminatorImpleUnitTest extends TestBase
 
 
 
-        Set<ObjectName> xaResourceRecords = JMXServer.getAgent().queryNames("jboss.jta:type=ObjectStore,itype=" + XAResourceRecord.typeName().substring(1) +",uid=*", null);
+        Set<ObjectName> xaResourceRecords = JMXServer.getAgent().queryNames(osb.getObjStoreBrowserMBeanName() + ",itype=" + XAResourceRecord.typeName().substring(1) +",uid=*", null);
         for (ObjectName xaResourceRecord : xaResourceRecords) {
 
             Object getGlobalTransactionId = JMXServer.getAgent().getServer().getAttribute(xaResourceRecord, "GlobalTransactionId");

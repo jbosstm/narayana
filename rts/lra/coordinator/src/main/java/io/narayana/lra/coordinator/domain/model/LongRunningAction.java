@@ -98,6 +98,11 @@ public class LongRunningAction extends BasicAction implements Reapable {
         this.status = LRAStatus.Active;
     }
 
+    // used for MBean LRA listing, see com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser
+    public LongRunningAction(Uid rcvUid) {
+        this(new LRAService(), rcvUid);
+    }
+
     /**
      * Creating {@link LRAData} from the current {@link LongRunningAction} state.
      * The data are immutable and represents the current state of the LRA transaction.
@@ -974,7 +979,7 @@ public class LongRunningAction extends BasicAction implements Reapable {
         }
     }
 
-    URI getParentId() {
+    public URI getParentId() {
         return parentId;
     }
 

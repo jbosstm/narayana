@@ -121,7 +121,7 @@ public class JTSOSBTestBase extends TestBase {
 
     private void showAllMBeans(MBeanServer mbs) {
         try {
-            Set<ObjectInstance> allBeans = mbs.queryMBeans(new ObjectName("jboss.jta:*"), null) ;
+            Set<ObjectInstance> allBeans = mbs.queryMBeans(new ObjectName("narayana.logStore:*"), null) ;
             System.out.printf("%d MBeans:%n", allBeans.size());
             for (ObjectInstance oi : allBeans)
                 System.out.printf("\t%s%n", oi.getObjectName().getCanonicalName());
@@ -142,7 +142,7 @@ public class JTSOSBTestBase extends TestBase {
 		try {
 			String type = ObjStoreBrowser.canonicalType(txn.type());
 
-			StringBuilder beanName = new StringBuilder("jboss.jta:type=ObjectStore,itype=").
+			StringBuilder beanName = new StringBuilder(osb.getObjStoreBrowserMBeanName() + ",itype=").
 					append(type).append(",uid=").append(txn.get_uid().fileStringForm());
 
 			System.out.printf("assertBeanWasCreated: bean name = %s%n", beanName);

@@ -294,7 +294,7 @@ public class ObjStoreBrowserTest {
         assertNotNull(txnMBean);
         assertNotNull(resourceBean);
 
-        txnBeanName = String.format("jboss.jta:type=ObjectStore,itype=%s,uid=%s",
+        txnBeanName = String.format(osb.getObjStoreBrowserMBeanName() + ",itype=%s,uid=%s",
                 txnMBean.type(), txnMBean.getId().replace(':', '_'));
 
         resourceBeanName = String.format("%s,puid=%s",

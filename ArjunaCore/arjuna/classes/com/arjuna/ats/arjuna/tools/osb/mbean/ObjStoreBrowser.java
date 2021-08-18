@@ -23,11 +23,18 @@ package com.arjuna.ats.arjuna.tools.osb.mbean;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.MBeanException;
 
 import com.arjuna.ats.arjuna.StateManager;
+import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -42,9 +49,7 @@ import com.arjuna.ats.arjuna.tools.osb.util.JMXServer;
  * that represent completing transactions (ie ones on which the user has called commit)
  *
  * @author Mike Musgrove
- */
-/**
- * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to 
+ * @deprecated as of 5.0.5.Final In a subsequent release we will change packages names in order to
  * provide a better separation between public and internal classes.
  */
 @Deprecated // in order to provide a better separation between public and internal classes.
@@ -57,7 +62,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     private static final String SUBORDINATE_ATI_TYPE =
             "StateManager/BasicAction/TwoPhaseCoordinator/ArjunaTransactionImple/ServerTransaction/JCA";
 
-    private static OSBTypeHandler[] defaultOsbTypes = {
+    private static final OSBTypeHandler[] defaultOsbTypes = {
             new OSBTypeHandler(
                     true,
                     "com.arjuna.ats.internal.jta.recovery.arjunacore.RecoverConnectableAtomicAction",
@@ -81,7 +86,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             ),
     };
 
-    private static OSBTypeHandler[] defaultJTSOsbTypes = {
+    private static final OSBTypeHandler[] defaultJTSOsbTypes = {
             new OSBTypeHandler(
                     true,
                     false, // by default do not probe for this type
@@ -141,12 +146,12 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             )
     };
 
-    private static Map<String, OSBTypeHandler> osbTypeMap = new HashMap<String, OSBTypeHandler>();
+    private static final Map<String, OSBTypeHandler> osbTypeMap = new ConcurrentHashMap<>();
 
     // A system property for defining extra bean types for instrumenting object store types
     // The format is OSType1=BeanType1,OSType2=BeanType2,etc
     public static final String OBJ_STORE_BROWSER_HANDLERS = "com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowserHandlers";
-    private static final String STORE_MBEAN_NAME = "jboss.jta:type=ObjectStore";
+    private final String objStoreBrowserMBeanName;
 
     public static HeaderStateReader getHeaderStateUnpacker(String type) {
         OSBTypeHandler osbType = osbTypeMap.get(type);
@@ -154,7 +159,8 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         return (osbType != null) ? osbType.getHeaderStateReader() : null;
     }
 
-    private Map<String, List<UidWrapper>> registeredMBeans = new HashMap<String, List<UidWrapper>> ();;
+    // holder of type to Uid mapping
+    private final Map<String, List<UidWrapper>> registeredMBeans = new ConcurrentHashMap<>();
     private boolean exposeAllLogs = false;
 
     /**
@@ -162,7 +168,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
      */
     public void start()
     {
-        JMXServer.getAgent().registerMBean(STORE_MBEAN_NAME, this);
+        JMXServer.getAgent().registerMBean(arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName(), this);
     }
 
     /**
@@ -173,7 +179,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     {
         unregisterMBeans();
 
-        JMXServer.getAgent().unregisterMBean(STORE_MBEAN_NAME);
+        JMXServer.getAgent().unregisterMBean(arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName());
     }
 
     private void unregisterMBeans(List<UidWrapper> beans) {
@@ -183,7 +189,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         beans.clear();
     }
 
-    private void unregisterMBeans() {
+    protected void unregisterMBeans() {
         for (List<UidWrapper> uids : registeredMBeans.values())
             unregisterMBeans(uids);
 
@@ -198,44 +204,66 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
-     * This method is deprecated in favour of @setType
+     * Returns the JMX name that the MBean that was registered with.
+     * If the MBean was not yet registered then the method returns the name provided by configuration
+     * within the {@link ObjectStoreEnvironmentBean#getJmxToolingMBeanName()}.
+     *
+     * @return name of the JMX
+     */
+    public String getObjStoreBrowserMBeanName() {
+        return this.objStoreBrowserMBeanName;
+    }
+
+    /**
+     * This method is deprecated in favour of {@link #setType(String, String)}.
      * The issue with this method is there is no mechanism for determining which class
      * is responsible for a given OS type.
+     * This method is a no-action method.
      *
-     * Define which object store types will registered as MBeans
-     * @param types the list of ObjectStore types that can be represented
-     * as MBeans
+     * Define which object store types will be registered as MBeans
+     * @param types the list of ObjectStore types that can be represented as MBeans
      */
     @Deprecated
     public void setTypes(Map<String, String> types) {
     }
 
     /**
-     * Tell the browser which beans to use for particular Object Store Action type
-     * @param osTypeClassName
-     * @param beanTypeClassName
+     * Tell the object browser which beans to use for particular Object Store Action type
+     *
+     * @param osTypeClassName {@link StateManager} type class name
+     * @param beanTypeClassName bean class name which makes tooling available on top of the {@code osTypeClassName}
      * @return whether the type was set OK
      */
     public boolean setType(String osTypeClassName, String beanTypeClassName) {
         try {
-            Class cls = Class.forName(osTypeClassName);
+            Class<?> cls = Class.forName(osTypeClassName);
             StateManager sm = (StateManager) cls.getConstructor().newInstance();
             String typeName = canonicalType(sm.type());
 
-            if (typeName == null || typeName.length() == 0)
-                return false;
-
-            osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
-            typeName = typeName.replaceAll("/", File.separator);
-            osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
-
-            return true;
+            return addType(typeName, osTypeClassName, beanTypeClassName);
         } catch (Exception e) {
-            if (tsLogger.logger.isDebugEnabled())
-                tsLogger.logger.debug("Invalid class type in system property ObjStoreBrowserHandlers: " + osTypeClassName);
-
+            tsLogger.i18NLogger.warn_invalidObjStoreBrowser_type(osTypeClassName, e);
             return false;
         }
+    }
+
+    /**
+     * Add the type to be considered by object browser.
+     * See {@link #setType(String, String)}.
+     *
+     * @param typeName type name that the bean will operate at
+     * @param osTypeClassName {@link StateManager} type class name
+     * @param beanTypeClassName bean class name which makes tooling available on top of the {@code osTypeClassName}
+     * @return whether the type was set OK
+     */
+    public boolean addType(String typeName, String osTypeClassName, String beanTypeClassName) {
+        if (typeName == null || typeName.length() == 0)
+            return false;
+
+        osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
+        typeName = typeName.replaceAll("/", File.separator);
+        osbTypeMap.put(typeName, new OSBTypeHandler(true, osTypeClassName, beanTypeClassName, typeName, null));
+        return true;
     }
 
     /**
@@ -275,12 +303,16 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         initTypeHandlers(System.getProperty(OBJ_STORE_BROWSER_HANDLERS, ""));
     }
 
+    /**
+     * Constructor for default configuration of the object store browser.
+     */
     public ObjStoreBrowser() {
-        init(null);
+        this(null);
     }
 
     public ObjStoreBrowser(String logDir) {
         init(logDir);
+        this.objStoreBrowserMBeanName = arjPropertyManager.getObjectStoreEnvironmentBean().getJmxToolingMBeanName();
     }
 
     /**
@@ -315,8 +347,9 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     /**
-     * Find the registered beand corresponding to a uid.
-     * @deprecated use {@link #findUid(com.arjuna.ats.arjuna.common.Uid)} ()} instead.
+     * Find the registered bean corresponding to a uid.
+     *
+     * @deprecated use {@link #findUid(com.arjuna.ats.arjuna.common.Uid)} instead.
      * @param uid the uid
      * @return the registered bean or null if the Uid is not registered
      */
@@ -409,10 +442,11 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     /**
      * See if any new MBeans need to be registered or if any existing MBeans no longer exist
      * as ObjectStore entries.
-     * @throws MBeanException 
+     *
+     * @throws MBeanException exception is thrown when it's not possible to list Uids from object store
      */
     public synchronized void probe() throws MBeanException {
-        Map<String, Collection<Uid>> currUidsForType = new HashMap<String, Collection<Uid>>();
+        Map<String, Collection<Uid>> currUidsForType = new HashMap<>();
 
         for (String type : getTypes())
             currUidsForType.put(type, getUids(type));
@@ -426,7 +460,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
             List<UidWrapper> beans = registeredMBeans.get(type);
 
             if (beans == null) {
-                beans = new ArrayList<UidWrapper>();
+                beans = new ArrayList<>();
                 registeredMBeans.put(type, beans);
             }
 
@@ -443,7 +477,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
         /*
          * now create the actual MBeans - we create all the UidWrappers before registering because
          * the process of creating a bean can call back into the browser to probe for a particular type
-         * (see for example com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean
+         * (see for example com.arjuna.ats.arjuna.tools.osb.mbean.ActionBean)
          */
         registerMBeans();
     }
@@ -484,7 +518,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     private Collection<Uid> getUids(String type) throws MBeanException {
-        Collection<Uid> uids = new ArrayList<Uid>();
+        Collection<Uid> uids = new ArrayList<>();
         try {
             ObjectStoreIterator iter = new ObjectStoreIterator(StoreManager.getRecoveryStore(), type);
     
@@ -516,7 +550,7 @@ public class ObjStoreBrowser implements ObjStoreBrowserMBean {
     }
 
     private Collection<String> getTypes() {
-        Collection<String> allTypes = new ArrayList<String>();
+        Collection<String> allTypes = new ArrayList<>();
         InputObjectState types = new InputObjectState();
 
         try {
