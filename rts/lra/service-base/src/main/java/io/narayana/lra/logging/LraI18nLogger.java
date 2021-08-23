@@ -143,6 +143,10 @@ public interface LraI18nLogger {
             "Please, provide the right version for the API.")
     String get_wrongAPIVersionDemanded(String demandedApiVersion, String supportedVersions);
 
+    @LogMessage(level = WARN)
+    @Message(id = 25029, value = "Cannot notify AfterLRA URL at %s")
+    void warn_cannotNotifyAfterLRAURI(URI target, @Cause Throwable t);
+
     /*
         Allocate new messages directly above this notice.
           - id: use the next id number in numeric sequence. Don't reuse ids.
