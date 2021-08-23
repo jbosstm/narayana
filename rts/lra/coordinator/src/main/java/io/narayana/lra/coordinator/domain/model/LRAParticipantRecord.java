@@ -448,13 +448,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 return true;
             }
         } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (!(e instanceof WebApplicationException) && cause instanceof WebApplicationException) {
-                e = (WebApplicationException) cause;
-            }
-            if (LRALogger.logger.isDebugEnabled()) {
-                LRALogger.logger.debugf("Could not notify URI at %s (%s)", target, e.getMessage());
-            }
+            LRALogger.i18nLogger.warn_cannotNotifyAfterLRAURI(target, e);
         } finally {
             if (client != null) {
                 client.close();
