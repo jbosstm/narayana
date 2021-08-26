@@ -146,6 +146,7 @@ public class LongRunningAction extends BasicAction {
 
             os.packString(status.name());
         } catch (IOException e) {
+            LRALogger.i18nLogger.warn_saveState(e.getMessage());
             return false;
         }
 
@@ -290,8 +291,10 @@ public class LongRunningAction extends BasicAction {
             return true;
         } catch (IOException | URISyntaxException e) {
             if (LRALogger.logger.isDebugEnabled()) {
-                LRALogger.logger.debugf(e, "Cannot restore state of objec type '%s'", ot);
+                LRALogger.logger.debugf(e, "Cannot restore state of object type '%s'", ot);
             }
+
+            LRALogger.i18nLogger.warn_restoreState(e.getMessage());
 
             return false;
         }
@@ -936,7 +939,6 @@ public class LongRunningAction extends BasicAction {
                     }
 
                     updateState(LRAStatus.Cancelling);
-
                     CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
                 }
             } finally {

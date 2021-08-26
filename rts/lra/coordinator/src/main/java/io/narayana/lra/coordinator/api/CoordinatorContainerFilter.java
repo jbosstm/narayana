@@ -66,6 +66,7 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
             } catch (URISyntaxException e) {
                 String errMsg = String.format("header %s contains an invalid URL %s: %s",
                         LRA_HTTP_CONTEXT_HEADER, Current.getLast(headers.get(LRA_HTTP_CONTEXT_HEADER)), e.getMessage());
+                LRALogger.logger.debugf(errMsg);
                 throw new WebApplicationException(errMsg, e,
                         Response.status(PRECONDITION_FAILED.getStatusCode()).entity(errMsg).build());
             }
@@ -117,6 +118,7 @@ public class CoordinatorContainerFilter implements ContainerRequestFilter, Conta
         if (!Arrays.stream(NARAYANA_LRA_API_SUPPORTED_VERSIONS).anyMatch(v -> v.equals(apiVersionString))) {
             String errorMsg = LRALogger.i18nLogger.get_wrongAPIVersionDemanded(
                     apiVersionString, NARAYANA_LRA_API_SUPPORTED_VERSIONS.toString());
+            LRALogger.logger.debugf(errorMsg);
             throw new WebApplicationException(errorMsg,
                     Response.status(EXPECTATION_FAILED).entity(errorMsg)
                             .header(NARAYANA_LRA_API_VERSION_HEADER_NAME, CURRENT_API_VERSION_STRING).build());

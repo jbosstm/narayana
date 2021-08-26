@@ -92,8 +92,9 @@ public class RecoveryCoordinator {
         String compensatorUrl = lraService.getParticipant(rcvCoordId);
 
         if (compensatorUrl == null) {
-            LRALogger.i18nLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
-            throw new NotFoundException(rcvCoordId);
+            String errorMsg = LRALogger.i18nLogger.warn_cannotFoundCompensatorUrl(rcvCoordId, lraId);
+            LRALogger.logger.warn(errorMsg);
+            throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(errorMsg).build());
         }
 
         return compensatorUrl;
@@ -141,9 +142,9 @@ public class RecoveryCoordinator {
             return context.getRequestUri().toASCIIString();
         }
 
-        LRALogger.i18nLogger.error_cannotFoundCompensatorUrl(compensatorUrl, lraId);
-        String errorMsg = lraId + ": Cannot find compensator URL " + compensatorUrl;
-        throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(rcvCoordId).build());
+        String errorMsg = LRALogger.i18nLogger.warn_cannotFoundCompensatorUrl(rcvCoordId, lraId);
+        LRALogger.logger.warn(errorMsg);
+        throw new NotFoundException(errorMsg, Response.status(NOT_FOUND).entity(errorMsg).build());
     }
 
     @GET

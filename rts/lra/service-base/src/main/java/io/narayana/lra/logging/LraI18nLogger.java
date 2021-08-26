@@ -76,12 +76,11 @@ public interface LraI18nLogger {
     @Message(id = 25010, value = "Error when converting String '%s' to URL")
     String error_invalidStringFormatOfUrl(String string, @Cause Throwable t);
 
-    @Message(id = 25011, value = "Invalid LRA id format to create LRA record from LRA id '%s', link URI '%s'")
-    String error_invalidFormatToCreateLRARecord(String lraId, String linkURI);
+    @Message(id = 25011, value = "Invalid LRA id format to create LRA record from LRA id '%s', link URI '%s' (reason: %s)")
+    String error_invalidFormatToCreateLRARecord(String lraId, String linkURI, String reason);
 
-    @LogMessage(level = ERROR)
     @Message(id = 25012, value = "Cannot found compensator url '%s' for lra '%s'")
-    void error_cannotFoundCompensatorUrl(String recoveryUrl, String lraId);
+    String warn_cannotFoundCompensatorUrl(String recoveryUrl, String lraId);
 
     @Message(id = 25013, value = "Could not recreate abstract record '%s'")
     @LogMessage(level = WARN)
@@ -146,6 +145,20 @@ public interface LraI18nLogger {
     @LogMessage(level = WARN)
     @Message(id = 25029, value = "Cannot notify AfterLRA URL at %s")
     void warn_cannotNotifyAfterLRAURI(URI target, @Cause Throwable t);
+
+    @Message(id=25030, value = "%s: Invalid link URI (%s): %s")
+    String error_invalidCompensator(URI id, String reason, String linkURI);
+
+    @Message(id=25031, value = "%s: Invalid link URI (%s): missing compensator or after LRA callback")
+    String error_missingCompensator(URI id, String linkURI);
+
+    @LogMessage(level = WARN)
+    @Message(id = 25032, value = "LRA Record: Cannot save state (reason: %s")
+    void warn_saveState(String cause);
+
+    @LogMessage(level = WARN)
+    @Message(id = 25033, value = "LRA Record: Cannot restore state (reason: %s")
+    void warn_restoreState(String cause);
 
     /*
         Allocate new messages directly above this notice.
