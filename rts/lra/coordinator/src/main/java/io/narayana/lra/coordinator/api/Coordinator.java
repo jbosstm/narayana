@@ -183,6 +183,7 @@ public class Coordinator extends Application {
                 requestedLRAStatus = LRAStatus.valueOf(state);
             } catch (IllegalArgumentException e) {
                 String errorMsg = "Status " + state + " is not a valid LRAStatus value";
+                LRALogger.logger.debugf(errorMsg);
                 throw new WebApplicationException(errorMsg, e,
                         Response.status(BAD_REQUEST).header(NARAYANA_LRA_API_VERSION_HEADER_NAME, version).entity(errorMsg).build());
             }
@@ -394,7 +395,7 @@ public class Coordinator extends Application {
 
         if (status == null || lra.getLRAStatus() == null) {
             String logMsg = LRALogger.i18nLogger.error_cannotGetStatusOfNestedLraURI(nestedLraId, lra.getId());
-            LRALogger.logger.error(logMsg);
+            LRALogger.logger.debug(logMsg);
             throw new WebApplicationException(logMsg,
                     Response.status(Response.Status.PRECONDITION_FAILED).entity(logMsg).build());
         }

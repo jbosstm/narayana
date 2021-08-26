@@ -64,7 +64,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
@@ -113,11 +112,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 });
 
                 if (parseException[0] != null) {
-                    String errorMsg = lra.getId() + ": Invalid link URI: " + parseException[0];
+                    String errorMsg = LRALogger.i18nLogger.error_invalidCompensator(lra.getId(), parseException[0].getMessage(), linkURI);
+                    LRALogger.logger.error(errorMsg);
                     throw new WebApplicationException(errorMsg, parseException[0],
                             Response.status(BAD_REQUEST).entity(errorMsg).build());
                 } else if (compensateURI == null && afterURI == null) {
-                    String errorMsg = lra.getId() + ": Invalid link URI: missing compensator or after LRA callback";
+                    String errorMsg = LRALogger.i18nLogger.error_missingCompensator(lra.getId(), linkURI);
+                    LRALogger.logger.error(errorMsg);
                     throw new WebApplicationException(errorMsg, Response.status(BAD_REQUEST).entity(errorMsg).build());
                 }
             } else {
@@ -138,11 +139,10 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             this.recoveryURI = null;
             this.compensatorData = compensatorData;
         } catch (URISyntaxException e) {
-            String logMsg = LRALogger.i18nLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI);
+            String logMsg = LRALogger.i18nLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI, e.getMessage());
             LRALogger.logger.error(logMsg);
-            String errorMsg = String.format("%s (%s)", logMsg, e.getMessage());
-            throw new WebApplicationException(errorMsg, e,
-                    Response.status(BAD_REQUEST).entity(errorMsg).build());
+            throw new WebApplicationException(logMsg, e,
+                    Response.status(BAD_REQUEST).entity(logMsg).build());
         }
     }
 
@@ -183,10 +183,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
             try {
                 link = Link.valueOf(lnk);
-            } catch (Exception e) {
-                String errorMsg = "Invalid compensator join request: cannot parse link '" + linkStr + "'";
-                throw new WebApplicationException(errorMsg, e,
-                        Response.status(PRECONDITION_FAILED).entity(errorMsg).build());
+            } catch (IllegalArgumentException e) {
+                throw new URISyntaxException(lnk, e.getMessage());
             }
 
             if (COMPENSATE_REL.equals(link.getRel())) {
@@ -359,7 +357,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 }
             } catch (Exception e) {
                 // log an informational message (failure to contact participants is unexceptional so don't dump the stack)
-                LRALogger.logger.infof("LRARecord.doEnd put %s failed", endPath);
+                LRALogger.logger.infof("LRARecord.doEnd put %s failed for LRA %s (reason: %s)",
+                        endPath, lraId, e.getMessage());
             } finally {
                 if (client != null) {
                     client.close();
@@ -526,7 +525,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
         LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s (cause %s)",
-                endPath.toASCIIString(), compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
+                endPath, compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
 
         // permanently failed so ask recovery to ignore us in the future.
         return TwoPhaseOutcome.FINISH_ERROR;
@@ -730,7 +729,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 if (LRALogger.logger.isInfoEnabled()) {
                     LRALogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
                                     "(should be compensate or complete)",
-                            endPath.toASCIIString());
+                            endPath);
                 }
 
                 httpStatus = BAD_REQUEST.getStatusCode();
@@ -772,8 +771,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 if (!(e instanceof WebApplicationException) && cause instanceof WebApplicationException) {
                     e = (WebApplicationException) cause;
                 }
-                LRALogger.logger.infof("LRARecord.forget delete %s failed: %s",
-                    forgetURI, e.getMessage());
+                LRALogger.logger.infof("LRARecord.forget delete %s failed for LRA %s (reason %s)",
+                    forgetURI, lraId, e.getMessage());
                 // TODO write a test to ensure that recovery only retries the forget request
                 return false; // force recovery to keep retrying
             } finally {
@@ -815,6 +814,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 os.packString(participantPath);
                 os.packString(compensatorData);
             } catch (IOException e) {
+                LRALogger.i18nLogger.warn_saveState(e.getMessage());
+
                 return false;
             }
         }
@@ -838,6 +839,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 compensatorData = os.unpackString();
                 accepted = status == ParticipantStatus.Completing || status == ParticipantStatus.Compensating;
             } catch (IOException | URISyntaxException e) {
+                LRALogger.i18nLogger.warn_restoreState(e.getMessage());
                 return false;
             }
         }
@@ -960,7 +962,10 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         try {
             this.recoveryURI = new URI(recoveryURI);
         } catch (URISyntaxException e) {
-            String errorMsg = recoveryURI + ": Invalid recovery id: " + e.getMessage();
+            String errorMsg = LRALogger.i18nLogger.error_invalidRecoveryUrlToJoinLRAURI(recoveryURI, lraId);
+
+            LRALogger.logger.info(errorMsg);
+
             throw new WebApplicationException(errorMsg, e,
                     Response.status(BAD_REQUEST).entity(errorMsg).build());
         }

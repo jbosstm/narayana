@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import io.narayana.lra.coordinator.internal.LRARecoveryModule;
+import io.narayana.lra.logging.LRALogger;
 
 import java.io.IOException;
 import java.net.URI;
@@ -73,6 +74,7 @@ public class LRAParentAbstractRecord extends AbstractRecord {
                 os.packString(childId.toASCIIString());
                 os.packBoolean(committed);
             } catch (IOException e) {
+                LRALogger.i18nLogger.warn_saveState(e.getMessage());
                 return false;
             }
         }
@@ -89,6 +91,7 @@ public class LRAParentAbstractRecord extends AbstractRecord {
                 childId = new URI(Objects.requireNonNull(os.unpackString()));
                 committed = os.unpackBoolean();
             } catch (IOException | URISyntaxException e) {
+                LRALogger.i18nLogger.warn_restoreState(e.getMessage());
                 return false;
             }
         }
