@@ -102,7 +102,13 @@ public class LRACDIExtension implements Extension {
      * @return Collected methods wrapped in {@link LRAParticipant} class or null if no non-JAX-RS methods have been found
      */
     private LRAParticipant getAsParticipant(ClassInfo classInfo) throws ClassNotFoundException {
-        Class<?> javaClass = getClass().getClassLoader().loadClass(classInfo.name().toString());
+        Class<?> javaClass;
+        String className = classInfo.name().toString();
+        try {
+            javaClass = getClass().getClassLoader().loadClass(className);
+        } catch (ClassNotFoundException cnfe) {
+            javaClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+        }
 
         if (javaClass.isInterface() || Modifier.isAbstract(javaClass.getModifiers()) || !isLRAParticipant(classInfo)) {
             return null;
