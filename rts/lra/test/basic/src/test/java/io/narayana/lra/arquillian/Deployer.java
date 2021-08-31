@@ -44,6 +44,9 @@ public class Deployer {
                         "io.narayana.lra.provider",
                         "io.narayana.lra.client",
                         "io.narayana.lra.arquillian.spi")
+                // adds the TestBase class, the test class itself seems to be uploaded during deployment by Arquillian
+                // then it requires the parent class as well, otherwise Weld NoClassDefFoundError is shown
+                .addClass(TestBase.class)
                 // adds the lra-participant wanted
                 .addClasses(participants)
                 .addPackages(true, org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage())
