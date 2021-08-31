@@ -196,7 +196,8 @@ public class LRAService {
         try {
             return getRM().removeCommitted(new Uid(uid));
         } catch (Exception e) {
-            return false; // the uid segment is invalid
+            LRALogger.i18nLogger.warn_cannotRemoveUidRecord(lraId, uid, e);
+            return false;
         }
     }
 

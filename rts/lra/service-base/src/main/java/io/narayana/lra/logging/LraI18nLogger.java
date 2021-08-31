@@ -157,8 +157,12 @@ public interface LraI18nLogger {
     void warn_saveState(String cause);
 
     @LogMessage(level = WARN)
-    @Message(id = 25033, value = "LRA Record: Cannot restore state (reason: %s")
+    @Message(id = 25033, value = "LRA Record: Cannot restore state (reason: %s)")
     void warn_restoreState(String cause);
+
+    @LogMessage(level = WARN)
+    @Message(id = 25034, value = "LRA Recovery cannot remove LRA id %s from the object store. The uid segment '%s' is probably invalid.")
+    void warn_cannotRemoveUidRecord(String lraId, String uid, @Cause Throwable t);
 
     /*
         Allocate new messages directly above this notice.
