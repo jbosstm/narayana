@@ -54,16 +54,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LongRunningAction extends BasicAction {
     private static final String LRA_TYPE = "/StateManager/BasicAction/LongRunningAction";
-    private final ScheduledExecutorService scheduler;
+    private static final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(10);
     private URI id;
     private URI parentId;
     private String clientId;
@@ -90,8 +90,6 @@ public class LongRunningAction extends BasicAction {
         this.clientId = clientId;
         this.finishTime = null;
         this.status = LRAStatus.Active;
-
-        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public LongRunningAction(LRAService lraService, Uid rcvUid) {
@@ -103,7 +101,6 @@ public class LongRunningAction extends BasicAction {
         this.clientId = null;
         this.finishTime = null;
         this.status = LRAStatus.Active;
-        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     /**
@@ -919,7 +916,19 @@ public class LongRunningAction extends BasicAction {
             finishTime = LocalDateTime.now(ZoneOffset.UTC).plusNanos(timeLimit * 1000000);
         }
 
-        scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
+        try {
+            scheduledAbort = scheduler.schedule(runnable, timeLimit, TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException executionException) {
+            // This exception does not need to be handled as the periodic recovery
+            // will eventually discover that this LRA is eligible for cancellation.
+            updateState(LRAStatus.Cancelling);
+            LRALogger.logger.warnf(
+                    "The LRA transaction with ID %s has not correctly scheduled the task to cancel itself." +
+                            "A recovery cycle will eventually cancel this LRA.\n" +
+                            "Exception message: %s",
+                    this.getId(),
+                    executionException.getMessage());
+        }
 
         return Response.Status.OK.getStatusCode();
     }
@@ -939,7 +948,7 @@ public class LongRunningAction extends BasicAction {
                     }
 
                     updateState(LRAStatus.Cancelling);
-                    CompletableFuture.supplyAsync(this::cancelLRA); // use a future to avoid hogging the ScheduledExecutorService
+                    cancelLRA();
                 }
             } finally {
                 lock.unlock();
