@@ -135,6 +135,8 @@
             <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
               <skipITs>false</skipITs>
+              <reportsDirectory>${project.build.directory}/failsafe-reports-arq-thorntail</reportsDirectory>
+              <summaryFile>${project.build.directory}/failsafe-reports-arq-thorntail/failsafe-summary.xml</summaryFile>
               <systemProperties>
                 <arquillian.xml>arquillian-thorntail.xml</arquillian.xml>
               </systemProperties>
@@ -308,6 +310,8 @@
             <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
               <skipITs>false</skipITs>
+              <reportsDirectory>${project.build.directory}/failsafe-reports-arq</reportsDirectory>
+              <summaryFile>${project.build.directory}/failsafe-reports-arq/failsafe-summary.xml</summaryFile>
               <systemProperties>
                 <arquillian.xml>arquillian-wildfly.xml</arquillian.xml>
                 <!-- qualifier used to identify the Wildfly cluster -->
