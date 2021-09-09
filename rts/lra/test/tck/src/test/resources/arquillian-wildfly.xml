@@ -27,7 +27,7 @@
     <container qualifier="${arquillian.lra.participant.container.qualifier}" mode="suite" default="true">
         <configuration>
             <!-- -Djboss.socket.binding.port-offset=100 shifts ports in Wildfly. This is used to avoid overlapping between the two instances of Wildfly-->
-            <property name="javaVmArguments">${server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url} -Djboss.socket.binding.port-offset=100</property>
+            <property name="javaVmArguments">${server.jvm.args} -Dlra.coordinator.url=${lra.coordinator.url} -Djboss.socket.binding.port-offset=100 -Dlra.tck.timeout.factor=${lra.tck.timeout.factor}</property>
             <property name="managementAddress">${test.application.host}</property>
             <property name="managementPort">10090</property>
             <property name="startupTimeoutInSeconds">${server.startup.timeout:60}</property>
