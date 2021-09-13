@@ -35,6 +35,7 @@ import org.eclipse.microprofile.lra.annotation.Status;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.eclipse.microprofile.lra.annotation.ws.rs.Leave;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
@@ -385,6 +386,13 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
             String timeLimitStr = terminateURIs.get(TIMELIMIT_PARAM_NAME);
             long timeLimit = timeLimitStr == null ? DEFAULT_TIMEOUT_MILLIS : Long.parseLong(timeLimitStr);
 
+            if (lraParticipantRegistry == null) {
+                try {
+                    lraParticipantRegistry = CDI.current().select(LRAParticipantRegistry.class).get();
+                } catch (IllegalStateException ise) {
+                    // ok, can be null
+                }
+            }
             LRAParticipant participant = lraParticipantRegistry != null ?
                 lraParticipantRegistry.getParticipant(resourceInfo.getResourceClass().getName()) : null;
 

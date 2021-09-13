@@ -29,6 +29,7 @@ import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.Status;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -110,6 +111,13 @@ public class LRAParticipantResource {
     }
 
     private LRAParticipant getParticipant(String participantId) {
+        if (lraParticipantRegistry == null) {
+            try {
+                lraParticipantRegistry = CDI.current().select(LRAParticipantRegistry.class).get();
+            } catch (IllegalStateException ise) {
+                // ok, can be null
+            }
+        }
         LRAParticipant participant = lraParticipantRegistry.getParticipant(participantId);
         if (participant == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).
