@@ -203,7 +203,7 @@
 date: ${date}
 binary: http://www.jboss.org/jbosstm/downloads/${tag}/binary/narayana-full-${tag}-bin.zip
 source: http://www.jboss.org/jbosstm/downloads/${tag}/src/narayana-full-${tag}-src.zip
-
+    </echo>
   </target>
   
   <target name="web-api" depends="api.check" if="api.exist" description="Update javadocs on Narayana web page">
