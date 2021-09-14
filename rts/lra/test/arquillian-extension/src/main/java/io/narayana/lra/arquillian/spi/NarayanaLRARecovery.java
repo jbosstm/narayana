@@ -57,14 +57,7 @@ public class NarayanaLRARecovery implements LRARecoveryService {
 
     @Override
     public void waitForCallbacks(URI lraId) {
-        // for tests that do not involve timeouts no action is needed,
-        // but there are races on time sensitive tests (depending upon how busy the test system is).
-        // To handle these cases introduce an arbitrary 1000 ms delay (note that since LRA provides
-        // no real-time guarantees, introducing the delay is a valid approach):
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignore) {
-        }
+        // no action needed
     }
 
     @Override
