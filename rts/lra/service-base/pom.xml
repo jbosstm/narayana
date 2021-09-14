@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>lra-parent</artifactId>
-    <version>5.12.1.Final-SNAPSHOT</version>
+    <version>5.12.1.Final</version>
   </parent>
 
   <artifactId>lra-service-base</artifactId>
