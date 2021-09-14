@@ -21,8 +21,7 @@
  */
 package io.narayana.lra.coordinator.domain.model;
 
-import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.coordinator.api.Coordinator;
 import io.narayana.lra.coordinator.domain.service.LRAService;
@@ -165,21 +164,6 @@ public class LRATest {
             return getResult(cancel, contextId);
         }
 
-        @GET
-        @Path("time-limit")
-        @Produces(MediaType.APPLICATION_JSON)
-        @LRA(value = LRA.Type.REQUIRED, timeLimit = 500, timeUnit = ChronoUnit.MILLIS)
-        public Response timeLimit(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
-            try {
-                // sleep for longer than specified in the attribute 'timeLimit'
-                // (go large, ie 2 seconds, to avoid time issues on slower systems)
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                LRALogger.logger.debugf("Interrupted because time limit elapsed", e);
-            }
-            return Response.status(Response.Status.OK).entity(lraId.toASCIIString()).build();
-        }
-
         @LRA(value = LRA.Type.NESTED, end = false)
         @PUT
         @Path("nested")
@@ -292,7 +276,6 @@ public class LRATest {
         private String restPutInvocation(URI lraURI, String path, String bodyText) {
             String id = "";
             Client client = ClientBuilder.newClient();
-
             try {
                 try (Response response = client
                         .target(TestPortProvider.generateURL("/base/test"))
@@ -402,18 +385,6 @@ public class LRATest {
         assertEquals(completions + 1, completeCount.get());
         LRAStatus status = getStatus(new URI(lraId));
         assertTrue("LRA should have closed", status == null || status == LRAStatus.Closed);
-    }
-
-    @Test
-    public void testTimeout() throws URISyntaxException {
-        int compensations = compensateCount.get();
-        String lraId = client
-            .target(TestPortProvider.generateURL("/base/test/time-limit"))
-            .request()
-            .get(String.class);
-        assertEquals(compensations + 1, compensateCount.get());
-        LRAStatus status = getStatus(new URI(lraId));
-        assertTrue("LRA should have cancelled", status == null || status == LRAStatus.Cancelled);
     }
 
     /**
@@ -854,7 +825,7 @@ public class LRATest {
     }
 
     private void clearObjectStore() {
-        final String objectStorePath = BeanPopulator.getDefaultInstance(ObjectStoreEnvironmentBean.class).getObjectStoreDir();
+        final String objectStorePath = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
         final File objectStoreDirectory = new File(objectStorePath);
 
         clearDirectory(objectStoreDirectory);
