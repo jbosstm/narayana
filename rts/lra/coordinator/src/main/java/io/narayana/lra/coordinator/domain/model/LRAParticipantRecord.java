@@ -53,6 +53,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -114,11 +116,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 if (parseException[0] != null) {
                     String errorMsg = LRALogger.i18nLogger.error_invalidCompensator(lra.getId(), parseException[0].getMessage(), linkURI);
                     LRALogger.logger.error(errorMsg);
+                    trace_progress(errorMsg);
                     throw new WebApplicationException(errorMsg, parseException[0],
                             Response.status(BAD_REQUEST).entity(errorMsg).build());
                 } else if (compensateURI == null && afterURI == null) {
                     String errorMsg = LRALogger.i18nLogger.error_missingCompensator(lra.getId(), linkURI);
                     LRALogger.logger.error(errorMsg);
+                    trace_progress(errorMsg);
                     throw new WebApplicationException(errorMsg, Response.status(BAD_REQUEST).entity(errorMsg).build());
                 }
             } else {
@@ -138,9 +142,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
             this.recoveryURI = null;
             this.compensatorData = compensatorData;
+
+            trace_progress("created");
         } catch (URISyntaxException e) {
             String logMsg = LRALogger.i18nLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI, e.getMessage());
             LRALogger.logger.error(logMsg);
+            trace_progress(logMsg);
+
             throw new WebApplicationException(logMsg, e,
                     Response.status(BAD_REQUEST).entity(logMsg).build());
         }
@@ -274,6 +282,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         URI endPath;
         Client client = null;
 
+        trace_progress("finishing");
+
         if (isFinished()) {
             return atEnd(status == ParticipantStatus.FailedToComplete || status == ParticipantStatus.FailedToCompensate
                     ? TwoPhaseOutcome.FINISH_ERROR : TwoPhaseOutcome.FINISH_OK);
@@ -325,6 +335,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         if (httpStatus == -1) {
             // the local invocation was not made so fallback to using JAX-RS
 
+            trace_progress("notifying participant");
+
             try {
                 // ask the participant to complete or compensate
                 client = ClientBuilder.newClient();
@@ -360,6 +372,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 LRALogger.logger.infof("LRARecord.doEnd put %s failed for LRA %s (reason: %s)",
                         endPath, lraId, e.getMessage());
             } finally {
+                trace_progress("notified participant");
+
                 if (client != null) {
                     client.close();
                 }
@@ -388,6 +402,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             // recovery will figure out the status via the status url
             status = compensate ? ParticipantStatus.Compensating : ParticipantStatus.Completing;
             accepted = true;
+            trace_progress("notify participant failed");
         }
 
         updateStatus(compensate);
@@ -444,11 +459,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             Response response = responseFuture.get(PARTICIPANT_TIMEOUT, TimeUnit.SECONDS);
 
             if (response.getStatus() == 200) {
+                trace_progress("notified participant");
                 return true;
             }
         } catch (Exception e) {
             LRALogger.i18nLogger.warn_cannotNotifyAfterLRAURI(target, e);
         } finally {
+            trace_progress("finished notifying participant");
             if (client != null) {
                 client.close();
             }
@@ -498,9 +515,12 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         if (afterURI == null || afterLRARequest(afterURI, lraStatus.name())) {
             afterURI = null;
 
+            trace_progress("runPostLRAActions with afterURI");
             // the post LRA actions succeeded so remove the participant from the intentions list otherwise retry
             return report ? reportFailure(lraStatus.name()) : TwoPhaseOutcome.FINISH_OK;
         }
+
+        trace_progress("runPostLRAActions");
 
         return report ? reportFailure(lraStatus.name()) : TwoPhaseOutcome.HEURISTIC_HAZARD;
     }
@@ -524,6 +544,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
     private int reportFailure(boolean compensate, URI endPath, String failureReason) {
         status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
+        trace_progress("reportFailure");
         LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s (cause %s)",
                 endPath, compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
 
@@ -540,11 +561,15 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         // first check that this isn't a nested coordinator running locally
         URI nestedLraId = extractParentLRA(endPath);
 
+        trace_progress("retryGetEndStatus");
+
         if (nestedLraId != null && lraService != null) {
             LongRunningAction transaction = lraService.getTransaction(nestedLraId);
 
             if (transaction != null) {
                 LRAStatus cStatus = transaction.getLRAStatus();
+
+                trace_progress("retryGetEndStatus: local status " + cStatus);
 
                 if (cStatus == null) {
                     LRALogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
@@ -640,6 +665,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // force recovery to keep retrying
             } finally {
+                trace_progress("retryGetEndStatus");
                 Current.pop();
                 if (client != null) {
                     client.close();
@@ -708,6 +734,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 } catch (UnsupportedEncodingException | URISyntaxException ignore) {
                 }
             }
+
+            trace_progress("extractParentLRA: not local");
         }
 
         return null;
@@ -776,6 +804,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 // TODO write a test to ensure that recovery only retries the forget request
                 return false; // force recovery to keep retrying
             } finally {
+                trace_progress("forget");
                 Current.pop();
                 if (client != null) {
                     client.close();
@@ -817,6 +846,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 LRALogger.i18nLogger.warn_saveState(e.getMessage());
 
                 return false;
+            } finally {
+                trace_progress("saved");
             }
         }
 
@@ -841,6 +872,8 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
             } catch (IOException | URISyntaxException e) {
                 LRALogger.i18nLogger.warn_restoreState(e.getMessage());
                 return false;
+            } finally {
+                trace_progress("restored");
             }
         }
 
@@ -999,5 +1032,17 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         String path = lraId.getPath();
 
         return path.substring(path.lastIndexOf('/') + 1);
+    }
+
+    private void trace_progress(String reason) {
+        if (LRALogger.logger.isTraceEnabled()) {
+            LRALogger.logger.tracef("%s: Participant id: %s, LRA id: %s, reason: %s, state: %s, accepted: %b",
+                    LocalDateTime.now(ZoneOffset.UTC), // use the same time function as used for LRA timeouts
+                    lraId,
+                    participantPath,
+                    reason,
+                    status,
+                    accepted);
+        }
     }
 }
