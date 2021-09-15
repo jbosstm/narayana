@@ -402,6 +402,11 @@ public class LongRunningAction extends BasicAction {
     public int finishLRA(boolean cancel) {
         ReentrantLock lock = null;
 
+        // check whether the transaction should cancel due to a timeout:
+        if (finishTime != null && !cancel && ChronoUnit.MILLIS.between(LocalDateTime.now(ZoneOffset.UTC), finishTime) <= 0) {
+            cancel = true;
+        }
+
         try {
             lock = lraService.tryLockTransaction(getId());
 
