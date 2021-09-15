@@ -423,7 +423,7 @@ public class LongRunningAction extends BasicAction {
 
             if (lock == null) {
                 if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.debugf("Transaction.endLRA Some other thread is finishing LRA %s",
+                    LRALogger.logger.debugf("LongRunningAction.endLRA Some other thread is finishing LRA %s",
                             getId().toASCIIString());
                 }
 
@@ -989,7 +989,7 @@ public class LongRunningAction extends BasicAction {
 
                 if (actionStatus == ActionStatus.RUNNING || actionStatus == ActionStatus.ABORT_ONLY) {
                     if (LRALogger.logger.isDebugEnabled()) {
-                        LRALogger.logger.debugf("Transaction.abortLRA cancelling LRA `%s", id);
+                        LRALogger.logger.debugf("LongRunningAction.abortLRA cancelling LRA `%s", id);
                     }
 
                     updateState(LRAStatus.Cancelling);
