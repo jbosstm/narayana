@@ -170,7 +170,7 @@ public class LRARecoveryModule implements RecoveryModule {
                     // Record already exists in failedLRARecord location, hence removing it from the LRARecord location
                     moved = true;
                     if (!_recoveryStore.remove_committed(failedUid, _transactionType)) {
-                        LRALogger.i18nLogger.warn_UnableToRemoveDuplicateFailedLRARecord(
+                        LRALogger.i18nLogger.warn_UnableToRemoveDuplicateFailedLRAParticipantRecord(
                                 failedUid.toString(), failedLRAType, _transactionType);
                         moved = false;
                     }

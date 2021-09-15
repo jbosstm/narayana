@@ -77,7 +77,7 @@ public interface LraI18nLogger {
     String error_invalidStringFormatOfUrl(String string, @Cause Throwable t);
 
     @Message(id = 25011, value = "Invalid LRA id format to create LRA record from LRA id '%s', link URI '%s' (reason: %s)")
-    String error_invalidFormatToCreateLRARecord(String lraId, String linkURI, String reason);
+    String error_invalidFormatToCreateLRAParticipantRecord(String lraId, String linkURI, String reason);
 
     @Message(id = 25012, value = "Cannot found compensator url '%s' for lra '%s'")
     String warn_cannotFoundCompensatorUrl(String recoveryUrl, String lraId);
@@ -129,9 +129,9 @@ public interface LraI18nLogger {
     String warn_LRAStatusInDoubt(String reason);
 
     @LogMessage(level = WARN)
-    @Message(id = 25026, value = "Unable to remove the failed duclicate failed LRA record (Uid: '%s') " +
+    @Message(id = 25026, value = "Unable to remove the failed duplicate failed LRA record (Uid: '%s') " +
             "(which is already present in the failedLRA record location type: '%s'.) from LRA Record location: '%s'")
-    void warn_UnableToRemoveDuplicateFailedLRARecord(String failedUid, String failedLRAType, String lraType);
+    void warn_UnableToRemoveDuplicateFailedLRAParticipantRecord(String failedUid, String failedLRAType, String lraType);
 
     @LogMessage(level = WARN)
     @Message(id = 25027, value = "An exception was thrown while moving failed LRA record (Uid: '%s'). " +

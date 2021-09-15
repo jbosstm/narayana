@@ -145,7 +145,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
             trace_progress("created");
         } catch (URISyntaxException e) {
-            String logMsg = LRALogger.i18nLogger.error_invalidFormatToCreateLRARecord(lraId.toASCIIString(), linkURI, e.getMessage());
+            String logMsg = LRALogger.i18nLogger.error_invalidFormatToCreateLRAParticipantRecord(lraId.toASCIIString(), linkURI, e.getMessage());
             LRALogger.logger.error(logMsg);
             trace_progress(logMsg);
 
@@ -368,9 +368,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                     responseData = response.readEntity(String.class);
                 }
             } catch (Exception e) {
-                // log an informational message (failure to contact participants is unexceptional so don't dump the stack)
-                LRALogger.logger.infof("LRARecord.doEnd put %s failed for LRA %s (reason: %s)",
-                        endPath, lraId, e.getMessage());
+                if (LRALogger.logger.isInfoEnabled()) {
+                    LRALogger.logger.infof("LRAParticipantRecord.doEnd(%s) HTTP PUT at %s failed for LRA %s (reason: %s)",
+                            compensate ? "compensate" : "complete", endPath, lraId, e.getMessage());
+                    if (LRALogger.logger.isDebugEnabled()) {
+                        LRALogger.logger.debug("LRAParticipantRecord.doEnd stacktrace", e);
+                    }
+                }
             } finally {
                 trace_progress("notified participant");
 
@@ -395,7 +399,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 && httpStatus != Response.Status.NO_CONTENT.getStatusCode()
                 && !accepted) {
             if (LRALogger.logger.isDebugEnabled()) {
-                LRALogger.logger.debugf("LRARecord.doEnd put %s failed with status: %d",
+                LRALogger.logger.debugf("LRAParticipantRecord.doEnd put %s failed with status: %d",
                         endPath, httpStatus);
             }
 
@@ -545,7 +549,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         status = compensate ? ParticipantStatus.FailedToCompensate : ParticipantStatus.FailedToComplete;
 
         trace_progress("reportFailure");
-        LRALogger.logger.warnf("LRARecord: participant %s reported a failure to %s (cause %s)",
+        LRALogger.logger.warnf("LRAParticipantRecord: participant %s reported a failure to %s (cause %s)",
                 endPath, compensate ? COMPENSATE_REL : COMPLETE_REL, failureReason);
 
         // permanently failed so ask recovery to ignore us in the future.
@@ -572,7 +576,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 trace_progress("retryGetEndStatus: local status " + cStatus);
 
                 if (cStatus == null) {
-                    LRALogger.logger.warnf("LRARecord.retryGetEndStatus: local LRA %s accepted but has a null status",
+                    LRALogger.logger.warnf("LRAParticipantRecord.retryGetEndStatus: local LRA %s accepted but has a null status",
                             endPath);
                     return -1; // shouldn't happen since it imples it's still be active - force end to be called
                 }
@@ -642,7 +646,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                         case FailedToComplete:
                             // the participant could not finish - log a warning and forget
                             LRALogger.logger.warnf(
-                                    "LRARecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
+                                    "LRAParticipantRecord.doEnd(compensate %b) get status %s did not finish: %s: WILL NOT RETRY",
                                     compensate, endPath, status);
 
                             if (forgetURI != null) {
@@ -659,7 +663,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 }
             } catch (Throwable e) {
                 if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.infof("LRARecord.doEnd status URI %s is invalid (%s)",
+                    LRALogger.logger.infof("LRAParticipantRecord.doEnd status URI %s is invalid (%s)",
                             statusURI, e.getMessage());
                 }
 
@@ -755,7 +759,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
             if (!isCompensate && !isComplete) {
                 if (LRALogger.logger.isInfoEnabled()) {
-                    LRALogger.logger.infof("LRARecord.doEnd invalid nested participant url %s" +
+                    LRALogger.logger.infof("LRAParticipantRecord.doEnd invalid nested participant url %s" +
                                     "(should be compensate or complete)",
                             endPath);
                 }
@@ -799,7 +803,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
                 if (!(e instanceof WebApplicationException) && cause instanceof WebApplicationException) {
                     e = (WebApplicationException) cause;
                 }
-                LRALogger.logger.infof("LRARecord.forget delete %s failed for LRA %s (reason %s)",
+                LRALogger.logger.infof("LRAParticipantRecord.forget delete %s failed for LRA %s (reason %s)",
                     forgetURI, lraId, e.getMessage());
                 // TODO write a test to ensure that recovery only retries the forget request
                 return false; // force recovery to keep retrying
@@ -813,7 +817,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
         } else {
             LRALogger.logger.warnf(
-                "LRARecord.forget() LRA: %s: cannot forget %s: missing forget URI, status: %s",
+                "LRAParticipantRecord.forget() LRA: %s: cannot forget %s: missing forget URI, status: %s",
                 lraId, recoveryURI, status);
         }
 
@@ -1036,7 +1040,7 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
     private void trace_progress(String reason) {
         if (LRALogger.logger.isTraceEnabled()) {
-            LRALogger.logger.tracef("%s: Participant id: %s, LRA id: %s, reason: %s, state: %s, accepted: %b",
+            LRALogger.logger.tracef("%s: LRA id: %s, Participant id: %s, reason: %s, state: %s, accepted: %b",
                     LocalDateTime.now(ZoneOffset.UTC), // use the same time function as used for LRA timeouts
                     lraId,
                     participantPath,
