@@ -153,6 +153,21 @@ public class LRATest {
         }
 
         @GET
+        @Path("time-limit")
+        @Produces(MediaType.APPLICATION_JSON)
+        @LRA(value = LRA.Type.REQUIRED, timeLimit = 500, timeUnit = ChronoUnit.MILLIS)
+        public Response timeLimit(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI lraId) {
+            try {
+                // sleep for longer than specified in the attribute 'timeLimit'
+                // (go large, ie 2 seconds, to avoid time issues on slower systems)
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                LRALogger.logger.debugf("Interrupted because time limit elapsed", e);
+            }
+            return Response.status(Response.Status.OK).entity(lraId.toASCIIString()).build();
+        }
+
+        @GET
         @Path("timed-action")
         @LRA(value = LRA.Type.REQUIRED, end = false, timeLimit = LRA_SHORT_TIMELIMIT) // the default unit is SECONDS
         public Response actionWithLRA(@HeaderParam(LRA_HTTP_CONTEXT_HEADER) URI contextId,
@@ -732,6 +747,18 @@ public class LRATest {
     @Test
     public void testCancel() {
         runLRA(true);
+    }
+
+    @Test
+    public void testTimeout() throws URISyntaxException {
+        int compensations = compensateCount.get();
+        String lraId = client
+                .target(TestPortProvider.generateURL("/base/test/time-limit"))
+                .request()
+                .get(String.class);
+        assertEquals(compensations + 1, compensateCount.get());
+        LRAStatus status = getStatus(new URI(lraId));
+        assertTrue("LRA should have cancelled", status == null || status == LRAStatus.Cancelled);
     }
 
     private void runLRA(boolean cancel) {
