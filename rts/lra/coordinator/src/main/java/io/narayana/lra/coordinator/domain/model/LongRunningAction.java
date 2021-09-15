@@ -554,7 +554,11 @@ public class LongRunningAction extends BasicAction {
             updateState(LRAStatus.Closing);
         } // otherwise status is (cancel ? LRAStatus.Cancelled : LRAStatus.Closed)
 
-        finishTime = LocalDateTime.now(ZoneOffset.UTC);
+        if (isTopLevel()) {
+            // note that we don't update the finish time for nested LRAs since their final state depends on the parent
+            finishTime = LocalDateTime.now(ZoneOffset.UTC);
+        }
+
         trace_progress("doEnd update finishTime");
 
         updateState(); // ensure the record is removed if it finished otherwise persisted the state
