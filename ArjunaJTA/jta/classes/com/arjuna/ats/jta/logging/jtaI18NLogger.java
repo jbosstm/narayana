@@ -614,6 +614,8 @@ public interface jtaI18NLogger {
     @Message(id = 16152, value = "TransactionScoped context is not active as there is no active transaction on the thread", format = MESSAGE_FORMAT)
     String get_contextual_is_not_active();
 
+    @Message(id = 16153, value = "Transaction is not allowed for invocation", format = MESSAGE_FORMAT)
+    public String get_tx_never();
 
     /*
         Allocate new messages directly above this notice.
