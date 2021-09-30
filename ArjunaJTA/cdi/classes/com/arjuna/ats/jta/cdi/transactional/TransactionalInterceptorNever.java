@@ -54,7 +54,7 @@ public class TransactionalInterceptorNever extends TransactionalInterceptorBase 
     @Override
     protected Object doIntercept(TransactionManager tm, Transaction tx, InvocationContext ic) throws Exception {
         if (tx != null) {
-            throw new TransactionalException(jtaLogger.i18NLogger.get_tx_required(), new InvalidTransactionException());
+            throw new TransactionalException(jtaLogger.i18NLogger.get_tx_never(), new InvalidTransactionException());
         }
         return invokeInNoTx(ic);
     }
