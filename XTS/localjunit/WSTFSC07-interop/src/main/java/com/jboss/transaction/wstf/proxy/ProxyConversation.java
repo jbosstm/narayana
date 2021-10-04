@@ -21,6 +21,7 @@
 package com.jboss.transaction.wstf.proxy;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,11 +37,11 @@ public class ProxyConversation
     /**
      * The conversation map.
      */
-    private static Map conversationMap = new TreeMap() ;
+    private static final Map<String, List<String>> conversationMap = new TreeMap<>() ;
     /**
      * The conversation state map.
      */
-    private static Map conversationStateMap = new TreeMap() ;
+    private static final Map<String,ProxyConversationState> conversationStateMap = new TreeMap<>() ;
     
     /**
      * The marker for an internal id.
@@ -58,7 +59,7 @@ public class ProxyConversation
     public static synchronized String createConversation()
     {
         final String conversationId = INTERNAL_ID + Integer.toString(++currentConversationId) ;
-        conversationMap.put(mapConversationId(conversationId), new ArrayList()) ;
+        conversationMap.put(mapConversationId(conversationId), new ArrayList<>()) ;
 System.out.println("KEV: created conversation " + conversationId) ;        
         return conversationId ;
     }
@@ -70,9 +71,9 @@ System.out.println("KEV: created conversation " + conversationId) ;
      */
     public static synchronized String[] removeConversation(final String conversationId)
     {
-        final ArrayList list = (ArrayList)conversationMap.remove(mapConversationId(conversationId)) ;
+        final List<String> list = conversationMap.remove(mapConversationId(conversationId)) ;
 System.out.println("KEV: removed conversation " + conversationId) ;        
-        return (list == null ? new String[0] : (String[])list.toArray(new String[list.size()])) ;
+        return (list == null ? new String[0] : list.toArray(new String[0])) ;
     }
     
     /**
@@ -82,7 +83,7 @@ System.out.println("KEV: removed conversation " + conversationId) ;
      */
     public static synchronized void appendConversation(final String conversationId, final String message)
     {
-        final ArrayList list = (ArrayList)conversationMap.get(mapConversationId(conversationId)) ;
+        final List<String> list = conversationMap.get(mapConversationId(conversationId)) ;
         if (list != null)
         {
             list.add(message) ;
@@ -106,7 +107,7 @@ System.out.println("KEV: removed conversation " + conversationId) ;
      */
     public static synchronized ProxyConversationState getConversationState(final String conversationId)
     {
-        return (ProxyConversationState)conversationStateMap.get(mapConversationId(conversationId)) ;
+        return conversationStateMap.get(mapConversationId(conversationId)) ;
     }
     
     /**

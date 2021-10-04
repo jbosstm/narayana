@@ -75,7 +75,7 @@ import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxStatusMediaType;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
+import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.spi.Registry;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -90,7 +90,7 @@ public class BaseTest {
     protected static final Logger log = Logger.getLogger(BaseTest.class);
 
     protected static final ExecutorService executor = Executors.newFixedThreadPool(4);
-    protected static boolean USE_RESTEASY = false;
+    protected static boolean USE_NETTY = false;
     protected static boolean USE_UNDERTOW = true;
     private static HttpServer grizzlyServer;
     protected static final String USE_SPDY_PROP = "rts.usespdy";
@@ -106,7 +106,7 @@ public class BaseTest {
     protected static final String PURL = SURL + PSEGMENT;
     protected static final String PURL_NO_RESPONSE = PURL + "/" + NO_RESPONSE_SEGMENT;
     protected static String TXN_MGR_URL = SURL + "tx/transaction-manager";
-    private static TJWSEmbeddedJaxrsServer server = null;
+    private static NettyJaxrsServer netty = null;
     private static SelectorThread threadSelector = null;
     private static UndertowJaxrsServer undertow;
 
@@ -125,11 +125,11 @@ public class BaseTest {
     }
 
     protected static void startRestEasy(Class<?> ... classes) throws Exception {
-        server = new TJWSEmbeddedJaxrsServer();
-        server.setPort(PORT);
-        server.start();
-        Registry registry = server.getDeployment().getRegistry();
-        ResteasyProviderFactory factory = server.getDeployment().getDispatcher().getProviderFactory();
+        netty = new NettyJaxrsServer();
+        netty.setPort(PORT);
+        netty.start();
+        Registry registry = netty.getDeployment().getRegistry();
+        ResteasyProviderFactory factory = netty.getDeployment().getDispatcher().getProviderFactory();
 
         if (classes != null)
             for (Class<?> clazz : classes)
@@ -185,7 +185,7 @@ public class BaseTest {
         if (USE_SPDY)
             TxSupport.setHttpConnectionCreator(new SpdyConnection());
 
-        if (USE_RESTEASY)
+        if (USE_NETTY)
             startRestEasy(classes);
         else if (USE_UNDERTOW)
             startUndertow(classes);
@@ -288,9 +288,9 @@ public class BaseTest {
             undertow = null;
         }
 
-        if (server != null) {
-            server.stop();
-            server = null;
+        if (netty != null) {
+            netty.stop();
+            netty = null;
         }
 
         if (threadSelector != null) {

@@ -17,6 +17,7 @@ import org.jboss.narayana.rest.integration.api.Participant;
 import org.jboss.narayana.rest.integration.api.Prepared;
 import org.jboss.narayana.rest.integration.api.ReadOnly;
 import org.jboss.narayana.rest.integration.test.common.LoggingParticipant;
+import org.jboss.resteasy.core.ResteasyDeploymentImpl;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.test.TestPortProvider;
@@ -55,7 +56,7 @@ public final class ParticipantResourceTestCase {
         List<String> resourceClasses = new ArrayList<String>();
         resourceClasses.add("org.jboss.narayana.rest.integration.ParticipantResource");
 
-        ResteasyDeployment resteasyDeployment = new ResteasyDeployment();
+        ResteasyDeployment resteasyDeployment = new ResteasyDeploymentImpl();
         resteasyDeployment.setResourceClasses(resourceClasses);
 
         NETTY = new NettyJaxrsServer();

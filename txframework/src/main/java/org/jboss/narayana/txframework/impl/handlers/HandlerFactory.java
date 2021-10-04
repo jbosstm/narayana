@@ -31,7 +31,7 @@ import org.jboss.narayana.txframework.api.annotation.transaction.Compensatable;
 import org.jboss.narayana.txframework.api.exception.TXFrameworkException;
 import org.jboss.narayana.txframework.impl.ServiceInvocationMeta;
 import org.jboss.narayana.txframework.impl.handlers.wsba.WSBAHandler;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -94,7 +94,7 @@ public class HandlerFactory {
         }
 
         //Try REST-AT
-        HttpServletRequest req = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+        HttpServletRequest req = ResteasyProviderFactoryImpl.getInstance().getContextData(HttpServletRequest.class);
         String enlistUrl = req.getHeader("enlistURL");
         if (enlistUrl != null) {
             String[] parts = enlistUrl.split("/");

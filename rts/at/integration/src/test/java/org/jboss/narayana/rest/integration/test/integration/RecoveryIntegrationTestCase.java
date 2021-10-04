@@ -1,6 +1,5 @@
 package org.jboss.narayana.rest.integration.test.integration;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.provider.HttpResponseException;
@@ -18,6 +17,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonString;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -28,7 +30,7 @@ import java.io.File;
 @RunWith(Arquillian.class)
 public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCase {
 
-    private static final String DEPENDENCIES = "Dependencies: org.jboss.narayana.rts,org.jboss.jts,org.codehaus.jettison\n";
+    private static final String DEPENDENCIES = "Dependencies: org.jboss.narayana.rts,org.jboss.jts\n";
 
     private static final int RECOVERY_PERIOD = 4;
 
@@ -74,14 +76,14 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
 
         TransactionStatusElement status;
         int cycles = 0;
-        JSONArray partricipantsInformation;
+        JsonArray partricipantsInformation;
 
         do {
             Thread.sleep(RECOVERY_PERIOD * 2000);
             partricipantsInformation = getParticipantsInformation();
-        } while (cycles++ < RECOVERY_WAIT_CYCLES && partricipantsInformation.length() > 0);
+        } while (cycles++ < RECOVERY_WAIT_CYCLES && partricipantsInformation.size() > 0);
 
-        if (partricipantsInformation.length() > 0) {
+        if (partricipantsInformation.size() > 0) {
             Assert.fail("Recovery failed");
         }
     }
@@ -141,15 +143,16 @@ public final class RecoveryIntegrationTestCase extends AbstractIntegrationTestCa
         Assert.assertEquals(204, clientResponse.getStatus());
     }
 
-    private JSONArray getParticipantsInformation() {
+    private JsonArray getParticipantsInformation() {
         try {
             final Response response = ClientBuilder.newClient().target(DEPLOYMENT_URL + "/"
                     + RestATManagementResource.BASE_URL_SEGMENT + "/"
                     + RestATManagementResource.PARTICIPANTS_URL_SEGMENT).request().get();
-            return new JSONArray(response.readEntity(String.class));
+            JsonString jsonString = response.readEntity(JsonString.class);
+            return Json.createArrayBuilder().add(jsonString).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONArray();
+            return Json.createArrayBuilder().build();
         }
     }
 

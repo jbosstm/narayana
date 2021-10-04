@@ -20,15 +20,13 @@
  */
 package org.jboss.jbossts.txbridge.tests.outbound.client;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
+import com.arjuna.mw.wst11.client.WSTXFeature;
+import org.jboss.jbossts.txbridge.outbound.JTAOverWSATFeature;
+import org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler;
 
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.ServletConfig;
@@ -42,13 +40,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.Handler;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.jboss.jbossts.txbridge.outbound.JTAOverWSATFeature;
-import org.jboss.jbossts.txbridge.outbound.JaxWSTxOutboundBridgeHandler;
-
-import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
-import com.arjuna.mw.wst11.client.WSTXFeature;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "Outbound Test Client AT Servlet", urlPatterns = TestATClient.URL_PATTERN)
 public class TestATClient extends HttpServlet {
@@ -104,11 +103,11 @@ public class TestATClient extends HttpServlet {
 
         CommonTestService service = getServiceByClientType(clientType, isWSATService, isJTAOverWSATFeatureEnabled,
                 isWSTXFeatureEnabled);
-        JSONArray result = executeTest(service, isTransaction, isCommit, clientType);
+        JsonArray result = executeTest(service, isTransaction, isCommit, clientType);
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        out.println(result.toString());
+        Json.createWriter(out).writeArray(result);
         out.close();
     }
 
@@ -122,8 +121,8 @@ public class TestATClient extends HttpServlet {
      * @param clientType
      * @return
      */
-    private JSONArray executeTest(CommonTestService service, boolean isTransaction, boolean isCommit, int clientType) {
-        JSONArray invocations = null;
+    private JsonArray executeTest(CommonTestService service, boolean isTransaction, boolean isCommit, int clientType) {
+        JsonArray invocations = null;
 
         if (clientType != CLIENT_WITH_MANUAL_HANDLERS) {
             service.reset();
@@ -149,11 +148,11 @@ public class TestATClient extends HttpServlet {
         }
 
         if (clientType != CLIENT_WITH_MANUAL_HANDLERS) {
-            invocations = new JSONArray(service.getTwoPhaseCommitInvocations());
+            invocations = Json.createArrayBuilder(service.getTwoPhaseCommitInvocations()).build();
         } else {
             try {
                 userTransaction.begin();
-                invocations = new JSONArray(service.getTwoPhaseCommitInvocations());
+                invocations = Json.createArrayBuilder(service.getTwoPhaseCommitInvocations()).build();
                 userTransaction.commit();
             } catch (Exception e) {
                 throw new RuntimeException(e);

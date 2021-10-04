@@ -242,17 +242,17 @@ public class CoordinatorApiIT extends TestBase {
      * GET - /{lraId}/status
      * Finding a status of a non existing LRA or wrong LRA id.
      */
-    @Test
-    public void getLRAStatusFailed() {
-        String nonExistingLRAUrl = "http://localhost:1234/Non-Existing-LRA-id";
-        try (Response response = client.target(coordinatorUrl).path(nonExistingLRAUrl).path("status")
+    public void getLRAStatusFailed() throws UnsupportedEncodingException {
+        String nonExistingLRAId = "http://localhost:1234/Non-Existing-LRA-id";
+        String nonExistingLRAIdEncodedForUrl = URLEncoder.encode("http://localhost:1234/Non-Existing-LRA-id", StandardCharsets.UTF_8.name());
+        try (Response response = client.target(coordinatorUrl).path(nonExistingLRAIdEncodedForUrl).path("status")
                 .request().header(LRA_API_VERSION_HEADER_NAME, version).get()) {
-            Assert.assertEquals("URL " + nonExistingLRAUrl + " was expected not being found, GET/404.",
+            Assert.assertEquals("LRA ID " + nonExistingLRAIdEncodedForUrl + " was expected not being found, GET/404.",
                     Status.NOT_FOUND.getStatusCode(), response.getStatus());
             Assert.assertEquals("Expected API header to be returned with the version provided in request",
                     version, response.getHeaderString(LRA_API_VERSION_HEADER_NAME));
             MatcherAssert.assertThat("Expected the failure message to contain the wrong LRA id",
-                    response.readEntity(String.class), containsString(nonExistingLRAUrl));
+                    response.readEntity(String.class), containsString(nonExistingLRAId));
         }
 
         String nonExistingLRAWrongUrlFormat = "Non-Existing-LRA-id";
