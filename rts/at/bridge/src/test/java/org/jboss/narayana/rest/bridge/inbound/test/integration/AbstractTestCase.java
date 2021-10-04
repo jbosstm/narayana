@@ -21,8 +21,6 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.integration;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
@@ -39,10 +37,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.StringReader;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -50,7 +53,7 @@ import java.io.File;
 public abstract class AbstractTestCase {
 
     protected static final String ManifestMF = "Manifest-Version: 1.0\n"
-            + "Dependencies: org.jboss.jts, org.jboss.narayana.rts, org.jboss.logging, org.codehaus.jettison\n";
+            + "Dependencies: org.jboss.jts, org.jboss.narayana.rts, org.jboss.logging\n";
 
     protected static final String CONTAINER_NAME = "jboss";
 
@@ -81,10 +84,9 @@ public abstract class AbstractTestCase {
     protected Deployer deployer;
 
     public static WebArchive getEmptyWebArchive() {
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, DEPLOYMENT_NAME + ".war")
+        return ShrinkWrap
+                .create(WebArchive.class, DEPLOYMENT_NAME + ".war")
                 .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF");
-
-        return archive;
     }
 
     @Before
@@ -175,17 +177,10 @@ public abstract class AbstractTestCase {
         Assert.assertNotNull(recoveryUrl);
     }
 
-    protected JSONArray getResourceInvocations(final String resourceUrl) {
+    protected JsonArray getResourceInvocations(final String resourceUrl) {
         final String response = ClientBuilder.newClient().target(resourceUrl).request().get(String.class);
-        final JSONArray jsonArray;
-
-        try {
-            jsonArray = new JSONArray(response);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        return jsonArray;
+        JsonReader reader = Json.createReader(new StringReader(response));
+        return reader.readArray();
     }
 
     protected Response postRestATResource(final String resourceUrl) {
@@ -203,11 +198,11 @@ public abstract class AbstractTestCase {
     private static boolean deleteDirectory(final File path) {
         if (path.exists()) {
             final File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
                 } else {
-                    files[i].delete();
+                    file.delete();
                 }
             }
         }
@@ -234,9 +229,9 @@ public abstract class AbstractTestCase {
 
     /**
      * Checking if the parameter <code>recordToAssert</code>
-     * is placed exactly once in the {@link JSONArray}.
+     * is placed exactly once in the {@link JsonArray}.
      */
-    protected void assertJsonArray(JSONArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) throws JSONException {
+    protected void assertJsonArray(JsonArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) {
         if (recordToAssert == null) throw new NullPointerException("recordToAssert");
         boolean containsJsonArrayExpectedCount = containsJsonArray(invocationsJSONArray, recordToAssert, expectedRecordFoundCount);
         if (!containsJsonArrayExpectedCount) {
@@ -248,10 +243,10 @@ public abstract class AbstractTestCase {
         }
     }
 
-    protected boolean containsJsonArray(JSONArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) throws JSONException {
+    protected boolean containsJsonArray(JsonArray invocationsJSONArray, String recordToAssert, int expectedRecordFoundCount) {
         int recordFoundCount = 0;
-        for (int i = 0; i < invocationsJSONArray.length(); i++) {
-            if (recordToAssert.equals(invocationsJSONArray.get(i))) {
+        for (JsonValue jsonValue : invocationsJSONArray) {
+            if (recordToAssert.equals(jsonValue.toString().replaceAll("^\"(.*)\"$", "$1"))) {
                 recordFoundCount++;
             }
         }

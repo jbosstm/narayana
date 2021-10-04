@@ -46,7 +46,6 @@
     <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
     <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
     <version.cdi-api>2.0</version.cdi-api>
-    <version.jackson>2.9.10.1</version.jackson>
 
     <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
     <version.jboss-modules>1.10.2.Final</version.jboss-modules>

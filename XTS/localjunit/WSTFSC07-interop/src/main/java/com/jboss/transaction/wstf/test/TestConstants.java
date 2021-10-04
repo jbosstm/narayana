@@ -210,7 +210,7 @@ public class TestConstants
     
     static
     {
-        final TreeMap descriptions = new TreeMap() ;
+        final TreeMap<String,String> descriptions = new TreeMap<>() ;
         
         descriptions.put(NAME_TEST_AT_1_1, DESCRIPTION_TEST_1_1) ;
         descriptions.put(NAME_TEST_1_2, DESCRIPTION_TEST_1_2) ;

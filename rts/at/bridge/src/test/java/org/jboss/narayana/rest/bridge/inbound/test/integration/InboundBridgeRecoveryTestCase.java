@@ -21,7 +21,6 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.integration;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.star.provider.HttpResponseException;
@@ -35,7 +34,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonReader;
 import javax.ws.rs.client.ClientBuilder;
+import java.io.StringReader;
 
 /**
  *
@@ -88,14 +91,14 @@ public class InboundBridgeRecoveryTestCase extends AbstractTestCase {
         restartContainer(VM_ARGUMENTS);
 
         int cycles = 0;
-        JSONArray partricipantsInformation;
+        JsonArray partricipantsInformation;
 
         do {
             Thread.sleep(RECOVERY_PERIOD * 2000);
             partricipantsInformation = getParticipantsInformation();
-        } while (cycles++ < RECOVERY_WAIT_CYCLES && partricipantsInformation.length() > 0);
+        } while (cycles++ < RECOVERY_WAIT_CYCLES && partricipantsInformation.size() > 0);
 
-        if (partricipantsInformation.length() > 0) {
+        if (partricipantsInformation.size() > 0) {
             Assert.fail("Recovery failed");
         }
     }
@@ -137,15 +140,16 @@ public class InboundBridgeRecoveryTestCase extends AbstractTestCase {
         }
     }
 
-    private JSONArray getParticipantsInformation() {
+    private JsonArray getParticipantsInformation() {
         try {
             final String response = ClientBuilder.newClient().target(DEPLOYMENT_URL + "/"
                     + RestATManagementResource.BASE_URL_SEGMENT + "/"
                     + RestATManagementResource.PARTICIPANTS_URL_SEGMENT).request().get(String.class);
-            return new JSONArray(response);
+            JsonReader reader = Json.createReader(new StringReader(response));
+            return reader.readArray();
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONArray();
+            return Json.createArrayBuilder().build();
         }
     }
 

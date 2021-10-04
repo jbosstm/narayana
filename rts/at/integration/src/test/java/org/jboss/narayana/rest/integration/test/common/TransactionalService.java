@@ -1,5 +1,7 @@
 package org.jboss.narayana.rest.integration.test.common;
 
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -9,7 +11,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
 import org.jboss.narayana.rest.integration.api.Aborted;
@@ -38,9 +39,9 @@ public final class TransactionalService {
             return Response.status(404).build();
         }
 
-        final JSONArray jsonArray = new JSONArray(((LoggingParticipant)information.getParticipant()).getInvocations());
+        final JsonArray jsonArray = Json.createArrayBuilder(((LoggingParticipant) information.getParticipant()).getInvocations()).build();
 
-        return Response.ok().entity(jsonArray.toString()).build();
+        return Response.ok().entity(jsonArray).build();
     }
 
     @POST

@@ -36,7 +36,7 @@ public class CoordinationContextManager {
     /**
      * The coordination context associated with the thread.
      */
-    private static final ThreadLocal THREAD_CONTEXT = new ThreadLocal() ;
+    private static final ThreadLocal<CoordinationContextType> THREAD_CONTEXT = new ThreadLocal<>() ;
 
     /**
      * Get the coordination context from the message context if present.
@@ -65,7 +65,7 @@ public class CoordinationContextManager {
      */
     public static CoordinationContextType getThreadContext()
     {
-        return (CoordinationContextType)THREAD_CONTEXT.get() ;
+        return THREAD_CONTEXT.get() ;
     }
 
     /**

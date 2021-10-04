@@ -56,12 +56,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
-      <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
       <version>${version.org.jboss.resteasy}</version>
       <scope>provided</scope>

@@ -1,6 +1,7 @@
 package org.jboss.jbossts.txbridge.tests.outbound.junit;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +17,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.jboss.arquillian.container.test.api.ContainerController;
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -35,6 +34,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.json.JsonArray;
 
 /**
  *
@@ -77,7 +78,7 @@ public final class DisabledContextPropagationTests {
                 .addClass(org.jboss.jbossts.txbridge.tests.outbound.client.TestATService.class)
                 .addClass(org.jboss.jbossts.txbridge.tests.outbound.client.TestNonATService.class)
                 .addClass(org.jboss.jbossts.txbridge.tests.outbound.client.TestATClient.class)
-                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.xts,org.jboss.jts,org.codehaus.jettison\n"),
+                .addAsManifestResource(new StringAsset("Dependencies: org.jboss.xts,org.jboss.jts\n"),
                         "MANIFEST.MF");
         return archive;
     }
@@ -374,8 +375,7 @@ public final class DisabledContextPropagationTests {
         assertInvocations(invocations, "rollback");
     }
 
-    private List<String> makeRequest(URL baseURL, List<NameValuePair> parameters) throws ClientProtocolException, IOException,
-            JSONException {
+    private List<String> makeRequest(URL baseURL, List<NameValuePair> parameters) throws ClientProtocolException, IOException {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost post = new HttpPost(baseURL.toString() + TestATClient.URL_PATTERN);
         post.setEntity(new UrlEncodedFormEntity(parameters));
@@ -383,24 +383,12 @@ public final class DisabledContextPropagationTests {
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String response = httpClient.execute(post, responseHandler);
 
-        List<String> invocations = unmarshalJSON(new JSONArray(response));
-
-        return invocations;
+        JsonArray jsonArray = javax.json.Json.createReader(new StringReader(response)).readArray();
+        return jsonArray.getValuesAs((jsonString) -> jsonString.toString().replaceAll("^\"(.*)\"$", "$1"));
     }
 
     private void assertInvocations(List<String> actual, String... expected) {
         System.out.println("Invocations: " + actual);
         Assert.assertArrayEquals(expected, actual.toArray());
     }
-
-    private List<String> unmarshalJSON(JSONArray json) throws JSONException {
-        List<String> list = new ArrayList<String>(json.length());
-
-        for (int i = 0; i < json.length(); i++) {
-            list.add(json.getString(i));
-        }
-
-        return list;
-    }
-
 }

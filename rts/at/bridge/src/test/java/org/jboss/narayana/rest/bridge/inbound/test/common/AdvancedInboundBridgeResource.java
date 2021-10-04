@@ -21,6 +21,8 @@
  */
 package org.jboss.narayana.rest.bridge.inbound.test.common;
 
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Transaction;
@@ -34,8 +36,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jettison.json.JSONArray;
 
 
 /**
@@ -54,12 +54,12 @@ public class AdvancedInboundBridgeResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getInvocations() {
+    public JsonArray getInvocations() {
         if (loggingXAResource == null) {
             throw new WebApplicationException(409);
         }
 
-        return new JSONArray(loggingXAResource.getInvocations()).toString();
+        return Json.createArrayBuilder(loggingXAResource.getInvocations()).build();
     }
 
     @POST

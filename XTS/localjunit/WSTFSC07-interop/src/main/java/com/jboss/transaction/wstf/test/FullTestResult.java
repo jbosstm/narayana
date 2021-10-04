@@ -35,9 +35,9 @@ import java.util.LinkedList;
  */
 public class FullTestResult extends TestResult
 {
-   private List _passedTests;
-   private List _failedTests;
-   private List _errorTests;
+   private final List<PassedTest> _passedTests;
+   private final List<FailedTest> _failedTests;
+   private final List<ErrorTest> _errorTests;
 
    private long                 _startTime            = 0;
    private boolean              _failed               = false;
@@ -49,22 +49,22 @@ public class FullTestResult extends TestResult
    {
       super();
 
-      _passedTests        = new LinkedList();
-      _failedTests        = new LinkedList();
-      _errorTests         = new LinkedList();
+      _passedTests        = new LinkedList<>();
+      _failedTests        = new LinkedList<>();
+      _errorTests         = new LinkedList<>();
    }
 
-   public List getPassedTests()
+   public List<PassedTest> getPassedTests()
    {
       return _passedTests;
    }
 
-   public List getFailedTests()
+   public List<FailedTest> getFailedTests()
    {
       return _failedTests;
    }
 
-   public List getErrorTests()
+   public List<ErrorTest> getErrorTests()
    {
       return _errorTests;
    }
@@ -127,20 +127,20 @@ public class FullTestResult extends TestResult
    }
 
    /*----------   SUBCLASSES   -----------*/
-   public class PassedTest
+   public static class PassedTest
    {
       public Test test;
       public long duration;
    }
 
-   public class FailedTest
+   public static class FailedTest
    {
       public Test                 test;
       public long                 duration;
       public AssertionFailedError assertionFailedError;
    }
 
-   public class ErrorTest
+   public static class ErrorTest
    {
       public Test      test;
       public long      duration;

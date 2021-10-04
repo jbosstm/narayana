@@ -9,6 +9,7 @@ import org.jboss.narayana.rest.integration.VolatileParticipantResource;
 import org.jboss.narayana.rest.integration.api.VolatileParticipant;
 import org.jboss.narayana.rest.integration.test.common.LoggingVolatileParticipant;
 
+import org.jboss.resteasy.core.ResteasyDeploymentImpl;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.test.TestPortProvider;
@@ -21,7 +22,6 @@ import org.junit.Test;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +42,10 @@ public final class VolatileParticipantResourceTestCase {
 
     @BeforeClass
     public static void beforeClass() {
-        List<String> resourceClasses = new ArrayList<String>();
+        List<String> resourceClasses = new ArrayList<>();
         resourceClasses.add("org.jboss.narayana.rest.integration.VolatileParticipantResource");
 
-        ResteasyDeployment resteasyDeployment = new ResteasyDeployment();
+        ResteasyDeployment resteasyDeployment = new ResteasyDeploymentImpl();
         resteasyDeployment.setResourceClasses(resourceClasses);
 
         NETTY = new NettyJaxrsServer();
@@ -66,7 +66,7 @@ public final class VolatileParticipantResourceTestCase {
     }
 
     @Test
-    public void testRequestsToNotRegisteredParticipant() throws Exception {
+    public void testRequestsToNotRegisteredParticipant() {
         Response simpleResponse = beforeCompletion(participantId);
         Assert.assertEquals(404, simpleResponse.getStatus());
 
@@ -75,7 +75,7 @@ public final class VolatileParticipantResourceTestCase {
     }
 
     @Test
-    public void testBeforeCompletion() throws Exception {
+    public void testBeforeCompletion() {
         LoggingVolatileParticipant participant = new LoggingVolatileParticipant();
         registerParticipant(participantId, participant);
 
@@ -89,7 +89,7 @@ public final class VolatileParticipantResourceTestCase {
     }
 
     @Test
-    public void testAfterCompletion() throws Exception {
+    public void testAfterCompletion() {
         LoggingVolatileParticipant participant = new LoggingVolatileParticipant();
         registerParticipant(participantId, participant);
 
@@ -106,17 +106,15 @@ public final class VolatileParticipantResourceTestCase {
         Assert.assertEquals(404, response.getStatus());
     }
 
-    private void registerParticipant(final String participantId, final VolatileParticipant volatileParticipant)
-            throws MalformedURLException {
-
+    private void registerParticipant(final String participantId, final VolatileParticipant volatileParticipant) {
         ParticipantsContainer.getInstance().addVolatileParticipant(participantId, volatileParticipant);
     }
 
-    private Response beforeCompletion(final String participantId) throws Exception {
+    private Response beforeCompletion(final String participantId) {
         return ClientBuilder.newClient().target(VOLATILE_PARTICIPANT_URL + "/" + participantId).request().put(null);
     }
 
-    private Response afterCompletion(final String participantId, final TxStatus txStatus) throws Exception {
+    private Response afterCompletion(final String participantId, final TxStatus txStatus) {
         return ClientBuilder.newClient().target(VOLATILE_PARTICIPANT_URL + "/" + participantId).request()
                 .put(Entity.entity(TxSupport.toStatusContent(txStatus.name()), TxMediaType.TX_STATUS_MEDIA_TYPE));
     }

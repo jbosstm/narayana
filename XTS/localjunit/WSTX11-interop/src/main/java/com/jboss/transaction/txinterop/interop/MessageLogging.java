@@ -29,7 +29,7 @@ public class MessageLogging
     /**
      * The thread local message log.
      */
-    private static final ThreadLocal MESSAGE_LOG = new ThreadLocal() ;
+    private static final ThreadLocal<StringBuffer> MESSAGE_LOG = new ThreadLocal<>() ;
     
     /**
      * Clear the log for the current thread.
@@ -55,7 +55,7 @@ public class MessageLogging
      */
     public static void appendThreadLog(final String message)
     {
-        final Object value = MESSAGE_LOG.get() ;
+        final StringBuffer value = MESSAGE_LOG.get() ;
         final StringBuffer buffer ;
         if (value == null)
         {
@@ -64,7 +64,7 @@ public class MessageLogging
         }
         else
         {
-            buffer = (StringBuffer)value ;
+            buffer = value ;
             buffer.append(message) ;
         }
     }

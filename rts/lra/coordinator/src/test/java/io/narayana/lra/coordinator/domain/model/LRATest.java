@@ -314,13 +314,12 @@ public class LRATest {
         }
     }
 
-    @ApplicationPath("/base")
+    @ApplicationPath("base")
     public static class LRAParticipant extends Application {
         @Override
         public Set<Class<?>> getClasses() {
             HashSet<Class<?>> classes = new HashSet<>();
             classes.add(Participant.class);
-            classes.add(Coordinator.class);
             classes.add(ServerLRAFilter.class);
             classes.add(ParticipantStatusOctetStreamProvider.class);
             return classes;
@@ -347,7 +346,7 @@ public class LRATest {
         client = ClientBuilder.newClient();
         coordinatorPath = TestPortProvider.generateURL('/' + COORDINATOR_PATH_NAME);
         server.deploy(Coordinator.class);
-        server.deploy(LRAParticipant.class);
+        server.deployOldStyle(LRAParticipant.class);
 
         service = LRARecoveryModule.getService();
     }

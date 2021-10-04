@@ -25,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
@@ -35,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.jboss.jbossts.star.util.TxLinkNames;
 import org.jboss.jbossts.star.util.TxStatus;
 import org.jboss.jbossts.star.util.TxSupport;
@@ -55,7 +56,7 @@ public final class LoggingRestATResource {
 
     private static final Logger LOG = Logger.getLogger(LoggingRestATResource.class);
 
-    private static final List<String> invocations = new ArrayList<String>();
+    private static final List<String> invocations = new ArrayList<>();
 
     /**
      * Returns links to the participant terminator.
@@ -127,10 +128,10 @@ public final class LoggingRestATResource {
     @GET
     @Path(INVOCATIONS_URL_SEGMENT)
     @Produces(MediaType.APPLICATION_JSON)
-    public String getInvocations() {
+    public JsonArray getInvocations() {
         LOG.info("LoggingRestATResource.getInvocations()");
 
-        return new JSONArray(invocations).toString();
+        return Json.createArrayBuilder(invocations).build();
     }
 
     @PUT

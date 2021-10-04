@@ -1,12 +1,12 @@
 package org.jboss.narayana.rest.integration.test.common;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.jboss.logging.Logger;
 import org.jboss.narayana.rest.integration.ParticipantInformation;
 import org.jboss.narayana.rest.integration.ParticipantsContainer;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.util.Map;
@@ -21,8 +21,6 @@ public class RestATManagementResource {
 
     public static final String PARTICIPANTS_URL_SEGMENT = "participants";
 
-    private static final Logger LOG = Logger.getLogger(RestATManagementResource.class);
-
     @GET
     @Path(PARTICIPANTS_URL_SEGMENT)
     public String getAllParticipantsInformation() {
@@ -32,36 +30,30 @@ public class RestATManagementResource {
         return participantsInformationToJSON(participantsInformation).toString();
     }
 
-    private JSONArray participantsInformationToJSON(final Map<String, ParticipantInformation> participantsInformation) {
-        final JSONArray array = new JSONArray();
+    private JsonArray participantsInformationToJSON(final Map<String, ParticipantInformation> participantsInformation) {
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
         for (final ParticipantInformation participantInformation : participantsInformation.values()) {
-            final JSONObject value = participantInformationToJSON(participantInformation);
+            final JsonObject value = participantInformationToJSON(participantInformation);
             if (value != null) {
-                array.put(value);
+                arrayBuilder.add(value);
             }
         }
 
-        return array;
+        return arrayBuilder.build();
     }
 
-    private JSONObject participantInformationToJSON(final ParticipantInformation participantInformation) {
+    private JsonObject participantInformationToJSON(final ParticipantInformation participantInformation) {
         if (participantInformation == null) {
             return null;
         }
 
-        final JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id", participantInformation.getId());
-            jsonObject.put("applicationId", participantInformation.getApplicationId());
-            jsonObject.put("recoveryURL", participantInformation.getRecoveryURL());
-            jsonObject.put("status", participantInformation.getStatus());
-        } catch (JSONException e) {
-            LOG.warn(e.getMessage(), e);
-            return null;
-        }
-
-        return jsonObject;
+        return Json.createObjectBuilder()
+            .add("id", participantInformation.getId())
+            .add("applicationId", participantInformation.getApplicationId())
+            .add("recoveryURL", participantInformation.getRecoveryURL())
+            .add("status", participantInformation.getStatus())
+            .build();
     }
 
 }

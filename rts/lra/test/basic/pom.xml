@@ -35,11 +35,24 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <version>${version.org.codehaus.jettison}</version>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+      <version>${version.jakarta.json-api}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>${version.fasterxml.jackson}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>${version.glassfish.json}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>

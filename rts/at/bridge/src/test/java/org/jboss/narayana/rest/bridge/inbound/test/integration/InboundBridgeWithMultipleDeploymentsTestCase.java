@@ -23,7 +23,6 @@ package org.jboss.narayana.rest.bridge.inbound.test.integration;
 
 import static org.junit.Assert.assertTrue;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.jboss.arquillian.container.test.api.Config;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -37,6 +36,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.json.JsonArray;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -89,14 +90,14 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
     }
 
     @Test
-    public void testCommitWithTwoParticipants() throws Exception {
+    public void testCommitWithTwoParticipants() {
         txSupport.startTx();
         postRestATResource(FIRST_RESOURCE_URL);
         postRestATResource(SECOND_RESOURCE_URL);
         txSupport.commitTx();
 
-        JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
-        JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
+        JsonArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
+        JsonArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
         assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
         assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.end", 1);
@@ -118,14 +119,14 @@ public class InboundBridgeWithMultipleDeploymentsTestCase extends AbstractTestCa
 
 
     @Test
-    public void testRollbackWithTwoParticipants() throws Exception {
+    public void testRollbackWithTwoParticipants() {
         txSupport.startTx();
         postRestATResource(FIRST_RESOURCE_URL);
         postRestATResource(SECOND_RESOURCE_URL);
         txSupport.rollbackTx();
 
-        JSONArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
-        JSONArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
+        JsonArray firstLoggingXAResourceInvocations = getResourceInvocations(FIRST_RESOURCE_URL);
+        JsonArray secondLoggingXAResourceInvocations = getResourceInvocations(SECOND_RESOURCE_URL);
 
         assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.start", 1);
         assertJsonArray(firstLoggingXAResourceInvocations, "LoggingXAResource.end", 1);

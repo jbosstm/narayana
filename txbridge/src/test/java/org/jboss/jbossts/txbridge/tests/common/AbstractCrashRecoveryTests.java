@@ -108,7 +108,8 @@ public abstract class AbstractCrashRecoveryTests extends AbstractBasicTests impl
                 log.error("Recovery failed with message: " + inMessage);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new IllegalStateException("Cannot run recovery scan at " + host + ":" + port +
+                    ". Please verify if 'recovery-listener' is enabled in the configuration.", ex);
         } finally {
             try {
                 if (in != null) {

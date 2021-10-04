@@ -28,8 +28,6 @@ import io.narayana.lra.arquillian.resource.LRAParticipantWithoutStatusURI;
 import io.narayana.lra.arquillian.resource.SimpleLRAParticipant;
 import io.narayana.lra.arquillian.spi.NarayanaLRARecovery;
 import io.narayana.lra.coordinator.domain.model.FailedLongRunningAction;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -43,15 +41,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.ws.rs.core.Response;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.RESET_ACCEPTED_PATH;
 import static io.narayana.lra.arquillian.resource.SimpleLRAParticipant.SIMPLE_PARTICIPANT_RESOURCE_PATH;
@@ -170,7 +171,7 @@ public class FailedLRAIT extends TestBase {
         assertEquals("used an invalid (wrong URI syntax) LRA id and precondition failed is expected", 412, status2);
 
         int status3 = removeFailedLRA(getRecoveryUrl(lraId), "http://example.com");
-        // there is a difference on handling this url format in different REST Easy versions (ie. Thorntail returns 404, WFLY 21 returns 405)
+        // there is a difference on handling this url format in different REST Easy versions (i.e. Thorntail returns 404, WFLY 21 returns 405)
         assertThat("deleting an LRA in wrong format that JAX-RS understands as non-existent URL binding or as method not-allowed",
                 status3, anyOf(equalTo(404), equalTo(405)));
 
@@ -219,21 +220,21 @@ public class FailedLRAIT extends TestBase {
     private boolean validateFailedRecordMoved(URI lra) throws Exception {
         boolean isMoved = false;
         String failedLRAId = null;
-        List<JSONObject> failedRecords = getFailedRecords(lra);
-        for (JSONObject failedLRA : failedRecords) {
-            String lraId = (String) failedLRA.get("lraId");
+        JsonArray failedRecords = getFailedRecords(lra);
+        for (JsonValue failedLRA : failedRecords) {
+            String lraId = failedLRA.asJsonObject().getString("lraId");
             lraId = lraId.replaceAll("\\\\", "");
             if (lraId.contains(lra.toASCIIString())) {
                 failedLRAId = lraId;
             }
         }
-        List<JSONObject> allRecords = getAllRecords(lra);
+        JsonArray allRecords = getAllRecords(lra);
         if (allRecords.isEmpty() && failedLRAId != null) {
             isMoved = true;
         } else {
             isMoved = true;
-            for (JSONObject lraRec : allRecords) {
-                String lraId = (String) lraRec.get("lraId");
+            for (JsonValue lraRec : allRecords) {
+                String lraId = lraRec.asJsonObject().getString("lraId");
                 lraId = lraId.replaceAll("\\\\", "");
                 if (failedLRAId == null || lraId.contains(failedLRAId)) {
                     return false;
@@ -244,40 +245,24 @@ public class FailedLRAIT extends TestBase {
         return isMoved;
     }
 
-    private List<JSONObject> getAllRecords(URI lra) throws Exception {
-        Response response = null;
+    private JsonArray getAllRecords(URI lra) {
         String coordinatorUrl = LRAConstants.getLRACoordinatorUrl(lra) + "/";
 
-        try {
-            response = client.target(coordinatorUrl).path("").request().get();
-
+        try (Response response = client.target(coordinatorUrl).path("").request().get()) {
             Assert.assertTrue("Missing response body when querying for all LRAs", response.hasEntity());
             String allLRAs = response.readEntity(String.class);
 
-            JSONArray jsonArray = new JSONArray(allLRAs);
-            List<JSONObject> allLRAList = new ArrayList<>();
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                allLRAList.add(new JSONObject(jsonArray.getString(i)));
-            }
-
-            return allLRAList;
-        } finally {
-            if (response != null) {
-                response.close();
-            }
+            JsonReader jsonReader = Json.createReader(new StringReader(allLRAs));
+            return jsonReader.readArray();
         }
     }
 
     private URI invokeInTransaction(String resourcePrefix, String resourcePath, int expectedStatus) {
-        Response response = null;
-
-        try {
-            response = client.target(baseURL.toURI())
-                    .path(resourcePrefix)
-                    .path(resourcePath)
-                    .request()
-                    .get();
+        try(Response response = client.target(baseURL.toURI())
+                .path(resourcePrefix)
+                .path(resourcePath)
+                .request()
+                .get()) {
 
             Assert.assertTrue("Expecting a non empty body in response from " + resourcePrefix + "/" + resourcePath,
                     response.hasEntity());
@@ -291,15 +276,11 @@ public class FailedLRAIT extends TestBase {
             return new URI(entity);
         } catch (URISyntaxException e) {
             throw new IllegalStateException("response cannot be converted to URI: " + e.getMessage());
-        } finally {
-            if (response != null) {
-                response.close();
-            }
         }
     }
 
     /**
-     * Validate whether or not a given LRA is in a particular state.
+     * Validate whether a given LRA is in a particular state.
      * Also validate that the corresponding record is removed.
      *
      * @param lra the LRA whose state is to be validated
@@ -308,12 +289,12 @@ public class FailedLRAIT extends TestBase {
      * @throws Exception if the state cannot be determined
      */
     private boolean validateStateAndRemove(URI lra, LRAStatus state) throws Exception {
-        List<JSONObject> failedRecords = getFailedRecords(lra);
-        for (JSONObject failedLRA : failedRecords) {
-            String lraId = (String) failedLRA.get("lraId");
+        JsonArray failedRecords = getFailedRecords(lra);
+        for (JsonValue failedLRA : failedRecords) {
+            String lraId = failedLRA.asJsonObject().getString("lraId");
             lraId = lraId.replaceAll("\\\\", "");
             if (lraId.contains(lra.toASCIIString())) {
-                String status = (String) failedLRA.get("status");
+                String status = failedLRA.asJsonObject().getString("status");
                 if (status.equals(state.name())) {
                     // remove the failed LRA
                     Assert.assertEquals("Could not remove log",
@@ -328,33 +309,20 @@ public class FailedLRAIT extends TestBase {
     }
 
     // look up LRAs that are in a failed state (ie FailedToCancel or FailedToClose)
-    private List<JSONObject> getFailedRecords(URI lra) throws Exception {
-        Response response = null;
+    private JsonArray getFailedRecords(URI lra) {
         String recoveryUrl = getRecoveryUrl(lra);
 
-        try {
-            response = client.target(recoveryUrl).path("failed").request().get();
-
+        try (Response response = client.target(recoveryUrl).path("failed").request().get()){
             Assert.assertTrue("Missing response body when querying for failed LRAs", response.hasEntity());
             String failedLRAs = response.readEntity(String.class);
 
-            JSONArray jsonArray = new JSONArray(failedLRAs);
-            List<JSONObject> failedList = new ArrayList<>();
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                failedList.add(new JSONObject(jsonArray.getString(i)));
-            }
-
-            return failedList;
-        } finally {
-            if (response != null) {
-                response.close();
-            }
+            JsonReader jsonReader = Json.createReader(new StringReader(failedLRAs));
+            return jsonReader.readArray();
         }
     }
 
     // ask the recovery coordinator to delete its log for an LRA
-    private int removeFailedLRA(URI lra) throws URISyntaxException, UnsupportedEncodingException {
+    private int removeFailedLRA(URI lra) throws UnsupportedEncodingException {
         String recoveryUrl = getRecoveryUrl(lra);
         String txId = URLEncoder.encode(lra.toASCIIString(), "UTF-8");
 
@@ -363,16 +331,8 @@ public class FailedLRAIT extends TestBase {
 
     // ask the recovery coordinator to delete its log for an LRA
     private int removeFailedLRA(String recoveryUrl, String lra) {
-        Response response = null;
-
-        try {
-            response = client.target(recoveryUrl).path(lra).request().delete();
-
+        try (Response response = client.target(recoveryUrl).path(lra).request().delete()) {
             return response.getStatus();
-        } finally {
-            if (response != null) {
-                response.close();
-            }
         }
     }
 }

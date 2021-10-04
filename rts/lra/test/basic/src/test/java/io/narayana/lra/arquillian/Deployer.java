@@ -49,7 +49,6 @@ public class Deployer {
                 .addClass(TestBase.class)
                 // adds the lra-participant wanted
                 .addClasses(participants)
-                .addPackages(true, org.codehaus.jettison.JSONSequenceTooLargeException.class.getPackage())
                 // activates Wildfly modules
                 .addAsManifestResource(new StringAsset(ManifestMF), "MANIFEST.MF")
                 // activates the bean and explicitly specifies to work with annotated classes
