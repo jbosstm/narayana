@@ -142,7 +142,9 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 # docker run --name oracle-ci -p 1521:1521 -p 5500:5500 -e ORACLE_PWD=oracle oracle/database:18.4.0-xe
 # Leave the docker container running and then in a second shell after waiting for the startup and even a bit longer
 
-# docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
+# This first connection string is used to access the pluggable database XEPDB1 (which is the only one in the eXprEss version).
+# Users can be only added in pluggable databases
+# docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XEPDB1 as sysdba
 # If you get a prompt to login, this command is not working as expected. Close this container, wait a bit longer and then retry
 #   
 #   CREATE USER dtf11 IDENTIFIED BY dtf11; 
@@ -152,6 +154,11 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 #   CREATE USER dtf12 IDENTIFIED BY dtf12;
 #   GRANT CREATE SESSION, RESOURCE TO dtf12;
 #   ALTER USER dtf12 quota unlimited on USERS;
+#
+#   exit
+#
+# This second connection string is used to access CDB. System-level configurations (e.g. alter system set) can only be modified in CDB.
+# docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
 #
 #   alter system set processes=300 scope=spfile;
 #   shut immediate;
@@ -164,10 +171,10 @@ DB1_THIN_JNDI_NumberOfDrivers=2
 DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_THIN_JNDI_Binding=oracle_thin1
-DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
+DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1:@//narayanaci1.eng.hst.ams2.redhat.com:1521/XEPDB1
 DB1_THIN_JNDI_DatabaseUser=dtf11
 DB1_THIN_JNDI_DatabasePassword=dtf11
-DB1_THIN_JNDI_DatabaseName=XE
+DB1_THIN_JNDI_DatabaseName=XEPDB1
 DB1_THIN_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 DB1_THIN_JNDI_Port=1521
 
@@ -175,9 +182,9 @@ DB2_THIN_JNDI_NumberOfDrivers=2
 DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_THIN_JNDI_Binding=oracle_thin2
-DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
+DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2:@//narayanaci1.eng.hst.ams2.redhat.com:1521/XEPDB1
 DB2_THIN_JNDI_DatabaseUser=dtf12
 DB2_THIN_JNDI_DatabasePassword=dtf12
-DB2_THIN_JNDI_DatabaseName=XE
+DB2_THIN_JNDI_DatabaseName=XEPDB1
 DB2_THIN_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 DB2_THIN_JNDI_Port=1521
