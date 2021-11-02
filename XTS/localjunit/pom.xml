@@ -84,7 +84,7 @@
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-api</artifactId>
             <version>${version.org.jboss.ws}</version>
-            <scope>provided</scope>            
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.xts</groupId>
@@ -341,10 +341,12 @@
     </profiles>
     <modules>
         <module>unit</module>
+        <module>unit-jakarta</module>
         <module>disabled-context-propagation</module>
         <module>WSTX11-interop</module>
         <module>WSTFSC07-interop</module>
         <module>xtstest</module>
         <module>crash-recovery-tests</module>
+        <module>crash-recovery-tests-jakarta</module>
     </modules>
 </project>

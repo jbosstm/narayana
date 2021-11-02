@@ -68,6 +68,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.xts</groupId>
+      <artifactId>jbossxts-jakarta</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.xts</groupId>
       <artifactId>ws-c11</artifactId>
       <version>${project.version}</version>
       <classifier>war</classifier>
@@ -103,6 +108,11 @@
     <dependency>
       <groupId>org.jboss.narayana</groupId>
       <artifactId>jbosstxbridge</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana</groupId>
+      <artifactId>jbosstxbridge-jakarta</artifactId>
       <version>${project.version}</version>
     </dependency>
 

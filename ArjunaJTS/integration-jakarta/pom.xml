@@ -1,46 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   Copyright The Narayana Authors
+
+   SPDX-License-Identifier: LGPL-2.1-only
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>org.jboss.narayana.jta</groupId>
-    <artifactId>narayana-jta-all</artifactId>
+    <groupId>org.jboss.narayana.jts</groupId>
+    <artifactId>narayana-jts-all</artifactId>
     <version>5.12.2.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>narayana-jta-jakarta</artifactId>
+  <artifactId>narayana-jts-integration-jakarta</artifactId>
   <packaging>jar</packaging>
-  <name>Narayana: ArjunaJTA Jakarta narayana-jta-jakarta</name>
-  <description>Narayana: ArjunaJTA Jakarta narayana-jta-jakarta (jta uber jar)</description>
+  <name>Narayana: ArjunaJTS integration Jakarta</name>
+  <description>Narayana: ArjunaJTS integration (atx) Jakarta</description>
 
   <properties>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <sortpom.skip>false</sortpom.skip>
   </properties>
-
   <dependencies>
     <dependency>
-      <groupId>org.jboss.narayana.jta</groupId>
-      <artifactId>narayana-jta</artifactId>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>narayana-jts-integration</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
+      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <dependencies>
           <dependency>
             <groupId>org.eclipse.transformer</groupId>
             <artifactId>org.eclipse.transformer.cli</artifactId>
-            <version>0.2.0</version>
+            <version>${version.org.eclipse.transformer}</version>
           </dependency>
           <dependency>
             <groupId>ant-contrib</groupId>
             <artifactId>ant-contrib</artifactId>
-            <version>1.0b3</version>
+            <version>${version.ant-contrib}</version>
             <exclusions>
               <exclusion>
                 <groupId>ant</groupId>
@@ -60,12 +69,12 @@
               <target>
                 <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
                 <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
-                  <arg value="${org.jboss.narayana.jta:narayana-jta:jar}"></arg>
+                  <arg value="${org.jboss.narayana.jts:narayana-jts-integration:jar}"></arg>
                   <arg value="${project.build.directory}/${project.build.finalName}.jar"></arg>
                   <arg value="-q"></arg>
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
-                  <arg value="${project.basedir}/rules/jakarta-renames.properties"></arg>
+                  <arg value="${project.basedir}/../../jakarta-rules/jakarta-renames.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
@@ -105,14 +114,14 @@
             <configuration>
               <target>
                 <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
-                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.jta:narayana-jta:jar}" property="source" regexp="\.jar$" replace="-sources.jar"></ac:propertyregex>
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.jts:narayana-jts-integration:jar}" property="source" regexp="\.jar$" replace="-sources.jar"></ac:propertyregex>
                 <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
                   <arg value="${source}"></arg>
                   <arg value="${project.build.directory}/${project.build.finalName}-sources.jar"></arg>
                   <arg value="-q"></arg>
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
-                  <arg value="${project.basedir}/rules/jakarta-renames.properties"></arg>
+                  <arg value="${project.basedir}/../../jakarta-rules/jakarta-renames.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
@@ -129,14 +138,14 @@
             <configuration>
               <target>
                 <property name="plugin_classpath" refid="maven.plugin.classpath"></property>
-                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.jta:narayana-jta:jar}" property="source" regexp="\.jar$" replace="-javadoc.jar"></ac:propertyregex>
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" global="true" input="${org.jboss.narayana.jts:narayana-jts-integration:jar}" property="source" regexp="\.jar$" replace="-javadoc.jar"></ac:propertyregex>
                 <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
                   <arg value="${source}"></arg>
                   <arg value="${project.build.directory}/${project.build.finalName}-javadoc.jar"></arg>
                   <arg value="-q"></arg>
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
-                  <arg value="${project.basedir}/rules/jakarta-renames.properties"></arg>
+                  <arg value="${project.basedir}/../../jakarta-rules/jakarta-renames.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
@@ -146,41 +155,31 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sources</id>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
-                  <type>jar</type>
-                  <classifier>sources</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
+      <id>not-j9</id>
+      <activation>
+        <jdk>[1.7,1.9)</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.narayana.jts</groupId>
+          <!-- do the other profiles generate an idlj-idl-tests artifact -->
+          <artifactId>idlj-idl-tests</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
       <id>release</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <inherited>false</inherited>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-install-plugin</artifactId>
@@ -208,6 +207,22 @@
                       <file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
                       <type>jar</type>
                       <classifier>javadoc</classifier>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+              <execution>
+                <id>sources</id>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+                      <type>jar</type>
+                      <classifier>sources</classifier>
                     </artifact>
                   </artifacts>
                 </configuration>
