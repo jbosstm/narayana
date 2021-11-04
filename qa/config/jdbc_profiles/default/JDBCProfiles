@@ -27,53 +27,9 @@
 # be more likely to timeout.
 #########
 
-#DB2
-#https://hub.docker.com/r/ibmcom/db2/
-# docker run -itd --name db2-ci --privileged=true -e DB2INST1_PASSWORD=db2inst1-pwd -e LICENSE=accept -e DBNAME=BTDB1 -p 50000:50000 ibmcom/db2:latest db2start
-# docker exec -it db2-ci bash
-# Edit line 193 of /var/db2_setup/lib/setup_db2_instance.sh to change "${instance_name?}" to "db2inst1" from the line
-#useradd db2
-#passwd db2
-#exit
-#docker stop db2-ci
-#docker start db2-ci
-# Check for BTDB1 to be created
-#docker logs -f db2-ci
-
-# Wait for a message like
-# /database/config/db2inst1/sqllib/ctrl/db2strst.lck
-# Stop tailing the log
-
-#docker exec -it db2-ci bash
-#su - db2inst1
-#db2
-#CONNECT TO BTDB1
-#GRANT CONNECT ON DATABASE TO USER db2
-#quit
-#exit
-#exit
-
 ######################################################################
 # PostgreSQL JNDI Pair
 ######################################################################
-
-# docker run --name postgres-ci -e POSTGRES_USER="postgres" -e POSTGRES_PASSWORD="postgres" -d -p 5432:5432 postgres:9.4
-# docker start postgres-ci
-# docker exec -it postgres-ci bash
-# su - postgres
-# createdb jbossts
-# psql -h narayanaci1.eng.hst.ams2.redhat.com -p 5432 jbossts
-# CREATE USER dtf11 PASSWORD 'dtf11';
-# GRANT ALL ON DATABASE jbossts TO dtf11;
-# CREATE USER dtf12 PASSWORD 'dtf12';
-# GRANT ALL ON DATABASE jbossts TO dtf12;
-# ALTER DATABASE jbossts SET bytea_output TO 'escape';
-# \q
-# exit
-# sed -i "s/#max_prepared_transactions = 0/max_prepared_transactions = 100/g" ./var/lib/postgresql/data/postgresql.conf
-# exit
-# docker stop postgres-ci
-# docker start postgres-ci
 
 DB1_PGSQL_JNDI_NumberOfDrivers=2
 DB1_PGSQL_JNDI_Driver0=org.postgresql.Driver
@@ -99,17 +55,6 @@ DB2_PGSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 # MySQL JNDI Pair
 ######################################################################
 
-# docker run --name mariadb-ci -e MYSQL_ROOT_PASSWORD="admin1234" -d -p 3306:3306 mariadb:latest
-# docker exec -it mariadb-ci bash
-# mysql -p
-# create database jbossts;
-# CREATE USER dtf11 IDENTIFIED BY 'dtf11';
-# grant all on jbossts.* to 'dtf11'@'%' identified by 'dtf11';
-# CREATE USER dtf12 IDENTIFIED BY 'dtf12';
-# grant all on jbossts.* to 'dtf12'@'%' identified by 'dtf12';
-# flush privileges;
-# exit
- 
 DB1_MYSQL_JNDI_NumberOfDrivers=2
 DB1_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
@@ -133,32 +78,6 @@ DB2_MYSQL_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 ######################################################################
 # Oracle thin JNDI Pair
 ######################################################################
-
-# git clone https://github.com/oracle/docker-images.git
-# cd docker-images/OracleDatabase/SingleInstance/dockerfiles
-# Consider changes after https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/dockerfiles/18.4.0/Dockerfile.xe#L61 if https://github.com/fuzziebrain/docker-oracle-xe/issues/15#issuecomment-578452720 is relevant
-# ./buildContainerImage.sh -x -v 18.4.0
-
-# docker run --name oracle-ci -p 1521:1521 -p 5500:5500 -e ORACLE_PWD=oracle oracle/database:18.4.0-xe
-# Leave the docker container running and then in a second shell after waiting for the startup and even a bit longer
-
-# docker run --rm -ti oracle/database:18.4.0-xe sqlplus sys/oracle@narayanaci1.eng.hst.ams2.redhat.com:1521/XE as sysdba
-# If you get a prompt to login, this command is not working as expected. Close this container, wait a bit longer and then retry
-#   
-#   CREATE USER dtf11 IDENTIFIED BY dtf11; 
-#   GRANT CREATE SESSION, RESOURCE TO dtf11;
-#   ALTER USER dtf11 quota unlimited on USERS;
-#
-#   CREATE USER dtf12 IDENTIFIED BY dtf12;
-#   GRANT CREATE SESSION, RESOURCE TO dtf12;
-#   ALTER USER dtf12 quota unlimited on USERS;
-#
-#   alter system set processes=300 scope=spfile;
-#   shut immediate;
-#   exit
-#
-# Exit both shells docker run commands
-# docker start oracle-ci
 
 DB1_THIN_JNDI_NumberOfDrivers=2
 DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
