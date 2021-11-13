@@ -45,6 +45,7 @@
     <module>jts</module>
     <module>jtax</module>
     <module>integration</module>
+    <module>integration-jakarta</module>
   </modules>
   <profiles>
       <profile>

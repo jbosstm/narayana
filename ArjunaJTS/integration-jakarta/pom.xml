@@ -1,0 +1,480 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jboss.narayana.jts</groupId>
+        <artifactId>narayana-jts-all</artifactId>
+        <version>5.12.1.Final</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>narayana-jts-integration-jakarta</artifactId>
+    <name>Narayana: ArjunaJTS integration Jakarta narayana-jta-jakarta</name>
+    <description>Narayana: ArjunaJTS integration Jakarta</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <version.jakarta.transaction.jakarta.transaction-api>2.0.0</version.jakarta.transaction.jakarta.transaction-api>
+        <version.jakarta.resource.jakarta.resource-api>2.0.0</version.jakarta.resource.jakarta.resource-api>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>transform-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+                                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                                    <arg value="${org.jboss.narayana.jts:narayana-jts-integration:jar}"/>
+                                    <arg value="${project.build.directory}/${project.build.finalName}.jar"/>
+                                    <arg value="-q"/>
+                                    <arg value="-o"/>
+                                    <arg value="-tr"/>
+                                    <arg value="${project.basedir}/rules/jakarta-renames.properties"/>
+                                    <classpath>
+                                        <pathelement path="${plugin_classpath}"/>
+                                    </classpath>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>transform-sources-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+                                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" property="source"
+                                                  input="${org.jboss.narayana.jts:narayana-jts-integration:jar}"
+                                                  regexp="\.jar$"
+                                                  replace="-sources.jar"
+                                                  global="true"/>
+                                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                                    <arg value="${source}"/>
+                                    <arg value="${project.build.directory}/${project.build.finalName}-sources.jar"/>
+                                    <arg value="-q"/>
+                                    <arg value="-o"/>
+                                    <arg value="-tr"/>
+                                    <arg value="${project.basedir}/rules/jakarta-renames.properties"/>
+                                    <classpath>
+                                        <pathelement path="${plugin_classpath}"/>
+                                    </classpath>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>transform-javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
+                                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" property="source"
+                                                  input="${org.jboss.narayana.jts:narayana-jts-integration:jar}"
+                                                  regexp="\.jar$"
+                                                  replace="-javadoc.jar"
+                                                  global="true"/>
+                                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                                    <arg value="${source}"/>
+                                    <arg value="${project.build.directory}/${project.build.finalName}-javadoc.jar"/>
+                                    <arg value="-q"/>
+                                    <arg value="-o"/>
+                                    <arg value="-tr"/>
+                                    <arg value="${project.basedir}/rules/jakarta-renames.properties"/>
+                                    <classpath>
+                                        <pathelement path="${plugin_classpath}"/>
+                                    </classpath>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.transformer</groupId>
+                        <artifactId>org.eclipse.transformer.cli</artifactId>
+                        <version>0.2.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>
+                                        ${project.build.directory}/${project.artifactId}-${project.version}-sources.jar
+                                    </file>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <inherited>false</inherited>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Specification-Title>JTA/JTS</Specification-Title>
+                            <Specification-Version>1.2/1.0</Specification-Version>
+                            <Specification-Vendor>Oracle</Specification-Vendor>
+                            <Implementation-Version>${project.version} (revision: ${buildNumber})
+                            </Implementation-Version>
+                            <arjuna-scm-revision>${buildNumber}</arjuna-scm-revision>
+                            <arjuna-properties-file>jbossts-properties.xml</arjuna-properties-file>
+                            <arjuna-builder>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}
+                            </arjuna-builder>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>5</shortRevisionLength>
+                    <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>narayana-jts-integration</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>idlj-idl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.narayana.jts</groupId>
+            <artifactId>jtax</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-transaction-spi</artifactId>
+            <version>${version.org.jboss.jboss-transaction-spi}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-spi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ironjacamar</groupId>
+            <artifactId>ironjacamar-spec-api</artifactId>
+            <version>${version.org.jboss.ironjacamar}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.integration</groupId>
+            <artifactId>jboss-corba-ots-spi</artifactId>
+            <version>${version.org.jboss.integration}</version>
+            <!-- TODO AS7 -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${version.org.jboss.logging.jboss-logging}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-processor</artifactId>
+            <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-install</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-submit</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-bmunit</artifactId>
+            <version>${version.org.jboss.byteman}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.com.h2database}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.naming</groupId>
+            <artifactId>jnpserver</artifactId>
+            <version>5.0.3.GA</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-spi</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <profiles>
+
+        <profile>
+            <id>not-j9</id>
+            <activation>
+                <jdk>[1.7,1.9)</jdk>
+            </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <!-- do the other profiles generate an idlj-idl-tests artifact -->
+                    <artifactId>idlj-idl-tests</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>j9</id>
+            <activation>
+                <jdk>[1.9, 11)</jdk>
+            </activation>
+
+            <properties>
+                <maven.compiler.source>1.9</maven.compiler.source>
+                <maven.compiler.target>1.9</maven.compiler.target>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>${java.corba.patch.name}</artifactId>
+                    <version>${project.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.narayana.jts</groupId>
+                    <artifactId>idlj-idl-tests</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <showDeprecation>false</showDeprecation>
+                            <compilerArgs>
+                                <arg>--add-modules</arg>
+                                <arg>java.base</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.jboss.narayana.jts</groupId>
+                                            <artifactId>${java.corba.patch.name}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>${project.packaging}</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.jboss.spec.javax.transaction</groupId>
+                                            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                                            <version>${version.org.jboss.spec.javax.transaction}</version>
+                                            <type>jar</type>
+                                            <outputDirectory>${project.build.directory}/upgrademodulepath
+                                            </outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl
+                                        </classpathDependencyExcludes>
+                                        <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar
+                                        </classpathDependencyExcludes>
+                                        <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl
+                                        </classpathDependencyExcludes>
+                                        <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar
+                                        </classpathDependencyExcludes>
+                                    </classpathDependencyExcludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>install</phase>
+                            </execution>
+                        </executions>
+                        <inherited>false</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>community</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.build.directory}/generated-sources/annotations/</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
