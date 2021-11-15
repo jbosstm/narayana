@@ -32,21 +32,26 @@ import javax.enterprise.context.spi.Context;
 
 import javax.enterprise.event.Observes;
 
+import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.spi.BeanManager;
 
 import javax.inject.Inject;
 
+import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionScoped;
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 
 import org.jboss.arquillian.junit.Arquillian;
 
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -71,16 +76,24 @@ import static org.junit.Assert.fail;
 @RunWith(Arquillian.class)
 @ApplicationScoped
 public class TransactionScopeLifecycleEventsTest {
+    private static final Logger log = Logger.getLogger(TransactionScopeLifecycleEventsTest.class);
 
     private static boolean initializedObserved;
     private static boolean beforeDestroyedObserved;
     private static boolean destroyedObserved;
+    private static int finalStatus;
 
     @Inject
     private TransactionManager transactionManager;
 
     @Inject
     private TransactionScopeLifecycleEventsTest self;
+
+    @Inject
+    TransactionSynchronizationRegistry registry;
+
+    @Inject
+    UserTransaction userTransaction;
 
     @Deployment
     public static JavaArchive createTestArchive() {
@@ -94,11 +107,12 @@ public class TransactionScopeLifecycleEventsTest {
         initializedObserved = false;
         beforeDestroyedObserved = false;
         destroyedObserved = false;
+        finalStatus = Status.STATUS_UNKNOWN;
     }
 
     @Transactional
     void doSomethingTransactional() {
-
+        registry.registerInterposedSynchronization(new TestSync());
     }
 
     void transactionScopeActivated(@Observes @Initialized(TransactionScoped.class) final Object initializedEvent,
@@ -146,13 +160,62 @@ public class TransactionScopeLifecycleEventsTest {
         beforeDestroyedObserved = true;
     }
 
+    void transactionScopeBeforeCompletion(@Observes(during = TransactionPhase.BEFORE_COMPLETION) Object ev) {
+        try {
+            // sleep for longer than the transaction timeout
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("transactionScopeBeforeCompletion: interrupted Thread.sleep");
+            }
+        }
+    }
+
     @Test
-    public void testEffects() {
+    public void testEffects() throws SystemException {
+        userTransaction.setTransactionTimeout(60); // because testRollbackDuringSynchronization sets it to 1 to force timeout
         self.doSomethingTransactional();
         assertTrue("Expected observed @Initialized(TransactionScoped.class)", initializedObserved);
         assertTrue("Expected observed @BeforeDestroyed(TransactionScoped.class)", beforeDestroyedObserved);
         assertTrue("Expected observed @Destroyed(TransactionScoped.class)", destroyedObserved);
-
     }
 
+    @Test
+    public void testRollbackDuringSynchronization() throws SystemException {
+        finalStatus = Status.STATUS_UNKNOWN;
+        // set the timeout to less than the sleep period in the TransactionPhase.BEFORE_COMPLETION CDI notification
+        userTransaction.setTransactionTimeout(1);
+
+        try {
+            self.doSomethingTransactional();
+            fail("testRollbackDuringSynchronization: expected a rollback exception");
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debugf("testRollback: exception in transactional method: %s", e.getMessage());
+            }
+
+            // the reason should be due to the transaction rolling back
+            assertTrue("testRollbackDuringSynchronization: should have failed with a RollbackException, not " + e, e instanceof RollbackException);
+        }
+
+        assertEquals("Expected rollback", Status.STATUS_ROLLEDBACK, finalStatus);
+    }
+
+    public static class TestSync implements javax.transaction.Synchronization {
+        @Override
+        public void beforeCompletion() {
+            if (log.isDebugEnabled()) {
+                log.debug("Synchronization beforeCompletion");
+            }
+        }
+
+        @Override
+        public void afterCompletion(int status) {
+            if (log.isDebugEnabled()) {
+                log.debugf("Synchronization afterCompletion: transaction status = %d%n", status);
+            }
+
+            finalStatus = status;
+        }
+    }
 }
