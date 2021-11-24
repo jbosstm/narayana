@@ -46,8 +46,10 @@
     <module>WSTX</module>
     <module>recovery</module>
     <module>bridge</module>
+    <module>bridge-jakarta</module>
     <module>sar</module>
     <module>jbossxts</module>
+    <module>jbossxts-jakarta</module>
     <module>localjunit</module>
   </modules>
     <profiles>
@@ -87,10 +89,17 @@
                 <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
 		<scope>provided</scope>
              </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>3.0.1</version>
+                <scope>runtime</scope>
+            </dependency>
+
 	     <dependency>
-                <groupId>org.jboss.spec.javax.xml.ws</groupId>
-                <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
-                <version>${version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec}</version>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>3.0.1</version>
 		<scope>provided</scope>
              </dependency>
 	     <dependency>
