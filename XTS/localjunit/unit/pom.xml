@@ -24,4 +24,41 @@
     <packaging>jar</packaging>
     <name>Narayana: XTS localjunit unit</name>
     <description>Narayana: XTS localjunit unit</description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- create a test jar for running tests on a jakarta server
+                         (see artifact localjunit-unit-tests-jakarta) -->
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+        <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>install</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+              </plugins>
+          </build>
+      </profile>
+    </profiles>
 </project>

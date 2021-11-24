@@ -127,9 +127,12 @@
     <module>XTS</module>
     <module>rts</module>
     <module>txbridge</module>
+    <module>txbridge-jakarta</module>
     <module>STM</module>
     <module>txframework</module>
+    <module>txframework-jakarta</module>
     <module>compensations</module>
+    <module>compensations-jakarta</module>
     <module>osgi</module>
     <module>vertx</module>
   </modules>
@@ -182,6 +185,7 @@
     <sortpom.skip>false</sortpom.skip>
     <!-- The surefire/failsafe test execution logs goes to a file by default -->
     <testLogToFile>true</testLogToFile>
+    <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.asm>3.3.1</version.asm>
     <version.com.github.spotbugs.spotbugs-maven-plugin>3.1.10</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.com.h2database>1.4.195</version.com.h2database>
@@ -220,6 +224,7 @@
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
     <version.org.eclipse.microprofile.openapi>1.1.2</version.org.eclipse.microprofile.openapi>
+    <version.org.eclipse.transformer>0.2.0</version.org.eclipse.transformer>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
     <version.org.jacoco>0.8.3</version.org.jacoco>
     <version.org.jacorb.jacorb>2.3.2-jbossorg-5</version.org.jacorb.jacorb>
@@ -232,6 +237,7 @@
     <version.org.jboss.ironjacamar>1.1.1.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
     <version.org.jboss.jboss-transaction-spi>7.6.1.Final</version.org.jboss.jboss-transaction-spi>
+    <version.org.jboss.jboss-transaction-spi-jakarta>7.6.1.Final</version.org.jboss.jboss-transaction-spi-jakarta>
     <version.org.jboss.logging.jboss-logging>3.2.1.Final</version.org.jboss.logging.jboss-logging>
     <version.org.jboss.logging.jboss-logging-processor>2.0.0.Final</version.org.jboss.logging.jboss-logging-processor>
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
@@ -322,6 +328,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
+          <version>3.2.0</version>
           <configuration>
             <archive>
               <manifestEntries>
@@ -370,6 +377,11 @@
               <include>**/*.java</include>
             </includes>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.0.0</version>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
