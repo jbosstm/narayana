@@ -6,7 +6,7 @@ import logging
 import getpass
 from optparse import OptionParser
 
-from utils import jira_helper
+from .utils import jira_helper
 
 
 def close_resolved_issues(jira_host, username, password, project_key, version_name):
