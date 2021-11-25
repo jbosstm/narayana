@@ -6,7 +6,7 @@ import logging
 import getpass
 from optparse import OptionParser
 
-from utils import jira_helper
+from .utils import jira_helper
 
 
 def close_resolved_issues(jira_host, username, password, project_key, version_name):
@@ -109,7 +109,7 @@ def get_username():
     """
     Returns JIRA username from the command prompt.
     """
-    return raw_input('JIRA Username: ')
+    return input('JIRA Username: ')
 
 
 def get_options():

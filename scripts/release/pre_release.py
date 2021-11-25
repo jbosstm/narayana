@@ -10,10 +10,10 @@ import re
 import calendar
 from datetime import datetime
 
-from utils import http_helper
-from utils import jira_helper
-from utils.input_helper import get_boolean
-from utils.input_helper import string_to_boolean
+from .utils import http_helper
+from .utils import jira_helper
+from .utils.input_helper import get_boolean
+from .utils.input_helper import string_to_boolean
 
 
 class JobConfig:
