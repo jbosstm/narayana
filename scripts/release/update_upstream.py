@@ -109,7 +109,7 @@ def get_username():
     """
     Returns JIRA username from the command prompt.
     """
-    return raw_input('JIRA Username: ')
+    return input('JIRA Username: ')
 
 
 def get_options():
