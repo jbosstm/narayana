@@ -1,11 +1,11 @@
-import httplib
+import http.client
 
 
 def request(method, host, path, body=None, headers={}):
     """
     Generic HTTPS request method
     """
-    connection = httplib.HTTPSConnection(host)
+    connection = http.client.HTTPSConnection(host)
     connection.request(method, path, body, headers)
     return connection.getresponse()
 

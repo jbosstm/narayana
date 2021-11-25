@@ -1,8 +1,8 @@
 import json
 import logging
 
-import https_helper
-import auth_helper
+from . import https_helper
+from . import auth_helper
 
 project_path = '/rest/api/2/project/%s'
 issues_path = '/rest/api/2/search?%s'
@@ -102,7 +102,7 @@ def get_issue_type_by_name(jira_host, type_name):
     response = https_helper.get(jira_host, issue_types_path)
     if response.status != 200:
         raise ValueError('Failed to get issue types: status={0}, reason={1}'.format(response.status, response.reason))
-    matches = filter(lambda x: x['name'] == type_name, json.loads(response.read()))
+    matches = [x for x in json.loads(response.read()) if x['name'] == type_name]
     if not matches:
         raise ValueError('Requested type does not exist: {0}'.format(type_name))
     return matches.pop()
@@ -189,7 +189,7 @@ def get_component_by_name(jira_host, project_key, name):
     project_key -- project which component should be returned.
     name -- name of the component which should be returned
     """
-    matches = filter(lambda x: x['name'] == name, get_project_components(jira_host, project_key))
+    matches = [x for x in get_project_components(jira_host, project_key) if x['name'] == name]
     if not matches:
         raise ValueError('Requested component does not exist: {0}'.format(name))
     return matches.pop()
