@@ -1,11 +1,11 @@
-import httplib
+import httplib.client
 
 
 def request(method, host, path, body=None, headers={}):
     """
     Generic HTTP request method
     """
-    connection = httplib.HTTPConnection(host)
+    connection = http.client.HTTPConnection(host)
     connection.request(method, path, body, headers)
     return connection.getresponse()
 
