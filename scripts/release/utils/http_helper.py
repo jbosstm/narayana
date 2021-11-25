@@ -1,4 +1,4 @@
-import httplib.client
+import http.client
 
 
 def request(method, host, path, body=None, headers={}):
