@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.jboss.narayana.xts</groupId>
     <artifactId>localjunit</artifactId>
-    <version>5.12.2.Final-SNAPSHOT</version>
+    <version>5.12.2.Final</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>localjunit-unit-tests-jakarta</artifactId>
