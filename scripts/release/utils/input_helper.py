@@ -1,6 +1,6 @@
 
 def get_boolean(message):
-    s = eval(input(message + ': '))
+    s = input(message + ': ')
     return string_to_boolean(s)
 
 
