@@ -73,21 +73,28 @@ docker login docker.io
 #fi
 
 git fetch upstream --tags
+if [[ $? != 0 ]]; then
+  echo "fetch upstream failed, exiting"
+  exit
+fi
 set +e
 git tag | grep -x $CURRENT
 if [[ $? != 0 ]]
 then
-  git status | grep "nothing to commit"
-  if [[ $? != 0 ]]
-  then
-    git status
-    exit
-  fi
-  git status | grep "ahead"
-  if [[ $? != 1 ]]
-  then
-    git status
-    exit
+  read -p "Should the release be aborted if there are local commits (y/n): " ok
+  if [[ $ok == y* ]]; then
+    git status | grep "nothing to commit"
+    if [[ $? != 0 ]]
+    then
+      git status
+      exit
+    fi
+    git status | grep "ahead"
+    if [[ $? != 1 ]]
+    then
+      git status
+      exit
+    fi
   fi
   git log -n 5
   read -p "Did the log before look OK?" ok
