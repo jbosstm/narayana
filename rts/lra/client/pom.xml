@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.jboss.narayana.rts</groupId>
     <artifactId>lra-parent</artifactId>
-    <version>5.12.3.Final</version>
+    <version>5.12.4.Final-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
