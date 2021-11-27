@@ -129,6 +129,7 @@
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>release</id>
@@ -151,19 +152,40 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <source>8</source>
-              <detectOfflineLinks>false</detectOfflineLinks>
-            </configuration>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
               <execution>
-                <id>create_javadocs</id>
+                <id>sources</id>
                 <goals>
-                  <goal>jar</goal>
+                  <goal>attach-artifact</goal>
                 </goals>
-                <phase>prepare-package</phase>
+                <phase>package</phase>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+                      <type>jar</type>
+                      <classifier>sources</classifier>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+              <execution>
+                <id>javadoc</id>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
+                      <type>jar</type>
+                      <classifier>javadoc</classifier>
+                    </artifact>
+                  </artifacts>
+                </configuration>
               </execution>
             </executions>
           </plugin>
