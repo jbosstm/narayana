@@ -130,45 +130,6 @@
               </target>
             </configuration>
           </execution>
-          <execution>
-            <id>change-manifest</id>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <echo>update manifest</echo>
-                <jar jarfile="${project.build.directory}/${project.build.finalName}.jar">
-                  <manifest>
-                    <attribute name="Implementation-Title" value="${project.name} classes"></attribute>
-                    <attribute name="Implementation-Version" value="${project.version} (revision: ${buildNumber})"></attribute>
-                    <attribute name="arjuna-scm-revision" value="${buildNumber}"></attribute>
-                    <attribute name="arjuna-properties-file" value="jbossts-properties.xml"></attribute>
-                    <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"></attribute>
-                  </manifest>
-                </jar>
-                <jar jarfile="${project.build.directory}/${project.build.finalName}-sources.jar">
-                  <manifest>
-                    <attribute name="Implementation-Title" value="${project.name} sources"></attribute>
-                    <attribute name="Implementation-Version" value="${project.version} (revision: ${buildNumber})"></attribute>
-                    <attribute name="arjuna-scm-revision" value="${buildNumber}"></attribute>
-                    <attribute name="arjuna-properties-file" value="jbossts-properties.xml"></attribute>
-                    <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"></attribute>
-                  </manifest>
-                </jar>
-                <jar jarfile="${project.build.directory}/${project.build.finalName}-javadoc.jar">
-                  <manifest>
-                    <attribute name="Implementation-Title" value="${project.name} javadocs"></attribute>
-                    <attribute name="Implementation-Version" value="${project.version} (revision: ${buildNumber})"></attribute>
-                    <attribute name="arjuna-scm-revision" value="${buildNumber}"></attribute>
-                    <attribute name="arjuna-properties-file" value="jbossts-properties.xml"></attribute>
-                    <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"></attribute>
-                  </manifest>
-                </jar>
-              </target>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
     </plugins>

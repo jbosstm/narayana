@@ -70,29 +70,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>change-manifest</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <echo>update manifest</echo>
-                <jar jarfile="${project.build.directory}/${project.build.finalName}-api.jar">
-                  <manifest>
-                    <attribute name="Specification-Title" value="${project.name}"/>
-                    <attribute name="Specification-Version" value="2.0"/>
-                    <attribute name="Specification-Vendor" value="Eclipse"/>
-                    <attribute name="Implementation-Version" value="${project.version} (revision: ${buildNumber})"/>
-                    <attribute name="arjuna-scm-revision" value="${buildNumber}"/>
-                    <attribute name="arjuna-properties-file" value="jbossts-properties.xml"/>
-                    <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"/>
-                  </manifest>
-                </jar>
-              </target>
-            </configuration>
-          </execution>
-          <execution>
             <id>transform-sources-jar</id>
             <phase>package</phase>
             <goals>
