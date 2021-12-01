@@ -343,8 +343,6 @@ public class PersistenceRecord extends RecoveryRecord
         {
             shadowMade = os.unpackBoolean();
 
-            // topLevelState = null;
-
             if (!shadowMade)
             {
                 topLevelState = new OutputObjectState(os);

@@ -33,8 +33,6 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
-import java.util.concurrent.Callable;
-
 /**
  * This class is responsible for performing asynchronous termination of
  * a transaction. Despite its name, it is also able to perform

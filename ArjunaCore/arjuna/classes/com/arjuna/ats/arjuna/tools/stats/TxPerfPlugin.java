@@ -63,7 +63,6 @@ public class TxPerfPlugin extends JConsolePlugin implements PropertyChangeListen
     public void propertyChange(PropertyChangeEvent ev) {
         String prop = ev.getPropertyName();
         if (prop == null ? JConsoleContext.CONNECTION_STATE_PROPERTY == null : prop.equals(JConsoleContext.CONNECTION_STATE_PROPERTY)) {
-            ConnectionState oldState = (ConnectionState)ev.getOldValue();
             ConnectionState newState = (ConnectionState)ev.getNewValue();
             // JConsole supports disconnection and reconnection
             // The MBeanServerConnection will become invalid when

@@ -121,9 +121,7 @@ public int getpid ()
     }
 
 private static int processId = 0;
-    
-private static final String hexStart = "0x";
 
 private static final Object lock = new Object();
-    
+
 }

@@ -425,13 +425,11 @@ public class TwoPhaseVolatileStore extends ObjectStore
         public String typeName;
         public Uid uid;
     }
-    
+
     /*
      * This could potentially grow indefinitely. Place a limit on the size?
      */
-    
-    //private WeakHashMap<Uid, StateInstance> _stateMap = new WeakHashMap<Uid, StateInstance>();
-    
+
     private ConcurrentHashMap<Uid, StateInstance> _stateMap = new ConcurrentHashMap<Uid, StateInstance>();
 
     private VolatileStore store;

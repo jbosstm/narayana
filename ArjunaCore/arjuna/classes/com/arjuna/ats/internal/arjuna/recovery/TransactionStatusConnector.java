@@ -144,9 +144,6 @@ public class TransactionStatusConnector
                // Retrieve current status from the TransactionStatusManager.
                String server_data = _from_server.readLine() ;
                status = Integer.parseInt ( server_data ) ;
-
-	       //	       _to_server.close();
-	       //	       _from_server.close();
             }
             catch ( IOException ex ) {
                 tsLogger.i18NLogger.warn_recovery_TransactionStatusConnector_2();
@@ -217,7 +214,6 @@ public class TransactionStatusConnector
                {
                   _to_server.println ( "TEST" ) ;
                   _to_server.flush() ;
-		  //		  _to_server.close();
 
                   _connector_socket.close() ;
                }
@@ -228,7 +224,6 @@ public class TransactionStatusConnector
             {
                _to_server.println ( "DEAD" ) ;
                _to_server.flush() ;
-	       //	       _to_server.close();
 
                _connector_socket.close() ;
                

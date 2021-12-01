@@ -87,27 +87,6 @@ public class Listener extends Thread
       connections = new LinkedList<Socket>();
    }
 
-   /*
-    * Close down the socket.
-    *
-    * this is pointless because this instance is a thread so never gets garbage collected until it has stopped running.
-    * but that means shutdown will have been called making the call to close in this method redundant.
-
-   public void finalize()
-   {
-      stopListener();
-
-      try
-      {
-         _listener_socket.close();
-      }
-      catch ( IOException ex )
-      {
-	  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Listener_1");
-      }
-   }      
-    */
-
    /**
     * Loops waiting for connection requests from client,
     * creates a new Connection object for each connection.

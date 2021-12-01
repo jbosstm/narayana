@@ -195,7 +195,7 @@ public class TransactionStatusManagerItem
 	  
 	  if ( restore_state( objstate) )
 	      {
-            return ret_status = true ;
+            ret_status = true ;
 	      }
       }
        catch ( ObjectStoreException ex ) {

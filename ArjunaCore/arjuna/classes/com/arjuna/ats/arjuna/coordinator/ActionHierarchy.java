@@ -326,9 +326,6 @@ public class ActionHierarchy
 	hierarchy = newHier.hierarchy;
 	currentDepth = newHier.currentDepth;
 	maxHierarchyDepth = newHier.maxHierarchyDepth;
-
-	newHier.hierarchy = null;
-	newHier = null;
     }
 
     /**

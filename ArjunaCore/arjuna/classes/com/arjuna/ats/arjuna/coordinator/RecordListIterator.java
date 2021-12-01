@@ -45,7 +45,6 @@ public class RecordListIterator
     public RecordListIterator (RecordList R)
     {
 	curElem = R.listHead;
-	curList = R;
     }
     
     public final synchronized void restart ()
@@ -68,6 +67,5 @@ public class RecordListIterator
     }
 
     private AbstractRecord curElem;
-    private RecordList     curList;
 
 }

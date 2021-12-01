@@ -264,8 +264,6 @@ public abstract class FileSystemStore extends ObjectStore
 
         state.setBuffer(store.buffer());
 
-        store = null;
-
         return true;
     }
 
@@ -304,8 +302,6 @@ public abstract class FileSystemStore extends ObjectStore
                         throw new ObjectStoreException(tsLogger.i18NLogger.get_objectstore_FileSystemStore_4(), e);
                     }
                 }
-
-                tmpFile = null;
             }
         }
 
@@ -565,8 +561,6 @@ public abstract class FileSystemStore extends ObjectStore
             return from.renameTo(to);
         else
         {
-            //      FileLock fl = new FileLock(to);
-
             if (!from.exists()) {
                 /*
                  * from is in the cache, but not on disk. So, either
@@ -592,28 +586,11 @@ public abstract class FileSystemStore extends ObjectStore
             /*
              * Let let crash recovery deal with this!
              */
+            to.delete();
 
-            //      if (fl.lock(FileLock.F_WRLCK))
-            {
-                to.delete();
+            boolean res = from.renameTo(to);
 
-                boolean res = from.renameTo(to);
-
-                //              fl.unlock();
-
-                return true;
-            }
-            /*
-            else
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_21",
-                                                new Object[]{to});
-                }
-
-                return false;
-                }*/
+            return true;
         }
     }
 
@@ -683,8 +660,6 @@ public abstract class FileSystemStore extends ObjectStore
                                 result = allTypes(foundTypes, root+File.separator+pack);
                             }
                         }
-
-                        tmpFile = null;
                     }
                     catch (IOException e)
                     {

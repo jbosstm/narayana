@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.arjuna.common;
 
-import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
-
 /**
  * A JMX MBean interface containing configuration for the objectstore and various implementations thereof.
  *

@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.txoj.common;
 
-import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 
 /**

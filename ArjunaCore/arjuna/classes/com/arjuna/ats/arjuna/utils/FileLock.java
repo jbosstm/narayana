@@ -293,8 +293,6 @@ public class FileLock
             tsLogger.logger.trace("FileLock.createFile "+_lockFile);
         }
 
-        byte b[] = new byte[1];
-
         try
         {
             if (!_theFile.exists())

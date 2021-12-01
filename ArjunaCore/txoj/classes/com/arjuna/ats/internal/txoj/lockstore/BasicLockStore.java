@@ -181,8 +181,6 @@ class LockStoreSegment
                 headOfList = ptr.getNext();
             else
                 trail.setNext(ptr.getNext());
-
-            ptr = null;
         }
 
         return true;

@@ -171,9 +171,6 @@ public class ShadowingStore extends FileSystemStore
                     super.addToCache(filename);
                     super.removeFromCache(shadow);
                 }
-
-                shadowState = null;
-                originalState = null;
             }
             else
                 result = true;
@@ -227,9 +224,6 @@ public class ShadowingStore extends FileSystemStore
                     tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
                 }
 
-                newState = null;
-                oldState = null;
-
                 break;
             }
             case StateStatus.OS_UNCOMMITTED:
@@ -248,9 +242,6 @@ public class ShadowingStore extends FileSystemStore
                 else {
                     tsLogger.i18NLogger.warn_objectstore_ShadowingStore_3(newState.getName(), oldState.getName());
                 }
-
-                newState = null;
-                oldState = null;
 
                 break;
             }
@@ -293,9 +284,6 @@ public class ShadowingStore extends FileSystemStore
                     tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
                 }
 
-                newState = null;
-                oldState = null;
-
                 break;
             }
             case StateStatus.OS_COMMITTED_HIDDEN:
@@ -314,9 +302,6 @@ public class ShadowingStore extends FileSystemStore
                 else {
                     tsLogger.i18NLogger.warn_objectstore_ShadowingStore_4(newState.getName(), oldState.getName());
                 }
-
-                newState = null;
-                oldState = null;
 
                 break;
             }

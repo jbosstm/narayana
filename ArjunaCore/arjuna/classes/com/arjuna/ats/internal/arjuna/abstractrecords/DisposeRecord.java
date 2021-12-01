@@ -146,7 +146,6 @@ public class DisposeRecord extends CadaverRecord
 		    if (super.objectAddr != null)
 		    {
 		        StateManagerFriend.destroyed(super.objectAddr);
-			//super.objectAddr.destroyed();
 		    }
 		    
 		    return TwoPhaseOutcome.FINISH_OK;

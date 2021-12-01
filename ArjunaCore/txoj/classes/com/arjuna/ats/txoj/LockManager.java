@@ -385,8 +385,6 @@ public class LockManager extends StateManager
                 {
                     txojLogger.i18NLogger.warn_LockManager_3();
 
-                    toSet = null;
-
                     return LockResult.REFUSED;
                 }
             }
@@ -858,7 +856,6 @@ public class LockManager extends StateManager
                     }
                     else
                     {
-                        // if (!stateLoaded)
                         if (!loaded)
                         {
                             txojLogger.i18NLogger.warn_LockManager_7();
@@ -1152,8 +1149,6 @@ public class LockManager extends StateManager
                     catch (IOException e)
                     {
                     }
-
-                    S = null;
                 }
                 else
                     stateLoaded = true;

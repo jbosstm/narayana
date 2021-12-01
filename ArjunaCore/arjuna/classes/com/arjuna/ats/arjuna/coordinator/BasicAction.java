@@ -258,27 +258,24 @@ public class BasicAction extends StateManager
 
         boolean res = false;
 
-        //	if (lockMutex())
+        /*
+         * If we are active then change status. Otherwise it may be an error so check status.
+         */
+
+        synchronized (this)
         {
-            /*
-                * If we are active then change status. Otherwise it may be an error so check status.
-                */
-
-            synchronized (this) {
-                if (actionStatus == ActionStatus.RUNNING)
-                    actionStatus = ActionStatus.ABORT_ONLY;
-            }
-
-            /*
-                * Since the reason to call this method is to make sure the transaction
-                * only aborts, check the status now and if it has aborted or will abort then
-                * we'll consider it a success.
-                */
-
-            res = ((actionStatus == ActionStatus.ABORT_ONLY) || (actionStatus == ActionStatus.ABORTED) || (actionStatus == ActionStatus.ABORTING));
-
-            //	    unlockMutex();
+            if (actionStatus == ActionStatus.RUNNING)
+                actionStatus = ActionStatus.ABORT_ONLY;
         }
+
+        /*
+         * Since the reason to call this method is to make sure the transaction
+         * only aborts, check the status now and if it has aborted or will abort then
+         * we'll consider it a success.
+         */
+
+        res = ((actionStatus == ActionStatus.ABORT_ONLY) || (actionStatus == ActionStatus.ABORTED) || (actionStatus == ActionStatus.ABORTING));
+
 
         return res;
     }
@@ -382,16 +379,7 @@ public class BasicAction extends StateManager
 
     public final int status ()
     {
-        int s = ActionStatus.INVALID;
-
-        //	if (tryLockMutex())
-        {
-            s = actionStatus;
-
-            //	    unlockMutex();
-        }
-
-        return s;
+        return actionStatus;
     }
 
     /**
@@ -1774,7 +1762,6 @@ public class BasicAction extends StateManager
 
     protected final void criticalStart ()
     {
-        //	_lock.lock();
     }
 
     /**
@@ -1785,7 +1772,6 @@ public class BasicAction extends StateManager
 
     protected final void criticalEnd ()
     {
-        //	_lock.unlock();
     }
 
     /**
@@ -2244,8 +2230,6 @@ public class BasicAction extends StateManager
 
         if (!stateToSave)
         {
-            iter = new RecordListIterator(heuristicList);
-
             /*
                 * Now check the heuristic list.
                 */
@@ -2258,8 +2242,6 @@ public class BasicAction extends StateManager
                 if (stateToSave)
                     break;
             }
-
-            iter = null;
         }
 
         /*
@@ -3375,8 +3357,6 @@ public class BasicAction extends StateManager
                     }
                 }
             }
-
-            currentAct = null;
         }
 
         return isCurrent;
@@ -3492,8 +3472,6 @@ public class BasicAction extends StateManager
                     child = null;
                 }
             }
-
-            iter = null;
 
             if (isCommit) {
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_62(((child != null ? child.get_uid().toString() : "null")));
@@ -3740,8 +3718,6 @@ public class BasicAction extends StateManager
 
         if ((as = parentAction.add(A)) != AddOutcome.AR_ADDED)
         {
-            A = null;
-
             if (as == AddOutcome.AR_REJECTED)
                 tsLogger.i18NLogger.warn_coordinator_BasicAction_68();
         }
@@ -3768,8 +3744,6 @@ public class BasicAction extends StateManager
 
     private ActionHierarchy currentHierarchy;
     private ParticipantStore transactionStore;  // a ParticipantStore is also a TxLog
-
-    //    private boolean savedIntentionList;
 
     /* Atomic action status variables */
 

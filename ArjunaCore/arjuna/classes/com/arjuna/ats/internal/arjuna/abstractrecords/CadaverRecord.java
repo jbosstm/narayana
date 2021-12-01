@@ -173,8 +173,6 @@ public class CadaverRecord extends PersistenceRecord
         tsLogger.i18NLogger.warn_CadaverRecord_1(order(), getTypeOfObject());
     }
 
-	// super.forgetAction(false);
-
 	return TwoPhaseOutcome.FINISH_OK;
     }
 
@@ -208,8 +206,6 @@ public class CadaverRecord extends PersistenceRecord
 		res = false;
 	    }
 	}
-
-	// super.forgetAction(false);
 
 	return ((res) ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.FINISH_ERROR);
     }

@@ -667,8 +667,6 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
     }
 
     void dispose() {
-//        if (coordMBean != null && disableStatsOnDispose.isSelected())
-//            coordMBean.setEnableStatistics(false);
     }
 
     class Worker extends SwingWorker<XYSeries[], Object> {
@@ -745,18 +743,4 @@ public class TxPerfGraph extends javax.swing.JPanel { //JFrame {
         return frame;
     }
 
-    private void setDefaultCloseOperation(int operation) {
-        frame.setDefaultCloseOperation(operation);
-    }
-
-    private Container getContentPane() {
-        return frame.getContentPane();
-    }
-
-    private void setJMenuBar(JMenuBar menuBar) {
-        frame.setJMenuBar(menuBar);
-    }
-
-    private void pack() {
-    }
 }

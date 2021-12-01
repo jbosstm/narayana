@@ -169,8 +169,6 @@ public class HashedStore extends ShadowNoFileLockStore
 
         state.setBuffer(store.buffer());
 
-        store = null;
-
         return true;
     }
 

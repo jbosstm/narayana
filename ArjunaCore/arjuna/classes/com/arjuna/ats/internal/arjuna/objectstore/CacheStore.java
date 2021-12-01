@@ -417,8 +417,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
                                 break;
                             case AsyncStore.WRITE:
-                                // if (element.fileType == ft)
-                            {
+
                                 if (element.state != null)
                                     _currentCacheSize -= element.state.size();
 
@@ -428,7 +427,6 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
                                 if (status != IN_USE)
                                     status = REMOVED;
-                            }
 
                                 break;
                             default:

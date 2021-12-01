@@ -68,8 +68,6 @@ public class ActionStore extends ShadowNoFileLockStore
         if (exists(path))
             theState = StateStatus.OS_COMMITTED;
 
-        path = null;
-
         if (tsLogger.logger.isTraceEnabled()) {
             tsLogger.logger.trace("ActionStore.currentState("+objUid+", "+tName+") - returning "+
                     StateStatus.stateStatusString(theState));

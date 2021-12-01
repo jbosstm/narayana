@@ -22,8 +22,6 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.utils.Utility;
-import com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 import com.arjuna.common.internal.util.ClassloadingUtility;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
@@ -50,9 +48,6 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile boolean transactionLog = false; // rename to useTransactionLog ?
 
     private volatile int maxTwoPhaseCommitThreads = 100;
-
-    // public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
-    //private String removalMarker;
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.writeOptimisation")
     private volatile boolean writeOptimisation = false;

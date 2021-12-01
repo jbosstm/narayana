@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.txoj.abstractrecords;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.ObjectModel;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordType;

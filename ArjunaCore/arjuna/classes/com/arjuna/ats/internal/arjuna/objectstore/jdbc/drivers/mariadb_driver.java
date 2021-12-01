@@ -20,9 +20,7 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers;
 
-import java.sql.Blob;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**

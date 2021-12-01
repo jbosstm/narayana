@@ -119,8 +119,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		if (parent() != null)
 			parent().removeChildAction(this);
 
-		// beforeCompletion();
-
 		int outcome = super.Abort(true);
 
 		if (outcome == ActionStatus.ABORTED) {

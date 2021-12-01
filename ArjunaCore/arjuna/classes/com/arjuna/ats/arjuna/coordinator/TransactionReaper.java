@@ -922,7 +922,6 @@ public class TransactionReaper
             TransactionReaper._theReaper._traceInterval = arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperTraceInterval();
 
             _reaperThread = new ReaperThread(TransactionReaper._theReaper);
-            // _reaperThread.setPriority(Thread.MIN_PRIORITY);
 
             _reaperThread.setDaemon(true);
 

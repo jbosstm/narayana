@@ -390,8 +390,6 @@ class LogPurger extends Thread
             {
             }
         }
-
-        // _status = Status.TERMINATED;
     }
 
     private HashMap<Uid, LogElement> _entries = new HashMap<Uid, LogElement>();
@@ -1182,7 +1180,6 @@ public class LogStore extends FileSystemStore
                 String fname = genPathName(logName, typeName, StateStatus.OS_COMMITTED);
                 File fd = openAndLock(fname, FileLock.F_WRLCK, true);
                 RandomAccessFile iFile = new RandomAccessFile(fd, FILE_MODE);
-                // iFile.getChannel().lock();
 
                 try
                 {
@@ -1481,7 +1478,6 @@ public class LogStore extends FileSystemStore
 
                     if (entry.present(txid))
                     {
-                        //entry.removeTxId(txid);
                         break;
                     }
                 }

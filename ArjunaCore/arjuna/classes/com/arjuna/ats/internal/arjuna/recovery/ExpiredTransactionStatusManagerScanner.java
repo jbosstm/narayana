@@ -128,7 +128,6 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                             tsLogger.logger.debugf("Removing old transaction status manager item %s", newUid);
 			    
                            tsc.delete() ;
-                           tsc = null ;
                         }
                      }
                   }

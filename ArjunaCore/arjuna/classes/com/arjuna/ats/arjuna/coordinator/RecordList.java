@@ -458,8 +458,6 @@ public class RecordList
             (newRecord.getNext()).setPrevious(newRecord);
         else
             listTail = newRecord;
-
-        oldRecord = null;
     }
 
     protected AbstractRecord listHead;

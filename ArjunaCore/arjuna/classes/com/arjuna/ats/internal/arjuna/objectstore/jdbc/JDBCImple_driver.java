@@ -42,10 +42,8 @@ import javax.naming.NamingException;
 
 import com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -59,7 +57,6 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 public abstract class JDBCImple_driver {
 
-	// protected Connection connection;
 	protected String tableName;
 	private JDBCAccess jdbcAccess;
 
@@ -722,18 +719,6 @@ public abstract class JDBCImple_driver {
 			ObjectStoreEnvironmentBean jdbcStoreEnvironmentBean)
 			throws SQLException, NamingException {
 		this.jdbcAccess = jdbcAccess;
-
-		// connection = new ThreadLocal<Connection>() {
-		//
-		// @Override
-		// protected Connection initialValue() {
-		// try {
-		// return jdbcAccess.getConnection();
-		// } catch (Exception e) {
-		// throw new RuntimeException(e);
-		// }
-		// }
-		// };
 
 		try (Connection connection = jdbcAccess.getConnection()) {
 

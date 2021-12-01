@@ -98,7 +98,7 @@ public class Lock extends StateManager
 
         if (curr == null)
         {
-            int currentPid = Utility.getpid(); // ::getpid();
+            int currentPid = Utility.getpid();
             ActionHierarchy ah = new ActionHierarchy(1); /* max depth of 1 */
 
             if (applicUid == null)
