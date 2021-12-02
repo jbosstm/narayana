@@ -158,7 +158,5 @@ public class DirectRecoverableConnection extends BaseTransactionalDriverXAConnec
 
     private String		          _dynamic;
     private DynamicClass                  _dynamicConnection;
-    private ConnectionImple               _theArjunaConnection;
 
 }
-

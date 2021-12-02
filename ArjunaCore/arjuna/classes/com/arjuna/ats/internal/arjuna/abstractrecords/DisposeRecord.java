@@ -62,17 +62,17 @@ public class DisposeRecord extends CadaverRecord
 	
 	if (sm != null)
 	{
-	    objectUid = sm.get_uid();
+	    originalInstanceID = sm.get_uid();
 	    typeName = sm.type();
 	}
 	else
 	{
-	    objectUid = Uid.nullUid();
+	    originalInstanceID = Uid.nullUid();
 	    typeName = null;
 	}
 
 	if (tsLogger.logger.isTraceEnabled()) {
-        tsLogger.logger.trace("DisposeRecord::DisposeRecord(" + participantStore + ", " + objectUid + ")");
+        tsLogger.logger.trace("DisposeRecord::DisposeRecord(" + participantStore + ", " + originalInstanceID + ")");
     }
     }
 
@@ -110,7 +110,7 @@ public class DisposeRecord extends CadaverRecord
         tsLogger.logger.trace("DisposeRecord::nestedPrepare() for " + order());
     }
 	
-	if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+	if ((targetParticipantStore != null) && (originalInstanceID.notEquals(Uid.nullUid())))
 	    return TwoPhaseOutcome.PREPARE_OK;
 	else
 	    return TwoPhaseOutcome.PREPARE_NOTOK;
@@ -135,11 +135,11 @@ public class DisposeRecord extends CadaverRecord
         tsLogger.logger.trace("DisposeRecord::topLevelCommit() for " + order());
     }
 
-	if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+	if ((targetParticipantStore != null) && (originalInstanceID.notEquals(Uid.nullUid())))
 	{
 	    try
 	    {
-		if (targetParticipantStore.remove_committed(objectUid, typeName))
+		if (targetParticipantStore.remove_committed(originalInstanceID, typeName))
 		{
 		    // only valid if not doing recovery
 
@@ -166,7 +166,7 @@ public class DisposeRecord extends CadaverRecord
             tsLogger.logger.trace("DisposeRecord::topLevelPrepare() for " + order());
         }
 
-        if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+        if ((targetParticipantStore != null) && (originalInstanceID.notEquals(Uid.nullUid())))
         {
             // force PersistenceRecord.save_state to ignore topLevelState:
             shadowForced();
@@ -191,11 +191,11 @@ public class DisposeRecord extends CadaverRecord
     {
         boolean res = true;
 
-        if ((targetParticipantStore != null) && (objectUid.notEquals(Uid.nullUid())))
+        if ((targetParticipantStore != null) && (originalInstanceID.notEquals(Uid.nullUid())))
         {
             try
             {
-                UidHelper.packInto(objectUid, os);
+                UidHelper.packInto(originalInstanceID, os);
                 os.packString(typeName);
 
                 res = (res && super.save_state(os, ot));
@@ -220,7 +220,7 @@ public class DisposeRecord extends CadaverRecord
 
         try
         {
-            objectUid = UidHelper.unpackFrom(os);
+            originalInstanceID = UidHelper.unpackFrom(os);
             typeName = os.unpackString();
 
             res = (res && super.restore_state(os, ot));
@@ -263,12 +263,11 @@ public class DisposeRecord extends CadaverRecord
     {
 	super();
 
-	objectUid = new Uid(Uid.nullUid());
+    originalInstanceID = new Uid(Uid.nullUid());
 	typeName = null;
 	targetParticipantStore = null;
     }
-    
-    private Uid         objectUid;
+
+    private Uid originalInstanceID;
     private String      typeName;
 }
-
