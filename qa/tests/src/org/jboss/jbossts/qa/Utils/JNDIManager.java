@@ -32,12 +32,10 @@ package org.jboss.jbossts.qa.Utils;
 
 import com.arjuna.ats.internal.jdbc.DynamicClass;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.XADataSource;
-import java.util.Hashtable;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Uses reflection to configure the datasources to avoid the need for
@@ -50,6 +48,7 @@ public class JNDIManager {
             String driver = JDBCProfileStore.driver(profileName, 0 /*driver number*/);
             String binding = JDBCProfileStore.binding(profileName);
             String databaseName = JDBCProfileStore.databaseName(profileName);
+            String serviceName = JDBCProfileStore.serviceName(profileName);
             String host = JDBCProfileStore.host(profileName);
             String dynamicClass = JDBCProfileStore.databaseDynamicClass(profileName);
             String databaseURL = JDBCProfileStore.databaseURL(profileName);
@@ -76,13 +75,17 @@ public class JNDIManager {
 
                 xaDataSourceToBind = xaDataSource;
             } else if (driver.equals("oracle.jdbc.driver.OracleDriver") || driver.equals("oracle.jdbc.OracleDriver")) {
-                if (databaseName == null) {
-                    throw new Exception("DatabaseName was not specified for profile: " + profileName);
+                if (serviceName == null) {
+                    if (databaseName != null) {
+                        throw new Exception(String.format("DatabaseName cannot be used for profile: %s. Please, use ServiceName instead.", profileName));
+                    }
+
+                    throw new Exception("ServiceName was not specified for profile: " + profileName);
                 }
 
                 XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("oracle.jdbc.xa.client.OracleXADataSource");
 
-                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serviceName", serviceName);
                 wrapper.setProperty("serverName", host);
                 wrapper.setProperty("portNumber", Integer.valueOf(port));
                 wrapper.setProperty("driverType", "thin");
