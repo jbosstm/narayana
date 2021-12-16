@@ -141,6 +141,22 @@
         </dependency>
     </dependencies>
     <profiles>
+    <profile>
+        <id>jdk17</id>
+        <activation>
+            <jdk>[17,)</jdk>
+        </activation>
+        <properties>
+            <jvm.args.modular>
+                --add-modules=java.se
+                --add-opens=java.base/java.security=ALL-UNNAMED
+                --add-opens=java.base/java.lang=ALL-UNNAMED
+                --add-opens=java.base/java.io=ALL-UNNAMED
+                --add-opens=java.base/java.util=ALL-UNNAMED
+                --add-opens=java.base/java.net=ALL-UNNAMED
+            </jvm.args.modular>
+        </properties>
+    </profile>
       <profile>
         <id>jts-ibmorb</id>
         <activation>
