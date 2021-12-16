@@ -8,7 +8,7 @@ set CLASSPATH=
 set M2_HOME=
 set MAVEN_HOME=
 
-set MAVEN_OPTS=%MAVEN_OPTS% -Xms1024m -XX:MaxPermSize=256m
+set MAVEN_OPTS=%MAVEN_OPTS% -Xms1024m -XX:MaxMetaspaceSize=256m
 set MVN_OPTIONS=-gs .mvn\wrapper\settings.xml -Dorson.jar.location=%PWD%\ext\ -Dbpa=vc9x32
 
 set MVN=%PWD%mvnw.cmd
