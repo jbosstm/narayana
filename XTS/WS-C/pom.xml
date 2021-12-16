@@ -116,4 +116,21 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <properties>
+        <jvm.args.modular>
+          --add-modules=java.se
+          --add-opens=java.base/java.util=ALL-UNNAMED
+          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+          --add-opens=java.base/java.text=ALL-UNNAMED
+          --add-opens=java.desktop/java.awt.font=ALL-UNNAMED
+        </jvm.args.modular>
+      </properties>
+    </profile>
+  </profiles>
 </project>

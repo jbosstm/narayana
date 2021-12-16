@@ -190,7 +190,7 @@
     <testLogToFile>true</testLogToFile>
     <version.ant-contrib>1.0b3</version.ant-contrib>
     <version.asm>3.3.1</version.asm>
-    <version.com.github.spotbugs.spotbugs-maven-plugin>3.1.10</version.com.github.spotbugs.spotbugs-maven-plugin>
+    <version.com.github.spotbugs.spotbugs-maven-plugin>4.5.3.0</version.com.github.spotbugs.spotbugs-maven-plugin>
     <version.com.h2database>1.4.195</version.com.h2database>
     <version.com.ibm>11.5.0.0</version.com.ibm>
     <version.com.microsoft.sqlserver>mssql2005_sqljdbc_2.0</version.com.microsoft.sqlserver>
@@ -202,24 +202,25 @@
     <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
     <version.dom4j>1.6.1</version.dom4j>
     <version.doxia>1.8.1</version.doxia>
-    <version.fasterxml.jackson>2.12.3</version.fasterxml.jackson>
-    <version.glassfish.json>1.0.4</version.glassfish.json>
+    <version.fasterxml.jackson>2.13.1</version.fasterxml.jackson>
+    <version.glassfish.json>1.1.4</version.glassfish.json>
     <version.hamcrest>2.2</version.hamcrest>
     <version.io.mashona>1.0.0.Beta1</version.io.mashona>
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
-    <version.jakarta.json-api>1.1.6</version.jakarta.json-api>
+    <version.jakarta.json-api>2.0.1</version.jakarta.json-api>
     <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
     <version.javax.annotation>1.2</version.javax.annotation>
     <version.javax.enterprise>2.0</version.javax.enterprise>
     <version.javax.inject>1</version.javax.inject>
-    <version.javax.javaee-api>7.0</version.javax.javaee-api>
+    <version.javax.javaee-api>8.0.1</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1.Final</version.javax.ws.rs-api>
     <version.jaxb>2.3.0</version.jaxb>
     <version.jaxws-ri>2.3.5</version.jaxws-ri>
     <version.jfree>1.0.9</version.jfree>
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
+    <version.junit.jupiter>5.7.1</version.junit.jupiter>
     <version.log4j>1.2.17</version.log4j>
     <version.mariadb>1.2.2</version.mariadb>
     <version.maven-failsafe-plugin>2.22.0</version.maven-failsafe-plugin>
@@ -227,18 +228,18 @@
     <version.maven.jandex-plugin>1.0.6</version.maven.jandex-plugin>
     <version.mysql>8.0.25</version.mysql>
     <version.org.apache.activemq>2.19.0</version.org.apache.activemq>
-    <version.org.apache.ant>1.10.9</version.org.apache.ant>
+    <version.org.apache.ant>1.10.12</version.org.apache.ant>
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
     <version.org.eclipse.microprofile.openapi>1.1.2</version.org.eclipse.microprofile.openapi>
     <version.org.eclipse.transformer>0.2.0</version.org.eclipse.transformer>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
-    <version.org.jacoco>0.8.3</version.org.jacoco>
+    <version.org.jacoco>0.8.8</version.org.jacoco>
     <version.org.jacorb.jacorb>2.3.2-jbossorg-5</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb-idl-compiler>2.3.1</version.org.jacorb.jacorb-idl-compiler>
     <version.org.jacorb.jacorb-idl-compiler>3.7</version.org.jacorb.jacorb-idl-compiler>
-    <version.org.jboss.arquillian.container.weld>1.0.0.CR9</version.org.jboss.arquillian.container.weld>
+    <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.6.0.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.18</version.org.jboss.byteman>
@@ -251,22 +252,22 @@
     <version.org.jboss.logging.jboss-logging-processor>2.0.0.Final</version.org.jboss.logging.jboss-logging-processor>
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>8.1.9.Final</version.org.jboss.openjdk-orb>
-    <version.org.jboss.resteasy>4.7.2.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>4.7.4.Final</version.org.jboss.resteasy>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
-    <version.org.jboss.spec.javax.interceptor>1.0.0.Final</version.org.jboss.spec.javax.interceptor>
+    <version.org.jboss.spec.javax.interceptor>2.0.0.Final</version.org.jboss.spec.javax.interceptor>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>1.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
     <version.org.jboss.spec.javax.servlet>1.0.2.Final</version.org.jboss.spec.javax.servlet>
     <version.org.jboss.spec.javax.transaction>1.1.0.Final</version.org.jboss.spec.javax.transaction>
-    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-    <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
-    <version.org.jboss.weld>2.3.5.Final</version.org.jboss.weld>
-    <version.org.jboss.ws>1.0.2.Final</version.org.jboss.ws>
+    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>2.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+    <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>2.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
+    <version.org.jboss.weld>2.4.8.Final</version.org.jboss.weld>
+    <version.org.jboss.ws>1.1.2.Final</version.org.jboss.ws>
     <version.org.mockito>3.8.0</version.org.mockito>
     <version.org.slf4j>1.7.30</version.org.slf4j>
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.org.wildfly.arquillian>3.0.1.Final</version.org.wildfly.arquillian>
-    <version.postgresql>42.2.20</version.postgresql>
+    <version.postgresql>42.3.1</version.postgresql>
     <version.quarkus>2.10.0.Final</version.quarkus>
     <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
@@ -859,15 +860,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.target>17</maven.compiler.target>
-      </properties>
     </profile>
   </profiles>
 </project>

@@ -50,6 +50,7 @@
           <includes>
             <include>**/*Test*.java</include>
           </includes>
+          <argLine>${server.jvm.args}</argLine>
           <systemPropertyVariables combine.children="append">
             <lra.tck.timeout.factor>${lra.test.timeout.factor}</lra.tck.timeout.factor>
           </systemPropertyVariables>

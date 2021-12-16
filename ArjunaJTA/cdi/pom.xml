@@ -280,5 +280,19 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <properties>
+        <jvm.args.modular>--add-modules=java.se
+          --add-exports java.base/sun.nio.ch=ALL-UNNAMED
+          --add-opens=java.base/java.security=ALL-UNNAMED
+          --add-opens=java.base/java.lang=ALL-UNNAMED
+          --add-opens=java.base/java.io=ALL-UNNAMED
+          --add-opens=java.base/java.util=ALL-UNNAMED</jvm.args.modular>
+      </properties>
+    </profile>
   </profiles>
 </project>
