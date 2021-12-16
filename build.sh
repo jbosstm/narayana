@@ -54,7 +54,7 @@ then
 	if [ $JAVA_VERSION -ge "9" ]; then
 		MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m"
 	else
-    MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxPermSize=512m"
+    MAVEN_OPTS="$MAVEN_OPTS -Xms1303m -Xmx1303m -XX:MaxMetaspaceSize=512m"
 	fi
 	export MAVEN_OPTS
 fi

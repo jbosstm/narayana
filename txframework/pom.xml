@@ -220,8 +220,6 @@
           </activation>
           <properties>
              <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-	     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-	     <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
 	  </properties>
 	  <dependencies>
              <dependency>
@@ -246,6 +244,22 @@
 	  </dependencies>
       </profile>
         <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <properties>
+                <jvm.args.modular>
+                    --add-modules java.se
+                    --add-opens=java.base/java.lang=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                    --add-opens=java.base/java.util=ALL-UNNAMED
+                    --add-opens=java.base/java.util.reflect=ALL-UNNAMED
+                    --add-exports java.base/sun.reflect=ALL-UNNAMED
+                </jvm.args.modular>
+            </properties>
+        </profile>
+        <profile>
             <id>arq</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -265,6 +279,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <argLine>${server.jvm.args}</argLine>
                             <skip>false</skip>
                             <systemPropertyVariables combine.children="append">
                                 <!--
