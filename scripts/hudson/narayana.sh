@@ -54,9 +54,8 @@ function init_test_options {
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
-    [ $ARQ_THORNTAIL ] || ARQ_THORNTAIL=arq.thorntail
     [ $IBM_ORB ] || IBM_ORB=0
-    [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.thorntail.test -Dtrace.lra.coordinator"
+    [ $ENABLE_LRA_TRACE_LOGS ] || ENABLE_LRA_TRACE_LOGS=" -Dtest.logs.to.file=true -Dtrace.lra.coordinator"
 
     if ! get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE; then # see if the PR description overrides the profile
         echo "SKIPPING PROFILE=$PROFILE"
@@ -522,17 +521,11 @@ function rts_tests {
 function lra_tests {
   echo "#0. LRA Test"
   ./build.sh install -pl ArjunaCore/arjunacore,rts -am -DskipTests -Pcommunity "$@"
-  # we can't use 'mvn -f' option beacuse of Thorntail plugin issue THORN-2049
   cd ./rts/lra/
   echo "#0. Running LRA tests using $ARQ_PROF profile"
   PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_PROF $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
   lra_arq=$?
-  echo "#0. Running LRA tests using $ARQ_THORNTAIL profile"
-  PRESERVE_WORKING_DIR=true ../../build.sh -fae -B -Pcommunity -P$ARQ_THORNTAIL $CODE_COVERAGE_ARGS $ENABLE_LRA_TRACE_LOGS -Dlra.test.timeout.factor="${LRA_TEST_TIMEOUT_FACTOR:-1.5}" "$@"
-  lra_thorn=$?
-  if [ $lra_arq != 0 ] && [ $lra_thorn != 0 ] ; then fatal "LRA Test failed with failures in both $ARQ_PROF and $ARQ_THORNTAIL profiles" ;  fi
   if [ $lra_arq != 0 ] ; then fatal "LRA Test failed with failures in $ARQ_PROF profile" ; fi
-  if [ $lra_thorn != 0 ] ; then fatal "LRA tests failed with failures in $ARQ_THORNTAIL profile" ; fi
 }
 
 function jta_cdi_tests {

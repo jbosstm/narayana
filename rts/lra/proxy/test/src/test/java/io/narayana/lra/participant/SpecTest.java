@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 public class SpecTest {
     private static URL MICROSERVICE_BASE_URL;
 
-    private static final int TEST_THORNTAIL_PORT = 8081;
+    private static final int TEST_PORT = 8081;
 
     private static NarayanaLRAClient lraClient;
     private static Client msClient;
@@ -36,7 +36,7 @@ public class SpecTest {
     @BeforeClass
     public static void setupClass() throws Exception {
         System.out.println("Getting ready to connect - waiting for coordinator to startup...");
-        int servicePort = Integer.getInteger("service.http.port", TEST_THORNTAIL_PORT);
+        int servicePort = Integer.getInteger("service.http.port", TEST_PORT);
 
         MICROSERVICE_BASE_URL = new URL("http://localhost:" + servicePort);
 

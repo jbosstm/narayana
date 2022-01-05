@@ -171,7 +171,7 @@ public class FailedLRAIT extends TestBase {
         assertEquals("used an invalid (wrong URI syntax) LRA id and precondition failed is expected", 412, status2);
 
         int status3 = removeFailedLRA(getRecoveryUrl(lraId), "http://example.com");
-        // there is a difference on handling this url format in different REST Easy versions (i.e. Thorntail returns 404, WFLY 21 returns 405)
+        // there is a difference on handling this url format in different REST Easy versions
         assertThat("deleting an LRA in wrong format that JAX-RS understands as non-existent URL binding or as method not-allowed",
                 status3, anyOf(equalTo(404), equalTo(405)));
 

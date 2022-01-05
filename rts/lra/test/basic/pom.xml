@@ -23,12 +23,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.thorntail</groupId>
-      <artifactId>cdi</artifactId>
-      <version>${version.thorntail}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.narayana.rts</groupId>
       <artifactId>lra-test-arquillian-extension</artifactId>
       <version>${project.version}</version>

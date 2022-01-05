@@ -170,7 +170,7 @@ main() {
 
     echo "$MVN $MVN_OPTIONS $MVN_GOAL $ADDIT_PARAMS"
 
-    # workaround in case 'mvn -f' is not supported, for example WFLY Thorntail plugin (THORN-2049)
+    # workaround in case 'mvn -f' is not supported
     if [ "$PRESERVE_WORKING_DIR" = "true" ]; then cd "$ORIG_WORKING_DIR"; fi
 
     #  Execute in debug mode, or simply execute.

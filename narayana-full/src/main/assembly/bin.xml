@@ -247,11 +247,6 @@
 			<fileMode>0644</fileMode>
 			<outputDirectory>rts/lra/</outputDirectory>
 		</file>
-		<file>
-			<source>../rts/lra/coordinator-thorntail/target/lra-coordinator-thorntail.jar</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>rts/lra/</outputDirectory>
-		</file>
 	</files>
 	<fileSets>
 		<fileSet>

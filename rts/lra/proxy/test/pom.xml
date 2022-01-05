@@ -22,14 +22,10 @@
     <failOnMissingWebXml>false</failOnMissingWebXml>
     <lra.http.host>localhost</lra.http.host>
     <lra.http.port>8080</lra.http.port>
-    <service.http.port>${thorntail.http.port}</service.http.port>
+    <service.http.port>8081</service.http.port>
 
     <skipITs>true</skipITs>
 
-    <thorntail.debug.params></thorntail.debug.params>
-    <thorntail.debug.port>8787</thorntail.debug.port>
-    <thorntail.http.port>8081</thorntail.http.port>
-    <thorntail.logging.params></thorntail.logging.params>
   </properties>
 
   <dependencies>
@@ -85,27 +81,6 @@
   <build>
     <finalName>lra-proxy-test</finalName>
     <plugins>
-      <plugin>
-        <groupId>io.thorntail</groupId>
-        <artifactId>thorntail-maven-plugin</artifactId>
-        <configuration>
-          <environment>
-            <thorntail.http.port>${thorntail.http.port}</thorntail.http.port>
-          </environment>
-          <properties>
-            <lra.http.host>${lra.http.host}</lra.http.host>
-            <lra.http.port>${lra.http.port}</lra.http.port>
-            <service.http.port>${service.http.port}</service.http.port>
-          </properties>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>package</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
