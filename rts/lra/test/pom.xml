@@ -52,8 +52,6 @@
     <test.application.host>localhost</test.application.host>
     <test.application.port>8180</test.application.port>
 
-    <thorntail.test.logging.category.arjuna></thorntail.test.logging.category.arjuna>
-    <thorntail.test.logging.category.narayana></thorntail.test.logging.category.narayana>
   </properties>
 
   <dependencies>
@@ -106,50 +104,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <!-- when arq.thorntail profile is activated we expect to start coordinator -->
-      <id>arq.thorntail</id>
-      <properties>
-        <!-- making the Quarkus coordinator to be started -->
-        <lra.coordinator.exec.plugin.phase>pre-integration-test</lra.coordinator.exec.plugin.phase>
-        <!-- where the Thorntail test application will be started at (the Quarkus coordinator goes at 8080) -->
-        <test.application.port>8180</test.application.port>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>io.thorntail</groupId>
-          <artifactId>arquillian</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>io.thorntail</groupId>
-          <artifactId>cdi</artifactId>
-          <version>${version.thorntail}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <skipITs>false</skipITs>
-              <reportsDirectory>${project.build.directory}/failsafe-reports-arq-thorntail</reportsDirectory>
-              <summaryFile>${project.build.directory}/failsafe-reports-arq-thorntail/failsafe-summary.xml</summaryFile>
-              <systemProperties>
-                <arquillian.xml>arquillian-thorntail.xml</arquillian.xml>
-              </systemProperties>
-              <systemPropertyVariables>
-                <thorntail.test.logging.category.arjuna>${thorntail.test.logging.category.arjuna}</thorntail.test.logging.category.arjuna>
-                <thorntail.test.logging.category.narayana>${thorntail.test.logging.category.narayana}</thorntail.test.logging.category.narayana>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <id>arq</id>
       <modules>
@@ -337,19 +291,6 @@
 
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>trace.thorntail.test</id>
-      <activation>
-        <property>
-          <name>trace.thorntail.test</name>
-        </property>
-      </activation>
-      <properties>
-        <thorntail.test.logging.category.arjuna>-Dthorntail.logging.com.arjuna=TRACE</thorntail.test.logging.category.arjuna>
-        <thorntail.test.logging.category.narayana>-Dthorntail.logging.io.narayana.lra=TRACE</thorntail.test.logging.category.narayana>
-      </properties>
     </profile>
 
     <profile>

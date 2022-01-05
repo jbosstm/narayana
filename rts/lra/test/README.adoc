@@ -34,57 +34,13 @@ The Failsafe Plugin link:../pom.xml[is configured] to run tests with names
 
 === Application runtimes
 
-The module is configured to run two runtimes - https://www.wildfly.org[WildFly]
-and link:https://quarkus.io[Quarkus]/link:https://thorntail.io[Thorntail].
+The module is configured to run with https://www.wildfly.org[WildFly] application runtime.
 
-When the **WildFly** runtime is used (through the 'arq' profile), two instances of Wildfly are initiated:
+The **WildFly** runtime is used through the 'arq' profile. Two instances of Wildfly are initiated:
  * The first instance is started using WildFly Maven Plugin, then the LRA coordinator is deployed using the WAR produced
  by the module `lra/lra-coordinator-war`
  * The second instance is started using Arquillian, then an LRA participant is deployed
 Moreover, the testing class is hosted on separated JVM.
-
-Also, the configuration using **Quarkus** (through the 'arq.thorntail') runs the LRA coordinator and the LRA participant(s)
-in two separate JVMs:
- * Quarkus is started with its maven plugin and configured to host Narayana LRA coordinator
- * A Thorntail (Arquillian) container hosts the LRA participant
-Again, the testing class is hosted on a separated JVM.
-
-=== Running tests with Quarkus/Thorntail
-
-To start integration tests:
-
-[source,sh]
-----
-mvn clean verify -Parq.thorntail
-
-# single test in one module (example)
-mvn clean verify -Parq.thorntail -pl basic -Dit.test=FailedLRAIT
-----
-
-.Configuration options of Quarkus/Thorntail
-|===
-| Option | Description
-
-| `-Dno.lra.coordinator`
-| The Quarkus coordinator is automatically started before the Arquillian executes the test (profile `start.lra.coodinator.before.it.tests`).
-This makes the coordinator not to be started.
-
-| `-Dtrace.thorntail.test`
-| Thorntail client application starts to use `TRACE` level
-for Narayana log messages.
-
-| `-Dtrace.lra.coordinator`
-| Quarkus LRA coordinator starts to use `TRACE` level for Narayana log messages.
-
-| `-Ddebug`
-| The Thorntail client application will be waiting at port `8787`
-for debugger to connect.
-
-| `-Ddebug.coordinator`
-| Quarkus LRA coordinator will be waiting at port `lra.coordinator.debug.port`
-(by default `8788`) for debugger to connect.
-
-|===
 
 === Running tests with WildFly
 

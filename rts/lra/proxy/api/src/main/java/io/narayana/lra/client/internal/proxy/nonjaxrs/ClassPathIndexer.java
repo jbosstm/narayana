@@ -73,9 +73,6 @@ class ClassPathIndexer {
             String entryName = ze.getName();
             if (entryName.endsWith(".class")) {
                 indexer.index(zis);
-            } else if (entryName.endsWith(".war")) {
-                // necessary because of the thorntail arquillian adapter
-                processFile(zis, indexer);
             }
         }
     }

@@ -67,8 +67,8 @@ public class ProxyService {
             participants = new ArrayList<>();
         }
 
-        int httpPort = Integer.getInteger("thorntail.http.port", 8081);
-        String httpHost = System.getProperty("thorntail.http.host", "localhost");
+        int httpPort = Integer.getInteger("lra.http.port", 8081);
+        String httpHost = System.getProperty("lra.http.host", "localhost");
 
         // TODO if the proxy is restarted on a different endpoint it should notify the recovery coordinator
 
