@@ -425,10 +425,10 @@ function tests_as {
 }
 
 function download_as {
-  echo "Download WildFly Build"
+  echo "Download WildFly Preview Build"
 
   cd $WORKSPACE
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_WildflyPreviewNightly/.lastSuccessful/artifacts.zip}
   wget --user=guest --password=guest -nv ${AS_LOCATION}
   local zipFileName=${AS_LOCATION##*/}
   unzip -qo "$zipFileName"
@@ -436,19 +436,19 @@ function download_as {
 
   ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
   ### which is changing time to time
-  # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
-  local wildflyLatestZipWrapper=$(ls wildfly-latest-*.zip | head -n 1)
+  # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-preview-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
+  local wildflyLatestZipWrapper=$(ls wildfly-preview-latest-*.zip | head -n 1)
   if [ -f "${wildflyLatestZipWrapper}" ]; then # wrapper zip exists, let's unzip it to proceed further to distro zip
     unzip -qo "${wildflyLatestZipWrapper}"
-    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build wrapper zip file '${wildflyLatestZipWrapper}'"
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly Preview nightly build wrapper zip file '${wildflyLatestZipWrapper}'"
     rm -f $wildflyLatestZipWrapper
     export JBOSS_HOME="${PWD}/${wildflyLatestZipWrapper%.zip}"
   fi
   # if SNAPSHOT zip still exists, unzip it further
-  local wildflyDistZip=$(ls wildfly-*-SNAPSHOT.zip | head -n 1)
+  local wildflyDistZip=$(ls wildfly-preview-*-SNAPSHOT.zip | head -n 1)
   if [ -f "${wildflyDistZip}" ]; then
     unzip -qo "${wildflyDistZip}"
-    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build distribution zip file '${wildflyDistZip}'"
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly Preview nightly build distribution zip file '${wildflyDistZip}'"
     export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
   fi
 
