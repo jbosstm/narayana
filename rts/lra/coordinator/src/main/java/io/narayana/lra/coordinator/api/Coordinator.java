@@ -103,7 +103,6 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 @ApplicationScoped
 @ApplicationPath("/")
 @Path(COORDINATOR_PATH_NAME)
-
 @OpenAPIDefinition(
         info = @Info(title = "LRA Coordinator", version = LRAConstants.CURRENT_API_VERSION_STRING,
                 contact = @Contact(name = "Narayana", url = "https://narayana.io")),

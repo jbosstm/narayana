@@ -22,17 +22,16 @@
 package io.narayana.lra.client.internal.proxy;
 
 import io.narayana.lra.client.NarayanaLRAClient;
-import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import io.narayana.lra.proxy.logging.LRAProxyLogger;
-
 import jakarta.annotation.PostConstruct;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
+import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -49,8 +48,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static io.narayana.lra.client.internal.proxy.ParticipantProxyResource.LRA_PROXY_PATH;
+import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 
 @ApplicationScoped
 public class ProxyService {

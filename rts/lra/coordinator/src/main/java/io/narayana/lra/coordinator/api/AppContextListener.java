@@ -2,7 +2,6 @@ package io.narayana.lra.coordinator.api;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.coordinator.internal.Implementations;
-
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;

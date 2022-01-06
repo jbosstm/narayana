@@ -83,7 +83,7 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
                         "io.narayana.lra.client.internal.proxy",
                         "org.eclipse.microprofile.lra.annotation")
                 // registration of LRACDIExtension as Weld extension to be booted-up
-                .addAsResource("META-INF/services/javax.enterprise.inject.spi.Extension")
+                .addAsResource("META-INF/services/jakarta.enterprise.inject.spi.Extension")
                 // explicitly define to work with annotated beans
                 .addAsManifestResource(new StringAsset("<beans version=\"1.1\" bean-discovery-mode=\"annotated\"></beans>"), "beans.xml")
                 // for WildFly we need dependencies to be part of the deployment's class path
@@ -96,7 +96,7 @@ public class MpLraTckAuxiliaryArchiveAppender implements AuxiliaryArchiveAppende
         archive.addPackages(true, io.narayana.lra.filter.ClientLRARequestFilter.class.getPackage())
                 .addAsResource(new StringAsset(filtersAsset), "META-INF/services/jakarta.ws.rs.ext.Providers")
                 .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
-                        "META-INF/services/jakarta.ws.rs.client.ClientBuilder");
+                    "META-INF/services/jakarta.ws.rs.client.ClientBuilder");
 
         // adding TCK required SPI implementation
         archive.addClass(NarayanaLRARecovery.class);

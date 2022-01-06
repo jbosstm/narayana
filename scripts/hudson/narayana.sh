@@ -439,6 +439,23 @@ function download_as {
   [ $? -ne 0 ] && fatal "Cannot unzip wildfly-latest-SNAPSHOT.zip"
   rm wildfly-latest-SNAPSHOT.zip
   zip=$(ls wildfly-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
+=======
+  # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-preview-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
+  local wildflyLatestZipWrapper=$(ls wildfly-preview-latest-*.zip | head -n 1)
+  if [ -f "${wildflyLatestZipWrapper}" ]; then # wrapper zip exists, let's unzip it to proceed further to distro zip
+    unzip -qo "${wildflyLatestZipWrapper}"
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly Preview nightly build wrapper zip file '${wildflyLatestZipWrapper}'"
+    rm -f $wildflyLatestZipWrapper
+    export JBOSS_HOME="${PWD}/${wildflyLatestZipWrapper%.zip}"
+  fi
+  # if SNAPSHOT zip still exists, unzip it further
+  local wildflyDistZip=$(ls wildfly-preview-*-SNAPSHOT.zip | head -n 1)
+  if [ -f "${wildflyDistZip}" ]; then
+    unzip -qo "${wildflyDistZip}"
+    [ $? -ne 0 ] && fatal "Cannot unzip WildFly Preview nightly build distribution zip file '${wildflyDistZip}'"
+    export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
+  fi
+>>>>>>> ead7de415 (JBTM-3532 Add LRA support for EE 9)
 
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
   rm -rf $JBOSS_HOME # clean up any previous unzip
