@@ -21,7 +21,7 @@
  */
 package io.narayana.lra.client.internal.proxy;
 
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.concurrent.Future;

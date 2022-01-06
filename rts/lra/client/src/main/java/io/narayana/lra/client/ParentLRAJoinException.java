@@ -22,7 +22,7 @@
 package io.narayana.lra.client;
 
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 public class ParentLRAJoinException extends Exception {
 

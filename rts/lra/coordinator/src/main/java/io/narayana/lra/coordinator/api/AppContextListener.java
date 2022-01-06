@@ -2,10 +2,9 @@ package io.narayana.lra.coordinator.api;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import io.narayana.lra.coordinator.internal.Implementations;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
 // start the recovery manager early so that we can start recovering in doubt LRAs
 @WebListener
