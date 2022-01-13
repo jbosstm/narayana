@@ -95,7 +95,7 @@ public class DbTester {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM CEYLONKV");
             ResultSet rs = statement.executeQuery();
 
-            printResultSet(key, rs, "key", "val");
+            printResultSet(key, rs, "id", "val");
 
             rs.close();
             statement.close();
@@ -122,9 +122,9 @@ public class DbTester {
 
     public void createTables(boolean clearTables) throws SQLException {
         String sql = "CREATE TABLE CEYLONKV " +
-                "(key VARCHAR(255) not NULL, " +
+                "(id VARCHAR(255) not NULL, " +
                 " val VARCHAR(255), " +
-                " PRIMARY KEY ( key ))";
+                " PRIMARY KEY ( id ))";
 
         for (Connection connection : connections.values()) {
             Statement statement = connection.createStatement();
@@ -197,7 +197,7 @@ public class DbTester {
     }
 
     public static void insertTable(Connection connection, String key, String val) throws SQLException {
-        String insert = "INSERT INTO CEYLONKV(key ,val) values (?,?)";
+        String insert = "INSERT INTO CEYLONKV(id ,val) values (?,?)";
         PreparedStatement statement = connection.prepareStatement(insert);
 
         statement.setString(1, key);
