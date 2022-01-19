@@ -136,6 +136,8 @@ public class HornetqJournalStore
         journal = new JournalImpl(envBean.getFileSize(), envBean.getMinFiles(), envBean.getPoolSize(), envBean.getCompactMinFiles(),
                         envBean.getCompactPercentage(), sequentialFileFactory, envBean.getFilePrefix(),
                         envBean.getFileExtension(), envBean.getMaxIO());
+        journal.replaceableRecord((byte)0);
+        journal.setRemoveExtraFilesOnLoad(true);
     }
 
 
@@ -153,7 +155,14 @@ public class HornetqJournalStore
         try {
             RecordInfo record = getContentForType(typeName).remove(uid);
             long id = (record != null ? record.id : getId(uid, typeName));
-            journal.appendDeleteRecord(id, syncDeletes);
+
+            if (!syncDeletes) {
+                // use the non blocking version which doesn't fail for I/O errors nor for `id` not found
+                journal.tryAppendDeleteRecord(id,false,null,null);
+            } else {
+                // blocking version
+                journal.appendDeleteRecord(id, true);
+            }
 
             return true;
         } catch (IllegalStateException e) { 
@@ -185,17 +194,21 @@ public class HornetqJournalStore
             outputBuffer.packBytes(txData.buffer());
             byte[] data = outputBuffer.buffer();
 
-            RecordInfo record = new RecordInfo(getId(uid, typeName), RECORD_TYPE, data, false, (short)0);
+            RecordInfo record = new RecordInfo(getId(uid, typeName), RECORD_TYPE, data, false, true, (short)0);
             previousRecord = getContentForType(typeName).putIfAbsent(uid, record);
 
             if(previousRecord != null) {
                 // the packed data may have changed so updated the map with the latest data
                 getContentForType(typeName).replace(uid,  record);
-                journal.appendUpdateRecord(previousRecord.id, RECORD_TYPE, data, syncWrites);
+
+                if (!syncWrites) {
+                    journal.tryAppendUpdateRecord(previousRecord.id, RECORD_TYPE, data, null, false, true);
+                } else {
+                    journal.appendUpdateRecord(previousRecord.id, RECORD_TYPE, data, true);
+                }
             } else {
                 journal.appendAddRecord(record.id, RECORD_TYPE, data, syncWrites);
             }
-
         } catch(Exception e) {
             if (previousRecord == null) {
                 // if appendAddRecord() fails, remove record from map. Leave it there if appendUpdateRecord() fails.
