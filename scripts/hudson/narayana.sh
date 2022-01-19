@@ -301,15 +301,20 @@ function build_narayana {
     if [ -d jboss-transaction-spi ]; then
       rm -rf jboss-transaction-spi
     fi
-    git clone https://github.com/jbosstm/jboss-transaction-spi.git -o jbosstm
-    [ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-transaction-spi.git failed"
-    cd jboss-transaction-spi
-    git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
-    [ $? -eq 0 ] || fatal "git fetch of pulls failed"
-    git checkout $SPI_BRANCH
-    [ $? -eq 0 ] || fatal "git fetch of pull branch failed"
-    cd ../
-    ./build.sh -f jboss-transaction-spi/pom.xml -B clean install
+    
+    if [ $NARAYANA_BUILD = 1 ]; then
+    	git clone https://github.com/jbosstm/jboss-transaction-spi.git -o jbosstm
+    	[ $? -eq 0 ] || fatal "git clone https://github.com/jbosstm/jboss-transaction-spi.git failed"
+    	cd jboss-transaction-spi
+    	git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
+    	[ $? -eq 0 ] || fatal "git fetch of pulls failed"
+    	git checkout $SPI_BRANCH
+    	[ $? -eq 0 ] || fatal "git fetch of pull branch failed"
+    	cd ../
+    	./build.sh -f jboss-transaction-spi/pom.xml -B clean install -DskipTests
+    else
+    	./build.sh -f jboss-transaction-spi/pom.xml -B test
+    fi
     [ $? -eq 0 ] || fatal "Build of SPI failed"
   fi
 
@@ -325,7 +330,11 @@ function build_narayana {
   fi
   echo "Using MAVEN_OPTS: $MAVEN_OPTS"
 
-  ./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install
+    if [ $NARAYANA_BUILD = 1 ]; then
+    	./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS clean install -DskipTests
+    else
+    	./build.sh -B -Prelease,community$OBJECT_STORE_PROFILE $ORBARG "$@" $NARAYANA_ARGS $IPV6_OPTS $CODE_COVERAGE_ARGS test
+    fi
 
   [ $? -eq 0 ] || fatal "narayana build failed"
 
@@ -1007,12 +1016,30 @@ export EXTRA_QA_SYSTEM_PROPERTIES="-Xms$MEM_SIZE -Xmx$MEM_SIZE -XX:ParallelGCThr
 # if we are building with IPv6 tell ant about it
 export ANT_OPTS="$ANT_OPTS $IPV6_OPTS"
 
+export JDK8_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+export JDK17_HOME=/usr/lib/jvm/java-17-openjdk-17.0.1.0.12-2.el8_5.x86_64
+
+# Build with JDK 8
+export JAVA_HOME=$JDK8_HOME
+export PATH=$JAVA_HOME/bin:$PATH
+java -version
+javac -version
+
 # run the job
 
 [ $NARAYANA_BUILD = 1 ] && build_narayana "$@"
 [ $AS_CLONE = 1 ] && clone_as "$@"
 [ $AS_BUILD = 1 ] && build_as "$@"
 [ $AS_DOWNLOAD = 1 ] && download_as "$@"
+
+# Test with JDK 17
+export JAVA_HOME=$JDK17_HOME
+export PATH=$JAVA_HOME/bin:$PATH
+java -version
+javac -version
+NARAYANA_BUILD=0
+[ $NARAYANA_TESTS = 1 ] && build_narayana "$@"
+
 [ $AS_TESTS = 1 ] && tests_as "$@"
 [ $OSGI_TESTS = 1 ] && osgi_tests "$@"
 [ $JTA_CDI_TESTS = 1 ] && jta_cdi_tests "$@"
