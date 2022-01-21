@@ -274,6 +274,12 @@ under the License.
         <repository>
           <id>download-java-net</id>
           <url>https://download.java.net/maven/2</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
         </repository>
       </repositories>
     </profile>
