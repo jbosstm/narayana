@@ -473,7 +473,7 @@
           <property name="jdbcstore-profile" value="true" />
           <property name="jdbc.datasource.class" value="oracle.jdbc.pool.OracleDataSource" />
           <property name="jdbc.db.url" value="narayanaci1.eng.hst.ams2.redhat.com" />
-          <property name="jdbc.db.name" value="XE" />
+          <property name="jdbc.db.name" value="XEPDB1" />
           <property name="jdbc.db.user" value="dtf11" />
           <property name="jdbc.db.password" value="dtf11" />
           <property name="jdbc.db.port" value="1521" />
