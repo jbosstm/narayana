@@ -63,7 +63,7 @@
     <mods.directory>target/mods</mods.directory>
 
     <!--Dependency versions-->
-    <junit.version>4.11</junit.version>
+    <junit.version>4.13.1</junit.version>
 
     <!--Plugin versions-->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
