@@ -62,9 +62,6 @@
     with -Dmods.directory=mydir -->
     <mods.directory>target/mods</mods.directory>
 
-    <!--Dependency versions-->
-    <junit.version>4.13.1</junit.version>
-
     <!--Plugin versions-->
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
@@ -117,7 +114,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
