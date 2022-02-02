@@ -537,11 +537,9 @@
             <then>
               <var name="jdbcstore.database.properties" value="ClassName=${jdbc.datasource.class};ServiceName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}" />
             </then>
-          <else>
-            <then>
+            <else>
               <var name="jdbcstore.database.properties" value="ClassName=${jdbc.datasource.class};DatabaseName=${jdbc.db.name};User=${jdbc.db.user};Password=${jdbc.db.password};ServerName=${jdbc.db.url};PortNumber=${jdbc.db.port}${jdbc.db.properties}" />
-            </then>
-          </else>
+            </else>
           </if>
           <var name="objectStoreElements" value="-DObjectStoreEnvironmentBean.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.communicationStore.tablePrefix=Communication -DObjectStoreEnvironmentBean.communicationStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.stateStore.tablePrefix=stateStore -DObjectStoreEnvironmentBean.stateStore.objectStoreType=com.arjuna.ats.internal.arjuna.objectstore.jdbc.JDBCStore -DObjectStoreEnvironmentBean.tablePrefix=Action -DObjectStoreEnvironmentBean.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.stateStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.communicationStore.jdbcAccess=com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors.SimplePooledDynamicDataSourceJDBCAccess;${jdbcstore.database.properties} -DObjectStoreEnvironmentBean.createTable=false -DObjectStoreEnvironmentBean.communicationStore.createTable=false -DObjectStoreEnvironmentBean.stateStore.createTable=false" />
           <echo message="Running with JDBC object store settings - DB: ${jdbcstore.database.properties}"/>
