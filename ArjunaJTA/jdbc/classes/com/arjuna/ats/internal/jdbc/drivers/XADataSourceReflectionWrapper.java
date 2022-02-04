@@ -53,7 +53,7 @@ public class XADataSourceReflectionWrapper
         Method[] methods = xaDataSource.getClass().getMethods();
         Method matchingMethod = null;
         for(Method method : methods) {
-            if(method.getName().equals(name) && method.getParameterTypes().length == 1) {
+            if(method.getName().equals(name) && method.getParameterCount() == 1) {
                 // ignores overloading, just takes the first match it finds.
                 matchingMethod = method;
                 break;

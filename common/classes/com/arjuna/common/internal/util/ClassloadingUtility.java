@@ -122,7 +122,7 @@ public class ClassloadingUtility
             Constructor[] ctors = clazz.getConstructors();
             Class environmentBeanClass = null;
             for(Constructor constructor : ctors) {
-                if(constructor.getParameterTypes().length == 1 &&
+                if(constructor.getParameterCount() == 1 &&
                         constructor.getParameterTypes()[0].getCanonicalName().endsWith("EnvironmentBean")) {
                     environmentBeanClass = constructor.getParameterTypes()[0];
                     Object envBean = BeanPopulator.getNamedInstance(environmentBeanClass, environmentBeanInstanceName);
