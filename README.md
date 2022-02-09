@@ -112,7 +112,6 @@ There are three types of tests in the Narayana repository.
   is about running commands:
 
       cd qa/
-      ant -Ddriver.url=file:///home/hudson/dbdrivers get.drivers dist
       ant -f run-tests.xml ci-tests
 
 

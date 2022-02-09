@@ -36,7 +36,7 @@ public class XADSWrapperObjectFactory implements ObjectFactory {
         put("org.h2.Driver", "org.h2.jdbcx.JdbcDataSource");
         put("oracle.jdbc.driver.OracleDriver", "oracle.jdbc.xa.client.OracleXADataSource");
         put("com.microsoft.sqlserver.jdbc.SQLServerDriver", "com.microsoft.sqlserver.jdbc.SQLServerXADataSource"); // no setPassword
-        put("com.mysql.jdbc.Driver", "com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
+        put("com.mysql.cj.jdbc.Driver", "com.mysql.cj.jdbc.MysqlXADataSource");
         put("com.ibm.db2.jcc.DB2Driver", "com.ibm.db2.jcc.DB2XADataSource"); // for DB2 version 8.2      // no setPassword
         put("com.sybase.jdbc3.jdbc.SybDriver", "com.sybase.jdbc3.jdbc.SybXADataSource");  // no setPassword
     }};
@@ -98,7 +98,7 @@ public class XADSWrapperObjectFactory implements ObjectFactory {
             wrapper.setProperty("driverType", "thin");
         } else if( driver.equals("com.microsoft.sqlserver.jdbc.SQLServerDriver")) {
             wrapper.setProperty("sendStringParametersAsUnicode", false);
-        } else if( driver.equals("com.mysql.jdbc.Driver")) {
+        } else if( driver.equals("com.mysql.cj.jdbc.Driver")) {
 
             // Note: MySQL XA only works on InnoDB tables.
             // set 'default-storage-engine=innodb' in e.g. /etc/my.cnf
