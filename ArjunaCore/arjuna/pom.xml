@@ -239,6 +239,7 @@
             </plugins>
         </build>
     </profile>
+    <!--
 	<profile>
 		<id>sybase-jdbc-store</id>
 		<dependencies>
@@ -267,6 +268,7 @@
 			</plugins>
 		</build>
 	</profile>
+	-->
 	<profile>
 		<id>oracle-jdbc-store</id>
 		<dependencies>
@@ -325,7 +327,7 @@
 		<id>postgres-jdbc-store</id>
 		<dependencies>
 			<dependency>
-				<groupId>postgresql</groupId>
+				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${version.postgresql}</version>
 				<scope>test</scope>
@@ -402,7 +404,7 @@
 			</plugins>
 		</build>
 	</profile>
-
+    <!--
 	<profile>
 		<id>mssql-jdbc-store</id>
 		<dependencies>
@@ -431,6 +433,7 @@
 			</plugins>
 		</build>
 	</profile>
+	-->
   <profile>
     <id>community</id>
     <dependencies>

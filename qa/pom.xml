@@ -190,7 +190,10 @@
 						org.apache.ant,
 						javax,
 						org.jboss.narayana,
-						com.oracle.database.jdbc
+						com.oracle.database.jdbc,
+						org.postgresql,
+						mysql,
+						com.ibm.db2
 					</excludeGroupIds>
 					<excludeArtifactIds>jboss-transaction-spi</excludeArtifactIds>
 					<outputDirectory>./ext</outputDirectory>
@@ -201,16 +204,23 @@
 					<stripVersion>true</stripVersion>
 				</configuration>
 
+				<!--
+				 Drivers of the used databases are downloaded directly from Maven repositories.
+				 The consumer of these drivers is the ant script "run-tests.xml", which is also
+				 the main script to run all tests in the QA module. The main reason to use DBs in
+				 the QA module is to test Narayana with different kinds of Object Stores
+				-->
+
 				<executions>
 					<execution>
-						<phase>install</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
+						<phase>install</phase>
 						<configuration>
 							<excludeGroupIds>*</excludeGroupIds>
 							<outputDirectory>${project.build.directory}/../dbdrivers</outputDirectory>
-							<includeArtifactIds>ojdbc8</includeArtifactIds>
+							<includeArtifactIds>ojdbc8, postgresql, mysql-connector-java, jcc</includeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -274,6 +284,21 @@
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
 			<version>${version.com.oracle}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${version.postgresql}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${version.mysql}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.db2</groupId>
+			<artifactId>jcc</artifactId>
+			<version>${version.com.ibm}</version>
 		</dependency>
 	</dependencies>
   <profiles>

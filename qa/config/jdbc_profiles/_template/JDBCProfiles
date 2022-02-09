@@ -231,7 +231,7 @@ DB2_PGSQL_JNDI_Host=localhost
 ##########################################################################
 
 DB_MYSQL_JNDI_NumberOfDrivers=2
-DB_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_MYSQL_JNDI_Binding=mysql
 DB_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql
@@ -246,7 +246,7 @@ DB_MYSQL_JNDI_Host=localhost
 ######################################################################
 
 DB1_MYSQL_JNDI_NumberOfDrivers=2
-DB1_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB1_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_MYSQL_JNDI_Binding=mysql1
 DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
@@ -256,7 +256,7 @@ DB1_MYSQL_JNDI_DatabaseName=test
 DB1_MYSQL_JNDI_Host=localhost
 
 DB2_MYSQL_JNDI_NumberOfDrivers=2
-DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB2_MYSQL_JNDI_Driver0=com.mysql.cj.jdbc.Driver
 DB2_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_MYSQL_JNDI_Binding=mysql2
 DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
