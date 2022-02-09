@@ -103,6 +103,14 @@ public class JDBCProfileStore
 		return (String) _profile.get(profileName + "_DatabaseName");
 	}
 
+	public static String serviceName(String profileName)
+			throws Exception
+	{
+		loadProfile();
+
+		return (String) _profile.get(profileName + "_ServiceName");
+	}
+
 	public static String host(String profileName)
 			throws Exception
 	{
