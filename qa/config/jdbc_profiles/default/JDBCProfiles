@@ -86,7 +86,7 @@ DB1_THIN_JNDI_Binding=oracle_thin1
 DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
 DB1_THIN_JNDI_DatabaseUser=dtf11
 DB1_THIN_JNDI_DatabasePassword=dtf11
-DB1_THIN_JNDI_DatabaseName=XE
+DB1_THIN_JNDI_ServiceName=XEPDB1
 DB1_THIN_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 DB1_THIN_JNDI_Port=1521
 
@@ -97,6 +97,6 @@ DB2_THIN_JNDI_Binding=oracle_thin2
 DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
 DB2_THIN_JNDI_DatabaseUser=dtf12
 DB2_THIN_JNDI_DatabasePassword=dtf12
-DB2_THIN_JNDI_DatabaseName=XE
+DB2_THIN_JNDI_ServiceName=XEPDB1
 DB2_THIN_JNDI_Host=narayanaci1.eng.hst.ams2.redhat.com
 DB2_THIN_JNDI_Port=1521
