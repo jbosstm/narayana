@@ -17,19 +17,6 @@ else
   NEXT=$2
 fi
 
-if [[ $(uname) == CYGWIN* ]]
-then
-  docker-machine env --shell bash
-  if [[ $? != 0 ]]; then
-    exit
-  fi
-  eval "$(docker-machine env --shell bash)"
-  read -p "ARE YOU RUNNING AN ELEVATED CMD PROMPT docker needs this" ELEV
-  if [[ $ELEV == n* ]]
-  then
-    exit
-  fi
-fi
 read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
