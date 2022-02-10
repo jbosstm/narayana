@@ -70,10 +70,6 @@ else
   read
 fi
 
-rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -Prelease
-rm -rf $PWD/localrepo
-
 cd ~/tmp/narayana/$CURRENT/sources/narayana/
 git checkout $CURRENT
 if [[ $? != 0 ]]
@@ -91,12 +87,6 @@ else
 fi
 
 rm -rf $PWD/localm2repo
-./build.sh clean install -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Pcommunity
-if [[ $? != 0 ]]
-then
-  echo 1>&2 Could not install narayana
-  exit
-fi
 ./build.sh clean deploy -Dmaven.repo.local=${PWD}/localm2repo -DskipTests -gs ~/.m2/settings.xml -Dorson.jar.location=$ORSON_PATH -Prelease,community
 if [[ $? != 0 ]]
 then
@@ -104,12 +94,4 @@ then
   exit
 fi
 
-# upload the released artifacts but avoid website update (i.e., do not use target 'all')
-git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-ant -f build-release-pkgs.xml -Dtag=$CURRENT init downloads
-if [[ $? != 0 ]]
-then
-  echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
-  exit
-fi
 cd -
