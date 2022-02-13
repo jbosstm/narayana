@@ -25,7 +25,7 @@ package io.narayana.lra.arquillian.spi;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.jboss.logging.Logger;
 
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

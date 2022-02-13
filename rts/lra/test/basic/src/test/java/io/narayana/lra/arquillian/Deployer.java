@@ -54,6 +54,6 @@ public class Deployer {
                 // activates the bean and explicitly specifies to work with annotated classes
                 .addAsWebInfResource(new StringAsset("<beans version=\"1.1\" bean-discovery-mode=\"all\"></beans>"), "beans.xml")
                 .addAsResource(new StringAsset("org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder"),
-                    "META-INF/services/jakarta.ws.rs.client.ClientBuilder");
+                        "META-INF/services/javax.ws.rs.client.ClientBuilder");
     }
 }

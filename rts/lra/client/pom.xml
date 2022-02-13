@@ -40,15 +40,10 @@
       <version>${version.org.jboss.resteasy}</version>
     </dependency>
     <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
       <version>${version.cdi-api}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_3.0_spec</artifactId>
-      <version>${version.javax.ws.rs-api}</version>
     </dependency>
   </dependencies>
 

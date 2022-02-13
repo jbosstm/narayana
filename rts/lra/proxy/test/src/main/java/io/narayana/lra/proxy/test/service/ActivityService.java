@@ -23,15 +23,15 @@ package io.narayana.lra.proxy.test.service;
 
 import io.narayana.lra.proxy.test.model.Activity;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @ApplicationScoped
 public class ActivityService {
