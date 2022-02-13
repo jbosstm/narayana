@@ -22,7 +22,7 @@
 
 package io.narayana.lra.arquillian.resource;
 
-import jakarta.ws.rs.Path;
+import javax.ws.rs.Path;
 
 @Path("/root")
 public class RootResource {

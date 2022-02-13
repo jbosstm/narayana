@@ -42,18 +42,14 @@
 
     <test.logs.to.file>false</test.logs.to.file>
 
-    <version.cdi-api>3.0.0</version.cdi-api>
-    <version.glassfish.json>2.0.0</version.glassfish.json>
-    <version.jakarta.json-api>2.0.0</version.jakarta.json-api>
-    <version.jakarta.servlet.api>5.0.0</version.jakarta.servlet.api>
-    <version.javax.ws.rs-api>1.0.1.Final</version.javax.ws.rs-api>
+    <version.cdi-api>2.0</version.cdi-api>
 
     <version.jboss-interceptors>1.0.1.Final</version.jboss-interceptors>
     <version.jboss-modules>1.10.2.Final</version.jboss-modules>
     <version.microprofile.fault-tolerance>2.1.1</version.microprofile.fault-tolerance>
 
-    <version.microprofile.lra>2.0-RC1</version.microprofile.lra>
-    <version.org.jboss.resteasy>6.0.0.Beta1</version.org.jboss.resteasy>
+    <version.microprofile.lra>1.0</version.microprofile.lra>
+    <version.org.jboss.servlet.api>1.0.0.Final</version.org.jboss.servlet.api>
     <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
     <version.org.jboss.shrinkwrap.resolvers>3.1.4</version.org.jboss.shrinkwrap.resolvers>
 

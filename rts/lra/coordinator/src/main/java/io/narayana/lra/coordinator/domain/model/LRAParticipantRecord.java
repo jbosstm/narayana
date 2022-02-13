@@ -33,21 +33,21 @@ import io.narayana.lra.LRAConstants;
 import io.narayana.lra.LRAData;
 import io.narayana.lra.coordinator.domain.service.LRAService;
 import io.narayana.lra.logging.LRALogger;
-import jakarta.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.HttpHeaders;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.AsyncInvoker;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.Invocation;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.Link;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.AsyncInvoker;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -65,7 +65,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static io.narayana.lra.LRAConstants.AFTER;
 import static io.narayana.lra.LRAConstants.PARTICIPANT_TIMEOUT;
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_PARENT_CONTEXT_HEADER;
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
@@ -692,13 +692,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
 
                     if (qp[0].equals(LRAConstants.HTTP_METHOD_NAME)) {
                         switch (qp[1]) {
-                            case "jakarta.ws.rs.GET":
+                            case "javax.ws.rs.GET":
                                 return asyncInvoker.get();
-                            case "jakarta.ws.rs.PUT":
+                            case "javax.ws.rs.PUT":
                                 return asyncInvoker.put(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
-                            case "jakarta.ws.rs.POST":
+                            case "javax.ws.rs.POST":
                                 return asyncInvoker.post(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
-                            case "jakarta.ws.rs.DELETE":
+                            case "javax.ws.rs.DELETE":
                                 return asyncInvoker.delete();
                             default:
                                 break;
@@ -709,13 +709,13 @@ public class LRAParticipantRecord extends AbstractRecord implements Comparable<A
         }
 
         switch (method) {
-            case "jakarta.ws.rs.GET":
+            case "javax.ws.rs.GET":
                 return asyncInvoker.get();
-            case "jakarta.ws.rs.PUT":
+            case "javax.ws.rs.PUT":
                 return asyncInvoker.put(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
-            case "jakarta.ws.rs.POST":
+            case "javax.ws.rs.POST":
                 return asyncInvoker.post(Entity.entity(compensatorData, MediaType.TEXT_PLAIN));
-            case "jakarta.ws.rs.DELETE":
+            case "javax.ws.rs.DELETE":
                 return asyncInvoker.delete();
             default:
                 return asyncInvoker.get();
