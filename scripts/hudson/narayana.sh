@@ -12,6 +12,29 @@ function fatal {
   exit 1
 }
 
+function which_java {
+  type -p java 2>&1 > /dev/null
+  if [ $? = 0 ]; then
+    _java=java
+  elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]]; then
+    _java="$JAVA_HOME/bin/java"
+  else
+    unset _java
+  fi
+
+  if [[ "$_java" ]]; then
+    version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+
+    if [[ $version = 17* ]]; then
+      echo 17
+    elif [[ $version = 11* ]]; then
+      echo 11
+    elif [[ $version = 1.8* ]]; then
+      echo 8
+    fi
+  fi
+}
+
 # return 0 if using the IBM java compiler
 function is_ibm {
   jvendor=$(java -XshowSettings:properties -version 2>&1 | awk -F '"' '/java.vendor = / {print $1}')
@@ -50,6 +73,13 @@ function get_pull_xargs {
 function init_test_options {
     is_ibm
     ISIBM=$?
+
+    # WildFly 27 requires JDK 11 (see JBTM-3582 for details)
+    _jdk=`which_java`
+    if [[ "$_jdk" -lt 11 && "$PROFILE" =~ ^(AS_TESTS|RTS|JACOCO|XTS) ]]; then
+        fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 or 17 instead"
+    fi
+
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.12.6.Final-SNAPSHOT"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
@@ -428,7 +458,13 @@ function download_as {
   echo "Download WildFly Preview Build"
 
   cd $WORKSPACE
-  AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_WildflyPreviewNightly/.lastSuccessful/artifacts.zip}
+
+  if [ "$_jdk" -lt 11 ]; then
+    AS_LOCATION=${AS_LOCATION:-https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-preview-26.0.1.Final.zip}
+  else
+    AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_WildflyPreviewNightly/.lastSuccessful/artifacts.zip}
+  fi
+
   wget --user=guest --password=guest -nv ${AS_LOCATION}
   local zipFileName=${AS_LOCATION##*/}
   unzip -qo "$zipFileName"
