@@ -77,7 +77,7 @@ function init_test_options {
     # WildFly 27 requires JDK 11 (see JBTM-3582 for details)
     _jdk=`which_java`
     if [[ "$_jdk" -lt 11 && "$PROFILE" =~ ^(AS_TESTS|RTS|JACOCO|XTS) ]]; then
-        fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 or 17 instead"
+        fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
     fi
 
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.12.6.Final-SNAPSHOT"
@@ -455,43 +455,47 @@ function tests_as {
 }
 
 function download_as {
-  echo "Download WildFly Build"
+  echo "Downloading WildFly Build"
+
+  # clean up any previously downloaded zip files (this will not clean up old directories)
+  rm -f artifacts.zip wildfly-*.zip
 
   cd $WORKSPACE
 
   if [ "$_jdk" -lt 11 ]; then
+    # download the last wildfly version that ran on Java 8
     AS_LOCATION=${AS_LOCATION:-https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-preview-26.0.1.Final.zip}
+    wget --user=guest --password=guest -nv ${AS_LOCATION}
+    [ $? -ne 0 ] && fatal "Cannot wget WildFly '${AS_LOCATION}'"
+    zip=wildfly-preview-26.0.1.Final.zip
   else
+    # download the latest wildfly nighly build (which we know supports Java 11)
     AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_WildflyPreviewNightly/.lastSuccessful/artifacts.zip}
+    wget --user=guest --password=guest -nv ${AS_LOCATION}
+    ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
+    ### which is changing time to time
+    # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
+    [ $? -ne 0 ] && fatal "Cannot wget WildFly '${AS_LOCATION}'"
+    unzip -j artifacts.zip wildfly-preview-latest-SNAPSHOT.zip
+    [ $? -ne 0 ] && fatal "Cannot unzip artifacts.zip"
+    unzip -qo wildfly-preview-latest-SNAPSHOT.zip
+    [ $? -ne 0 ] && fatal "Cannot unzip wildfly-preview-latest-SNAPSHOT.zip"
+    rm wildfly-preview-latest-SNAPSHOT.zip
+    zip=$(ls wildfly-preview-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
   fi
 
-  wget --user=guest --password=guest -nv ${AS_LOCATION}
-  local zipFileName=${AS_LOCATION##*/}
-  unzip -qo "$zipFileName"
-  export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zipFileName%.zip}"}
+  export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
+  rm -rf $JBOSS_HOME # clean up any previous unzip
 
-  ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
-  ### which is changing time to time
-  # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
-  local wildflyLatestZipWrapper=$(ls wildfly-latest-*.zip | head -n 1)
-  if [ -f "${wildflyLatestZipWrapper}" ]; then # wrapper zip exists, let's unzip it to proceed further to distro zip
-    unzip -qo "${wildflyLatestZipWrapper}"
-    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build wrapper zip file '${wildflyLatestZipWrapper}'"
-    rm -f $wildflyLatestZipWrapper
-    export JBOSS_HOME="${PWD}/${wildflyLatestZipWrapper%.zip}"
-  fi
-  # if SNAPSHOT zip still exists, unzip it further
-  local wildflyDistZip=$(ls wildfly-*-SNAPSHOT.zip | head -n 1)
-  if [ -f "${wildflyDistZip}" ]; then
-    unzip -qo "${wildflyDistZip}"
-    [ $? -ne 0 ] && fatal "Cannot unzip WildFly nightly build distribution zip file '${wildflyDistZip}'"
-    export JBOSS_HOME="${PWD}/${wildflyDistZip%.zip}"
-  fi
+  unzip -qo $zip
+  [ $? -ne 0 ] && fatal "Cannot unzip wildfly zip file: $zip"
 
-  [ ! -d "${JBOSS_HOME}" ] && fatal "After unzipping the file '$zipFileName' (and possible zip wrapper '${wildflyDistZip}') the JBOSS_HOME directory at '${JBOSS_HOME}' does not exist"
-  # cleaning
-  rm -f artifacts.zip
-  rm -f wildfly-*.zip
+  [ -d "${JBOSS_HOME}" ] || fatal "After unzipping the file '$zip', '${JBOSS_HOME}' does not exist"
+
+  echo JBOSS_HOME=$JBOSS_HOME
+
+  # clean up downloaded zip files
+  rm -f wildfly-*.zip artifacts.zip
 
   # init files under JBOSS_HOME before tests are started
   init_jboss_home
