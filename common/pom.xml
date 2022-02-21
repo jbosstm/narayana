@@ -18,10 +18,17 @@
   <packaging>jar</packaging>
   <properties>
     <sortpom.skip>true</sortpom.skip>
+    <propertiesFileName>jbossts-properties.xml</propertiesFileName>
   </properties>
   <build>
     <sourceDirectory>classes</sourceDirectory>
     <testSourceDirectory>tests</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <inherited>false</inherited>
@@ -55,50 +62,11 @@
             <exclude>**/DummyProperties.java</exclude>
             <exclude>**/DummyEnvironmentBean.java</exclude>
           </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jboss.maven.plugins</groupId>
-        <artifactId>maven-injection-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>bytecode</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!-- inject build information into the ConfigurationInfo class -->
-          <bytecodeInjections>
-            <bytecodeInjection>
-              <expression>${buildNumber}</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getSourceId</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-            <bytecodeInjection>
-              <expression>jbossts-properties.xml</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getPropertiesFile</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-            <bytecodeInjection>
-              <expression>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getBuildId</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-          </bytecodeInjections>
+          <systemPropertyVariables>
+            <test_build_version>${buildNumber}</test_build_version>
+            <test_build_prop_file>${propertiesFileName}</test_build_prop_file>
+            <test_build_id>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</test_build_id>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

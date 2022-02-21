@@ -23,7 +23,16 @@
   <name>Narayana: ArjunaJTS narayana-jts-ibmorb</name>
   <packaging>jar</packaging>
   <description>JTS uber jar with ibmorb stubs</description>
+  <properties>
+    <propertiesFileName>jbossts-ibmorb-properties.xml</propertiesFileName>
+  </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <inherited>false</inherited>
@@ -129,49 +138,6 @@
           <doUpdate>false</doUpdate>
           <shortRevisionLength>5</shortRevisionLength>
           <revisionOnScmFailure>${project.version}-noscm</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jboss.maven.plugins</groupId>
-        <artifactId>maven-injection-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>bytecode</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <bytecodeInjections>
-            <bytecodeInjection>
-              <expression>${buildNumber}</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getSourceId</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-            <bytecodeInjection>
-              <expression>jbossts-ibmorb-properties.xml</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getPropertiesFile</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-            <bytecodeInjection>
-              <expression>JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}</expression>
-              <targetMembers>
-                <methodBodyReturn>
-                  <className>com.arjuna.common.util.ConfigurationInfo</className>
-                  <methodName>getBuildId</methodName>
-                </methodBodyReturn>
-              </targetMembers>
-            </bytecodeInjection>
-          </bytecodeInjections>
         </configuration>
       </plugin>
     </plugins>
