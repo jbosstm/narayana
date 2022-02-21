@@ -232,7 +232,7 @@
     <version.org.jboss.arquillian.container.weld>1.0.0.CR9</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.6.0.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
-    <version.org.jboss.byteman>4.0.13</version.org.jboss.byteman>
+    <version.org.jboss.byteman>4.0.18</version.org.jboss.byteman>
     <version.org.jboss.integration>6.0.0.CR1</version.org.jboss.integration>
     <version.org.jboss.ironjacamar>1.1.1.Final</version.org.jboss.ironjacamar>
     <version.org.jboss.jandex>2.1.1.Final</version.org.jboss.jandex>
@@ -862,6 +862,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <properties>
+        <!-- maven-compiler-plugin -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+      </properties>
     </profile>
   </profiles>
 </project>
