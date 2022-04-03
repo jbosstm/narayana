@@ -457,31 +457,32 @@ function tests_as {
 function download_as {
   echo "Downloading WildFly Build"
 
+  cd $WORKSPACE
+
   # clean up any previously downloaded zip files (this will not clean up old directories)
   rm -f artifacts.zip wildfly-*.zip
 
-  cd $WORKSPACE
-
   if [ "$_jdk" -lt 11 ]; then
     # download the last wildfly version that ran on Java 8
-    AS_LOCATION=${AS_LOCATION:-https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-preview-26.0.1.Final.zip}
+    AS_VERSION="26.1.0.Beta1"
+    AS_LOCATION="https://github.com/wildfly/wildfly/releases/download/${AS_VERSION}/wildfly-${AS_VERSION}.zip"
     wget --user=guest --password=guest -nv ${AS_LOCATION}
     [ $? -ne 0 ] && fatal "Cannot wget WildFly '${AS_LOCATION}'"
-    zip=wildfly-preview-26.0.1.Final.zip
+    zip=wildfly-${AS_VERSION}.zip
   else
     # download the latest wildfly nighly build (which we know supports Java 11)
-    AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_WildflyPreviewNightly/.lastSuccessful/artifacts.zip}
+    AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
     wget --user=guest --password=guest -nv ${AS_LOCATION}
     ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
     ### which is changing time to time
     # the artifacts.zip may be wrapping several zip files: artifacts.zip -> wildfly-latest-SNAPSHOT.zip -> wildfly-###-SNAPSHOT.zip
     [ $? -ne 0 ] && fatal "Cannot wget WildFly '${AS_LOCATION}'"
-    unzip -j artifacts.zip wildfly-preview-latest-SNAPSHOT.zip
+    unzip -j artifacts.zip wildfly-latest-SNAPSHOT.zip
     [ $? -ne 0 ] && fatal "Cannot unzip artifacts.zip"
-    unzip -qo wildfly-preview-latest-SNAPSHOT.zip
-    [ $? -ne 0 ] && fatal "Cannot unzip wildfly-preview-latest-SNAPSHOT.zip"
-    rm wildfly-preview-latest-SNAPSHOT.zip
-    zip=$(ls wildfly-preview-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
+    unzip -qo wildfly-latest-SNAPSHOT.zip
+    [ $? -ne 0 ] && fatal "Cannot unzip wildfly-latest-SNAPSHOT.zip"
+    rm wildfly-latest-SNAPSHOT.zip
+    zip=$(ls wildfly-*-SNAPSHOT.zip) # example the current latest is wildfly-preview-27.0.0.Beta1-SNAPSHOT.zip
   fi
 
   export JBOSS_HOME=${JBOSS_HOME:-"${PWD}/${zip%.*}"}
