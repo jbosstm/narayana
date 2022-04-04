@@ -80,7 +80,7 @@ function init_test_options {
         fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
     fi
 
-    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.12.6.Final"
+    [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.12.7.Final-SNAPSHOT"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
     [ x"$CODE_COVERAGE_ARGS" != "x" ] || CODE_COVERAGE_ARGS=""
     [ $ARQ_PROF ] || ARQ_PROF=arq	# IPv4 arquillian profile
