@@ -38,12 +38,13 @@
 
       Update the properties section below to suit your machine.
 
-      Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
+      Set JAVA_HOME to a jdk 1.8, since that's the version we currently support.
+      Set the host used to rsync to (-Drsync.host=<fully qualified hostname>).
 
-      ant -f build-release-pkgs.xml all
+      ant -f build-release-pkgs.xml -Drsync.host=${RSYNC_HOST} all
 
       rsync or sftp the downloads to publish to the web site (careful with the trailing '/') e.g.
-        rsync \-\-protocol=29 -avz 4.11.0.Final jbosstm@filemgmt.jboss.org:downloads_htdocs/jbosstm/
+        rsync -avz 4.11.0.Final jbosstm@<rsync host>:downloads_htdocs/jbosstm/
 
       Check out Narayana web page. This script uploas all the contents to the develop branch.
       However, you have to execute awestruct build as explained in web page's readme.
@@ -59,6 +60,8 @@
   <description>
         package Narayana binary + src files for upload to website and other repos.
     </description>
+  <!-- the fully qualified name of the host to use for rsync'ing artefacts (such as zips and website) during the build -->
+  <property name="rsync.host" value="${rsync.host}"/>
   <property name="awestruct.executable" value="awestruct"/>
   <!-- where to get the source -->
   <property name="gitbase" value="git@github.com:jbosstm"/>
@@ -123,7 +126,7 @@
     <copy file="${workdir}/sources/narayana/narayana-full/target/narayana-full-${tag}-javadoc.jar" todir="${workdir}/downloads/api"/>
     <exec executable="bash" dir="${workdir}" failonerror="true">
       <arg value="-c"/>
-      <arg value="rsync --chmod=ugo=rwX --protocol=29 --partial --progress --rsh=ssh -r downloads/* jbosstm@filemgmt.jboss.org:${downloads.dir}/${tag}" />
+      <arg value="rsync --chmod=ugo=rwX --partial --progress --rsh=ssh -r downloads/* jbosstm@{rsync.host}:${downloads.dir}/${tag}" />
     </exec>
   </target>
   
@@ -174,7 +177,7 @@
     </exec>
     <exec executable="bash" dir="${workdir}/narayana.io/" failonerror="true">
       <arg value="-c"/>
-      <arg value="rsync --protocol=29 --partial --progress --rsh=ssh --delete-after -r _site/* jbosstm@filemgmt.jboss.org:www_htdocs/jbosstm/" />
+      <arg value="rsync --partial --progress --rsh=ssh --delete-after -r _site/* jbosstm@{rsync.host}:www_htdocs/jbosstm/" />
     </exec>
   </target>
   
