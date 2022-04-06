@@ -19,13 +19,14 @@ if [[ $WISSUEOK == n* ]]
 then
   exit
 fi
-if [ $# -ne 3 ]; then
-  echo 1>&2 "$0: usage: CURRENT NEXT WFLYISSUE"
+if [ $# -ne 4 ]; then
+  echo 1>&2 "$0: usage: CURRENT NEXT WFLYISSUE RSYNC_HOST"
   exit 2
 else
   CURRENT=$1
   NEXT=$2
   WFLYISSUE=$3
+  RSYNC_HOST=$4
 fi
 
 if [[ $(uname) == CYGWIN* ]]
@@ -41,7 +42,7 @@ then
     exit
   fi
 fi
-read -p "You will need: VPN, credentials for jbosstm@filemgmt, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
+read -p "You will need: VPN, credentials for jbosstm@${RSYNC_HOST}, jira admin, github permissions on all jbosstm/ repo and nexus permissions. Do you have these?" ENVOK
 if [[ $ENVOK == n* ]]
 then
   exit
@@ -188,7 +189,7 @@ then
   exit
 fi
 git archive -o ../../narayana-full-$CURRENT-src.zip $CURRENT
-ant -f build-release-pkgs.xml -Dawestruct.executable="awestruct" all
+ant -f build-release-pkgs.xml -Drsync.host=${RSYNC_HOST} -Dawestruct.executable="awestruct" all
 if [[ $? != 0 ]]
 then
   echo 1>&2 COULD NOT BUILD Narayana RELEASE PKGS
@@ -204,10 +205,25 @@ then
   echo 1>&2 jboss-dockerfiles: Tag $CURRENT did not exist
   exit
 fi
-docker build -t lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
-docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:${CURRENT}
-docker tag lra-coordinator:latest docker.io/jbosstm/lra-coordinator:latest
-docker push docker.io/jbosstm/lra-coordinator:${CURRENT}
-docker push  docker.io/jbosstm/lra-coordinator:latest
 
-xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/ &
+echo "building, tagging and pushing podman images to quay.io ..."
+#read -p "Have you logged in (podman login quay.io), if not you will be prompted (y/n): " ok
+#if [[ $ok == y* ]]; then
+  # build the lra-coordinator image
+  podman build --tag lra-coordinator --build-arg NARAYANA_VERSION=${CURRENT} .
+  # tag it and push it
+  podman tag lra-coordinator quay.io/jbosstm/lra-coordinator:${CURRENT}
+  podman tag lra-coordinator quay.io/jbosstm/lra-coordinator:latest
+  echo "loging in to quay.io ..."
+  # log in to quay.io
+  podman login quay.io
+  # push the image
+  podman push quay.io/jbosstm/lra-coordinator:${CURRENT}
+  podman push quay.io/jbosstm/lra-coordinator:latest
+  # the image will appear in https://quay.io/repository/jbosstm/lra-coordinator?tab=tags
+#else
+#  echo "alternatively run the above commands manually"
+#fi
+
+# not sure why we need to look at CI at this point so commenting it out
+# xdg-open http://narayanaci1.eng.hst.ams2.redhat.com/ &
