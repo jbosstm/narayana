@@ -36,8 +36,6 @@
      -->
     <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
     <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
-
-    <version.org.jboss.resteasy-cdi>4.5.5.Final</version.org.jboss.resteasy-cdi>
   </properties>
 
   <dependencies>
@@ -134,7 +132,7 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-cdi</artifactId>
-      <version>${version.org.jboss.resteasy-cdi}</version>
+      <version>${version.org.jboss.resteasy}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>

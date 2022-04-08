@@ -219,7 +219,7 @@
     <version.maven.checkstyle-plugin>3.1.2</version.maven.checkstyle-plugin>
     <version.maven.jandex-plugin>1.0.6</version.maven.jandex-plugin>
     <version.mysql>8.0.25</version.mysql>
-    <version.org.apache.activemq>2.19.0</version.org.apache.activemq>
+    <version.org.apache.activemq>2.21.0</version.org.apache.activemq>
     <version.org.apache.ant>1.10.9</version.org.apache.ant>
     <version.org.apache.httpcomponents>4.2.1</version.org.apache.httpcomponents>
     <version.org.codehaus.mojo.jboss-maven-plugin>1.5.0</version.org.codehaus.mojo.jboss-maven-plugin>
@@ -230,7 +230,7 @@
     <version.org.jacorb.jacorb>2.3.2-jbossorg-5</version.org.jacorb.jacorb>
     <version.org.jacorb.jacorb-idl-compiler>2.3.1</version.org.jacorb.jacorb-idl-compiler>
     <version.org.jboss.arquillian.container.weld>1.0.0.CR9</version.org.jboss.arquillian.container.weld>
-    <version.org.jboss.arquillian.core>1.6.0.Final</version.org.jboss.arquillian.core>
+    <version.org.jboss.arquillian.core>1.7.0.Alpha10</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>
     <version.org.jboss.byteman>4.0.18</version.org.jboss.byteman>
     <version.org.jboss.integration>6.0.0.CR1</version.org.jboss.integration>
@@ -242,7 +242,7 @@
     <version.org.jboss.logging.jboss-logging-processor>2.0.0.Final</version.org.jboss.logging.jboss-logging-processor>
     <version.org.jboss.logmanager>1.5.1.Final</version.org.jboss.logmanager>
     <version.org.jboss.openjdk-orb>8.1.9.Final</version.org.jboss.openjdk-orb>
-    <version.org.jboss.resteasy>4.7.2.Final</version.org.jboss.resteasy>
+    <version.org.jboss.resteasy>6.0.0.Final</version.org.jboss.resteasy>
     <version.org.jboss.spec.javax.ejb>1.0.2.Final</version.org.jboss.spec.javax.ejb>
     <version.org.jboss.spec.javax.interceptor>1.0.0.Final</version.org.jboss.spec.javax.interceptor>
     <version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>1.0.1.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_1.1_spec>
