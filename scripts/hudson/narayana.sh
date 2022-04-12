@@ -372,14 +372,14 @@ function clone_as {
 
     git remote | grep upstream
     if [ $? -ne 0 ]; then
-      git remote add upstream git://github.com/wildfly/wildfly.git
+      git remote add upstream https://github.com/wildfly/wildfly.git
     fi
     #Abort any partially complete rebase
     git rebase --abort
     git checkout 5_BRANCH
     [ $? -eq 0 ] || fatal "git checkout 5_BRANCH failed"
     git fetch
-    [ $? -eq 0 ] || fatal "git fetch git://github.com/jbosstm/jboss-as.git failed"
+    [ $? -eq 0 ] || fatal "git fetch https://github.com/jbosstm/jboss-as.git failed"
     git reset --hard jbosstm/5_BRANCH
     [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
@@ -393,7 +393,7 @@ function clone_as {
 
     cd jboss-as
 
-    git remote add upstream git://github.com/wildfly/wildfly.git
+    git remote add upstream https://github.com/wildfly/wildfly.git
   fi
 
   [ -z "$AS_BRANCH" ] || git fetch jbosstm +refs/pull/*/head:refs/remotes/jbosstm/pull/*/head
