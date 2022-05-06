@@ -46,7 +46,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
@@ -57,23 +56,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.lra.annotation.LRAStatus;
 import org.eclipse.microprofile.lra.annotation.ParticipantStatus;
-import org.eclipse.microprofile.openapi.annotations.Components;
-import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
-import org.eclipse.microprofile.openapi.annotations.info.Contact;
-import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
@@ -103,29 +95,8 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVER
 
 @ApplicationScoped
 @Path(COORDINATOR_PATH_NAME)
-
-@OpenAPIDefinition(
-        info = @Info(title = "LRA Coordinator", version = LRAConstants.CURRENT_API_VERSION_STRING,
-                contact = @Contact(name = "Narayana", url = "https://narayana.io")),
-        tags = @Tag(name = "LRA Coordinator"),
-        components = @Components(
-                schemas = {
-                        @Schema(name = "LRAApiVersionSchema",
-                                description = "Format is `major.minor`, both components are required, they are to be numbers",
-                                type = SchemaType.STRING, pattern = "^\\d+\\.\\d+$", example = "1.0")
-                },
-                parameters = {
-                        @Parameter(name = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME, in = ParameterIn.HEADER,
-                                description = "Narayana LRA API version", schema = @Schema(ref = "LRAApiVersionSchema"))
-                },
-                headers = {
-                        @Header(name = LRAConstants.NARAYANA_LRA_API_VERSION_HEADER_NAME, description = "Narayana LRA API version",
-                                schema = @Schema(ref = "LRAApiVersionSchema"))
-                }
-        )
-)
 @Tag(name = "LRA Coordinator", description = "Operations to work with active LRAs (to start, to get a status, to finish, etc.)")
-public class Coordinator extends Application {
+public class Coordinator {
     static final String LRA_API_VERSION = "1.0-RC1";
 
     @Context
@@ -133,20 +104,6 @@ public class Coordinator extends Application {
 
     private final LRAService lraService;
     private final RecoveryCoordinator recoveryCoordinator;
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        HashSet<Class<?>> classes = new HashSet<>();
-        classes.add(Coordinator.class);
-        return classes;
-    }
-
-    @Override
-    public Set<Object> getSingletons() {
-        Set<Object> containerFilters = new HashSet<>();
-        containerFilters.add(new CoordinatorContainerFilter());
-        return containerFilters;
-    }
 
     public Coordinator() {
         lraService = LRARecoveryModule.getService();
