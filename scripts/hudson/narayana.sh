@@ -363,7 +363,7 @@ function build_narayana {
 }
 
 function clone_as {
-  echo "Cloning AS sources from git://github.com/jbosstm/jboss-as.git"
+  echo "Cloning AS sources from https://github.com/jbosstm/jboss-as.git"
 
   cd ${WORKSPACE}
   if [ -d jboss-as ]; then
