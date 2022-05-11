@@ -76,9 +76,6 @@ function init_test_options {
 
     # WildFly 27 requires JDK 11 (see JBTM-3582 for details)
     _jdk=`which_java`
-    if [[ "$_jdk" -lt 11 && "$PROFILE" =~ ^(AS_TESTS|RTS|JACOCO|XTS) ]]; then
-        fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
-    fi
 
     [ $NARAYANA_CURRENT_VERSION ] || NARAYANA_CURRENT_VERSION="5.12.7.Final-SNAPSHOT"
     [ $CODE_COVERAGE ] || CODE_COVERAGE=0
@@ -114,6 +111,9 @@ function init_test_options {
         fi
     elif [[ $PROFILE == "AS_TESTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!AS_TESTS* ]]; then
+          if [[ "$_jdk" -lt 11 ]]; then
+            fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
+          fi
           comment_on_pull "Started testing this pull request with $PROFILE profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=1 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=1 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
@@ -123,6 +123,9 @@ function init_test_options {
         fi
     elif [[ $PROFILE == "RTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!RTS* ]]; then
+          if [[ "$_jdk" -lt 11 ]]; then
+            fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
+          fi
           comment_on_pull "Started testing this pull request with RTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TEST=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
           export RTS_AS_TESTS=1 RTS_TESTS=1 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0 OSGI_TESTS=0
@@ -132,6 +135,9 @@ function init_test_options {
         fi
     elif [[ $PROFILE == "JACOCO" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!JACOCO* ]]; then
+          if [[ "$_jdk" -lt 11 ]]; then
+            fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
+          fi
           comment_on_pull "Started testing this pull request with JACOCO profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=1 XTS_AS_TESTS=0 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=1 JTA_CDI_TESTS=1 QA_TESTS=1 SUN_ORB=1 JAC_ORB=0 JTA_AS_TESTS=1 OSGI_TESTS=0
@@ -142,6 +148,9 @@ function init_test_options {
         fi
     elif [[ $PROFILE == "XTS" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!XTS* ]]; then
+          if [[ "$_jdk" -lt 11 ]]; then
+            fatal "Requested JDK version $_jdk cannot run with axis $PROFILE: please use jdk 11 instead"
+          fi
           comment_on_pull "Started testing this pull request with XTS profile: $BUILD_URL"
           export AS_BUILD=1 AS_CLONE=1 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=1 XTS_TESTS=1 TXF_TESTS=1 txbridge=1
           export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=0 SUN_ORB=0 JAC_ORB=0 JTA_AS_TESTS=0
