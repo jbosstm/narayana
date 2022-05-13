@@ -27,6 +27,7 @@ import org.jboss.jbossts.star.client.ServerSRAFilter;
 import org.jboss.jbossts.star.service.Coordinator;
 import org.jboss.jbossts.star.util.TxMediaType;
 import org.jboss.jbossts.star.util.TxSupport;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,6 +52,7 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,47 +61,85 @@ import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
 
 public class SRATest extends BaseTest {
 
+    private static TxSupport txn =txn = new TxSupport(TXN_MGR_URL, 6000);
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         System.setProperty(COORDINATOR_URL_PROP, TXN_MGR_URL);
         startContainer2(TXN_MGR_URL, TransactionalResource.class, Coordinator.class, ServerSRAFilter.class, SRAParticipant.class);
     }
 
+    //afterClass finishes SRA in order to clean in-memory transaction map
+    @AfterClass
+    public static void after() {
+        Collection<String> txs = txn.getTransactions();
+        for( String id : txs) {
+            String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                    SRAParticipant.END_REQUIRED_SRA_PATH);
+            Map<String, String> reqHeaders = new HashMap<>();
+
+            reqHeaders.put(RTS_HTTP_CONTEXT_HEADER, id);
+            txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                    TxMediaType.PLAIN_MEDIA_TYPE, null, null, reqHeaders);
+        }
+
+
+
+        Assert.assertEquals(0, txn.getTransactions().size());
+    }
+
     @Path(SRAParticipant.SRA_TEST_PATH)
     public static class SRAParticipant {
-        private static final String SRA_TEST_PATH = "sra-participant";
-        private static final String SRA_TEST_DELAY_TRUE_PATH = "delay-true";
-        private static final String SRA_TEST_DELAY_FALSE_PATH = "delay-false";
-
-        private Response getResult(boolean cancel, URI sraId) {
-            Response.Status status = cancel ? Response.Status.INTERNAL_SERVER_ERROR : Response.Status.OK;
-
-            return Response.status(status).entity(sraId.toASCIIString()).build();
-        }
+        protected static final String SRA_TEST_PATH = "sra-participant";
+        private static final String END_REQUIRED_SRA_PATH = "required-end-true";
+        private static final String START_REQUIRED_SRA_PATH = "required-end-false";
+        private static final String END_MANDATORY_SRA_PATH = "mandatory-end-true";
+        private static final String START_MANDATORY_SRA_PATH = "mandatory-end-false";
 
         @GET
-        @Path(SRA_TEST_DELAY_FALSE_PATH)
-        @SRA(value = SRA.Type.REQUIRED)
+        @Path(START_REQUIRED_SRA_PATH)
+        @SRA(value = SRA.Type.REQUIRED, end = false)
         @Consumes(TxMediaType.PLAIN_MEDIA_TYPE)
-        public Response delayCommitFalse(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
-                                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
-                                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
-//            SRATest.acceptCount.set(acceptCount);
+        public Response startRequiredSRA(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
+                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
+                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
 
             return Response.ok(contextId).build();
         }
 
         @GET
-        @Path(SRA_TEST_DELAY_TRUE_PATH)
-        @SRA(value = SRA.Type.REQUIRED, delayCommit = true)
+        @Path(END_REQUIRED_SRA_PATH)
+        @SRA(value = SRA.Type.REQUIRED, end = true)
         @Consumes(TxMediaType.PLAIN_MEDIA_TYPE)
-        public Response delayCommitTrue(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
+        public Response endRequiredSRA(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
                                 @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
                                 @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
-//            SRATest.acceptCount.set(acceptCount);
 
             return Response.ok(contextId).build();
         }
+
+        @GET
+        @Path(START_MANDATORY_SRA_PATH)
+        @SRA(value = SRA.Type.MANDATORY, end = false)
+        @Consumes(TxMediaType.PLAIN_MEDIA_TYPE)
+        public Response startMandatorySRA(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
+                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
+                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
+
+            return Response.ok(contextId).build();
+        }
+
+        @GET
+        @Path(END_MANDATORY_SRA_PATH)
+        @SRA(value = SRA.Type.MANDATORY, end = true)
+        @Consumes(TxMediaType.PLAIN_MEDIA_TYPE)
+        public Response endMandatorySRA(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
+                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
+                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
+
+            return Response.ok(contextId).build();
+        }
+
         @POST
         @Produces(TxMediaType.PLAIN_MEDIA_TYPE)
         public String enlist(@Context UriInfo info, @QueryParam("pId") @DefaultValue("") String pId,
@@ -163,39 +203,81 @@ public class SRATest extends BaseTest {
     }*/
 
     @Test
-    public void testDelayCommitFalse() throws IOException {
-        TxSupport txn = new TxSupport(TXN_MGR_URL, 60000);
+    public void testRequiredSRAWithoutEnd() throws IOException {
 
-//        txn.startTx(60000);
+        int activeTxCount = txn.getTransactions().size();
 
-//        Assert.assertEquals(1, txn.getTransactions().size());
-        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.SRA_TEST_DELAY_FALSE_PATH);
-        txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, path, "GET",
-                TxMediaType.PLAIN_MEDIA_TYPE,null, null);
-//        txn.enlistTestResource(SURL + SRAParticipant.SRA_TEST_PATH, false);
+        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                SRAParticipant.START_REQUIRED_SRA_PATH);
 
-//        txn.commitTx();
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET", TxMediaType.PLAIN_MEDIA_TYPE, null, null);
 
-        Assert.assertEquals(0, txn.getTransactions().size());
+        Assert.assertEquals(true, txn.getTransactions().contains(sraId));
+
+        Assert.assertEquals(activeTxCount + 1, txn.getTransactions().size());
+
     }
 
     @Test
-    public void testDelayCommitTrue() throws IOException {
-        TxSupport txn = new TxSupport(TXN_MGR_URL, 60000);
+    public void testRequiredSRAWithEnd() throws IOException {
+        int activeTxCount = txn.getTransactions().size();
 
-        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.SRA_TEST_DELAY_TRUE_PATH);
-        String sraId= txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, path, "GET",
-                TxMediaType.PLAIN_MEDIA_TYPE,null, null);
+        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                SRAParticipant.END_REQUIRED_SRA_PATH);
 
-        Assert.assertEquals(1, txn.getTransactions().size());
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null);
 
-        path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.SRA_TEST_DELAY_FALSE_PATH);
-        Map<String, String> reqHeaders = new HashMap();
+        Assert.assertEquals(false, txn.getTransactions().contains(sraId));
+        Assert.assertEquals(activeTxCount, txn.getTransactions().size());
+
+    }
+
+    //mandatory transaction needs an existing transaction id to be called
+    @Test
+    public void testMandatorySRAWithoutEnd() throws IOException {
+        int activeTxCount = txn.getTransactions().size();
+
+        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                SRAParticipant.START_REQUIRED_SRA_PATH);
+
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null);
+
+        Map<String, String> reqHeaders = new HashMap<>();
 
         reqHeaders.put(RTS_HTTP_CONTEXT_HEADER, sraId);
-        txn.httpRequest(new int[] {HttpURLConnection.HTTP_OK}, path, "GET",
+        path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.START_MANDATORY_SRA_PATH);
+
+        txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET", TxMediaType.PLAIN_MEDIA_TYPE, null, null,
+                reqHeaders);
+
+        Assert.assertEquals(true, txn.getTransactions().contains(sraId));
+        Assert.assertEquals(activeTxCount + 1, txn.getTransactions().size());
+    }
+
+    @Test
+    public void testMandatorySRAWithEnd() throws IOException {
+        int activeTxCount = txn.getTransactions().size();
+
+        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                SRAParticipant.START_REQUIRED_SRA_PATH);
+
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null);
+
+        Assert.assertEquals(true, txn.getTransactions().contains(sraId));
+
+        Map<String, String> reqHeaders = new HashMap<>();
+
+        reqHeaders.put(RTS_HTTP_CONTEXT_HEADER, sraId);
+        path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.END_MANDATORY_SRA_PATH);
+
+        txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
                 TxMediaType.PLAIN_MEDIA_TYPE, null, null, reqHeaders);
 
-        Assert.assertEquals(0, txn.getTransactions().size());
+        Assert.assertEquals(false, txn.getTransactions().contains(sraId));
+        Assert.assertEquals(activeTxCount, txn.getTransactions().size());
+
     }
 }
