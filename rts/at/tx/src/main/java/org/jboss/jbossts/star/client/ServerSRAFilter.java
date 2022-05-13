@@ -105,21 +105,21 @@ public class ServerSRAFilter implements ContainerRequestFilter, ContainerRespons
         URL suspendedSRA = null;
         URL incommingSRA = null;
         String recoveryUrl = null;
-        boolean delayCommit;
+        boolean isLongRunning;
 
         if (transactional == null)
             transactional = method.getDeclaringClass().getDeclaredAnnotation(SRA.class);
 
         if (transactional != null) {
             type = (transactional).value();
-            delayCommit = (transactional).delayCommit();
+            isLongRunning = !(transactional).end();
             Response.Status.Family[] cancel0nFamily = {Response.Status.Family.SERVER_ERROR};//TODO((Transactional) transactional).cancelOnFamily();
             Response.Status[] cancel0n = {}; //TODO((Transactional) transactional).cancelOn();
 
             containerRequestContext.setProperty(CANCEL_ON_FAMILY_PROP, cancel0nFamily);
             containerRequestContext.setProperty(CANCEL_ON_PROP, cancel0n);
         } else {
-            delayCommit = false;
+            isLongRunning = false;
         }
 
         if (type == null) {
@@ -209,7 +209,7 @@ public class ServerSRAFilter implements ContainerRequestFilter, ContainerRespons
 //            headers.putSingle(SRA_HTTP_HEADER, sraId.toString());
         }
 
-        if (!delayCommit) {
+        if (!isLongRunning) {
             containerRequestContext.setProperty(TERMINAL_SRA_PROP, sraId);
             newSRA = null;
         }

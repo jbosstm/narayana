@@ -122,13 +122,12 @@ public @interface SRA {
     boolean enableJTABridge() default false;
 
     /**
-     * Some annotations (such as REQUIRES_NEW) will start an SRA on entry to a method and
-     * end it on exit. For some business activities it is desirable for the action to survive
-     * method execution and be completed elsewhere.
+     * Normally if an SRA is present when a bean method is invoked it will not be ended when the method returns.
+     * To override this behaviour use the end element to force its termination
      *
-     * @return whether or not newly created SRAs will survive after the method has executed.
+     * @return true if an SRA that was present before method execution will be closed when the bean method finishes.
      */
-    boolean delayCommit() default false;
+    boolean end() default true;
 
     /**
      * Normally if an SRA is present when a bean method is invoked it will not be ended when the method returns.

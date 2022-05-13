@@ -110,8 +110,8 @@ public class TripController extends SRAParticipant {
     @POST
     @Path("/book")
     @Produces(MediaType.APPLICATION_JSON)
-    // delayClose because we want the LRA to be associated with a booking until the user confirms the booking
-    @SRA(value = SRA.Type.REQUIRED, delayCommit = false)
+    // end = false because we want the SRA to be associated with a booking until the user confirms the booking
+    @SRA(value = SRA.Type.REQUIRED, end = false)
     public Response bookTrip( @HeaderParam(RTS_HTTP_CONTEXT_HEADER) String sraId,
                               @QueryParam(HotelController.HOTEL_NAME_PARAM) @DefaultValue("") String hotelName,
                               @QueryParam(HotelController.HOTEL_BEDS_PARAM) @DefaultValue("1") Integer hotelGuests,
