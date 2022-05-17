@@ -48,7 +48,6 @@
                     <include>org.jboss.narayana.jts:orbportability</include>
                     <include>org.jboss.narayana.jts:jts</include>
                     <include>org.jboss.narayana.jts:idlj-idl</include>
-                    <include>org.jboss.narayana.jts:idlj-idl-jdk8</include>
                     <include>org.jboss.narayana.jts:idlj-idl-jdk9</include>
                     <include>org.jboss.narayana.jts:idlj-idl-tests</include>
                     <include>org.jboss.narayana.jts:jtax</include>
@@ -418,19 +417,6 @@
     </dependency>
   </dependencies>
       </profile>
-    <profile>
-      <id>not-j9</id>
-      <activation>
-        <jdk>[1.7,1.9)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-jdk8</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-      </dependencies>    
-  </profile>
   <profile>
     <id>j9</id>
     <activation>

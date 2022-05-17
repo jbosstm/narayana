@@ -27,24 +27,12 @@
 
   <profiles>
     <profile>
-      <id>not-j9</id>
-      <activation>
-        <jdk>[1.7,1.9)</jdk>
-      </activation>
-      <modules>
-        <module>idlj-jdk8</module>
-        <module>idlj</module>
-        <module>idlj-tests</module>
-      </modules>
-    </profile>
-    <profile>
       <id>j9</id>
       <activation>
         <jdk>[1.9, 11)</jdk>
       </activation>
       <modules>
         <module>idlj.java.corba</module>
-        <module>idlj-jdk8</module>
         <module>idlj-jdk9</module>
         <module>idlj</module>
         <module>idlj-tests</module>
