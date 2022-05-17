@@ -58,72 +58,6 @@
     </build>
     <profiles>
         <profile>
-            <id>not-j9</id>
-            <activation>
-                <jdk>[1.7,1.9)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.narayana.jts</groupId>
-                    <artifactId>idlj-idl-jdk8</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-              <plugins>
-                <plugin>
-                  <artifactId>maven-dependency-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>copy-dependencies</id>
-                      <phase>initialize</phase>
-                      <goals>
-                        <goal>unpack</goal>
-                      </goals>
-                      <configuration>
-                        <artifactItems>
-                          <artifactItem>
-                            <groupId>org.jboss.narayana.jts</groupId>
-                            <artifactId>idlj-idl-jdk8</artifactId>
-                            <version>${project.version}</version>
-                            <type>test-jar</type>
-                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-                          </artifactItem>
-                          <artifactItem>
-                            <groupId>org.jboss.narayana.jts</groupId>
-                            <artifactId>idlj-idl-jdk8</artifactId>
-                            <version>${project.version}</version>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                          </artifactItem>
-                        </artifactItems>
-                      </configuration>
-                    </execution>
-                  </executions>
-                </plugin>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-shade-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <phase>package</phase>
-                      <goals>
-                        <goal>shade</goal>
-                      </goals>
-                      <configuration>
-                        <artifactSet>
-                          <includes>
-                            <include>org.jboss.narayana.jts:idlj-idl</include>
-                            <include>org.jboss.narayana.jts:idlj-idl-jdk8</include>
-                          </includes>
-                        </artifactSet>
-                      </configuration>
-                    </execution>
-                  </executions>
-                </plugin>
-              </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>j9</id>
             <activation>
                 <jdk>[1.9, 11)</jdk>
@@ -148,23 +82,10 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>org.jboss.narayana.jts</groupId>
-                                            <artifactId>idlj-idl-jdk8</artifactId>
-                                            <version>${project.version}</version>
-                                            <type>test-jar</type>
-                                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.jboss.narayana.jts</groupId>
                                             <artifactId>idlj-idl-jdk9</artifactId>
                                             <version>${project.version}</version>
                                             <type>test-jar</type>
                                             <outputDirectory>${project.build.directory}/generated-test-resources/META-INF/versions/9</outputDirectory>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>org.jboss.narayana.jts</groupId>
-                                            <artifactId>idlj-idl-jdk8</artifactId>
-                                            <version>${project.version}</version>
-                                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
                                         </artifactItem>
                                         <artifactItem>
                                             <groupId>org.jboss.narayana.jts</groupId>
