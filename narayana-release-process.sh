@@ -72,6 +72,33 @@ docker login docker.io
   #./scripts/release/update_upstream.py -s WFLY -n $CURRENT
 #  exit
 #fi
+function which_java {
+  type -p java 2>&1 > /dev/null
+  if [ $? = 0 ]; then
+    _java=java
+  elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]]; then
+    _java="$JAVA_HOME/bin/java"
+  else
+    unset _java
+  fi
+
+  if [[ "$_java" ]]; then
+    version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+
+    if [[ $version = 17* ]]; then
+      echo 17
+    elif [[ $version = 11* ]]; then
+      echo 11
+    elif [[ $version = 1.8* ]]; then
+      echo 8
+    fi
+  fi
+}
+_jdk=`which_java`
+if [[ "$_jdk" -lt 11 ]]; then
+        echo "Requested JDK version $_jdk cannot run : please use jdk 11 instead"
+        exit 1
+fi
 
 git fetch upstream --tags
 if [[ $? != 0 ]]; then
