@@ -61,15 +61,16 @@ import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
 
 public class SRATest extends BaseTest {
 
-    private static TxSupport txn =txn = new TxSupport(TXN_MGR_URL, 6000);
+    private static TxSupport txn = txn = new TxSupport(TXN_MGR_URL, 6000);
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         System.setProperty(COORDINATOR_URL_PROP, TXN_MGR_URL);
-        startContainer2(TXN_MGR_URL, TransactionalResource.class, Coordinator.class, ServerSRAFilter.class, SRAParticipant.class);
+        startContainer2(TXN_MGR_URL, TransactionalResource.class, Coordinator.class, ServerSRAFilter.class,
+                SRAParticipant.class);
     }
 
-    //afterClass finishes SRA in order to clean in-memory transaction map
+    // afterClass finishes SRA in order to clean in-memory transaction map
     @AfterClass
     public static void after() {
         Collection<String> txs = txn.getTransactions();
@@ -82,8 +83,6 @@ public class SRATest extends BaseTest {
             txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
                     TxMediaType.PLAIN_MEDIA_TYPE, null, null, reqHeaders);
         }
-
-
 
         Assert.assertEquals(0, txn.getTransactions().size());
     }
@@ -112,8 +111,8 @@ public class SRATest extends BaseTest {
         @SRA(value = SRA.Type.REQUIRED, end = true)
         @Consumes(TxMediaType.PLAIN_MEDIA_TYPE)
         public Response endRequiredSRA(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) URI contextId,
-                                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
-                                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
+                @DefaultValue("0") @QueryParam("accept") Integer acceptCount,
+                @DefaultValue("false") @QueryParam("cancel") Boolean cancel) {
 
             return Response.ok(contextId).build();
         }
@@ -143,11 +142,11 @@ public class SRATest extends BaseTest {
         @POST
         @Produces(TxMediaType.PLAIN_MEDIA_TYPE)
         public String enlist(@Context UriInfo info, @QueryParam("pId") @DefaultValue("") String pId,
-                             @QueryParam("fault") @DefaultValue("") String fault,
-                             @QueryParam("twoPhaseAware") @DefaultValue("true") String twoPhaseAware,
-                             @QueryParam("isVolatile") @DefaultValue("false") String isVolatile,
-                             @QueryParam("isUnawareTwoPhaseParticipantOnePhase") @DefaultValue("true") String isUnawareOnePhase,
-                             String enlistUrl) throws IOException {
+                @QueryParam("fault") @DefaultValue("") String fault,
+                @QueryParam("twoPhaseAware") @DefaultValue("true") String twoPhaseAware,
+                @QueryParam("isVolatile") @DefaultValue("false") String isVolatile,
+                @QueryParam("isUnawareTwoPhaseParticipantOnePhase") @DefaultValue("true") String isUnawareOnePhase,
+                String enlistUrl) throws IOException {
             return "";
         }
 
@@ -155,9 +154,9 @@ public class SRATest extends BaseTest {
         @Path("/commit/{txid}")
         @Produces(MediaType.APPLICATION_JSON)
         @Commit
-        public Response commitWork(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String atId,
-                                   @PathParam("txid") String sraId) throws NotFoundException {
-            return updateState(SRAStatus.TransactionCommitted, sraId);//getCurrentActivityId());
+        public Response commitWork(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String atId, @PathParam("txid") String sraId)
+                throws NotFoundException {
+            return updateState(SRAStatus.TransactionCommitted, sraId);// getCurrentActivityId());
         }
 
         @PUT
@@ -165,7 +164,7 @@ public class SRATest extends BaseTest {
         @Produces(MediaType.APPLICATION_JSON)
         @Prepare
         public Response prepareWork(@PathParam("txid") String sraId) throws NotFoundException {
-            return updateState(SRAStatus.TransactionPrepared, sraId);//getCurrentActivityId());
+            return updateState(SRAStatus.TransactionPrepared, sraId);// getCurrentActivityId());
         }
 
         @PUT
@@ -173,7 +172,7 @@ public class SRATest extends BaseTest {
         @Produces(MediaType.APPLICATION_JSON)
         @Rollback
         public Response rollbackWork(@PathParam("txid") String sraId) throws NotFoundException {
-            return updateState(SRAStatus.TransactionRolledBack, sraId);//getCurrentActivityId());
+            return updateState(SRAStatus.TransactionRolledBack, sraId);// getCurrentActivityId());
         }
 
         @GET
@@ -190,17 +189,6 @@ public class SRATest extends BaseTest {
         }
     }
 
-/*    @ApplicationPath("base")
-    public static class SRAParticipant extends Application {
-        @Override
-        public Set<Class<?>> getClasses() {
-            HashSet<Class<?>> classes = new HashSet<>();
-            classes.add(Participant.class);
-//            classes.add(Coordinator.class);
-            classes.add(ServerSRAFilter.class);
-            return classes;
-        }
-    }*/
 
     @Test
     public void testRequiredSRAWithoutEnd() throws IOException {
@@ -210,7 +198,8 @@ public class SRATest extends BaseTest {
         String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
                 SRAParticipant.START_REQUIRED_SRA_PATH);
 
-        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET", TxMediaType.PLAIN_MEDIA_TYPE, null, null);
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null);
 
         Assert.assertEquals(true, txn.getTransactions().contains(sraId));
 
@@ -233,7 +222,7 @@ public class SRATest extends BaseTest {
 
     }
 
-    //mandatory transaction needs an existing transaction id to be called
+    // mandatory transaction needs an existing transaction id to be called
     @Test
     public void testMandatorySRAWithoutEnd() throws IOException {
         int activeTxCount = txn.getTransactions().size();
@@ -273,8 +262,8 @@ public class SRATest extends BaseTest {
         reqHeaders.put(RTS_HTTP_CONTEXT_HEADER, sraId);
         path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH, SRAParticipant.END_MANDATORY_SRA_PATH);
 
-        txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
-                TxMediaType.PLAIN_MEDIA_TYPE, null, null, reqHeaders);
+        txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET", TxMediaType.PLAIN_MEDIA_TYPE, null, null,
+                reqHeaders);
 
         Assert.assertEquals(false, txn.getTransactions().contains(sraId));
         Assert.assertEquals(activeTxCount, txn.getTransactions().size());

@@ -129,13 +129,6 @@ public @interface SRA {
      */
     boolean end() default true;
 
-    /**
-     * Normally if an SRA is present when a bean method is invoked it will not be ended when the method returns.
-     * To override this behaviour use the terminal element to force its termination
-     *
-     * @return true if an SRA that was present before method execution will be terminated when the bean method finishes.
-     */
-    boolean terminal() default false;
 
     /**
      * The cancelOnFamily element can be set to indicate which families of HTTP response codes will cause
