@@ -29,6 +29,7 @@ import org.jboss.jbossts.star.util.TxMediaType;
 import org.jboss.jbossts.star.util.TxSupport;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,6 +56,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.jboss.jbossts.star.client.SRAClient.COORDINATOR_URL_PROP;
 import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
@@ -62,12 +64,15 @@ import static org.jboss.jbossts.star.client.SRAClient.RTS_HTTP_CONTEXT_HEADER;
 public class SRATest extends BaseTest {
 
     private static TxSupport txn = txn = new TxSupport(TXN_MGR_URL, 6000);
+    static final AtomicInteger completeCount = new AtomicInteger(0);
+    static final AtomicInteger prepareCount = new AtomicInteger(0);
+
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         System.setProperty(COORDINATOR_URL_PROP, TXN_MGR_URL);
         startContainer2(TXN_MGR_URL, TransactionalResource.class, Coordinator.class, ServerSRAFilter.class,
-                SRAParticipant.class);
+                SRAParticipant.class, SRASecondParticipant.class);
     }
 
     // afterClass finishes SRA in order to clean in-memory transaction map
@@ -87,13 +92,19 @@ public class SRATest extends BaseTest {
         Assert.assertEquals(0, txn.getTransactions().size());
     }
 
+    @Before
+    public void before() {
+        prepareCount.set(0);
+        completeCount.set(0);
+    }
+
     @Path(SRAParticipant.SRA_TEST_PATH)
     public static class SRAParticipant {
         protected static final String SRA_TEST_PATH = "sra-participant";
-        private static final String END_REQUIRED_SRA_PATH = "required-end-true";
-        private static final String START_REQUIRED_SRA_PATH = "required-end-false";
-        private static final String END_MANDATORY_SRA_PATH = "mandatory-end-true";
-        private static final String START_MANDATORY_SRA_PATH = "mandatory-end-false";
+        protected static final String END_REQUIRED_SRA_PATH = "required-end-true";
+        protected static final String START_REQUIRED_SRA_PATH = "required-end-false";
+        protected static final String END_MANDATORY_SRA_PATH = "mandatory-end-true";
+        protected static final String START_MANDATORY_SRA_PATH = "mandatory-end-false";
 
         @GET
         @Path(START_REQUIRED_SRA_PATH)
@@ -156,6 +167,7 @@ public class SRATest extends BaseTest {
         @Commit
         public Response commitWork(@HeaderParam(RTS_HTTP_CONTEXT_HEADER) String atId, @PathParam("txid") String sraId)
                 throws NotFoundException {
+            completeCount.incrementAndGet();
             return updateState(SRAStatus.TransactionCommitted, sraId);// getCurrentActivityId());
         }
 
@@ -164,6 +176,7 @@ public class SRATest extends BaseTest {
         @Produces(MediaType.APPLICATION_JSON)
         @Prepare
         public Response prepareWork(@PathParam("txid") String sraId) throws NotFoundException {
+            prepareCount.incrementAndGet();
             return updateState(SRAStatus.TransactionPrepared, sraId);// getCurrentActivityId());
         }
 
@@ -189,7 +202,11 @@ public class SRATest extends BaseTest {
         }
     }
 
+    @Path(SRASecondParticipant.SRA_TEST_PATH)
+    public static class SRASecondParticipant extends SRAParticipant{
+        protected static final String SRA_TEST_PATH = "sra-second-participant";
 
+    }
     @Test
     public void testRequiredSRAWithoutEnd() throws IOException {
 
@@ -267,6 +284,34 @@ public class SRATest extends BaseTest {
 
         Assert.assertEquals(false, txn.getTransactions().contains(sraId));
         Assert.assertEquals(activeTxCount, txn.getTransactions().size());
+
+    }
+
+    // when SRA is committed the prepare and commit endpoints will be invoked for each partecipant involved in the transaction
+    @Test
+    public void testTwoPartecipants() throws IOException {
+        int completions = completeCount.get();
+        int prepared = prepareCount.get();
+
+        String path = String.format("%s%s/%s", SURL, SRAParticipant.SRA_TEST_PATH,
+                SRAParticipant.START_REQUIRED_SRA_PATH);
+        String sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null);
+
+
+        Assert.assertEquals(completions, completeCount.get());
+        Assert.assertEquals(prepared, prepareCount.get());
+
+        Map<String, String> reqHeaders = new HashMap<>();
+        reqHeaders.put(RTS_HTTP_CONTEXT_HEADER, sraId);
+        path = String.format("%s%s/%s", SURL, SRASecondParticipant.SRA_TEST_PATH,
+                 SRASecondParticipant.END_MANDATORY_SRA_PATH);
+        sraId = txn.httpRequest(new int[] { HttpURLConnection.HTTP_OK }, path, "GET",
+                TxMediaType.PLAIN_MEDIA_TYPE, null, null, reqHeaders);
+
+
+        Assert.assertEquals(completions + 2, completeCount.get());
+        Assert.assertEquals(prepared + 2, prepareCount.get());
 
     }
 }
