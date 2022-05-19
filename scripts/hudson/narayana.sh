@@ -512,7 +512,7 @@ function download_as {
 
   cd $WORKSPACE
 }
-26.1.0.Beta1
+
 function init_jboss_home {
   [ -d $JBOSS_HOME ] || fatal "missing AS - $JBOSS_HOME is not a directory"
   echo "JBOSS_HOME=$JBOSS_HOME"
