@@ -480,7 +480,7 @@ function download_as {
     zip=wildfly-${AS_VERSION}.zip
   else
     # download the latest wildfly nighly build (which we know supports Java 11)
-    AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/httpAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
+    AS_LOCATION=${AS_LOCATION:-https://ci.wildfly.org/guestAuth/repository/downloadAll/WF_Nightly/.lastSuccessful/artifacts.zip}
     wget -nv ${AS_LOCATION}
     ### The following sequence of unzipping wrapping zip files is a way how to process the WildFly nightly build ZIP structure
     ### which is changing time to time
