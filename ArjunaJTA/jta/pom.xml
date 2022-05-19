@@ -29,7 +29,6 @@
     <server.jvm.args>
       ${jvm.args.other} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
     </server.jvm.args>
-    <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
   </properties>
 
   <build>

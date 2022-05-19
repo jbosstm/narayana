@@ -35,9 +35,6 @@
             ${jvm.args.other} ${jvm.args.memory} ${byteman.server.jvm.args} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
         <sortpom.skip>true</sortpom.skip>
-        <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-        <version.jaxb>2.3.0</version.jaxb>
-        <version.jaxws-ri>2.3.0</version.jaxws-ri>
     </properties>
     <build>
         <plugins>
