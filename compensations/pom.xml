@@ -44,10 +44,6 @@
             ${jvm.args.other} ${jvm.args.byteman} ${jvm.args.memory} ${jvm.args.debug} ${jvm.args.modular}
         </server.jvm.args>
         <sortpom.skip>true</sortpom.skip>
-        <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
-        <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
-        <version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>1.0.0.Final</version.org.jboss.spec.javax.xml.ws.jboss-jaxws-api_2.3_spec>
-        <version.jaxws-ri>2.3.0</version.jaxws-ri>
     </properties>
 
     <build>
