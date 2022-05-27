@@ -27,6 +27,8 @@ import io.narayana.lra.client.NarayanaLRAClient;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipant;
 import io.narayana.lra.client.internal.proxy.nonjaxrs.LRAParticipantRegistry;
 import io.narayana.lra.logging.LRALogger;
+
+import org.eclipse.microprofile.lra.annotation.AfterLRA;
 import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.Forget;
@@ -158,7 +160,8 @@ public class ServerLRAFilter implements ContainerRequestFilter, ContainerRespons
                 || AnnotationResolver.isAnnotationPresent(Compensate.class, method)
                 || AnnotationResolver.isAnnotationPresent(Leave.class, method)
                 || AnnotationResolver.isAnnotationPresent(Status.class, method)
-                || AnnotationResolver.isAnnotationPresent(Forget.class, method);
+                || AnnotationResolver.isAnnotationPresent(Forget.class, method)
+                || AnnotationResolver.isAnnotationPresent(AfterLRA.class, method);
 
         if (headers.containsKey(LRA_HTTP_CONTEXT_HEADER)) {
             try {
