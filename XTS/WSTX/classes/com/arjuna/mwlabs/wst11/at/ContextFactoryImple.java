@@ -350,13 +350,9 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 
     private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
-        final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
-        final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
         final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(serviceName);
-        builder.endpointName(endpointName);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
         return builder.build();
@@ -371,8 +367,6 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
     private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, String identifier)
     {
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
-        builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         // strictly we shouldn't need to set the address because we are in the same web app as the
         // coordinator but we have to as the W3CEndpointReference implementation is incomplete
         builder.address(registrationCoordinatorURI);

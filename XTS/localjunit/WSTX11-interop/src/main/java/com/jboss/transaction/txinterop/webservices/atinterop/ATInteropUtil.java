@@ -139,8 +139,6 @@ public class ATInteropUtil
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
         final String serviceURI = serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME) ;
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME);
-        builder.endpointName(AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME);
         builder.address(serviceURI);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, id) ;
         return builder.build();
@@ -156,8 +154,6 @@ public class ATInteropUtil
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
         final String serviceURI = serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME) ;
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME);
-        builder.endpointName(AtomicTransactionConstants.PARTICIPANT_PORT_QNAME);
         builder.address(serviceURI);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, id) ;
         return builder.build();

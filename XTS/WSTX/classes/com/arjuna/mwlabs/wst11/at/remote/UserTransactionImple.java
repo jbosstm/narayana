@@ -472,13 +472,9 @@ public class UserTransactionImple extends UserTransaction
      */
     private W3CEndpointReference getCompletionParticipant(final String id, final boolean isSecure)
     {
-        final QName serviceName = AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME;
-        final QName endpointName = AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME;
-		final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(serviceName);
-        builder.endpointName(endpointName);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
         return builder.build();

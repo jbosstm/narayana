@@ -63,8 +63,6 @@ public class TestContextFactory implements ContextFactory
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
         final String registrationURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME) ;
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
-        builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         builder.address(registrationURI);
         W3CEndpointReference registrationService = builder.build();
 

@@ -22,8 +22,6 @@
 
 package com.arjuna.wst.tests;
 
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContextEvent;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import javax.xml.namespace.QName;
@@ -271,11 +269,7 @@ public void teardownTest() {
     {
         try {
             W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-            final QName serviceName = AtomicTransactionConstants.COORDINATOR_SERVICE_QNAME;
-            final QName endpointName = AtomicTransactionConstants.COORDINATOR_PORT_QNAME;
             final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME);
-            builder.serviceName(serviceName);
-            builder.endpointName(endpointName);
             builder.address(address);
             InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
             return builder.build();

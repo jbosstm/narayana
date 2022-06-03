@@ -128,13 +128,9 @@ public class TransactionManagerImple extends TransactionManager
 
     final W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
-        final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
-        final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
-		final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
+        final ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         final String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(serviceName);
-        builder.endpointName(endpointName);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
         return builder.build();

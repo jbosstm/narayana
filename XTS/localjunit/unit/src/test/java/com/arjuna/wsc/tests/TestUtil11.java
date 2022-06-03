@@ -26,7 +26,6 @@
 
 package com.arjuna.wsc.tests;
 
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
@@ -55,16 +54,12 @@ public class TestUtil11
 
     public static W3CEndpointReference getActivationEndpoint() {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(CoordinationConstants.ACTIVATION_SERVICE_QNAME);
-        builder.endpointName(CoordinationConstants.ACTIVATION_ENDPOINT_QNAME);
         builder.address(activationCoordinatorService);
         return builder.build();
     }
 
     public static W3CEndpointReference getRegistrationEndpoint(String identifier) {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
-        builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         builder.address(registrationCoordinatorService);
         if (identifier != null) {
             InstanceIdentifier.setEndpointInstanceIdentifier(builder, identifier);
@@ -74,8 +69,6 @@ public class TestUtil11
 
     public static W3CEndpointReference getProtocolCoordinatorEndpoint(String identifier) {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(PROTOCOL_COORDINATOR_SERVICE_QNAME);
-        builder.endpointName(PROTOCOL_COORDINATOR_ENDPOINT_QNAME);
         builder.address(TestUtil.PROTOCOL_COORDINATOR_SERVICE);
         if (identifier != null) {
             InstanceIdentifier.setEndpointInstanceIdentifier(builder, identifier);
@@ -85,8 +78,6 @@ public class TestUtil11
 
     public static W3CEndpointReference getProtocolParticipantEndpoint(String identifier) {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(PROTOCOL_PARTICIPANT_SERVICE_QNAME);
-        builder.endpointName(PROTOCOL_PARTICIPANT_ENDPOINT_QNAME);
         builder.address(TestUtil.PROTOCOL_PARTICIPANT_SERVICE);
         if (identifier != null) {
             InstanceIdentifier.setEndpointInstanceIdentifier(builder, identifier);

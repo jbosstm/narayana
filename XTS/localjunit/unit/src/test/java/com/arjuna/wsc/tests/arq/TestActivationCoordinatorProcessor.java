@@ -78,8 +78,6 @@ public class TestActivationCoordinatorProcessor extends
         identifierInstance.setValue(identifier);
         coordinationContext.setIdentifier(identifierInstance);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
-        builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         builder.address(TestUtil.PROTOCOL_COORDINATOR_SERVICE);
         builder.build();
         coordinationContext.setRegistrationService(TestUtil11.getRegistrationEndpoint(identifier));

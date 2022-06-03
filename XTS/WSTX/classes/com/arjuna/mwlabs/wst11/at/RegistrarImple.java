@@ -293,8 +293,6 @@ public class RegistrarImple implements Registrar
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
 		ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, isSecure);
-        builder.serviceName(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_QNAME);
-        builder.endpointName(AtomicTransactionConstants.COMPLETION_COORDINATOR_PORT_QNAME);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, instanceIdentifier);
         return builder.build();
@@ -305,8 +303,6 @@ public class RegistrarImple implements Registrar
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
 		ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_SERVICE_NAME, isSecure);
-        builder.serviceName(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_SERVICE_QNAME);
-        builder.endpointName(AtomicTransactionConstants.COMPLETION_COORDINATOR_RPC_PORT_QNAME);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, instanceIdentifier);
         return builder.build();
@@ -317,8 +313,6 @@ public class RegistrarImple implements Registrar
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
 		ServiceRegistry serviceRegistry = PrivilegedServiceRegistryFactory.getInstance().getServiceRegistry();
         String address = serviceRegistry.getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME, isSecure);
-        builder.serviceName(AtomicTransactionConstants.COORDINATOR_SERVICE_QNAME);
-        builder.endpointName(AtomicTransactionConstants.COORDINATOR_PORT_QNAME);
         builder.address(address);
         InstanceIdentifier.setEndpointInstanceIdentifier(builder, participantId);
         return builder.build();

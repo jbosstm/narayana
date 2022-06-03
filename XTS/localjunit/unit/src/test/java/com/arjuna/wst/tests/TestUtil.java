@@ -28,7 +28,6 @@ package com.arjuna.wst.tests;
 
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import org.jboss.jbossts.xts.environment.XTSPropertyManager;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -84,32 +83,28 @@ public class TestUtil
 
     public static W3CEndpointReference getParticipantEndpoint(String id)
     {
-        return getEndpoint(AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME,
-                AtomicTransactionConstants.PARTICIPANT_PORT_QNAME,
+        return getEndpoint(null, null,
                 participantServiceURI,
                 id);
     }
 
     public static W3CEndpointReference getCoordinatorEndpoint(String id)
     {
-        return getEndpoint(AtomicTransactionConstants.COORDINATOR_SERVICE_QNAME,
-                AtomicTransactionConstants.COORDINATOR_PORT_QNAME,
+        return getEndpoint(null, null,
                 coordinatorServiceURI,
                 id);
     }
 
     public static W3CEndpointReference getCompletionInitiatorEndpoint(String id)
     {
-        return getEndpoint(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME,
-                AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME,
+        return getEndpoint(null, null,
                 completionInitiatorServiceURI,
                 id);
     }
 
     public static W3CEndpointReference getCompletionCoordinatorEndpoint(String id)
     {
-        return getEndpoint(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_QNAME,
-                AtomicTransactionConstants.COMPLETION_COORDINATOR_PORT_QNAME,
+        return getEndpoint(null, null,
                 completionCoordinatorServiceURI,
                 id);
     }
@@ -150,8 +145,12 @@ public class TestUtil
     {
         try {
             W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-            builder.serviceName(service);
-            builder.endpointName(port);
+            if (service != null) {
+                builder.serviceName(service);
+            }
+            if (port != null) {
+                builder.endpointName(port);
+            }
             builder.address(address);
             if (id != null) {
                 InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
