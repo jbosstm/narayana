@@ -29,9 +29,6 @@
     <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
     <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
-    <modular.jdk.args>--add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED</modular.jdk.args>
-    <idlj.jdk9.args/>
-    <jacorb.jdk9.args/>
     <surefireArgLine/>
     <idlj.boot.args/>
   </properties>
@@ -210,68 +207,6 @@
 
   <profiles>
     <profile>
-      <id>jts-jacorb-jdk9</id>
-      <activation>
-        <property>
-          <name>!jacorb-disabled</name>
-        </property>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-        <jacorb.jdk9.args>
-          --add-modules java.corba
-          --patch-module java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar
-          --add-exports=java.corba/org.omg.CORBA_2_5=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.CONV_FRAME=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.CSIIOP=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.ETF=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.GIOP=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.PortableGroup=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED
-        </jacorb.jdk9.args>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>jacorb-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                    <arg>--patch-module</arg>
-                    <arg>java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>jacorb-testCompile</id>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
       <id>jts-jacorb</id>
       <activation>
         <property>
@@ -342,7 +277,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${jacorb.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true</argLine>
                   <reportsDirectory>${project.build.directory}/jacorb-surefire-reports</reportsDirectory>
                   <excludes>
                     <exclude>**/exceptions/**</exclude>
@@ -363,81 +298,6 @@
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jts-idlj-jdk9</id>
-      <activation>
-        <property>
-          <name>!idlj-disabled</name>
-        </property>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-jdk9</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-jdk9</artifactId>
-          <version>${project.version}</version>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <properties>
-        <idlj.jdk9.args>--add-modules java.corba</idlj.jdk9.args>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>idlj-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                    <arg>--patch-module</arg>
-                    <arg>java.corba=${java.corba.patch.jar}</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>idlj-testCompile</id>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                  </compilerArgs>
                 </configuration>
               </execution>
             </executions>
@@ -529,7 +389,7 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/ibmorb/**</exclude>
                   </excludes>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true</argLine>
                   <reportsDirectory>${project.build.directory}/idlj-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
@@ -549,69 +409,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>openjdk-idlj-jdk9</id>
-      <activation>
-        <property>
-          <name>!openjdk-disabled</name>
-        </property>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-      <properties>
-        <idlj.jdk9.args>--add-modules java.corba</idlj.jdk9.args>
-        <idlj.boot.args>--patch-module java.corba=${openjdk-orb.jar} --add-opens=java.base/java.io=java.corba</idlj.boot.args>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>idlj-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                    <arg>--patch-module</arg>
-                    <arg>java.corba=${java.corba.patch.jar}</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.orbutil=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/com.sun.corba.se.impl.interceptors=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/org.omg.CORBA.portable=ALL-UNNAMED</arg>
-                    <arg>--add-exports</arg>
-                    <arg>java.corba/org.omg.CosTransactions=ALL-UNNAMED</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>idlj-testCompile</id>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <!--
        Use a fork of the jdk orb.
@@ -705,7 +502,7 @@
                     <exclude>**/jacorb/**</exclude>
                     <exclude>**/ibmorb/**</exclude>
                   </excludes>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args} ${idlj.boot.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.boot.args}</argLine>
                   <reportsDirectory>${project.build.directory}/idlj-openjdk-surefire-reports</reportsDirectory>
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>

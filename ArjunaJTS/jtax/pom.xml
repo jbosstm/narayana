@@ -26,12 +26,8 @@
 
   <properties>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
-    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
+    <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath</modular.jdk.args>
 
-    <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
-    <java.corba.patch.jar>${project.build.directory}/dependency/${java.corba.patch.name}-${project.version}.jar</java.corba.patch.jar>
-    <idlj.jdk9.args/>
-    <jacorb.jdk9.args/>
     <surefireArgLine/>
     <idlj.boot.args/>
   </properties>
@@ -207,7 +203,7 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${jacorb.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true</argLine>
                   <systemProperties combine.children="append">
                      <property>
                        <name>java.util.logging.config.file</name>
@@ -273,7 +269,7 @@
                 </goals>
                 <configuration>
                   <skip>false</skip>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true</argLine>
                   <systemProperties combine.children="append">
                      <property>
                        <name>java.util.logging.config.file</name>
@@ -352,7 +348,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.jdk9.args} ${idlj.boot.args}</argLine>
+                  <argLine>@{surefireArgLine} -Djdk.attach.allowAttachSelf=true ${idlj.boot.args}</argLine>
                   <skip>false</skip>
                   <systemProperties combine.children="append">
                      <property>
