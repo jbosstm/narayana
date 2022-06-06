@@ -37,17 +37,10 @@
       </plugin>
     </plugins>
   </build>
-
+  <modules>
+    <module>idlj</module>
+  </modules>
   <profiles>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-      <modules>
-        <module>idlj</module>
-      </modules>
-    </profile>
     <profile>
       <id>jts-jacorb</id>
       <activation>

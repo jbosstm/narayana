@@ -63,80 +63,29 @@
                   </execution>
               </executions>
           </plugin>
+          <plugin>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <executions>
+                  <execution>
+                      <id>copy-dependencies</id>
+                      <phase>initialize</phase>
+                      <goals>
+                          <goal>unpack</goal>
+                      </goals>
+                      <configuration>
+                          <artifactItems>
+                              <artifactItem>
+                                  <groupId>org.jboss.narayana.jts</groupId>
+                                  <artifactId>idlj-idl-openjdk</artifactId>
+                                  <version>${project.version}</version>
+                                  <classifier>tests</classifier>
+                                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                              </artifactItem>
+                          </artifactItems>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
       </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-
-      <properties>
-        <surefire.system.args>--add-modules java.corba</surefire.system.args>
-      </properties>
-
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.jboss.narayana.jts</groupId>
-                      <artifactId>idlj-idl-jdk9</artifactId>
-                      <version>${project.version}</version>
-                      <type>test-jar</type>
-                      <outputDirectory>${project.build.directory}/generated-resources/META-INF/versions/9</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jdk11</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                      <artifactItem>
-                          <groupId>org.jboss.narayana.jts</groupId>
-                          <artifactId>idlj-idl-openjdk</artifactId>
-                          <version>${project.version}</version>
-                          <classifier>tests</classifier>
-                          <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                      </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

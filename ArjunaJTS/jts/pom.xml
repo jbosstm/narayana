@@ -29,11 +29,11 @@
     <classesDirectoryWithIdlj>${project.build.directory}/jts-idlj</classesDirectoryWithIdlj>
     <classesDirectoryWithibmorb>${project.build.directory}/jts-ibmorb</classesDirectoryWithibmorb>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
-    <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
     <modular.jdk.args>--add-exports java.corba/org.omg.CORBA.portable=ALL-UNNAMED --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED</modular.jdk.args>
     <idlj.jdk9.args/>
     <jacorb.jdk9.args/>
     <surefireArgLine/>
+    <idlj.boot.args/>
   </properties>
 
   <build>
@@ -209,67 +209,6 @@
   </dependencies>
 
   <profiles>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-
-      <properties>
-        <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
-        <version.compiler.plugin>3.6.0</version.compiler.plugin>
-      </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>${java.corba.patch.name}</artifactId>
-          <version>${project.version}</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jacorb</groupId>
-          <artifactId>jacorb-omgapi</artifactId>
-          <version>${version.org.jacorb.jacorb}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.jboss.narayana.jts</groupId>
-                      <artifactId>${java.corba.patch.name}</artifactId>
-                      <version>${project.version}</version>
-                      <type>${project.packaging}</type>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.jacorb</groupId>
-                      <artifactId>jacorb-omgapi</artifactId>
-                      <type>jar</type>
-                      <overWrite>false</overWrite>
-                      <outputDirectory>${project.basedir}/target/java9-jacorb</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>jts-jacorb-jdk9</id>
       <activation>
@@ -896,15 +835,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>jdk11</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <properties>
-        <idlj.boot.args/>
-      </properties>
     </profile>
     <profile>
           <id>release</id>

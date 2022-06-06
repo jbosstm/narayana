@@ -213,52 +213,6 @@
 
   <profiles>
     <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,11)</jdk>
-      </activation>
-      <properties>
-        <!-- a couple of the rest bridge tests a failing with
-           java.lang.NoClassDefFoundError: javax/xml/bind/JAXBContext
-        <modular.jdk.args>-add-modules=java.xml,java.xml.bind,java.xml.ws</modular.jdk.args>
-        <modular.jdk.args>-add-modules java.se.ee</modular.jdk.args>
-           but the following does not resolve it. Instead I changed the way the test looks
-           up rts transaction status
-           -->
-        <jvm.args.modular>--add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED</jvm.args.modular>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.xml.ws</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>default-testCompile</id>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.xml.ws</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>arq</id>
       <activation>
         <activeByDefault>false</activeByDefault>
