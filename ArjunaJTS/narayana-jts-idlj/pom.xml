@@ -282,6 +282,12 @@
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.narayana.jts</groupId>
+      <artifactId>idlj-idl-openjdk</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
@@ -417,32 +423,5 @@
     </dependency>
   </dependencies>
       </profile>
-  <profile>
-    <id>j9</id>
-    <activation>
-      <jdk>[1.9, 11)</jdk>
-    </activation>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>idlj-idl-jdk9</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    </dependencies>
-    </profile>
-    <profile>
-    <id>j11</id>
-    <activation>
-      <jdk>[11,)</jdk>
-    </activation>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.narayana.jts</groupId>
-        <artifactId>idlj-idl-openjdk</artifactId>
-        <version>${project.version}</version>
-	<scope>provided</scope>
-      </dependency>
-    </dependencies>
-    </profile>
   </profiles>
 </project>

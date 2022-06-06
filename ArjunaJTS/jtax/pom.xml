@@ -26,7 +26,6 @@
 
   <properties>
     <openjdk-orb.jar>${settings.localRepository}/org/jboss/openjdk-orb/openjdk-orb/${version.org.jboss.openjdk-orb}/openjdk-orb-${version.org.jboss.openjdk-orb}.jar</openjdk-orb.jar>
-    <idlj.boot.args>-Xbootclasspath/p:${openjdk-orb.jar}</idlj.boot.args>
     <modular.jdk.args>--upgrade-module-path ${project.build.directory}/upgrademodulepath --add-exports java.corba/org.omg.CosTransactions=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED</modular.jdk.args>
 
     <java.corba.patch.name>idlj.java.corba.patch</java.corba.patch.name>
@@ -34,6 +33,7 @@
     <idlj.jdk9.args/>
     <jacorb.jdk9.args/>
     <surefireArgLine/>
+    <idlj.boot.args/>
   </properties>
 
   <build>
@@ -163,126 +163,6 @@
   </dependencies>
 
   <profiles>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9, 11)</jdk>
-      </activation>
-      <properties>
-        <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
-        <version.compiler.plugin>3.6.0</version.compiler.plugin>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-        <idlj.jdk9.args>
-          --add-modules java.corba
-          --upgrade-module-path ${project.build.directory}/upgrademodulepath
-          --add-exports java.corba/com.sun.corba.se.spi.orb=ALL-UNNAMED
-          --add-exports java.corba/com.sun.corba.se.spi.ior=ALL-UNNAMED
-          --add-exports java.corba/com.sun.corba.se.impl.ior=ALL-UNNAMED
-        </idlj.jdk9.args>
-        <jacorb.jdk9.args>
-          --add-modules java.corba
-          --patch-module java.corba=${project.build.directory}/java9-jacorb/jacorb-omgapi-${version.org.jacorb.jacorb}.jar
-          --upgrade-module-path ${project.build.directory}/upgrademodulepath
-          --add-exports java.corba/org.omg.CORBA_2_5=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.CONV_FRAME=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.CSIIOP=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.ETF=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.GIOP=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.PortableGroup=ALL-UNNAMED
-          --add-exports=java.corba/org.omg.SSLIOP=ALL-UNNAMED
-        </jacorb.jdk9.args>
-        <idlj.boot.args>--patch-module java.corba=${openjdk-orb.jar} --add-opens=java.base/java.io=java.corba</idlj.boot.args>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>${java.corba.patch.name}</artifactId>
-          <version>${project.version}</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jacorb</groupId>
-          <artifactId>jacorb-omgapi</artifactId>
-          <version>${version.org.jacorb.jacorb}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-jdk9</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-jdk9</artifactId>
-          <version>${project.version}</version>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.jboss.narayana.jts</groupId>
-                      <artifactId>${java.corba.patch.name}</artifactId>
-                      <version>${project.version}</version>
-                      <type>${project.packaging}</type>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.jacorb</groupId>
-                      <artifactId>jacorb-omgapi</artifactId>
-                      <version>${version.org.jacorb.jacorb}</version>
-                      <type>jar</type>
-                      <overWrite>false</overWrite>
-                      <outputDirectory>${project.basedir}/target/java9-jacorb</outputDirectory>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>org.jboss.spec.javax.transaction</groupId>
-                      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-                      <version>${version.org.jboss.spec.javax.transaction}</version>
-                      <type>jar</type>
-                      <outputDirectory>${project.build.directory}/upgrademodulepath</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <configuration>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.corba</arg>
-                    <arg>--upgrade-module-path</arg>
-                    <arg>${project.build.directory}/upgrademodulepath</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>jts-jacorb</id>
       <activation>
@@ -596,14 +476,5 @@
               </plugins>
           </build>
      </profile>
-     <profile>
-      <id>jdk11</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <properties>
-        <idlj.boot.args/>
-      </properties>
-    </profile>
   </profiles>
 </project>

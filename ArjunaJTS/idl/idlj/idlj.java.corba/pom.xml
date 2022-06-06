@@ -25,13 +25,6 @@
   <description>Narayana: ArjunaJTS patch of java.corba module</description>
   <packaging>jar</packaging>
 
-    <profiles>
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,)</jdk>
-      </activation>
-
   <build>
     <plugins>
       <plugin>
@@ -71,18 +64,18 @@
                 </java>
                 <mkdir dir="${project.build.directory}/classes"/>
                 <javac destdir="${project.build.directory}/classes">
-                   <compilerarg value="--add-modules=java.corba"/>
-                   <src>
-                      <!-- include the following in the module patch since without it we get:
-                        "error: org.omg.CosTransactions.XXX is not visible because
-                               package org.omg.CosTransactions is not visible"
-                        It seems as if the java.corba module is hiding the package
-                        org.omg.CosTransactions which is odd because
-                        jmod describe <jdk-9 install dir>/jmods/java.corba.jmod
-                        does not report any org.omg.CosTransactions clases
-                        -->
-                      <pathelement location="${project.build.directory}/generated-sources/idl/org/omg/CosTransactions"/>
-                   </src>
+                  <compilerarg value="--add-modules=java.corba"/>
+                  <src>
+                    <!-- include the following in the module patch since without it we get:
+                      "error: org.omg.CosTransactions.XXX is not visible because
+                             package org.omg.CosTransactions is not visible"
+                      It seems as if the java.corba module is hiding the package
+                      org.omg.CosTransactions which is odd because
+                      jmod describe <jdk-9 install dir>/jmods/java.corba.jmod
+                      does not report any org.omg.CosTransactions clases
+                      -->
+                    <pathelement location="${project.build.directory}/generated-sources/idl/org/omg/CosTransactions"/>
+                  </src>
                 </javac>
                 <delete>
                   <fileset dir="${project.build.directory}/generated-sources/idl/org/omg/CORBA" includes="**/*"/>
@@ -96,25 +89,23 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>add-source</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>add-source</goal>
-              </goals>
-              <configuration>
-                <sources>
-                  <source>
-                    ${project.build.directory}/generated-sources/idl/org/omg/CORBA
-                  </source>
-                </sources>
-              </configuration>
-            </execution>
-          </executions>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>
+                  ${project.build.directory}/generated-sources/idl/org/omg/CORBA
+                </source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
-    </profile>
-    </profiles>
 </project>

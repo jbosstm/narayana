@@ -163,38 +163,6 @@
   </build>
 
   <profiles>
-
-    <profile>
-      <id>j9</id>
-      <activation>
-        <jdk>[1.9,11)</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>1.9</maven.compiler.source>
-        <maven.compiler.target>1.9</maven.compiler.target>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <configuration>
-                  <showDeprecation>false</showDeprecation>
-                  <compilerArgs>
-                    <arg>--add-modules</arg>
-                    <arg>java.xml.bind</arg>
-                  </compilerArgs>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <id>release</id>
       <build>
