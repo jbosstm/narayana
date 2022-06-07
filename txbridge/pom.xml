@@ -350,7 +350,6 @@
           <properties>
              <jvm.args.modular>--add-modules=java.se</jvm.args.modular>
 	     <version.jaxb>2.3.0</version.jaxb>
-	     <version.jaxws-ri>2.3.0</version.jaxws-ri>
 	  </properties>
 	  <dependencies>
 		  <dependency>
