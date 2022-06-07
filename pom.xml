@@ -210,6 +210,7 @@
     <version.javax.inject>1</version.javax.inject>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.javax.ws.rs-api>2.0.1.Final</version.javax.ws.rs-api>
+    <version.jaxws-ri>2.3.5</version.jaxws-ri>
     <version.jfree>1.0.9</version.jfree>
     <version.jnpserver>5.0.3.GA</version.jnpserver>
     <version.junit>4.13.1</version.junit>
