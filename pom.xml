@@ -196,6 +196,7 @@
     <version.com.sun.jersey>1.9.1</version.com.sun.jersey>
     <version.com.sybase.jConnect>6.0</version.com.sybase.jConnect>
     <version.commons-httpclient>3.1-jbossorg-1</version.commons-httpclient>
+    <version.compiler.plugin>3.8.0-jboss-2</version.compiler.plugin>
     <version.dom4j>1.6.1</version.dom4j>
     <version.doxia>1.8.1</version.doxia>
     <version.fasterxml.jackson>2.12.3</version.fasterxml.jackson>
