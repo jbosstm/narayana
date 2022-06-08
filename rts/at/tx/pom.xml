@@ -37,7 +37,6 @@
     <spdy.args>-Xbootclasspath/p:${basedir}/src/test/resources/grizzly-npn-bootstrap-1.0.jar -Drts.usespdy=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</spdy.args>
     <ssl.args>-Drts.usessl=true -Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=123456</ssl.args>
 
-    <version.org.jboss.resteasy-cdi>4.5.5.Final</version.org.jboss.resteasy-cdi>
   </properties>
 
   <dependencies>
@@ -47,42 +46,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${version.log4j}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.jmx</groupId>
-          <artifactId>jmxri</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jdmk</groupId>
-          <artifactId>jmxtools</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.mail</groupId>
-          <artifactId>mail</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <version>${version.org.jboss.spec.javax.servlet}</version>
       <scope>provided</scope>
     </dependency>
     <!-- Jersey -->
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>${version.asm}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.sun.grizzly</groupId>
       <artifactId>grizzly-servlet-webserver</artifactId>
@@ -133,19 +102,8 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-cdi</artifactId>
-      <version>${version.org.jboss.resteasy-cdi}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxb-provider</artifactId>
       <version>${version.org.jboss.resteasy}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${version.commons-httpclient}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -153,12 +111,6 @@
       <artifactId>jboss-logging</artifactId>
       <version>${version.org.jboss.logging.jboss-logging}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${version.com.h2database}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
