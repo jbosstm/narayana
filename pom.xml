@@ -206,6 +206,7 @@
     <version.io.narayana.checkstyle-config>1.0.1.Final</version.io.narayana.checkstyle-config>
     <version.jacorb>2.3.1jboss.patch01-brew</version.jacorb>
     <version.jakarta.json-api>1.1.6</version.jakarta.json-api>
+    <version.javadoc.plugin>3.0.1</version.javadoc.plugin>
     <version.javax.annotation>1.2</version.javax.annotation>
     <version.javax.enterprise>2.0</version.javax.enterprise>
     <version.javax.inject>1</version.javax.inject>
