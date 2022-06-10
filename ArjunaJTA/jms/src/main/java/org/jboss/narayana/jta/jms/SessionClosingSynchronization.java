@@ -34,12 +34,12 @@ import javax.transaction.Synchronization;
  */
 public class SessionClosingSynchronization implements Synchronization {
 
-    private final Session session;
+    private final AutoCloseable session;
 
     /**
      * @param session session to be closed.
      */
-    public SessionClosingSynchronization(Session session) {
+    public SessionClosingSynchronization(AutoCloseable session) {
         this.session = session;
     }
 
@@ -61,7 +61,7 @@ public class SessionClosingSynchronization implements Synchronization {
 
         try {
             session.close();
-        } catch (JMSException e) {
+        } catch (Exception e) {
             jtaLogger.i18NLogger.warn_failed_to_close_jms_session(session.toString(), e);
         }
     }

@@ -28,6 +28,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.XAConnectionFactory;
+import javax.jms.XAJMSContext;
 
 /**
  * Proxy connection factory to wrap around provided {@link XAConnectionFactory}.
@@ -88,22 +89,22 @@ public class ConnectionFactoryProxy implements ConnectionFactory {
 
     @Override
     public JMSContext createContext() {
-        return xaConnectionFactory.createXAContext();
+        return JMSContextProxy.wrapContext(xaConnectionFactory.createXAContext(), transactionHelper);
     }
 
     @Override
     public JMSContext createContext(String userName, String password) {
-        return xaConnectionFactory.createXAContext(userName, password);
+        return JMSContextProxy.wrapContext(xaConnectionFactory.createXAContext(userName, password), transactionHelper);
     }
 
     @Override
     public JMSContext createContext(String userName, String password, int sessionMode) {
-        return xaConnectionFactory.createXAContext(userName, password).createContext(sessionMode);
+        return JMSContextProxy.wrapContext((XAJMSContext) xaConnectionFactory.createXAContext(userName, password).createContext(sessionMode), transactionHelper);
     }
 
     @Override
     public JMSContext createContext(int sessionMode) {
-        return xaConnectionFactory.createXAContext().createContext(sessionMode);
+        return JMSContextProxy.wrapContext((XAJMSContext) xaConnectionFactory.createXAContext().createContext(sessionMode), transactionHelper);
     }
 
 }

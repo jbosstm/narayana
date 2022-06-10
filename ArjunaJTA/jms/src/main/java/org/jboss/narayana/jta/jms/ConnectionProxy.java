@@ -78,11 +78,19 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public Session createSession(int sessionMode) throws JMSException {
+        if (transactionHelper.isTransactionAvailable()) {
+            return createAndRegisterSession();
+        }
+
         return xaConnection.createSession(sessionMode);
     }
 
     @Override
     public Session createSession() throws JMSException {
+        if (transactionHelper.isTransactionAvailable()) {
+            return createAndRegisterSession();
+        }
+
         return xaConnection.createSession();
     }
 
