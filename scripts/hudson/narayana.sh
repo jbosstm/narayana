@@ -982,7 +982,7 @@ function perf_tests {
     fi
   fi
 
-  ./scripts/run_bm.sh
+  WORKSPACE=$(pwd) ./scripts/run_bm.sh
   res=$?
   cd $WORKSPACE
 
