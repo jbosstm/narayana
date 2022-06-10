@@ -78,6 +78,9 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public Session createSession(int sessionMode) throws JMSException {
+        if (connectionCloseScheduled) {
+            throw new RuntimeException("Connection is already scheduled to be closed");
+        }
         if (transactionHelper.isTransactionAvailable()) {
             return createAndRegisterSession();
         }
@@ -87,6 +90,9 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public Session createSession() throws JMSException {
+        if (connectionCloseScheduled) {
+            throw new RuntimeException("Connection is already scheduled to be closed");
+        }
         if (transactionHelper.isTransactionAvailable()) {
             return createAndRegisterSession();
         }
@@ -224,6 +230,9 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public ConnectionConsumer createSharedConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool, int maxMessages) throws JMSException {
+        if (connectionCloseScheduled) {
+            throw new RuntimeException("Connection is already scheduled to be closed");
+        }
         return xaConnection.createSharedConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
     }
 
@@ -243,6 +252,9 @@ public class ConnectionProxy implements Connection {
 
     @Override
     public ConnectionConsumer createSharedDurableConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool, int maxMessages) throws JMSException {
+        if (connectionCloseScheduled) {
+            throw new RuntimeException("Connection is already scheduled to be closed");
+        }
         return xaConnection.createSharedDurableConnectionConsumer(topic, subscriptionName, messageSelector, sessionPool, maxMessages);
     }
 

@@ -260,11 +260,17 @@ public class SessionProxy implements Session {
 
     @Override
     public MessageConsumer createSharedConsumer(Topic topic, String sharedSubscriptionName) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return xaSession.createSharedConsumer(topic, sharedSubscriptionName);
     }
 
     @Override
     public MessageConsumer createSharedConsumer(Topic topic, String sharedSubscriptionName, String messageSelector) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return xaSession.createSharedConsumer(topic, sharedSubscriptionName, messageSelector);
     }
 
@@ -302,21 +308,33 @@ public class SessionProxy implements Session {
 
     @Override
     public MessageConsumer createDurableConsumer(Topic topic, String name) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return xaSession.createDurableConsumer(topic, name);
     }
 
     @Override
     public MessageConsumer createDurableConsumer(Topic topic, String name, String messageSelector, boolean noLocal) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return xaSession.createDurableConsumer(topic, name, messageSelector, noLocal);
     }
 
     @Override
     public MessageConsumer createSharedDurableConsumer(Topic topic, String name) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return createSharedDurableConsumer(topic, name);
     }
 
     @Override
     public MessageConsumer createSharedDurableConsumer(Topic topic, String name, String messageSelector) throws JMSException {
+        if (sessionCloseScheduled) {
+            throw new JMSException("Session is already scheduled to be closed");
+        }
         return createSharedDurableConsumer(topic, name, messageSelector);
     }
 
