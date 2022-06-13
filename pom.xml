@@ -267,7 +267,7 @@
     <version.org.sonatype.plugins.nexus-staging-maven-plugin>1.6.6</version.org.sonatype.plugins.nexus-staging-maven-plugin>
     <version.org.wildfly.arquillian>3.0.1.Final</version.org.wildfly.arquillian>
     <version.postgresql>42.2.20</version.postgresql>
-    <version.quarkus>2.9.0.Final</version.quarkus>
+    <version.quarkus>2.9.2.Final</version.quarkus>
     <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.sun.jdk>jdk</version.sun.jdk>
