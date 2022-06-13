@@ -180,6 +180,8 @@
     <jvm.args.modular></jvm.args.modular>
     <jvm.args.other>-server</jvm.args.other>
     <maven.build.timestamp.format>yyyy/MMM/dd HH:mm</maven.build.timestamp.format>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Sortpom is enabled by default, but it could be disabled in sub-modules setting sortpom.skip = true -->
     <sortpom.skip>false</sortpom.skip>
@@ -265,8 +267,6 @@
     <version.smallrye-converter-api>1.0.10</version.smallrye-converter-api>
     <version.sortpom>3.0.0</version.sortpom>
     <version.sun.jdk>jdk</version.sun.jdk>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
   <dependencies>
