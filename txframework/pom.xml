@@ -201,12 +201,7 @@
             </activation>
             <properties>
                 <jvm.args.modular>
-                    --add-modules java.se
-                    --add-opens=java.base/java.lang=ALL-UNNAMED
-                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
                     --add-opens=java.base/java.util=ALL-UNNAMED
-                    --add-opens=java.base/java.util.reflect=ALL-UNNAMED
-                    --add-exports java.base/sun.reflect=ALL-UNNAMED
                 </jvm.args.modular>
             </properties>
         </profile>
