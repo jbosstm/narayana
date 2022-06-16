@@ -76,6 +76,8 @@
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
                   <arg value="${project.basedir}/../jakarta-rules/jakarta-renames.properties"></arg>
+                  <arg value="-td"></arg>
+                  <arg value="${project.basedir}/../jakarta-rules/jakarta-direct.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
@@ -100,6 +102,8 @@
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
                   <arg value="${project.basedir}/../jakarta-rules/jakarta-renames.properties"></arg>
+                  <arg value="-td"></arg>
+                  <arg value="${project.basedir}/../jakarta-rules/jakarta-direct.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
@@ -124,6 +128,8 @@
                   <arg value="-o"></arg>
                   <arg value="-tr"></arg>
                   <arg value="${project.basedir}/../jakarta-rules/jakarta-renames.properties"></arg>
+                  <arg value="-td"></arg>
+                  <arg value="${project.basedir}/../jakarta-rules/jakarta-direct.properties"></arg>
                   <classpath>
                     <pathelement path="${plugin_classpath}"></pathelement>
                   </classpath>
