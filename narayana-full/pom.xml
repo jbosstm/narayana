@@ -452,6 +452,7 @@
                   </additionalJOptions>
                   <dependencySourceExcludes>
                     <dependencySourceExclude>javax.enterprise:cdi-api</dependencySourceExclude>
+                    <dependencySourceExclude>org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.3_spec</dependencySourceExclude>
                   </dependencySourceExcludes>
                 </configuration>
               </execution>

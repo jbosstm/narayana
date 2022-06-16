@@ -239,13 +239,10 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
-                  <java-opts>
-                    <java-opt>${server.jvm.object.store.arg}</java-opt>
-                  </java-opts>
                   <!-- used by start -->
                   <jbossHome>${env.JBOSS_HOME}</jbossHome>
                   <serverConfig>${lra.coordinator.xml.filename}</serverConfig>
-                  <javaOpts>${server.jvm.args}</javaOpts>
+                  <javaOpts>${server.jvm.args} ${server.jvm.object.store.arg}</javaOpts>
 
                   <!-- used by deploy-artifact -->
                   <groupId>org.jboss.narayana.rts</groupId>
@@ -425,10 +422,7 @@
         <jdk>[17,)</jdk>
       </activation>
       <properties>
-        <jvm.args.modular>--add-modules=java.se
-          --add-opens=java.base/java.util=ALL-UNNAMED
-          --add-opens=java.base/java.util.reflect=ALL-UNNAMED
-          --add-opens=java.base/java.lang=ALL-UNNAMED
+        <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED
           --add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvm.args.modular>
       </properties>
     </profile>

@@ -535,7 +535,7 @@ function rts_as_tests {
 function jta_as_tests {
   echo "#-1. JTA AS Integration Test"
   cp ArjunaJTA/jta/src/test/resources/standalone-cmr.xml ${JBOSS_HOME}/standalone/configuration/
-  ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -Parq $CODE_COVERAGE_ARGS "$@" test
+  ./build.sh -f ArjunaJTA/jta/pom.xml -fae -B -DarqProfileActivated=true $CODE_COVERAGE_ARGS "$@" test
   [ $? -eq 0 ] || fatal "JTA AS Integration Test failed"
   cd ${WORKSPACE}
 }
