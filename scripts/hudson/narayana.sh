@@ -247,7 +247,7 @@ function init_test_options {
     [ $JAC_ORB ] || JAC_ORB=0 # Run QA test suite against JacORB
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
-    [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
+    [ $REDUCE_SPACE ] || REDUCE_SPACE=0 # Whether to reduce the space used
 
     get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults
 
