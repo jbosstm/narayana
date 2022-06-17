@@ -248,7 +248,7 @@ function init_test_options {
     [ $JAC_ORB ] || JAC_ORB=0 # Run QA test suite against JacORB
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
-    [ $REDUCE_SPACE ] || REDUCE_SPACE=1 # Whether to reduce the space used
+    [ $REDUCE_SPACE ] || REDUCE_SPACE=0 # Whether to reduce the space used
 
     get_pull_xargs "$PULL_DESCRIPTION_BODY" $PROFILE # see if the PR description overrides any of the defaults
 
@@ -393,7 +393,7 @@ function clone_as {
     git reset --hard jbosstm/5_BRANCH
     [ $? -eq 0 ] || fatal "git reset 5_BRANCH failed"
     git clean -f -d -x
-    [ $? -gt 1 ] || fatal "git clean failed"
+    [ $? -eq 0 ] || fatal "git clean failed"
     git rebase --abort
     rm -rf .git/rebase-apply
   else
