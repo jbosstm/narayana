@@ -1,6 +1,0 @@
-<entry key="RecoveryEnvironmentBean.expiryScannerClassNames">
-  com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
-  com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner
-  com.arjuna.ats.internal.jts.recovery.transactions.ExpiredToplevelScanner
-  com.arjuna.ats.internal.jts.recovery.transactions.ExpiredServerScanner
-</entry>

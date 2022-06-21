@@ -1,9 +1,0 @@
-DEMOSYNC : BEFORE_COMPLETION
-Synchronization throwing exception.
-WARNING: OTS_Transaction.beforeCompletion - caught exception.
-TRANOBJECT : ROLLBACK
-DEMOSYNC : AFTER_COMPLETION ( CosTransactions::StatusRolledBack )
-Synchronization throwing exception.
-Transaction rolledback
-Final action status: CosTransactions::StatusRolledBack
-Test completed successfully.
