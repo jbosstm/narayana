@@ -27,7 +27,6 @@
 
   <properties>
 
-    <lra.coordinator.debug.params></lra.coordinator.debug.params>
     <!-- defined within -Ddebug.coordinator/-Pdebug.lra.coordinator -->
     <lra.coordinator.debug.port>8788</lra.coordinator.debug.port>
     <lra.coordinator.exec.plugin.phase>none</lra.coordinator.exec.plugin.phase>
@@ -38,12 +37,6 @@
     <!-- the lra.coordinator.jar.path needs to be redefined at each test sub-module -->
     <lra.coordinator.jar.path>${project.basedir}/../coordinator-quarkus/target/lra-coordinator-runner.jar</lra.coordinator.jar.path>
 
-    <lra.coordinator.log.console.disable></lra.coordinator.log.console.disable>
-    <lra.coordinator.log.file.enable></lra.coordinator.log.file.enable>
-    <lra.coordinator.log.file.level></lra.coordinator.log.file.level>
-    <lra.coordinator.log.file.module.arjuna></lra.coordinator.log.file.module.arjuna>
-    <lra.coordinator.log.file.module.narayana></lra.coordinator.log.file.module.narayana>
-    <lra.coordinator.log.file.path></lra.coordinator.log.file.path>
     <lra.coordinator.port>8080</lra.coordinator.port>
     <!-- the property used by NarayanaLRAClient when passed into the container as the JVM parameter -->
     <lra.coordinator.url>http://${lra.coordinator.host}:${lra.coordinator.port}/lra-coordinator</lra.coordinator.url>
@@ -122,6 +115,10 @@
              standalone.xml file provided in WildFly (${env.JBOSS_HOME}/standalone/configuration/standalone.xml). Please, see the plugins
              section of this profile (specifically, maven-antrun-plugin) for further info -->
         <lra.coordinator.xml.filename>lra-coordinator.xml</lra.coordinator.xml.filename>
+	<!-- The path where the Object Store of the coordinator should be saved -->
+	<lra.coordinator.object.store.path>${project.build.directory}/wfly_lra_objectstore</lra.coordinator.object.store.path>
+	<server.jvm.object.store.arg>-DObjectStoreEnvironmentBean.objectStoreDir=${lra.coordinator.object.store.path}</server.jvm.object.store.arg>
+
         <!-- Qualifier of the container hosting lra-participant -->
         <lra.participant.container.qualifier>lra-participant-server</lra.participant.container.qualifier>
         <!-- Qualifier of the lra-participant of the deployment -->
@@ -200,6 +197,8 @@
                   <target>
                     <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.coordinator.xml.filename}"></copy>
                     <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.participant.xml.filename}"></copy>
+
+                    <replace file="${env.JBOSS_HOME}/standalone/configuration/${lra.participant.xml.filename}" token="tx-object-store" value="tx-participant-object-store"></replace>
                   </target>
                 </configuration>
               </execution>
@@ -232,6 +231,10 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
+		  <java-opts>
+		    <java-opt>${server.jvm.object.store.arg}</java-opt>
+		    <!--<java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005</java-opt>-->
+		  </java-opts>
                   <!-- used by start -->
                   <jbossHome>${env.JBOSS_HOME}</jbossHome>
                   <serverConfig>${lra.coordinator.xml.filename}</serverConfig>
