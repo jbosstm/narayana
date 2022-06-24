@@ -36,3 +36,16 @@ jobs:
         env:
           LRA_TCK_TIMEOUT_FACTOR: 1
 
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: wildfly-logs
+          path: |
+            wildfly-*/standalone/log/
+            **/ObjectStore*/**
+            **/tx-object-store/**
+            **/*tx-object-store.zip
+            **/target/*surefire-reports*/**
+            **/target/*failsafe-reports*/**
+          if-no-files-found: error
+
