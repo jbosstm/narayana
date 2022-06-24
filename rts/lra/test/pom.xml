@@ -110,6 +110,7 @@
         <module>crash</module>
       </modules>
       <properties>
+        <config.to.replace>standalone.xml</config.to.replace>
         <!-- Qualifier of the container hosting lra-coordinator -->
         <lra.coordinator.container.qualifier>lra-coordinator-server</lra.coordinator.container.qualifier>
         <!-- Qualifier of the lra-coordinator of the deployment -->
@@ -203,8 +204,9 @@
                   <target>
                     <zip basedir="../../" destfile="../../ObjectStore-${project.artifactId}.zip" includes="ObjectStore" whenempty="skip"></zip>
                     <delete dir="../../ObjectStore" failonerror="false"></delete>
-                    <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.coordinator.xml.filename}"></copy>
-                    <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.participant.xml.filename}"></copy>
+                    <!-- We overwrite the config files as the config.to.replace can be different in different modules and without overwrite being the case, then the file will not be written over -->
+                    <copy file="${env.JBOSS_HOME}/standalone/configuration/${config.to.replace}" overwrite="true" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.coordinator.xml.filename}"></copy>
+                    <copy file="${env.JBOSS_HOME}/standalone/configuration/${config.to.replace}" overwrite="true" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.participant.xml.filename}"></copy>
                   </target>
                 </configuration>
               </execution>

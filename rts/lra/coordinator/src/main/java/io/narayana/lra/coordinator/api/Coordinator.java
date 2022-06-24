@@ -32,6 +32,7 @@ import io.narayana.lra.logging.LRALogger;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -102,6 +103,7 @@ import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_CONTEXT
 import static org.eclipse.microprofile.lra.annotation.ws.rs.LRA.LRA_HTTP_RECOVERY_HEADER;
 
 @ApplicationScoped
+@ApplicationPath("/")
 @Path(COORDINATOR_PATH_NAME)
 
 @OpenAPIDefinition(
