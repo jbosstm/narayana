@@ -201,6 +201,8 @@
                 <phase>generate-test-resources</phase>
                 <configuration>
                   <target>
+                    <zip basedir="../../" destfile="../../ObjectStore-${project.artifactId}.zip" includes="ObjectStore" whenempty="skip"></zip>
+                    <delete dir="../../ObjectStore" failonerror="false"></delete>
                     <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.coordinator.xml.filename}"></copy>
                     <copy file="${env.JBOSS_HOME}/standalone/configuration/standalone.xml" tofile="${env.JBOSS_HOME}/standalone/configuration/${lra.participant.xml.filename}"></copy>
                   </target>
