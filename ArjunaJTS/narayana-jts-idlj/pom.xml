@@ -48,7 +48,6 @@
                     <include>org.jboss.narayana.jts:orbportability</include>
                     <include>org.jboss.narayana.jts:jts</include>
                     <include>org.jboss.narayana.jts:idlj-idl</include>
-                    <include>org.jboss.narayana.jts:idlj-idl-jdk9</include>
                     <include>org.jboss.narayana.jts:idlj-idl-tests</include>
                     <include>org.jboss.narayana.jts:jtax</include>
                   </includes>
