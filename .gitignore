@@ -11,6 +11,7 @@ jboss-eap
 *~
 
 wildfly-*.zip
+wildfly-*/
 
 *.orig
 qa/ext/log4j.jar
