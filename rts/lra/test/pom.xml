@@ -114,6 +114,8 @@
         <lra.coordinator.container.qualifier>lra-coordinator-server</lra.coordinator.container.qualifier>
         <!-- Qualifier of the lra-coordinator of the deployment -->
         <lra.coordinator.deployment.qualifier>lra-coordinator</lra.coordinator.deployment.qualifier>
+        <!-- The path where the Object Store of the coordinator should be saved -->
+        <lra.coordinator.object.store.path>${project.build.directory}/wfly_lra_objectstore</lra.coordinator.object.store.path>
         <!-- the AppServerCoordinatorDeploymentObserver creates the deployment named 'lra-coordinator' and deploys it to the app server,
              the last part of the path with value 'lra-coordinator' is defined by LRA coordinator JAX-RS endpoint -->
         <lra.coordinator.url>http://${lra.coordinator.host}:${lra.coordinator.port}/lra-coordinator/lra-coordinator</lra.coordinator.url>
@@ -130,6 +132,7 @@
              standalone.xml file provided in WildFly (${env.JBOSS_HOME}/standalone/configuration/standalone.xml). Please, see the plugins
              section of this profile (specifically, maven-antrun-plugin) for further info -->
         <lra.participant.xml.filename>lra-participant.xml</lra.participant.xml.filename>
+        <server.jvm.object.store.arg>-DObjectStoreEnvironmentBean.objectStoreDir=${lra.coordinator.object.store.path}</server.jvm.object.store.arg>
         <skip.wildfly.plugin>true</skip.wildfly.plugin>
         <!-- where the WFLY test application will be started at (the coordinator is war deployed for the same app server at the same port) -->
         <test.application.port>8080</test.application.port>
@@ -232,6 +235,9 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
+                  <java-opts>
+                    <java-opt>${server.jvm.object.store.arg}</java-opt>
+                  </java-opts>
                   <!-- used by start -->
                   <jbossHome>${env.JBOSS_HOME}</jbossHome>
                   <serverConfig>${lra.coordinator.xml.filename}</serverConfig>
