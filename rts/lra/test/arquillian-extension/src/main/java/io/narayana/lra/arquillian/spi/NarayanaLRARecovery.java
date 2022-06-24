@@ -62,6 +62,7 @@ public class NarayanaLRARecovery implements LRARecoveryService {
 
     @Override
     public boolean waitForEndPhaseReplay(URI lraId) {
+        log.info("waitForEndPhaseReplay for: " + lraId.toASCIIString());
         if (!recoverLRAs(lraId)) {
             // first recovery scan probably collided with periodic recovery which started
             // before the test execution so try once more
