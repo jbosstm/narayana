@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 120
     strategy:
       matrix:
-        java-version: [ 11 ]
+        java-version: [ 11, 17 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
