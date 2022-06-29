@@ -58,9 +58,9 @@
           </modules>
         <dependencies>
           <dependency>
-            <groupId>jacorb</groupId>
+            <groupId>org.jacorb</groupId>
             <artifactId>jacorb</artifactId>
-            <version>${version.jacorb}</version>
+            <version>${version.org.jacorb.jacorb}</version>
             <scope>provided</scope>
           </dependency>
           <dependency>
