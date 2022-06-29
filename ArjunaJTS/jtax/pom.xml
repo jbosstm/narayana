@@ -182,9 +182,15 @@
           <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>jacorb</groupId>
+          <groupId>org.jacorb</groupId>
           <artifactId>jacorb</artifactId>
-          <version>${version.jacorb}</version>
+          <version>${version.org.jacorb.jacorb}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jacorb</groupId>
+          <artifactId>jacorb-omgapi</artifactId>
+          <version>${version.org.jacorb.jacorb}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

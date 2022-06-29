@@ -37,7 +37,6 @@ import org.omg.IOP.TaggedProfile;
 import org.omg.IOP.TaggedProfileHolder;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.sun.corba.se.spi.ior.IORFactories;
 
 public class RecoverIOR
 {

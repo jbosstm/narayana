@@ -112,10 +112,10 @@ public String name ()
     }
 
     private void trace_request(String method, ServerRequestInfo request_info) {
-        jtsLogger.logger.tracef("InterpositionServerRequestInterceptorImpl::%s ( %s ) nodeId=%s requestId=%d target=%s",
+        jtsLogger.logger.tracef("InterpositionServerRequestInterceptorImpl::%s ( %s ) nodeId=%s requestId=%d",
                 method, request_info.operation(),
                 arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier(),
-                request_info.request_id(), ((ServerRequestInfoImpl) request_info).target().toString());
+                request_info.request_id());
     }
 
 public void receive_request_service_contexts (ServerRequestInfo request_info) throws SystemException
