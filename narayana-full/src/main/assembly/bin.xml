@@ -158,23 +158,11 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<excludes>
 				<exclude>org.jboss.narayana*</exclude>
-				<exclude>org.jacorb*</exclude>
 			</excludes>
 			<outputDirectory>lib/ext</outputDirectory>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
 			</outputFileNameMapping>
 			<unpack>false</unpack>
-		</dependencySet>
-		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.jacorb*</include>
-			</includes>
-			<outputDirectory>jacorb/lib</outputDirectory>
-			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}
-			</outputFileNameMapping>
-			<unpack>false</unpack>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
 		</dependencySet>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -219,12 +207,6 @@
 			<fileMode>0644</fileMode>
 			<outputDirectory>etc</outputDirectory>
 			<destName>default-jta-jbossts-properties.xml</destName>
-		</file>
-		<file>
-			<source>../ArjunaJTS/narayana-jts-jacorb/src/main/resources/jbossts-properties.xml</source>
-			<fileMode>0644</fileMode>
-			<outputDirectory>etc</outputDirectory>
-			<destName>default-jts-jacorb-jbossts-properties.xml</destName>
 		</file>
 		<file>
 			<source>../ArjunaJTS/narayana-jts-idlj/src/main/resources/jbossts-properties.xml</source>
@@ -342,10 +324,6 @@
 				<include>CosTransactions.idl</include>
 				<include>XA.idl</include>
 			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>../ArjunaJTS/jacorb</directory>
-			<outputDirectory>jacorb</outputDirectory>
 		</fileSet>
 		
 		<fileSet>

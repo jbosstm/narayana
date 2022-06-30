@@ -98,8 +98,7 @@ public class JTSInterpositionSynchronizationTest {
 		try {
 			myORB.orb().shutdown(true);
 		} catch (BAD_INV_ORDER bio) {
-			// ignore - jacorb can tolerate the second call to shutdown, IDLJ
-			// will not
+			// ignore - IDLJ will not tolerate the second call to shutdown
 		}
 		emptyObjectStore();
 		jtsPropertyManager.getJTSEnvironmentBean()

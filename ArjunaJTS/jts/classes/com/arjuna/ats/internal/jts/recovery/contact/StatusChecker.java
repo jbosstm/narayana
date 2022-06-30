@@ -241,15 +241,6 @@ private Status getStatus (Uid transactionUid, FactoryContactItem item, boolean c
 	// addresses are valid
 	} catch ( TRANSIENT ex_trans) {
 
-	    if (ORBInfo.getOrbEnumValue() == ORBType.JACORB)
-	    {
-		    // the original application has (probably) died
-		    if (jtsLogger.logger.isDebugEnabled()) {
-                jtsLogger.logger.debug("StatusChecker.getStatus("+transactionUid+") - TRANSIENT = dead");
-            }
-		    originalDead = true;
-	    }
-
 	} catch ( COMM_FAILURE ex_comm) {
 	    if (ORBInfo.getOrbEnumValue() == ORBType.JAVAIDL)
 	    {

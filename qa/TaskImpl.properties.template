@@ -23,8 +23,8 @@ COMMAND_LINE_0=/usr/lib/jvm/java-1.7.0/bin/java
 COMMAND_LINE_1=-classpath
 #
 # The classpath consists (approx) of the JBossTS build (from its original home in 'install' - we no longer copy to
-# qa/build/) plus its bundled runtime dependencies, including jacorb, plus the qa tests jar, plus a dir in which the build
-# script places any required db driver. Note the use of wildcards for this - don't expect it to work on jdk5.
+# qa/build/) plus its bundled runtime dependencies, plus the qa tests jar, plus a dir in which the build process places
+# any required db driver. Note the use of wildcards for this - don't expect it to work on jdk5.
 #
 # The effective properties file for JBossTS is the one in ../install/etc but note that later in this
 # file we use command line override of some properties.
@@ -37,8 +37,6 @@ COMMAND_LINE_2=\
   dist${file.separator}narayana-full-5.12.8.Final-SNAPSHOT${file.separator}etc${file.separator}\
   ${path.separator}dist${file.separator}narayana-full-5.12.8.Final-SNAPSHOT${file.separator}lib${file.separator}*\
   ${path.separator}dist${file.separator}narayana-full-5.12.8.Final-SNAPSHOT${file.separator}lib${file.separator}ext${file.separator}*\
-  ${path.separator}dist${file.separator}narayana-full-5.12.8.Final-SNAPSHOT${file.separator}jacorb${file.separator}lib${file.separator}*\
-  ${path.separator}dist${file.separator}narayana-full-5.12.8.Final-SNAPSHOT${file.separator}jacorb${file.separator}etc${file.separator}\
   ${path.separator}ext${file.separator}fscontext.jar${path.separator}ext${file.separator}providerutil.jar\
   ${path.separator}ext${file.separator}jboss-profiler-jvmti.jar${path.separator}ext${file.separator}jboss-logging-spi.jar\
   ${path.separator}tests${file.separator}build${file.separator}classes${file.separator}\

@@ -247,7 +247,7 @@ public class JavaIdlRCServiceInit implements RecoveryServiceInit
     }
 
     private static final String POA_NAME_PREFIX = "RcvCo-";
-    private static String OBJ_KEY_PREFIX = ""; // is there an equivalent of JacORBs jacorb.implname
+    private static String OBJ_KEY_PREFIX = ""; // Prefix for the Recovery Coordinator's key (i.e. RC_KEY)
     protected static POA                _poa = null;
     static String RC_ID = "RecoveryManager";
 

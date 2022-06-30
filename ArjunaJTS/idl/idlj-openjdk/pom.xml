@@ -94,7 +94,6 @@
 
                             </compilerArgs>
                             <excludes>
-                                <exclude>**/jacorb/**</exclude>
                                 <exclude>**/ibmorb/**</exclude>
                             </excludes>
                         </configuration>
@@ -329,6 +328,5 @@
 			    <classifier>sources</classifier>
 			    <scope>provided</scope>
 		    </dependency>
-
 	    </dependencies>
 </project>

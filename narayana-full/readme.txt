@@ -24,9 +24,6 @@ This release contains:
   idl/
     The IDL files for integration with the JTS
     
-  jacorb/
-    A jacorb deployment for use with JTS
-    
   lib/
     ext/ - All the dependencies required to run Narayana JTA/JTS/XTS
     txbridge/jbosstxbridge.jar

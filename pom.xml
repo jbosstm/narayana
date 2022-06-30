@@ -234,8 +234,6 @@
     <version.org.eclipse.transformer>0.2.0</version.org.eclipse.transformer>
     <version.org.hibernate.javax.persistence>1.0.1.Final</version.org.hibernate.javax.persistence>
     <version.org.jacoco>0.8.8</version.org.jacoco>
-    <version.org.jacorb.jacorb>3.7</version.org.jacorb.jacorb>
-    <version.org.jacorb.jacorb-idl-compiler>3.7</version.org.jacorb.jacorb-idl-compiler>
     <version.org.jboss.arquillian.container.weld>3.0.2.Final</version.org.jboss.arquillian.container.weld>
     <version.org.jboss.arquillian.core>1.6.0.Final</version.org.jboss.arquillian.core>
     <version.org.jboss.as.plugins.jboss-as-maven-plugin>7.4.Final</version.org.jboss.as.plugins.jboss-as-maven-plugin>

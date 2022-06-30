@@ -87,9 +87,6 @@ public class RecoveryInit
 
 		    switch (orbType)
 		    {
-		    case ORBType.JACORB:
-			initClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";
-			break;
 		    case ORBType.JAVAIDL:
 			initClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.JavaIdlRecoveryInit";
 			break;

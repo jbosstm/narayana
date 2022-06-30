@@ -176,10 +176,9 @@ public class JavaIdlRCManager implements RcvCoManager
        * Note: this relies directly on system property lookup, since we don't
        * want to expose the setting via the public EnvironmentBean config.
        */
-        String env = System.getProperty("com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.noDaemon");
-        String env2 = System.getProperty("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.noDaemon");
+        String idl_noDaemon = System.getProperty("com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.noDaemon");
 
-        _runWithoutDaemon = (env != null && env.equals("YES")) || (env2 != null && env2.equals("YES"));
+        _runWithoutDaemon = (idl_noDaemon != null && idl_noDaemon.equals("YES"));
     }
 
 }

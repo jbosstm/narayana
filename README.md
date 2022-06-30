@@ -50,10 +50,6 @@ If you are building the "community" profile and are using a different maven inst
 The distribution is then available in:
 
 	./narayana-full/target/narayana-full-<VERSION>-bin.zip
-
-Alternatively, the uber jar for JacORB is available here:
-
-	./ArjunaJTS/narayana-jts-jacorb/target/narayana-jts-jacorb-<VERSION>.jar
 	
 The uber jar for the JDK ORB is available here:
 
@@ -80,9 +76,7 @@ ArjunaCore: `./build.[sh|bat] -am -pl :arjunacore`
 
 NarayanaJTA: `./build.[sh|bat] -am -pl :narayana-jta`
 
-NarayanaJTS (jacorb): `./build.[sh|bat] -am -pl :narayana-jts-jacorb -Didlj-disabled=true`
-
-NarayanaJTS (idlj): `./build.[sh|bat] -am -pl :narayana-jts-idlj -Djacorb-disabled=true`
+NarayanaJTS (idlj): `./build.[sh|bat] -am -pl :narayana-jts-idlj`
 
 NarayanaJTS (ibmorb): `./build.[sh|bat] -am -pl :narayana-jts-ibmorb -Dibmorb-enabled=true` (requires IBM jdk)
 
