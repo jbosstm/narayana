@@ -104,10 +104,10 @@
         </build>
       </profile>
       <profile>
-        <id>jts-idlj</id>
+        <id>jts-openjdk</id>
         <activation>
             <property>
-              <name>!idlj-disabled</name>
+              <name>!openjdk-disabled</name>
             </property>
         </activation>
         <modules>
@@ -121,7 +121,7 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <executions>
                 <execution>
-                  <id>surefire-idlj</id>
+                  <id>surefire-idlj-openjdk</id>
                   <phase>test</phase>
                   <goals>
                     <goal>test</goal>

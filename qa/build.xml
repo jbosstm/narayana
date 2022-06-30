@@ -21,7 +21,7 @@
 -->
 <project name="JBossTS QA Suite Distribution" default="dist">
   <property environment="env"/>
-  <property name="orbtype" value="idlj"/>
+  <property name="orbtype" value="openjdk"/>
   <!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
   <property name="org.jboss.jbossts.qa.ts.home" location="dist"/>
   <property name="narayana.version" value="5.12.8.Final-SNAPSHOT"/>

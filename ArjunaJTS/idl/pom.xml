@@ -37,9 +37,6 @@
       </plugin>
     </plugins>
   </build>
-  <modules>
-    <module>idlj</module>
-  </modules>
   <profiles>
     <profile>
       <id>jts-jacorb</id>
@@ -50,17 +47,6 @@
       </activation>
       <modules>
         <module>jacorb</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>jts-idlj</id>
-      <activation>
-        <property>
-          <name>!idlj-disabled</name>
-        </property>
-      </activation>
-      <modules>
-        <module>idlj</module>
       </modules>
     </profile>
     <profile>
