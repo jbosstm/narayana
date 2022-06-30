@@ -2,13 +2,16 @@ name: LRA
 
 on:
   push:
-    branches: [ master ]
-    paths:
-      - "rts/lra/**"
   pull_request:
     branches: [ master ]
     paths:
       - "rts/lra/**"
+      - "rts/pom.xml"
+      - "ArjunaCore/arjuna/**"
+      - "ArjunaCore/pom.xml"
+      - "pom.xml"
+      - "scripts/hudson/narayana.sh"
+      - ".github/workflows/lra-test.yml"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
