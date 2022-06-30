@@ -867,11 +867,12 @@ function qa_tests {
   ok4=0;
 
   if [ $IBM_ORB = 1 ]; then
+    if [ $JAVA_VERSION -eq "17" ] ; then
+        echo "IBM ORB execution failed on JDK17, please check https://issues.redhat.com/browse/JBTM-3600 for more info."
+        exit -1
+    fi
     qa_tests_once "orb=ibmorb" "$@" # run qa against the IBM orb
     ok3=$?
-    if [ $ok3 == 0 ] && [ $JAVA_VERSION -eq "17" ] ; then
-        echo "IBM ORB execution failed on JDK17, please check https://issues.redhat.com/browse/JBTM-3600 for more info."
-    fi
   else
     if [ $JAC_ORB = 1 ]; then
       qa_tests_once "orb=jacorb" "$@"    # run qa against the default orb
