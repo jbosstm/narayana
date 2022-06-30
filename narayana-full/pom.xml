@@ -148,21 +148,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jacorb</groupId>
-      <artifactId>jacorb</artifactId>
-      <version>${version.org.jacorb.jacorb}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jacorb</groupId>
-      <artifactId>jacorb-omgapi</artifactId>
-      <version>${version.org.jacorb.jacorb}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jacorb</groupId>
-      <artifactId>jacorb-idl-compiler</artifactId>
-      <version>${version.org.jacorb.jacorb-idl-compiler}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.ws</groupId>
       <artifactId>jbossws-api</artifactId>
       <version>${version.org.jboss.ws}</version>
@@ -341,21 +326,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>jts-jacorb</id>
-      <activation>
-        <property>
-          <name>!jacorb-disabled</name>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>narayana-jts-jacorb</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
     <profile>
       <id>jts-idlj</id>
       <activation>

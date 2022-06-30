@@ -21,27 +21,31 @@
 -->
 <idl-compiler-definitions>
 
-    <orb name="jacorb">
+    <orb name="idlj">
 
 	<in-parameters>
 	    <param name="destdir" required="false"/>
 	    <param name="include" required="false" delimiter=";"/>
 	    <param name="package" required="false"/>
+	    <param name="mapping" required="false" delimiter=";"/>
 	    <param name="filename" required="true"/>
 	    <param name="classpath" required="true" delimiter=";" classpath="true"/>
-	    <param name="mapping" required="false" delimiter=";"/>
 	</in-parameters>
 
-	<idl-executable>java -cp ${classpath} org.jacorb.idl.parser</idl-executable>
+	<idl-executable>idlj</idl-executable>
 
 	<out-parameters>
-	    <param>-d</param>
+	    <param>-td</param>
 	    <param>${destdir}</param>
-	    <param>-DORB_CURRENT_SUPPORT=1</param>
-	    <param foreach="include">-I${include}</param>
+	    <param>-fallTIE</param>
+	    <param foreach="include">
+		<sub-param>-i</sub-param>
+		<sub-param>${include}</sub-param>
+	    </param>
 	    <param foreach="mapping">
-		<sub-param>-i2jpackage</sub-param>
-		<sub-param>${mapping-name}:${mapping-value}.${mapping-name}</sub-param>
+		<sub-param>-pkgPrefix</sub-param>
+		<sub-param>${mapping-name}</sub-param>
+		<sub-param>${mapping-value}</sub-param>
 	    </param>
 	    <param>${filename}</param>
 	</out-parameters>

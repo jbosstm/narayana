@@ -25,8 +25,7 @@
  * Newcastle upon Tyne,
  * Tyne and Wear,
  * UK.
- * 
- * $Id: jacorb_2_0.java 2342 2006-03-30 13:06:17Z  $
+ *
  */
 package com.arjuna.orbportability.internal.orbspecific.versions;
 

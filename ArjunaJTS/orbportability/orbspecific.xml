@@ -26,7 +26,6 @@
 
         <!-- Setup default properties -->
         <property name="com.hp.mw.orbportability.orbspecific.javaidl.build" value="no"/>
-        <property name="com.hp.mw.orbportability.orbspecific.jacorb.build" value="yes"/>
 
         <property name="com.hp.mwlabs.orbportability.orbspecific.idlbuilddir" location="idl-build/"/>
         <property name="com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir" location="orbspecific-build/"/>
@@ -35,18 +34,11 @@
 
         <property name="com.hp.mw.orbportability.orbspecific.javaidl-home" value="c:/jdk1.4.1_01/"/>
         <property name="com.hp.mw.orbportability.orbspecific.javaidl-bootclasspath" value="${java.home}/lib/rt.jar"/>
-        <property name="com.hp.mw.orbportability.orbspecific.jacorb-home" value="c:/Progra~1/JacORB_2_0/"/>
-        <path id="com.hp.mw.orbportability.orbspecific.jacorb-classpath">
-          <fileset dir="${com.hp.mw.orbportability.orbspecific.jacorb-home}/lib" includes="*.jar"/>
-        </path>
-        <property name="com.hp.mw.orbportability.orbspecific.jacorb-classpath" refid="com.hp.mw.orbportability.orbspecific.jacorb-classpath"/>
-        <property name="com.hp.mw.orbportability.orbspecific.jacorb-bootclasspath" value="${java.home}/lib/rt.jar:${java.home}/lib/core.jar:${java.home}/lib/vm.jar:${java.home}/lib/graphics.jar:${java.home}/lib/server.jar:${java.home}/lib/java.util.jar:${java.home}/lib/sql.jar"/>
 
         <property name="com.hp.mw.orbportability.orbspecific.include" value=""/>
 
         <property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
         <property name="com.hp.mwlabs.javaidl.classpathbuilderfilename" location="buildsystem.javaidl.classpath"/>
-        <property name="com.hp.mwlabs.jacorb.classpathbuilderfilename" location="buildsystem.jacorb.classpath"/>
 
         <!--
           Use this target to build the .orbspecific sub-structure with the given
@@ -54,7 +46,7 @@
           place the generated classes in the given build directory
           ${com.hp.mw.orbportability.orbspecific.destdir}.
           -->
-        <target name="com.hp.mwlabs.orbportability.orbspecific.build" depends="com.hp.mwlabs.orbportability.orbspecific.init,com.hp.mwlabs.orbportability.orbspecific.javaidl.build,com.hp.mwlabs.orbportability.orbspecific.jacorb.build">
+        <target name="com.hp.mwlabs.orbportability.orbspecific.build" depends="com.hp.mwlabs.orbportability.orbspecific.init,com.hp.mwlabs.orbportability.orbspecific.javaidl.build">
         </target>
 
         <!--
@@ -73,102 +65,6 @@
                 <delete dir="${com.hp.mwlabs.orbportability.orbspecific.idlsrcdir}"/>
                 <delete file="com.hp.mwlabs.classpathbuilderfilename" quiet="true"/>
                 <delete file="com.hp.mwlabs.javaidl.classpathbuilderfilename" quiet="true"/>
-                <delete file="com.hp.mwlabs.jacorb.classpathbuilderfilename" quiet="true"/>
-
-        </target>
-
-        <target name="com.hp.mwlabs.orbportability.orbspecific.jacorb.build" depends="com.hp.mwlabs.orbportability.orbspecific.jacorb.compile" if="com.hp.mwlabs.orbportability.orbspecific.jacorb.build">
-
-                <property name="com.hp.mw.orbportability.orbspecific.lib" value="${com.hp.mwlabs.orbportability.orbspecific.default.lib}"/>
-
-                <echo message="Performing JacORB build"/>
-
-                <mkdir dir="${com.hp.mw.orbportability.orbspecific.lib}"/>
-
-                <jar jarfile="${com.hp.mw.orbportability.orbspecific.lib}/${com.hp.mw.orbportability.orbspecific.modulename}-jacorb.jar">
-                        <fileset dir="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}" includes="**/*.class"/>
-                        <fileset dir="${com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir}"
-                                 includes="com/arjuna/**/orbspecific/**/*.class"
-                                 excludes="com/arjuna/**/orbspecific/javaidl/**/*.class"/>
-                </jar>
-
-                <classpath-builder filename="${com.hp.mwlabs.jacorb.classpathbuilderfilename}" inproperty="build.jacorb.classpath" clear="true">
-                        <classpath>
-                                <pathelement location="${com.hp.mw.orbportability.orbspecific.lib}/${com.hp.mw.orbportability.orbspecific.modulename}-jacorb.jar"/>
-                        </classpath>
-                </classpath-builder>
-
-                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath">
-                        <classpath>
-                                <pathelement location="${com.hp.mw.orbportability.orbspecific.lib}/${com.hp.mw.orbportability.orbspecific.modulename}-jacorb.jar"/>
-                        </classpath>
-                </classpath-builder>
-
-                <antcall target="com.hp.mwlabs.orbportability.orbspecific.clean"/>
-
-        </target>
-
-        <target name="com.hp.mwlabs.orbportability.orbspecific.jacorb.compile" depends="com.hp.mwlabs.orbportability.orbspecific.jacorb.idl" if="com.hp.mwlabs.orbportability.orbspecific.jacorb.build">
-
-                <echo message="Performing JacORB IDL compile"/>
-
-                <classpath-builder filename="${com.hp.mwlabs.jacorb.classpathbuilderfilename};${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.jacorb.classpath"/>
-
-                <!-- Compile with debug? -->
-                <condition property="com.hp.mwlabs.debug" value="no">
-                        <equals arg1="${com.hp.mw.debug}" arg2="no"/>
-                </condition>
-                <property name="com.hp.mwlabs.debug" value="yes"/>
-
-                <!-- Compile with deprecation? -->
-                <condition property="com.hp.mwlabs.deprecation" value="yes">
-                        <equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
-                </condition>
-                <property name="com.hp.mwlabs.deprecation" value="no"/>
-
-                <javac srcdir="${com.hp.mwlabs.orbportability.orbspecific.idlsrcdir}"
-                        destdir="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"
-                        debug="${com.hp.mwlabs.debug}"
-                        bootclasspath="${com.hp.mw.orbportability.orbspecific.jacorb-bootclasspath}"
-                        deprecation="${com.hp.mwlabs.deprecation}"
-                        includeantruntime="false">
-                        <classpath>
-                                <pathelement path="${build.jacorb.classpath}"/>
-                                <pathelement path="${com.hp.mw.orbportability.orbspecific.jacorb-classpath}"/>
-                        </classpath>
-                </javac>
-
-                <echo message="Performing JacORB orb specific compile"/>
-
-                <javac srcdir="${com.hp.mw.orbportability.orbspecific.srcdir}"
-                        destdir="${com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir}"
-                        includes="**/orbspecific/**/*.java"
-                        excludes="**/orbspecific/javaidl/**/*.java"
-                        debug="${com.hp.mwlabs.debug}"
-                        bootclasspath="${com.hp.mw.orbportability.orbspecific.jacorb-bootclasspath}"
-                        deprecation="${com.hp.mwlabs.deprecation}"
-                        includeantruntime="false">
-                        <classpath>
-                                <pathelement path="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"/>
-                                <pathelement path="${build.jacorb.classpath}"/>
-                                <pathelement path="${com.hp.mw.orbportability.orbspecific.jacorb-classpath}"/>
-                        </classpath>
-                </javac>
-
-        </target>
-
-        <target name="com.hp.mwlabs.orbportability.orbspecific.jacorb.idl" if="com.hp.mwlabs.orbportability.orbspecific.jacorb.build">
-
-                <echo message="Performing JacORB IDL build"/>
-
-                <mkdir dir="${com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir}"/>
-                <mkdir dir="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}"/>
-                <mkdir dir="${com.hp.mwlabs.orbportability.orbspecific.idlsrcdir}"/>
-
-                <idl-compiler orb="JacORB"
-                        buildlist="${com.hp.mw.orbportability.orbspecific.buildlist}"
-                        destdir="${com.hp.mwlabs.orbportability.orbspecific.idlsrcdir}"
-                        parameters="include='${com.hp.mw.orbportability.orbspecific.include};${com.hp.mw.orbportability.orbspecific.jacorb-home}/idl/omg/',classpath='${com.hp.mw.orbportability.orbspecific.jacorb-classpath}'"/>
 
         </target>
 
@@ -184,7 +80,6 @@
                         <fileset dir="${com.hp.mwlabs.orbportability.orbspecific.idlbuilddir}" includes="**/*.class"/>
                         <fileset dir="${com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir}"
                                  includes="com/arjuna/**/orbspecific/**/*.class"
-                                 excludes="com/arjuna/**/orbspecific/jacorb/**/*.class"/>
                 </jar>
 
                 <classpath-builder filename="${com.hp.mwlabs.javaidl.classpathbuilderfilename}" inproperty="build.javaidl.classpath" clear="true">
@@ -205,15 +100,6 @@
 
 
         <target name="com.hp.mwlabs.orbportability.orbspecific.init">
-
-                <condition property="com.hp.mwlabs.orbportability.orbspecific.jacorb.build">
-                        <and>
-                                <equals arg1="${com.hp.mw.orbportability.orbspecific.jacorb.build}" arg2="yes"/>
-                                <not>
-                                        <equals arg1="${java.version}" arg2="1.4.1_01"/>
-                                </not>
-                        </and>
-                </condition>
 
                 <condition property="com.hp.mwlabs.orbportability.orbspecific.javaidl.build">
                         <and>
@@ -268,7 +154,6 @@
                 <javac srcdir="${com.hp.mw.orbportability.orbspecific.srcdir}"
                         destdir="${com.hp.mwlabs.orbportability.orbspecific.orbspecificbuilddir}"
                         includes="**/orbspecific/**/*.java"
-                        excludes="**/orbspecific/jacorb/**/*.java"
                         debug="${com.hp.mwlabs.debug}"
                         bootclasspath="${com.hp.mw.orbportability.orbspecific.javaidl-bootclasspath}"
                         deprecation="${com.hp.mwlabs.deprecation}"

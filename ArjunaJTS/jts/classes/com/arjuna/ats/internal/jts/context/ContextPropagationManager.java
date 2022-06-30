@@ -74,14 +74,6 @@ public class ContextPropagationManager
 			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.javaidl.interceptors.context.ContextORBInitializerImpl");
 	    }
 	    break;
-	case ORBType.JACORB:
-	    {
-		if (interposition)
-			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl");
-		else
-			System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl");
-	    }
-	    break;
 	case ORBType.IBMORB:
 	    {
 		if (interposition)

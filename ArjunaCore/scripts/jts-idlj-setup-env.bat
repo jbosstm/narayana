@@ -31,8 +31,6 @@ if "%NARAYANA_HOME%"=="" goto home_error
 
 echo Environment variable NARAYANA_HOME set to "%NARAYANA_HOME%"
 
-set JACORB_HOME=%NARAYANA_HOME%\jacorb
-
 rem Setup EXT classpath
 
 echo Setting up environment
@@ -44,16 +42,7 @@ setlocal ENABLEDELAYEDEXPANSION
 FOR /R %NARAYANA_HOME%\lib\ext %%G IN (*.jar) DO set EXT_CLASSPATH=%%G;!EXT_CLASSPATH!
 endlocal & set EXT_CLASSPATH=%EXT_CLASSPATH%
 
-rem
-rem Caution: JBossTS needs a specially patched version of JacORB.
-rem Use %JBOSSTS_HOME%\jacorb here unless you have a good reason not to.
-rem
-setlocal ENABLEDELAYEDEXPANSION
-FOR /R %JACORB_HOME%\lib %%G IN (*.jar) DO set JACORB_CLASSPATH=%%G;!JACORB_CLASSPATH!
-endlocal & set JACORB_CLASSPATH=%JACORB_CLASSPATH%
-set JACORB_CLASSPATH=%JACORB_CLASSPATH%;%JACORB_HOME%\etc
-
-set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%;%JACORB_CLASSPATH%;%NARAYANA_HOME%\lib\jts\narayana-jts-idlj.jar
+set CLASSPATH=.;%PRODUCT_CLASSPATH%;%EXT_CLASSPATH%;%NARAYANA_HOME%\lib\jts\narayana-jts-idlj.jar
 
 goto end
 

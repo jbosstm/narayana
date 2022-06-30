@@ -400,7 +400,6 @@
     </fileset>
     <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib">
       <exclude name="narayana-jts-idlj.jar"/>
-      <exclude name="narayana-jts-jacorb.jar"/>
       <exclude name="narayana-jts-ibmorb.jar"/>
       <include name="*.jar"/>
     </fileset>
@@ -605,7 +604,6 @@
             <exclude name="**/openjdk-orb-**.jar"/>
             <exclude name="**/ext/jacocoant.jar"/>
             <exclude name="**/dependenc*/**.jar"/>
-            <exclude name="**/java9-jacorb/**.jar"/>
           </fileset>
         </classfiles>
         <sourcefiles encoding="UTF-8">

@@ -236,23 +236,11 @@
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>orbportability</artifactId>
       <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>jacorb-idl</artifactId>
-          </exclusion>
-        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jts</artifactId>
       <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>jacorb-idl</artifactId>
-          </exclusion>
-        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
@@ -263,12 +251,6 @@
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
       <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.narayana.jts</groupId>
-            <artifactId>jacorb-idl</artifactId>
-          </exclusion>
-        </exclusions>
     </dependency>
 <!--
     <dependency>

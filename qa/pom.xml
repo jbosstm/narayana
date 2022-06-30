@@ -94,17 +94,17 @@
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
       <version>${version.org.jboss.openjdk-orb}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.openjdk-orb</groupId>
+      <artifactId>openjdk-orb</artifactId>
+      <version>${version.org.jboss.openjdk-orb}</version>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>org.jboss.openjdk-orb</groupId>
       <artifactId>openjdk-orb</artifactId>
       <version>${version.org.jboss.openjdk-orb}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jacorb</groupId>
-      <artifactId>jacorb-omgapi</artifactId>
-      <version>${version.org.jacorb.jacorb}</version>
     </dependency>
   </dependencies>
 
@@ -233,9 +233,6 @@
                   </additionalArguments>
                 </source>
               </sources>
-              <includeDirs>
-                <includeDir>${project.parent.basedir}/ArjunaJTS/jacorb/idl/omg</includeDir>
-              </includeDirs>
             </configuration>
           </execution>
         </executions>

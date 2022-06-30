@@ -168,15 +168,6 @@ function init_test_options {
         else
           export COMMENT_ON_PULL=""
         fi
-    elif [[ $PROFILE == "QA_JTS_JACORB" ]]; then
-        if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_JACORB* ]]; then
-          comment_on_pull "Started testing this pull request with QA_JTS_JACORB profile: $BUILD_URL"
-          export AS_BUILD=0 AS_CLONE=0 AS_DOWNLOAD=0 AS_TESTS=0 NARAYANA_BUILD=1 NARAYANA_TESTS=0 XTS_AS_TESTS=0 XTS_TESTS=0 TXF_TESTS=0 txbridge=0
-          export RTS_AS_TESTS=0 RTS_TESTS=0 JTA_CDI_TESTS=0 QA_TESTS=1 OPENJDK_ORB=0 JAC_ORB=1 QA_TARGET=ci-jts-tests JTA_AS_TESTS=0
-          export TOMCAT_TESTS=0 LRA_TESTS=0
-        else
-          export COMMENT_ON_PULL=""
-        fi
     elif [[ $PROFILE == "QA_JTS_OPENJDKORB" ]]; then
         if [[ ! $PULL_DESCRIPTION_BODY == *!QA_JTS_OPENJDKORB* ]]; then
           comment_on_pull "Started testing this pull request with QA_JTS_OPENJDKORB profile: $BUILD_URL"
@@ -235,7 +226,6 @@ function init_test_options {
     [ $JTA_AS_TESTS ] || JTA_AS_TESTS=0 # JTA AS tests
     [ $QA_TESTS ] || QA_TESTS=0 # QA test suite
     [ $OPENJDK_ORB ] || OPENJDK_ORB=0 # Run QA test suite against the openjdk orb
-    [ $JAC_ORB ] || JAC_ORB=0 # Run QA test suite against JacORB
     [ $txbridge ] || txbridge=0 # bridge tests
     [ $PERF_TESTS ] || PERF_TESTS=0 # benchmarks
     [ $REDUCE_SPACE ] || REDUCE_SPACE=0 # Whether to reduce the space used
@@ -349,7 +339,7 @@ function build_narayana {
   [ $NARAYANA_TESTS = 1 ] && NARAYANA_ARGS= || NARAYANA_ARGS="-DskipTests"
 
   if [ $IBM_ORB = 1 ]; then
-    ORBARG="-Dibmorb-enabled -Djacorb-disabled -Didlj-disabled -Dopenjdk-disabled"
+    ORBARG="-Dibmorb-enabled -Didlj-disabled -Dopenjdk-disabled"
     ${JAVA_HOME}/bin/java -version 2>&1 | grep IBM
     [ $? -eq 0 ] || fatal "You must use the IBM jdk to build with ibmorb"
   fi
@@ -757,13 +747,13 @@ function qa_tests_once {
   cp TaskImpl.properties.template TaskImpl.properties
 
   # check to see which orb we are running against:
-  if [ x$orb = x"openjdk" ]; then
-    orbtype=openjdk
-  elif [ x$orb = x"ibmorb" ]; then
+  if [ x$orb = x"ibmorb" ]; then
     orbtype=ibmorb
 	sed -e "s#^  dist#  ${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}${JAVA_HOME}\${file.separator}jre\${file.separator}lib\${file.separator}ibmorb.jar\\\\\\n  \${path.separator}dist#" TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
+  elif [ x$orb = x"openjdk" ]; then
+    orbtype=openjdk
   else
-    orbtype=jacorb
+    fatal "Narayana does not support the specified ORB. Supported ORBs are: ibmorb and openjdk"
   fi
 
   testoutputzip="testoutput-${orbtype}.zip"
@@ -774,9 +764,6 @@ function qa_tests_once {
   if [[ x"$EXTRA_QA_SYSTEM_PROPERTIES" != "x" ]]; then
     add_qa_xargs "$EXTRA_QA_SYSTEM_PROPERTIES"
   fi
-
-  # delete lines containing jacorb
-  [ $orbtype != "jacorb" ] && sed -e  '/^.*separator}jacorb/ d' TaskImpl.properties > "TaskImpl.properties.tmp" && mv "TaskImpl.properties.tmp" "TaskImpl.properties"
 
   # if the env variable MFACTOR is set then set the bean property CoreEnvironmentBean.timeoutFactor
   if [[ -n "$MFACTOR" ]] ; then
@@ -792,21 +779,12 @@ function qa_tests_once {
 
   [ $? -eq 0 ] || fatal "qa build failed"
 
-  if [ $orbtype = "jacorb" ]; then
-    sed -e "s#^jacorb.log.default.verbosity=.*#jacorb.log.default.verbosity=2#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
-    sed -e "s#^jacorb.poa.thread_pool_max=.*#jacorb.poa.thread_pool_max=100#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
-    sed -e "s#^jacorb.poa.thread_pool_min=.*#jacorb.poa.thread_pool_min=40#"   dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties > "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" && mv "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties.tmp" "dist/narayana-full-${NARAYANA_CURRENT_VERSION}/jacorb/etc/jacorb.properties"
-  fi
-
   if [[ $# == 0 || $# > 0 && "$1" != "-DskipTests" ]]; then
     # determine which QA test target to call
     target="ci-tests" # the default is to run everything (ci-tests)
 
     # if IPV6_OPTS is set then do not do the jdbc tests (ie run target junit-testsuite)
     [ -z "${IPV6_OPTS+x}" ] || target="junit"
-
-    # if called with the openjdk or ibm orbs then only run the jtsremote tests
-    [ $orbtype != "jacorb" ] && target="ci-jts-tests"
 
     # QA_TARGET overrides the previous settings
     [ x$QA_TARGET = x ] || target=$QA_TARGET # the caller can force the build to run a specific target
@@ -862,9 +840,8 @@ function qa_tests_once {
 }
 
 function qa_tests {
-  ok1=0;
-  ok3=0;
-  ok4=0;
+  ibm_orb_tests_ok=0;
+  openjdk_orb_tests_ok=0;
 
   if [ $IBM_ORB = 1 ]; then
     if [ $JAVA_VERSION -eq "17" ] ; then
@@ -872,23 +849,17 @@ function qa_tests {
         exit -1
     fi
     qa_tests_once "orb=ibmorb" "$@" # run qa against the IBM orb
-    ok3=$?
+    ibm_orb_tests_ok=$?
   else
-    if [ $JAC_ORB = 1 ]; then
-      qa_tests_once "orb=jacorb" "$@"    # run qa against the default orb
-      ok1=$?
-    fi
-    if [ $OPENJDK_ORB = 1 ]; then
-      qa_tests_once "orb=openjdk" "$@"    # run qa against the openjdk orb
-      ok4=$?
-    fi
+    # OPENJDK_ORB #
+    qa_tests_once "orb=openjdk" "$@"    # run qa against the openjdk orb
+    openjdk_orb_tests_ok=$?
   fi
 
-  [ $ok1 = 0 ] || echo some jacorb QA tests failed
-  [ $ok3 = 0 ] || echo some IBM ORB QA tests failed
-  [ $ok4 = 0 ] || echo some openjdk ORB QA tests failed
+  [ $ibm_orb_tests_ok = 0 ] || echo some IBM ORB QA tests failed
+  [ $openjdk_orb_tests_ok = 0 ] || echo some openjdk ORB QA tests failed
 
-  [ $ok1 = 0 -a $ok3 = 0 -a $ok4 = 0 ] || fatal "some qa tests failed"
+  [ $openjdk_orb_tests_ok = 0 -a $ibm_orb_tests_ok = 0 ] || fatal "some qa tests failed"
 }
 
 function hw_spec {

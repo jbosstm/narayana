@@ -42,13 +42,6 @@ public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.Recovery
     {
         jbossatxLogger.i18NLogger.info_jts_RecoveryManagerService_init();
 
-        if (ORBType.JACORB == ORBInfo.getOrbEnumValue()) {
-            // Make sure the orb is ready: TODO improve on this
-            Class c = ClassloadingUtility.loadClass("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit");
-            Method m = c.getDeclaredMethod("waitForRunningORBRunner", null);
-            m.invoke(null, null);
-        }
-
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
         ORB orb = ORB.getInstance(TransactionManagerService.ORB_NAME);
 

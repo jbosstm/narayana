@@ -35,7 +35,7 @@ public class StoreManager
 {
     private static ObjectStoreAPI actionStore = null; // for BasicAction i.e. tx logging / recovery
     private static ObjectStoreAPI stateStore = null; // for StateManager i.e. object type store.
-    private static ObjectStoreAPI communicationStore = null; // for IPC e.g. JacOrbRCServiceInit, TransactionStatusManagerItem
+    private static ObjectStoreAPI communicationStore = null; // for IPC e.g. TransactionStatusManagerItem
 
     public StoreManager(ObjectStoreAPI actionStore, ObjectStoreAPI stateStore, ObjectStoreAPI communicationStore) {
 

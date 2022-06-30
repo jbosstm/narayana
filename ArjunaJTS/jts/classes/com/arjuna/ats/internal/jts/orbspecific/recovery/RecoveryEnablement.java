@@ -117,9 +117,6 @@ public class RecoveryEnablement implements RecoveryActivator
         // The class that should start the service shall not be called directly. An intermediate class shall be used
         switch (orbType)
         {
-            case ORBType.JACORB:
-                theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
-                break;
             case ORBType.JAVAIDL:
                 theClassName = "com.arjuna.ats.internal.jts.orbspecific.javaidl.recoverycoordinators.JavaIdlRCServiceInit";
                 break;

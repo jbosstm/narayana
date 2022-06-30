@@ -54,14 +54,12 @@ import com.arjuna.orbportability.RootOA;
 public class XAResourceTest {
 	@Before
 	public void setup() {
-//		System.setProperty("jacorb.implname", "1");
 //		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryActivatorClassNames(Arrays.asList(new String[] {com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement.class.getName()}));
 	}
 
 	@After
 	public void tearDown() {
 //		recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryActivatorClassNames(null);
-//		System.setProperty("jacorb.implname", "");
 	}
 
 	@Test

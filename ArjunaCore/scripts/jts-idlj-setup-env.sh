@@ -44,18 +44,6 @@ fi
 if test "$CONTINUE_SETUP" = "true"
 then
 
-# Full JacORB installation location
-# Caution: JBossTS needs a specially patched version of JacORB.
-# Use $JBOSSTS_HOME/jacorb here unless you have a good reason not to.
-#
-isIdlj=0
-
-if [ $isIdlj == 1 ]; then
-	JACORB_HOME=
-else
-	JACORB_HOME=$NARAYANA_HOME/jacorb
-fi
-
 # Find classpath separator
 
 CPS=":"
@@ -63,9 +51,6 @@ CPS=":"
 case `uname -a` in
     CYGWIN_* | Windows* )
         CPS=";"
-	if [ $isIdlj == 0 ]; then
-		JACORB_HOME=`echo $JACORB_HOME | sed -e 's;\\\;/;g'`
-	fi
 	NARAYANA_HOME=`echo $NARAYANA_HOME | sed -e 's;\\\;/;g'`
     ;;
 esac
@@ -83,17 +68,7 @@ do
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$i"
 done
 
-if [ $isIdlj == 0 ]; then
-	for i in $JACORB_HOME/lib/*.jar
-	do
-		JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$i"
-	done
-	JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/etc"
-
-	CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH$CPS$JACORB_CLASSPATH"
-else
-	CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
-fi
+CLASSPATH=".$CPS$PRODUCT_CLASSPATH$CPS$EXT_CLASSPATH"
 
 export CLASSPATH=$CLASSPATH:$NARAYANA_HOME/lib/jts/narayana-jts-idlj.jar
 
