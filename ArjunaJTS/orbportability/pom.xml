@@ -352,6 +352,12 @@
       </activation>
 
       <dependencies>
+		    <dependency>
+			    <groupId>org.jboss.openjdk-orb</groupId>
+			    <artifactId>openjdk-orb</artifactId>
+			    <version>${version.org.jboss.openjdk-orb}</version>
+			    <scope>provided</scope>
+		    </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
           <artifactId>idlj-idl</artifactId>
