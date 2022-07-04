@@ -94,7 +94,7 @@ public class TransactionManagerGetStatusDifferenceDemonstrator {
                     // com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0
 					assertTrue(
 							"Status: " + getStatusSync.getTransactionManagerGetStatus(),
-							getStatusSync.getTransactionManagerGetStatus() == Status.STATUS_NO_TRANSACTION);
+							getStatusSync.getTransactionManagerGetStatus() == Status.STATUS_COMMITTED);
 				}
 			} else {
 				assertTrue(
