@@ -151,7 +151,16 @@
       <groupId>org.jacorb</groupId>
       <artifactId>jacorb</artifactId>
       <version>${version.org.jacorb.jacorb}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb-omgapi</artifactId>
+      <version>${version.org.jacorb.jacorb}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb-idl-compiler</artifactId>
+      <version>${version.org.jacorb.jacorb-idl-compiler}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.ws</groupId>

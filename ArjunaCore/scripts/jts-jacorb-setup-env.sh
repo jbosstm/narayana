@@ -44,7 +44,7 @@ fi
 if test "$CONTINUE_SETUP" = "true"
 then
 
-# Full JacORB installation location
+# JacORB Jars and configuration location
 # Caution: JBossTS needs a specially patched version of JacORB.
 # Use $JBOSSTS_HOME/jacorb here unless you have a good reason not to.
 #
