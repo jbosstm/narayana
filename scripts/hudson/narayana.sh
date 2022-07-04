@@ -399,7 +399,7 @@ function clone_as {
   echo $(git rev-parse HEAD)
 
   echo "Rebasing the wildfly upstream/main on top of the AS_BRANCH $AS_BRANCH"
-  git pull --rebase --ff-only upstream main
+  git pull --rebase upstream main
   [ $? -eq 0 ] || fatal "git rebase failed"
 
   if [ $REDUCE_SPACE = 1 ]; then
