@@ -25,14 +25,6 @@
         </classpath>
     </taskdef>
 
-    <condition property="is.jdk9">
-      <equals arg1="${java.specification.version}" arg2="9"/>
-    </condition>
-
-    <condition property="is.jdk11">
-      <equals arg1="${java.specification.version}" arg2="11"/>
-    </condition>
-
 	<!-- set this property to the location of a JBossTS JTS build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../dist"/>
 	<property name="narayana.version" value="5.12.8.Final-SNAPSHOT"/>
@@ -57,15 +49,7 @@
         <property name="upgrademodulepath" value="${jts.build.dir}/jtax/target/upgrademodulepath"/>
 
 	<target name="setIdlProps">
-        <if>
-           <isset property="is.jdk9"/>
-           <then>
-               <property name="orb.idl.path" value="include"/>
-           </then>
-           <else>
-               <property name="orb.idl.path" value="lib"/>
-           </else>
-        </if>
+        <property name="orb.idl.path" value="lib"/>
         <if>
 	         <equals arg1="${orbtype}" arg2="ibmorb" />
         <then>
@@ -136,7 +120,7 @@
             <fileset dir="${org.jboss.jbossts.qa.ts.home}/narayana-full-${narayana.version}/lib/ext">
                 <include name="jboss-transaction-api_1.2_spec.jar"/>
 	        <include name="jboss-logging.jar"/>
-                <include name="openjdk-orb.jar" if="is.jdk11" />
+                <include name="openjdk-orb.jar" if="is.sunorb" />
             </fileset>
             <pathelement location="${jts.build.dir}/orbportability/config"/>
             <!--<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />-->
@@ -283,25 +267,7 @@
 					  parameters="${idl.params2}" />
 	</target>
 
-	<target name="org.jboss.jbossts.qa.idl.orb.compile" depends="org.jboss.jbossts.qa.idl.orb.compile.jdk9,org.jboss.jbossts.qa.idl.orb.compile.notjdk9"/>
-
-	<target name="org.jboss.jbossts.qa.idl.orb.compile.jdk9" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init" if="is.jdk9">
-		<javac srcdir="${org.jboss.jbossts.qa.build.idl}"
-			   destdir="${org.jboss.jbossts.qa.build.classes}"
-			   debug="on" includeantruntime="false">
-			<compilerarg value="--upgrade-module-path" />
-			<compilerarg value="${upgrademodulepath}" />
-			<compilerarg value="--patch-module" />
-			<compilerarg value="java.corba=${java.corba.patch.jar}" />
-			<compilerarg value="--add-modules" />
-			<compilerarg value="java.corba" />
-			<classpath>
-				<path refid="jts.classpath"/>
-			</classpath>
-		</javac>
-	</target>
-
-	<target name="org.jboss.jbossts.qa.idl.orb.compile.notjdk9" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init" unless="is.jdk9">
+	<target name="org.jboss.jbossts.qa.idl.orb.compile" depends="org.jboss.jbossts.qa.init,org.jboss.jbossts.qa.idl.compile.init">
 		<javac srcdir="${org.jboss.jbossts.qa.build.idl}"
 			   destdir="${org.jboss.jbossts.qa.build.classes}"
 			   debug="on" includeantruntime="false">
@@ -311,44 +277,7 @@
 		</javac>
 	</target>
 
-    <target name="org.jboss.jbossts.qa.compile" depends="org.jboss.jbossts.qa.compile.jdk9,org.jboss.jbossts.qa.compile.notjdk9"/>
-
-    <target name="org.jboss.jbossts.qa.compile.jdk9" depends="org.jboss.jbossts.qa.idl.compile" if="is.jdk9">
-        <javac destdir="${org.jboss.jbossts.qa.build.classes}"
-               debug="on" deprecation="on" includeantruntime="true">
-            <compilerarg value="--upgrade-module-path" />
-            <compilerarg value="${upgrademodulepath}" />
-            <compilerarg value="--patch-module" />
-            <compilerarg value="java.corba=${java.corba.patch.jar}" />
-            <compilerarg value="--add-modules" />
-            <compilerarg value="java.corba" />
-            <compilerarg value="--add-modules" />
-            <compilerarg value="java.sql" />
-            <compilerarg value="--add-modules" />
-            <compilerarg value="java.transaction" />
-
-            <src path="${org.jboss.jbossts.qa.src}"/>
-            <src path="${jts.build.dir}/jts/tests/classes"/>
-            <src path="../../common/tests"/>
-
-            <exclude name="**/ibmorb/**/*.java" unless="is.ibmorb"/>
-            <exclude name="**/javaidl/**/*.java" unless="is.sunorb"/>
-            <exclude name="**/jacorb/**/*.java" unless="is.jacorb"/>
-
-            <exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
-            <exclude name="**/${astest.dir}/**/*.java" />
-            <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredTransactionUnitTest.java" />
-            <exclude name="com/hp/mwtests/ts/jts/recovery/RecoveredServerTransactionUnitTest.java" />
-
-            <classpath>
-                <path refid="jts.classpath"/>
-	        <path refid="target.classpath"/>
-                <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-            </classpath>
-        </javac>
-    </target>
-
-    <target name="org.jboss.jbossts.qa.compile.notjdk9" depends="org.jboss.jbossts.qa.idl.compile" unless="is.jdk9">
+    <target name="org.jboss.jbossts.qa.compile" depends="org.jboss.jbossts.qa.idl.compile">
         <javac destdir="${org.jboss.jbossts.qa.build.classes}"
                debug="on" deprecation="on" includeantruntime="true">
 
