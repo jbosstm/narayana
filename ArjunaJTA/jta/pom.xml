@@ -477,6 +477,7 @@
             </property>
         </activation>
         <properties>
+            <!-- CMRIntegrationTest needs this -->
             <jvm.args.modular>
                 --add-opens=java.base/java.util=ALL-UNNAMED
             </jvm.args.modular>

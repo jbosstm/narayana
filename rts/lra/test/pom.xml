@@ -422,6 +422,7 @@
         <jdk>[17,)</jdk>
       </activation>
       <properties>
+        <!-- At least org.eclipse.microprofile.lra.tck.TckUnknownStatusTests needs java.base/java.lang and java.base/java.lang.reflect -->
         <jvm.args.modular>--add-opens=java.base/java.lang=ALL-UNNAMED
           --add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvm.args.modular>
       </properties>
