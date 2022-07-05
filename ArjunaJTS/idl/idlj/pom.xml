@@ -27,7 +27,5 @@
 
   <modules>
     <module>idlj-openjdk</module>
-    <module>idlj</module>
-    <module>idlj-tests</module>
   </modules>
 </project>

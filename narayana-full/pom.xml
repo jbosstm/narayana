@@ -361,11 +361,6 @@
           <artifactId>narayana-jts-idlj</artifactId>
           <version>${project.version}</version>
         </dependency>
-        <dependency>
-          <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
-          <version>${project.version}</version>
-        </dependency>
       </dependencies>
     </profile>
     <profile>
