@@ -200,6 +200,7 @@
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
+                <!-- At least org.jboss.narayana.txframework.functional.ws.ba.bridged.BABridgedTest seems to need java.base/java.util -->
                 <jvm.args.modular>
                     --add-opens=java.base/java.util=ALL-UNNAMED
                 </jvm.args.modular>

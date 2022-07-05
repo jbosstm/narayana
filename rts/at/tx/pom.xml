@@ -339,15 +339,5 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <properties>
-        <jvm.args.modular>--add-modules=java.se
-          --add-opens=java.base/java.lang=ALL-UNNAMED</jvm.args.modular>
-      </properties>
-    </profile>
   </profiles>
 </project>
