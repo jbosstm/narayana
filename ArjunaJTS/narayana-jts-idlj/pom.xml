@@ -47,8 +47,7 @@
                     <include>org.jboss.narayana.jta:cdi</include>
                     <include>org.jboss.narayana.jts:orbportability</include>
                     <include>org.jboss.narayana.jts:jts</include>
-                    <include>org.jboss.narayana.jts:idlj-idl</include>
-                    <include>org.jboss.narayana.jts:idlj-idl-tests</include>
+                    <include>org.jboss.narayana.jts:idlj-idl-openjdk</include>
                     <include>org.jboss.narayana.jts:jtax</include>
                   </includes>
                 </artifactSet>
@@ -248,11 +247,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.narayana.jts</groupId>
-      <artifactId>idlj-idl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>jtax</artifactId>
       <version>${project.version}</version>
         <exclusions>
@@ -285,7 +279,6 @@
       <groupId>org.jboss.narayana.jts</groupId>
       <artifactId>idlj-idl-openjdk</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <profiles>

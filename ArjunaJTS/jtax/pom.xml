@@ -219,9 +219,8 @@
                     <exclude>**/subordinate/TransactionImpleUnitTest.java</exclude>
                   </excludes>
                   <classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-tests</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-openjdk</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-openjdk:tests</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:ibmorb-idl:test-jar</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
@@ -248,13 +247,14 @@
       <dependencies>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl</artifactId>
+          <artifactId>idlj-idl-openjdk</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.jboss.narayana.jts</groupId>
-          <artifactId>idlj-idl-tests</artifactId>
+          <artifactId>idlj-idl-openjdk</artifactId>
           <version>${project.version}</version>
+          <classifier>tests</classifier>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -367,8 +367,8 @@
                   <classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl</classpathDependencyExcludes>
                     <classpathDependencyExcludes>org.jboss.narayana.jts:jacorb-idl:test-jar</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl</classpathDependencyExcludes>
-                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl:test-jar</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-openjdk</classpathDependencyExcludes>
+                    <classpathDependencyExcludes>org.jboss.narayana.jts:idlj-idl-openjdk:tests</classpathDependencyExcludes>
                   </classpathDependencyExcludes>
                   <systemPropertyVariables
                     combine.children="append">
