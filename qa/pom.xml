@@ -24,16 +24,7 @@
   <packaging>jar</packaging>
   <name>Narayana: qa</name>
 
-  <properties>
-    <version.org.jboss.netty>3.2.5.Final</version.org.jboss.netty>
-  </properties>
-
   <dependencies>
-    <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>${version.org.jboss.netty}</version>
-    </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
